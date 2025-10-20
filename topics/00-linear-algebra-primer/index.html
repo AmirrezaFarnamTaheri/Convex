@@ -80,9 +80,27 @@
 
       <!-- Widget 1 -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Norm Geometry Visualizer</h3>
+        <p>Interactively displays the unit balls for ℓ₁, ℓ₂, and ℓ∞ norms.</p>
+        <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 2 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Matrix Explorer</h3>
         <p>Eigenvalue/PSD visualizer</p>
-        <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
+        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 3 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Hessian Landscape Visualizer</h3>
+        <p>Renders the 3D surface of a quadratic function.</p>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
           <!-- Widget will be rendered here -->
         </div>
       </div>
@@ -133,7 +151,18 @@
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
   <!-- Widget loaders -->
-  <script type="module" src="./widgets/js/matrix-explorer.js"></script>
+  <script type="module">
+    import { initNormGeometryVisualizer } from './widgets/js/norm-geometry-visualizer.js';
+    initNormGeometryVisualizer('widget-1');
+  </script>
+  <script type="module">
+    import { initEigenvalueExplorer } from './widgets/js/matrix-explorer.js';
+    initEigenvalueExplorer('widget-2');
+  </script>
+  <script type="module">
+    import { initHessianLandscapeVisualizer } from './widgets/js/hessian-landscape-visualizer.js';
+    initHessianLandscapeVisualizer('widget-3');
+  </script>
 
   <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>

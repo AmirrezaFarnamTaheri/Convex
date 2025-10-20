@@ -139,8 +139,14 @@
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
   <!-- Widget loaders -->
-  <script type="module" src="./widgets/js/jensen-visualizer.js"></script>
-  <script type="module" src="./widgets/js/hessian-explorer.js"></script>
+  <script type="module">
+    import { initJensenVisualizer } from './widgets/js/jensen-visualizer.js';
+    initJensenVisualizer('widget-1');
+  </script>
+  <script type="module">
+    import { initHessianExplorer } from './widgets/js/hessian-explorer.js';
+    initHessianExplorer('widget-2');
+  </script>
 
   <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>

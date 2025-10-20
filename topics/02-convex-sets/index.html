@@ -149,8 +149,14 @@
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
   <!-- Widget loaders -->
-  <script type="module" src="./widgets/js/convex-set-checker.js"></script>
-  <script type="module" src="./widgets/js/ellipsoid-explorer.js"></script>
+  <script type="module">
+    import { initConvexSetChecker } from './widgets/js/convex-set-checker.js';
+    initConvexSetChecker('widget-1');
+  </script>
+  <script type="module">
+    import { initEllipsoidExplorer } from './widgets/js/ellipsoid-explorer.js';
+    initEllipsoidExplorer('widget-2');
+  </script>
   <script type="module" src="./widgets/js/polyhedron-viz.js"></script>
 
   <!-- Global utilities -->

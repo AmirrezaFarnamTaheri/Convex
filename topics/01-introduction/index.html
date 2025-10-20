@@ -142,8 +142,14 @@
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
   <!-- Widget loaders -->
-  <script type="module" src="./widgets/js/convex-vs-nonconvex.js"></script>
-  <script type="module" src="./widgets/js/landscape-viewer.js"></script>
+  <script type="module">
+    import { initConvexVsNonconvex } from './widgets/js/convex-vs-nonconvex.js';
+    initConvexVsNonconvex('widget-1');
+  </script>
+  <script type="module">
+    import { initLandscapeViewer } from './widgets/js/landscape-viewer.js';
+    initLandscapeViewer('widget-2');
+  </script>
 
   <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>

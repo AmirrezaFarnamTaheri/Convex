@@ -139,7 +139,10 @@
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
   <!-- Widget loaders -->
-  <script type="module" src="./widgets/js/mvee-visualizer.js"></script>
+  <script type="module">
+    import { initMVEEVisualizer } from './widgets/js/mvee-visualizer.js';
+    initMVEEVisualizer('widget-1');
+  </script>
   <script type="module" src="./widgets/js/chebyshev-center.js"></script>
 
   <!-- Global utilities -->

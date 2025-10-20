@@ -139,7 +139,10 @@
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
   <!-- Widget loaders -->
-  <script type="module" src="./widgets/js/classification-boundary.js"></script>
+  <script type="module">
+    import { initClassificationBoundaryVisualizer } from './widgets/js/classification-boundary.js';
+    initClassificationBoundaryVisualizer('widget-1');
+  </script>
   <script type="module" src="./widgets/js/svm-margin-viz.js"></script>
 
   <!-- Global utilities -->
