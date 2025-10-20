@@ -278,3 +278,11 @@ convex-optimization-course/
     ├── CONTRIBUTING.md                [Contribution guidelines]
     └── MATH-REFERENCE.md              [Quick LaTeX & notation reference]
 ```
+
+## How Widgets Are Loaded
+
+While the structure above shows where widget files are located (`/topics/NN-slug/widgets/js/`), it's important to understand how they are loaded into a lecture page. Widgets are not loaded automatically. Instead, each lecture's `index.html` file must explicitly load its required widgets using ES module imports.
+
+This is done by adding a `<script type="module">` tag at the end of the lecture's HTML file, after the widget's container `<div>` has been defined. This ensures the container element exists before the widget's initialization script runs.
+
+For a detailed explanation of the widget initialization signature, state management patterns, and Pyodide integration, see the `WIDGET_ARCHITECTURE.md` document.
