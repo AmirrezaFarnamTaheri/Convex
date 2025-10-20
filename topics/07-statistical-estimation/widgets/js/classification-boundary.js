@@ -1,87 +1,132 @@
 /**
- * Widget: classification-boundary
- *
- * Description: [What does this widget do?]
- *
- * Uses: Canvas/SVG for rendering, event listeners for interactivity
- *
- * DOM target: #widget-1 (or appropriate ID)
+ * Widget: Classification Boundary Visualizer
  */
 
-export function initWidget(containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) {
-    console.warn(`Widget container #${containerId} not found.`);
-    return;
-  }
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
 
-  // Create canvas or SVG
-  const canvas = document.createElement('canvas');
-  canvas.width = container.clientWidth;
-  canvas.height = container.clientHeight;
-  container.appendChild(canvas);
-
-  const ctx = canvas.getContext('2d');
-
-  // State
-  let state = {
-    // Initialize state here
-    param1: 1.0,
-    param2: 0.5,
-  };
-
-  // UI controls (sliders, buttons, etc.)
-  const controlPanel = document.createElement('div');
-  controlPanel.style.cssText = 'margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap;';
-
-  const slider1Label = document.createElement('label');
-  slider1Label.style.cssText = 'display: flex; align-items: center; gap: 6px;';
-  slider1Label.textContent = 'Parameter 1:';
-
-  const slider1 = document.createElement('input');
-  slider1.type = 'range';
-  slider1.min = '0';
-  slider1.max = '10';
-  slider1.step = '0.1';
-  slider1.value = state.param1;
-  slider1.addEventListener('input', (e) => {
-    state.param1 = parseFloat(e.target.value);
-    render();
-  });
-
-  slider1Label.appendChild(slider1);
-  controlPanel.appendChild(slider1Label);
-  container.insertBefore(controlPanel, canvas);
-
-  // Render function
-  function render() {
-    // Clear canvas
-    ctx.fillStyle = 'var(--bg)'; // Won't work; use actual color
-    ctx.fillStyle = '#0b0d12';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw based on state
-    ctx.fillStyle = '#7cc5ff';
-    ctx.font = '16px system-ui';
-    ctx.fillText(`param1 = ${state.param1.toFixed(2)}`, 16, 32);
-
-    // [Add actual drawing logic here]
-  }
-
-  // Handle window resize
-  window.addEventListener('resize', () => {
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
-    render();
-  });
-
-  // Initial render
-  render();
+async function initPyodide() {
+    const pyodide = await loadPyodide();
+    await pyodide.loadPackage(["numpy", "scikit-learn"]);
+    return pyodide;
 }
+const pyodidePromise = initPyodide();
 
-// Auto-initialize if this is a module
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => initWidget('widget-1'));
-} else {
-  initWidget('widget-1');
+export async function initClassificationBoundaryVisualizer(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) { console.error(`Container #${containerId} not found.`); return; }
+
+    let points = [];
+    let currentClass = 0;
+    let classifierType = "LogisticRegression";
+
+    // --- UI CONTROLS ---
+    const controls = document.createElement("div");
+    controls.style.cssText = "padding: 10px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;";
+
+    const classSelector = document.createElement("select");
+    classSelector.innerHTML = `<option value="0">Class 0</option><option value="1">Class 1</option>`;
+    classSelector.addEventListener("change", () => currentClass = parseInt(classSelector.value));
+
+    const classifierSelector = document.createElement("select");
+    classifierSelector.innerHTML = `<option value="LogisticRegression">Logistic Regression</option><option value="SVM">SVM</option>`;
+    classifierSelector.addEventListener("change", () => classifierType = classifierSelector.value);
+
+    const trainButton = document.createElement("button");
+    trainButton.textContent = "Train & Visualize";
+    trainButton.addEventListener("click", trainAndDrawBoundary);
+
+    const resetButton = document.createElement("button");
+    resetButton.textContent = "Reset";
+    resetButton.addEventListener("click", reset);
+
+    controls.append("Add points for:", classSelector, "Classifier:", classifierSelector, trainButton, resetButton);
+    container.appendChild(controls);
+
+    // --- D3.js PLOT ---
+    const margin = { top: 10, right: 10, bottom: 20, left: 30 };
+    const width = container.clientWidth - margin.left - margin.right;
+    const height = 350 - margin.top - margin.bottom;
+
+    const svg = d3.select(container).append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleLinear().domain([-5, 5]).range([0, width]);
+    const y = d3.scaleLinear().domain([-5, 5]).range([height, 0]);
+
+    const backgroundGroup = svg.append("g");
+    const pointsGroup = svg.append("g");
+
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
+
+    svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .style("fill", "none")
+        .style("pointer-events", "all")
+        .on("click", (event) => {
+            const [mx, my] = d3.pointer(event);
+            points.push({ x: x.invert(mx), y: y.invert(my), class: currentClass });
+            drawPoints();
+        });
+
+    function drawPoints() {
+        pointsGroup.selectAll("circle").data(points).join("circle")
+            .attr("cx", d => x(d.x)).attr("cy", d => y(d.y))
+            .attr("r", 5).attr("fill", d => d.class === 0 ? "blue" : "orange");
+    }
+
+    function reset() {
+        points = [];
+        backgroundGroup.selectAll("*").remove();
+        drawPoints();
+    }
+
+    async function trainAndDrawBoundary() {
+        if (points.length < 2) return;
+
+        const pyodide = await pyodidePromise;
+        await pyodide.globals.set("points_data", points);
+        await pyodide.globals.set("classifier_type", classifierType);
+        const classifierCode = `
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+import numpy as np
+
+X = np.array([[p['x'], p['y']] for p in points_data])
+y = np.array([p['class'] for p in points_data])
+
+model = LogisticRegression() if classifier_type == 'LogisticRegression' else SVC()
+model.fit(X, y)
+
+xx, yy = np.meshgrid(np.linspace(-5, 5, 50), np.linspace(-5, 5, 50))
+Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+Z.tolist()
+        `;
+
+        const Z = await pyodide.runPythonAsync(classifierCode).then(z => z.toJs());
+        const color = d3.scaleOrdinal(["lightblue", "moccasin"]);
+
+        const contours = d3.contours()
+            .size([50, 50])
+            .thresholds([0.5])
+            (Z.flat());
+
+        backgroundGroup.selectAll("path").remove();
+        backgroundGroup.selectAll("path")
+            .data(contours)
+            .join("path")
+            .attr("d", d3.geoPath().transform({
+                scale: [width / 49, height / 49], // scale factor adjusted for grid size
+                translate: [0, 0]
+            }))
+            .attr("fill", d => color(d.value));
+    }
+
+    reset();
 }

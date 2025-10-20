@@ -1,87 +1,105 @@
 /**
- * Widget: robust-regression
- *
- * Description: [What does this widget do?]
- *
- * Uses: Canvas/SVG for rendering, event listeners for interactivity
- *
- * DOM target: #widget-1 (or appropriate ID)
+ * Widget: Robust Regression vs Least Squares
  */
 
-export function initWidget(containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) {
-    console.warn(`Widget container #${containerId} not found.`);
-    return;
-  }
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
 
-  // Create canvas or SVG
-  const canvas = document.createElement('canvas');
-  canvas.width = container.clientWidth;
-  canvas.height = container.clientHeight;
-  container.appendChild(canvas);
-
-  const ctx = canvas.getContext('2d');
-
-  // State
-  let state = {
-    // Initialize state here
-    param1: 1.0,
-    param2: 0.5,
-  };
-
-  // UI controls (sliders, buttons, etc.)
-  const controlPanel = document.createElement('div');
-  controlPanel.style.cssText = 'margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap;';
-
-  const slider1Label = document.createElement('label');
-  slider1Label.style.cssText = 'display: flex; align-items: center; gap: 6px;';
-  slider1Label.textContent = 'Parameter 1:';
-
-  const slider1 = document.createElement('input');
-  slider1.type = 'range';
-  slider1.min = '0';
-  slider1.max = '10';
-  slider1.step = '0.1';
-  slider1.value = state.param1;
-  slider1.addEventListener('input', (e) => {
-    state.param1 = parseFloat(e.target.value);
-    render();
-  });
-
-  slider1Label.appendChild(slider1);
-  controlPanel.appendChild(slider1Label);
-  container.insertBefore(controlPanel, canvas);
-
-  // Render function
-  function render() {
-    // Clear canvas
-    ctx.fillStyle = 'var(--bg)'; // Won't work; use actual color
-    ctx.fillStyle = '#0b0d12';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw based on state
-    ctx.fillStyle = '#7cc5ff';
-    ctx.font = '16px system-ui';
-    ctx.fillText(`param1 = ${state.param1.toFixed(2)}`, 16, 32);
-
-    // [Add actual drawing logic here]
-  }
-
-  // Handle window resize
-  window.addEventListener('resize', () => {
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
-    render();
-  });
-
-  // Initial render
-  render();
+async function initPyodide() {
+    const pyodide = await loadPyodide();
+    await pyodide.loadPackage(["numpy", "scikit-learn"]);
+    return pyodide;
 }
+const pyodidePromise = initPyodide();
 
-// Auto-initialize if this is a module
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => initWidget('widget-1'));
-} else {
-  initWidget('widget-1');
+export async function initRobustRegression(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) { console.error(`Container #${containerId} not found.`); return; }
+
+    let points = [];
+
+    // --- UI CONTROLS ---
+    const controls = document.createElement("div");
+    controls.style.cssText = "padding: 10px;";
+    const clearButton = document.createElement("button");
+    clearButton.textContent = "Clear";
+    clearButton.onclick = reset;
+    controls.appendChild(clearButton);
+    container.appendChild(controls);
+
+    // --- D3.js PLOT ---
+    const margin = { top: 10, right: 10, bottom: 20, left: 30 };
+    const width = container.clientWidth - margin.left - margin.right;
+    const height = 350 - margin.top - margin.bottom;
+
+    const svg = d3.select(container).append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleLinear().domain([-5, 5]).range([0, width]);
+    const y = d3.scaleLinear().domain([-5, 5]).range([height, 0]);
+
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
+
+    const pointsGroup = svg.append("g");
+    const lsLine = svg.append("path").attr("stroke", "red").attr("stroke-width", 2).attr("fill", "none");
+    const huberLine = svg.append("path").attr("stroke", "green").attr("stroke-width", 2).attr("fill", "none");
+
+    svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .style("fill", "none")
+        .style("pointer-events", "all")
+        .on("click", (event) => {
+            const [mx, my] = d3.pointer(event);
+            points.push({ x: x.invert(mx), y: y.invert(my) });
+            drawPoints();
+            updateRegressions();
+        });
+
+    function drawPoints() {
+        pointsGroup.selectAll("circle").data(points).join("circle")
+            .attr("cx", d => x(d.x)).attr("cy", d => y(d.y))
+            .attr("r", 5).attr("fill", "blue");
+    }
+
+    function reset() {
+        points = [];
+        lsLine.attr("d", null);
+        huberLine.attr("d", null);
+        drawPoints();
+    }
+
+    async function updateRegressions() {
+        if (points.length < 2) return;
+
+        const pyodide = await pyodidePromise;
+        await pyodide.globals.set("points_data", points);
+        const code = `
+from sklearn.linear_model import LinearRegression, HuberRegressor
+import numpy as np
+
+X = np.array([p['x'] for p in points_data]).reshape(-1, 1)
+y = np.array([p['y'] for p in points_data])
+
+ls = LinearRegression().fit(X, y)
+ls_line_y = ls.predict(np.array([[-5], [5]]))
+
+huber = HuberRegressor().fit(X, y)
+huber_line_y = huber.predict(np.array([[-5], [5]]))
+
+{"ls_line": ls_line_y.tolist(), "huber_line": huber_line_y.tolist()}
+        `;
+        const lines = await pyodide.runPythonAsync(code).then(l => l.toJs());
+
+        const lineGenerator = d3.line()
+            .x((d, i) => x(i === 0 ? -5 : 5))
+            .y(d => y(d));
+
+        lsLine.datum(lines.ls_line).attr("d", lineGenerator);
+        huberLine.datum(lines.huber_line).attr("d", lineGenerator);
+    }
 }

@@ -139,7 +139,10 @@
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
   <!-- Widget loaders -->
-  <script type="module" src="./widgets/js/barrier-method-path-tracer.js"></script>
+  <script type="module">
+    import { initBarrierPathTracer } from './widgets/js/barrier-method-path-tracer.js';
+    initBarrierPathTracer('widget-1');
+  </script>
   <script type="module" src="./widgets/js/lp-simplex-vs-ip.js"></script>
 
   <!-- Global utilities -->

@@ -1,87 +1,129 @@
 /**
- * Widget: problem-form-recognizer
+ * Widget: Problem Form Recognizer
  *
- * Description: [What does this widget do?]
- *
- * Uses: Canvas/SVG for rendering, event listeners for interactivity
- *
- * DOM target: #widget-1 (or appropriate ID)
+ * Description: Users can input a simple optimization problem using structured fields,
+ *              and the tool will attempt to classify it.
  */
 
-export function initWidget(containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) {
-    console.warn(`Widget container #${containerId} not found.`);
-    return;
-  }
+import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
 
-  // Create canvas or SVG
-  const canvas = document.createElement('canvas');
-  canvas.width = container.clientWidth;
-  canvas.height = container.clientHeight;
-  container.appendChild(canvas);
-
-  const ctx = canvas.getContext('2d');
-
-  // State
-  let state = {
-    // Initialize state here
-    param1: 1.0,
-    param2: 0.5,
-  };
-
-  // UI controls (sliders, buttons, etc.)
-  const controlPanel = document.createElement('div');
-  controlPanel.style.cssText = 'margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap;';
-
-  const slider1Label = document.createElement('label');
-  slider1Label.style.cssText = 'display: flex; align-items: center; gap: 6px;';
-  slider1Label.textContent = 'Parameter 1:';
-
-  const slider1 = document.createElement('input');
-  slider1.type = 'range';
-  slider1.min = '0';
-  slider1.max = '10';
-  slider1.step = '0.1';
-  slider1.value = state.param1;
-  slider1.addEventListener('input', (e) => {
-    state.param1 = parseFloat(e.target.value);
-    render();
-  });
-
-  slider1Label.appendChild(slider1);
-  controlPanel.appendChild(slider1Label);
-  container.insertBefore(controlPanel, canvas);
-
-  // Render function
-  function render() {
-    // Clear canvas
-    ctx.fillStyle = 'var(--bg)'; // Won't work; use actual color
-    ctx.fillStyle = '#0b0d12';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw based on state
-    ctx.fillStyle = '#7cc5ff';
-    ctx.font = '16px system-ui';
-    ctx.fillText(`param1 = ${state.param1.toFixed(2)}`, 16, 32);
-
-    // [Add actual drawing logic here]
-  }
-
-  // Handle window resize
-  window.addEventListener('resize', () => {
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
-    render();
-  });
-
-  // Initial render
-  render();
+async function initPyodide() {
+    const pyodide = await loadPyodide();
+    await pyodide.loadPackage(["numpy", "cvxpy"]);
+    return pyodide;
 }
 
-// Auto-initialize if this is a module
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => initWidget('widget-1'));
-} else {
-  initWidget('widget-1');
+const pyodidePromise = initPyodide();
+
+export async function initProblemRecognizer(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) {
+        console.error(`Container #${containerId} not found.`);
+        return;
+    }
+
+    container.innerHTML = `
+        <div style="padding: 10px; display: flex; flex-direction: column; gap: 15px;">
+            <h4>Objective: Minimize</h4>
+            <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+                <input type="number" id="c_x2" value="0" style="width: 40px;"> x² +
+                <input type="number" id="c_y2" value="0" style="width: 40px;"> y² +
+                <input type="number" id="c_xy" value="0" style="width: 40px;"> xy +
+                <input type="number" id="c_x" value="1" style="width: 40px;"> x +
+                <input type="number" id="c_y" value="1" style="width: 40px;"> y
+            </div>
+            <h4>Constraints</h4>
+            <div id="constraints-container">
+                <div class="constraint" style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
+                    <input type="number" value="1" style="width: 40px;"> x +
+                    <input type="number" value="1" style="width: 40px;"> y &le;
+                    <input type="number" value="1" style="width: 40px;">
+                </div>
+            </div>
+            <button id="add-constraint">Add Constraint</button>
+            <button id="recognize-button">Recognize Problem Form</button>
+            <div id="result-div"></div>
+        </div>
+    `;
+
+    document.getElementById('add-constraint').addEventListener('click', () => {
+        const container = document.getElementById('constraints-container');
+        const newConstraint = document.createElement('div');
+        newConstraint.className = 'constraint';
+        newConstraint.style.cssText = "display: flex; align-items: center; gap: 5px; margin-bottom: 5px;";
+        newConstraint.innerHTML = `
+            <input type="number" value="0" style="width: 40px;"> x +
+            <input type="number" value="0" style="width: 40px;"> y &le;
+            <input type="number" value="0" style="width: 40px;">
+        `;
+        container.appendChild(newConstraint);
+    });
+
+    document.getElementById('recognize-button').addEventListener('click', recognizeProblem);
+
+    async function recognizeProblem() {
+        const resultDiv = document.getElementById('result-div');
+        resultDiv.textContent = "Recognizing...";
+
+        const P_x2 = parseFloat(document.getElementById('c_x2').value) * 2; // CVXPY P is 1/2 x'Px
+        const P_y2 = parseFloat(document.getElementById('c_y2').value) * 2;
+        const P_xy = parseFloat(document.getElementById('c_xy').value);
+        const c_x = parseFloat(document.getElementById('c_x').value);
+        const c_y = parseFloat(document.getElementById('c_y').value);
+
+        const P = [[P_x2, P_xy], [P_xy, P_y2]];
+        const c = [c_x, c_y];
+
+        const constraints = [];
+        document.querySelectorAll('.constraint').forEach(c_div => {
+            const inputs = c_div.getElementsByTagName('input');
+            constraints.push([
+                parseFloat(inputs[0].value),
+                parseFloat(inputs[1].value),
+                parseFloat(inputs[2].value)
+            ]);
+        });
+
+        const pyodide = await pyodidePromise;
+        await pyodide.globals.set("P_val", P);
+        await pyodide.globals.set("c_val", c);
+        await pyodide.globals.set("constraints_val", constraints);
+
+        const code = `
+import cvxpy as cp
+import numpy as np
+
+try:
+    x = cp.Variable(2)
+    P = np.array(P_val)
+    c = np.array(c_val)
+
+    objective = cp.Minimize(0.5 * cp.quad_form(x, P) + c.T @ x)
+
+    constraints_list = []
+    for const in constraints_val:
+        constraints_list.append(const[0]*x[0] + const[1]*x[1] <= const[2])
+
+    prob = cp.Problem(objective, constraints_list)
+
+    if prob.is_qp():
+        # is_qp() is true for LPs as well, so check for LP first.
+        # An LP has a zero quadratic term.
+        if np.allclose(P, np.zeros((2,2))):
+             result = "Linear Program (LP)"
+        else:
+             result = "Quadratic Program (QP)"
+    else:
+        # Fallback for other potential problem types cvxpy can identify
+        result = "Non-QP / Unknown Form"
+
+except Exception as e:
+    result = f"Error: {e}"
+
+result
+        `;
+
+        const result = await pyodide.runPythonAsync(code);
+        resultDiv.textContent = `Problem Form: ${result}`;
+    }
 }

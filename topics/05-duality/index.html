@@ -140,7 +140,10 @@
 
   <!-- Widget loaders -->
   <script type="module" src="./widgets/js/lagrangian-explainer.js"></script>
-  <script type="module" src="./widgets/js/duality-visualizer.js"></script>
+  <script type="module">
+    import { initDualityVisualizer } from './widgets/js/duality-visualizer.js';
+    initDualityVisualizer('widget-2');
+  </script>
 
   <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>
