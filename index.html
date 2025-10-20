@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Convex Optimization</title>
+  <link rel="stylesheet" href="static/css/styles.css" />
+</head>
+<body>
+  <!-- Header with navigation -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img src="static/img/logo.svg" class="logo" alt="logo" />
+        <a href="index.html" style="text-decoration:none;color:inherit">
+          <strong>Convex Optimization</strong>
+        </a>
+      </div>
+      <nav class="nav">
+        <a href="#sessions">All Lectures</a>
+        <a href="#about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="container" style="padding: 32px 0 60px;">
+    <section class="card" id="about">
+      <h1>About This Course</h1>
+      <p>This course is an introduction to the theory and application of convex optimization. We will cover the basics of convex analysis, duality, and optimization algorithms. We will also explore applications in machine learning, statistics, and finance.</p>
+    </section>
+
+    <section class="card" id="sessions">
+      <h2>Lectures</h2>
+      <div id="lecture-list"></div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p style="margin: 0;">
+        © <span id="year"></span> Convex Optimization Course ·
+        <a href="README.md" style="color: var(--brand);">About</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="static/js/app.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

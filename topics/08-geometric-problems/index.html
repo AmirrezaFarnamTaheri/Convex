@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>08. Applications III: Geometric Problems — Convex Optimization</title>
+  <link rel="stylesheet" href="../../static/css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+</head>
+<body>
+  <!-- Header with navigation -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img src="../../static/img/logo.svg" class="logo" alt="logo" />
+        <a href="../../index.html" style="text-decoration:none;color:inherit">
+          <strong>Convex Optimization</strong>
+        </a>
+      </div>
+      <nav class="nav">
+        <a href="../../index.html#sessions">All Lectures</a>
+        <a href="#widgets">Interactive</a>
+        <a href="#readings">Readings</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="container" style="padding: 32px 0 60px;">
+    <!-- Lecture header -->
+    <article class="card" style="margin-bottom: 32px;">
+      <h1 style="margin-top: 0;">08. Applications III: Geometric Problems</h1>
+      <div class="meta">
+        Date: 2025-12-09 · Duration: 90 min · Tags: applications, geometry
+      </div>
+
+      <!-- Brief introduction -->
+      <section style="margin-top: 16px;">
+        <p><strong>Overview:</strong> MVEE, Chebyshev center, best-fit shapes, distance problems.</p>
+        <p><strong>Prerequisites:</strong> <a href="../02-convex-sets/index.html">Lecture 02</a></p>
+      </section>
+    </article>
+
+    <!-- Learning objectives -->
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>Learning Objectives</h2>
+      <p>After this lecture, you should understand:</p>
+      <ul style="line-height: 1.8;">
+        <li>How to formulate and solve problems involving distances between sets.</li>
+        <li>The formulation of the minimum volume enclosing ellipsoid (MVEE) problem.</li>
+        <li>How to formulate and solve problems involving Chebyshev centers.</li>
+      </ul>
+    </section>
+
+    <!-- Main lecture content -->
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>Key Concepts</h2>
+
+      <h3>Concept 1: Distance Between Sets</h3>
+      <p>The distance between two sets $\mathcal{C}_1$ and $\mathcal{C}_2$ is defined as $\inf\{\|x_1 - x_2\| \mid x_1 \in \mathcal{C}_1, x_2 \in \mathcal{C}_2\}$.</p>
+      <p>Visual intuition: We are finding the shortest line segment connecting the two sets.</p>
+
+      <!-- Include images as needed -->
+      <figure style="margin: 16px 0; text-align: center;">
+        <img src="./images/diagrams/distance-between-sets.svg" alt="The distance between two sets" style="max-width: 100%; height: auto;" />
+        <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
+          If the sets are convex, the problem of finding the distance between them is a convex optimization problem.
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- Interactive widgets -->
+    <section class="card" id="widgets" style="margin-bottom: 32px;">
+      <h2>Interactive Widgets</h2>
+      <p>Below are tools to explore the concepts interactively. Try tweaking parameters to build intuition.</p>
+
+      <!-- Widget 1 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">MVEE Visualizer</h3>
+        <p>Visualize the minimum volume enclosing ellipsoid for a set of points.</p>
+        <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 2 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Chebyshev Center</h3>
+        <p>Find the Chebyshev center of a polyhedron.</p>
+        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="card" id="readings" style="margin-bottom: 32px;">
+      <h2>Readings & Resources</h2>
+      <ul class="link-list">
+        <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 8 — Geometric Problems</li>
+        <li><strong>Course slides:</strong> [Link if available]</li>
+      </ul>
+    </section>
+
+    <!-- Example problems -->
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>Example Problems</h2>
+
+      <h3>Example 1: Finding the closest point in a convex set to a given point</h3>
+      <p>[Problem statement and worked solution]</p>
+
+      <h3>Example 2: Separating two polyhedra</h3>
+      <p>[Problem statement and worked solution]</p>
+    </section>
+
+    <!-- Exercises (optional) -->
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>Exercises</h2>
+      <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
+      <ol style="line-height: 2;">
+        <li>How can you use the MVEE to detect outliers?</li>
+        <li>Formulate the problem of finding the largest ball that can fit inside a polyhedron as a convex optimization problem.</li>
+      </ol>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p style="margin: 0;">
+        © <span id="year"></span> Convex Optimization Course ·
+        <a href="../../README.md" style="color: var(--brand);">About</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Load Pyodide for Python widgets (optional) -->
+  <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+
+  <!-- Widget loaders -->
+  <script type="module" src="./widgets/js/mvee-visualizer.js"></script>
+  <script type="module" src="./widgets/js/chebyshev-center.js"></script>
+
+  <!-- Global utilities -->
+  <script src="../../static/js/math-renderer.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

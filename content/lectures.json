@@ -1,0 +1,122 @@
+[
+  {
+    "slug": "00-linear-algebra-primer",
+    "title": "Linear Algebra Primer",
+    "date": "2025-10-14",
+    "duration": "60 min",
+    "blurb": "Essential review: norms, inner products, eigenvalues, PSD matrices, quadratic forms. Start here if you need background.",
+    "tags": ["prerequisites", "review", "linear-algebra"],
+    "slides": null,
+    "is_optional": true
+  },
+  {
+    "slug": "01-introduction",
+    "title": "Introduction: What & Why of Convex Optimization",
+    "date": "2025-10-21",
+    "duration": "90 min",
+    "blurb": "Optimization landscape, convex vs nonconvex, examples in ML, control, and geometry.",
+    "tags": ["intro", "motivation", "overview"],
+    "slides": null,
+    "prerequisites": []
+  },
+  {
+    "slug": "02-convex-sets",
+    "title": "Convex Sets: Affine, Cones, Balls, Ellipsoids",
+    "date": "2025-10-28",
+    "duration": "90 min",
+    "blurb": "Geometric foundations: convex sets, operations preserving convexity, supporting hyperplanes.",
+    "tags": ["sets", "geometry", "foundational"],
+    "slides": null,
+    "prerequisites": ["01-introduction"]
+  },
+  {
+    "slug": "03-convex-functions",
+    "title": "Convex Functions: Characterization & Operations",
+    "date": "2025-11-04",
+    "duration": "90 min",
+    "blurb": "Jensen, epigraphs, first/second-order tests, operations preserving convexity.",
+    "tags": ["functions", "theory"],
+    "slides": null,
+    "prerequisites": ["02-convex-sets"]
+  },
+  {
+    "slug": "04-convex-opt-problems",
+    "title": "Convex Optimization Problems: Standard Forms",
+    "date": "2025-11-11",
+    "duration": "90 min",
+    "blurb": "LP, QP, SDP, SOCP—how to recognize and formulate convex problems.",
+    "tags": ["standard-forms", "classification"],
+    "slides": null,
+    "prerequisites": ["03-convex-functions"]
+  },
+  {
+    "slug": "05-duality",
+    "title": "Duality: Lagrangian, KKT, Strong Duality",
+    "date": "2025-11-18",
+    "duration": "90 min",
+    "blurb": "Dual problems, optimality conditions, shadow prices, and why duality powers algorithms.",
+    "tags": ["duality", "theory"],
+    "slides": null,
+    "prerequisites": ["04-convex-opt-problems"]
+  },
+  {
+    "slug": "06-approximation-fitting",
+    "title": "Applications I: Approximation & Fitting",
+    "date": "2025-11-25",
+    "duration": "90 min",
+    "blurb": "Least squares, robust regression, sparse recovery, regularization.",
+    "tags": ["applications", "fitting"],
+    "slides": null,
+    "prerequisites": ["04-convex-opt-problems"]
+  },
+  {
+    "slug": "07-statistical-estimation",
+    "title": "Applications II: Statistical Estimation & Machine Learning",
+    "date": "2025-12-02",
+    "duration": "90 min",
+    "blurb": "MLE, logistic regression, SVM, classification—convex optimization at the heart of ML.",
+    "tags": ["applications", "ml", "statistics"],
+    "slides": null,
+    "prerequisites": ["06-approximation-fitting"]
+  },
+  {
+    "slug": "08-geometric-problems",
+    "title": "Applications III: Geometric Problems",
+    "date": "2025-12-09",
+    "duration": "90 min",
+    "blurb": "MVEE, Chebyshev center, best-fit shapes, distance problems.",
+    "tags": ["applications", "geometry"],
+    "slides": null,
+    "prerequisites": ["02-convex-sets"]
+  },
+  {
+    "slug": "09-unconstrained-minimization",
+    "title": "Algorithms I: Unconstrained Minimization",
+    "date": "2025-12-16",
+    "duration": "90 min",
+    "blurb": "Gradient descent, Newton's method, step size selection, convergence rates.",
+    "tags": ["algorithms", "unconstrained"],
+    "slides": null,
+    "prerequisites": ["03-convex-functions"]
+  },
+  {
+    "slug": "10-equality-constrained-minimization",
+    "title": "Algorithms II: Equality-Constrained Minimization",
+    "date": "2026-01-06",
+    "duration": "90 min",
+    "blurb": "Null-space methods, projected gradient descent, penalty methods.",
+    "tags": ["algorithms", "constrained"],
+    "slides": null,
+    "prerequisites": ["05-duality", "09-unconstrained-minimization"]
+  },
+  {
+    "slug": "11-interior-point-methods",
+    "title": "Algorithms III: Interior-Point Methods",
+    "date": "2026-01-13",
+    "duration": "90 min",
+    "blurb": "Barrier methods, central path, polynomial-time complexity, practical implementations.",
+    "tags": ["algorithms", "interior-point"],
+    "slides": null,
+    "prerequisites": ["10-equality-constrained-minimization"]
+  }
+]
