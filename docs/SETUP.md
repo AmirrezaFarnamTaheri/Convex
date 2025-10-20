@@ -26,6 +26,10 @@ done
 python -m http.server 8010
 # Open http://localhost:8010 in browser
 
+## Why a Local Server?
+
+We use a local server (not opening files directly) because the JavaScript fetch() function for loading lectures.json is blocked by browsers' Cross-Origin Resource Sharing (CORS) policy for file:// URLs. Running a local server emulates HTTP serving, allowing fetch() to work.
+
 # Create initial content files (copy templates above)
 # Copy lecture template to each topics/NN-slug/index.html
 # Create content/lectures.json from template
