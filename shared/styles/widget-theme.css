@@ -1,0 +1,91 @@
+/* ---
+   WIDGET THEME
+   - A consistent theme for interactive widget controls.
+   - Import this stylesheet within your widget's shadow DOM or link it in the lecture page.
+--- */
+
+.widget-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background-color: var(--color-surface-2);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.widget-controls label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* ---
+   Buttons
+--- */
+.widget-button {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.widget-button:hover {
+  background-color: var(--color-accent);
+}
+
+/* ---
+   Sliders (input[type="range"])
+--- */
+.widget-controls input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 150px;
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 5px;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+}
+.widget-controls input[type="range"]:hover {
+  opacity: 1;
+}
+.widget-controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--color-primary);
+  cursor: pointer;
+  border-radius: 50%;
+}
+.widget-controls input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--color-primary);
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+/* ---
+   Text Inputs
+--- */
+.widget-input {
+  background-color: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-main);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+}
+.widget-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}

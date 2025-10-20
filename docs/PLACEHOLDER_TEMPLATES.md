@@ -17,7 +17,7 @@ Below are ready-to-use starter templates for each lecture and widget type.
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
 </head>
-<body>
+<body class="lecture-page">
   <!-- REQUIRED: Every lecture needs this header -->
   <header class="site-header">
     <div class="container header-inner">
