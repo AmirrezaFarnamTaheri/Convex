@@ -1,889 +1,84 @@
-# Complete Convex Optimization Course Plan
-## All 11 Lectures with Widgets, Prerequisites & File Structure
+## Table of Contents
 
-**Goal:** Provide a teaching scaffold where every lecture has clear learning objectives, necessary background, proposed interactive widgets, and ready-to-use placeholder files.
-
----
-
-# Table of Contents
-
-1. [Linear Algebra Prerequisites](#linear-algebra-prerequisites)
-2. [Lecture-by-Lecture Plans (01–11)](#lectures)
-3. [Complete File Structure](#file-structure)
-4. [Placeholder Templates](#placeholder-templates)
-5. [Widget Development Priority](#widget-priority)
-6. [Asset & Data Requirements](#assets)
-7. [Implementation Timeline](#timeline)
-
----
-
-# Linear Algebra Prerequisites
-
-Before diving into convex optimization, students need comfort with these linear algebra concepts. These appear repeatedly throughout the course, so establishing them early ensures smooth progression.
-
-**Essential Concepts:**
-
-*Vector spaces and subspaces* form the foundation. You need to understand that vectors live in $\mathbb{R}^n$, and subsets of $\mathbb{R}^n$ can themselves be vector spaces if they satisfy certain closure properties. A linear subspace is one where any linear combination of elements stays within the subspace. This matters because feasible regions in optimization problems often are or contain subspaces.
-
-*Norms and inner products* measure "size" and "angle" between vectors. The Euclidean norm $\|x\|_2 = \sqrt{x_1^2 + \cdots + x_n^2}$ appears constantly. Inner products $\langle x, y \rangle = x^T y$ let us talk about orthogonality and projections, which are central to understanding separating hyperplanes and duality.
-
-*Matrix rank and dimension* tell us how many independent directions a matrix's columns span. The rank-nullity theorem ($\text{rank}(A) + \text{nullity}(A) = n$) is crucial for understanding constraint qualification and the structure of feasible regions. When solving equality-constrained problems, the nullspace of the constraint matrix becomes the search direction space.
-
-*Eigenvalues and positive semidefiniteness (PSD)* characterize the curvature of functions. A matrix $A$ is positive semidefinite if $x^T A x \geq 0$ for all $x$. This is the algebraic way to encode "the function curves upward everywhere"—a property we'll formalize as convexity.
-
-*Quadratic forms and the second derivative test* show that a twice-differentiable function is convex if its Hessian (matrix of second partial derivatives) is PSD everywhere. This connects linear algebra directly to optimization.
-
-**Linear Algebra Review Sessions (Suggested):**
-- Add a "LA Primer" page in `topics/00-linear-algebra/` that covers these five concepts with worked examples
-- Include a widget that lets students explore eigenvalues, PSD visualization, and matrix-vector products interactively
-- This ensures all students start on equal footing regardless of background
+*   **Linear Algebra**
+    *   [Introduction to Linear Algebra](#introduction-to-linear-algebra)
+    *   [Gaussian Elimination](#gaussian-elimination)
+    *   [Vector Spaces](#vector-spaces)
+    *   [Eigenvalues and Eigenvectors](#eigenvalues-and-eigenvectors)
+    *   [Singular Value Decomposition (SVD)](#singular-value-decomposition-svd)
+*   **Calculus**
+    *   [Limits and Continuity](#limits-and-continuity)
+    *   [Derivatives](#derivatives)
+    *   [Integrals](#integrals)
+    *   [Taylor Series](#taylor-series)
+*   **Probability and Statistics**
+    *   [Basic Probability](#basic-probability)
+    *   [Random Variables](#random-variables)
+    *   [Common Distributions](#common-distributions)
+    *   [Hypothesis Testing](#hypothesis-testing)
+*   **Numerical Methods**
+    *   [Floating-Point Arithmetic](#floating-point-arithmetic)
+    *   [Root Finding](#root-finding)
+    *   [Optimization](#optimization)
+    *   [Monte Carlo Methods](#monte-carlo-methods)
 
 ---
 
-# Lectures
+## Detailed Lecture Notes
 
-## Lecture 01: Introduction—What & Why of Convex Optimization
+### Introduction to Linear Algebra
+*   **Matrices and Vectors:** Understanding the basic building blocks of linear algebra.
+*   **Matrix Operations:** Addition, subtraction, multiplication, and scalar multiplication.
+*   **Linear Combinations:** The concept of combining vectors to form new vectors.
+*   **Systems of Linear Equations:** Representing and solving systems of linear equations using matrices.
 
-**Learning Objectives:**
+### Gaussian Elimination
+*   **Row Echelon Form:** Transforming a matrix into a simplified form to solve linear systems.
+*   **Pivoting:** A technique to improve numerical stability during Gaussian elimination.
+*   **LU Decomposition:** Factoring a matrix into a product of lower and upper triangular matrices.
 
-Students should leave understanding that optimization problems ask "find $x$ that minimizes $f(x)$ subject to constraints." They should recognize that some problems are "convex" (have a single global optimum easily found) while others are "nonconvex" (have multiple local minima, much harder). The course centers on convex problems because they are (1) common in practice, (2) tractable algorithmically, and (3) beautiful mathematically.
+### Vector Spaces
+*   **Subspaces:** Understanding subsets of vector spaces that are themselves vector spaces.
+*   **Basis and Dimension:** The concept of a basis for a vector space and its dimension.
+*   **Linear Independence:** Determining if a set of vectors is linearly independent.
+*   **Change of Basis:** Transforming coordinates from one basis to another.
 
-**Key Concepts:**
+### Eigenvalues and Eigenvectors
+*   **Characteristic Polynomial:** Finding the eigenvalues of a matrix by solving the characteristic equation.
+*   **Eigenspaces:** The set of eigenvectors corresponding to an eigenvalue.
+*   **Diagonalization:** Decomposing a matrix into a product of an invertible matrix and a diagonal matrix.
 
-An optimization problem has the form $\text{minimize } f(x) \text{ subject to } x \in \mathcal{C}$, where $f$ is the objective and $\mathcal{C}$ is the feasible set. A convex optimization problem is one where $f$ is a convex function and $\mathcal{C}$ is a convex set. This special structure guarantees any local optimum is global. We'll spend the rest of the course defining "convex" rigorously, but intuitively a function is convex if the line segment between any two points on the graph lies above (or on) the graph itself.
-
-**Why This Matters:**
-
-Many real problems are convex: fitting models to data, portfolio optimization, machine learning (support vector machines, logistic regression), signal processing (compressed sensing), and control. Once you recognize a problem as convex, you can deploy mature algorithms that reliably find the optimal solution. Nonconvex problems, by contrast, often require heuristics that may get stuck at suboptimal local minima.
-
-**Prerequisites:**
-
-Linear algebra fundamentals: vectors, matrices, norms, inner products. High school calculus (functions, derivatives, basic multivariable concepts).
-
-**Proposed Widgets:**
-
-1. **"Convex vs Nonconvex Explorer"** (Interactive 2D visualization, JavaScript)
-   - Users input coefficients for a polynomial or choose from a library (e.g., $x^2$, $x^4$, $\sin(x)$, etc.)
-   - Plot the function and show random point pairs; draw the line segment between them and check: does it stay above the curve (convex) or dip below (nonconvex)?
-   - Real-time feedback: "This function is convex!" or "Uh-oh, not convex at this point."
-   - Educational value: Builds intuition for the definition before we make it rigorous
-
-2. **"Landscape Viewer: Local vs Global Minima"** (Interactive 2D surface, Three.js or SVG)
-   - Show a 2D landscape with multiple valleys (nonconvex) and a single bowl (convex)
-   - Let users place a marble and watch it roll downhill via simple gradient descent
-   - Compare: convex landscape finds the global minimum; nonconvex landscape gets stuck
-   - Highlight: Why convexity is a game-changer
-
-3. **"Convex Combination Demo"** (Already exists; refine it)
-   - Two user-chosen points $x$ and $y$, slider for $\lambda \in [0,1]$
-   - Show $z = (1-\lambda)x + \lambda y$ traces a line segment
-   - In next lectures, we'll use this for defining convex sets and functions formally
-
-**Required Assets:**
-
-- Diagrams: Example landscapes (convex bowl, nonconvex with multiple valleys), optimization problem visualization
-- Sample images: Real applications (portfolio allocation, ML decision boundaries, image compression)
-- Data: None (simple mathematical examples suffice)
-
-**File Stubs to Create:**
-
-```
-topics/01-introduction/
-├─ index.html                          [Main lecture page]
-├─ widgets/
-│  ├─ js/
-│  │  ├─ convex-vs-nonconvex.js       [Widget 1]
-│  │  └─ landscape-viewer.js           [Widget 2]
-│  └─ py/
-│     └─ [None for now]
-└─ images/
-   ├─ diagrams/
-   │  ├─ optimization-problem-diagram.svg
-   │  ├─ convex-vs-nonconvex.svg
-   │  └─ landscape-examples.svg
-   └─ applications/
-      ├─ portfolio.jpg
-      ├─ ml-decision-boundary.jpg
-      └─ signal-processing.jpg
-```
+### Singular Value Decomposition (SVD)
+*   **Geometric Interpretation:** Understanding the geometric meaning of SVD.
+*   **Applications:** Image compression, principal component analysis (PCA), and recommendation systems.
 
 ---
 
-## Lecture 02: Convex Sets—Affine, Cones, Balls, & Ellipsoids
-
-**Learning Objectives:**
-
-A convex set $\mathcal{C}$ has the property that if $x, y \in \mathcal{C}$ and $0 \leq \lambda \leq 1$, then $(1-\lambda)x + \lambda y \in \mathcal{C}$. That is, any line segment between two points in the set stays in the set. This is a foundational concept: feasible regions of convex optimization problems must be convex sets. Students should recognize common convex sets (balls, ellipsoids, polyhedra, cones) and learn operations that preserve convexity (intersection, Cartesian product, projection).
-
-**Key Concepts:**
-
-*Affine sets* generalize lines and planes. An affine set is closed under affine combinations $\sum_i \lambda_i x_i$ where $\sum_i \lambda_i = 1$ (no restriction on $\lambda_i$ values). Affine hulls and affine dimension are useful for understanding constraint structure.
-
-*Cones* are sets where if $x$ is in the set, so is $\lambda x$ for any $\lambda > 0$. A convex cone also requires convexity. Cones appear in optimization because many constraint sets have cone structure (e.g., the set of positive semidefinite matrices forms a cone).
-
-*Balls and ellipsoids* are fundamental convex sets. The Euclidean ball $B(c, r) = \{x : \|x - c\|_2 \leq r\}$ is centered at $c$ with radius $r$. An ellipsoid is an affine transformation of a ball: $\{x : (x - c)^T P^{-1} (x - c) \leq 1\}$ where $P$ is positive definite. This shape appears in many practical problems.
-
-*Polyhedra* are intersections of finitely many half-spaces: $\{x : Ax \leq b\}$. Linear constraints (equality and inequality) define polyhedra. Nearly every practical constraint set is polyhedral.
-
-*Separating hyperplanes* show that convex sets can be "separated" from external points by a hyperplane. This is foundational for duality and understanding optimality conditions.
-
-**Prerequisites:**
-
-All linear algebra from Lecture 00. Vectors, hyperplanes, linear inequalities. Basic set theory notation.
-
-**Proposed Widgets:**
-
-1. **"Convex Set Checker"** (JavaScript, 2D/3D visualization)
-   - User uploads a point cloud or draws points on canvas
-   - Click "Check Convexity": compute convex hull, compare to user's claimed set boundary
-   - Feedback: "Yes, convex!" or highlight the point pair whose line segment exits the set
-   - Educational: Makes the definition concrete
-
-2. **"Ellipsoid Explorer"** (Interactive 2D, JavaScript + Canvas/SVG)
-   - User adjusts matrix $P$ coefficients via sliders (or eigenvalues/rotation angle UI)
-   - Real-time plot of the ellipsoid $\{x : (x - c)^T P^{-1} (x - c) \leq 1\}$
-   - Show the effect of eigenvalues (stretching) and eigenvectors (rotation)
-   - Compare ellipsoid to a circle: insight into anisotropic geometry
-   - Extension: Show level sets of a quadratic function, linking to optimization landscape
-
-3. **"Polyhedron Visualizer"** (Python via Pyodide or pre-computed SVG)
-   - User enters linear constraints $Ax \leq b$ (or picks from templates: simplex, cube, etc.)
-   - Use scipy.spatial.ConvexHull or similar to compute vertices
-   - Plot the polyhedron in 2D/3D (handle 3D with Three.js for fun)
-   - Show that the feasible region is the intersection of half-spaces (color each constraint differently)
-   - Educational: Connects algebra (constraints) to geometry (shape)
-
-**Required Assets:**
-
-- Diagrams: Half-space definition, ellipsoid geometry, polyhedron examples, separating hyperplane theorem
-- 3D models or renderings of various convex sets (cone, ball, ellipsoid, simplex)
-- Icons/color scheme for different constraint types
-
-**File Stubs:**
-
-```
-topics/02-convex-sets/
-├─ index.html
-├─ widgets/
-│  ├─ js/
-│  │  ├─ convex-set-checker.js        [Widget 1]
-│  │  ├─ ellipsoid-explorer.js        [Widget 2]
-│  │  └─ polyhedron-viz.js            [Widget 3]
-│  └─ py/
-│     └─ polyhedron-compute.py        [Helper for polyhedron widget]
-└─ images/
-   ├─ diagrams/
-   │  ├─ affine-vs-convex.svg
-   │  ├─ cone-definition.svg
-   │  ├─ ball-ellipsoid-comparison.svg
-   │  ├─ polyhedron-constraints.svg
-   │  └─ separating-hyperplane.svg
-   └─ examples/
-      └─ convex-sets-gallery.png
-```
+## Common Widget Patterns
+*   **Model-View-Controller (MVC):** Separating the application's data, user interface, and control logic.
+*   **Observer Pattern:** A behavioral pattern where an object maintains a list of its dependents (observers) and notifies them of any state changes.
+*   **Singleton Pattern:** Restricting the instantiation of a class to a single object.
 
 ---
 
-## Lecture 03: Convex Functions—Characterization & Operations
-
-**Learning Objectives:**
-
-A function $f$ is convex if its epigraph (the set of points on or above its graph) is a convex set, or equivalently, if $f(\lambda x + (1-\lambda) y) \leq \lambda f(x) + (1-\lambda) f(y)$ for all $x, y$ and $\lambda \in [0,1]$. This is Jensen's inequality. Students should recognize convex functions, understand why they matter (single global minimum), and learn operations preserving convexity (positive combinations, composition, etc.). Strictness and strong convexity add useful properties.
-
-**Key Concepts:**
-
-*Jensen's inequality* is the cornerstone. We'll use this repeatedly to show functions are convex or to bound quantities in algorithms.
-
-*First-order characterization* uses gradients. If $f$ is differentiable and convex, then $f(y) \geq f(x) + \nabla f(x)^T (y - x)$ for all $x, y$. Geometrically: the tangent plane at any point lies below the function everywhere. This is how we check convexity via calculus.
-
-*Second-order characterization* uses Hessians. If $f$ is twice differentiable and convex, then $\nabla^2 f(x) \succeq 0$ (Hessian is positive semidefinite) for all $x$. This connects to the linear algebra prerequisite on PSD matrices. A purely convex function (i.e., non-flat anywhere) has $\nabla^2 f(x) \succ 0$ (strictly positive definite).
-
-*Epigraphs* are a useful abstraction. The epigraph of $f$ is $\text{epi}(f) = \{(x, t) : f(x) \leq t\}$. A function is convex iff its epigraph is a convex set. This links convex functions back to convex sets and lets us use geometric intuition.
-
-*Operations preserving convexity* include: non-negative weighted sums of convex functions, composition with non-decreasing convex functions, pointwise max, and perspective functions. Understanding these operations is key to recognizing when a new function is convex.
-
-*Log-convexity* is a bonus topic. A function $f$ is log-convex if $\log f$ is convex (i.e., $f(\lambda x + (1-\lambda) y) \geq f(x)^\lambda f(y)^{1-\lambda}$). This is related to geometric means in data analysis.
-
-**Prerequisites:**
-
-Linear algebra: vectors, matrices, norms, positive semidefiniteness. Calculus: partial derivatives, Hessian matrices, gradient. Introduction to convex optimization (Lecture 01).
-
-**Proposed Widgets:**
-
-1. **"Jensen's Inequality Visualizer"** (Interactive 2D, JavaScript)
-   - User draws or selects a function
-   - Click two points $x$ and $y$; slider for $\lambda$
-   - Show the point $z = \lambda x + (1-\lambda) y$ on the $x$-axis and the three values: $f(z)$, $\lambda f(x) + (1-\lambda) f(y)$
-   - For convex functions, always $f(z) \leq$ the combination; for nonconvex, the inequality breaks
-   - Educational: Direct visual proof of the inequality
-
-2. **"Hessian Eigenvalue Visualizer"** (Interactive, JavaScript + Python backend)
-   - User enters a 2D function (as text) or picks from library (e.g., $x^2 + y^2$, $xy$, $x^2 - y^2$)
-   - Compute the Hessian symbolically or numerically
-   - Plot eigenvalues as a bar chart or color by sign (red = negative, green = positive)
-   - Display: "All eigenvalues $\geq 0$ → Convex!" or "Some $< 0$ → Nonconvex"
-   - Show level curves colored by PSD-ness
-   - Educational: Bridges calculus and linear algebra; makes the second-order test tangible
-
-3. **"Convex Operations Composer"** (JavaScript, build-your-own-function)
-   - Start with basic convex functions: $x^2$, $|x|$, $e^x$, $\log(x)$ (only on $x > 0$)
-   - Offer operations: add two functions, multiply by positive scalar, max, compose
-   - After each operation, show: convex or nonconvex? (with reason)
-   - Plot the result
-   - Educational: Understand which combinations stay convex
-
-**Required Assets:**
-
-- Diagrams: Jensen's inequality (line above curve), epigraph illustration, first/second-order characterizations, log-convexity
-- Function plots: Convex, nonconvex, and boundary cases (e.g., $x^2$ convex, $x^3$ not, $|x|$ convex with non-smooth point)
-- Hessian visualization: Color maps showing PSD-ness across 2D domain
-
-**File Stubs:**
-
-```
-topics/03-convex-functions/
-├─ index.html
-├─ widgets/
-│  ├─ js/
-│  │  ├─ jensen-visualizer.js         [Widget 1]
-│  │  ├─ hessian-explorer.js          [Widget 2]
-│  │  └─ operations-composer.js       [Widget 3]
-│  └─ py/
-│     ├─ function-analyzer.py         [Hessian computation, PSD check]
-│     └─ symbolic-derivatives.py      [Optional: use sympy]
-└─ images/
-   ├─ diagrams/
-   │  ├─ jensen-inequality.svg
-   │  ├─ epigraph-illustration.svg
-   │  ├─ first-order-characterization.svg
-   │  ├─ second-order-characterization.svg
-   │  └─ operations-preserving-convexity.svg
-   └─ function-examples/
-      └─ various-convex-shapes.png
-```
+## Backend Architecture
+*   **Microservices:** A software development technique that structures an application as a collection of loosely coupled services.
+*   **RESTful APIs:** A set of rules that developers follow when they create their API.
+*   **Database Design:** The process of producing a detailed data model of a database.
 
 ---
 
-## Lecture 04: Convex Optimization Problems—Standard Forms
-
-**Learning Objectives:**
-
-A convex optimization problem has the standard form $\text{minimize } f(x) \text{ subject to } g_i(x) \leq 0$ for $i=1,\ldots,m$ and $Ax = b$, where $f$ and $g_i$ are convex and $A$ is a matrix. Students should recognize this form, understand key subclasses (linear programming, quadratic programming, semidefinite programming, second-order cones), and see how real-world problems map into these classes.
-
-**Key Concepts:**
-
-*Linear programming (LP)* minimizes a linear objective over a polyhedral feasible region: $\text{minimize } c^T x \text{ subject to } Ax \leq b$. LPs are the workhorse of optimization with century-old algorithms (simplex, interior-point). Countless applications: resource allocation, production planning, optimal transport.
-
-*Quadratic programming (QP)* has a quadratic objective and linear constraints: $\text{minimize } \frac{1}{2} x^T P x + q^T x \text{ subject to } Ax \leq b$. When $P \succeq 0$, the problem is convex. QPs appear in machine learning (SVMs), control, and finance.
-
-*Semidefinite programming (SDP)* minimizes a linear functional over positive semidefinite matrices: $\text{minimize } \text{trace}(CX) \text{ subject to } \text{trace}(A_i X) = b_i, X \succeq 0$. SDPs are surprisingly general and can encode many nonconvex problems as convex relaxations.
-
-*Second-order cone programming (SOCP)* involves $\ell_2$-norm constraints: $\text{minimize } c^T x \text{ subject to } \|A_i x + b_i\|_2 \leq d_i^T x + e_i$. Bridges LP (norms in constraints) and SDP (cone structure).
-
-*Conic programming* abstracts these into "minimize $c^T x$ subject to $x \in K$" where $K$ is a cone. All the above fit this framework.
-
-**Prerequisites:**
-
-Convex sets and functions (Lectures 02–03). Linear algebra: positive semidefiniteness, matrix trace.
-
-**Proposed Widgets:**
-
-1. **"Problem Form Recognizer"** (JavaScript, drag-and-drop or fill-in)
-   - User writes or pastes an optimization problem (natural language or pseudocode)
-   - Widget parses and highlights: objective $f(x)$, inequality constraints $g_i(x) \leq 0$, equality constraints $Ax = b$
-   - Classification: "This is a QP!" or "This is an LP!" or "Not convex (not a standard form)"
-   - If standard form, suggests a solver library (CVX, SCS, Gurobi, etc.)
-   - Educational: Teach pattern recognition for problem classes
-
-2. **"LP Visualizer: Simplex Geometry"** (JavaScript, 2D/3D)
-   - User specifies LP: $\text{minimize } c^T x \text{ subject to } Ax \leq b$ (2D or 3D)
-   - Plot the polyhedral feasible region (using convex hull)
-   - Show the objective function level curves (hyperplane $c^T x = k$)
-   - Animate simplex algorithm: hop from vertex to adjacent vertex, improving objective each step
-   - Show optimal solution at a vertex
-   - Educational: Understand why LP solutions are at vertices (a key insight)
-
-3. **"QP/SDP Solver Sandbox"** (Python via Pyodide, using CVXPY)
-   - Simple interface: user enters $P$, $q$, $A$, $b$ for a QP (or matrix dimensions for SDP)
-   - Hit "Solve": CVXPY solves it, plots solution, shows iteration count
-   - Small examples built-in (portfolio optimization, least squares with bounds, etc.)
-   - Educational: See convex solvers in action (black-box perspective)
-
-**Required Assets:**
-
-- Diagrams: Standard form visualization, LP/QP/SDP icons/flowchart, polyhedral geometry example, cone illustrations
-- Example problems: Portfolio allocation (QP), machine learning classification (QP), structural design (SDP)
-
-**File Stubs:**
-
-```
-topics/04-convex-opt-problems/
-├─ index.html
-├─ widgets/
-│  ├─ js/
-│  │  ├─ problem-form-recognizer.js  [Widget 1]
-│  │  ├─ lp-visualizer.js            [Widget 2]
-│  │  └─ lp-simplex-animator.js      [Helper for Widget 2]
-│  └─ py/
-│     └─ solver-wrapper.py           [Widget 3 backend using CVXPY]
-└─ images/
-   ├─ diagrams/
-   │  ├─ standard-form.svg
-   │  ├─ lp-geometry.svg
-   │  ├─ qp-illustration.svg
-   │  ├─ sdp-illustration.svg
-   │  └─ problem-classification-flowchart.svg
-   └─ applications/
-      ├─ portfolio-problem.jpg
-      ├─ ml-svm.jpg
-      └─ structural-design.jpg
-```
+## Advanced Topics
+*   **Fourier Analysis:** Decomposing a function into a sum of simple oscillating functions.
+*   **Wavelets:** A mathematical function used to divide a given function or continuous-time signal into different scale components.
+*   **Tensor Calculus:** A generalization of vector calculus.
 
 ---
 
-## Lecture 05: Duality—Lagrangian, KKT Conditions, Sensitivity
-
-**Learning Objectives:**
-
-Duality is one of the deepest ideas in optimization. Given a primal problem (minimization), the dual problem is derived via the Lagrangian and offers a lower bound on the optimum. For convex problems, strong duality often holds: the optimal primal and dual values are equal. The dual problem is often easier to solve or provides insight. The Karush-Kuhn-Tucker (KKT) conditions are necessary and sufficient conditions for optimality in convex problems. Understanding duality is crucial for algorithm design and economic interpretation (shadow prices, sensitivity analysis).
-
-**Key Concepts:**
-
-*The Lagrangian* is $L(x, \lambda, \nu) = f(x) + \sum_i \lambda_i g_i(x) + \sum_j \nu_j h_j(x)$, where $\lambda \geq 0$ are Lagrange multipliers for inequality constraints and $\nu$ are multipliers for equality constraints. The dual function is $g(\lambda, \nu) = \inf_x L(x, \lambda, \nu)$, and the dual problem maximizes $g(\lambda, \nu)$ over $\lambda \geq 0$.
-
-*Weak duality* says the dual optimum is a lower bound: $g(\lambda^*, \nu^*) \leq f(x^*)$ (for any feasible $x^*$ and dual-feasible $\lambda, \nu$).
-
-*Strong duality* holds under mild conditions (constraint qualification) for convex problems: $g(\lambda^*, \nu^*) = f(x^*)$. This is powerful: solve the dual instead of the primal if it's easier.
-
-*Complementary slackness* is a consequence: if $g_i(x^*) < 0$ (inequality $i$ is inactive), then $\lambda_i^* = 0$ (its multiplier is zero). This decouples the problem at optimality.
-
-*KKT conditions* are stationarity, primal feasibility, dual feasibility, and complementary slackness. For convex problems, these conditions are necessary and sufficient for optimality.
-
-*Dual interpretation* often reveals economic meaning. Lagrange multipliers are "shadow prices": how much the optimum improves if we relax a constraint slightly.
-
-**Prerequisites:**
-
-Convex sets and functions (Lectures 02–03), standard forms (Lecture 04). Multivariable calculus: gradients, Lagrange multipliers (from basic optimization courses).
-
-**Proposed Widgets:**
-
-1. **"Lagrangian Interactive Explainer"** (JavaScript, 2D animated visualization)
-   - Start with a simple constrained optimization problem: $\text{minimize } f(x) \text{ subject to } g(x) \leq 0$
-   - Show the original problem (feasible region, objective)
-   - Sliders for Lagrange multiplier $\lambda \geq 0$
-   - Plot the Lagrangian $L(x, \lambda) = f(x) + \lambda g(x)$ as $\lambda$ varies
-   - Highlight: As $\lambda$ increases, the unconstrained min of $L$ approaches the constrained min of the original problem
-   - Educational: Intuition for why Lagrangian works
-
-2. **"Duality Visualizer: Primal vs Dual"** (JavaScript, 2D)
-   - User enters a simple LP or QP
-   - Compute and display the primal problem and its dual
-   - Side-by-side plots: primal feasible region and objective, dual feasible region and objective
-   - Animate: solve primal via one method, solve dual via another, show both converging to the same value
-   - Bar chart: primal cost vs dual value, converging to strong duality
-   - Educational: See strong duality in action
-
-3. **"KKT Condition Checker"** (Python via Pyodide)
-   - User provides an optimization problem and a candidate solution $x^*$
-   - Widget checks all KKT conditions: stationarity, feasibility, complementary slackness
-   - Detailed output: "Stationarity? YES (gradient zero). Feasibility? YES. Complementary slackness? YES at constraints 1,3; slackness at 2,4."
-   - If all pass, declares optimality; if not, explains which condition fails
-   - Educational: Build intuition for when a point is optimal
-
-**Required Assets:**
-
-- Diagrams: Lagrangian illustration, primal-dual geometry, KKT conditions flowchart, strong duality (primal = dual), weak duality (dual ≤ primal)
-- Economic interpretation visuals (shadow prices, sensitivity)
-
-**File Stubs:**
-
-```
-topics/05-duality/
-├─ index.html
-├─ widgets/
-│  ├─ js/
-│  │  ├─ lagrangian-explainer.js     [Widget 1]
-│  │  └─ duality-visualizer.js       [Widget 2]
-│  └─ py/
-│     └─ kkt-checker.py              [Widget 3]
-└─ images/
-   ├─ diagrams/
-   │  ├─ lagrangian-visualization.svg
-   │  ├─ primal-dual-geometry.svg
-   │  ├─ weak-vs-strong-duality.svg
-   │  ├─ kkt-conditions-flowchart.svg
-   │  └─ complementary-slackness.svg
-   └─ applications/
-      └─ shadow-prices-example.png
-```
-
----
-
-## Lecture 06: Applications I—Approximation & Fitting
-
-**Learning Objectives:**
-
-Convex optimization is the workhorse for fitting models to data. Students should recognize common fitting problems: least squares, robust regression, sparse recovery, and approximation. These applications show the real-world relevance of the theory and demonstrate how to translate a practical goal (e.g., "fit a line to noisy data") into a convex optimization problem. The theme is: convexity provides a principled, efficient way to solve these problems.
-
-**Key Concepts:**
-
-*Least squares* minimizes $\|Ax - b\|_2^2$, solved in closed form via the normal equations $A^T A x = A^T b$. This is the foundation of linear regression.
-
-*Regularized least squares* adds a penalty term to control model complexity: $\|Ax - b\|_2^2 + \lambda \|x\|^2$ (Tikhonov/ridge regression) or $\|Ax - b\|_2^2 + \lambda \|x\|_1$ (LASSO/sparse recovery). The $\ell_1$ penalty promotes sparsity (many coefficients exactly zero), useful when you expect the true model to be sparse.
-
-*Robust regression* minimizes $\sum_i \rho(r_i)$ where $r_i = a_i^T x - b_i$ is the residual and $\rho$ is a robust loss (e.g., Huber loss, $\ell_1$ norm). Unlike least squares, which is sensitive to outliers, robust methods downweight large errors, making the fit stable to anomalies.
-
-*Norms and approximation* generalize the notion of "distance." Beyond $\ell_2$, the $\ell_1$ norm $\|x\|_1 = \sum_i |x_i|$ and max norm $\|x\|_\infty = \max_i |x_i|$ are also useful. Each corresponds to a different optimization problem with different geometry.
-
-*Matrix completion* infers missing entries in a matrix (e.g., Netflix movie ratings) by minimizing the rank subject to observed entries matching. The rank minimization is often relaxed to nuclear norm minimization, a convex proxy.
-
-**Prerequisites:**
-
-Convex optimization problems (Lecture 04), especially quadratic programming. Linear algebra: matrix norms, rank.
-
-**Proposed Widgets:**
-
-1. **"Least Squares & Regularization Playground"** (JavaScript, 2D scatter plot with curves)
-   - Generate random noisy data points from a true underlying model
-   - User fits with: unregularized LS, ridge regression, LASSO
-   - Visualize three fitted curves on the same plot; sliders for $\lambda$
-   - Show: LASSO drives coefficients to zero (sparsity); ridge shrinks but keeps all
-   - Metric: training error, test error (on held-out data), sparsity (# nonzero coeff)
-   - Educational: Understand regularization bias-variance trade-off
-
-2. **"Robust Regression Visualizer"** (JavaScript, 2D)
-   - Generate data with outliers
-   - Compare fitted lines: LS (pulls toward outliers), robust method (ignores them)
-   - Sliders for loss function choice (quadratic vs Huber vs absolute value)
-   - Educational: When and why to use robust methods
-
-3. **"Sparse Recovery Demo"** (Python via Pyodide, using CVXPY)
-   - Generate a sparse signal $x^* \in \mathbb{R}^n$ (most entries zero)
-   - Measure $y = Ax^* + \text{noise}$ where $A$ is a random matrix ($m$ measurements, $n > m$)
-   - Solve LASSO: $\text{minimize } \|Ax - y\|_2^2 + \lambda \|x\|_1$
-   - Plot: true signal, noisy measurements, recovered signal
-   - Show: For appropriate $\lambda$, LASSO recovers the sparse signal from few measurements (magic of compressed sensing!)
-   - Educational: Convex optimization can recover high-dim signals from low-dim observations
-
-**Required Assets:**
-
-- Diagrams: LS geometry (projection onto column space), regularization paths (how coefficients change with $\lambda$), robust loss functions, matrix completion illustration
-- Real datasets: Image pixels, ratings data, compressed sensing examples
-
-**File Stubs:**
-
-```
-topics/06-approximation-fitting/
-├─ index.html
-├─ widgets/
-│  ├─ js/
-│  │  ├─ least-squares-regularization.js [Widget 1]
-│  │  └─ robust-regression.js           [Widget 2]
-│  └─ py/
-│     ├─ sparse-recovery-demo.py        [Widget 3]
-│     └─ data-generator.py              [Helpers]
-└─ images/
-   ├─ diagrams/
-   │  ├─ least-squares-geometry.svg
-   │  ├─ regularization-paths.svg
-   │  ├─ robust-loss-functions.svg
-   │  └─ matrix-completion.svg
-   └─ applications/
-      ├─ outlier-example.jpg
-      ├─ compressed-sensing.jpg
-      └─ image-recovery.jpg
-```
-
----
-
-## Lecture 07: Applications II—Statistical Estimation & Machine Learning
-
-**Learning Objectives:**
-
-Many machine learning and statistical problems are convex optimization in disguise. Students will see that maximum likelihood estimation, support vector machines (SVMs), and logistic regression are all convex problems. This connection between statistics, ML, and convex optimization is profound: it means state-of-the-art solvers apply directly to these problems, guaranteeing we find the globally optimal model. The focus is on recognizing the convexity structure and understanding the role of convexity in ensuring our model fits well.
-
-**Key Concepts:**
-
-*Maximum likelihood estimation (MLE)* maximizes the probability of observing the data given a model. For many distributions (Gaussian, exponential, Poisson with log link), the negative log-likelihood is convex, making MLE a convex problem.
-
-*Logistic regression* models binary classification via $P(y=1 | x) = \frac{1}{1 + e^{-w^T x}}$. The negative log-likelihood (cross-entropy loss) is convex in $w$. Training amounts to solving a convex optimization problem.
-
-*Support vector machines (SVMs)* maximize the margin between two classes of data via quadratic programming: $\text{minimize } \frac{1}{2} \|w\|^2 \text{ subject to } y_i (w^T x_i + b) \geq 1$. The convex structure ensures we find the unique, optimal separating hyperplane.
-
-*Softmax regression* and *multinomial logistic regression* extend binary classification to multiple classes, still convex.
-
-*Regularization in ML* (ridge, LASSO, elastic net) are special cases of the regularized loss minimization we saw in Lecture 06. Convexity ensures these have unique solutions (no local minima trap).
-
-*Generalized linear models (GLMs)* unify many statistical models (linear regression, logistic regression, Poisson regression, etc.) under a framework where the negative log-likelihood is convex.
-
-**Prerequisites:**
-
-Convex optimization problems (Lecture 04), applications (Lecture 06). Statistics: distributions, MLE, probability. Basic ML knowledge (classification, SVMs).
-
-**Proposed Widgets:**
-
-1. **"Classification Boundary Visualizer"** (JavaScript, 2D animated)
-   - Generate or upload 2D binary classification data
-   - Buttons to train: logistic regression, SVM, or naive nonconvex method (random search or GA)
-   - Animate the fitting process: convex methods converge cleanly to global optimum; nonconvex methods get stuck
-   - Plot: data points, decision boundary, margin (for SVM)
-   - Educational: Why convex models are preferred for supervised learning
-
-2. **"Logistic Regression Solver"** (Python via Pyodide, CVXPY or gradient descent visualizer)
-   - Simple 2D dataset (or synthetic)
-   - User clicks to add positive/negative examples
-   - Hit "Train": optimize logistic regression
-   - Plot: data, decision boundary (updated in real-time)
-   - Show convergence: cost decreases monotonically
-   - Educational: See ML training as optimization in real-time
-
-3. **"SVM Margin Visualizer"** (JavaScript, 2D)
-   - Load a 2D binary dataset
-   - Train an SVM: show decision boundary and support vectors
-   - Visualize the margin (gap between hyperplanes $w^T x + b = 1$ and $w^T x + b = -1$)
-   - Interactive: change regularization $C$; watch margin vs misclassification trade-off adjust
-   - Educational: Understand SVM's geometric interpretation (margin maximization)
-
-**Required Assets:**
-
-- Diagrams: Logistic sigmoid function, SVM margin geometry, cross-entropy loss landscape, MLE interpretation
-- Datasets: Iris, simple 2D synthetic classification data, handwritten digits (MNIST subset)
-
-**File Stubs:**
-
-```
-topics/07-statistical-estimation/
-├─ index.html
-├─ widgets/
-│  ├─ js/
-│  │  ├─ classification-boundary.js  [Widget 1]
-│  │  ├─ svm-margin-viz.js           [Widget 3]
-│  │  └─ decision-boundary-common.js [Shared utility]
-│  └─ py/
-│     ├─ logistic-regression.py      [Widget 2]
-│     └─ svm-trainer.py              [Widget 3 backend]
-└─ images/
-   ├─ diagrams/
-   │  ├─ logistic-sigmoid.svg
-   │  ├─ svm-margin-geometry.svg
-   │  ├─ cross-entropy-loss.svg
-   │  ├─ mle-illustration.svg
-   │  └─ glm-framework.svg
-   └─ datasets/
-      └─ classification-examples.csv
-```
-
----
-
-## Lecture 08: Applications III—Geometric Problems
-
-**Learning Objectives:**
-
-Convex optimization naturally describes geometric problems: packing shapes, computing distances, finding best-fit objects. These problems illustrate that convexity is ubiquitous and show students how to model geometric constraints as convex sets and minimize geometric objectives as convex functions. This lecture builds intuition that "if it feels like a geometry problem, it's probably convex."
-
-**Key Concepts:**
-
-*Minimum volume enclosing ellipsoid (MVEE)* finds the smallest ellipsoid containing a set of points. This is an SDP and has applications in robust optimization, machine learning (data approximation), and collision detection.
-
-*Chebyshev center* finds the point in a polyhedron farthest from any boundary (the "safest" interior point). Minimizing $t = \text{dist}(x, \text{boundary})$ is a linear program.
-
-*Best fit problems* recover a geometric object (line, plane, circle, ellipse) that best approximates a point cloud. These are convex when we use $\ell_2$ (Euclidean) distances.
-
-*Proximity problems* compute distances between geometric objects (convex sets, polyhedra). Computing distance between two convex sets is a convex problem: $\text{minimize } \|x - y\|$ subject to $x \in C_1, y \in C_2$.
-
-*Matrix completion via nuclear norm* is secretly geometric: it recovers a low-rank matrix as the "nearest" low-rank matrix to the observed entries (under nuclear norm). The rank-minimization problem is relaxed to SDP, a convex program.
-
-**Prerequisites:**
-
-Convex sets (Lecture 02), standard forms (Lecture 04), duality (Lecture 05). Geometry basics (distances, ellipsoids, etc.).
-
-**Proposed Widgets:**
-
-1. **"Minimum Volume Enclosing Ellipsoid (MVEE) Visualizer"** (JavaScript, 2D; Python backend for SDP)
-   - Upload or generate 2D point cloud
-   - Hit "Compute MVEE": solve SDP, display smallest ellipsoid enclosing all points
-   - Visualize: points, candidate ellipses (e.g., from other heuristics) for comparison
-   - Interactive: rotate/rescale ellipsoid, see volume change
-   - Educational: See convex optimization solve a non-obvious geometric problem
-
-2. **"Chebyshev Center Explorer"** (JavaScript, 2D LP solver)
-   - User draws a polygon (polyhedral constraint set)
-   - Compute Chebyshev center: the "safest" interior point (farthest from any wall)
-   - Visualize: center point, distance to each constraint, inscribed circle showing the maximum radius
-   - Educational: Understand feasibility, robustness, and interior points
-
-3. **"Best Fit Shape Finder"** (Python via Pyodide, 2D)
-   - User uploads a point cloud (or draws points)
-   - Choose a model: line, circle, ellipse, or parabola
-   - Fit via LS or robust loss (user choice)
-   - Show: data, fitted shape, residuals
-   - Metrics: sum of squared residuals, explained variance
-   - Educational: Convex optimization as the workhorse of fitting
-
-**Required Assets:**
-
-- Diagrams: MVEE illustration, Chebyshev center geometry, distance between sets, best-fit examples, nuclear norm relaxation
-- 3D visualizations (optional but cool): MVEE in 3D
-
-**File Stubs:**
-
-```
-topics/08-geometric-problems/
-├─ index.html
-├─ widgets/
-│  ├─ js/
-│  │  ├─ mvee-visualizer.js          [Widget 1]
-│  │  └─ chebyshev-center.js         [Widget 2]
-│  └─ py/
-│     ├─ mvee-solver.py              [Widget 1 backend, SDP]
-│     ├─ shape-fitter.py             [Widget 3]
-│     └─ geometry-utils.py           [Helpers]
-└─ images/
-   ├─ diagrams/
-   │  ├─ mvee-illustration.svg
-   │  ├─ chebyshev-center-geometry.svg
-   │  ├─ distance-between-convex-sets.svg
-   │  ├─ best-fit-examples.svg
-   │  └─ matrix-completion-geometry.svg
-   └─ examples/
-      └─ point-clouds-samples.csv
-```
-
----
-
-## Lecture 09: Algorithms I—Unconstrained Minimization
-
-**Learning Objectives:**
-
-Having understood convex problems and their properties (Lectures 01–08), we now study algorithms to solve them. This lecture focuses on unconstrained problems: $\text{minimize } f(x)$. Key algorithms are gradient descent (first-order) and Newton's method (second-order). Students should understand the geometry of these methods, their convergence rates, and when to use which method. The takeaway: convexity ensures convergence to the global optimum; the art is choosing the right step size and algorithm for speed.
-
-**Key Concepts:**
-
-*Gradient descent* moves in the negative gradient direction: $x_{k+1} = x_k - \alpha_k \nabla f(x_k)$. The step size $\alpha_k$ can be fixed, backtracking (line search), or adaptive. Gradient descent converges at rate $O(1/k)$ for smooth convex functions (linear convergence if strongly convex). It's simple, scalable to high dimensions, and the basis of modern deep learning.
-
-*Step size selection* is crucial. Fixed step size $\alpha$ works if $\alpha < 2/L$ where $L$ is the Lipschitz constant of the gradient. Backtracking line search finds a good step size automatically. Adaptive methods (Adam, RMSprop) estimate local curvature to scale step sizes per coordinate.
-
-*Convergence rate* depends on problem structure. For strongly convex functions with $\alpha$ chosen well, convergence is exponentially fast (R-linear rate). For merely convex functions, convergence is slower ($O(1/k)$). The condition number $\kappa = L / \mu$ (where $\mu$ is strong convexity constant) governs the rate.
-
-*Newton's method* uses second derivatives: $x_{k+1} = x_k - \nabla^2 f(x_k)^{-1} \nabla f(x_k)$. The step is the Newton step. Newton converges much faster (quadratically) but requires computing/storing the Hessian $\nabla^2 f(x_k)$, which is expensive in high dimensions.
-
-*Quasi-Newton methods* (BFGS, L-BFGS) approximate the Hessian using past gradient information, offering a middle ground: faster than gradient descent, cheaper than full Newton.
-
-*Proximal methods* handle non-smooth convex functions (e.g., $\ell_1$-regularized) via $x_{k+1} = \text{prox}_{\alpha f}(x_k - \alpha \nabla g(x_k))$ where $f + g = \text{objective}$.
-
-**Prerequisites:**
-
-Convex optimization problems (Lecture 04), convex functions (Lecture 03). Calculus: gradients, directional derivatives, Hessians.
-
-**Proposed Widgets:**
-
-1. **"Gradient Descent Visualizer: 2D Animation"** (JavaScript, Canvas)
-   - User defines a 2D function (via sliders or equation)
-   - Choose starting point by clicking
-   - Select step size (fixed, backtracking, or adaptive)
-   - Animate gradient descent: iterate $x_{k+1} = x_k - \alpha \nabla f(x_k)$, showing trajectory on contour plot
-   - Display: iteration count, current loss, gradient norm (stopping criteria)
-   - Educational: See the algorithm in action; understand role of step size and convergence
-
-2. **"Gradient Descent vs Newton's Method: Race"** (JavaScript, 2D)
-   - Define an unconstrained convex problem
-   - Side-by-side animation: GD on left, Newton on right
-   - Same starting point, both aiming to minimize
-   - Track: iterations to convergence, trajectory
-   - Newton converges in far fewer iterations
-   - Educational: Compare first-order vs second-order convergence rates
-
-3. **"Step Size Exploration: Fixed vs Backtracking"** (JavaScript, 2D)
-   - Define a function and starting point
-   - Sliders: adjust fixed step size $\alpha$
-   - Show: if $\alpha$ too large, diverge; if too small, crawl; backtracking finds good size automatically
-   - Plot: loss over iterations for each choice
-   - Educational: Understand step size's critical role
-
-**Required Assets:**
-
-- Diagrams: Gradient descent trajectory on contour plot, Newton direction vs gradient, convergence rate curves (GD vs Newton), step size selection flowchart, condition number effect
-- 3D plots: Landscape with gradient descent trajectory
-
-**File Stubs:**
-
-```
-topics/09-unconstrained-minimization/
-├─ index.html
-├─ widgets/
-│  ├─ js/
-│  │  ├─ gradient-descent-visualizer.js [Widget 1]
-│  │  ├─ gd-vs-newton-race.js          [Widget 2]
-│  │  ├─ step-size-explorer.js         [Widget 3]
-│  │  └─ optimization-common.js        [Shared utils: contour plot, animation]
-│  └─ py/
-│     └─ [Possibly for backend gradient/Hessian computation]
-└─ images/
-   ├─ diagrams/
-   │  ├─ gradient-descent-trajectory.svg
-   │  ├─ newton-method-geometry.svg
-   │  ├─ convergence-rates-comparison.svg
-   │  ├─ step-size-selection.svg
-   │  ├─ condition-number-effect.svg
-   │  └─ proximal-methods.svg
-   └─ convergence-plots/
-      └─ rate-comparison.png
-```
-
----
-
-## Lecture 10: Algorithms II—Equality-Constrained Minimization
-
-**Learning Objectives:**
-
-Many practical problems have equality constraints (e.g., conservation laws, budget constraints). This lecture extends unconstrained algorithms to handle $\text{minimize } f(x) \text{ subject to } Ax = b$. Key techniques are null-space methods (reduce to unconstrained problem in lower dimension), elimination (substitute $Ax=b$ to eliminate constraints), and projected gradient descent. Understanding equality constraints is a stepping stone to inequality-constrained problems in Lecture 11.
-
-**Key Concepts:**
-
-*Null-space method* exploits the constraint $Ax = b$. We parameterize the feasible set as $x = x_0 + Zy$ where $x_0$ is a particular solution and $Z$ has columns forming a basis for $\text{null}(A)$. Substituting into the objective, we get an unconstrained problem in $y$, which we solve via gradient descent.
-
-*Elimination* directly removes constrained variables: if we can partition $x = (x_B, x_N)$ (basic and nonbasic), express $x_B$ in terms of $x_N$ via $Ax = b$, and substitute into the objective to get an unconstrained problem in $x_N$ alone.
-
-*Projected gradient descent* (alternating direction method of multipliers, ADMM) is an iterative algorithm: at each step, move in the negative gradient direction and then project back onto the constraint set. For linear equality constraints, the projection is a linear operation, making this efficient.
-
-*KKT conditions for equality constraints* simplify: stationarity requires $\nabla f(x) + A^T \nu = 0$ (Lagrange multiplier $\nu$). At optimality, the gradient lies in the range of $A^T$ (it's a linear combination of constraint normals).
-
-*Regularization (log-barrier methods)* approximate the equality constraint via a penalty: $\text{minimize } f(x) + \frac{1}{t} \phi(Ax - b)$ for a barrier function $\phi$. As $t \to \infty$, the minimum approaches the constrained optimum.
-
-**Prerequisites:**
-
-Unconstrained algorithms (Lecture 09), duality and KKT (Lecture 05). Linear algebra: null space, rank, linear subspaces.
-
-**Proposed Widgets:**
-
-1. **"Null-Space Method Visualizer"** (JavaScript, 3D if possible, or 2D example)
-   - User specifies an equality-constrained problem in $\mathbb{R}^3$: minimize $f(x)$ subject to a plane $Ax = b$
-   - Show the original 3D landscape and the 2D constraint surface (plane)
-   - Visualize null-space basis $Z$: the plane in 3D
-   - Animate: parametrize feasible points as $x_0 + Zy$, solve the reduced 2D problem in $y$
-   - Educational: See how equality constraints reduce problem dimension
-
-2. **"Projected Gradient Descent on Constraints"** (JavaScript, 2D animation)
-   - Equality constraint: $Ax = b$ (a line in 2D, a plane in 3D)
-   - Objective: $\|x - \text{target}\|^2$ or similar
-   - Animate PGD: start outside the constraint, gradient descent step, then project onto the constraint surface
-   - Compare to: unconstrained GD (ignores constraint, diverges), GD + null-space method (stays feasible)
-   - Educational: Understand projection and its role in maintaining feasibility
-
-3. **"Penalty vs Barrier Methods"** (JavaScript, 2D)
-   - Equality constraint and objective
-   - Sliders for penalty parameter $t$
-   - Plot the penalized objective: $f(x) + \frac{1}{t} \|(Ax - b)\|^2$
-   - Show how the minimum moves toward the true constrained optimum as $t \to \infty$
-   - Educational: See regularization trade-off between satisfying objective and constraint
-
-**Required Assets:**
-
-- Diagrams: Null-space method illustration, constraint surface + objective level sets, projected gradient step geometry, KKT conditions for equality constraints, penalty method progression
-- Example: Constrained quadratic problem in 2D/3D
-
-**File Stubs:**
-
-```
-topics/10-equality-constrained-minimization/
-├─ index.html
-├─ widgets/
-│  ├─ js/
-│  │  ├─ null-space-visualizer.js    [Widget 1]
-│  │  ├─ projected-gd.js             [Widget 2]
-│  │  └─ penalty-barrier-methods.js  [Widget 3]
-│  └─ py/
-│     └─ constraint-utils.py         [Null-space basis computation]
-└─ images/
-   ├─ diagrams/
-   │  ├─ null-space-method.svg
-   │  ├─ projection-onto-constraint.svg
-   │  ├─ kkt-equality-constraints.svg
-   │  ├─ penalty-method-progression.svg
-   │  └─ barrier-method-illustration.svg
-   └─ examples/
-      └─ constrained-quadratic.png
-```
-
----
-
-## Lecture 11: Algorithms III—Interior-Point Methods & Inequality Constraints
-
-**Learning Objectives:**
-
-Inequality constraints are the most general and most practical. This lecture covers algorithms that handle constraints $g_i(x) \leq 0$ efficiently. Interior-point methods are a major class: they move through the interior of the feasible set, maintaining strict inequality. These methods have polynomial-time complexity for convex problems and are the basis of commercial solvers (Mosek, Gurobi, CPLEX). Understanding interior-point methods is understanding how modern optimization software works at its core. The takeaway: with proper algorithm design and convex structure, we can solve even large constrained problems efficiently.
-
-**Key Concepts:**
-
-*Interior-point methods (IPMs)* maintain a point $x$ strictly satisfying all inequality constraints ($g_i(x) < 0$) and approach the boundary as iterations progress. Central to IPMs is the *barrier method*: $\text{minimize } f(x) + \frac{1}{t} \sum_i \phi(g_i(x))$ where $\phi$ is a barrier function (e.g., $-\log(-g_i)$). As $t$ increases, the barrier grows steep near the boundary, pushing the solution toward the true constrained optimum while staying interior.
-
-*Logarithmic barrier* $\phi(u) = -\log(-u)$ is standard. It's defined only for $u < 0$, ensuring strict feasibility. The barrier gradient becomes infinite as $u \to 0^-$, forming a "wall" that keeps the method interior.
-
-*Path-following methods* trace the central path: the set of solutions to the barrier subproblems as $t$ increases from small to large. The central path converges to the optimal solution as $t \to \infty$.
-
-*Newton's method for barrier* solves each barrier subproblem using Newton's method. The Hessian of the barrier objective can be computed efficiently for cones (LP, QP, SDP).
-
-*Complexity and polynomial-time solvability* IPMs have proven complexity bounds: e.g., for convex problems, iterations = $O(\sqrt{n} \log(1/\epsilon))$, each computing a Newton step of cost $O(n^3)$ or better for structured problems. This polynomial-time guarantee is a remarkable achievement.
-
-*Conic programming* unifies LP, QP, SDP, SOCP, and more. IPMs for conic problems form a unified theory.
-
-*Practical considerations*: detecting strict complementarity, warm starts, numerical stability, exploiting sparsity.
-
-**Prerequisites:**
-
-Equality-constrained algorithms (Lecture 10), duality and KKT (Lecture 05). Understanding of conic problems (Lecture 04).
-
-**Proposed Widgets:**
-
-1. **"Barrier Method Path Tracer"** (JavaScript, 2D animation)
-   - Constrained problem: $\text{minimize } f(x)$ subject to $g(x) \leq 0$
-   - Visualize the feasible region (interior), objective, and constraints
-   - Animate barrier method: start with small $t$, solve barrier problem (round interior point), increase $t$, resolve (iterate toward boundary)
-   - Show: iteration points tracing a path converging to the constrained optimum
-   - Contours of the barrier objective: as $t$ increases, barrier "dissolves" near boundary
-   - Educational: Understand the interior-point trajectory and how barrier strength evolves
-
-2. **"LP via Interior-Point Method"** (JavaScript, 2D simplex comparison)
-   - Simple LP: $\text{minimize } c^T x$ subject to $Ax \leq b$
-   - Side-by-side: simplex method (hops vertices) vs interior-point method (traces central path)
-   - Animate both; show iteration counts and total time
-   - Educational: Modern solvers (IP) can be faster/more stable than simplex on many problems
-
-3. **"Conic Problem Solver Showcase"** (Python via Pyodide, CVXPY + SCS solver)
-   - Gallery of conic problems: LP, QP, SDP, SOCP
-   - User selects one, system builds a small instance, solves via IP method
-   - Display: problem structure (A, b, c, K), solve steps, final solution, solution time
-   - Educational: See that a single algorithm (IP) solves diverse problem classes
-
-**Required Assets:**
-
-- Diagrams: Feasible region with interior-point trajectory, barrier function illustration, central path, logarithmic barrier wall, complexity vs problem size
-- Comparison: simplex vs interior-point (vertices vs interior path)
-- Conic structure diagrams (LP cone, SDP cone, SOCP cone)
-
-**File Stubs:**
-
-```
-topics/11-interior-point-methods/
-├─ index.html
-├─ widgets/
-│  ├─ js/
-│  │  ├─ barrier-method-path-tracer.js [Widget 1]
-│  │  └─ lp-simplex-vs-ip.js           [Widget 2]
-│  └─ py/
-│     ├─ barrier-solver.py             [Simple barrier method]
-│     └─ conic-solver-wrapper.py       [Widget 3, CVXPY wrapper]
-└─ images/
-   ├─ diagrams/
-   │  ├─ interior-point-trajectory.svg
-   │  ├─ barrier-function-landscape.svg
-   │  ├─ central-path-illustration.svg
-   │  ├─ simplex-vs-interior-point.svg
-   │  ├─ conic-structures.svg
-   │  └─ complexity-vs-problem-size.svg
-   └─ algorithms/
-      └─ ip-algorithm-pseudocode.png
-```
+## Appendices
+*   **Appendix A: Mathematical Notation**
+*   **Appendix B: Further Reading**
+*   **Appendix C: Glossary of Terms**
 
 ---
 
@@ -1215,7 +410,7 @@ Below are ready-to-use starter templates for each lecture and widget type.
       <div class="meta">
         Date: [DATE] · Duration: [90 MIN] · Tags: [tag1], [tag2]
       </div>
-      
+
       <!-- Brief introduction -->
       <section style="margin-top: 16px;">
         <p><strong>Overview:</strong> [2–3 sentence summary of what we'll learn and why it matters]</p>
@@ -1237,14 +432,14 @@ Below are ready-to-use starter templates for each lecture and widget type.
     <!-- Main lecture content -->
     <section class="card" style="margin-bottom: 32px;">
       <h2>Key Concepts</h2>
-      
+
       <h3>Concept 1: [NAME]</h3>
       <p>[Detailed explanation with inline LaTeX: $\mathcal{C}$ is convex if ...]</p>
       <p>Visual intuition: [Description of accompanying diagram]</p>
-      
+
       <h3>Concept 2: [NAME]</h3>
       <p>[Another concept with examples]</p>
-      
+
       <!-- Include images as needed -->
       <figure style="margin: 16px 0; text-align: center;">
         <img src="./images/diagrams/[DIAGRAM].svg" alt="[Description]" style="max-width: 100%; height: auto;" />
@@ -1258,7 +453,7 @@ Below are ready-to-use starter templates for each lecture and widget type.
     <section class="card" id="widgets" style="margin-bottom: 32px;">
       <h2>Interactive Widgets</h2>
       <p>Below are tools to explore the concepts interactively. Try tweaking parameters to build intuition.</p>
-      
+
       <!-- Widget 1 -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">[WIDGET 1 TITLE]</h3>
@@ -1300,10 +495,10 @@ Below are ready-to-use starter templates for each lecture and widget type.
     <!-- Example problems -->
     <section class="card" style="margin-bottom: 32px;">
       <h2>Example Problems</h2>
-      
+
       <h3>Example 1: [Problem title]</h3>
       <p>[Problem statement and worked solution]</p>
-      
+
       <h3>Example 2: [Problem title]</h3>
       <p>[Another example]</p>
     </section>
@@ -1324,7 +519,7 @@ Below are ready-to-use starter templates for each lecture and widget type.
   <footer class="site-footer">
     <div class="container">
       <p style="margin: 0;">
-        © <span id="year"></span> Convex Optimization Course · 
+        © <span id="year"></span> Convex Optimization Course ·
         <a href="../../README.md" style="color: var(--brand);">About</a>
       </p>
     </div>
@@ -1354,11 +549,11 @@ Below are ready-to-use starter templates for each lecture and widget type.
 ```javascript
 /**
  * Widget: [Widget Name]
- * 
+ *
  * Description: [What does this widget do?]
- * 
+ *
  * Uses: Canvas/SVG for rendering, event listeners for interactivity
- * 
+ *
  * DOM target: #widget-1 (or appropriate ID)
  */
 
@@ -1374,7 +569,7 @@ export function initWidget(containerId) {
   canvas.width = container.clientWidth;
   canvas.height = container.clientHeight;
   container.appendChild(canvas);
-  
+
   const ctx = canvas.getContext('2d');
 
   // State
@@ -1387,11 +582,11 @@ export function initWidget(containerId) {
   // UI controls (sliders, buttons, etc.)
   const controlPanel = document.createElement('div');
   controlPanel.style.cssText = 'margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap;';
-  
+
   const slider1Label = document.createElement('label');
   slider1Label.style.cssText = 'display: flex; align-items: center; gap: 6px;';
   slider1Label.textContent = 'Parameter 1:';
-  
+
   const slider1 = document.createElement('input');
   slider1.type = 'range';
   slider1.min = '0';
@@ -1402,7 +597,7 @@ export function initWidget(containerId) {
     state.param1 = parseFloat(e.target.value);
     render();
   });
-  
+
   slider1Label.appendChild(slider1);
   controlPanel.appendChild(slider1Label);
   container.insertBefore(controlPanel, canvas);
@@ -1452,7 +647,7 @@ Widget: [Widget Name]
 This Python script runs in Pyodide (in-browser Python).
 It provides computation/analysis that JS calls.
 
-Usage from JS: 
+Usage from JS:
   const py = await getPyodide();
   await py.runPythonAsync(`
     import sys; sys.path.append('.')
@@ -1468,22 +663,22 @@ from scipy.optimize import minimize
 def analyze(params):
     """
     Main function that JS calls.
-    
+
     Args:
         params: dict with problem parameters
-    
+
     Returns:
         result: dict with output (vectors, matrices, scalars, etc.)
     """
-    
+
     # Extract parameters
     n = params.get('n', 10)
     lambda_ = params.get('lambda', 0.1)
-    
+
     # Compute
     x_opt = np.random.randn(n)  # Placeholder
     obj_value = np.sum(x_opt**2)
-    
+
     # Return results
     return {
         'x_opt': x_opt.tolist(),  # Convert to list for JSON serialization
@@ -1496,26 +691,26 @@ def analyze(params):
 def gradient_descent(f_grad, x0, alpha=0.01, max_iter=100):
     """
     Simple gradient descent.
-    
+
     Args:
         f_grad: function that returns (f(x), grad_f(x))
         x0: initial point
         alpha: step size
         max_iter: max iterations
-    
+
     Returns:
         trajectory (list of x iterates)
     """
     trajectory = [x0.copy()]
     x = x0.copy()
-    
+
     for k in range(max_iter):
         f_val, grad = f_grad(x)
         if np.linalg.norm(grad) < 1e-6:
             break
         x = x - alpha * grad
         trajectory.append(x.copy())
-    
+
     return trajectory
 ```
 
