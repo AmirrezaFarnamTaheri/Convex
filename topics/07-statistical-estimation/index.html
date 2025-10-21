@@ -92,6 +92,15 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+
+      <!-- Widget 3 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Logistic Regression Solver</h3>
+        <p>An interactive solver for logistic regression.</p>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Readings -->
@@ -143,7 +152,14 @@
     import { initClassificationBoundaryVisualizer } from './widgets/js/classification-boundary.js';
     initClassificationBoundaryVisualizer('widget-1');
   </script>
-  <script type="module" src="./widgets/js/svm-margin-viz.js"></script>
+  <script type="module">
+    import { initSVMMargin } from './widgets/js/svm-margin.js';
+    initSVMMargin('widget-2');
+  </script>
+  <script type="module">
+    import { initLogisticRegression } from './widgets/js/logistic-regression.js';
+    initLogisticRegression('widget-3');
+  </script>
 
   <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>

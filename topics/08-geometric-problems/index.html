@@ -92,6 +92,15 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+
+      <!-- Widget 3 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Distance Between Convex Sets</h3>
+        <p>Calculates and visualizes the shortest distance between two convex sets.</p>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Readings -->
@@ -143,7 +152,10 @@
     import { initMVEEVisualizer } from './widgets/js/mvee-visualizer.js';
     initMVEEVisualizer('widget-1');
   </script>
-  <script type="module" src="./widgets/js/chebyshev-center.js"></script>
+  <script type="module">
+    import { initDistanceBetweenSets } from './widgets/js/distance-between-sets.js';
+    initDistanceBetweenSets('widget-3');
+  </script>
 
   <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>
