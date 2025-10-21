@@ -13,21 +13,30 @@ export async function initFeasibleVsInterior(containerId) {
     container.innerHTML = `
         <div class="fvi-widget">
             <div class="widget-controls">
-                <button id="run-fvi-btn">Run Comparison</button>
+                 <div class="control-group">
+                    <label>Barrier Param (t₀): <span id="fvi-t0-val">1</span></label>
+                    <input type="range" id="fvi-t0-slider" min="0.1" max="10" step="0.1" value="1">
+                </div>
+                <button id="fvi-reset-btn">Reset Start</button>
                 <div class="legend">
                     <span style="color:var(--color-primary);">―</span> Projected GD
                     <span style="color:var(--color-accent); margin-left: 10px;">―</span> Interior-Point
                 </div>
             </div>
             <div id="plot-container"></div>
+            <p class="widget-instructions">Drag the start point. Note that Interior-Point requires a strictly feasible start.</p>
         </div>
     `;
 
-    const runBtn = container.querySelector("#run-fvi-btn");
+    const t0Slider = container.querySelector("#fvi-t0-slider");
+    const resetBtn = container.querySelector("#fvi-reset-btn");
     const plotContainer = container.querySelector("#plot-container");
 
+    let startPoint = [0.1, 0.1];
+    const defaultStartPoint = [0.1, 0.1];
+
     const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const width = (plotContainer.clientWidth || 600) - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
     const svg = d3.select(plotContainer).append("svg")
@@ -41,80 +50,93 @@ export async function initFeasibleVsInterior(containerId) {
     svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
     svg.append("g").call(d3.axisLeft(y));
 
-    // Objective: min (x-2)^2 + (y-2)^2
+    // Static elements
     const center = [2,2];
-    const contours = d3.range(0.5, 4, 0.5).map(r => d3.range(0,2*Math.PI+0.1,0.1).map(a => [center[0]+r*Math.cos(a), center[1]+r*Math.sin(a)]));
-    svg.append("g").selectAll("path").data(contours).join("path").attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))).attr("stroke", "var(--color-surface-1)");
-
-    // Feasible set: x+y <= 1, x>=0, y>=0
+    const contours = d3.range(0.5, 4, 0.5).map(r => d3.range(0, 2*Math.PI+0.1, 0.1).map(a => [center[0]+r*Math.cos(a), center[1]+r*Math.sin(a)]));
+    svg.append("g").selectAll("path").data(contours).join("path").attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1]))).attr("stroke", "var(--color-surface-1)").attr("stroke-width", 0.5);
     const feasible_poly = [[0,0], [1,0], [0,1]];
-    svg.append("path").attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(feasible_poly)+"Z").attr("fill", "var(--color-primary-light)").attr("opacity", 0.5);
+    svg.append("path").attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1]))(feasible_poly)+"Z").attr("fill", "var(--color-primary-light)").attr("opacity", 0.3).style("pointer-events", "none");
 
     const pyodide = await getPyodide();
     const pythonCode = `
 import numpy as np
 import json
 
-# Objective: min (x-2)^2 + (y-2)^2, Grad: [2(x-2), 2(y-2)]
-# Feasible: x+y<=1, x>=0, y>=0
+def run_methods(start_point_list, t0):
+    start_point = np.array(start_point_list)
 
-def project(p):
-    # Project onto feasible set (simplified for this specific set)
-    p = np.maximum(0, p)
-    if np.sum(p) > 1:
-        p = np.array([ (p[0]-p[1]+1)/2, (p[1]-p[0]+1)/2 ])
-    return p
+    # --- Projected GD ---
+    def project(p):
+        p = np.maximum(1e-6, p) # Keep it slightly away from boundary
+        if np.sum(p) > 1: p = np.array([(p[0]-p[1]+1)/2, (p[1]-p[0]+1)/2])
+        return p
 
-def run_projected_gd():
-    path = [np.array([0.1, 0.1])]
-    for _ in range(20):
-        p = path[-1]
-        grad = np.array([2*(p[0]-2), 2*(p[1]-2)])
-        p_next = project(p - 0.1 * grad)
-        path.append(p_next)
-        if np.linalg.norm(p_next-p) < 1e-3: break
-    return np.array(path).tolist()
+    path_pgd = [start_point]
+    p_pgd = start_point.copy()
+    for _ in range(30):
+        grad = np.array([2*(p_pgd[0]-2), 2*(p_pgd[1]-2)])
+        p_next = project(p_pgd - 0.1 * grad)
+        path_pgd.append(p_next)
+        if np.linalg.norm(p_next - p_pgd) < 1e-4: break
+        p_pgd = p_next
 
-def run_interior_point():
-    # Barrier method: min (x-2)^2+(y-2)^2 - (1/t)*log(1-x-y) - (1/t)*log(x) - (1/t)*log(y)
-    path = []
-    p = np.array([0.2, 0.2])
-    for t in np.logspace(0, 3, 20):
-        # 10 steps of GD for each t
-        for _ in range(10):
-            grad_barrier_x = -1/(1-p[0]-p[1]) * -1  - 1/p[0]
-            grad_barrier_y = -1/(1-p[0]-p[1]) * -1  - 1/p[1]
-            grad = np.array([2*(p[0]-2), 2*(p[1]-2)]) - (1/t) * np.array([grad_barrier_x, grad_barrier_y])
-            p -= 0.01 * grad
-            path.append(p.copy())
-    return np.array(path).tolist()
+    # --- Interior Point (Barrier Method) ---
+    path_ip = []
+    p_ip = start_point.copy()
 
+    # Check if starting point is strictly feasible for IP
+    if p_ip[0] > 0 and p_ip[1] > 0 and (p_ip[0] + p_ip[1]) < 1:
+        path_ip.append(p_ip.copy())
+        for t in np.logspace(np.log10(t0), 3, 15):
+            for _ in range(15): # Inner centering steps
+                grad_barrier = np.array([1/(1-p_ip[0]-p_ip[1]) - 1/p_ip[0],
+                                         1/(1-p_ip[0]-p_ip[1]) - 1/p_ip[1]])
+                grad = np.array([2*(p_ip[0]-2), 2*(p_ip[1]-2)]) - (1/t) * grad_barrier
+                # A simple line search could be added here for robustness
+                p_ip -= 0.01 * grad
+                path_ip.append(p_ip.copy())
+
+    return json.dumps({"pgd": path_pgd, "ip": path_ip})
 `;
     await pyodide.runPythonAsync(pythonCode);
-    const run_projected_gd = pyodide.globals.get('run_projected_gd');
-    const run_interior_point = pyodide.globals.get('run_interior_point');
+    const run_methods = pyodide.globals.get('run_methods');
 
-    async function run() {
-        runBtn.disabled = true;
-        svg.selectAll(".path").remove();
+    const pgdPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2.5);
+    const ipPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5);
 
-        const pgd_path_data = await run_projected_gd().then(r => r.toJs());
-        const ip_path_data = await run_interior_point().then(r => r.toJs());
+    async function update() {
+        const t0 = +t0Slider.value;
+        container.querySelector("#fvi-t0-val").textContent = t0.toFixed(1);
 
-        const animate = (pathEl, data, color) => {
-            pathEl.datum(data).attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])))
-                .attr("fill", "none").attr("stroke", color).attr("stroke-width", 2.5);
-            const len = pathEl.node().getTotalLength();
-            pathEl.attr("stroke-dasharray", `${len} ${len}`).attr("stroke-dashoffset", len)
-                .transition().duration(2000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
+        const paths = await run_methods(startPoint, t0).then(r => JSON.parse(r));
+
+        const animate = (pathEl, data) => {
+             pathEl.datum(data).attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1])));
+             const len = pathEl.node().getTotalLength();
+             if (len > 0) {
+                 pathEl.attr("stroke-dasharray", `${len} ${len}`).attr("stroke-dashoffset", len)
+                     .transition().duration(1000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
+             }
         };
 
-        animate(svg.append("path").attr("class", "path"), pgd_path_data, "var(--color-primary)");
-        animate(svg.append("path").attr("class", "path"), ip_path_data, "var(--color-accent)");
+        animate(pgdPath, paths.pgd);
+        animate(ipPath, paths.ip);
 
-        setTimeout(() => runBtn.disabled = false, 2000);
+        svg.selectAll(".start-point").remove();
+        svg.append("circle").attr("class", "start-point").attr("cx", x(startPoint[0])).attr("cy", y(startPoint[1]))
+            .attr("r", 7).attr("fill", "var(--color-danger)").style("cursor", "move")
+            .call(d3.drag().on("drag", function(event) {
+                startPoint = [x.invert(event.x), y.invert(event.y)];
+                update();
+            }));
     }
 
-    runBtn.addEventListener("click", run);
-    run();
+    t0Slider.addEventListener("input", update);
+    resetBtn.addEventListener("click", () => {
+        startPoint = [...defaultStartPoint];
+        t0Slider.value = 1.0;
+        update();
+    });
+
+    update();
 }

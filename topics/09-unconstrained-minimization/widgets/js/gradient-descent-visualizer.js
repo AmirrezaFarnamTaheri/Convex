@@ -13,25 +13,31 @@ export async function initGradientDescentVisualizer(containerId) {
     container.innerHTML = `
         <div class="gd-visualizer-widget">
             <div class="widget-controls">
-                <label>Function:</label> <select id="gd-func-select"></select>
-                <label>Step Size (α): <span id="lr-val">0.10</span></label> <input type="range" id="lr-slider" min="0.01" max="0.6" step="0.01" value="0.1">
-                <button id="gd-start-btn">Run Gradient Descent</button>
+                <div class="control-group">
+                    <label>Function:</label>
+                    <select id="gd-func-select"></select>
+                </div>
+                <div class="control-group">
+                    <label>Step Size (α): <span id="lr-val">0.10</span></label>
+                    <input type="range" id="lr-slider" min="0.01" max="1.0" step="0.01" value="0.1">
+                </div>
             </div>
             <div id="plot-container"></div>
-            <p class="widget-instructions">Click on the plot to set the starting point, then click "Run".</p>
+            <p class="widget-instructions">Click or drag on the plot to set the starting point.</p>
+            <div id="gd-output" class="widget-output"></div>
         </div>
     `;
 
     const funcSelect = container.querySelector("#gd-func-select");
     const lrSlider = container.querySelector("#lr-slider");
     const lrVal = container.querySelector("#lr-val");
-    const startBtn = container.querySelector("#gd-start-btn");
     const plotContainer = container.querySelector("#plot-container");
+    const outputDiv = container.querySelector("#gd-output");
 
     const functions = {
-        "f(x,y) = x² + y²": { py_func: "x**2 + y**2", py_grad: "np.array([2*x, 2*y])", domain: [-4, 4] },
-        "f(x,y) = (x-1)² + 5(y-1)²": { py_func: "(x-1)**2 + 5*(y-1)**2", py_grad: "np.array([2*(x-1), 10*(y-1)])", domain: [-4, 4]},
-        "Rosenbrock": { py_func: "(1-x)**2 + 100*(y-x**2)**2", py_grad: "np.array([-2*(1-x)-400*x*(y-x**2), 200*(y-x**2)])", domain: [-2, 2] },
+        "Simple Quadratic": { domain: [-4, 4] },
+        "Ill-Conditioned Quadratic": { domain: [-4, 4] },
+        "Rosenbrock": { domain: [-2, 2] },
     };
     Object.keys(functions).forEach(name => funcSelect.add(new Option(name, name)));
 
@@ -39,7 +45,7 @@ export async function initGradientDescentVisualizer(containerId) {
     let isRunning = false;
 
     const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const width = (plotContainer.clientWidth || 600) - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
     const svg = d3.select(plotContainer).append("svg")
@@ -52,86 +58,140 @@ export async function initGradientDescentVisualizer(containerId) {
     const y = d3.scaleLinear().range([height, 0]);
     const xAxis = svg.append("g").attr("transform", `translate(0,${height})`);
     const yAxis = svg.append("g");
+    const contourGroup = svg.append("g");
+    const pathGroup = svg.append("g");
 
     const pyodide = await getPyodide();
+    const pythonCode = `
+import numpy as np
+import json
 
-    async function drawContours() {
-        const funcInfo = functions[funcSelect.value];
-        x.domain([funcInfo.domain[0], funcInfo.domain[1]]);
-        y.domain([funcInfo.domain[0], funcInfo.domain[1]]);
-        xAxis.call(d3.axisBottom(x));
-        yAxis.call(d3.axisLeft(y));
+def get_contours_and_run_gd(func_name, start_point_list, learning_rate, domain_str):
+    domain = json.loads(domain_str)
 
-        const grid_json = await pyodide.runPythonAsync(`
-            import numpy as np
-            import json
-            domain = np.linspace(${funcInfo.domain[0]}, ${funcInfo.domain[1]}, 100)
-            xx, yy = np.meshgrid(domain, domain)
-            x, y = xx, yy
-            zz = ${funcInfo.py_func}
-            json.dumps(zz.tolist())
-        `);
-        const grid = JSON.parse(grid_json);
+    # Define functions and gradients
+    def grad_simple(p): return np.array([2*p[0], 2*p[1]])
+    def func_simple(x, y): return x**2 + y**2
 
-        svg.selectAll(".contour").remove();
-        const contours = d3.contours().size([100, 100]).thresholds(d3.range(0, 100, 2))(grid.flat());
-        svg.append("g").attr("class", "contour")
-            .selectAll("path").data(contours).join("path")
-            .attr("d", d3.geoPath(d3.geoIdentity().scale(width / 99)))
-            .attr("fill", "none").attr("stroke", "var(--color-surface-1)");
+    def grad_ill(p): return np.array([2*p[0], 100*p[1]])
+    def func_ill(x, y): return x**2 + 50*y**2
+
+    def grad_rosenbrock(p): return np.array([-2*(1-p[0]) - 400*p[0]*(p[1]-p[0]**2), 200*(p[1]-p[0]**2)])
+    def func_rosenbrock(x, y): return (1-x)**2 + 100*(y-x**2)**2
+
+    func_map = {
+        "Simple Quadratic": (func_simple, grad_simple),
+        "Ill-Conditioned Quadratic": (func_ill, grad_ill),
+        "Rosenbrock": (func_rosenbrock, grad_rosenbrock)
     }
 
-    async function run() {
-        if (!startPoint || isRunning) return;
+    # Generate contours
+    func, grad = func_map[func_name]
+    grid_pts = np.linspace(domain[0], domain[1], 80)
+    xx, yy = np.meshgrid(grid_pts, grid_pts)
+    zz = func(xx, yy)
+
+    # Run GD if start point is provided
+    path = []
+    iterations = 0
+    status = "Ready"
+    if start_point_list:
+        p = np.array(start_point_list)
+        path.append(p.tolist())
+        for i in range(200):
+            g = grad(p)
+            if np.linalg.norm(g) < 1e-4:
+                status = f"Converged in {i} iterations"
+                break
+            p_next = p - learning_rate * g
+            path.append(p_next.tolist())
+            if np.linalg.norm(p_next) > 1e4:
+                status = f"Diverged after {i+1} iterations"
+                break
+            p = p_next
+        else:
+            status = f"Max iterations (200) reached"
+        iterations = len(path) -1
+
+    return json.dumps({"contours": zz.tolist(), "path": path, "status": status})
+`;
+    await pyodide.runPythonAsync(pythonCode);
+    const get_contours_and_run_gd = pyodide.globals.get('get_contours_and_run_gd');
+
+    async function update() {
+        if (isRunning) return;
         isRunning = true;
-        startBtn.disabled = true;
 
-        svg.selectAll(".gd-path").remove();
+        const funcInfo = functions[funcSelect.value];
+        const sp_list = startPoint ? [startPoint.x, startPoint.y] : null;
 
-        await pyodide.globals.set("start_point", [startPoint.x, startPoint.y]);
-        await pyodide.globals.set("learning_rate", +lrSlider.value);
-        await pyodide.globals.set("py_grad_str", functions[funcSelect.value].py_grad);
+        const result = await get_contours_and_run_gd(
+            funcSelect.value, sp_list, +lrSlider.value, JSON.stringify(funcInfo.domain)
+        ).then(r => JSON.parse(r));
 
-        const path = await pyodide.runPythonAsync(`
-            import numpy as np
-            path = [start_point]
-            p = np.array(start_point)
-            for _ in range(100):
-                x, y = p
-                grad = eval(py_grad_str)
-                p_next = p - learning_rate * grad
-                path.append(p_next.tolist())
-                if np.linalg.norm(p_next - p) < 1e-3: break
-                p = p_next
-            path
-        `).then(p => p.toJs());
+        // Update domain and axes only if they've changed
+        if (x.domain()[0] !== funcInfo.domain[0]) {
+            x.domain(funcInfo.domain);
+            y.domain(funcInfo.domain);
+            xAxis.transition().call(d3.axisBottom(x));
+            yAxis.transition().call(d3.axisLeft(y));
+        }
 
-        svg.append("path").attr("class", "gd-path")
-            .datum(path).attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])))
-            .attr("fill", "none").attr("stroke", "var(--color-danger)").attr("stroke-width", 2.5)
-            .call(path => {
-                const totalLength = path.node().getTotalLength();
-                path.attr("stroke-dasharray", `${totalLength} ${totalLength}`)
-                    .attr("stroke-dashoffset", totalLength)
-                    .transition().duration(2000).ease(d3.easeLinear)
-                    .attr("stroke-dashoffset", 0);
-            });
+        contourGroup.selectAll("*").remove();
+        const thresholds = funcSelect.value === "Rosenbrock"
+            ? d3.range(0, 10, 0.5).concat(d3.range(10, 50, 5), d3.range(50, 400, 20))
+            : d3.range(0, 100, 2);
+        contourGroup.selectAll("path")
+            .data(d3.contours().thresholds(thresholds)(result.contours.flat()))
+            .join("path")
+            .attr("d", d3.geoPath(d3.geoIdentity().scale(width / 79)))
+            .attr("fill", "none").attr("stroke", "var(--color-surface-1)").attr("stroke-width", 0.5);
 
-        setTimeout(() => { isRunning = false; startBtn.disabled = false; }, 2000);
+        pathGroup.selectAll("*").remove();
+        outputDiv.innerHTML = result.status;
+
+        if (result.path && result.path.length > 0) {
+            pathGroup.append("path").datum(result.path)
+                .attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1])))
+                .attr("fill", "none").attr("stroke", "var(--color-danger)").attr("stroke-width", 2.5)
+                .call(path => {
+                    const totalLength = path.node().getTotalLength();
+                    if (totalLength > 0) {
+                        path.attr("stroke-dasharray", `${totalLength} ${totalLength}`)
+                           .attr("stroke-dashoffset", totalLength)
+                           .transition().duration(1500).ease(d3.easeLinear)
+                           .attr("stroke-dashoffset", 0);
+                    }
+                });
+             pathGroup.append("circle").attr("cx", x(result.path[0][0])).attr("cy", y(result.path[0][1])).attr("r", 5).attr("fill", "var(--color-danger)");
+        }
+
+        isRunning = false;
     }
+
+    const drag = d3.drag()
+        .on("start", (event) => svg.select(".start-handle").remove())
+        .on("drag", (event) => {
+            startPoint = {x: x.invert(event.x), y: y.invert(event.y)};
+            pathGroup.selectAll(".start-handle")
+                .data([startPoint]).join("circle").attr("class", "start-handle")
+                .attr("cx", d => x(d.x)).attr("cy", d => y(d.y))
+                .attr("r", 7).attr("fill", "var(--color-danger-light)");
+        })
+        .on("end", update);
 
     svg.append("rect").attr("width", width).attr("height", height).style("fill", "none").style("pointer-events", "all")
-        .on("click", (event) => {
-            if (isRunning) return;
-            const [mx, my] = d3.pointer(event, svg.node());
-            startPoint = {x: x.invert(mx), y: y.invert(my)};
-            svg.selectAll(".start-point").remove();
-            svg.append("circle").attr("class", "start-point").attr("cx", mx).attr("cy", my).attr("r", 5).attr("fill", "var(--color-danger)");
+        .call(drag)
+        .on("click", (event) => { // For non-drag clicks
+             startPoint = {x: x.invert(event.x), y: y.invert(event.y)};
+             update();
         });
 
-    funcSelect.addEventListener("change", () => { svg.selectAll(".gd-path, .start-point").remove(); startPoint=null; drawContours(); });
-    lrSlider.addEventListener("input", () => lrVal.textContent = (+lrSlider.value).toFixed(2));
-    startBtn.addEventListener("click", run);
+    funcSelect.addEventListener("change", () => { startPoint=null; pathGroup.selectAll("*").remove(); update(); });
+    lrSlider.addEventListener("input", () => {
+        lrVal.textContent = (+lrSlider.value).toFixed(2);
+        if (startPoint) update();
+    });
 
-    drawContours();
+    update();
 }

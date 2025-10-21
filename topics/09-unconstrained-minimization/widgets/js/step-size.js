@@ -13,15 +13,24 @@ export async function initStepSize(containerId) {
     container.innerHTML = `
         <div class="step-size-widget">
             <div class="widget-controls">
-                <label>Function:</label> <select id="ss-func-select">
-                    <option value="x**2 + 5*y**2">Well-conditioned</option>
-                    <option value="x**2 + 25*y**2">Ill-conditioned</option>
-                </select>
-                <label>Step Size (α): <span id="ss-alpha-val">0.05</span></label>
-                <input type="range" id="ss-alpha-slider" min="0.01" max="0.1" step="0.005" value="0.05">
+                <div class="control-group">
+                    <label>Function:</label> <select id="ss-func-select">
+                        <option value="well">Well-conditioned Quadratic</option>
+                        <option value="ill">Ill-conditioned Quadratic</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Step Size (α):</label>
+                    <input type="radio" name="alpha-type" value="fixed" checked> Fixed
+                    <input type="radio" name="alpha-type" value="auto"> Auto (Backtracking)
+                    <input type="range" id="ss-alpha-slider" min="0.01" max="0.2" step="0.005" value="0.05">
+                    <span id="ss-alpha-val">0.050</span>
+                </div>
+                <button id="ss-reset-btn">Reset Start</button>
             </div>
             <div id="plot-container"></div>
-            <p class="widget-instructions">Click to set a start point. Adjust the step size to see convergence, slow progress, or divergence.</p>
+            <p class="widget-instructions">Drag the start point. Adjust the fixed step size or use backtracking line search.</p>
+            <div id="ss-output" class="widget-output"></div>
         </div>
     `;
 
@@ -29,11 +38,14 @@ export async function initStepSize(containerId) {
     const alphaSlider = container.querySelector("#ss-alpha-slider");
     const alphaVal = container.querySelector("#ss-alpha-val");
     const plotContainer = container.querySelector("#plot-container");
+    const outputDiv = container.querySelector("#ss-output");
+    const resetBtn = container.querySelector("#ss-reset-btn");
 
-    let startPoint = {x: 3, y: 3};
+    let startPoint = [3, 3];
+    const defaultStartPoint = [3, 3];
 
     const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const width = (plotContainer.clientWidth || 600) - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
     const svg = d3.select(plotContainer).append("svg")
@@ -48,68 +60,102 @@ export async function initStepSize(containerId) {
     svg.append("g").call(d3.axisLeft(y));
 
     const pyodide = await getPyodide();
-    await pyodide.loadPackage("sympy");
-
     const pythonCode = `
-import sympy
 import numpy as np
 import json
 
-x, y = sympy.symbols('x y')
+def get_data(func_name, start_pt_list, alpha_type, alpha_val):
+    # --- Function definitions ---
+    def func_well(p): return p[0]**2 + 5*p[1]**2
+    def grad_well(p): return np.array([2*p[0], 10*p[1]])
 
-def get_gd_path_and_contours(f_str, start_pt, alpha):
-    f = sympy.sympify(f_str)
-    grad_f = sympy.lambdify((x, y), [sympy.diff(f, x), sympy.diff(f, y)], 'numpy')
+    def func_ill(p): return p[0]**2 + 50*p[1]**2
+    def grad_ill(p): return np.array([2*p[0], 100*p[1]])
 
-    path = [np.array(start_pt)]
-    p = np.array(start_pt)
-    for _ in range(50):
-        grad = np.array(grad_f(p[0], p[1]))
-        p_next = p - alpha * grad
+    func_map = {'well': (func_well, grad_well), 'ill': (func_ill, grad_ill)}
+    func, grad = func_map[func_name]
+
+    # --- Path calculation ---
+    path = [np.array(start_pt_list)]
+    p = np.array(start_pt_list)
+    status = "Running"
+    for i in range(100):
+        g = grad(p)
+        if np.linalg.norm(g) < 1e-4:
+            status = f"Converged in {i} iterations."; break
+
+        if alpha_type == 'fixed':
+            alpha = float(alpha_val)
+        else: # Backtracking
+            alpha, beta_bt, c_bt = 1.0, 0.5, 0.5
+            while func(p - alpha * g) > func(p) - c_bt * alpha * np.dot(g, g):
+                alpha *= beta_bt
+
+        p_next = p - alpha * g
         path.append(p_next)
-        if np.linalg.norm(p_next - p) < 1e-3 or np.linalg.norm(p_next) > 1e4:
-            break
+        if np.linalg.norm(p_next) > 1e4:
+            status = f"Diverged after {i+1} iterations."; break
         p = p_next
+    else:
+        status = "Max iterations (100) reached."
 
-    f_np = sympy.lambdify((x, y), f, 'numpy')
+    # --- Contour calculation ---
     xx, yy = np.meshgrid(np.linspace(-4, 4, 50), np.linspace(-4, 4, 50))
-    zz = f_np(xx, yy)
+    zz = func(np.array([xx, yy]))
 
-    return json.dumps({"path": np.array(path).tolist(), "contours": zz.flatten().tolist()})
+    return json.dumps({"path": np.array(path).tolist(), "contours": zz.tolist(), "status": status})
 `;
     await pyodide.runPythonAsync(pythonCode);
-    const get_gd_path_and_contours = pyodide.globals.get('get_gd_path_and_contours');
+    const get_data = pyodide.globals.get('get_data');
 
     async function update() {
-        const funcStr = funcSelect.value;
+        const funcName = funcSelect.value;
+        const alphaType = container.querySelector('input[name="alpha-type"]:checked').value;
         const alpha = +alphaSlider.value;
         alphaVal.textContent = alpha.toFixed(3);
+        alphaSlider.style.display = alphaType === 'fixed' ? 'inline-block' : 'none';
+        alphaVal.style.display = alphaType === 'fixed' ? 'inline-block' : 'none';
 
-        const data = await get_gd_path_and_contours(funcStr, [startPoint.x, startPoint.y], alpha).then(r => JSON.parse(r));
+        const data = await get_data(funcName, startPoint, alphaType, alpha).then(r => JSON.parse(r));
 
-        svg.selectAll(".contour").remove();
+        svg.selectAll(".contour, .gd-path, .start-point").remove();
+
+        const colorScale = d3.scaleSequential(d3.interpolateViridis).domain([d3.max(data.contours.flat()), 0]);
         svg.append("g").attr("class", "contour")
-            .selectAll("path").data(d3.contours().size([50,50]).thresholds(20)(data.contours)).join("path")
-            .attr("d", d3.geoPath(d3.geoIdentity().scale(width/49)))
-            .attr("fill", "none").attr("stroke", "var(--color-surface-1)");
+            .selectAll("path").data(d3.contours().thresholds(d3.range(0, 200, 5))(data.contours.flat()))
+            .join("path")
+            .attr("d", d3.geoPath(d3.geoIdentity().scale(width / 49)))
+            .attr("fill", d => colorScale(d.value))
+            .attr("stroke", "#000").attr("stroke-width", 0.2);
 
-        svg.selectAll(".gd-path").remove();
         svg.append("path").attr("class", "gd-path").datum(data.path)
-            .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])))
-            .attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
+            .attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1])))
+            .attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5);
 
-        svg.selectAll(".start-point").remove();
-        svg.append("circle").attr("class", "start-point").attr("cx", x(startPoint.x)).attr("cy", y(startPoint.y)).attr("r", 5).attr("fill", "var(--color-danger)");
+        svg.append("circle").attr("class", "start-point").attr("cx", x(startPoint[0])).attr("cy", y(startPoint[1]))
+            .attr("r", 7).attr("fill", "var(--color-danger)").style("cursor", "move")
+            .call(d3.drag().on("drag", function(event) {
+                startPoint = [x.invert(event.x), y.invert(event.y)];
+                update();
+            }));
+
+        outputDiv.textContent = data.status;
     }
+
+    container.querySelectorAll('input[name="alpha-type"]').forEach(radio => radio.addEventListener('change', update));
+    funcSelect.addEventListener("change", update);
+    alphaSlider.addEventListener("input", update);
+    resetBtn.addEventListener("click", () => {
+        startPoint = [...defaultStartPoint];
+        update();
+    });
 
     svg.append("rect").attr("width", width).attr("height", height).style("fill", "none").style("pointer-events", "all")
         .on("click", (event) => {
             const [mx, my] = d3.pointer(event, svg.node());
-            startPoint = {x: x.invert(mx), y: y.invert(my)};
+            startPoint = [x.invert(mx), y.invert(my)];
             update();
         });
 
-    funcSelect.addEventListener("change", update);
-    alphaSlider.addEventListener("input", update);
     update();
 }

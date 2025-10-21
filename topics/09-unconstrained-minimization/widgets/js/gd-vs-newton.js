@@ -13,22 +13,29 @@ export async function initGDvsNewton(containerId) {
     container.innerHTML = `
         <div class="gd-vs-newton-widget">
             <div class="widget-controls">
-                <button id="run-race-btn">Run Race</button>
-                <div class="legend">
-                    <span style="color:var(--color-primary);">―</span> Gradient Descent
-                    <span style="color:var(--color-accent); margin-left: 10px;">―</span> Newton's Method
+                <div class="control-group">
+                    <label>GD Step Size (α): <span id="gdn-alpha-val">0.0012</span></label>
+                    <input type="range" id="gdn-alpha-slider" min="0.0001" max="0.002" step="0.0001" value="0.0012">
+                </div>
+                 <div class="legend">
+                    <span style="color:var(--color-primary);">―</span> GD
+                    <span style="color:var(--color-accent); margin-left: 10px;">―</span> Newton
                 </div>
             </div>
             <div id="plot-container"></div>
-            <p class="widget-instructions">Click "Run Race" to see the optimization paths. The problem is minimizing the non-convex Rosenbrock function.</p>
+            <p class="widget-instructions">Drag the start point. The problem is minimizing the Rosenbrock function.</p>
+            <div id="gdn-output" class="widget-output"></div>
         </div>
     `;
 
-    const runBtn = container.querySelector("#run-race-btn");
+    const alphaSlider = container.querySelector("#gdn-alpha-slider");
     const plotContainer = container.querySelector("#plot-container");
+    const outputDiv = container.querySelector("#gdn-output");
+
+    let startPoint = [-1.5, 2.5];
 
     const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const width = (plotContainer.clientWidth || 600) - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
     const svg = d3.select(plotContainer).append("svg")
@@ -47,9 +54,6 @@ export async function initGDvsNewton(containerId) {
 import numpy as np
 import json
 
-def rosenbrock(x, y):
-    return (1 - x)**2 + 100 * (y - x**2)**2
-
 def grad_rosenbrock(p):
     x, y = p
     return np.array([-2*(1-x) - 400*x*(y-x**2), 200*(y-x**2)])
@@ -58,55 +62,102 @@ def hess_rosenbrock(p):
     x, y = p
     return np.array([[1200*x**2 - 400*y + 2, -400*x], [-400*x, 200]])
 
-def run_paths():
-    start_point = np.array([-1.5, 2.5])
+def run_paths(start_point_list, alpha):
+    start_point = np.array(start_point_list)
 
     # GD
     path_gd = [start_point.tolist()]
     p_gd = start_point.copy()
-    for _ in range(50):
-        p_gd -= 0.0012 * grad_rosenbrock(p_gd)
+    for _ in range(100):
+        grad = grad_rosenbrock(p_gd)
+        if np.linalg.norm(grad) < 1e-4: break
+        p_gd -= alpha * grad
         path_gd.append(p_gd.tolist())
-        if np.linalg.norm(grad_rosenbrock(p_gd)) < 1e-3: break
+        if np.linalg.norm(p_gd) > 1e3: break # Divergence
 
     # Newton
     path_newton = [start_point.tolist()]
     p_newton = start_point.copy()
-    for _ in range(6):
-        p_newton -= np.linalg.inv(hess_rosenbrock(p_newton)) @ grad_rosenbrock(p_newton)
-        path_newton.append(p_newton.tolist())
-        if np.linalg.norm(grad_rosenbrock(p_newton)) < 1e-3: break
+    newton_info = "OK"
+    for _ in range(15):
+        grad = grad_rosenbrock(p_newton)
+        if np.linalg.norm(grad) < 1e-4: break
+        try:
+            hess = hess_rosenbrock(p_newton)
+            # Damping for stability
+            step = np.linalg.solve(hess + 1e-4 * np.eye(2), grad)
+            p_newton -= step
+            path_newton.append(p_newton.tolist())
+            if np.linalg.norm(p_newton) > 1e3:
+                newton_info = "Diverged"; break
+        except np.linalg.LinAlgError:
+            newton_info = "Hessian singular"; break
 
-    return json.dumps({"gd": path_gd, "newton": path_newton})
+    return json.dumps({
+        "gd": {"path": path_gd, "iter": len(path_gd)-1},
+        "newton": {"path": path_newton, "iter": len(path_newton)-1, "info": newton_info}
+    })
 `;
     await pyodide.runPythonAsync(pythonCode);
     const run_paths = pyodide.globals.get('run_paths');
 
-    // Contours
-    const grid = d3.range(-2, 2.1, 0.1).flatMap(i => d3.range(-1, 3.1, 0.1).map(j => ({x: i, y: j, v: (1 - i)**2 + 100 * (j - i*i)**2})));
-    const contours = d3.contourDensity().x(d=>x(d.x)).y(d=>y(d.y)).weight(d=>d.v).thresholds(30)(grid);
-    svg.append("g").selectAll("path").data(contours).join("path")
-        .attr("d", d3.geoPath()).attr("fill", "none").attr("stroke", "var(--color-surface-1)");
+    const contourGroup = svg.append("g");
+    const gdPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2.5);
+    const newtonPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5);
+    const startPointHandle = svg.append("circle").attr("r", 7).attr("fill", "var(--color-danger)").style("cursor", "move");
 
-    const gdPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
-    const newtonPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
+    async function update() {
+        const alpha = +alphaSlider.value;
+        container.querySelector("#gdn-alpha-val").textContent = alpha.toFixed(4);
 
-    async function run() {
-        runBtn.disabled = true;
-        const paths = await run_paths().then(r => JSON.parse(r));
+        startPointHandle.attr("cx", x(startPoint[0])).attr("cy", y(startPoint[1]));
+
+        const result = await run_paths(startPoint, alpha).then(r => JSON.parse(r));
 
         const animate = (pathEl, data) => {
-            pathEl.datum(data).attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])));
+            pathEl.datum(data)
+                .attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1])))
+                .attr("stroke-dasharray", "none")
+                .node().getTotalLength(); // to flush
             const totalLength = pathEl.node().getTotalLength();
-            pathEl.attr("stroke-dasharray", `${totalLength} ${totalLength}`).attr("stroke-dashoffset", totalLength)
-                .transition().duration(2000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
+            pathEl.attr("stroke-dasharray", `${totalLength} ${totalLength}`)
+                .attr("stroke-dashoffset", totalLength)
+                .transition().duration(1000).ease(d3.easeLinear)
+                .attr("stroke-dashoffset", 0);
         };
 
-        animate(gdPath, paths.gd);
-        animate(newtonPath, paths.newton);
+        animate(gdPath, result.gd.path);
+        animate(newtonPath, result.newton.path);
 
-        setTimeout(() => runBtn.disabled = false, 2000);
+        outputDiv.innerHTML = `
+            GD iterations: <strong>${result.gd.iter}</strong><br>
+            Newton iterations: <strong>${result.newton.iter}</strong>
+            (${result.newton.info})
+        `;
     }
 
-    runBtn.addEventListener("click", run);
+    // Draw contours once
+    pyodide.runPythonAsync(`
+import numpy as np
+import json
+xx, yy = np.meshgrid(np.linspace(-2, 2, 80), np.linspace(-1, 3, 80))
+zz = (1-xx)**2 + 100*(yy-xx**2)**2
+contours_json = json.dumps(zz.tolist())
+    `).then(() => {
+        const contours_data = JSON.parse(pyodide.globals.get('contours_json'));
+        const thresholds = d3.range(0, 10, 0.5).concat(d3.range(10, 50, 5), d3.range(50, 400, 20));
+        contourGroup.selectAll("path")
+            .data(d3.contours().thresholds(thresholds)(contours_data.flat()))
+            .join("path")
+            .attr("d", d3.geoPath(d3.geoIdentity().scale(width / 79)))
+            .attr("fill", "none").attr("stroke", "var(--color-surface-1)").attr("stroke-width", 0.5);
+    });
+
+    startPointHandle.call(d3.drag().on("drag", function(event) {
+        startPoint = [x.invert(event.x), y.invert(event.y)];
+        update();
+    }));
+    alphaSlider.addEventListener("input", update);
+
+    update();
 }

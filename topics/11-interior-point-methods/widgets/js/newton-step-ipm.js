@@ -14,22 +14,34 @@ export async function initNewtonStepIPM(containerId) {
     container.innerHTML = `
         <div class="newton-step-widget">
             <div class="widget-controls">
-                <label>Barrier Param (t): <span id="t-val-ns">1.0</span></label>
-                <input type="range" id="t-slider-ns" min="-1" max="2" step="0.1" value="0">
+                <div class="control-group">
+                    <label>Barrier Param (t): <span id="t-val-ns">1.0</span></label>
+                    <input type="range" id="t-slider-ns" min="-1" max="3" step="0.1" value="0">
+                </div>
+                <button id="ns-reset-btn">Reset</button>
             </div>
             <div id="plot-container"></div>
-            <p class="widget-instructions">Drag the red point (xₖ) to see the Newton step components at different locations.</p>
+            <div class="legend">
+                <span style="color:var(--color-primary);">―</span> Affine Step
+                <span style="color:var(--color-accent); margin-left: 10px;">―</span> Centering Step
+                <span style="color:white; margin-left: 10px;">---</span> Full Newton Step
+            </div>
+            <p class="widget-instructions">Drag the point xₖ (red) and the objective vector (purple).</p>
         </div>
     `;
 
     const tSlider = container.querySelector("#t-slider-ns");
     const tVal = container.querySelector("#t-val-ns");
     const plotContainer = container.querySelector("#plot-container");
+    const resetBtn = container.querySelector("#ns-reset-btn");
 
-    let xk = {x: 0.2, y: 0.2};
+    let xk = [0.2, 0.2];
+    let c = [-1.0, -2.0];
+    const defaultXk = [0.2, 0.2];
+    const defaultC = [-1.0, -2.0];
 
     const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const width = (plotContainer.clientWidth || 600) - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
     const svg = d3.select(plotContainer).append("svg")
@@ -43,39 +55,34 @@ export async function initNewtonStepIPM(containerId) {
     svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
     svg.append("g").call(d3.axisLeft(y));
 
-    // Feasible region & central path
-    svg.append("rect").attr("x",x(0)).attr("y",y(1)).attr("width",x(1)-x(0)).attr("height",y(0)-y(1)).attr("fill","var(--color-primary-light)").attr("opacity",0.5);
-    const central_path = d3.range(0.1, 20, 0.5).map(t_val => [(t_val*1-1)/(2*t_val), (t_val*2-1)/(2*t_val)]);
-    svg.append("path").datum(central_path).attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))).attr("fill", "none").attr("stroke", "var(--color-danger)").attr("stroke-dasharray", "4 4");
+    const visGroup = svg.append("g");
 
     const pyodide = await getPyodide();
     const pythonCode = `
 import numpy as np
 import json
 
-c = np.array([-1.0, -2.0])
-A = np.array([[-1,0], [0,-1], [1,0], [0,1]])
-b = np.array([0,0,1,1])
+def get_newton_step(xk_list, t, c_vec):
+    x = np.array(xk_list)
+    c = np.array(c_vec)
+    A = np.array([[-1,0], [0,-1], [1,0], [0,1]])
+    b = np.array([0,0,1,1])
 
-def get_newton_step(xk, t):
-    x = np.array(xk)
     # Barrier grad and hessian
-    #phi = -np.sum(np.log(b - A @ x))
-    g_phi = (A.T / (b - A @ x)).sum(axis=1)
-    H_phi = A.T @ np.diag(1/((b - A @ x)**2)) @ A
+    residuals = b - A @ x
+    if np.any(residuals <= 0): return None
 
-    # Full gradient and hessian of barrier objective
-    g = t * c + g_phi
-    H = H_phi
+    g_phi = (A.T / residuals).sum(axis=1)
+    H_phi = A.T @ np.diag(1/(residuals**2)) @ A
 
-    # Newton step dx = -H^-1 * g
-    dx = -np.linalg.inv(H) @ g
+    try:
+        H_inv = np.linalg.inv(H_phi)
+    except np.linalg.LinAlgError:
+        return None
 
-    # Affine step: dx_aff = - (1/t) * H^-1 * c
-    dx_aff = -(1/t) * np.linalg.inv(H) @ (t*c)
-
-    # Centering step: dx_cent = - H^-1 * g_phi
-    dx_cent = -np.linalg.inv(H) @ g_phi
+    dx_aff = -H_inv @ c
+    dx_cent = -H_inv @ g_phi
+    dx = dx_aff + (1/t) * dx_cent
 
     return json.dumps({
         "dx": dx.tolist(),
@@ -86,33 +93,58 @@ def get_newton_step(xk, t):
     await pyodide.runPythonAsync(pythonCode);
     const get_newton_step = pyodide.globals.get('get_newton_step');
 
-    const k_point = svg.append("circle").attr("r", 5).attr("fill", "var(--color-danger)").style("cursor", "move");
-    const aff_vec = svg.append("line").attr("stroke", "var(--color-primary)").attr("marker-end", "url(#arrow)");
-    const cent_vec = svg.append("line").attr("stroke", "var(--color-accent)").attr("marker-end", "url(#arrow)");
-    const nt_vec = svg.append("line").attr("stroke", "white").attr("stroke-dasharray", "3,3");
-
     async function update() {
         const t = 10**(+tSlider.value);
         tVal.textContent = t.toExponential(1);
 
-        k_point.attr("cx", x(xk.x)).attr("cy", y(xk.y));
+        visGroup.selectAll("*").remove();
 
-        const step = await get_newton_step([xk.x, xk.y], t).then(r => JSON.parse(r));
+        // Feasible region & central path
+        visGroup.append("rect").attr("x",x(0)).attr("y",y(1)).attr("width",x(1)-x(0)).attr("height",y(0)-y(1)).attr("fill","var(--color-primary-light)").attr("opacity",0.3);
+        const central_path_data = Array.from({length: 100}, (_, i) => {
+            const t_val = 10**(-1 + 4*i/99);
+            return [(t_val*(-c[0])-1)/(2*t_val), (t_val*(-c[1])-1)/(2*t_val)];
+        });
+        visGroup.append("path").datum(central_path_data).attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))).attr("fill", "none").attr("stroke", "var(--color-danger)").attr("stroke-dasharray", "3 3").attr("opacity",0.7);
 
-        aff_vec.attr("x1", x(xk.x)).attr("y1", y(xk.y)).attr("x2", x(xk.x + step.dx_aff[0])).attr("y2", y(xk.y + step.dx_aff[1]));
-        cent_vec.attr("x1", x(xk.x)).attr("y1", y(xk.y)).attr("x2", x(xk.x + step.dx_cent[0])).attr("y2", y(xk.y + step.dx_cent[1]));
-        nt_vec.attr("x1", x(xk.x)).attr("y1", y(xk.y)).attr("x2", x(xk.x + step.dx[0])).attr("y2", y(xk.y + step.dx[1]));
+        const step = await get_newton_step(xk, t, c).then(r => r ? JSON.parse(r) : null);
+
+        if (step) {
+            visGroup.append("line").attr("x1", x(xk[0])).attr("y1", y(xk[1])).attr("x2", x(xk[0] + step.dx_aff[0])).attr("y2", y(xk[1] + step.dx_aff[1])).attr("stroke", "var(--color-primary)").attr("stroke-width", 2.5).attr("marker-end", "url(#arrow-aff)");
+            visGroup.append("line").attr("x1", x(xk[0])).attr("y1", y(xk[1])).attr("x2", x(xk[0] + step.dx_cent[0])).attr("y2", y(xk[1] + step.dx_cent[1])).attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5).attr("marker-end", "url(#arrow-cent)");
+            visGroup.append("line").attr("x1", x(xk[0])).attr("y1", y(xk[1])).attr("x2", x(xk[0] + step.dx[0])).attr("y2", y(xk[1] + step.dx[1])).attr("stroke", "white").attr("stroke-dasharray", "3 3").attr("stroke-width", 2);
+        }
+
+        visGroup.append("circle").attr("cx", x(xk[0])).attr("cy", y(xk[1])).attr("r", 7).attr("fill", "var(--color-danger)").style("cursor", "move")
+            .call(d3.drag().on("drag", function(event) {
+                xk = [x.invert(event.x), y.invert(event.y)];
+                xk[0] = Math.max(1e-3, Math.min(1-1e-3, xk[0]));
+                xk[1] = Math.max(1e-3, Math.min(1-1e-3, xk[1]));
+                update();
+            }));
+
+        const c_handle_pos = [-c[0] * 0.2, -c[1] * 0.2];
+        visGroup.append("circle").attr("cx", x(c_handle_pos[0])).attr("cy", y(c_handle_pos[1])).attr("r", 7).attr("fill", "transparent").style("cursor", "move")
+            .call(d3.drag().on("drag", function(event) {
+                c = [-x.invert(event.x)*5, -y.invert(event.y)*5];
+                update();
+            }));
+        visGroup.append("line").attr("x1",x(0)).attr("y1",y(0)).attr("x2",x(c_handle_pos[0])).attr("y2",y(c_handle_pos[1])).attr("stroke","purple").attr("stroke-width",2).attr("marker-end","url(#arrow-c)");
     }
 
-    const drag = d3.drag().on("drag", (event) => {
-        const [mx,my] = d3.pointer(event, svg.node());
-        xk = {x: x.invert(mx), y: y.invert(my)};
-        // Ensure point stays inside feasible set
-        xk.x = Math.max(1e-3, Math.min(1-1e-3, xk.x));
-        xk.y = Math.max(1e-3, Math.min(1-1e-3, xk.y));
+    const defs = svg.append("defs");
+    [["aff", "var(--color-primary)"], ["cent", "var(--color-accent)"], ["c", "purple"]].forEach(([id, color]) => {
+         defs.append("marker").attr("id", `arrow-${id}`).attr("viewBox", "0 -5 10 10")
+            .attr("refX", 10).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6)
+            .attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", color);
+    });
+
+    tSlider.addEventListener("input", update);
+    resetBtn.addEventListener("click", () => {
+        xk = [...defaultXk];
+        c = [...defaultC];
+        tSlider.value = 0;
         update();
     });
-    k_point.call(drag);
-    tSlider.addEventListener("input", update);
     update();
 }
