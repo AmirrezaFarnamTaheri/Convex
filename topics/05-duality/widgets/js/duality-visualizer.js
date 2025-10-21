@@ -22,6 +22,13 @@ export function initDualityVisualizer(containerId) {
     // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="duality-visualizer-widget">
+            <div class="widget-controls" style="padding: 15px;">
+                <h4>Primal Objective: Maximize c₁x₁ + c₂x₂</h4>
+                <div class="control-row">
+                    c₁: <input type="number" id="c1-in" value="-1" step="0.1">
+                    c₂: <input type="number" id="c2-in" value="-2" step="0.1">
+                </div>
+            </div>
             <div class="plots-container" style="display: flex; flex-wrap: wrap; gap: 15px;">
                 <div id="primal-plot" style="flex: 1; min-width: 300px; height: 400px;"></div>
                 <div id="dual-plot" style="flex: 1; min-width: 300px; height: 400px;"></div>
@@ -30,6 +37,8 @@ export function initDualityVisualizer(containerId) {
         </div>
     `;
 
+    const c1In = container.querySelector("#c1-in");
+    const c2In = container.querySelector("#c2-in");
     const primalPlotDiv = container.querySelector("#primal-plot");
     const dualPlotDiv = container.querySelector("#dual-plot");
     const outputDiv = container.querySelector("#duality-output");
@@ -59,6 +68,7 @@ export function initDualityVisualizer(containerId) {
     }
 
     function update() {
+        c = [+c1In.value, +c2In.value];
         // --- Primal Problem ---
         let primalFeasible = [[0,0], [10,0], [10,10], [0,10]]; // Start with x>=0 box
         const primalConstraints = [...A.map((row, i) => [...row, b[i]]), [-1, 0, 0], [0, -1, 0]];
@@ -76,6 +86,8 @@ export function initDualityVisualizer(containerId) {
         if (primalSol) {
             primalPlot.svg.select(".content").append("circle").attr("cx", primalPlot.x(primalSol[0]))
                 .attr("cy", primalPlot.y(primalSol[1])).attr("r", 6).attr("fill", "var(--color-success)");
+            primalPlot.svg.select(".content").append("text").attr("x", primalPlot.x(primalSol[0])).attr("y", primalPlot.y(primalSol[1]))
+                .attr("dy", "-1em").text(`p* = ${(c[0]*primalSol[0] + c[1]*primalSol[1]).toFixed(2)}`);
         }
 
         // --- Dual Problem ---
@@ -84,7 +96,7 @@ export function initDualityVisualizer(containerId) {
         const dual_b = c.map(val => -val);
 
         // This is a 3D problem, we'll visualize a slice (y₃ = 0) for simplicity
-        let dualFeasible = [[0,0], [10,0], [10,10], [0,10]];
+        let dualFeasible = [[-10,-10], [10,-10], [10,10], [-10,10]];
         const dualConstraints = [...dual_A.map((row, i) => [...row, dual_b[i]]), [-1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0]]; // y>=0
         dualConstraints.filter(c => Math.abs(c[2]) < 1e-6).forEach(c => { // Project to y3=0 plane
              dualFeasible = polygonClip(halfPlaneToPolygon({a: c.slice(0,2), b: c[3]}), dualFeasible);
@@ -100,6 +112,8 @@ export function initDualityVisualizer(containerId) {
         if (dualSol) {
             dualPlot.svg.select(".content").append("circle").attr("cx", dualPlot.x(dualSol[0]))
                 .attr("cy", dualPlot.y(dualSol[1])).attr("r", 6).attr("fill", "var(--color-success)");
+            dualPlot.svg.select(".content").append("text").attr("x", dualPlot.x(dualSol[0])).attr("y", dualPlot.y(dualSol[1]))
+                .attr("dy", "-1em").text(`d* = ${(b[0]*dualSol[0] + b[1]*dualSol[1]).toFixed(2)}`);
         }
 
         // --- Output ---
@@ -107,7 +121,8 @@ export function initDualityVisualizer(containerId) {
         const dualOptVal = dualSol ? b[0] * dualSol[0] + b[1] * dualSol[1] : NaN;
         outputDiv.innerHTML = `
             <strong>Primal Optimal Value:</strong> ${primalOptVal.toFixed(3)}<br>
-            <strong>Dual Optimal Value:</strong> ${dualOptVal.toFixed(3)} (projected)<br>
+            <strong>Dual Optimal Value:</strong> ${dualOptVal.toFixed(3)} (projected to y₃=0)<br>
+            The dual is a 3D problem; this visualization shows a slice where the third dual variable is zero.
             Strong duality holds: the optimal values are equal.
         `;
     }
@@ -139,6 +154,8 @@ export function initDualityVisualizer(containerId) {
         update();
     }
 
+    c1In.addEventListener('input', update);
+    c2In.addEventListener('input', update);
     new ResizeObserver(setup).observe(container);
     setup();
 }

@@ -21,15 +21,21 @@ export async function initSparseRecoveryDemo(containerId) {
             <div id="plot-container" style="width: 100%; height: 350px;"></div>
             <div class="widget-controls" style="padding: 15px;">
                 <div class="control-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                    <div><label>Algorithm:</label><select id="algorithm-select"><option value="Lasso">Lasso (ISTA)</option><option value="OMP">OMP</option></select></div>
                     <div><label># Samples (m): <span id="samples-val">25</span></label><input type="range" id="samples-slider" min="10" max="50" value="25"></div>
                     <div><label>Sparsity (k): <span id="sparsity-val">5</span></label><input type="range" id="sparsity-slider" min="1" max="15" value="5"></div>
-                    <div><label>Lasso Alpha (λ): <span id="alpha-val">0.1</span></label><input type="range" id="alpha-slider" min="0.01" max="0.5" step="0.01" value="0.1"></div>
+                    <div id="alpha-control"><label>Lasso Alpha (λ): <span id="alpha-val">0.1</span></label><input type="range" id="alpha-slider" min="0.01" max="0.5" step="0.01" value="0.1"></div>
                 </div>
                 <button id="run-recovery-btn" style="margin-top: 15px;">Generate New Signal & Recover</button>
+                 <details>
+                    <summary>Show Measurement Matrix (A)</summary>
+                    <div id="matrix-display" style="max-height: 150px; overflow-y: auto; font-family: monospace;"></div>
+                </details>
             </div>
         </div>
     `;
 
+    const algorithmSelect = container.querySelector("#algorithm-select");
     const sliders = {
         samples: container.querySelector("#samples-slider"),
         sparsity: container.querySelector("#sparsity-slider"),
@@ -42,6 +48,8 @@ export async function initSparseRecoveryDemo(containerId) {
     };
     const runBtn = container.querySelector("#run-recovery-btn");
     const plotContainer = container.querySelector("#plot-container");
+    const matrixDisplay = container.querySelector("#matrix-display");
+    const alphaControl = container.querySelector("#alpha-control");
 
     let svg, x, y;
     const n_features = 50;
@@ -49,16 +57,25 @@ export async function initSparseRecoveryDemo(containerId) {
     // --- Pyodide (for matrix ops) & JS Lasso ---
     const pythonSetup = `
         import numpy as np
+        from sklearn.linear_model import OrthogonalMatchingPursuit
+
         def generate_problem(n_features, n_samples, sparsity):
             original_signal = np.zeros(n_features)
             non_zero_indices = np.random.choice(n_features, sparsity, replace=False)
             original_signal[non_zero_indices] = np.random.uniform(-1, 1, sparsity)
             A = np.random.randn(n_samples, n_features)
+            A /= np.linalg.norm(A, axis=0) # Normalize columns
             y = A @ original_signal + 0.05 * np.random.randn(n_samples)
             return {"A": A, "y": y, "original": original_signal}
+
+        def omp(A, y, n_nonzero_coefs):
+            omp_model = OrthogonalMatchingPursuit(n_nonzero_coefs=n_nonzero_coefs)
+            omp_model.fit(A, y)
+            return omp_model.coef_
     `;
     await pyodide.runPythonAsync(pythonSetup);
     const generate_problem = pyodide.globals.get('generate_problem');
+    const omp = pyodide.globals.get('omp');
 
     function soft_threshold(rho, lam) { return Math.sign(rho) * Math.max(0, Math.abs(rho) - lam); }
 
@@ -105,10 +122,20 @@ export async function initSparseRecoveryDemo(containerId) {
         const n_samples = +sliders.samples.value;
         const sparsity = +sliders.sparsity.value;
         const alpha = +sliders.alpha.value;
+        const algorithm = algorithmSelect.value;
+
+        alphaControl.style.display = (algorithm === 'Lasso') ? 'block' : 'none';
 
         const problem = await generate_problem(n_features, n_samples, sparsity).then(r => r.toJs({create_proxies: false}));
 
-        const recovered_signal = lasso_ista(problem.A, problem.y, alpha);
+        let recovered_signal;
+        if (algorithm === 'Lasso') {
+            recovered_signal = lasso_ista(problem.A, problem.y, alpha);
+        } else {
+            recovered_signal = await omp(problem.A, problem.y, sparsity).then(r => r.toJs());
+        }
+
+        matrixDisplay.innerHTML = "A = [" + problem.A.map(row => "[" + row.map(v => v.toFixed(2)).join(', ') + "]").join('<br>') + "]";
 
         const barWidth = x.bandwidth();
         const drawBars = (selection, data, color) => {

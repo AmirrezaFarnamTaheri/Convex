@@ -5,6 +5,7 @@
  *              It shows the interplay between the least-squares objective contours and the regularization constraint boundaries.
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import renderMathInElement from "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.mjs";
 
 export function initRegularizationTheoryTool(containerId) {
     const container = document.getElementById(containerId);
@@ -17,16 +18,19 @@ export function initRegularizationTheoryTool(containerId) {
                 <select id="reg-geo-type">
                     <option value="L1">L1 (Lasso)</option>
                     <option value="L2">L2 (Ridge)</option>
+                    <option value="ElasticNet">Elastic Net</option>
                 </select>
                 <label>Constraint Size (t):</label>
                 <input type="range" id="reg-geo-t" min="0.1" max="4" step="0.1" value="1.5">
             </div>
             <div id="plot-container"></div>
+            <div id="norm-equation" class="widget-output"></div>
             <p class="widget-instructions">Drag the blue point (the unconstrained minimum) to see how the optimal solution (green point) changes.</p>
         </div>
     `;
 
     const typeSelect = container.querySelector("#reg-geo-type");
+    const normEquation = container.querySelector("#norm-equation");
     const tSlider = container.querySelector("#reg-geo-t");
     const plotContainer = container.querySelector("#plot-container");
 
@@ -74,8 +78,18 @@ export function initRegularizationTheoryTool(containerId) {
         let constraintShape;
         if (regType === 'L1') {
             constraintShape = [[t,0], [0,t], [-t,0], [0,-t]];
-        } else { // L2
+            normEquation.innerHTML = `L1 Norm:  \\( ||w||_1 = |w_1| + |w_2| \\leq t \\)`;
+        } else if (regType === 'L2') { // L2
             constraintShape = d3.range(0, 2*Math.PI+0.1, 0.1).map(a => [t*Math.cos(a), t*Math.sin(a)]);
+            normEquation.innerHTML = `L2 Norm: \\( ||w||_2^2 = w_1^2 + w_2^2 \\leq t^2 \\)`;
+        } else { // ElasticNet
+            const l1_ratio = 0.5;
+            // This is not a simple shape, so we approximate it
+            constraintShape = d3.range(-t, t+0.1, 0.1).flatMap(v => [
+                [v, (t - l1_ratio*Math.abs(v))/(1-l1_ratio)],
+                [v, -(t - l1_ratio*Math.abs(v))/(1-l1_ratio)]
+            ]);
+             normEquation.innerHTML = `Elastic Net: \\( \\alpha ||w||_1 + (1-\\alpha) ||w||_2^2 \\leq t \\)`;
         }
         constraintPath.attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(constraintShape) + "Z");
 
@@ -100,6 +114,7 @@ export function initRegularizationTheoryTool(containerId) {
             }
         }
         solutionPoint.attr("cx", x(sol_x)).attr("cy", y(sol_y));
+        renderMathInElement(normEquation);
     }
 
     typeSelect.addEventListener("change", update);

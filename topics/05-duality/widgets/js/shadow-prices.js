@@ -22,30 +22,35 @@ export function initShadowPrices(containerId) {
             <div id="plot-container-sp" style="width: 100%; height: 350px;"></div>
             <div class="widget-controls" style="padding: 15px;">
                 <p><strong>Problem:</strong> Maximize ${c[0]}x₁ + ${c[1]}x₂</p>
-                <p>s.t. ${A[0][0]}x₁ + ${A[0][1]}x₂ ≤ <span id="b1-val-text">3.0</span>, ${A[1][0]}x₁ + ${A[1][1]}x₂ ≤ ${b[1]}</p>
-                <label for="b1-slider">Perturb constraint b₁:</label>
-                <input type="range" id="b1-slider" min="0" max="5" step="0.1" value="3" style="width: 100%;">
+                <div id="constraints-text"></div>
+                <label for="constraint-select">Perturb Constraint:</label>
+                <select id="constraint-select"></select>
+                <input type="range" id="b-slider" min="0" max="5" step="0.1" value="3" style="width: 100%;">
                 <div class="widget-output" id="shadow-price-output" style="margin-top: 10px;"></div>
             </div>
         </div>
     `;
 
-    const b1Slider = container.querySelector("#b1-slider");
+    const constraintSelect = container.querySelector("#constraint-select");
+    const bSlider = container.querySelector("#b-slider");
     const b1ValSpan = container.querySelector("#b1-val-text");
     const plotContainer = container.querySelector("#plot-container-sp");
     const outputDiv = container.querySelector("#shadow-price-output");
 
     let svg, x, y;
 
-    // Pre-calculate optimal values for the graph
-    const b1_values = d3.range(0, 5.1, 0.1);
-    const optimal_values = b1_values.map(b1 => {
-        const local_b = [b1, b[1]];
-        const sol = solveLP(c, A, local_b);
-        return { b1: b1, p_star: sol ? sol.value : 0, dual: sol ? sol.dual[0] : 0 };
-    });
+    let optimal_values = [];
 
     function setupChart() {
+        const perturbed_idx = +constraintSelect.value;
+        const b_values = d3.range(0, 5.1, 0.1);
+        optimal_values = b_values.map(b_val => {
+            let local_b = [...b];
+            local_b[perturbed_idx] = b_val;
+            const sol = solveLP(c, A, local_b);
+            return { b: b_val, p_star: sol ? sol.value : 0, dual: sol ? sol.dual[perturbed_idx] : 0 };
+        });
+
         plotContainer.innerHTML = '';
         const margin = {top: 20, right: 20, bottom: 40, left: 50};
         const width = plotContainer.clientWidth - margin.left - margin.right;
@@ -59,11 +64,11 @@ export function initShadowPrices(containerId) {
         x = d3.scaleLinear().domain([0, 5]).range([0, width]);
         y = d3.scaleLinear().domain([0, d3.max(optimal_values, d => d.p_star) * 1.1]).range([height, 0]);
 
-        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x)).append("text").text("Constraint b₁").attr("x", width).attr("dy", "-0.5em").attr("text-anchor", "end").attr("fill", "currentColor");
-        svg.append("g").call(d3.axisLeft(y).ticks(5)).append("text").text("Optimal Value p*(b₁)").attr("transform", "rotate(-90)").attr("dy", "-3em").attr("text-anchor", "middle").attr("fill", "currentColor");
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x)).append("text").text(`Constraint b${perturbed_idx+1}`).attr("x", width).attr("dy", "-0.5em").attr("text-anchor", "end").attr("fill", "currentColor");
+        svg.append("g").call(d3.axisLeft(y).ticks(5)).append("text").text("Optimal Value p*").attr("transform", "rotate(-90)").attr("dy", "-3em").attr("text-anchor", "middle").attr("fill", "currentColor");
 
         svg.append("path").datum(optimal_values).attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2)
-           .attr("d", d3.line().x(d => x(d.b1)).y(d => y(d.p_star)));
+           .attr("d", d3.line().x(d => x(d.b)).y(d => y(d.p_star)));
 
         svg.append("g").attr("class", "tangent-group");
     }
@@ -102,29 +107,42 @@ export function initShadowPrices(containerId) {
     }
 
     function update() {
-        const b1 = parseFloat(b1Slider.value);
-        b1ValSpan.textContent = b1.toFixed(1);
+        const perturbed_idx = +constraintSelect.value;
+        const b_val = parseFloat(bSlider.value);
 
-        const current_b = [b1, b[1]];
+        let current_b = [...b];
+        current_b[perturbed_idx] = b_val;
+
         const sol = solveLP(c, A, current_b);
-        const shadow_price = sol ? sol.dual[0] : 0;
+        const shadow_price = sol ? sol.dual[perturbed_idx] : 0;
 
         const tangentGroup = svg.select(".tangent-group");
         tangentGroup.selectAll("*").remove();
 
         if (sol) {
-            tangentGroup.append("circle").attr("cx", x(b1)).attr("cy", y(sol.value)).attr("r", 5).attr("fill", "var(--color-accent)");
-            const intercept = sol.value - shadow_price * b1;
+            tangentGroup.append("circle").attr("cx", x(b_val)).attr("cy", y(sol.value)).attr("r", 5).attr("fill", "var(--color-accent)");
+            const intercept = sol.value - shadow_price * b_val;
             tangentGroup.append("line").attr("stroke", "var(--color-accent)").attr("stroke-width", 2).attr("stroke-dasharray", "4 4")
                 .attr("x1", x(0)).attr("y1", y(intercept))
                 .attr("x2", x(5)).attr("y2", y(shadow_price * 5 + intercept));
         }
 
-        outputDiv.innerHTML = `For b₁=${b1.toFixed(1)}, Optimal Value p* ≈ ${sol ? sol.value.toFixed(2) : 'N/A'}
-            <br>Shadow Price (Dual λ₁) ≈ <strong>${shadow_price.toFixed(2)}</strong> (slope of the graph)`;
+        outputDiv.innerHTML = `For b${perturbed_idx+1}=${b_val.toFixed(1)}, Optimal Value p* ≈ ${sol ? sol.value.toFixed(2) : 'N/A'}
+            <br>Shadow Price (Dual λ${perturbed_idx+1}) ≈ <strong>${shadow_price.toFixed(2)}</strong> (slope of the graph)`;
     }
 
-    b1Slider.oninput = update;
+    A.forEach((_, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `Constraint ${i+1}`;
+        constraintSelect.appendChild(option);
+    });
+
+    constraintSelect.addEventListener('change', () => {
+        setupChart();
+        update();
+    });
+    bSlider.oninput = update;
     new ResizeObserver(setupChart).observe(plotContainer);
     setupChart();
     update();

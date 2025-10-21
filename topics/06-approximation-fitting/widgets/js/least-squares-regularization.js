@@ -36,11 +36,16 @@ export async function initLeastSquaresRegularization(containerId) {
                     </div>
                 </div>
                 <button id="clear-points-btn" style="margin-top: 15px;">Clear Points</button>
+                <div class="widget-output" id="error-display" style="margin-top: 10px;"></div>
+                <p class="widget-instructions" style="margin-top: 10px;">
+                    Click on the plot to add data points. Observe how high-degree polynomials can overfit the data.
+                    Use L1 or L2 regularization to penalize complexity and achieve a smoother, more generalizable fit.
+                </p>
             </div>
         </div>
     `;
 
-    // ... (rest of the implementation is the same as the original, as it's already quite good)
+    const errorDisplay = container.querySelector("#error-display");
     const degreeSlider = container.querySelector("#degree-slider");
     const degreeVal = container.querySelector("#degree-val");
     const regTypeSelect = container.querySelector("#reg-type-select");
@@ -85,13 +90,18 @@ export async function initLeastSquaresRegularization(containerId) {
         from sklearn.linear_model import LinearRegression, Lasso, Ridge
         from sklearn.preprocessing import PolynomialFeatures
         from sklearn.pipeline import make_pipeline
+        from sklearn.metrics import mean_squared_error
         import numpy as np
 
         def fit_model(points_data, degree, reg_type, lambda_val):
-            if not points_data or len(points_data) < 2: return None
+            if not points_data or len(points_data) < 2:
+                return {"line": None, "train_error": 0, "test_error": 0}
 
-            X = np.array([p['x'] for p in points_data]).reshape(-1, 1)
-            y = np.array([p['y'] for p in points_data])
+            X_train = np.array([p['x'] for p in points_data]).reshape(-1, 1)
+            y_train = np.array([p['y'] for p in points_data])
+
+            X_test = np.linspace(-5, 5, 50).reshape(-1, 1)
+            y_test = 2*np.sin(X_test).flatten() + np.random.randn(50) * 0.2
 
             if reg_type == "None":
                 model = make_pipeline(PolynomialFeatures(degree), LinearRegression())
@@ -101,15 +111,23 @@ export async function initLeastSquaresRegularization(containerId) {
                 model = make_pipeline(PolynomialFeatures(degree), model_class(alpha=alpha, max_iter=10000, tol=1e-3))
 
             try:
-                model.fit(X, y)
+                model.fit(X_train, y_train)
                 line_x = np.linspace(-5, 5, 200).reshape(-1, 1)
                 line_y = model.predict(line_x)
-                return np.column_stack((line_x.flatten(), line_y)).tolist()
+
+                train_error = mean_squared_error(y_train, model.predict(X_train))
+                test_error = mean_squared_error(y_test, model.predict(X_test))
+
+                return {
+                    "line": np.column_stack((line_x.flatten(), line_y)).tolist(),
+                    "train_error": train_error,
+                    "test_error": test_error
+                }
             except Exception as e:
                 print(f"Error fitting model: {e}")
-                return None
+                return {"line": None, "train_error": 0, "test_error": 0}
     `;
-    pyodide.runPythonAsync(pythonCode);
+    await pyodide.runPythonAsync(pythonCode);
     const fit_model = pyodide.globals.get('fit_model');
 
     function drawPoints() {
@@ -128,13 +146,15 @@ export async function initLeastSquaresRegularization(containerId) {
         lambdaVal.textContent = lambda.toFixed(2);
         lambdaControl.style.display = (regType === 'None') ? 'none' : 'block';
 
-        const lineData = await fit_model(points.map(p => ({x:p.x, y:p.y})), degree, regType, lambda).then(ld => ld ? ld.toJs() : null);
+        const result = await fit_model(points.map(p => ({x:p.x, y:p.y})), degree, regType, lambda).then(r => r.toJs({create_proxies: false}));
 
-        if (lineData) {
-            svg.select(".regression-line").datum(lineData).attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1])));
+        if (result && result.line) {
+            svg.select(".regression-line").datum(result.line).attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1])));
         } else {
             svg.select(".regression-line").attr("d", null);
         }
+
+        errorDisplay.innerHTML = `<strong>Training Error (MSE):</strong> ${result.train_error.toFixed(3)} | <strong>Test Error (MSE):</strong> ${result.test_error.toFixed(3)}`;
     }
 
     const setupAndUpdate = () => {

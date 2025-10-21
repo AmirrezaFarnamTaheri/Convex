@@ -22,6 +22,8 @@ export function initComplementarySlacknessExplorer(containerId) {
         <div class="comp-slack-widget">
             <div id="plot-container" style="width: 100%; height: 400px;"></div>
             <div class="widget-controls" style="padding: 15px;">
+                <h4>Dual Variables (Lagrange Multipliers)</h4>
+                <div id="dual-sliders"></div>
                 <button id="reset-points-btn">Reset to Optimal</button>
                 <div id="cs-output" class="widget-output"></div>
             </div>
@@ -31,9 +33,10 @@ export function initComplementarySlacknessExplorer(containerId) {
     const plotContainer = container.querySelector("#plot-container");
     const outputDiv = container.querySelector("#cs-output");
     const resetBtn = container.querySelector("#reset-points-btn");
+    const dualSlidersDiv = container.querySelector("#dual-sliders");
 
     let primal_sol = [...optimal.x];
-    let dual_sol = [...optimal.lambda]; // Not user-adjustable in this version
+    let dual_sol = [...optimal.lambda];
 
     let svg, x, y;
 
@@ -93,16 +96,21 @@ export function initComplementarySlacknessExplorer(containerId) {
         // --- Output ---
         let outputHTML = `
             <h5>Primal Point x: [${primal_sol.map(v => v.toFixed(2)).join(', ')}]</h5>
-            <h5>Dual Variables λ (at optimum): [${optimal.lambda.join(', ')}]</h5>
+            <h5>Dual Variables λ: [${dual_sol.map(v => v.toFixed(2)).join(', ')}]</h5>
+            <h5>Dual Problem:</h5>
+            <p>Minimize 3λ₁ + λ₂ + 2λ₃ + 2λ₄</p>
+            <p>s.t. λ₁ - λ₂ + λ₃ ≥ -1</p>
+            <p>λ₁ + λ₂ + λ₄ ≥ -2</p>
+            <p>λᵢ ≥ 0</p>
             <h5>Complementary Slackness Conditions (λᵢ(bᵢ - aᵢᵀx)=0):</h5>
             <ul>`;
 
         for (let i = 0; i < A.length; i++) {
             const slack = primal_slack[i];
-            const lambda = optimal.lambda[i];
+            const lambda = dual_sol[i];
             const conditionMet = Math.abs(lambda * slack) < 1e-4;
             outputHTML += `<li>Constraint ${i + 1}:
-                λᵢ* = ${lambda.toFixed(2)}, Slack = ${slack.toFixed(2)}.
+                λᵢ = ${lambda.toFixed(2)}, Slack = ${slack.toFixed(2)}.
                 Product = ${(lambda * slack).toFixed(2)}.
                 <strong style="color: ${conditionMet ? 'var(--color-success)' : 'var(--color-danger)'};">
                 ${conditionMet ? 'Holds' : 'Fails'}</strong>
@@ -112,9 +120,30 @@ export function initComplementarySlacknessExplorer(containerId) {
         outputDiv.innerHTML = outputHTML;
     }
 
+    dual_sol.forEach((val, i) => {
+        const sliderDiv = document.createElement('div');
+        sliderDiv.innerHTML = `<label>λ${i+1}: <span id="dual-val-${i}"></span></label>
+                             <input type="range" id="dual-slider-${i}" min="0" max="3" step="0.1" value="${val}">`;
+        dualSlidersDiv.appendChild(sliderDiv);
+        const slider = sliderDiv.querySelector(`#dual-slider-${i}`);
+        const valSpan = sliderDiv.querySelector(`#dual-val-${i}`);
+        valSpan.textContent = val.toFixed(2);
+        slider.addEventListener('input', () => {
+            dual_sol[i] = +slider.value;
+            valSpan.textContent = (+slider.value).toFixed(2);
+            update();
+        });
+    });
+
     resetBtn.onclick = () => {
         primal_sol = [...optimal.x];
         dual_sol = [...optimal.lambda];
+        dual_sol.forEach((val, i) => {
+            const slider = dualSlidersDiv.querySelector(`#dual-slider-${i}`);
+            const valSpan = dualSlidersDiv.querySelector(`#dual-val-${i}`);
+            slider.value = val;
+            valSpan.textContent = val.toFixed(2);
+        });
         update();
     };
 

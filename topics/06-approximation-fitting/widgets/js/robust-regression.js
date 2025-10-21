@@ -18,16 +18,25 @@ export function initRobustRegression(containerId) {
             <div class="widget-controls" style="padding: 15px;">
                 <p class="widget-instructions">Click to add points. Try adding outliers far from the main trend.</p>
                 <button id="clear-rr-btn">Clear Points</button>
+                <div id="huber-delta-control">
+                    <label>Huber Delta: <span id="huber-delta-val">1.0</span></label>
+                    <input type="range" id="huber-delta-slider" min="0.1" max="3" step="0.1" value="1">
+                </div>
                 <div class="legend" style="margin-top: 10px;">
                     <span style="color:var(--color-primary); font-weight:bold;">●</span> Data Points |
                     <span style="color:var(--color-danger); margin-left: 10px; font-weight:bold;">―</span> Least Squares |
-                    <span style="color:var(--color-success); margin-left: 10px; font-weight:bold;">―</span> Huber (Robust)
+                    <span style="color:var(--color-success); margin-left: 10px; font-weight:bold;">―</span> Huber (Robust) |
+                    <span style="color:var(--color-accent); margin-left: 10px; font-weight:bold;">―</span> RANSAC
                 </div>
+                 <div id="residuals-display"></div>
             </div>
         </div>
     `;
 
     const clearBtn = container.querySelector("#clear-rr-btn");
+    const huberDeltaSlider = container.querySelector("#huber-delta-slider");
+    const huberDeltaVal = container.querySelector("#huber-delta-val");
+    const residualsDisplay = container.querySelector("#residuals-display");
     const plotContainer = container.querySelector("#plot-container");
 
     let points = [ {x: -3, y: -2.5}, {x: -2, y: -1.5}, {x: -1, y: -0.5}, {x: 0, y: 0.5}, {x: 1, y: 1.5}, {x: 2, y: 2.5} ];
@@ -52,6 +61,7 @@ export function initRobustRegression(containerId) {
         svg.append("g").attr("class", "points-group");
         svg.append("path").attr("class", "ls-line").attr("stroke", "var(--color-danger)").attr("stroke-width", 2.5).attr("fill", "none");
         svg.append("path").attr("class", "huber-line").attr("stroke", "var(--color-success)").attr("stroke-width", 2.5).attr("fill", "none");
+        svg.append("path").attr("class", "ransac-line").attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5).attr("fill", "none");
 
         svg.append("rect").attr("width", width).attr("height", height).style("fill", "none").style("pointer-events", "all")
             .on("click", (event) => {
@@ -100,26 +110,51 @@ export function initRobustRegression(containerId) {
         return { m, b };
     }
 
+    function ransac(data, n=2, k=10, t=1, d=Math.floor(data.length*0.6)) {
+        if (data.length < 2) return null;
+        let best_model = null;
+        let best_inliers = [];
+
+        for(let i=0; i<k; i++) {
+            const sample = d3.shuffle(data.slice()).slice(0, n);
+            const model = leastSquares(sample);
+            if(!model) continue;
+
+            const inliers = data.filter(p => Math.abs(p.y - (model.m*p.x + model.b)) < t);
+            if (inliers.length > best_inliers.length) {
+                best_inliers = inliers;
+                best_model = model;
+            }
+        }
+        return leastSquares(best_inliers);
+    }
+
     function update() {
+        huberDeltaVal.textContent = (+huberDeltaSlider.value).toFixed(1);
         svg.select(".points-group").selectAll("circle").data(points).join("circle")
             .attr("cx", d => x(d.x)).attr("cy", d => y(d.y))
             .attr("r", 5).attr("fill", "var(--color-primary)");
 
         const ls_params = leastSquares(points);
-        const huber_params = huberRegression(points);
+        const huber_params = huberRegression(points, +huberDeltaSlider.value);
+        const ransac_params = ransac(points);
 
         const lineGenerator = (params) => {
             if (!params) return null;
-            return d3.line()([
-                [x.domain()[0], params.m * x.domain()[0] + params.b],
-                [x.domain()[1], params.m * x.domain()[1] + params.b]
-            ]);
+            const [x1, x2] = x.domain();
+            return d3.line()([[x1, params.m * x1 + params.b], [x2, params.m * x2 + params.b]]);
         };
-
         const line = d3.line().x(d => x(d[0])).y(d => y(d[1]));
 
-        svg.select(".ls-line").datum(ls_params).transition().duration(200).attr("d", d => lineGenerator(d));
-        svg.select(".huber-line").datum(huber_params).transition().duration(200).attr("d", d => lineGenerator(d));
+        svg.select(".ls-line").datum(ls_params).transition().duration(200).attr("d", d => line(lineGenerator(d)));
+        svg.select(".huber-line").datum(huber_params).transition().duration(200).attr("d", d => line(lineGenerator(d)));
+        svg.select(".ransac-line").datum(ransac_params).transition().duration(200).attr("d", d => line(lineGenerator(d)));
+
+        const mse = (data, model) => d3.mean(data, p => (p.y - (model.m*p.x + model.b))**2);
+        residualsDisplay.innerHTML = `<strong>Mean Squared Error:</strong><br>
+            LS: ${mse(points, ls_params).toFixed(3)} |
+            Huber: ${mse(points, huber_params).toFixed(3)} |
+            RANSAC: ${mse(points, ransac_params).toFixed(3)}`;
     }
 
     clearBtn.onclick = () => {
@@ -127,6 +162,7 @@ export function initRobustRegression(containerId) {
         update();
     };
 
+    huberDeltaSlider.oninput = update;
     new ResizeObserver(setupChart).observe(plotContainer);
     setupChart();
     update();

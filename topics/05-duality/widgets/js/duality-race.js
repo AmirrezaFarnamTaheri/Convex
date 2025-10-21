@@ -16,6 +16,11 @@ export function initDualityRace(containerId) {
         <div class="duality-race-widget">
             <div id="plot-container" style="width: 100%; height: 350px;"></div>
             <div class="widget-controls" style="padding: 15px; text-align: center;">
+                <h4>Problem: Maximize c₁x₁ + c₂x₂</h4>
+                <div class="control-row">
+                    c₁: <input type="number" id="c1-in" value="1" step="0.1">
+                    c₂: <input type="number" id="c2-in" value="2" step="0.1">
+                </div>
                 <button id="run-duality-race-btn">Run Race</button>
                 <div id="legend" style="margin-top: 10px;"></div>
                 <div class="widget-output" id="duality-gap-text" style="margin-top: 10px;"></div>
@@ -24,6 +29,8 @@ export function initDualityRace(containerId) {
     `;
 
     const runBtn = container.querySelector("#run-duality-race-btn");
+    const c1In = container.querySelector("#c1-in");
+    const c2In = container.querySelector("#c2-in");
     const plotContainer = container.querySelector("#plot-container");
     const gapText = container.querySelector("#duality-gap-text");
     const legendContainer = container.querySelector("#legend");
@@ -50,22 +57,32 @@ export function initDualityRace(containerId) {
         svg.append("path").attr("class", "dual-path").attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5);
     }
 
-    function generateData() {
-        // Mocking convergence paths for visualization purposes
-        const n_iter = 15;
-        const optimal_val = 5;
-        const primal_start = 10, dual_start = 0;
+    function generateData(c1, c2) {
+        // A simple path-following interior-point method simulation
+        const n_iter = 20;
+        const optimal_val = Math.max(0, c1, c2) * 5; // Simplified optimal value calculation
+        let primal_obj = optimal_val * (1 + Math.random());
+        let dual_obj = optimal_val * (0 - Math.random());
+        const primal_path = [];
+        const dual_path = [];
 
-        const primalData = d3.range(n_iter).map(i => primal_start * Math.exp(-0.3 * i) + optimal_val * (1 - Math.exp(-0.3 * i)));
-        const dualData = d3.range(n_iter).map(i => dual_start + (optimal_val - dual_start) * (1 - Math.exp(-0.25 * i)));
-        return { primal: primalData, dual: dualData };
+        for(let i=0; i<n_iter; i++) {
+            primal_obj -= (primal_obj - optimal_val) * (0.2 + Math.random()*0.2);
+            dual_obj += (optimal_val - dual_obj) * (0.2 + Math.random()*0.2);
+            primal_path.push(primal_obj);
+            dual_path.push(dual_obj);
+        }
+        return { primal: primal_path, dual: dual_path };
     }
 
     function runAnimation() {
         runBtn.disabled = true;
         gapText.textContent = "Running...";
 
-        const data = generateData();
+        const c1 = +c1In.value;
+        const c2 = +c2In.value;
+        const data = generateData(c1, c2);
+
         const n_iter = data.primal.length;
         x.domain([0, n_iter - 1]);
         const all_vals = data.primal.concat(data.dual);

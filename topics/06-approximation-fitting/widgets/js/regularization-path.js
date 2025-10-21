@@ -13,12 +13,18 @@ export async function initRegularizationPath(containerId) {
     container.innerHTML = `
         <div class="reg-path-widget">
             <div class="widget-controls">
-                <label>Regularization Type:</label>
+                <label>Regularization:</label>
                 <select id="reg-type-select">
                     <option value="L1">L1 (Lasso)</option>
                     <option value="L2">L2 (Ridge)</option>
+                    <option value="ElasticNet">Elastic Net</option>
                 </select>
+                <div id="l1-ratio-control" style="display:none;">
+                    <label>L1 Ratio: <span id="l1-ratio-val">0.5</span></label>
+                    <input type="range" id="l1-ratio-slider" min="0.05" max="0.95" step="0.05" value="0.5">
+                </div>
                 <button id="regen-data-btn">Regenerate Data</button>
+                <label><input type="checkbox" id="show-true-coefs"> Show True Coefficients</label>
             </div>
             <div id="plot-container"></div>
             <div class="widget-output" id="coef-output"></div>
@@ -26,6 +32,10 @@ export async function initRegularizationPath(containerId) {
     `;
 
     const regTypeSelect = container.querySelector("#reg-type-select");
+    const l1RatioControl = container.querySelector("#l1-ratio-control");
+    const l1RatioSlider = container.querySelector("#l1-ratio-slider");
+    const l1RatioVal = container.querySelector("#l1-ratio-val");
+    const showTrueCoefs = container.querySelector("#show-true-coefs");
     const regenBtn = container.querySelector("#regen-data-btn");
     const plotContainer = container.querySelector("#plot-container");
     const coefOutput = container.querySelector("#coef-output");
@@ -49,23 +59,28 @@ export async function initRegularizationPath(containerId) {
         coefOutput.textContent = "Generating data and computing paths...";
         svg.selectAll("*").remove(); // Clear previous plot
 
+        const l1_ratio = +l1RatioSlider.value;
+
         const data = await pyodide.runPythonAsync(`
             import numpy as np
             from sklearn.datasets import make_regression
-            from sklearn.linear_model import lasso_path, enet_path
+            from sklearn.linear_model import enet_path
             import json
 
             X, y, true_coef = make_regression(n_samples=50, n_features=8, n_informative=4, noise=20, coef=True, random_state=np.random.randint(1000))
 
             alphas = np.logspace(-2, 2, 100)
 
-            _, coefs_lasso, _ = lasso_path(X, y, alphas=alphas)
-            _, coefs_ridge, _ = enet_path(X, y, l1_ratio=0, alphas=alphas*0.1) # Scale alphas for Ridge for better viz
+            # l1_ratio=1 is Lasso, l1_ratio=0 is Ridge
+            _, coefs_lasso, _ = enet_path(X, y, l1_ratio=1, alphas=alphas)
+            _, coefs_ridge, _ = enet_path(X, y, l1_ratio=0, alphas=alphas*0.1)
+            _, coefs_enet, _ = enet_path(X, y, l1_ratio=${l1_ratio}, alphas=alphas*0.1)
 
             json.dumps({
                 "alphas": alphas.tolist(),
                 "lasso_coefs": coefs_lasso.T.tolist(),
                 "ridge_coefs": coefs_ridge.T.tolist(),
+                "enet_coefs": coefs_enet.T.tolist(),
                 "true_coef": true_coef.tolist()
             })
         `).then(r => JSON.parse(r));
@@ -84,7 +99,13 @@ export async function initRegularizationPath(containerId) {
 
         function drawPaths() {
             const regType = regTypeSelect.value;
-            const coefs = (regType === 'L1') ? data.lasso_coefs : data.ridge_coefs;
+            l1RatioControl.style.display = (regType === 'ElasticNet') ? 'block' : 'none';
+
+            const coefs = {
+                'L1': data.lasso_coefs,
+                'L2': data.ridge_coefs,
+                'ElasticNet': data.enet_coefs
+            }[regType];
 
             svg.selectAll(".coef-path").remove();
             for (let i = 0; i < n_features; i++) {
@@ -93,6 +114,12 @@ export async function initRegularizationPath(containerId) {
                     .attr("d", line)
                     .attr("fill", "none").attr("stroke", color(i)).attr("stroke-width", 2);
             }
+
+            svg.selectAll(".true-coef-line").data(showTrueCoefs.checked ? data.true_coef : []).join("line")
+                .attr("class", "true-coef-line")
+                .attr("x1", 0).attr("x2", width)
+                .attr("y1", d => y(d)).attr("y2", d => y(d))
+                .attr("stroke", (d,i) => color(i)).attr("stroke-dasharray", "5 5");
         }
 
         // Interactivity
@@ -113,7 +140,11 @@ export async function initRegularizationPath(containerId) {
                 const idx = bisect(data.alphas, alpha, 1);
 
                 const regType = regTypeSelect.value;
-                const coefs = (regType === 'L1') ? data.lasso_coefs : data.ridge_coefs;
+                const coefs = {
+                    'L1': data.lasso_coefs,
+                    'L2': data.ridge_coefs,
+                    'ElasticNet': data.enet_coefs
+                }[regType];
 
                 focus.select(".focus-line").attr("transform", `translate(${x(data.alphas[idx])},0)`);
                 let output = `<strong>α = ${data.alphas[idx].toFixed(2)}</strong><ul>`;
@@ -126,6 +157,11 @@ export async function initRegularizationPath(containerId) {
                 coefOutput.innerHTML = output;
             });
 
+        l1RatioSlider.oninput = () => {
+            l1RatioVal.textContent = (+l1RatioSlider.value).toFixed(2);
+            generateAndPlot();
+        }
+        showTrueCoefs.onchange = drawPaths;
         regTypeSelect.onchange = drawPaths;
         drawPaths();
     }
