@@ -1,25 +1,40 @@
 /**
- * Widget: KKT Checker
+ * Widget: KKT Conditions Checker
  *
- * Description: Allows users to input a problem and a potential solution, and the widget checks which KKT conditions are satisfied.
+ * Description: An interactive tool to check the KKT conditions for a user-selected
+ *              point and Lagrange multiplier in a simple constrained optimization problem.
+ * Version: 2.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-export async function initKKTChecker(containerId) {
+export function initKKTChecker(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    const problems = {
+        "QP": {
+            title: "Minimize x² + y² s.t. x + y ≥ 2",
+            func: (x, y) => x**2 + y**2,
+            grad_f: (x, y) => [2*x, 2*y],
+            g: (x, y) => 2 - (x + y), // g(x) <= 0
+            grad_g: (x, y) => [-1, -1],
+            domain: {x: [-1, 3], y: [-1, 3]}
+        }
+    };
+    let selectedProblem = problems["QP"];
+    let candidate_x = { x: 1, y: 1 };
+    let mu = 2.0;
+
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="kkt-checker-widget">
-            <div class="widget-controls">
-                <p><strong>Problem:</strong> Minimize x² + y² s.t. x + y ≥ 2</p>
-                <label>Lagrange multiplier μ:</label>
-                <input id="mu-slider" type="range" min="0" max="4" step="0.1" value="2">
-                <span id="mu-val">2.0</span>
+            <div id="plot-container" style="width: 100%; height: 400px;"></div>
+            <div class="widget-controls" style="padding: 15px;">
+                <p><strong>Problem:</strong> ${selectedProblem.title}</p>
+                <label>Lagrange multiplier μ = <span id="mu-val">2.0</span></label>
+                <input id="mu-slider" type="range" min="0" max="4" step="0.1" value="2" style="width: 100%;">
+                <div class="widget-output" id="kkt-status" style="margin-top: 10px;"></div>
             </div>
-            <div id="plot-container"></div>
-            <div class="widget-output" id="kkt-status"></div>
         </div>
     `;
 
@@ -28,84 +43,73 @@ export async function initKKTChecker(containerId) {
     const muValSpan = container.querySelector("#mu-val");
     const kktStatus = container.querySelector("#kkt-status");
 
-    let candidate_x = { x: 1, y: 1 };
+    let svg, x, y;
 
-    const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    function setupChart() {
+        plotContainer.innerHTML = '';
+        const margin = {top: 20, right: 20, bottom: 40, left: 40};
+        const width = plotContainer.clientWidth - margin.left - margin.right;
+        const height = plotContainer.clientHeight - margin.top - margin.bottom;
 
-    const svg = d3.select(plotContainer).append("svg")
-        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        svg = d3.select(plotContainer).append("svg")
+            .attr("width", "100%").attr("height", "100%")
+            .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-1, 3]).range([0, width]);
-    const y = d3.scaleLinear().domain([-1, 3]).range([height, 0]);
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-    svg.append("g").call(d3.axisLeft(y));
+        x = d3.scaleLinear().domain(selectedProblem.domain.x).range([0, width]);
+        y = d3.scaleLinear().domain(selectedProblem.domain.y).range([height, 0]);
 
-    // Feasible region (x+y >= 2)
-    const feasibleRegion = d3.polygonHull([[3, -1], [3, 3], [-1, 3]]);
-    svg.append("path").attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(feasibleRegion) + "Z").attr("fill", "var(--color-primary-light)");
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+        svg.append("g").call(d3.axisLeft(y));
 
-    // Objective contours
-    const contours = d3.range(0.5, 4, 0.5).map(r => d3.range(0, 2*Math.PI, 0.1).map(a => [r*Math.cos(a), r*Math.sin(a)]));
-    svg.selectAll("path.contour").data(contours).enter().append("path").attr("class", "contour").attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))).attr("stroke", "var(--color-surface-1)");
+        // Feasible region
+        const feasiblePath = "M" + [x(2), y(0)] + "L" + [x(3),y(0)] + "L" + [x(3),y(3)] + "L" + [x(0),y(3)] + "L" + [x(0),y(2)] + "Z";
+        svg.append("path").attr("d", feasiblePath).attr("fill", "var(--color-primary-light)");
 
-    const drag = d3.drag().on("drag", (event) => {
-        const [mx, my] = d3.pointer(event, svg.node());
-        candidate_x = { x: x.invert(mx), y: y.invert(my) };
-        update();
-    });
-    const candidatePoint = svg.append("circle").attr("r", 6).attr("fill", "var(--color-danger)").style("cursor", "move").call(drag);
+        // Contours
+        const contours = d3.range(0.5, 4, 0.5).map(r => d3.range(0, 2*Math.PI, 0.1).map(a => [r*Math.cos(a), r*Math.sin(a)]));
+        svg.selectAll("path.contour").data(contours).enter().append("path").attr("class", "contour")
+           .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))).attr("stroke", "var(--color-surface-1)");
 
-    const pyodide = await getPyodide();
-    await pyodide.loadPackage("sympy");
-    const pythonCode = `
-import sympy
-def check_kkt(x_val, y_val, mu_val):
-    x, y, mu = sympy.symbols('x y mu')
-    f = x**2 + y**2
-    g = 2 - (x + y)  # Constraint in g(x) <= 0 form
-    sol = {x: x_val, y: y_val, mu: mu_val}
-
-    primal_feas = g.subs(sol) <= 1e-6
-    dual_feas = sol[mu] >= 0
-    comp_slack = abs(sol[mu] * g.subs(sol)) < 1e-6
-
-    L = f + mu * g
-    grad_L_x = sympy.diff(L, x).subs(sol)
-    grad_L_y = sympy.diff(L, y).subs(sol)
-    stationarity = abs(grad_L_x) < 1e-6 and abs(grad_L_y) < 1e-6
-
-    return {
-        "Primal Feasibility (x+y≥2)": primal_feas,
-        "Dual Feasibility (μ≥0)": dual_feas,
-        "Complementary Slackness": comp_slack,
-        "Stationarity (∇L=0)": stationarity
+        const drag = d3.drag().on("drag", (event) => {
+            candidate_x = { x: x.invert(event.x), y: y.invert(event.y) };
+            update();
+        });
+        svg.append("circle").attr("class", "candidate-point").attr("r", 6)
+           .attr("fill", "var(--color-danger)").style("cursor", "move").call(drag);
     }
-`;
-    await pyodide.runPythonAsync(pythonCode);
-    const check_kkt = pyodide.globals.get('check_kkt');
 
-    async function update() {
-        const mu = +muSlider.value;
-        muValSpan.textContent = mu.toFixed(1);
-        candidatePoint.attr("cx", x(candidate_x.x)).attr("cy", y(candidate_x.y));
+    function checkKKT() {
+        const { func, grad_f, g, grad_g } = selectedProblem;
+        const { x, y } = candidate_x;
 
-        const results = await check_kkt(candidate_x.x, candidate_x.y, mu).then(r => r.toJs());
+        const grad_L = [
+            grad_f(x, y)[0] + mu * grad_g(x, y)[0],
+            grad_f(x, y)[1] + mu * grad_g(x, y)[1]
+        ];
+
+        const conditions = {
+            "Primal Feasibility (g(x) ≤ 0)": g(x, y) <= 1e-6,
+            "Dual Feasibility (μ ≥ 0)": mu >= 0,
+            "Complementary Slackness (|μ * g(x)| ≈ 0)": Math.abs(mu * g(x, y)) < 1e-4,
+            "Stationarity (||∇L|| ≈ 0)": Math.sqrt(grad_L[0]**2 + grad_L[1]**2) < 1e-4
+        };
 
         kktStatus.innerHTML = "<h5>KKT Conditions Status:</h5><ul>" +
-            Object.entries(results).map(([name, status]) => `
-                <li>${name}:
-                    <strong style="color:${status ? 'var(--color-success)' : 'var(--color-danger)'};">
-                    ${status ? 'Satisfied' : 'Violated'}
-                    </strong>
-                </li>
-            `).join('') + "</ul>";
+            Object.entries(conditions).map(([name, status]) => `
+                <li>${name}: <strong style="color:${status ? 'var(--color-success)' : 'var(--color-danger)'};">
+                ${status ? 'Satisfied' : 'Violated'}</strong></li>`).join('') + "</ul>";
+    }
+
+    function update() {
+        mu = parseFloat(muSlider.value);
+        muValSpan.textContent = mu.toFixed(1);
+        svg.select(".candidate-point").attr("cx", x(candidate_x.x)).attr("cy", y(candidate_x.y));
+        checkKKT();
     }
 
     muSlider.addEventListener("input", update);
+    new ResizeObserver(setupChart).observe(plotContainer);
+    setupChart();
     update();
 }

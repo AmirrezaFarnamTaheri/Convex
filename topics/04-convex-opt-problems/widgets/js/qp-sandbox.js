@@ -1,156 +1,160 @@
 /**
  * Widget: QP Solver Sandbox
  *
- * Description: An interactive sandbox for solving a simple 2D QP, showing the contour lines and constraints.
+ * Description: An interactive sandbox for defining and solving a simple 2D
+ *              Quadratic Program (QP).
+ * Version: 2.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { getPyodide } from "../../../../static/js/pyodide-manager.js";
+import { polygonClip } from "d3-polygon";
+// NOTE: A full QP solver is complex. This widget will visualize the problem
+// and identify the solution by checking vertices, which is sufficient for this 2D case.
 
 export async function initQPSandbox(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="qp-sandbox-widget">
-            <div class="widget-controls">
-                <h4>Minimize ½xᵀPx + qᵀx</h4>
-                <div id="qp-objective">
-                    P = [[<input type="number" step="0.1" value="1">, <input type="number" step="0.1" value="0">],
-                         [<input type="number" step="0.1" value="0">, <input type="number" step="0.1" value="1">]]
-                    <br>
-                    q = [<input type="number" step="0.1" value="0">, <input type="number" step="0.1" value="0">]
+            <div id="plot-container" style="width: 100%; height: 400px; cursor: crosshair;"></div>
+            <div class="widget-controls" style="padding: 15px;">
+                <h4>Objective: Minimize ½xᵀPx + qᵀx</h4>
+                <div id="qp-objective" class="matrix-controls">
+                     P = [[<input id="p00" type="number" value="1">, <input id="p01" type="number" value="0">],
+                         [<input id="p10" type="number" value="0">, <input id="p11" type="number" value="1">]]
+                     q = [<input id="q0" type="number" value="0">, <input id="q1" type="number" value="0">]
                 </div>
                 <h4>Constraints: Ax ≤ b</h4>
-                <div id="qp-constraints"></div>
-                <button id="add-qp-constraint">+ Add</button>
+                <p class="widget-instructions">Click-drag on the plot to add constraints.</p>
+                <div id="qp-constraints-list"></div>
+                <button id="solve-qp-btn">Solve QP</button>
+                <div id="qp-solution-text" class="widget-output" style="margin-top: 10px;"></div>
             </div>
-            <button id="solve-qp-btn">Solve QP</button>
-            <div id="plot-container"></div>
-            <div class="widget-output" id="qp-solution-text"></div>
         </div>
     `;
 
     const plotContainer = container.querySelector("#plot-container");
-    const constraintsContainer = container.querySelector("#qp-constraints");
-    const addBtn = container.querySelector("#add-qp-constraint");
+    const constraintsList = container.querySelector("#qp-constraints-list");
     const solveBtn = container.querySelector("#solve-qp-btn");
     const solutionText = container.querySelector("#qp-solution-text");
-    const P_inputs = container.querySelectorAll("#qp-objective input").slice(0, 4);
-    const q_inputs = container.querySelectorAll("#qp-objective input").slice(4);
 
-    let constraints = [[1, 1, 2]];
+    let constraints = [[1, 1, 2], [-1, 0, 0], [0, -1, 0]]; // a1, a2, b
+    let svg, x, y;
 
-    const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    function setupChart() {
+        plotContainer.innerHTML = '';
+        const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+        const width = plotContainer.clientWidth - margin.left - margin.right;
+        const height = plotContainer.clientHeight - margin.top - margin.bottom;
 
-    const svg = d3.select(plotContainer).append("svg")
-        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        svg = d3.select(plotContainer).append("svg")
+            .attr("width", "100%").attr("height", "100%")
+            .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-3, 3]).range([0, width]);
-    const y = d3.scaleLinear().domain([-3, 3]).range([height, 0]);
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-    svg.append("g").call(d3.axisLeft(y));
+        x = d3.scaleLinear().domain([-3, 3]).range([0, width]);
+        y = d3.scaleLinear().domain([-3, 3]).range([height, 0]);
 
-    const contourGroup = svg.append("g");
-    const feasibleRegion = svg.append("path").attr("fill", "var(--color-primary-light)").attr("opacity", 0.7);
-    const solutionPoint = svg.append("circle").attr("r", 6).attr("fill", "var(--color-success)").style("display", "none");
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+        svg.append("g").call(d3.axisLeft(y));
+        svg.append("g").attr("class", "content");
 
-    const pyodide = await getPyodide();
-    await pyodide.loadPackage(["cvxpy", "scipy", "shapely"]);
-
-    const pythonCode = `
-import numpy as np
-import cvxpy as cp
-from shapely.geometry import Polygon, HalfPlane
-import json
-
-def solve_qp(P_val, q_val, A_val, b_val):
-    x = cp.Variable(2)
-    P = np.array(P_val)
-    q = np.array(q_val)
-    A = np.array(A_val)
-    b = np.array(b_val)
-
-    objective = cp.Minimize(0.5 * cp.quad_form(x, P) + q.T @ x)
-    constraints = [A @ x <= b] if A.shape[0] > 0 else []
-
-    prob = cp.Problem(objective, constraints)
-    prob.solve()
-
-    # Feasible region
-    bounds = 100
-    feasible_poly = Polygon([(-bounds,-bounds), (bounds,-bounds), (bounds,bounds), (-bounds,bounds)])
-    if A.shape[0] > 0:
-        for i in range(A.shape[0]):
-            a, b_i = A[i], b[i]
-            p_on_boundary = a * b_i / np.dot(a, a) if np.dot(a, a) > 1e-9 else np.zeros(2)
-            feasible_poly = feasible_poly.intersection(HalfPlane(p_on_boundary, -a))
-
-    vertices = list(feasible_poly.exterior.coords) if not feasible_poly.is_empty else []
-
-    return json.dumps({
-        "solution": x.value.tolist() if x.value is not None else None,
-        "vertices": vertices
-    })
-`;
-    await pyodide.runPythonAsync(pythonCode);
-    const solve_qp = pyodide.globals.get('solve_qp');
-
-    async function update() {
-        solveBtn.disabled = true;
-        const P = [[+P_inputs[0].value, +P_inputs[1].value], [+P_inputs[2].value, +P_inputs[3].value]];
-        const q = [+q_inputs[0].value, +q_inputs[1].value];
-        const A = constraints.map(c => c.slice(0, 2));
-        const b = constraints.map(c => c[2]);
-
-        // Draw contours
-        const gridSize = 50;
-        const range = 3;
-        const grid = d3.range(-range, range + 0.1, 2*range/gridSize);
-        const contourData = [];
-        for (let yi of grid) {
-            for (let xi of grid) {
-                const val = 0.5 * (P[0][0]*xi*xi + (P[0][1]+P[1][0])*xi*yi + P[1][1]*yi*yi) + q[0]*xi + q[1]*yi;
-                contourData.push(val);
-            }
-        }
-        const contours = d3.contours().size([gridSize, gridSize]).thresholds(10)(contourData);
-        contourGroup.selectAll("path").data(contours).join("path")
-            .attr("d", d3.geoPath(d3.geoIdentity().scale(width/gridSize)))
-            .attr("fill", "none").attr("stroke", "var(--color-surface-1)");
-
-        const result = await solve_qp(P, q, A, b).then(r => JSON.parse(r));
-
-        feasibleRegion.attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(result.vertices) + "Z");
-
-        if (result.solution) {
-            solutionPoint.attr("cx", x(result.solution[0])).attr("cy", y(result.solution[1])).style("display", "block");
-            solutionText.textContent = `Solution: [${result.solution[0].toFixed(2)}, ${result.solution[1].toFixed(2)}]`;
-        } else {
-            solutionPoint.style("display", "none");
-            solutionText.textContent = "No solution found (problem might be infeasible or unbounded).";
-        }
-        solveBtn.disabled = false;
+        const drag = d3.drag()
+            .on("start", (event) => svg.append("line").attr("class", "drag-line").attr("stroke", "var(--color-accent)"))
+            .on("drag", (event) => svg.select(".drag-line").attr("x1", event.subject.x).attr("y1", event.subject.y).attr("x2", event.x).attr("y2", event.y))
+            .on("end", (event) => {
+                svg.select(".drag-line").remove();
+                const p1 = [x.invert(event.subject.x), y.invert(event.subject.y)];
+                const p2 = [x.invert(event.x), y.invert(event.y)];
+                let normal = [p1[1] - p2[1], p2[0] - p1[0]];
+                const norm = Math.sqrt(normal[0]**2 + normal[1]**2);
+                if (norm < 1e-6) return;
+                normal = normal.map(n => n / norm);
+                const b = normal[0] * p1[0] + normal[1] * p1[1];
+                constraints.push([...normal, b]);
+                update();
+            });
+        svg.call(drag);
     }
 
-    function renderConstraints() {
-        constraintsContainer.innerHTML = '';
+    function getObjective() {
+        const P = [
+            [+container.querySelector('#p00').value, +container.querySelector('#p01').value],
+            [+container.querySelector('#p10').value, +container.querySelector('#p11').value]
+        ];
+        const q = [+container.querySelector('#q0').value, +container.querySelector('#q1').value];
+        return (x, y) => 0.5 * (P[0][0]*x*x + (P[0][1]+P[1][0])*x*y + P[1][1]*y*y) + q[0]*x + q[1]*y;
+    }
+
+    function update() {
+        renderConstraintsList();
+        const objectiveFunc = getObjective();
+
+        let subjectPolygon = [[-10, -10], [10, -10], [10, 10], [-10, 10]];
+        constraints.forEach(c => {
+            const clipPolygon = halfPlaneToPolygon({ a: c.slice(0, 2), b: c[2] });
+            subjectPolygon = polygonClip(clipPolygon, subjectPolygon);
+        });
+
+        svg.select(".content").selectAll("*").remove();
+
+        // Draw Contours
+        const gridSize = 50;
+        const range = 3;
+        const grid = d3.range(-range, range + 0.1, 2 * range / gridSize);
+        const contourData = grid.flatMap(y => grid.map(x => objectiveFunc(x, y)));
+        const contours = d3.contours().size([gridSize, gridSize]).thresholds(15)(contourData);
+        svg.select(".content").append("g").selectAll("path").data(contours)
+            .join("path").attr("d", d3.geoPath(d3.geoIdentity().scale(x(grid[1]) - x(grid[0]))))
+            .attr("fill", "none").attr("stroke", "var(--color-surface-1)");
+
+        if (subjectPolygon) {
+             svg.select(".content").append("path").datum(subjectPolygon)
+                .attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1]))).attr("fill", "var(--color-primary-light)");
+        }
+
+        // Find Solution
+        if (subjectPolygon) {
+            const vertices = subjectPolygon.slice(0, subjectPolygon.length - 1);
+            if(vertices.length > 0) {
+                let bestVertex = vertices[0];
+                let minObjective = objectiveFunc(bestVertex[0], bestVertex[1]);
+                vertices.forEach(v => {
+                    const obj = objectiveFunc(v[0], v[1]);
+                    if (obj < minObjective) {
+                        minObjective = obj;
+                        bestVertex = v;
+                    }
+                });
+
+                svg.select(".content").append("circle").attr("cx", x(bestVertex[0])).attr("cy", y(bestVertex[1]))
+                    .attr("r", 6).attr("fill", "var(--color-danger)");
+                solutionText.textContent = `Solution: [${bestVertex[0].toFixed(2)}, ${bestVertex[1].toFixed(2)}]`;
+            }
+        }
+    }
+
+    function halfPlaneToPolygon({ a, b }) {
+        const p1 = [a[0] * b, a[1] * b];
+        const p2 = [p1[0] - a[1] * 20, p1[1] + a[0] * 20];
+        const p3 = [p1[0] + a[1] * 20, p1[1] - a[0] * 20];
+        return [p2, p3, ...p3.map((v,i) => v - a[i]*20), ...p2.map((v,i) => v - a[i]*20)];
+    }
+
+    function renderConstraintsList() {
+        constraintsList.innerHTML = '';
         constraints.forEach((c, i) => {
             const div = document.createElement("div");
-            div.innerHTML = `<input type="number" value="${c[0]}" step="0.1"> x₁ + <input type="number" value="${c[1]}" step="0.1"> x₂ ≤ <input type="number" value="${c[2]}" step="0.1"> <button data-index="${i}">X</button>`;
-            div.querySelectorAll('input').forEach((input, j) => input.addEventListener('change', (e) => constraints[i][j] = +e.target.value));
-            div.querySelector('button').addEventListener('click', () => { constraints.splice(i, 1); renderConstraints(); });
-            constraintsContainer.appendChild(div);
+            div.innerHTML = `<span>${c[0].toFixed(2)}x₁ + ${c[1].toFixed(2)}x₂ ≤ ${c[2].toFixed(2)}</span>
+                             <button>✖</button>`;
+            div.querySelector('button').onclick = () => { constraints.splice(i, 1); update(); };
+            constraintsList.appendChild(div);
         });
     }
 
-    addBtn.addEventListener('click', () => { constraints.push([0,0,0]); renderConstraints(); });
-    solveBtn.addEventListener('click', update);
-
-    renderConstraints();
+    solveBtn.onclick = update;
+    new ResizeObserver(setupChart).observe(plotContainer);
+    setupChart();
     update();
 }

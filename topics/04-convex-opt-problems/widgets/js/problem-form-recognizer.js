@@ -1,127 +1,110 @@
 /**
  * Widget: Problem Form Recognizer
  *
- * Description: Users can input a simple optimization problem using structured fields,
- *              and the tool will attempt to classify it.
+ * Description: Classifies a user-defined optimization problem based on its
+ *              objective function and constraints.
+ * Version: 2.0.0
  */
-import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-export async function initProblemRecognizer(containerId) {
+export function initProblemRecognizer(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="problem-recognizer-widget">
             <div class="widget-controls">
-                <h4>Objective: Minimize</h4>
-                <div class="objective-form">
-                    <input type="number" id="c_x2" value="1"> x² +
-                    <input type="number" id="c_y2" value="1"> y² +
-                    <input type="number" id="c_xy" value="0"> xy +
-                    <input type="number" id="c_x" value="0"> x +
-                    <input type="number" id="c_y" value="0"> y
-                </div>
-                <h4>Constraints (Ax ≤ b)</h4>
+                <h4>Objective: Minimize f₀(x₁, x₂)</h4>
+                <div id="objective-editor"></div>
+                <h4>Constraints: fᵢ(x₁, x₂) ≤ 0</h4>
                 <div id="constraints-container"></div>
                 <button id="add-constraint-btn">+ Add Constraint</button>
             </div>
             <button id="recognize-btn">Recognize Problem</button>
-            <div id="result-output" class="widget-output"></div>
+            <div id="result-output" class="widget-output" style="margin-top: 15px;"></div>
         </div>
     `;
 
+    const objectiveEditor = container.querySelector("#objective-editor");
     const constraintsContainer = container.querySelector("#constraints-container");
     const addBtn = container.querySelector("#add-constraint-btn");
     const recognizeBtn = container.querySelector("#recognize-btn");
     const resultOutput = container.querySelector("#result-output");
 
-    let constraint_count = 0;
+    let constraints = [];
+    let objectiveType = 'linear';
 
-    function addConstraint(a1=0, a2=0, b=0) {
-        const id = ++constraint_count;
+    const functionTemplates = {
+        linear: () => `c₁ <input type="number" value="1" step="0.1"> + c₂ <input type="number" value="1" step="0.1">`,
+        quadratic: () => `P₁₁ <input type="number" value="1" step="0.1">² + P₂₂ <input type="number" value="1" step="0.1">² + P₁₂ <input type="number" value="0" step="0.1">x₁x₂`,
+    };
+
+    function renderObjective() {
+        objectiveEditor.innerHTML = `
+            <select id="obj-type-select">
+                <option value="linear">Linear</option>
+                <option value="quadratic">Quadratic</option>
+            </select>
+            <div id="obj-params">${functionTemplates[objectiveType]()}</div>
+        `;
+        objectiveEditor.querySelector("#obj-type-select").value = objectiveType;
+        objectiveEditor.querySelector("#obj-type-select").onchange = (e) => {
+            objectiveType = e.target.value;
+            renderObjective();
+        };
+    }
+
+    function addConstraint() {
+        const id = constraints.length;
         const div = document.createElement("div");
         div.className = 'constraint-row';
-        div.id = `constraint-${id}`;
         div.innerHTML = `
-            <input type="number" value="${a1}"> x +
-            <input type="number" value="${a2}"> y ≤
-            <input type="number" value="${b}">
-            <button data-id="${id}">Remove</button>
+            <select data-id="${id}" class="constraint-type">
+                <option value="linear">Linear</option>
+                <option value="quadratic">Quadratic</option>
+            </select>
+            <div class="constraint-params">${functionTemplates.linear()}</div>
+            <button data-id="${id}">✖</button>
         `;
-        div.querySelector('button').addEventListener('click', () => {
-            document.getElementById(`constraint-${id}`).remove();
-        });
         constraintsContainer.appendChild(div);
+
+        const typeSelect = div.querySelector('.constraint-type');
+        const paramsDiv = div.querySelector('.constraint-params');
+
+        typeSelect.onchange = () => {
+             paramsDiv.innerHTML = functionTemplates[typeSelect.value]();
+        };
+        div.querySelector('button').onclick = () => {
+             div.remove();
+        };
     }
 
-    const pyodide = await getPyodide();
-    await pyodide.loadPackage("cvxpy");
+    function recognize() {
+        const isObjectiveLinear = objectiveType === 'linear';
+        const P_inputs = objectiveEditor.querySelectorAll("input");
+        const isObjectiveQuadratic = objectiveType === 'quadratic' && (+P_inputs[0].value > 0 && +P_inputs[1].value > 0 && (4 * +P_inputs[0].value * +P_inputs[1].value - (+P_inputs[2].value)**2) >= 0);
 
-    async function recognize() {
-        resultOutput.innerHTML = "Analyzing...";
-
-        const P_x2 = +container.querySelector('#c_x2').value * 2;
-        const P_y2 = +container.querySelector('#c_y2').value * 2;
-        const P_xy = +container.querySelector('#c_xy').value;
-        const c = [+container.querySelector('#c_x').value, +container.querySelector('#c_y').value];
-        const P = [[P_x2, P_xy], [P_xy, P_y2]];
-
-        const constraints = Array.from(constraintsContainer.querySelectorAll('.constraint-row')).map(row => {
-            const inputs = row.querySelectorAll('input');
-            return [ +inputs[0].value, +inputs[1].value, +inputs[2].value ];
+        let constraintsAreLinear = true;
+        constraintsContainer.querySelectorAll('.constraint-row').forEach(row => {
+            if (row.querySelector('.constraint-type').value !== 'linear') {
+                constraintsAreLinear = false;
+            }
         });
 
-        await pyodide.globals.set("P_val", P);
-        await pyodide.globals.set("c_val", c);
-        await pyodide.globals.set("constraints_val", constraints);
-
-        const result_json = await pyodide.runPythonAsync(`
-            import cvxpy as cp
-            import numpy as np
-            import json
-
-            x = cp.Variable(2)
-            P = np.array(P_val)
-            c = np.array(c_val)
-            objective = cp.Minimize(0.5 * cp.quad_form(x, P) + c.T @ x)
-
-            constraints = [ A_i[0]*x[0] + A_i[1]*x[1] <= b_i for *A_i, b_i in constraints_val ]
-
-            prob = cp.Problem(objective, constraints)
-
-            is_lp = np.allclose(P, 0)
-            is_qp = prob.is_qp() and not is_lp
-            is_convex = prob.is_convex()
-
-            form = "Unknown"
-            if is_lp: form = "Linear Program (LP)"
-            elif is_qp: form = "Quadratic Program (QP)"
-            elif is_convex: form = "General Convex Program"
-            else: form = "Non-Convex Program"
-
-            json.dumps({
-                "form": form,
-                "is_convex": is_convex,
-                "solver": prob.solver if prob.solver else "N/A"
-            })
-        `);
-        const result = JSON.parse(result_json);
+        let form = "General Non-linear Program";
+        if (isObjectiveLinear && constraintsAreLinear) form = "Linear Program (LP)";
+        else if (isObjectiveQuadratic && constraintsAreLinear) form = "Quadratic Program (QP)";
+        else if(isObjectiveQuadratic && !constraintsAreLinear) form = "Quadratically Constrained QP (QCQP)";
 
         resultOutput.innerHTML = `
-            <p><strong>Problem Type:</strong> ${result.form}</p>
-            <p><strong>Is Convex:</strong>
-                <span style="color:${result.is_convex ? 'var(--color-success)' : 'var(--color-danger)'};">
-                ${result.is_convex}
-                </span>
-            </p>
+            <p><strong>Problem Type:</strong> <span style="color:var(--color-accent);">${form}</span></p>
+            <p>This is a simplified classification based on the forms you've selected.</p>
         `;
     }
 
-    addBtn.addEventListener('click', () => addConstraint());
-    recognizeBtn.addEventListener('click', recognize);
+    addBtn.onclick = addConstraint;
+    recognizeBtn.onclick = recognize;
 
-    // Add some initial constraints
-    addConstraint(1, 1, 1);
-    addConstraint(1, 0, 0);
-    addConstraint(0, 1, 0);
+    renderObjective();
+    addConstraint();
 }

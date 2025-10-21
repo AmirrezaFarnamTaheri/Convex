@@ -1,109 +1,124 @@
 /**
  * Widget: Complementary Slackness Explorer
  *
- * Description: An interactive tool that demonstrates the complementary slackness conditions for a simple LP.
+ * Description: An interactive tool demonstrating complementary slackness for a simple LP.
+ *              Users can move the primal and dual solutions to see how the conditions hold or fail.
+ * Version: 2.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-export async function initComplementarySlacknessExplorer(containerId) {
+export function initComplementarySlacknessExplorer(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    // --- LP Problem Definition ---
+    const c = [-1, -2];
+    const A = [[1, 1], [-1, 1], [1, 0], [0, 1]];
+    const b = [3, 1, 2, 2];
+    const optimal = { x: [1, 2], lambda: [1, 1, 0, 0] };
+
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="comp-slack-widget">
-            <div id="plot-container"></div>
-            <div class="widget-output" id="cs-output"></div>
+            <div id="plot-container" style="width: 100%; height: 400px;"></div>
+            <div class="widget-controls" style="padding: 15px;">
+                <button id="reset-points-btn">Reset to Optimal</button>
+                <div id="cs-output" class="widget-output"></div>
+            </div>
         </div>
     `;
 
     const plotContainer = container.querySelector("#plot-container");
     const outputDiv = container.querySelector("#cs-output");
+    const resetBtn = container.querySelector("#reset-points-btn");
 
-    const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    let primal_sol = [...optimal.x];
+    let dual_sol = [...optimal.lambda]; // Not user-adjustable in this version
 
-    const svg = d3.select(plotContainer).append("svg")
-        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+    let svg, x, y;
 
-    const x = d3.scaleLinear().domain([-1, 4]).range([0, width]);
-    const y = d3.scaleLinear().domain([-1, 4]).range([height, 0]);
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-    svg.append("g").call(d3.axisLeft(y));
+    function setupChart() {
+        plotContainer.innerHTML = '';
+        const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+        const width = plotContainer.clientWidth - margin.left - margin.right;
+        const height = plotContainer.clientHeight - margin.top - margin.bottom;
 
-    const pyodide = await getPyodide();
-    await pyodide.loadPackage("scipy");
-    const pythonCode = `
-import numpy as np
-from scipy.optimize import linprog
-import json
+        svg = d3.select(plotContainer).append("svg")
+            .attr("width", "100%").attr("height", "100%")
+            .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-c = np.array([-1, -2])
-A_ub = np.array([[1, 1], [-1, 1], [1, 0], [0, 1]])
-b_ub = np.array([3, 1, 2, 2])
+        x = d3.scaleLinear().domain([-1, 4]).range([0, width]);
+        y = d3.scaleLinear().domain([-1, 4]).range([height, 0]);
 
-# Primal
-primal_res = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=(0, None))
-# Dual
-dual_res = linprog(b_ub, A_ub=-A_ub.T, b_ub=-c, bounds=(0, None))
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+        svg.append("g").call(d3.axisLeft(y));
 
-primal_sol = primal_res.x
-dual_sol = dual_res.x
+        // Feasible Region
+        const feasibleRegion = [[0,0], [2,0], [2,1], [1,2], [0,1]];
+        svg.append("path").attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(feasibleRegion)+"Z").attr("fill", "var(--color-primary-light)");
 
-comp_slack_primal = b_ub - A_ub @ primal_sol
-comp_slack_dual = A_ub.T @ dual_sol + c
+        svg.append("g").attr("class", "constraints-group");
 
-json.dumps({
-    "primal_sol": primal_sol.tolist(),
-    "dual_sol": dual_sol.tolist(),
-    "primal_slack": comp_slack_primal.tolist(),
-    "dual_slack": comp_slack_dual.tolist(),
-    "A": A_ub.tolist(),
-    "b": b_ub.tolist()
-})
-`;
-    const result = await pyodide.runPythonAsync(pythonCode).then(r => JSON.parse(r));
-
-    // Feasible Region (hardcoded for this example)
-    const feasibleRegion = [[0,0], [2,0], [2,1], [1,2], [0,1]];
-    svg.append("path").attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(feasibleRegion)+"Z").attr("fill", "var(--color-primary-light)");
-
-    // Constraints
-    const constraints_lines = [
-        [[2,1],[3,0]], // x+y<=3
-        [[-1,0],[1,2]], // -x+y<=1
-        [[2,-1],[2,4]], // x<=2
-        [[-1,2],[4,2]] // y<=2
-    ];
-    svg.selectAll("line.constraint").data(constraints_lines).enter().append("line").attr("class", "constraint")
-        .attr("x1", d=>x(d[0][0])).attr("y1", d=>y(d[0][1]))
-        .attr("x2", d=>x(d[1][0])).attr("y2", d=>y(d[1][1]))
-        .attr("stroke", (d,i) => Math.abs(result.primal_slack[i]) < 1e-6 ? "var(--color-danger)" : "var(--color-text-secondary)")
-        .attr("stroke-width", (d,i) => Math.abs(result.primal_slack[i]) < 1e-6 ? 3 : 1);
-
-    // Optimal point
-    svg.append("circle").attr("cx", x(result.primal_sol[0])).attr("cy", y(result.primal_sol[1])).attr("r", 5).attr("fill", "var(--color-success)");
-
-    // Output
-    let outputHTML = "<h5>Primal Solution x*:</h5>" + `[${result.primal_sol.map(v=>v.toFixed(2)).join(', ')}]`
-    outputHTML += "<h5>Dual Solution λ*:</h5>" + `[${result.dual_sol.map(v=>v.toFixed(2)).join(', ')}]`
-    outputHTML += "<h5>Complementary Slackness Conditions:</h5><ul>"
-
-    for(let i=0; i<result.A.length; i++) {
-        const primal_slack_active = Math.abs(result.primal_slack[i]) < 1e-6;
-        const dual_var_active = result.dual_sol[i] > 1e-6;
-
-        outputHTML += `<li>Constraint ${i+1}:
-            λᵢ* = ${result.dual_sol[i].toFixed(2)},
-            Slack = (b-Ax)ᵢ = ${result.primal_slack[i].toFixed(2)}.
-            Condition holds: ${primal_slack_active || !dual_var_active}
-        </li>`;
+        const drag = d3.drag().on("drag", (event) => {
+            primal_sol = [x.invert(event.x), y.invert(event.y)];
+            update();
+        });
+        svg.append("circle").attr("class", "primal-solution").attr("r", 6).attr("fill", "var(--color-danger)").style("cursor", "move").call(drag);
     }
-    outputHTML += "</ul><p>For each constraint, either the dual variable is zero, or the constraint is active (slack is zero), or both.</p>"
 
-    outputDiv.innerHTML = outputHTML;
+    function update() {
+        // --- Calculations ---
+        const primal_slack = b.map((bi, i) => bi - (A[i][0] * primal_sol[0] + A[i][1] * primal_sol[1]));
+        const dual_slack = [
+            dual_sol[0] - dual_sol[1] + dual_sol[2] + c[0],
+            dual_sol[0] + dual_sol[1] + dual_sol[3] + c[1]
+        ];
+
+        // --- Visualization ---
+        svg.select(".primal-solution").attr("cx", x(primal_sol[0])).attr("cy", y(primal_sol[1]));
+
+        const constraints_lines = [
+            { p1: [2, 1], p2: [3, 0] }, { p1: [-1, 0], p2: [1, 2] },
+            { p1: [2, -1], p2: [2, 4] }, { p1: [-1, 2], p2: [4, 2] }
+        ];
+
+        svg.select(".constraints-group").selectAll("line").data(constraints_lines)
+            .join("line")
+            .attr("x1", d => x(d.p1[0])).attr("y1", d => y(d.p1[1]))
+            .attr("x2", d => x(d.p2[0])).attr("y2", d => y(d.p2[1]))
+            .attr("stroke", (d, i) => Math.abs(primal_slack[i]) < 1e-4 ? "var(--color-danger)" : "var(--color-text-secondary)")
+            .attr("stroke-width", (d, i) => Math.abs(primal_slack[i]) < 1e-4 ? 2.5 : 1.5);
+
+        // --- Output ---
+        let outputHTML = `
+            <h5>Primal Point x: [${primal_sol.map(v => v.toFixed(2)).join(', ')}]</h5>
+            <h5>Dual Variables λ (at optimum): [${optimal.lambda.join(', ')}]</h5>
+            <h5>Complementary Slackness Conditions (λᵢ(bᵢ - aᵢᵀx)=0):</h5>
+            <ul>`;
+
+        for (let i = 0; i < A.length; i++) {
+            const slack = primal_slack[i];
+            const lambda = optimal.lambda[i];
+            const conditionMet = Math.abs(lambda * slack) < 1e-4;
+            outputHTML += `<li>Constraint ${i + 1}:
+                λᵢ* = ${lambda.toFixed(2)}, Slack = ${slack.toFixed(2)}.
+                Product = ${(lambda * slack).toFixed(2)}.
+                <strong style="color: ${conditionMet ? 'var(--color-success)' : 'var(--color-danger)'};">
+                ${conditionMet ? 'Holds' : 'Fails'}</strong>
+            </li>`;
+        }
+        outputHTML += "</ul>";
+        outputDiv.innerHTML = outputHTML;
+    }
+
+    resetBtn.onclick = () => {
+        primal_sol = [...optimal.x];
+        dual_sol = [...optimal.lambda];
+        update();
+    };
+
+    new ResizeObserver(setupChart).observe(plotContainer);
+    setupChart();
+    update();
 }

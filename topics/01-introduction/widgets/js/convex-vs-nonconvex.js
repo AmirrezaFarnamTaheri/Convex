@@ -1,43 +1,44 @@
 /**
- * Widget: Convex vs Nonconvex Explorer
+ * Widget: Convex vs. Non-convex Explorer
+ *
+ * Description: Interactively demonstrates Jensen's inequality to classify functions
+ *              as convex, concave, or neither.
+ * Version: 2.0.0
  */
-
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-export async function initConvexVsNonconvex(containerId) {
+export function initConvexVsNonconvex(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="convex-explorer-widget">
-            <div class="widget-controls">
-                <label for="function-select">Select a function:</label>
+            <div id="plot-container" style="width: 100%; height: 350px;"></div>
+            <div class="widget-controls" style="padding: 15px;">
+                <label for="function-select">Function:</label>
                 <select id="function-select"></select>
-                <button id="reset-button">Reset Points</button>
-                <div id="result-display" class="widget-output"></div>
+                <button id="clear-button">Clear Points</button>
+                <div id="result-display" class="widget-output" style="margin-top: 10px; min-height: 2em;">
+                    Click two points on the curve to test for convexity.
+                </div>
             </div>
-            <div id="plot-container"></div>
-            <p class="widget-instructions">Click on two points on the curve to check for convexity.</p>
         </div>
     `;
 
     const functionSelect = container.querySelector("#function-select");
-    const resetButton = container.querySelector("#reset-button");
+    const clearButton = container.querySelector("#clear-button");
     const resultDisplay = container.querySelector("#result-display");
     const plotContainer = container.querySelector("#plot-container");
 
     const functions = {
-        "x² (Convex)": { js_func: x => x**2, domain: [-5, 5] },
-        "x³ (Non-convex)": { js_func: x => x**3, domain: [-3, 3] },
-        "eˣ (Convex)": { js_func: x => Math.exp(x), domain: [-3, 3] },
-        "log(x) (Concave)": { js_func: x => Math.log(x), domain: [0.1, 10] },
-        "sin(x) (Non-convex)": { js_func: x => Math.sin(x), domain: [-6, 6]},
+        "x² (Convex)": { func: x => x**2, domain: [-5, 5] },
+        "x³ (Non-convex)": { func: x => x**3, domain: [-3, 3] },
+        "eˣ (Convex)": { func: x => Math.exp(x), domain: [-3, 3] },
+        "log(x) (Concave)": { func: x => Math.log(x), domain: [0.1, 10] },
+        "sin(x) (Non-convex)": { func: x => Math.sin(x), domain: [-6, 6] },
     };
-    let selectedFunctionName = Object.keys(functions)[0];
+    let selectedFunc = functions[Object.keys(functions)[0]];
     let points = [];
 
     Object.keys(functions).forEach(name => {
@@ -47,119 +48,109 @@ export async function initConvexVsNonconvex(containerId) {
         functionSelect.appendChild(option);
     });
 
-    functionSelect.onchange = () => {
-        selectedFunctionName = functionSelect.value;
-        reset();
-    };
-    resetButton.onclick = reset;
+    let svg, x, y;
 
-    const margin = { top: 20, right: 20, bottom: 40, left: 40 };
-    const width = plotContainer.clientWidth - margin.left - margin.right;
-    const height = 350 - margin.top - margin.bottom;
+    function setupChart() {
+        plotContainer.innerHTML = '';
+        const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+        const width = plotContainer.clientWidth - margin.left - margin.right;
+        const height = plotContainer.clientHeight - margin.top - margin.bottom;
 
-    const svg = d3.select(plotContainer).append("svg")
-        .attr("width", "100%")
-        .attr("height", height + margin.top + margin.bottom)
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        svg = d3.select(plotContainer).append("svg")
+            .attr("width", "100%").attr("height", "100%")
+            .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().range([0, width]);
-    const y = d3.scaleLinear().range([height, 0]);
+        x = d3.scaleLinear().range([0, width]);
+        y = d3.scaleLinear().range([height, 0]);
 
-    const xAxis = svg.append("g").attr("transform", `translate(0,${height})`).attr("class", "axis");
-    const yAxis = svg.append("g").attr("class", "axis");
-    const path = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
-    const interactionGroup = svg.append("g");
-    const clickOverlay = svg.append("rect")
-        .attr("width", width)
-        .attr("height", height)
-        .style("fill", "none")
-        .style("pointer-events", "all")
-        .on("click", handleClick);
+        svg.append("g").attr("class", "x-axis").attr("transform", `translate(0,${height})`);
+        svg.append("g").attr("class", "y-axis");
+        svg.append("path").attr("class", "function-path").attr("fill", "none")
+            .attr("stroke", "var(--color-primary)").attr("stroke-width", 2.5);
+        svg.append("g").attr("class", "interaction-layer");
 
-    function drawPlot() {
-        const { js_func, domain } = functions[selectedFunctionName];
-        x.domain(domain);
-        const plotData = d3.range(domain[0], domain[1], (domain[1] - domain[0])/200).map(d => ({x: d, y: js_func(d)}));
-        y.domain(d3.extent(plotData, d => d.y)).nice();
-
-        xAxis.call(d3.axisBottom(x));
-        yAxis.call(d3.axisLeft(y));
-        path.datum(plotData).attr("d", d3.line().x(d=>x(d.x)).y(d=>y(d.y)));
+        svg.append("rect").attr("width", width).attr("height", height)
+            .style("fill", "none").style("pointer-events", "all").on("click", handleClick);
     }
 
-    function reset() {
+    function draw() {
+        const { func, domain } = selectedFunc;
+        x.domain(domain);
+        const plotData = d3.range(domain[0], domain[1], (domain[1] - domain[0]) / 200).map(d => ({ x: d, y: func(d) }));
+        y.domain(d3.extent(plotData, d => d.y)).nice();
+
+        svg.select(".x-axis").call(d3.axisBottom(x));
+        svg.select(".y-axis").call(d3.axisLeft(y));
+        svg.select(".function-path").datum(plotData).attr("d", d3.line().x(d => x(d.x)).y(d => y(d.y)));
+    }
+
+    function clear() {
         points = [];
-        interactionGroup.selectAll("*").remove();
-        resultDisplay.textContent = "";
-        drawPlot();
+        svg.select(".interaction-layer").selectAll("*").remove();
+        resultDisplay.textContent = "Click two points on the curve.";
     }
 
     function handleClick(event) {
         if (points.length >= 2) return;
+
         const [mx] = d3.pointer(event);
         const xVal = x.invert(mx);
-        const yVal = functions[selectedFunctionName].js_func(xVal);
-        points.push({x: xVal, y: yVal});
+        const yVal = selectedFunc.func(xVal);
+        points.push({ x: xVal, y: yVal });
 
-        interactionGroup.append("circle")
+        svg.select(".interaction-layer").append("circle")
             .attr("cx", x(xVal)).attr("cy", y(yVal))
             .attr("r", 5).attr("fill", "var(--color-accent)");
 
         if (points.length === 2) {
-            drawChordAndCheckConvexity();
+            checkConvexity();
         }
     }
 
-    async function drawChordAndCheckConvexity() {
-        // Sort points by x-value
+    function checkConvexity() {
         points.sort((a, b) => a.x - b.x);
-
         const [p1, p2] = points;
 
-        interactionGroup.append("line")
+        svg.select(".interaction-layer").append("line")
             .attr("class", "chord")
             .attr("x1", x(p1.x)).attr("y1", y(p1.y))
             .attr("x2", x(p2.x)).attr("y2", y(p2.y))
             .attr("stroke", "var(--color-text-secondary)").attr("stroke-width", 2);
 
-        const pyodide = await getPyodide();
-        const func_str = functions[selectedFunctionName].js_func.toString().replace('Math.','np.');
+        const samples = d3.range(0, 1.01, 0.05);
+        let isConvex = true, isConcave = true;
 
-        await pyodide.globals.set("func_str", func_str);
-        await pyodide.globals.set("x1", p1.x);
-        await pyodide.globals.set("y1", p1.y);
-        await pyodide.globals.set("x2", p2.x);
-        const code = `
-import numpy as np
-func = eval("lambda x: " + func_str)
-is_convex = True
-mid_x = (x1 + x2) / 2
-mid_y_chord = (y1 + y2) / 2
-if func(mid_x) > mid_y_chord + 1e-6:
-    is_convex = False
-is_convex
-        `;
-        const isConvex = await pyodide.runPythonAsync(code);
+        samples.forEach(t => {
+            const interX = (1 - t) * p1.x + t * p2.x;
+            const chordY = (1 - t) * p1.y + t * p2.y;
+            const funcY = selectedFunc.func(interX);
 
-        resultDisplay.innerHTML = isConvex
-            ? '<span style="color: var(--color-success);">Locally Convex</span>'
-            : '<span style="color: var(--color-danger);">Not Convex</span>';
+            if (funcY > chordY + 1e-6) isConvex = false;
+            if (funcY < chordY - 1e-6) isConcave = false;
+        });
 
-        // Visualize Jensen's inequality
-        const mid_x = (p1.x + p2.x) / 2;
-        const mid_y_func = functions[selectedFunctionName].js_func(mid_x);
-        const mid_y_chord = (p1.y + p2.y) / 2;
+        let resultText = "";
+        let color = "var(--color-primary)";
+        if (isConvex) { resultText = "The function is <strong>convex</strong> between these points."; color = "var(--color-success)"; }
+        else if (isConcave) { resultText = "The function is <strong>concave</strong> between these points."; color = "#ffb080"; }
+        else { resultText = "The function is <strong>neither convex nor concave</strong> here."; color = "var(--color-danger)"; }
 
-        interactionGroup.append("line")
-            .attr("class", "jensen-line")
-            .attr("x1", x(mid_x)).attr("y1", y(mid_y_func))
-            .attr("x2", x(mid_x)).attr("y2", y(mid_y_chord))
-            .attr("stroke", isConvex ? "var(--color-success)" : "var(--color-danger)")
-            .attr("stroke-width", 2)
-            .attr("stroke-dasharray", "4 4");
+        resultDisplay.innerHTML = `<span style="color: ${color};">${resultText}</span>`;
     }
 
-    reset();
+    functionSelect.onchange = () => {
+        selectedFunc = functions[functionSelect.value];
+        clear();
+        draw();
+    };
+    clearButton.onclick = clear;
+
+    new ResizeObserver(() => {
+        setupChart();
+        draw();
+    }).observe(plotContainer);
+
+    setupChart();
+    draw();
 }
