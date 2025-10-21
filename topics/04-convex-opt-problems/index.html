@@ -115,6 +115,24 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+
+      <!-- Widget 5 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">SDP Visualizer</h3>
+        <p>Visualizes the cone of positive semidefinite matrices in 3D (for 2x2 matrices).</p>
+        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 6 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Problem Reformulation Tool</h3>
+        <p>Shows how a problem can be reformulated to fit a standard form.</p>
+        <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Readings -->
@@ -177,6 +195,14 @@
   <script type="module">
     import { initQPSandbox } from './widgets/js/qp-sandbox.js';
     initQPSandbox('widget-4');
+  </script>
+  <script type="module">
+    import { initSDPVisualizer } from './widgets/js/sdp-visualizer.js';
+    initSDPVisualizer('widget-5');
+  </script>
+  <script type="module">
+    import { initProblemReformulationTool } from './widgets/js/reformulation-tool.js';
+    initProblemReformulationTool('widget-6');
   </script>
 
   <!-- Global utilities -->

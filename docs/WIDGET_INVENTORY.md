@@ -2,9 +2,9 @@
 
 ## Summary
 - **Total Planned:** 104 widgets
-- **Completed:** 40
+- **Completed:** 45
 - **In Progress:** 0
-- **Not Started:** 64
+- **Not Started:** 59
 
 ## By Priority
 - **High Priority:** 32/32 Completed
@@ -24,6 +24,6 @@
 | 07 Stat Estimation & ML | 9 | 3 | ✅ In Progress |
 | 08 Geometric Problems | 8 | 2 | ✅ In Progress |
 | 09 Unconstrained Min | 9 | 3 | ✅ In Progress |
-| 10 Equality-Constrained Min | 8 | 0 | 📋 Planned |
-| 11 Interior-Point Methods | 9 | 1 | ✅ In Progress |
-| **Total**| **104** | **40** | |
+| 10 Equality-Constrained Min | 8 | 3 | ✅ In Progress |
+| 11 Interior-Point Methods | 9 | 3 | ✅ In Progress |
+| **Total**| **104** | **45** | |

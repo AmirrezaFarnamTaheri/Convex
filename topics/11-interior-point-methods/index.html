@@ -166,5 +166,19 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+
+  <!-- Widget loaders -->
+  <script type="module">
+    import { initBarrierPathTracer } from './widgets/js/barrier-method-path-tracer.js';
+    initBarrierPathTracer('widget-1');
+  </script>
+  <script type="module">
+    import { initSimplexVsIPM } from './widgets/js/lp-simplex-vs-ip.js';
+    initSimplexVsIPM('widget-2');
+  </script>
+  <script type="module">
+    import { initNewtonStepIPM } from './widgets/js/newton-step-ipm.js';
+    initNewtonStepIPM('widget-3');
+  </script>
 </body>
 </html>

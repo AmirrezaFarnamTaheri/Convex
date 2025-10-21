@@ -101,6 +101,33 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+
+      <!-- Widget 4 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Best-Fit Shape Finder</h3>
+        <p>Finds the best-fitting line or plane to a set of points.</p>
+        <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 5 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Matrix Rank Minimization</h3>
+        <p>A toy example demonstrating rank minimization via the nuclear norm heuristic.</p>
+        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 6 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Robust Geometry Optimizer</h3>
+        <p>Compares a standard geometric optimization with its robust counterpart.</p>
+        <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Readings -->
@@ -155,6 +182,22 @@
   <script type="module">
     import { initDistanceBetweenSets } from './widgets/js/distance-between-sets.js';
     initDistanceBetweenSets('widget-3');
+  </script>
+  <script type="module">
+    import { initChebyshevCenter } from './widgets/js/chebyshev-center.js';
+    initChebyshevCenter('widget-2');
+  </script>
+  <script type="module">
+    import { initBestFitShapeFinder } from './widgets/js/best-fit-shape.js';
+    initBestFitShapeFinder('widget-4');
+  </script>
+  <script type="module">
+    import { initMatrixRankMinimization } from './widgets/js/rank-minimization.js';
+    initMatrixRankMinimization('widget-5');
+  </script>
+  <script type="module">
+    import { initRobustGeometryOptimizer } from './widgets/js/robust-geometry.js';
+    initRobustGeometryOptimizer('widget-6');
   </script>
 
   <!-- Global utilities -->

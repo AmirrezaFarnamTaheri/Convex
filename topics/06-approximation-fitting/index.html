@@ -101,6 +101,24 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+
+      <!-- Widget 4 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Matrix Completion Visualizer</h3>
+        <p>Users can hide entries of a low-rank matrix (e.g., an image) and watch an algorithm recover the missing values.</p>
+        <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 5 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Regularization Theory Tool</h3>
+        <p>Visualizes the geometry of different regularizers (L1, L2, Elastic Net).</p>
+        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Readings -->
@@ -159,6 +177,14 @@
   <script type="module">
     import { initSparseRecoveryDemo } from './widgets/js/sparse-recovery.js';
     initSparseRecoveryDemo('widget-3');
+  </script>
+  <script type="module">
+    import { initMatrixCompletionVisualizer } from './widgets/js/matrix-completion.js';
+    initMatrixCompletionVisualizer('widget-4');
+  </script>
+  <script type="module">
+    import { initRegularizationTheoryTool } from './widgets/js/regularization-theory.js';
+    initRegularizationTheoryTool('widget-5');
   </script>
 
   <!-- Global utilities -->
