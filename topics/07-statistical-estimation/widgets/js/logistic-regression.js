@@ -4,7 +4,7 @@
  * Description: An interactive solver for logistic regression, showing the likelihood function and convergence.
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.mjs";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initLogisticRegression(containerId) {
     const container = document.getElementById(containerId);
@@ -15,8 +15,7 @@ export async function initLogisticRegression(containerId) {
 
     container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
 
-    let pyodide = await loadPyodide();
-    await pyodide.loadPackage("numpy");
+    const pyodide = await getPyodide();
 
     container.innerHTML = `
         <div id="plot_boundary" style="width: 500px; height: 500px;"></div>

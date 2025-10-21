@@ -3,14 +3,7 @@
  */
 
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
-
-async function initPyodide() {
-    const pyodide = await loadPyodide();
-    await pyodide.loadPackage("numpy");
-    return pyodide;
-}
-const pyodidePromise = initPyodide();
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initGradientDescentVisualizer(containerId) {
     const container = document.getElementById(containerId);
@@ -18,7 +11,7 @@ export async function initGradientDescentVisualizer(containerId) {
 
     container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
 
-    const pyodide = await pyodidePromise;
+    const pyodide = await getPyodide();
 
     container.innerHTML = '';
 

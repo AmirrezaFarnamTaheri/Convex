@@ -7,7 +7,7 @@
 
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128/build/three.module.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.128/examples/jsm/controls/OrbitControls.js";
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.mjs";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initHessianLandscapeVisualizer(containerId) {
     const container = document.getElementById(containerId);
@@ -18,8 +18,7 @@ export async function initHessianLandscapeVisualizer(containerId) {
 
     container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
 
-    let pyodide = await loadPyodide();
-    await pyodide.loadPackage("numpy");
+    const pyodide = await getPyodide();
 
     container.innerHTML = '';
 

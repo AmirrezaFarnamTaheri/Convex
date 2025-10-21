@@ -4,7 +4,7 @@
  * Description: Visualizes the four fundamental subspaces of a user-defined 2x3 or 3x2 matrix.
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.mjs";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 
 export async function initRankNullspace(containerId) {
@@ -16,8 +16,7 @@ export async function initRankNullspace(containerId) {
 
     container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
 
-    let pyodide = await loadPyodide();
-    await pyodide.loadPackage("numpy");
+    const pyodide = await getPyodide();
 
     container.innerHTML = `
         <div id="matrix_input">
@@ -34,7 +33,6 @@ export async function initRankNullspace(containerId) {
 
         pyodide.globals.set("matrix_A", matrix_data);
         const result = await pyodide.runPythonAsync(`
-            import numpy as np
 
             A = np.array(matrix_A).reshape(2, 3)
 
