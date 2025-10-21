@@ -12,17 +12,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js for SVG rendering.
   - **Status:** Completed
 
-- **[ ] Orthogonality & Projection Explorer (MEDIUM)**
+- **[x] Orthogonality & Projection Explorer (MEDIUM)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/orthogonality.js`
   - **Description:** Allows users to drag two vectors and see their dot product, angle, and orthogonal projection update in real-time.
   - **Dependencies:** D3.js or a simple canvas library.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Rank & Nullspace Visualizer (MEDIUM)**
+- **[x] Rank & Nullspace Visualizer (MEDIUM)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/rank-nullspace.js`
   - **Description:** Visualizes the four fundamental subspaces of a user-defined 2x3 or 3x2 matrix.
   - **Dependencies:** D3.js, Pyodide (NumPy for computation).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Eigenvalue Decomposition & PSD Explorer (HIGH)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/eigen-psd.js`
@@ -64,17 +64,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Three.js.
   - **Status:** Completed
 
-- **[ ] Problem Classification Flowchart (MEDIUM)**
+- **[x] Problem Classification Flowchart (MEDIUM)**
   - **Location:** `topics/01-introduction/widgets/js/problem-flowchart.js`
   - **Description:** An interactive flowchart that guides users through classifying an optimization problem (e.g., LP, QP, convex, nonconvex).
   - **Dependencies:** A library like Mermaid.js or custom SVG.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Convex Combination Animation (MEDIUM)**
+- **[x] Convex Combination Animation (MEDIUM)**
   - **Location:** `topics/01-introduction/widgets/js/convex-combination.js`
   - **Description:** Animates the concept of a convex combination by showing the line segment between two points remaining within a set.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Real-World Problem Gallery (LOW)**
   - **Location:** `topics/01-introduction/widgets/js/problem-gallery.js`
@@ -82,11 +82,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** None (static HTML/CSS/JS).
   - **Status:** Planned
 
-- **[ ] Convergence Comparison (HIGH)**
+- **[x] Convergence Comparison (HIGH)**
   - **Location:** `topics/01-introduction/widgets/js/convergence-comparison.js`
   - **Description:** A simple animated plot comparing the convergence rates of a convex solver vs. a generic nonconvex solver on a sample problem.
   - **Dependencies:** D3.js or Chart.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
@@ -104,23 +104,23 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Polyhedron Visualizer & Constraint Explorer (HIGH)**
+- **[x] Polyhedron Visualizer & Constraint Explorer (HIGH)**
   - **Location:** `topics/02-convex-sets/widgets/js/polyhedron-visualizer.js`
   - **Description:** Users can add or modify linear inequalities (Ax <= b) and see the resulting 2D polyhedron update in real-time.
   - **Dependencies:** D3.js, Pyodide (NumPy for constraint solving).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Separating Hyperplane Theorem Visualizer (HIGH)**
+- **[x] Separating Hyperplane Theorem Visualizer (HIGH)**
   - **Location:** `topics/02-convex-sets/widgets/js/separating-hyperplane.js`
   - **Description:** Allows users to place two convex sets and watch the algorithm find a separating hyperplane between them.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Operations Preserve Convexity Builder (MEDIUM)**
+- **[x] Operations Preserve Convexity Builder (MEDIUM)**
   - **Location:** `topics/02-convex-sets/widgets/js/operations-builder.js`
   - **Description:** A tool where users can apply operations (intersection, affine transformation) to pre-defined convex sets to see the result.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Cone Geometry & Properties (LOW)**
   - **Location:** `topics/02-convex-sets/widgets/js/cone-geometry.js`
@@ -144,17 +144,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Epigraph Visualizer (MEDIUM)**
+- **[x] Epigraph Visualizer (MEDIUM)**
   - **Location:** `topics/03-convex-functions/widgets/js/epigraph-visualizer.js`
   - **Description:** Shows the 2D graph of a function and allows the user to toggle the visualization of its epigraph.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] First-Order Characterization: Tangent Line Explorer (HIGH)**
+- **[x] First-Order Characterization: Tangent Line Explorer (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/tangent-line-explorer.js`
   - **Description:** Users can slide a point along a convex function's graph and see that the tangent line is always a global underestimator.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Hessian Eigenvalue Heatmap (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/hessian-heatmap.js`
@@ -162,11 +162,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
-- **[ ] Operations Preserving Convexity (MEDIUM)**
+- **[x] Operations Preserving Convexity (MEDIUM)**
   - **Location:** `topics/03-convex-functions/widgets/js/operations-preserving.js`
   - **Description:** Interactive tool to show how operations like composition with an affine map preserve convexity.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Strongly Convex vs Merely Convex Comparison (LOW)**
   - **Location:** `topics/03-convex-functions/widgets/js/strong-convexity.js`
@@ -196,11 +196,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] QP Solver Sandbox (MEDIUM)**
+- **[x] QP Solver Sandbox (MEDIUM)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/qp-sandbox.js`
   - **Description:** An interactive sandbox for solving a simple 2D QP, showing the contour lines and constraints.
   - **Dependencies:** D3.js, Pyodide (CVXPY).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] SDP Visualizer (MEDIUM)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/sdp-visualizer.js`
@@ -214,11 +214,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Three.js.
   - **Status:** Planned
 
-- **[ ] Problem Classification Decision Tree (HIGH)**
+- **[x] Problem Classification Decision Tree (HIGH)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/classification-tree.js`
   - **Description:** An interactive decision tree to help classify optimization problems.
   - **Dependencies:** Mermaid.js or similar.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Solver Selection Guide (LOW)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/solver-guide.js`
@@ -236,11 +236,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ## Lecture 05: Duality (8 Widgets)
 
-- **[ ] Lagrangian Interactive Explainer (HIGH)**
+- **[x] Lagrangian Interactive Explainer (HIGH)**
   - **Location:** `topics/05-duality/widgets/js/lagrangian-explainer.js`
   - **Description:** Visualizes the Lagrangian function for a simple constrained problem and shows how the dual function is a pointwise infimum.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Primal-Dual Geometry Visualizer (HIGH)**
   - **Location:** `topics/05-duality/widgets/js/primal-dual-geometry.js`
@@ -254,11 +254,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js or Chart.js.
   - **Status:** Planned
 
-- **[ ] KKT Condition Checker (HIGH)**
+- **[x] KKT Condition Checker (HIGH)**
   - **Location:** `topics/05-duality/widgets/js/kkt-checker.js`
   - **Description:** Users can input a problem and a potential solution, and the widget checks which KKT conditions are satisfied.
   - **Dependencies:** Pyodide (SymPy, NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Shadow Prices & Sensitivity Analysis (MEDIUM)**
   - **Location:** `topics/05-duality/widgets/js/shadow-prices.js`
@@ -346,17 +346,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
   - **Status:** Completed
 
-- **[ ] Logistic Regression Solver (HIGH)**
+- **[x] Logistic Regression Solver (HIGH)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/logistic-regression.js`
   - **Description:** An interactive solver for logistic regression, showing the likelihood function and convergence.
   - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] SVM Margin Maximizer (HIGH)**
+- **[x] SVM Margin Maximizer (HIGH)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/svm-margin.js`
   - **Description:** Users can drag support vectors and see how the SVM margin and decision boundary change.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Naive Bayes Visualization (MEDIUM)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/naive-bayes.js`
@@ -416,11 +416,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Planned
 
-- **[ ] Distance Between Convex Sets (HIGH)**
+- **[x] Distance Between Convex Sets (HIGH)**
   - **Location:** `topics/08-geometric-problems/widgets/js/distance-between-sets.js`
   - **Description:** Calculates and visualizes the shortest distance between two convex sets.
   - **Dependencies:** D3.js, Pyodide (CVXPY).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Facility Location Problem (LOW)**
   - **Location:** `topics/08-geometric-problems/widgets/js/facility-location.js`
@@ -456,11 +456,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
-- **[ ] Gradient Descent vs Newton Race (HIGH)**
+- **[x] Gradient Descent vs Newton Race (HIGH)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/gd-vs-newton.js`
   - **Description:** A side-by-side animation comparing the convergence of Gradient Descent and Newton's method.
   - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Step Size Selector (MEDIUM)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/step-size.js`
@@ -468,11 +468,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Planned
 
-- **[ ] Convergence Rate Comparison (HIGH)**
+- **[x] Convergence Rate Comparison (HIGH)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/convergence-rate.js`
   - **Description:** Plots the convergence rates of different first-order methods.
   - **Dependencies:** D3.js or Chart.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Condition Number Impact (MEDIUM)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/condition-number-impact.js`
@@ -575,7 +575,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 - **[ ] Newton Step in IPM (HIGH)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/newton-step-ipm.js`
   - **Description:** Shows a single Newton step within an interior-point method, including the centering and affine steps.
-  - **Dependencies:** D3.js, Pyodide (NumPy).
+  - **dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Planned
 
 - **[ ] LP via Simplex vs IPM (HIGH)**

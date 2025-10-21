@@ -1,23 +1,34 @@
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+/**
+ * Widget: Classification Tree
+ *
+ * Description: An interactive decision tree to help classify optimization problems.
+ */
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@9/+esm";
 
-export async function initClassificationTree(containerId) {
+export function initClassificationTree(containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
-        console.error(`Container #${containerId} not found`);
+        console.error(`Container #${containerId} not found.`);
         return;
     }
 
     const graphDefinition = `
-graph TD
-    A[Start] --> B{Is it a convex problem?};
-    B -- Yes --> C{Is it an LP?};
-    B -- No --> D[Non-convex];
-    C -- Yes --> E[LP Solver];
-    C -- No --> F{Is it a QP?};
-    F -- Yes --> G[QP Solver];
-    F -- No --> H[General Convex Solver];
+    graph TD
+        A{Problem} --> B{Is the objective function linear?};
+        B -- Yes --> C{Are the constraints linear?};
+        B -- No --> D{Is the objective function quadratic?};
+        C -- Yes --> E[Linear Program (LP)];
+        C -- No --> F[Non-linear Program];
+        D -- Yes --> G{Are the constraints linear?};
+        D -- No --> H[Non-linear Program];
+        G -- Yes --> I[Quadratic Program (QP)];
+        G -- No --> J[Quadratically Constrained Quadratic Program (QCQP)];
     `;
 
-    const { svg } = await mermaid.render('graphDiv', graphDefinition);
-    container.innerHTML = svg;
+    const mermaidContainer = document.createElement("div");
+    mermaidContainer.classList.add("mermaid");
+    mermaidContainer.textContent = graphDefinition;
+    container.appendChild(mermaidContainer);
+
+    mermaid.initialize({ startOnLoad: true });
 }
