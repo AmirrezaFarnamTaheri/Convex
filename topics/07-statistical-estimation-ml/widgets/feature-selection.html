@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Selection via Sparsity</title>
+    <link rel="stylesheet" href="../../../shared/styles/widget-theme.css">
+    <style>
+        #sparsity-plot-container {
+            width: 600px;
+            height: 400px;
+            border: 1px solid var(--color-surface-1);
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <label for="c-slider">Regularization Strength (C):</label>
+        <input type="range" id="c-slider" min="-2" max="2" value="0" step="0.1">
+        <div id="sparsity-plot-container"></div>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="module" src="js/feature-selection.js"></script>
+</body>
+</html>

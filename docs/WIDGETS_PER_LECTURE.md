@@ -24,17 +24,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy for computation).
   - **Status:** Completed
 
-- **[ ] Eigenvalue Decomposition & PSD Explorer (HIGH)**
+- **[x] Eigenvalue Decomposition & PSD Explorer (HIGH)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/eigen-psd.js`
   - **Description:** Shows the geometric interpretation of eigenvalues/eigenvectors for a 2x2 matrix and visualizes its quadratic form to check for positive semidefiniteness.
   - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Condition Number & Convergence Race (LOW)**
+- **[x] Condition Number & Convergence Race (LOW)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/condition-number.js`
   - **Description:** Demonstrates how a high condition number slows down iterative solvers by comparing two systems of linear equations.
   - **Dependencies:** D3.js for plotting convergence.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Hessian Landscape Visualizer (HIGH)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/hessian-landscape-visualizer.js`
@@ -42,11 +42,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Three.js, Pyodide (NumPy).
   - **Status:** Completed
 
-- **[ ] SVD & Low-Rank Approximation (LOW)**
+- **[x] SVD & Low-Rank Approximation (LOW)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/svd-approximator.js`
   - **Description:** Lets users perform a low-rank approximation of an image by selecting the number of singular values to use.
   - **Dependencies:** Canvas, Pyodide (NumPy, Scikit-image).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Matrix Explorer (MEDIUM)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/matrix-explorer.js`
@@ -167,11 +167,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Hessian Eigenvalue Heatmap (HIGH)**
+- **[x] Hessian Eigenvalue Heatmap (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/hessian-heatmap.js`
   - **Description:** Displays a 2D function's value as a heatmap and overlays the eigenvalues of the Hessian at each point, showing where it is convex.
   - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Hessian Explorer (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/hessian-explorer.js`
@@ -311,11 +311,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Regularization Path Explorer (HIGH)**
+- **[x] Regularization Path Explorer (HIGH)**
   - **Location:** `topics/06-approximation-fitting/widgets/js/regularization-path.js`
   - **Description:** Shows how the coefficients of a linear model change as the regularization parameter (lambda) for Lasso or Ridge is varied.
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Robust Regression vs LS (MEDIUM)**
   - **Location:** `topics/06-approximation-fitting/widgets/js/robust-regression.js`
@@ -375,17 +375,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Naive Bayes Visualization (MEDIUM)**
+- **[x] Naive Bayes Visualization (MEDIUM)**
   - **Location:** `topics/07-statistical-estimation/widgets/js/naive-bayes.js`
   - **Description:** Visualizes the conditional probabilities used in a Naive Bayes classifier.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Multi-class Classification (MEDIUM)**
+- **[x] Multi-class Classification (MEDIUM)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/multiclass-classification.js`
   - **Description:** Shows decision boundaries for one-vs-all or softmax classification on a multi-class dataset.
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Mixture Model Solver (LOW)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/mixture-model.js`
@@ -399,17 +399,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js or Chart.js.
   - **Status:** Planned
 
-- **[ ] Feature Selection via Sparsity (MEDIUM)**
+- **[x] Feature Selection via Sparsity (MEDIUM)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/feature-selection.js`
   - **Description:** Shows how L1 regularization in logistic regression can drive feature coefficients to zero.
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Model Comparison Dashboard (MEDIUM)**
+- **[x] Model Comparison Dashboard (MEDIUM)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/model-comparison.js`
   - **Description:** A dashboard to compare the performance of different classifiers on a given dataset.
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
@@ -484,11 +484,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
-- **[ ] Step Size Selector (MEDIUM)**
+- **[x] Step Size Selector (MEDIUM)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/step-size.js`
   - **Description:** Shows how different step sizes (too large, too small, just right) affect the convergence of gradient descent.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Convergence Rate Comparison (HIGH)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/convergence-rate.js`
@@ -496,11 +496,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js or Chart.js.
   - **Status:** Completed
 
-- **[ ] Condition Number Impact (MEDIUM)**
+- **[x] Condition Number Impact (MEDIUM)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/condition-number-impact.js`
   - **Description:** Visualizes how a high condition number elongates the contours of a function and slows down gradient descent.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Momentum & Acceleration (LOW)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/momentum.js`
@@ -514,17 +514,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Planned
 
-- **[ ] Coordinate Descent Visualizer (MEDIUM)**
+- **[x] Coordinate Descent Visualizer (MEDIUM)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/coordinate-descent.js`
   - **Description:** Animates the steps of coordinate descent, showing how it optimizes along one axis at a time.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] First-Order Method Gallery (MEDIUM)**
+- **[x] First-Order Method Gallery (MEDIUM)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/first-order-gallery.js`
   - **Description:** A gallery comparing the paths taken by various first-order methods on the same problem.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
@@ -542,17 +542,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Augmented Lagrangian Method (MEDIUM)**
+- **[x] Augmented Lagrangian Method (MEDIUM)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/augmented-lagrangian.js`
   - **Description:** Visualizes the convergence of the augmented Lagrangian method.
   - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Penalty Method Path (MEDIUM)**
+- **[x] Penalty Method Path (MEDIUM)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/penalty-method.js`
   - **Description:** Shows the path of solutions as the penalty parameter increases in the penalty method.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Barrier Method Progression (LOW)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/barrier-method.js`
@@ -566,11 +566,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Pyodide (SymPy).
   - **Status:** Planned
 
-- **[ ] Infeasibility Detection (MEDIUM)**
+- **[x] Infeasibility Detection (MEDIUM)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/infeasibility-detection.js`
   - **Description:** Visualizes how a Phase I method can detect infeasibility in an LP.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Feasible vs Interior-Point Methods (HIGH)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/feasible-vs-interior.js`
@@ -588,11 +588,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Logarithmic Barrier Landscape (MEDIUM)**
+- **[x] Logarithmic Barrier Landscape (MEDIUM)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/log-barrier-landscape.js`
   - **Description:** Visualizes the objective function combined with the logarithmic barrier function.
   - **Dependencies:** Three.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Newton Step in IPM (HIGH)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/newton-step-ipm.js`
@@ -606,17 +606,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Conic Problem Solver (MEDIUM)**
+- **[x] Conic Problem Solver (MEDIUM)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/conic-solver.js`
   - **Description:** A simple sandbox for solving a small conic problem.
   - **Dependencies:** Pyodide (CVXPY).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Primal-Dual IPM Visualizer (MEDIUM)**
+- **[x] Primal-Dual IPM Visualizer (MEDIUM)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/primal-dual-ipm.js`
   - **Description:** Visualizes the convergence of a primal-dual interior-point method.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Self-Concordant Functions Explorer (LOW)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/self-concordant.js`
@@ -630,8 +630,8 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js or Chart.js.
   - **Status:** Planned
 
-- **[ ] Large-Scale IPM Behavior (MEDIUM)**
+- **[x] Large-Scale IPM Behavior (MEDIUM)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/large-scale-ipm.js`
   - **Description:** A plot showing the number of iterations for an IPM as problem size grows, illustrating the near-constant iteration count.
   - **Dependencies:** D3.js or Chart.js.
-  - **Status:** Planned
+  - **Status:** Completed

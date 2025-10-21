@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step Size Selector</title>
+    <link rel="stylesheet" href="../../../shared/styles/widget-theme.css">
+    <style>
+        #step-size-plot-container {
+            width: 500px;
+            height: 500px;
+            border: 1px solid var(--color-surface-1);
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <label for="function-select">Function:</label>
+        <select id="function-select">
+            <option value="x**2 + y**2">f(x,y) = x² + y²</option>
+            <option value="0.5*x**2 + 5*y**2">f(x,y) = 0.5x² + 5y²</option>
+        </select>
+        <label for="step-size-slider">Step Size (α):</label>
+        <input type="range" id="step-size-slider" min="0.01" max="1.0" value="0.1" step="0.01">
+        <label for="start-x-slider">Start X:</label>
+        <input type="range" id="start-x-slider" min="-4" max="4" value="-3" step="0.1">
+        <label for="start-y-slider">Start Y:</label>
+        <input type="range" id="start-y-slider" min="-4" max="4" value="4" step="0.1">
+        <button id="restart-btn">Restart Animation</button>
+        <div id="step-size-plot-container"></div>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="module" src="js/step-size.js"></script>
+</body>
+</html>
