@@ -115,11 +115,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Description:** Users can add or modify linear inequalities (Ax <= b) and see the resulting 2D polyhedron update in real-time.
   - **Dependencies:** D3.js, Pyodide (NumPy for constraint solving).
   - **Status:** Completed
-- **[x] Polyhedron Visualizer (Alternate) (HIGH)**
-  - **Location:** `topics/02-convex-sets/widgets/js/polyhedron-viz.js`
-  - **Description:** An alternate visualization of a polyhedron.
-  - **Dependencies:** D3.js.
-  - **Status:** Completed
 
 - **[x] Separating Hyperplane Theorem Visualizer (HIGH)**
   - **Location:** `topics/02-convex-sets/widgets/js/separating-hyperplane.js`
@@ -476,11 +471,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
 - **[x] Gradient Descent vs Newton Race (HIGH)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/gd-vs-newton.js`
   - **Description:** A side-by-side animation comparing the convergence of Gradient Descent and Newton's method.
-  - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Completed
-- **[x] Gradient Descent vs Newton Race (Alternate) (HIGH)**
-  - **Location:** `topics/09-unconstrained-minimization/widgets/js/gd-vs-newton-race.js`
-  - **Description:** An alternate animation comparing the convergence of Gradient Descent and Newton's method.
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
