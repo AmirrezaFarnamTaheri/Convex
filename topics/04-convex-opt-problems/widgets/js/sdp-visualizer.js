@@ -17,19 +17,33 @@ export function initSDPVisualizer(containerId) {
         <div class="sdp-visualizer-widget">
             <div id="sdp-scene-container" style="width: 100%; height: 400px; position: relative;"></div>
             <div class="widget-controls" style="padding: 15px;">
-                <p>Visualizing the set of 2x2 symmetric positive semidefinite matrices.</p>
-                <div class="widget-output">
-                    <p>A matrix M = [[x, z], [z, y]] is PSD if and only if:</p>
-                    <ul>
-                        <li>x ≥ 0</li>
-                        <li>y ≥ 0</li>
-                        <li>xy - z² ≥ 0 (determinant is non-negative)</li>
-                    </ul>
+                <h4>Matrix Controls</h4>
+                <div class="control-row">
+                    <label for="x-slider">x (M₁₁):</label>
+                    <input type="range" id="x-slider" min="0" max="4" step="0.1" value="2">
                 </div>
+                <div class="control-row">
+                    <label for="y-slider">y (M₂₂):</label>
+                    <input type="range" id="y-slider" min="0" max="4" step="0.1" value="2">
+                </div>
+                <div class="control-row">
+                    <label for="z-slider">z (M₁₂):</label>
+                    <input type="range" id="z-slider" min="-3" max="3" step="0.1" value="1">
+                </div>
+                <div id="matrix-display" class="widget-output" style="margin-top: 10px;"></div>
             </div>
         </div>
     `;
     const sceneContainer = container.querySelector("#sdp-scene-container");
+    const xSlider = container.querySelector("#x-slider");
+    const ySlider = container.querySelector("#y-slider");
+    const zSlider = container.querySelector("#z-slider");
+    const matrixDisplay = container.querySelector("#matrix-display");
+
+    let pointSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(0.15, 32, 32),
+        new THREE.MeshBasicMaterial({ color: 'red' })
+    );
 
     // --- SCENE SETUP ---
     const scene = new THREE.Scene();
@@ -91,6 +105,27 @@ export function initSDPVisualizer(containerId) {
     });
     const surface = new THREE.Mesh(geometry, material);
     scene.add(surface);
+    scene.add(pointSphere);
+
+    function updatePoint() {
+        const x = +xSlider.value;
+        const y = +ySlider.value;
+        const z = +zSlider.value;
+        pointSphere.position.set(x, y, z);
+        const det = x * y - z * z;
+        const isPSD = det >= 0;
+        pointSphere.material.color.set(isPSD ? 'var(--color-success)' : 'var(--color-danger)');
+
+        matrixDisplay.innerHTML = `
+            <p>M = <span class="matrix">[[${x.toFixed(1)}, ${z.toFixed(1)}], [${z.toFixed(1)}, ${y.toFixed(1)}]]</span></p>
+            <p>Determinant: <strong>${det.toFixed(2)}</strong></p>
+            <p>Status: <strong style="color: ${isPSD ? 'var(--color-success)' : 'var(--color-danger)'}">${isPSD ? 'Positive Semidefinite' : 'Not PSD'}</strong></p>
+        `;
+    }
+
+    xSlider.addEventListener('input', updatePoint);
+    ySlider.addEventListener('input', updatePoint);
+    zSlider.addEventListener('input', updatePoint);
 
     // --- ANIMATION & RESIZE ---
     function animate() {
@@ -105,5 +140,6 @@ export function initSDPVisualizer(containerId) {
         renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
     }).observe(sceneContainer);
 
+    updatePoint();
     animate();
 }

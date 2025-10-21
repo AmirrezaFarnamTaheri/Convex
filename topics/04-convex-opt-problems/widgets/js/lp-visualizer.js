@@ -23,6 +23,8 @@ export async function initLPVisualizer(containerId) {
                 <p class="widget-instructions">Click-drag on the plot to add constraints. Non-negativity (x₁, x₂ ≥ 0) is assumed.</p>
                 <div id="lp-constraints-list"></div>
                 <button id="run-simplex-btn">Animate Simplex</button>
+                <button id="clear-constraints-btn">Clear Constraints</button>
+                <div id="lp-solution-text" class="widget-output" style="margin-top: 10px;"></div>
             </div>
         </div>
     `;
@@ -30,10 +32,13 @@ export async function initLPVisualizer(containerId) {
     const plotContainer = container.querySelector("#plot-container");
     const constraintsList = container.querySelector("#lp-constraints-list");
     const runBtn = container.querySelector("#run-simplex-btn");
+    const clearBtn = container.querySelector("#clear-constraints-btn");
+    const solutionText = container.querySelector("#lp-solution-text");
     const c1_in = container.querySelector("#c1");
     const c2_in = container.querySelector("#c2");
 
-    let constraints = [[-1, 1, 1], [1, 1, 3], [1, 0, 2]]; // Default a1, a2, b
+    const initialConstraints = [[-1, 1, 1], [1, 1, 3], [1, 0, 2]];
+    let constraints = [...initialConstraints]; // Default a1, a2, b
     let svg, x, y;
 
     function setupChart() {
@@ -124,36 +129,59 @@ export async function initLPVisualizer(containerId) {
         });
     }
 
-    function runSimplex() {
+    async function runSimplex() {
         const region = updateFeasibleRegion();
-        if (!region || region.length === 0) return;
+        solutionText.innerHTML = "";
+        if (!region || region.length < 3) {
+            solutionText.innerHTML = "Feasible region is empty or unbounded.";
+            return;
+        }
 
         const c = [+c1_in.value, +c2_in.value];
-        const vertices = region.slice(0, region.length -1); // d3-polygon repeats the last point
+        let vertices = region.slice(0, region.length - 1);
 
-        // Find the optimal vertex
-        let bestVertex = vertices[0];
-        let maxObjective = c[0] * bestVertex[0] + c[1] * bestVertex[1];
-        vertices.forEach(v => {
-            const obj = c[0] * v[0] + c[1] * v[1];
+        // Sort vertices to trace the perimeter
+        const center = vertices.reduce((acc, v) => [acc[0] + v[0], acc[1] + v[1]], [0,0]).map(v => v/vertices.length);
+        vertices.sort((a,b) => Math.atan2(a[1]-center[1], a[0]-center[0]) - Math.atan2(b[1]-center[1], b[0]-center[0]));
+
+        let path = [];
+        let maxObjective = -Infinity;
+        let bestVertex = null;
+
+        for (const vertex of vertices) {
+            path.push(vertex);
+            const obj = c[0] * vertex[0] + c[1] * vertex[1];
             if (obj > maxObjective) {
                 maxObjective = obj;
-                bestVertex = v;
+                bestVertex = vertex;
             }
-        });
 
-        // Simplified "animation": just show the optimal point
-        svg.select(".content").selectAll(".vertex").data(vertices)
-            .join("circle").attr("class", "vertex").attr("cx", d => x(d[0])).attr("cy", d => y(d[1]))
-            .attr("r", 4).attr("fill", "white");
+            svg.select(".content").selectAll(".vertex").data(vertices)
+                .join("circle").attr("class", "vertex").attr("cx", d => x(d[0])).attr("cy", d => y(d[1]))
+                .attr("r", 4).attr("fill", "var(--color-text-main)");
+
+            svg.select(".content").append("circle").attr("class", "current-vertex")
+                .attr("cx", x(vertex[0])).attr("cy", y(vertex[1]))
+                .attr("r", 6).attr("fill", "var(--color-accent)")
+                .transition().duration(400).attr("r", 8).transition().attr("r", 6);
+
+            await new Promise(resolve => setTimeout(resolve, 400));
+        }
 
         svg.select(".content").append("circle").attr("class", "optimal-vertex")
             .attr("cx", x(bestVertex[0])).attr("cy", y(bestVertex[1]))
-            .attr("r", 6).attr("fill", "var(--color-danger)")
-            .transition().duration(500).attr("r", 10).transition().attr("r", 6);
+            .attr("r", 8).attr("fill", "var(--color-success)");
+
+        solutionText.innerHTML = `<strong>Solution:</strong> [${bestVertex[0].toFixed(2)}, ${bestVertex[1].toFixed(2)}]<br>
+                                  <strong>Optimal Value:</strong> ${maxObjective.toFixed(3)}`;
     }
 
     runBtn.onclick = runSimplex;
+    clearBtn.onclick = () => {
+        constraints = [...initialConstraints];
+        updateFeasibleRegion();
+        solutionText.innerHTML = "";
+    };
     new ResizeObserver(setupChart).observe(plotContainer);
     setupChart();
     updateFeasibleRegion();

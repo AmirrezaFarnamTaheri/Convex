@@ -5,6 +5,8 @@
  *              reformulated into standard convex optimization forms like LP, QP, etc.
  * Version: 2.0.0
  */
+import "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.mjs";
+import renderMathInElement from "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.mjs";
 
 export function initReformulationTool(containerId) {
     const container = document.getElementById(containerId);
@@ -34,6 +36,18 @@ export function initReformulationTool(containerId) {
                 "These can be rewritten in standard form: x₁ - t ≤ 0, 2x₂ - t ≤ -1, and x₁ - x₂ - t ≤ 0."
             ],
              final_form: "Linear Program (LP)"
+        },
+        "sum_of_squares": {
+            title: "Sum of Squares Minimization",
+            original: "Minimize: (Ax-b)ᵀ(Ax-b)",
+            steps: [
+                "This is an unconstrained least-squares problem.",
+                "Expand the objective function: xᵀAᵀAx - 2bᵀAx + bᵀb.",
+                "This is a quadratic function of x.",
+                "Let P = 2AᵀA, q = -2Aᵀb. The problem is equivalent to minimizing ½xᵀPx + qᵀx.",
+                "This is the standard form of a convex Quadratic Program (QP)."
+            ],
+            final_form: "Quadratic Program (QP)"
         }
     };
 
@@ -68,6 +82,7 @@ export function initReformulationTool(containerId) {
 
     function render() {
         originalProblemDiv.innerHTML = `<h5>Original Problem</h5><p>${selectedProblem.original}</p>`;
+        renderMathInElement(originalProblemDiv);
 
         let stepsHTML = '<h5>Reformulation Steps:</h5><ol>';
         for (let i = 0; i < currentStep; i++) {
@@ -75,6 +90,7 @@ export function initReformulationTool(containerId) {
         }
         stepsHTML += '</ol>';
         stepsContainer.innerHTML = stepsHTML;
+        renderMathInElement(stepsContainer);
 
         if (currentStep < selectedProblem.steps.length) {
             const nextButton = document.createElement('button');

@@ -29,6 +29,7 @@ export async function initQPSandbox(containerId) {
                 <p class="widget-instructions">Click-drag on the plot to add constraints.</p>
                 <div id="qp-constraints-list"></div>
                 <button id="solve-qp-btn">Solve QP</button>
+                <button id="clear-constraints-btn">Clear Constraints</button>
                 <div id="qp-solution-text" class="widget-output" style="margin-top: 10px;"></div>
             </div>
         </div>
@@ -37,9 +38,11 @@ export async function initQPSandbox(containerId) {
     const plotContainer = container.querySelector("#plot-container");
     const constraintsList = container.querySelector("#qp-constraints-list");
     const solveBtn = container.querySelector("#solve-qp-btn");
+    const clearBtn = container.querySelector("#clear-constraints-btn");
     const solutionText = container.querySelector("#qp-solution-text");
 
-    let constraints = [[1, 1, 2], [-1, 0, 0], [0, -1, 0]]; // a1, a2, b
+    const initialConstraints = [[1, 1, 2], [-1, 0, 0], [0, -1, 0]];
+    let constraints = [...initialConstraints]; // a1, a2, b
     let svg, x, y;
 
     function setupChart() {
@@ -107,11 +110,11 @@ export async function initQPSandbox(containerId) {
         const contours = d3.contours().size([gridSize, gridSize]).thresholds(15)(contourData);
         svg.select(".content").append("g").selectAll("path").data(contours)
             .join("path").attr("d", d3.geoPath(d3.geoIdentity().scale(x(grid[1]) - x(grid[0]))))
-            .attr("fill", "none").attr("stroke", "var(--color-surface-1)");
+            .attr("fill", "none").attr("stroke", "var(--color-surface-1)").attr("stroke-opacity", 0.5);
 
         if (subjectPolygon) {
              svg.select(".content").append("path").datum(subjectPolygon)
-                .attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1]))).attr("fill", "var(--color-primary-light)");
+                .attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1]))).attr("fill", "var(--color-primary)").attr("fill-opacity", 0.3);
         }
 
         // Find Solution
@@ -129,8 +132,9 @@ export async function initQPSandbox(containerId) {
                 });
 
                 svg.select(".content").append("circle").attr("cx", x(bestVertex[0])).attr("cy", y(bestVertex[1]))
-                    .attr("r", 6).attr("fill", "var(--color-danger)");
-                solutionText.textContent = `Solution: [${bestVertex[0].toFixed(2)}, ${bestVertex[1].toFixed(2)}]`;
+                    .attr("r", 6).attr("fill", "var(--color-accent)");
+                solutionText.innerHTML = `<strong>Solution:</strong> [${bestVertex[0].toFixed(2)}, ${bestVertex[1].toFixed(2)}]<br>
+                                          <strong>Optimal Value:</strong> ${minObjective.toFixed(3)}`;
             }
         }
     }
@@ -154,6 +158,11 @@ export async function initQPSandbox(containerId) {
     }
 
     solveBtn.onclick = update;
+    clearBtn.onclick = () => {
+        constraints = [...initialConstraints];
+        update();
+    };
+
     new ResizeObserver(setupChart).observe(plotContainer);
     setupChart();
     update();

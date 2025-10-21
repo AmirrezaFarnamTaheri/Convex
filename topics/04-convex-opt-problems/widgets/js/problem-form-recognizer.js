@@ -35,8 +35,10 @@ export function initProblemRecognizer(containerId) {
     let objectiveType = 'linear';
 
     const functionTemplates = {
-        linear: () => `c₁ <input type="number" value="1" step="0.1"> + c₂ <input type="number" value="1" step="0.1">`,
-        quadratic: () => `P₁₁ <input type="number" value="1" step="0.1">² + P₂₂ <input type="number" value="1" step="0.1">² + P₁₂ <input type="number" value="0" step="0.1">x₁x₂`,
+        linear: () => `c₁<input type="number" value="1" step="0.1">x₁ + c₂<input type="number" value="1" step="0.1">x₂`,
+        quadratic: () => `½(xᵀ<input class="matrix" value="1"> <input class="matrix" value="0"> <br> <input class="matrix" value="0"> <input class="matrix" value="1">x) + qᵀx`,
+        socp: () => `||<input class="matrix" value="1">x - <input class="matrix" value="0">||₂ ≤ <input value="1">ᵀx + <input value="0">`,
+        sdp: () => `x₁A₁ + ... + xₙAₙ ≼ B`
     };
 
     function renderObjective() {
@@ -60,11 +62,13 @@ export function initProblemRecognizer(containerId) {
         div.className = 'constraint-row';
         div.innerHTML = `
             <select data-id="${id}" class="constraint-type">
-                <option value="linear">Linear</option>
-                <option value="quadratic">Quadratic</option>
+                <option value="linear">Linear (Ax ≤ b)</option>
+                <option value="quadratic">Quadratic (xᵀQx + rᵀx + s ≤ 0)</option>
+                <option value="socp">Second-Order Cone (||Fx+g||₂ ≤ hᵀx+k)</option>
+                <option value="sdp">Semidefinite (x₁A₁ + ... + xₙAₙ ≼ B)</option>
             </select>
             <div class="constraint-params">${functionTemplates.linear()}</div>
-            <button data-id="${id}">✖</button>
+            <button data-id="${id}" class="remove-btn">✖</button>
         `;
         constraintsContainer.appendChild(div);
 
@@ -72,33 +76,46 @@ export function initProblemRecognizer(containerId) {
         const paramsDiv = div.querySelector('.constraint-params');
 
         typeSelect.onchange = () => {
-             paramsDiv.innerHTML = functionTemplates[typeSelect.value]();
+            const selectedType = typeSelect.value;
+            paramsDiv.innerHTML = functionTemplates[selectedType] ? functionTemplates[selectedType]() : '';
         };
-        div.querySelector('button').onclick = () => {
-             div.remove();
-        };
+        div.querySelector('.remove-btn').onclick = () => div.remove();
     }
 
     function recognize() {
         const isObjectiveLinear = objectiveType === 'linear';
-        const P_inputs = objectiveEditor.querySelectorAll("input");
-        const isObjectiveQuadratic = objectiveType === 'quadratic' && (+P_inputs[0].value > 0 && +P_inputs[1].value > 0 && (4 * +P_inputs[0].value * +P_inputs[1].value - (+P_inputs[2].value)**2) >= 0);
+        const constraintTypes = Array.from(constraintsContainer.querySelectorAll('.constraint-type')).map(s => s.value);
 
-        let constraintsAreLinear = true;
-        constraintsContainer.querySelectorAll('.constraint-row').forEach(row => {
-            if (row.querySelector('.constraint-type').value !== 'linear') {
-                constraintsAreLinear = false;
-            }
-        });
+        const hasLinear = constraintTypes.includes('linear');
+        const hasQuadratic = constraintTypes.includes('quadratic');
+        const hasSOCP = constraintTypes.includes('socp');
+        const hasSDP = constraintTypes.includes('sdp');
 
         let form = "General Non-linear Program";
-        if (isObjectiveLinear && constraintsAreLinear) form = "Linear Program (LP)";
-        else if (isObjectiveQuadratic && constraintsAreLinear) form = "Quadratic Program (QP)";
-        else if(isObjectiveQuadratic && !constraintsAreLinear) form = "Quadratically Constrained QP (QCQP)";
+        let description = "The combination of objective and constraints does not fit a standard convex problem form.";
+
+        if (isObjectiveLinear && !hasQuadratic && !hasSOCP && !hasSDP) {
+            form = "Linear Program (LP)";
+            description = "Objective and all constraints are linear functions.";
+        } else if (objectiveType === 'quadratic' && !hasSOCP && !hasSDP) {
+            if (!hasQuadratic) {
+                form = "Quadratic Program (QP)";
+                description = "Quadratic objective with only linear constraints.";
+            } else {
+                form = "Quadratically Constrained QP (QCQP)";
+                description = "Quadratic objective with at least one quadratic constraint.";
+            }
+        } else if ((isObjectiveLinear || objectiveType === 'quadratic' || hasSOCP) && !hasSDP) {
+            form = "Second-Order Cone Program (SOCP)";
+            description = "LP, QP, or QCQP constraints, plus one or more second-order cone constraints.";
+        } else if (hasSDP) {
+            form = "Semidefinite Program (SDP)";
+            description = "The problem includes one or more semidefinite constraints, making it an SDP.";
+        }
 
         resultOutput.innerHTML = `
             <p><strong>Problem Type:</strong> <span style="color:var(--color-accent);">${form}</span></p>
-            <p>This is a simplified classification based on the forms you've selected.</p>
+            <p>${description}</p>
         `;
     }
 
