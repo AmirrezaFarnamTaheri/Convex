@@ -5,15 +5,9 @@
  *              and the tool will attempt to classify it.
  */
 
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-async function initPyodide() {
-    const pyodide = await loadPyodide();
-    await pyodide.loadPackage(["numpy", "cvxpy"]);
-    return pyodide;
-}
-
-const pyodidePromise = initPyodide();
+const pyodidePromise = getPyodide();
 
 export async function initProblemRecognizer(containerId) {
     const container = document.getElementById(containerId);

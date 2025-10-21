@@ -4,14 +4,9 @@
 
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128/build/three.module.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.128/examples/jsm/controls/OrbitControls.js";
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-async function initPyodide() {
-    const pyodide = await loadPyodide();
-    await pyodide.loadPackage("numpy");
-    return pyodide;
-}
-const pyodidePromise = initPyodide();
+const pyodidePromise = getPyodide();
 
 
 export async function initLandscapeViewer(containerId) {

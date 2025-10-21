@@ -4,7 +4,7 @@
  * Description: An interactive sandbox for solving a simple 2D QP, showing the contour lines and constraints.
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.mjs";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 
 export async function initQPSandbox(containerId) {
@@ -20,7 +20,7 @@ export async function initQPSandbox(containerId) {
         <div id="output"></div>
     `;
 
-    let pyodide = await loadPyodide();
+    let pyodide = await getPyodide();
     await pyodide.loadPackage("cvxpy");
 
     const margin = {top: 20, right: 30, bottom: 40, left: 40},
