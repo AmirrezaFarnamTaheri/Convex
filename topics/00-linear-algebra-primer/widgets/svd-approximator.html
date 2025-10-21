@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVD & Low-Rank Approximation</title>
+    <link rel="stylesheet" href="../../../shared/styles/widget-theme.css">
+    <style>
+        .svd-container {
+            display: flex;
+            gap: 20px;
+        }
+        canvas {
+            border: 1px solid var(--color-surface-1);
+            width: 256px;
+            height: 256px;
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <input type="file" id="image-upload" accept="image/*">
+        <label for="k-slider">Number of Singular Values (k):</label>
+        <input type="range" id="k-slider" min="1" max="256" value="50" step="1">
+        <div class="svd-container">
+            <div>
+                <p>Original Image</p>
+                <canvas id="original-canvas" width="256" height="256"></canvas>
+            </div>
+            <div>
+                <p>Approximated Image</p>
+                <canvas id="approximated-canvas" width="256" height="256"></canvas>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="js/svd-approximator.js"></script>
+</body>
+</html>
