@@ -23,6 +23,12 @@ export async function initEigenvalueExplorer(containerId) {
         return;
     }
 
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await pyodidePromise;
+
+    container.innerHTML = '';
+
     let matrix = [[1, 0.5], [0.5, 1]];
 
     // --- UI CONTROLS ---

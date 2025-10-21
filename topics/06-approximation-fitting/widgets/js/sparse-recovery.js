@@ -16,6 +16,12 @@ export async function initSparseRecoveryDemo(containerId) {
     const container = document.getElementById(containerId);
     if (!container) { console.error(`Container #${containerId} not found.`); return; }
 
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await pyodidePromise;
+
+    container.innerHTML = '';
+
     let n_features = 50;
     let n_samples = 20;
     let alpha = 0.1;

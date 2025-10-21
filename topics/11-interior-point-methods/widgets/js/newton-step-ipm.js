@@ -19,6 +19,11 @@ export async function initNewtonStepIPM(containerId) {
         console.error(`Container #${containerId} not found`);
         return;
     }
+
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await getPyodide();
+
     container.innerHTML = `
     <div style="display: flex; flex-direction: column; height: 100%;">
       <div style="flex-grow: 1; position: relative;" id="vis-newton-ipm"></div>
@@ -27,8 +32,6 @@ export async function initNewtonStepIPM(containerId) {
       </div>
     </div>
   `;
-
-    const pyodide = await getPyodide();
 
     // This is a conceptual visualization, so we'll use pre-calculated vectors
     // that represent a typical Newton step for an IPM.

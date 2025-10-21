@@ -16,6 +16,12 @@ export async function initMVEEVisualizer(containerId) {
     const container = document.getElementById(containerId);
     if (!container) { console.error(`Container #${containerId} not found.`); return; }
 
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await pyodidePromise;
+
+    container.innerHTML = '';
+
     let points = [];
 
     // --- UI CONTROLS ---

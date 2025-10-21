@@ -13,14 +13,16 @@ export async function initLogisticRegression(containerId) {
         return;
     }
 
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    let pyodide = await loadPyodide();
+    await pyodide.loadPackage("numpy");
+
     container.innerHTML = `
         <div id="plot_boundary" style="width: 500px; height: 500px;"></div>
         <div id="plot_likelihood" style="width: 500px; height: 200px;"></div>
         <button id="start_training">Start Training</button>
     `;
-
-    let pyodide = await loadPyodide();
-    await pyodide.loadPackage("numpy");
 
     const margin = {top: 20, right: 30, bottom: 40, left: 40},
         width = 500 - margin.left - margin.right,

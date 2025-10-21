@@ -14,6 +14,11 @@ export async function initRankNullspace(containerId) {
         return;
     }
 
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    let pyodide = await loadPyodide();
+    await pyodide.loadPackage("numpy");
+
     container.innerHTML = `
         <div id="matrix_input">
             [ <input type="number" value="1">, <input type="number" value="2">, <input type="number" value="3"> ]<br>
@@ -22,9 +27,6 @@ export async function initRankNullspace(containerId) {
         <button id="calculate">Calculate</button>
         <div id="output"></div>
     `;
-
-    let pyodide = await loadPyodide();
-    await pyodide.loadPackage("numpy");
 
     d3.select("#calculate").on("click", async () => {
         const inputs = d3.selectAll("#matrix_input input").nodes();

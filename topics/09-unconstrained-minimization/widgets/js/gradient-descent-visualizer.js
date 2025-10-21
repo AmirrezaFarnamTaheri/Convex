@@ -16,6 +16,12 @@ export async function initGradientDescentVisualizer(containerId) {
     const container = document.getElementById(containerId);
     if (!container) { console.error(`Container #${containerId} not found.`); return; }
 
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await pyodidePromise;
+
+    container.innerHTML = '';
+
     const functions = {
         "Quadratic": { func: (x, y) => x**2 + y**2, py_grad: "np.array([2*x, 2*y])", domain: {x: [-5, 5], y: [-5, 5]} },
         "Rosenbrock": { func: (x, y) => (1 - x)**2 + 100 * (y - x**2)**2, py_grad: "np.array([-2*(1-x) - 400*x*(y-x**2), 200*(y-x**2)])", domain: {x:[-2,2], y:[-1,3]} },

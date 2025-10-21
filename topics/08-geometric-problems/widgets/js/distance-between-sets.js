@@ -13,15 +13,17 @@ export async function initDistanceBetweenSets(containerId) {
         return;
     }
 
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    let pyodide = await loadPyodide();
+    await pyodide.loadPackage("cvxpy");
+
     container.innerHTML = `
         <p>Drag the two polygons and then click "Calculate Distance" to find the shortest distance between them.</p>
         <div id="plot"></div>
         <button id="calculate_distance">Calculate Distance</button>
         <div id="output"></div>
     `;
-
-    let pyodide = await loadPyodide();
-    await pyodide.loadPackage("cvxpy");
 
     const margin = {top: 20, right: 30, bottom: 40, left: 40},
         width = 500 - margin.left - margin.right,

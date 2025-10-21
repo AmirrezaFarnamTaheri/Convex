@@ -14,6 +14,12 @@ export async function initKKTChecker(containerId) {
         return;
     }
 
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    let pyodide = await loadPyodide();
+    await pyodide.loadPackage(["sympy", "numpy"]);
+
+    container.innerHTML = ``;
     const controls = document.createElement("div");
     controls.innerHTML = `
         <p><b>Problem:</b> Minimize x² + y² subject to x + y >= 2</p>
@@ -26,9 +32,6 @@ export async function initKKTChecker(containerId) {
         <div id="output"></div>
     `;
     container.appendChild(controls);
-
-    let pyodide = await loadPyodide();
-    await pyodide.loadPackage(["sympy", "numpy"]);
 
     d3.select("#check_kkt").on("click", async () => {
         const x_val = +document.getElementById("x_val").value;

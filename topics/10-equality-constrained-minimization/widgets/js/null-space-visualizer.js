@@ -23,6 +23,11 @@ export async function initNullSpaceVisualizer(containerId) {
         console.error(`Container #${containerId} not found`);
         return;
     }
+
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await getPyodide();
+
     container.innerHTML = `
     <div style="display: flex; flex-direction: column; height: 100%;">
       <div style="flex-grow: 1; position: relative;" id="vis-main"></div>
@@ -32,8 +37,6 @@ export async function initNullSpaceVisualizer(containerId) {
       </div>
     </div>
   `;
-
-    const pyodide = await getPyodide();
 
     const state = {
         P: [[2, 0], [0, 2]],
