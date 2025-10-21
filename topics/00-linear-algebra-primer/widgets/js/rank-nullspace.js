@@ -25,7 +25,6 @@ export async function initRankNullspace(containerId) {
 
     let pyodide = await loadPyodide();
     await pyodide.loadPackage("numpy");
-    // scipy is not available in pyodide, so we will use numpy for SVD
 
     d3.select("#calculate").on("click", async () => {
         const inputs = d3.selectAll("#matrix_input input").nodes();
