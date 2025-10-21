@@ -168,12 +168,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
-- **[x] Hessian Explorer (HIGH)**
-  - **Location:** `topics/03-convex-functions/widgets/js/hessian-explorer.js`
-  - **Description:** An interactive tool to explore the properties of the Hessian matrix.
-  - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Completed
-
 - **[x] Operations Preserving Convexity (MEDIUM)**
   - **Location:** `topics/03-convex-functions/widgets/js/operations-preserving.js`
   - **Description:** Interactive tool to show how operations like composition with an affine map preserve convexity.
@@ -225,12 +219,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Description:** Shows the geometry of the second-order cone and a simple SOCP problem.
   - **Dependencies:** Three.js.
   - **Status:** Planned
-
-- **[x] Problem Classification Decision Tree (HIGH)**
-  - **Location:** `topics/04-convex-opt-problems/widgets/js/classification-tree.js`
-  - **Description:** An interactive decision tree to help classify optimization problems.
-  - **Dependencies:** Mermaid.js or similar.
-  - **Status:** Completed
 
 - **[ ] Solver Selection Guide (LOW)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/solver-guide.js`
