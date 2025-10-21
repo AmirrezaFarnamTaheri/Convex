@@ -1,67 +1,86 @@
 /**
- * Widget: Convergence Rate
+ * Widget: Convergence Rate Comparison
  *
  * Description: Plots the convergence rates of different first-order methods.
  */
-import * as Chart from "https://cdn.jsdelivr.net/npm/chart.js/+esm";
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-export function initConvergenceRate(containerId) {
+export async function initConvergenceRate(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="convergence-rate-widget">
+            <div class="widget-controls" id="cr-controls"></div>
+            <div id="plot-container"></div>
+        </div>
+    `;
+
+    const controlsContainer = container.querySelector("#cr-controls");
+    const plotContainer = container.querySelector("#plot-container");
+
+    const margin = {top: 30, right: 20, bottom: 40, left: 60};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    svg.append("text").attr("x", width/2).attr("y", -10).attr("text-anchor", "middle").text("Convergence Rates of First-Order Methods");
+
+    const pyodide = await getPyodide();
+    const pythonCode = `
+import numpy as np
+import json
+
+def get_convergence_paths():
+    # Simulate f(x) - p* for a strongly convex function
+    # GD: linear convergence
+    gd_path = [10 * (0.9**i) for i in range(50)]
+    # Momentum
+    momentum_path = [10 * (0.7**i) for i in range(50)]
+    # Nesterov
+    nesterov_path = [10 * (0.5**i) for i in range(50)]
+
+    return json.dumps({
+        "Gradient Descent": gd_path,
+        "Momentum": momentum_path,
+        "Nesterov": nesterov_path
+    })
+`;
+    await pyodide.runPythonAsync(pythonCode);
+    const paths = await pyodide.globals.get('get_convergence_paths')().then(r => JSON.parse(r));
+
+    const n_iter = paths["Gradient Descent"].length;
+    const all_vals = Object.values(paths).flat();
+
+    const x = d3.scaleLinear().domain([0, n_iter-1]).range([0, width]);
+    const y = d3.scaleLog().domain([d3.min(all_vals), d3.max(all_vals)]).range([height, 0]);
+
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x)).append("text").text("Iteration").attr("x", width).attr("dy", "-0.5em").attr("text-anchor", "end").attr("fill", "currentColor");
+    svg.append("g").call(d3.axisLeft(y).ticks(5, ".1e")).append("text").text("f(x) - p* (log scale)").attr("transform", "rotate(-90)").attr("dy", "1.5em").attr("text-anchor", "end").attr("fill", "currentColor");
+
+    const colors = d3.scaleOrdinal(d3.schemeTableau10);
+    const line = d3.line().x((d,i) => x(i)).y(d => y(d));
+
+    const methodPaths = {};
+    for (const methodName in paths) {
+        methodPaths[methodName] = svg.append("path")
+            .datum(paths[methodName])
+            .attr("d", line)
+            .attr("fill", "none")
+            .attr("stroke", colors(methodName))
+            .attr("stroke-width", 2.5);
+
+        const checkbox = document.createElement("label");
+        checkbox.innerHTML = `<input type="checkbox" checked value="${methodName}"> <span style="color:${colors(methodName)}">${methodName}</span>`;
+        checkbox.querySelector('input').addEventListener('change', (e) => {
+            methodPaths[methodName].style("display", e.target.checked ? "block" : "none");
+        });
+        controlsContainer.appendChild(checkbox);
     }
-
-    const canvas = document.createElement("canvas");
-    container.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-
-    // Simulate objective values over iterations for different methods
-    const iterations = Array.from({length: 50}, (_, i) => i);
-    const gd_values = iterations.map(i => 100 / (i + 1));
-    const momentum_values = iterations.map(i => 100 / ((i + 1)**1.5));
-    const nesterov_values = iterations.map(i => 100 / ((i + 1)**2));
-
-
-    const data = {
-        labels: iterations,
-        datasets: [{
-            label: 'Gradient Descent',
-            data: gd_values,
-            borderColor: 'rgba(255, 99, 132, 1)',
-            fill: false,
-        }, {
-            label: 'Momentum',
-            data: momentum_values,
-            borderColor: 'rgba(54, 162, 235, 1)',
-            fill: false,
-        }, {
-            label: 'Nesterov Accelerated Gradient',
-            data: nesterov_values,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            fill: false,
-        }]
-    };
-
-    const chart = new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: {
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Iteration'
-                    }
-                },
-                y: {
-                    type: 'logarithmic',
-                    title: {
-                        display: true,
-                        text: 'Objective Value (log scale)'
-                    }
-                }
-            }
-        }
-    });
 }

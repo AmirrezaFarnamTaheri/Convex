@@ -1,108 +1,88 @@
+/**
+ * Widget: Condition Number Impact on Gradient Descent
+ *
+ * Description: Visualizes how a high condition number elongates the contours of a function
+ *              and slows down gradient descent.
+ */
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-async function initConditionNumberImpact(containerId) {
-    const pyodide = await getPyodide();
-    const container = document.querySelector(containerId);
-    const slider = container.querySelector("#condition-number-slider");
+export async function initConditionNumberImpact(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-    const margin = {top: 20, right: 20, bottom: 30, left: 40};
-    const width = 500 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    container.innerHTML = `
+        <div class="cond-num-impact-widget">
+            <div class="widget-controls">
+                <label>Condition Number (κ): <span id="kappa-val">10</span></label>
+                <input type="range" id="kappa-slider" min="1" max="100" step="1" value="10">
+            </div>
+            <div id="plot-container"></div>
+            <p class="widget-instructions">Adjust the condition number to see how it affects the shape of the function's contours and the convergence path of gradient descent.</p>
+        </div>
+    `;
 
-    const svg = d3.select("#condition-number-plot-container").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+    const kappaSlider = container.querySelector("#kappa-slider");
+    const kappaVal = container.querySelector("#kappa-val");
+    const plotContainer = container.querySelector("#plot-container");
+
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xScale = d3.scaleLinear().domain([-4, 4]).range([0, width]);
-    const yScale = d3.scaleLinear().domain([-4, 4]).range([height, 0]);
+    const x = d3.scaleLinear().domain([-4, 4]).range([0, width]);
+    const y = d3.scaleLinear().domain([-4, 4]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xScale));
-    svg.append("g").call(d3.axisLeft(yScale));
-
-    const pythonSetupCode = `
+    const pyodide = await getPyodide();
+    const pythonCode = `
 import numpy as np
-import sympy
+import json
 
-x, y = sympy.symbols('x y')
+def get_path_and_contours(kappa):
+    alpha = 1.8 / (1 + kappa)
+    path = [np.array([3.5, 3.5])]
+    for _ in range(100):
+        p = path[-1]
+        grad = np.array([p[0], kappa * p[1]])
+        if np.linalg.norm(grad) < 1e-3: break
+        p_next = p - alpha * grad
+        path.append(p_next)
+        if np.linalg.norm(p_next) > 1e4: break
 
-def get_gd_path_and_contours(kappa):
-    # f(x,y) = 0.5 * (x^2 + kappa * y^2)
-    # Gradient is [x, kappa*y]
-    # Optimal step size for this function is 2 / (1 + kappa)
+    xx, yy = np.meshgrid(np.linspace(-4, 4, 50), np.linspace(-4, 4, 50))
+    zz = 0.5 * (xx**2 + kappa * yy**2)
 
-    alpha = 1.8 / (1 + kappa) # slightly less than optimal to show steps
-    start_pos = np.array([3.5, 3.5])
-    path = [start_pos]
-
-    for _ in range(50):
-        current_pos = path[-1]
-        grad = np.array([current_pos[0], kappa * current_pos[1]])
-        if np.linalg.norm(grad) < 1e-4: break
-        path.append(current_pos - alpha * grad)
-
-    # Contours
-    f_lambda = lambda xv, yv: 0.5 * (xv**2 + kappa * yv**2)
-    xx, yy = np.meshgrid(np.linspace(-4, 4, 100), np.linspace(-4, 4, 100))
-    zz = f_lambda(xx, yy)
-
-    return {
-        "path": [p.tolist() for p in path],
-        "contours": {
-            "x": xx[0].tolist(),
-            "y": yy[:,0].tolist(),
-            "z": zz.flatten().tolist()
-        }
-    }
+    return json.dumps({"path": np.array(path).tolist(), "contours": zz.flatten().tolist()})
 `;
-    await pyodide.runPythonAsync(pythonSetupCode);
+    await pyodide.runPythonAsync(pythonCode);
+    const get_path_and_contours = pyodide.globals.get('get_path_and_contours');
 
-    async function draw(kappa) {
-        svg.selectAll(".contour, .path-line, .path-point").remove();
+    async function update() {
+        const kappa = +kappaSlider.value;
+        kappaVal.textContent = kappa;
 
-        const dataPy = await pyodide.runPythonAsync(`get_gd_path_and_contours(${kappa})`);
-        const { path, contours: contourData } = dataPy.toJs();
+        const data = await get_path_and_contours(kappa).then(r => JSON.parse(r));
 
-        // Draw contours
-        const contours = d3.contours()
-            .size([contourData.x.length, contourData.y.length])
-            .thresholds(d3.range(0, 50, 2))
-            (contourData.z);
+        svg.selectAll(".contour, .gd-path").remove();
 
-        svg.append("g")
-            .attr("class", "contour")
-            .selectAll("path")
-            .data(contours)
-            .enter().append("path")
-            .attr("d", d3.geoPath(d3.geoIdentity().scale(width / contourData.x.length)))
-            .attr("fill", "none")
-            .attr("stroke", "var(--color-surface-1)");
+        svg.append("g").attr("class", "contour")
+            .selectAll("path").data(d3.contours().size([50,50]).thresholds(20)(data.contours)).join("path")
+            .attr("d", d3.geoPath(d3.geoIdentity().scale(width/49)))
+            .attr("fill", "none").attr("stroke", "var(--color-surface-1)");
 
-        // Draw GD Path
-        svg.append("path")
-            .attr("class", "path-line")
-            .datum(path)
-            .attr("fill", "none")
-            .attr("stroke", "var(--color-accent)")
-            .attr("stroke-width", 2)
-            .attr("d", d3.line().x(d => xScale(d[0])).y(d => yScale(d[1])));
-
-        svg.selectAll(".path-point")
-            .data(path)
-            .enter().append("circle")
-            .attr("class", "path-point")
-            .attr("cx", d => xScale(d[0]))
-            .attr("cy", d => yScale(d[1]))
-            .attr("r", 4)
-            .attr("fill", "var(--color-primary)");
+        svg.append("path").attr("class", "gd-path").datum(data.path)
+            .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])))
+            .attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
     }
 
-    slider.addEventListener("input", () => {
-        draw(+slider.value);
-    });
-
-    draw(+slider.value);
+    kappaSlider.addEventListener("input", update);
+    update();
 }
-
-initConditionNumberImpact(".widget-container");

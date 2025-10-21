@@ -7,97 +7,75 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export function initLagrangianExplainer(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
-    const controls = document.createElement("div");
-    controls.innerHTML = `
-        <label for="nu_slider">Lagrange multiplier (ν):</label>
-        <input id="nu_slider" type="range" min="-10" max="10" value="0" step="0.1">
-        <span id="nu_val">0</span>
+    container.innerHTML = `
+        <div class="lagrangian-explainer-widget">
+            <div class="widget-controls">
+                <p>Problem: Minimize <strong>x²</strong> subject to <strong>x ≥ 1</strong> (or 1-x ≤ 0)</p>
+                <label for="nu-slider">Lagrange multiplier ν (must be ≥ 0):</label>
+                <input id="nu-slider" type="range" min="0" max="10" value="2" step="0.1">
+                <span id="nu-val-display">2.0</span>
+            </div>
+            <div id="plot-container-main"></div>
+            <div id="plot-container-dual"></div>
+            <div class="widget-output" id="lagrangian-formula"></div>
+        </div>
     `;
-    container.appendChild(controls);
 
-    const margin = {top: 20, right: 30, bottom: 40, left: 40},
-        width = 500 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+    const nuSlider = container.querySelector("#nu-slider");
+    const nuValDisplay = container.querySelector("#nu-val-display");
+    const plotContainerMain = container.querySelector("#plot-container-main");
+    const plotContainerDual = container.querySelector("#plot-container-dual");
+    const formulaDisplay = container.querySelector("#lagrangian-formula");
 
-    const svg = d3.select(container).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top - margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+    const margin = {top: 20, right: 20, bottom: 40, left: 50};
+    const width = plotContainerMain.clientWidth - margin.left - margin.right;
+    const height = 300 - margin.top - margin.bottom;
 
-    const x = d3.scaleLinear().domain([-5, 5]).range([0, width]);
-    svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x).ticks(10));
+    // Main plot (L(x,ν) vs x)
+    const svgMain = d3.select(plotContainerMain).append("svg").attr("width", "100%").attr("height", height + margin.top + margin.bottom).attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    const x = d3.scaleLinear().domain([-3, 3]).range([0, width]);
+    const y = d3.scaleLinear().domain([-5, 10]).range([height, 0]);
+    svgMain.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svgMain.append("g").call(d3.axisLeft(y));
+    const f_path = svgMain.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 1.5).attr("stroke-dasharray", "5,5");
+    const lagrangianPath = svgMain.append("path").attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5);
+    const infimumPoint = svgMain.append("circle").attr("r", 5).attr("fill", "var(--color-danger)");
 
-    const y = d3.scaleLinear().domain([-10, 25]).range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
-
-    // Draw the original function
-    const f = x_val => x_val*x_val;
-    const f_line = d3.line()
-        .x(d => x(d))
-        .y(d => y(f(d)));
-
-    svg.append("path")
-        .datum(d3.range(-5, 5.1, 0.1))
-        .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 2)
-        .attr("d", f_line);
-
-    // Draw the constraint line (x=1)
-    svg.append("line")
-        .attr("x1", x(1))
-        .attr("y1", y(-10))
-        .attr("x2", x(1))
-        .attr("y2", y(25))
-        .attr("stroke", "black")
-        .attr("stroke-dasharray", "5,5");
-
+    // Dual plot (g(ν) vs ν)
+    const svgDual = d3.select(plotContainerDual).append("svg").attr("width", "100%").attr("height", 200).attr("viewBox", `0 0 ${width + margin.left + margin.right} 200`).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    const nu_scale = d3.scaleLinear().domain([0, 10]).range([0, width]);
+    const g_scale = d3.scaleLinear().domain([-5, 2]).range([160, 0]);
+    svgDual.append("g").attr("transform", `translate(0,160)`).call(d3.axisBottom(nu_scale).ticks(5));
+    svgDual.append("g").call(d3.axisLeft(g_scale).ticks(5));
+    svgDual.append("text").text("Dual function g(ν)").attr("x", width/2).attr("y", 0).attr("text-anchor", "middle");
+    const dualPath = svgDual.append("path").attr("fill", "none").attr("stroke", "var(--color-danger)").attr("stroke-width", 2);
+    const currentNuLine = svgDual.append("line").attr("stroke", "var(--color-text-secondary)").attr("stroke-dasharray", "4 4");
 
     function update(nu) {
-        document.getElementById("nu_val").textContent = nu.toFixed(1);
-        svg.selectAll(".lagrangian").remove();
-        svg.selectAll(".infimum").remove();
+        nuValDisplay.textContent = nu.toFixed(1);
+        formulaDisplay.innerHTML = `<strong>L(x, ν) = x² + ${nu.toFixed(1)}(1 - x)</strong>`;
 
-        // Lagrangian function L(x, ν) = x² + ν(x - 1)
-        const lagrangian = x_val => x_val*x_val + nu * (x_val - 1);
-        const lagrangian_line = d3.line()
-            .x(d => x(d))
-            .y(d => y(lagrangian(d)));
+        // Main plot
+        const f = x_val => x_val**2;
+        const lagrangian = x_val => f(x_val) + nu * (1 - x_val);
+        const data = d3.range(-3, 3.1, 0.1);
+        f_path.datum(data).attr("d", d3.line().x(d => x(d)).y(d => y(f(d))));
+        lagrangianPath.datum(data).attr("d", d3.line().x(d => x(d)).y(d => y(lagrangian(d))));
 
-        svg.append("path")
-            .datum(d3.range(-5, 5.1, 0.1))
-            .attr("class", "lagrangian")
-            .attr("fill", "none")
-            .attr("stroke", "red")
-            .attr("stroke-width", 2)
-            .attr("d", lagrangian_line);
+        // Infimum of L(x,ν) is at x = ν/2
+        const min_x = nu / 2;
+        const g_nu = lagrangian(min_x); // This is the value of the dual function
+        infimumPoint.attr("cx", x(min_x)).attr("cy", y(g_nu));
 
-        // The minimum of the Lagrangian occurs at x = -ν/2
-        const min_x = -nu / 2;
-        const min_y = lagrangian(min_x);
-
-        svg.append("circle")
-            .attr("class", "infimum")
-            .attr("cx", x(min_x))
-            .attr("cy", y(min_y))
-            .attr("r", 5)
-            .attr("fill", "green");
+        // Dual plot
+        const dual_f = v => v - v**2 / 4;
+        const dualData = d3.range(0, 10.1, 0.1);
+        dualPath.datum(dualData).attr("d", d3.line().x(d => nu_scale(d)).y(d => g_scale(dual_f(d))));
+        currentNuLine.attr("x1", nu_scale(nu)).attr("y1", g_scale.range()[0]).attr("x2", nu_scale(nu)).attr("y2", g_scale(g_nu));
     }
 
-
-    d3.select("#nu_slider").on("input", function() {
-        update(+this.value);
-    });
-
-    // Initial draw
-    update(0);
+    nuSlider.addEventListener("input", (e) => update(+e.target.value));
+    update(+nuSlider.value);
 }

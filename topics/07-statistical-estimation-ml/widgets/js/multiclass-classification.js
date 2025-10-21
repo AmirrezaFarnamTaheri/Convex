@@ -1,100 +1,144 @@
+/**
+ * Widget: Multi-class Classification
+ *
+ * Description: Shows decision boundaries for one-vs-all or softmax classification on a multi-class dataset.
+ */
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-async function initMultiClass(containerId) {
-    const pyodide = await getPyodide();
-    const container = document.querySelector(containerId);
-    const modelSelect = container.querySelector("#model-select");
+export async function initMultiClass(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-    const margin = {top: 20, right: 20, bottom: 30, left: 40};
-    const width = 500 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
-
-    const svg = d3.select("#classification-plot-container").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    const pythonCode = `
-        import numpy as np
-        from sklearn.datasets import make_blobs
-        from sklearn.linear_model import LogisticRegression
-        from sklearn.multiclass import OneVsRestClassifier
-
-        X, y = make_blobs(n_samples=150, centers=4, n_features=2, random_state=42, cluster_std=1.2)
-
-        h = .02
-        x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-        y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-        xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-                             np.arange(y_min, y_max, h))
-
-        def get_decision_boundary(model_type):
-            if model_type == 'ovr':
-                clf = OneVsRestClassifier(LogisticRegression(random_state=42))
-            else: # softmax
-                clf = LogisticRegression(multi_class='multinomial', solver='lbfgs', random_state=42)
-
-            clf.fit(X, y)
-            Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
-            return Z.reshape(xx.shape).tolist()
-
-        initial_Z = get_decision_boundary('ovr')
-
-        {
-            "X": X.tolist(), "y": y.tolist(),
-            "xx": xx.tolist(), "yy": yy.tolist(), "Z": initial_Z,
-            "x_min": x_min, "x_max": x_max, "y_min": y_min, "y_max": y_max
-        }
+    container.innerHTML = `
+        <div class="multiclass-widget">
+            <div class="widget-controls">
+                <label>Strategy:</label>
+                <select id="mc-model-select">
+                    <option value="ovr">One-vs-Rest (OvR)</option>
+                    <option value="multinomial">Softmax (Multinomial)</option>
+                </select>
+                <label>Add Class:</label>
+                <select id="mc-class-select"></select>
+                <button id="mc-reset-btn">Reset Points</button>
+            </div>
+            <div id="plot-container"></div>
+        </div>
     `;
 
-    const data = await pyodide.runPythonAsync(pythonCode);
-    const { X, y, xx, yy, Z, x_min, x_max, y_min, y_max } = data.toJs();
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
+    const modelSelect = container.querySelector("#mc-model-select");
+    const classSelect = container.querySelector("#mc-class-select");
+    const resetBtn = container.querySelector("#mc-reset-btn");
+    const plotContainer = container.querySelector("#plot-container");
 
-    const xScale = d3.scaleLinear().domain([x_min, x_max]).range([0, width]);
-    const yScale = d3.scaleLinear().domain([y_min, y_max]).range([height, 0]);
-
-    svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(xScale));
-
-    svg.append("g")
-        .call(d3.axisLeft(yScale));
-
-    const contourGroup = svg.append("g").attr("class", "contours");
-    const pointsGroup = svg.append("g").attr("class", "points");
-
-    function draw(Z_data) {
-        contourGroup.selectAll("*").remove();
-
-        contourGroup.selectAll("path")
-            .data(d3.contours()
-                .size([xx[0].length, xx.length])
-                .thresholds(d3.range(0, 4, 1))
-                (Z_data.flat())
-            )
-            .enter().append("path")
-            .attr("d", d3.geoPath())
-            .attr("fill", d => color(d.value))
-            .attr("opacity", 0.5);
+    const n_classes = 4;
+    for(let i=0; i<n_classes; i++) {
+        classSelect.innerHTML += `<option value="${i}">Class ${i}</option>`;
     }
 
-    pointsGroup.selectAll("circle")
-        .data(X)
-        .enter().append("circle")
-        .attr("cx", d => xScale(d[0]))
-        .attr("cy", d => yScale(d[1]))
-        .attr("r", 4)
-        .attr("fill", (d, i) => color(y[i]));
+    let points = [];
+    const colors = d3.schemeTableau10;
 
-    modelSelect.addEventListener("change", async () => {
-        const model = modelSelect.value;
-        const new_Z = await pyodide.runPythonAsync(`get_decision_boundary('${model}')`);
-        draw(new_Z.toJs());
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleLinear().domain([-8, 8]).range([0, width]);
+    const y = d3.scaleLinear().domain([-8, 8]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
+
+    const backgroundGroup = svg.append("g");
+    const pointsGroup = svg.append("g");
+
+    svg.append("rect").attr("width", width).attr("height", height).style("fill", "none").style("pointer-events", "all")
+        .on("click", (event) => {
+            const [mx, my] = d3.pointer(event, svg.node());
+            points.push({ x: x.invert(mx), y: y.invert(my), class: +classSelect.value });
+            drawPoints();
+            updateBoundary();
+        });
+
+    const pyodide = await getPyodide();
+    await pyodide.loadPackage("scikit-learn");
+    const pythonCode = `
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+import json
+
+def get_multiclass_boundary(points, model_type, domain_x, domain_y, grid_size=50):
+    if len(points) < 2 or len(np.unique([p['class'] for p in points])) < 2:
+        return None
+
+    X = np.array([[p['x'], p['y']] for p in points])
+    y = np.array([p['class'] for p in points])
+
+    clf = LogisticRegression(multi_class=model_type, solver='lbfgs', C=1)
+    clf.fit(X, y)
+
+    xx, yy = np.meshgrid(np.linspace(domain_x[0], domain_x[1], grid_size),
+                         np.linspace(domain_y[0], domain_y[1], grid_size))
+
+    Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+    return json.dumps(Z.reshape(xx.shape).tolist())
+`;
+    await pyodide.runPythonAsync(pythonCode);
+    const get_multiclass_boundary = pyodide.globals.get('get_multiclass_boundary');
+
+    function drawPoints() {
+        pointsGroup.selectAll("circle").data(points).join("circle")
+            .attr("cx", d=>x(d.x)).attr("cy", d=>y(d.y)).attr("r", 5)
+            .attr("fill", d=>colors[d.class]);
+    }
+
+    async function updateBoundary() {
+        const model_type = modelSelect.value;
+        const boundary_json = await get_multiclass_boundary(points, model_type, x.domain(), y.domain());
+        if (!boundary_json) return;
+        const Z = JSON.parse(boundary_json);
+
+        // This approach is more robust for showing decision regions
+        backgroundGroup.selectAll("image").remove();
+        const canvas = document.createElement("canvas");
+        canvas.width = 50;
+        canvas.height = 50;
+        const context = canvas.getContext("2d");
+        const imageData = context.createImageData(50, 50);
+        for (let j = 0, k = 0; j < 50; ++j) {
+            for (let i = 0; i < 50; ++i, ++k) {
+                const c = d3.rgb(colors[Z[j][i]]);
+                imageData.data[k * 4] = c.r;
+                imageData.data[k * 4 + 1] = c.g;
+                imageData.data[k * 4 + 2] = c.b;
+                imageData.data[k * 4 + 3] = 128; // Opacity
+            }
+        }
+        context.putImageData(imageData, 0, 0);
+
+        backgroundGroup.append("image")
+            .attr("width", width).attr("height", height)
+            .attr("preserveAspectRatio", "none")
+            .attr("xlink:href", canvas.toDataURL());
+    }
+
+    resetBtn.addEventListener("click", () => {
+        points = [];
+        drawPoints();
+        backgroundGroup.selectAll("*").remove();
     });
+    modelSelect.addEventListener("change", updateBoundary);
 
-    draw(Z);
+    // Initial random data
+    pyodide.runPythonAsync('make_blobs(n_samples=100, centers=4, random_state=1, cluster_std=1.5)').then(data => {
+        const [X, y] = data.toJs();
+        points = X.map((p, i) => ({x: p[0], y: p[1], class: y[i]}));
+        drawPoints();
+        updateBoundary();
+    });
 }
-
-initMultiClass(".widget-container");

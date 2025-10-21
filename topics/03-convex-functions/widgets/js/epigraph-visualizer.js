@@ -7,66 +7,86 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export function initEpigraphVisualizer(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
     container.innerHTML = `
-        <label><input type="checkbox" id="show_epigraph"> Show Epigraph</label>
-        <div id="plot"></div>
+        <div class="epigraph-visualizer-widget">
+            <div class="widget-controls">
+                <label for="epigraph-func-select">Function:</label>
+                <select id="epigraph-func-select"></select>
+                <label class="widget-toggle">
+                    <input type="checkbox" id="show-epigraph-toggle">
+                    <span>Show Epigraph</span>
+                </label>
+            </div>
+            <div id="plot-container"></div>
+        </div>
     `;
 
-    const margin = {top: 20, right: 30, bottom: 40, left: 40},
-        width = 500 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+    const funcSelect = container.querySelector("#epigraph-func-select");
+    const toggle = container.querySelector("#show-epigraph-toggle");
+    const plotContainer = container.querySelector("#plot-container");
 
-    const svg = d3.select("#plot").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top - margin.bottom)
-        .append("g")
+    const functions = {
+        "x² (Convex)": { func: x => x**2, domain: [-5, 5] },
+        "|x| (Convex)": { func: x => Math.abs(x), domain: [-5, 5] },
+        "eˣ (Convex)": { func: x => Math.exp(x), domain: [-3, 3] },
+        "x³ (Non-Convex)": { func: x => x**3, domain: [-3, 3] },
+    };
+    let selectedFunctionName = Object.keys(functions)[0];
+
+    Object.keys(functions).forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        funcSelect.appendChild(option);
+    });
+
+    const margin = {top: 20, right: 20, bottom: 40, left: 50};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 350 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-5, 5]).range([0, width]);
-    svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+    const x = d3.scaleLinear().range([0, width]);
+    const y = d3.scaleLinear().range([height, 0]);
 
-    const y = d3.scaleLinear().domain([0, 25]).range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
+    svg.append("g").attr("class", "x-axis").attr("transform", `translate(0,${height})`);
+    svg.append("g").attr("class", "y-axis");
 
-    // Function
-    const f = x_val => x_val*x_val;
+    const path = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 3);
+    const epigraphArea = svg.append("path").attr("fill", "var(--color-primary-light)").attr("opacity", 0.7).style("display", "none");
 
-    // Draw the function
-    const line = d3.line()
-        .x(d => x(d))
-        .y(d => y(f(d)));
+    function draw() {
+        const { func, domain } = functions[selectedFunctionName];
+        x.domain(domain);
+        const data = d3.range(domain[0], domain[1] + 0.1, 0.1);
+        const yData = data.map(func);
+        y.domain([d3.min(yData), d3.max(yData)]).nice();
 
-    svg.append("path")
-        .datum(d3.range(-5, 5.1, 0.1))
-        .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 2)
-        .attr("d", line);
+        svg.select(".x-axis").call(d3.axisBottom(x));
+        svg.select(".y-axis").call(d3.axisLeft(y));
 
-    // Epigraph area
-    const area = d3.area()
-        .x(d => x(d))
-        .y0(d => y(f(d)))
-        .y1(0);
+        const lineGenerator = d3.line().x(d => x(d)).y(d => y(func(d)));
+        path.datum(data).attr("d", lineGenerator);
 
-    const epigraph = svg.append("path")
-        .datum(d3.range(-5, 5.1, 0.1))
-        .attr("class", "epigraph")
-        .attr("fill", "lightblue")
-        .attr("opacity", 0.5)
-        .attr("d", area)
-        .style("visibility", "hidden");
+        const areaGenerator = d3.area().x(d => x(d)).y0(d => y(func(d))).y1(0);
+        epigraphArea.datum(data).attr("d", areaGenerator);
 
+        epigraphArea.style("display", toggle.checked ? "block" : "none");
+    }
 
-    d3.select("#show_epigraph").on("change", function() {
-        epigraph.style("visibility", this.checked ? "visible" : "hidden");
+    funcSelect.addEventListener("change", (e) => {
+        selectedFunctionName = e.target.value;
+        draw();
     });
+    toggle.addEventListener("change", () => {
+        epigraphArea.style("display", toggle.checked ? "block" : "none");
+    });
+
+    draw();
 }
