@@ -4,7 +4,7 @@
  * Description: Allows users to input a problem and a potential solution, and the widget checks which KKT conditions are satisfied.
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.mjs";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 
 export async function initKKTChecker(containerId) {
@@ -14,6 +14,12 @@ export async function initKKTChecker(containerId) {
         return;
     }
 
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await getPyodide();
+    await pyodide.loadPackage("sympy");
+
+    container.innerHTML = ``;
     const controls = document.createElement("div");
     controls.innerHTML = `
         <p><b>Problem:</b> Minimize x² + y² subject to x + y >= 2</p>
@@ -26,9 +32,6 @@ export async function initKKTChecker(containerId) {
         <div id="output"></div>
     `;
     container.appendChild(controls);
-
-    let pyodide = await loadPyodide();
-    await pyodide.loadPackage(["sympy", "numpy"]);
 
     d3.select("#check_kkt").on("click", async () => {
         const x_val = +document.getElementById("x_val").value;

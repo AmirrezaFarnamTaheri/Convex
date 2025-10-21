@@ -4,7 +4,7 @@
  * Description: Calculates and visualizes the shortest distance between two convex sets.
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.mjs";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initDistanceBetweenSets(containerId) {
     const container = document.getElementById(containerId);
@@ -13,15 +13,17 @@ export async function initDistanceBetweenSets(containerId) {
         return;
     }
 
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await getPyodide();
+    await pyodide.loadPackage("cvxpy");
+
     container.innerHTML = `
         <p>Drag the two polygons and then click "Calculate Distance" to find the shortest distance between them.</p>
         <div id="plot"></div>
         <button id="calculate_distance">Calculate Distance</button>
         <div id="output"></div>
     `;
-
-    let pyodide = await loadPyodide();
-    await pyodide.loadPackage("cvxpy");
 
     const margin = {top: 20, right: 30, bottom: 40, left: 40},
         width = 500 - margin.left - margin.right,

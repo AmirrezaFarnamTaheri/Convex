@@ -7,6 +7,7 @@
 
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128/build/three.module.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.128/examples/jsm/controls/OrbitControls.js";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initHessianLandscapeVisualizer(containerId) {
     const container = document.getElementById(containerId);
@@ -14,6 +15,12 @@ export async function initHessianLandscapeVisualizer(containerId) {
         console.error(`Container #${containerId} not found.`);
         return;
     }
+
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await getPyodide();
+
+    container.innerHTML = '';
 
     let H = [[1, 0.5], [0.5, 1]]; // Hessian matrix
 

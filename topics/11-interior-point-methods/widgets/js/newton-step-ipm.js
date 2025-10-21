@@ -1,17 +1,5 @@
 import "https://d3js.org/d3.v7.min.js";
-import {
-    loadPyodide
-} from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
-
-async function getPyodide() {
-    if (!window.pyodide) {
-        window.pyodide = await loadPyodide({
-            indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/"
-        });
-        await window.pyodide.loadPackage("numpy");
-    }
-    return window.pyodide;
-}
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initNewtonStepIPM(containerId) {
     const container = document.getElementById(containerId);
@@ -19,6 +7,11 @@ export async function initNewtonStepIPM(containerId) {
         console.error(`Container #${containerId} not found`);
         return;
     }
+
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await getPyodide();
+
     container.innerHTML = `
     <div style="display: flex; flex-direction: column; height: 100%;">
       <div style="flex-grow: 1; position: relative;" id="vis-newton-ipm"></div>
@@ -27,8 +20,6 @@ export async function initNewtonStepIPM(containerId) {
       </div>
     </div>
   `;
-
-    const pyodide = await getPyodide();
 
     // This is a conceptual visualization, so we'll use pre-calculated vectors
     // that represent a typical Newton step for an IPM.

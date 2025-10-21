@@ -1,21 +1,5 @@
 import "https://d3js.org/d3.v7.min.js";
-import {
-    loadPyodide
-} from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
-
-async function getPyodide() {
-    if (!window.pyodide) {
-        window.pyodide = await loadPyodide({
-            indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/"
-        });
-        await window.pyodide.loadPackage(["numpy", "scipy"]);
-        await window.pyodide.runPythonAsync(`
-        import numpy as np
-        from scipy.linalg import null_space
-    `);
-    }
-    return window.pyodide;
-}
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initNullSpaceVisualizer(containerId) {
     const container = document.getElementById(containerId);
@@ -23,6 +7,11 @@ export async function initNullSpaceVisualizer(containerId) {
         console.error(`Container #${containerId} not found`);
         return;
     }
+
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await getPyodide();
+
     container.innerHTML = `
     <div style="display: flex; flex-direction: column; height: 100%;">
       <div style="flex-grow: 1; position: relative;" id="vis-main"></div>
@@ -32,8 +21,6 @@ export async function initNullSpaceVisualizer(containerId) {
       </div>
     </div>
   `;
-
-    const pyodide = await getPyodide();
 
     const state = {
         P: [[2, 0], [0, 2]],

@@ -3,18 +3,17 @@
  */
 
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
-
-async function initPyodide() {
-    const pyodide = await loadPyodide();
-    await pyodide.loadPackage("numpy");
-    return pyodide;
-}
-const pyodidePromise = initPyodide();
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initGradientDescentVisualizer(containerId) {
     const container = document.getElementById(containerId);
     if (!container) { console.error(`Container #${containerId} not found.`); return; }
+
+    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
+
+    const pyodide = await getPyodide();
+
+    container.innerHTML = '';
 
     const functions = {
         "Quadratic": { func: (x, y) => x**2 + y**2, py_grad: "np.array([2*x, 2*y])", domain: {x: [-5, 5], y: [-5, 5]} },
