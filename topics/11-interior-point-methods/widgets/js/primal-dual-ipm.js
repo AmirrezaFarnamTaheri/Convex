@@ -1,82 +1,117 @@
+/**
+ * Widget: Primal-Dual IPM Visualizer
+ *
+ * Description: Visualizes the convergence of a primal-dual interior-point method.
+ */
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-async function initPrimalDualIpm(containerId) {
-    const pyodide = await getPyodide();
-    const container = document.querySelector(containerId);
+export async function initPrimalDualIpm(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="pd-ipm-widget">
+            <div class="widget-controls">
+                <button id="run-pd-ipm-btn">Run Primal-Dual IPM</button>
+            </div>
+            <div id="plot-container"></div>
+        </div>
+    `;
+
     const runBtn = container.querySelector("#run-pd-ipm-btn");
+    const plotContainer = container.querySelector("#plot-container");
 
-    const margin = {top: 20, right: 20, bottom: 30, left: 40};
-    const width = 500 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
 
-    const svg = d3.select("#pd-ipm-plot-container").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xScale = d3.scaleLinear().domain([0, 4]).range([0, width]);
-    const yScale = d3.scaleLinear().domain([0, 4]).range([height, 0]);
+    const x = d3.scaleLinear().domain([0, 4]).range([0, width]);
+    const y = d3.scaleLinear().domain([0, 4]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xScale));
-    svg.append("g").call(d3.axisLeft(yScale));
+    // Feasible Region & Objective
+    const feasible_poly = [[0,0], [3.5,0], [2,3], [0,3]];
+    svg.append("path").attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(feasible_poly)+"Z").attr("fill", "var(--color-primary-light)").attr("opacity", 0.5);
+    const contours = d3.range(1, 7, 1).map(c => [[c,0], [0,c]]);
+    svg.append("g").selectAll("path").data(contours).join("path").attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))).attr("stroke", "var(--color-surface-1)").attr("stroke-dasharray", "3,3");
 
+    const pyodide = await getPyodide();
     const pythonCode = `
 import numpy as np
+import json
 
-def get_pd_ipm_path():
-    # LP: max x + y s.t. x <= 2, y <= 3, x+y <= 4, x>=0, y>=0
-    # True optimum is at (1, 3) where cost is 4, but let's change obj to max x+2y
-    # so optimum is at (1,3)
+# min -x-y s.t. x+2y<=8, 2x+y<=7, x,y>=0
+def solve_pd_ipm():
+    c = np.array([-1.,-1.])
+    A = np.array([[1.,2.], [2.,1.], [-1.,0.], [0.,-1.]])
+    b = np.array([8., 7., 0., 0.])
 
-    # This is a conceptual visualization, not a real IPM solver.
-    # It shows a path moving through the interior towards the optimum.
-    path = [
-        np.array([0.5, 0.5]),
-        np.array([0.8, 1.5]),
-        np.array([1.0, 2.2]),
-        np.array([1.0, 2.8]),
-        np.array([1.0, 3.0])
-    ]
-    return [p.tolist() for p in path]
+    x = np.array([1., 1.]) # Primal vars
+    l = np.array([1., 1., 1., 1.]) # Dual vars for inequality
+    s = b - A @ x # Slack vars
 
-path_data = get_pd_ipm_path()
+    path = [x.tolist()]
+    mu = 10 # Duality measure
+
+    for _ in range(15):
+        # Affine scaling system
+        rd = A.T @ l + c
+        rp = A @ x + s - b
+        rc = s * l
+
+        # Build KKT system matrix
+        KKT = np.block([
+            [np.zeros((2,2)), A.T, np.eye(2)],
+            [A, np.zeros((4,4)), np.eye(4)],
+            [np.diag(s), np.zeros((4,4)), np.diag(l)]
+        ])
+
+        # Solve for affine step
+        # This is a simplified version; a real solver would be more complex
+        try:
+            step = np.linalg.solve(KKT, -np.concatenate([rd, rp, rc]))
+            dx, dl, ds = step[:2], step[2:6], step[6:]
+        except np.linalg.LinAlgError:
+            break
+
+        # Line search for step size (simplified)
+        alpha = 0.99
+
+        x += alpha * dx
+        l += alpha * dl
+        s += alpha * ds
+        path.append(x.tolist())
+
+    return json.dumps(path)
 `;
     await pyodide.runPythonAsync(pythonCode);
+    const solve_pd_ipm = pyodide.globals.get('solve_pd_ipm');
 
-    // Draw feasible region
-    const feasibleRegion = [
-        {x: 0, y: 0}, {x: 2, y: 0}, {x: 2, y: 2}, {x: 1, y: 3}, {x: 0, y: 3}
-    ];
-    svg.append("polygon")
-        .datum(feasibleRegion)
-        .attr("points", d => d.map(p => [xScale(p.x), yScale(p.y)].join(",")).join(" "))
-        .attr("fill", "var(--color-primary)")
-        .attr("opacity", 0.3);
+    async function run() {
+        runBtn.disabled = true;
+        svg.selectAll(".path").remove();
 
-    async function runAnimation() {
-        svg.selectAll(".path-line, .path-point").remove();
-        const pathPy = await pyodide.runPythonAsync('path_data');
-        const path = pathPy.toJs();
+        const path_data = await solve_pd_ipm().then(r => JSON.parse(r));
 
-        const pathLine = svg.append("path")
-            .attr("class", "path-line")
-            .datum(path)
-            .attr("fill", "none")
-            .attr("stroke", "var(--color-accent)")
-            .attr("stroke-width", 2)
-            .attr("d", d3.line().x(d => xScale(d[0])).y(d => yScale(d[1])));
+        const path = svg.append("path").attr("class", "path").datum(path_data)
+            .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])))
+            .attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5);
 
-        const totalLength = pathLine.node().getTotalLength();
-        pathLine
-            .attr("stroke-dasharray", totalLength + " " + totalLength)
-            .attr("stroke-dashoffset", totalLength)
-            .transition().duration(2000).ease(d3.easeLinear)
-            .attr("stroke-dashoffset", 0);
+        const totalLength = path.node().getTotalLength();
+        path.attr("stroke-dasharray", `${totalLength} ${totalLength}`).attr("stroke-dashoffset", totalLength)
+            .transition().duration(2000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
+
+        setTimeout(() => runBtn.disabled = false, 2000);
     }
 
-    runBtn.addEventListener("click", runAnimation);
-    runAnimation();
+    runBtn.addEventListener("click", run);
+    run();
 }
-
-initPrimalDualIpm(".widget-container");

@@ -4,86 +4,138 @@
  * Description: Allows users to add or modify linear inequalities (Ax <= b) and see the resulting 2D polyhedron update in real-time.
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-export function initPolyhedronVisualizer(containerId) {
+export async function initPolyhedronVisualizer(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
-    const controls = document.createElement("div");
-    controls.innerHTML = `
-        <div>
-            <input type="number" value="1" id="a1"> x + <input type="number" value="2" id="a2"> y <= <input type="number" value="10" id="b">
-            <button id="add_constraint">Add</button>
+    container.innerHTML = `
+        <div class="polyhedron-visualizer-widget">
+            <div class="widget-controls">
+                <div>
+                    <input type="number" value="1" step="0.1" id="a1"> x₁ +
+                    <input type="number" value="1" step="0.1" id="a2"> x₂ ≤
+                    <input type="number" value="2" step="0.1" id="b">
+                    <button id="add-constraint-btn">Add</button>
+                </div>
+                <div id="constraints-list"></div>
+            </div>
+            <div id="plot-container"></div>
         </div>
     `;
-    container.appendChild(controls);
 
-    const margin = {top: 20, right: 30, bottom: 40, left: 40},
-        width = 500 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+    const plotContainer = container.querySelector("#plot-container");
+    const addBtn = container.querySelector("#add-constraint-btn");
+    const constraintsList = container.querySelector("#constraints-list");
+    const a1_input = container.querySelector("#a1");
+    const a2_input = container.querySelector("#a2");
+    const b_input = container.querySelector("#b");
 
-    const svg = d3.select(container).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top - margin.bottom)
-        .append("g")
+    let constraints = [
+        { a: [-1, 0], b: 0 }, { a: [0, -1], b: 0 }, { a: [1, 0], b: 5 }, { a: [0, 1], b: 5 }
+    ];
+
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%")
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-10, 10]).range([0, width]);
-    svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+    const x = d3.scaleLinear().domain([-6, 6]).range([0, width]);
+    const y = d3.scaleLinear().domain([-6, 6]).range([height, 0]);
 
-    const y = d3.scaleLinear().domain([-10, 10]).range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    let constraints = [];
+    const feasibleRegion = svg.append("path").attr("fill", "var(--color-primary-light)").attr("opacity", 0.8);
 
-    function draw() {
-        svg.selectAll(".constraint").remove();
-        svg.selectAll(".feasible-region").remove();
+    const pyodide = await getPyodide();
+    await pyodide.loadPackage("scipy");
+    const pythonCode = `
+import numpy as np
+from scipy.optimize import linprog
 
-        constraints.forEach(c => {
-            const y1 = (c.b - c.a1 * -10) / c.a2;
-            const y2 = (c.b - c.a1 * 10) / c.a2;
+def find_feasible_point(A, b):
+    # Find a point inside the polyhedron
+    c = np.zeros(A.shape[1])
+    res = linprog(c, A_ub=A, b_ub=b, bounds=[(None, None), (None, None)], method='highs')
+    return res.x if res.success else None
 
-            svg.append("line")
-                .attr("class", "constraint")
-                .attr("x1", x(-10))
-                .attr("y1", y(y1))
-                .attr("x2", x(10))
-                .attr("y2", y(y2))
-                .attr("stroke", "black")
-                .attr("stroke-width", 2);
-        });
+def get_vertices(A, b):
+    # This is a complex problem; for now, we'll find a feasible region by clipping half-planes
+    # This is a simplified approach for visualization
+    from shapely.geometry import Polygon, HalfPlane
 
-        if (constraints.length > 0) {
-            // Simplified visualization of the feasible region
-             const polygon = [
-                [-10, -10],
-                [10, -10],
-                [10, 5],
-                [-10, 5]
-            ];
+    # Start with a large bounding box
+    bounds = 100
+    feasible_poly = Polygon([(-bounds,-bounds), (bounds,-bounds), (bounds,bounds), (-bounds,bounds)])
 
-            svg.append("polygon")
-                .attr("class", "feasible-region")
-                .attr("points", polygon.map(p => [x(p[0]), y(p[1])].join(",")).join(" "))
-                .attr("fill", "lightblue")
-                .attr("opacity", 0.5);
+    for i in range(A.shape[0]):
+        a = A[i]
+        b_val = b[i]
+        # Create half-plane Ax <= b
+        # Normal vector is a, point on boundary is a*b_val/|a|^2
+        p_on_boundary = a * b_val / np.dot(a, a)
+        half_plane = HalfPlane(p_on_boundary, -a)
+        feasible_poly = feasible_poly.intersection(half_plane)
+
+    if feasible_poly.is_empty:
+        return []
+
+    return list(feasible_poly.exterior.coords)
+`;
+    await pyodide.runPythonAsync(pythonCode);
+    const get_vertices = pyodide.globals.get('get_vertices');
+
+    async function updateVisualization() {
+        renderConstraintsList();
+
+        const A = constraints.map(c => c.a);
+        const b = constraints.map(c => c.b);
+
+        const verticesPy = await get_vertices(A, b);
+        const vertices = verticesPy.toJs();
+        verticesPy.destroy();
+
+        if (vertices.length > 0) {
+            feasibleRegion.attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1]))(vertices) + "Z");
+        } else {
+            feasibleRegion.attr("d", null);
         }
     }
 
-    d3.select("#add_constraint").on("click", () => {
-        const a1 = +document.getElementById("a1").value;
-        const a2 = +document.getElementById("a2").value;
-        const b = +document.getElementById("b").value;
-        constraints.push({a1, a2, b});
-        draw();
+    function renderConstraintsList() {
+        constraintsList.innerHTML = '<strong>Constraints:</strong>';
+        constraints.forEach((c, i) => {
+            const div = document.createElement("div");
+            div.innerHTML = `
+                <span>${c.a[0].toFixed(1)}x₁ + ${c.a[1].toFixed(1)}x₂ ≤ ${c.b.toFixed(1)}</span>
+                <button data-index="${i}">Remove</button>
+            `;
+            div.querySelector('button').addEventListener('click', () => {
+                constraints.splice(i, 1);
+                updateVisualization();
+            });
+            constraintsList.appendChild(div);
+        });
+    }
+
+    addBtn.addEventListener('click', () => {
+        const a1 = +a1_input.value || 0;
+        const a2 = +a2_input.value || 0;
+        const b = +b_input.value || 0;
+
+        if (Math.abs(a1) + Math.abs(a2) > 1e-6) { // Avoid zero vector for 'a'
+            constraints.push({ a: [a1, a2], b: b });
+            updateVisualization();
+        }
     });
 
-    draw();
+    updateVisualization();
 }

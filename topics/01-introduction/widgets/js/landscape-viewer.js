@@ -6,106 +6,171 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128/build/three.mod
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.128/examples/jsm/controls/OrbitControls.js";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-const pyodidePromise = getPyodide();
-
-
 export async function initLandscapeViewer(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="landscape-viewer-widget">
+            <div class="widget-controls">
+                <label for="function-select-3d">Function:</label>
+                <select id="function-select-3d"></select>
+                <button id="start-button">Drop Marble</button>
+            </div>
+            <div id="scene-container" style="height: 400px; position: relative;"></div>
+        </div>
+    `;
+
+    const sceneContainer = container.querySelector("#scene-container");
+    const functionSelect = container.querySelector("#function-select-3d");
+    const startButton = container.querySelector("#start-button");
+
+    let animationId;
+    let marble, trace;
 
     const functions = {
-        "Quadratic": { py_func: "x**2 + y**2", py_grad: "np.array([2*x, 2*y])" },
-        "Rosenbrock": { py_func: "(1 - x)**2 + 100 * (y - x**2)**2", py_grad: "np.array([-2*(1-x) - 400*x*(y-x**2), 200*(y-x**2)])" },
+        "Convex Quadratic": { py_func: "x**2 + y**2", py_grad: "[2*x, 2*y]", domain: 2 },
+        "Non-Convex Rosenbrock": { py_func: "(1 - x)**2 + 100 * (y - x**2)**2", py_grad: "[-2*(1-x) - 400*x*(y-x**2), 200*(y-x**2)]", domain: 2 },
+        "Multi-Modal": { py_func: "np.sin(5*x)*np.cos(5*y)/5", py_grad: "[np.cos(5*x)*np.cos(5*y), -np.sin(5*x)*np.sin(5*y)]", domain: 2},
     };
-    let selectedFunction = "Quadratic";
-
-    // --- UI CONTROLS ---
-    const controlsContainer = document.createElement("div");
-    controlsContainer.style.cssText = "padding: 10px;";
-    const dropdown = document.createElement("select");
+    let selectedFunctionName = Object.keys(functions)[0];
     Object.keys(functions).forEach(name => {
         const option = document.createElement("option");
         option.value = name;
         option.textContent = name;
-        dropdown.appendChild(option);
+        functionSelect.appendChild(option);
     });
-    dropdown.onchange = () => {
-        selectedFunction = dropdown.value;
-        updateSurface();
-    };
-    controlsContainer.appendChild(dropdown);
-    container.appendChild(controlsContainer);
+
+    const pyodide = await getPyodide();
+    const pythonCode = `
+import numpy as np
+def calculate_surface(func_str, domain):
+    x_ = np.linspace(-domain, domain, 50)
+    y_ = np.linspace(-domain, domain, 50)
+    xx, yy = np.meshgrid(x_, y_)
+    x, y = xx.flatten(), yy.flatten()
+    zz = eval(func_str)
+    return zz.tolist()
+
+def calculate_gradient(grad_str, x_val, y_val):
+    x, y = x_val, y_val
+    return eval(grad_str)
+
+def calculate_z(func_str, x_val, y_val):
+    x, y = x_val, y_val
+    return eval(func_str)
+`;
+    await pyodide.runPythonAsync(pythonCode);
+    const py_calculate_surface = pyodide.globals.get('calculate_surface');
+    const py_calculate_gradient = pyodide.globals.get('calculate_gradient');
+    const py_calculate_z = pyodide.globals.get('calculate_z');
 
     // --- SCENE SETUP ---
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / 350, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(container.clientWidth, 350);
-    container.appendChild(renderer.domElement);
-    const controls3d = new OrbitControls(camera, renderer.domElement);
-    camera.position.set(0, -5, 5);
-    controls3d.target.set(0,0,0);
+    scene.background = new THREE.Color("hsl(225, 18%, 13%)");
+    const camera = new THREE.PerspectiveCamera(60, sceneContainer.clientWidth / 400, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(sceneContainer.clientWidth, 400);
+    sceneContainer.appendChild(renderer.domElement);
+    const controls = new OrbitControls(camera, renderer.domElement);
+    camera.position.set(0, -6, 6);
+    controls.target.set(0, 0, 0);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    scene.add(new THREE.DirectionalLight(0xffffff, 0.5));
 
-    // --- SURFACE GEOMETRY ---
-    const geometry = new THREE.PlaneGeometry(5, 5, 50, 50);
-    const material = new THREE.MeshNormalMaterial({ wireframe: true });
+    const geometry = new THREE.PlaneGeometry(4, 4, 49, 49);
+    const material = new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide });
     const surface = new THREE.Mesh(geometry, material);
     scene.add(surface);
 
-    // --- MARBLE ---
-    const marbleGeo = new THREE.SphereGeometry(0.1, 16, 16);
-    const marbleMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const marble = new THREE.Mesh(marbleGeo, marbleMat);
-    scene.add(marble);
-
     async function updateSurface() {
-        const pyodide = await pyodidePromise;
-        await pyodide.globals.set("py_func_str", functions[selectedFunction].py_func);
-        const code = `
-import numpy as np
-x_ = np.linspace(-2.5, 2.5, 51)
-y_ = np.linspace(-2.5, 2.5, 51)
-xx, yy = np.meshgrid(x_, y_)
-x, y = xx.flatten(), yy.flatten()
-zz = eval(py_func_str)
-zz.tolist()
-        `;
-        const vertices_z = await pyodide.runPythonAsync(code).then(v => v.toJs());
+        const funcInfo = functions[selectedFunctionName];
+        const z_values = await py_calculate_surface(funcInfo.py_func, funcInfo.domain);
+
         const vertices = geometry.attributes.position.array;
-        for (let i = 0; i < vertices_z.length; i++) {
-            vertices[i*3 + 2] = vertices_z[i];
+        const colors = new Float32Array(vertices.length);
+        let minZ = Infinity, maxZ = -Infinity;
+        for(let i=0; i < z_values.length; i++) {
+            vertices[i*3 + 2] = z_values[i];
+            if (z_values[i] < minZ) minZ = z_values[i];
+            if (z_values[i] > maxZ) maxZ = z_values[i];
         }
+
+        for (let i = 0; i < z_values.length; i++) {
+            const color = new THREE.Color().setHSL(0.7 * (1 - (z_values[i] - minZ)/(maxZ-minZ)), 0.8, 0.5);
+            colors[i*3] = color.r; colors[i*3+1] = color.g; colors[i*3+2] = color.b;
+        }
+
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
         geometry.attributes.position.needsUpdate = true;
-
-        marble.position.set(2, 2, await pyodide.runPythonAsync("x,y=2,2; eval(py_func_str)") + 0.1);
+        geometry.computeVertexNormals();
     }
 
-    async function animate() {
-        requestAnimationFrame(animate);
+    function startAnimation() {
+        if (animationId) cancelAnimationFrame(animationId);
+        if (marble) scene.remove(marble);
+        if (trace) scene.remove(trace);
 
-        const p = marble.position;
-        const pyodide = await pyodidePromise;
-        await pyodide.globals.set("x", p.x);
-        await pyodide.globals.set("y", p.y);
-        await pyodide.globals.set("py_grad_str", functions[selectedFunction].py_grad);
+        marble = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), new THREE.MeshStandardMaterial({ color: 0xff4136 }));
+        marble.position.set(1.5, 1.5, 10); // Start high
+        scene.add(marble);
 
-        const grad = await pyodide.runPythonAsync("eval(py_grad_str)").then(g => g.toJs());
+        const traceMaterial = new THREE.LineBasicMaterial({ color: 0xff4136, linewidth: 2 });
+        const traceGeometry = new THREE.BufferGeometry();
+        const tracePositions = new Float32Array(3000); // 1000 points
+        traceGeometry.setAttribute('position', new THREE.BufferAttribute(tracePositions, 3));
+        trace = new THREE.Line(traceGeometry, traceMaterial);
+        let tracePosCount = 0;
+        scene.add(trace);
 
-        p.x -= 0.01 * grad[0];
-        p.y -= 0.01 * grad[1];
+        let lastTime = 0;
+        async function animate(time) {
+            const dt = (time - lastTime) * 0.001;
+            lastTime = time;
 
-        await pyodide.globals.set("x", p.x);
-        await pyodide.globals.set("y", p.y);
-        await pyodide.globals.set("py_func_str", functions[selectedFunction].py_func);
-        p.z = await pyodide.runPythonAsync("eval(py_func_str)") + 0.1;
+            const funcInfo = functions[selectedFunctionName];
+            const p = marble.position;
 
-        controls3d.update();
+            const z = await py_calculate_z(funcInfo.py_func, p.x, p.y);
+
+            if (p.z > z + 0.05) { // Is airborne
+                p.z -= 9.8 * dt; // Gravity
+            } else {
+                p.z = z + 0.05;
+                const grad = await py_calculate_gradient(funcInfo.py_grad, p.x, p.y);
+                p.x -= 0.5 * grad[0] * dt;
+                p.y -= 0.5 * grad[1] * dt;
+
+                if (tracePosCount < 999) {
+                    tracePositions[tracePosCount * 3] = p.x;
+                    tracePositions[tracePosCount * 3 + 1] = p.y;
+                    tracePositions[tracePosCount * 3 + 2] = p.z;
+                    tracePosCount++;
+                    trace.geometry.setDrawRange(0, tracePosCount);
+                    trace.geometry.attributes.position.needsUpdate = true;
+                }
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+        animationId = requestAnimationFrame(animate);
+    }
+
+    function render() {
+        controls.update();
         renderer.render(scene, camera);
+        requestAnimationFrame(render);
     }
+
+    functionSelect.addEventListener("change", (e) => {
+        selectedFunctionName = e.target.value;
+        if (animationId) cancelAnimationFrame(animationId);
+        if (marble) scene.remove(marble);
+        if (trace) scene.remove(trace);
+        updateSurface();
+    });
+    startButton.addEventListener("click", startAnimation);
 
     updateSurface();
-    animate();
+    render();
 }

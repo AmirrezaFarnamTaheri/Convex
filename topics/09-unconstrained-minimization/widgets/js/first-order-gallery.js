@@ -1,129 +1,113 @@
+/**
+ * Widget: First-Order Method Gallery
+ *
+ * Description: A gallery comparing the paths taken by various first-order methods on the same problem.
+ */
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-async function initFirstOrderGallery(containerId) {
-    const pyodide = await getPyodide();
-    const container = document.querySelector(containerId);
-    const legendContainer = container.querySelector("#gallery-legend");
+export async function initFirstOrderGallery(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-    const margin = {top: 20, right: 20, bottom: 30, left: 40};
-    const width = 600 - margin.left - margin.right;
-    const height = 600 - margin.top - margin.bottom;
+    container.innerHTML = `
+        <div class="fo-gallery-widget">
+            <div class="widget-controls" id="gallery-controls">
+                <p>Comparing paths on the Rosenbrock function:</p>
+            </div>
+            <div id="plot-container"></div>
+        </div>
+    `;
 
-    const svg = d3.select("#gallery-plot-container").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+    const controlsContainer = container.querySelector("#gallery-controls");
+    const plotContainer = container.querySelector("#plot-container");
+
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xScale = d3.scaleLinear().domain([-2, 2]).range([0, width]);
-    const yScale = d3.scaleLinear().domain([-1, 3]).range([height, 0]);
+    const x = d3.scaleLinear().domain([-2, 2]).range([0, width]);
+    const y = d3.scaleLinear().domain([-1, 3]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xScale));
-    svg.append("g").call(d3.axisLeft(yScale));
-
+    const pyodide = await getPyodide();
     const pythonCode = `
 import numpy as np
+import json
 
-# Using Rosenbrock function, a classic hard test case
-def rosenbrock(x, y):
-    return (1 - x)**2 + 100 * (y - x**2)**2
+def rosenbrock_grad(p):
+    x, y = p
+    return np.array([-2*(1-x)-400*x*(y-x**2), 200*(y-x**2)])
 
-def rosenbrock_grad(x, y):
-    dx = -2 * (1 - x) - 400 * x * (y - x**2)
-    dy = 200 * (y - x**2)
-    return np.array([dx, dy])
+def run_all_paths():
+    start_pos = np.array([-1.5, 2.5])
 
-start_pos = np.array([-1.5, 2.5])
-iters = 200
+    # GD
+    path_gd = [start_pos]; p = start_pos.copy()
+    for _ in range(50): p -= 0.0012 * rosenbrock_grad(p); path_gd.append(p.copy())
 
-# Simple Gradient Descent
-def gd():
-    path = [start_pos]
-    pos = start_pos.copy()
-    for _ in range(iters):
-        pos -= 0.001 * rosenbrock_grad(pos[0], pos[1])
-        path.append(pos.copy())
-    return path
+    # Momentum
+    path_mom = [start_pos]; p = start_pos.copy(); v = np.zeros(2)
+    for _ in range(50): v = 0.9 * v + 0.001 * rosenbrock_grad(p); p -= v; path_mom.append(p.copy())
 
-# Momentum
-def momentum():
-    path = [start_pos]
-    pos = start_pos.copy()
-    velocity = np.zeros(2)
-    gamma = 0.9
-    alpha = 0.001
-    for _ in range(iters):
-        velocity = gamma * velocity + alpha * rosenbrock_grad(pos[0], pos[1])
-        pos -= velocity
-        path.append(pos.copy())
-    return path
+    # Nesterov
+    path_nag = [start_pos]; p = start_pos.copy(); v = np.zeros(2)
+    for _ in range(50):
+        p_ahead = p - 0.9 * v
+        v = 0.9 * v + 0.001 * rosenbrock_grad(p_ahead)
+        p -= v
+        path_nag.append(p.copy())
 
-# Adam
-def adam():
-    path = [start_pos]
-    pos = start_pos.copy()
-    m = np.zeros(2)
-    v = np.zeros(2)
-    beta1 = 0.9
-    beta2 = 0.999
-    epsilon = 1e-8
-    alpha = 0.01
-    for t in range(1, iters + 1):
-        grad = rosenbrock_grad(pos[0], pos[1])
-        m = beta1 * m + (1 - beta1) * grad
-        v = beta2 * v + (1 - beta2) * (grad**2)
-        m_hat = m / (1 - beta1**t)
-        v_hat = v / (1 - beta2**t)
-        pos -= alpha * m_hat / (np.sqrt(v_hat) + epsilon)
-        path.append(pos.copy())
-    return path
+    # Adam
+    path_adam = [start_pos]; p=start_pos.copy(); m=np.zeros(2); v=np.zeros(2)
+    for t in range(1, 51):
+        grad = rosenbrock_grad(p)
+        m = 0.9 * m + 0.1 * grad
+        v = 0.999 * v + 0.001 * (grad**2)
+        m_hat = m / (1 - 0.9**t)
+        v_hat = v / (1 - 0.999**t)
+        p -= 0.03 * m_hat / (np.sqrt(v_hat) + 1e-8)
+        path_adam.append(p.copy())
 
-paths = {
-    "GD": [p.tolist() for p in gd()],
-    "Momentum": [p.tolist() for p in momentum()],
-    "Adam": [p.tolist() for p in adam()]
-}
+    xx, yy = np.meshgrid(np.linspace(-2, 2, 50), np.linspace(-1, 3, 50))
+    zz = (1-xx)**2 + 100*(yy-xx**2)**2
 
-# Contours
-xx, yy = np.meshgrid(np.linspace(-2, 2, 100), np.linspace(-1, 3, 100))
-zz = rosenbrock(xx, yy)
-contours = {"x": xx[0].tolist(), "y": yy[:,0].tolist(), "z": zz.flatten().tolist()}
-
-{"paths": paths, "contours": contours}
+    return json.dumps({
+        "paths": {"GD": np.array(path_gd).tolist(), "Momentum": np.array(path_mom).tolist(), "Nesterov": np.array(path_nag).tolist(), "Adam": np.array(path_adam).tolist()},
+        "contours": zz.flatten().tolist()
+    })
 `;
-    const dataPy = await pyodide.runPythonAsync(pythonCode);
-    const { paths, contours } = dataPy.toJs();
+    await pyodide.runPythonAsync(pythonCode);
+    const data = await pyodide.globals.get('run_all_paths')().then(r => JSON.parse(r));
 
-    const contourData = d3.contours()
-        .size([contours.x.length, contours.y.length])
-        .thresholds([2, 5, 10, 25, 50, 100, 200, 400])
-        (contours.z);
+    svg.append("g").selectAll("path").data(d3.contours().size([50,50]).thresholds([2, 5, 10, 25, 50, 100, 200])(data.contours)).join("path")
+        .attr("d", d3.geoPath(d3.geoIdentity().scale(width/49)))
+        .attr("fill", "none").attr("stroke", "var(--color-surface-1)");
 
-    svg.append("g")
-        .selectAll("path")
-        .data(contourData)
-        .enter().append("path")
-        .attr("d", d3.geoPath(d3.geoIdentity().scale(width / contours.x.length)))
-        .attr("fill", "none")
-        .attr("stroke", "var(--color-surface-1)");
+    const colors = d3.scaleOrdinal(d3.schemeTableau10);
+    const line = d3.line().x(d=>x(d[0])).y(d=>y(d[1]));
+    const methodPaths = {};
 
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
-    const line = d3.line().x(d => xScale(d[0])).y(d => yScale(d[1]));
-
-    for (const [name, path] of Object.entries(paths)) {
-        svg.append("path")
-            .datum(path)
+    for (const methodName in data.paths) {
+        methodPaths[methodName] = svg.append("path")
+            .datum(data.paths[methodName])
+            .attr("d", line)
             .attr("fill", "none")
-            .attr("stroke", color(name))
-            .attr("stroke-width", 2)
-            .attr("d", line);
+            .attr("stroke", colors(methodName))
+            .attr("stroke-width", 2.5);
 
-        const legendItem = d3.select(legendContainer).append("div").attr("class", "legend-item");
-        legendItem.append("div")
-            .attr("class", "legend-color")
-            .style("background-color", color(name));
-        legendItem.append("span").text(name);
+        const checkbox = document.createElement("label");
+        checkbox.innerHTML = `<input type="checkbox" checked value="${methodName}"> <span style="color:${colors(methodName)}">${methodName}</span>`;
+        checkbox.querySelector('input').addEventListener('change', (e) => {
+            methodPaths[methodName].style("display", e.target.checked ? "block" : "none");
+        });
+        controlsContainer.appendChild(checkbox);
     }
 }
-
-initFirstOrderGallery(".widget-container");

@@ -1,89 +1,127 @@
+/**
+ * Widget: Infeasibility Detection (Phase I Method)
+ *
+ * Description: Visualizes how a Phase I method can detect infeasibility in an LP.
+ */
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-async function initInfeasibilityDetection(containerId) {
-    const pyodide = await getPyodide();
-    const container = document.querySelector(containerId);
-    const runBtn = container.querySelector("#run-phase1-btn");
-    const statusDisplay = container.querySelector("#status-display");
+export async function initInfeasibilityDetection(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-    const margin = {top: 20, right: 20, bottom: 30, left: 40};
-    const width = 500 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    container.innerHTML = `
+        <div class="infeasibility-widget">
+            <div class="widget-controls">
+                <h4>Constraints: Ax ≤ b</h4>
+                <div id="inf-constraints"></div>
+                <button id="add-inf-constraint">+ Add</button>
+                <button id="run-phase-one-btn">Run Phase I</button>
+            </div>
+            <div id="plot-container"></div>
+            <div class="widget-output" id="inf-status"></div>
+        </div>
+    `;
 
-    const svg = d3.select("#infeasibility-plot-container").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+    const constraintsContainer = container.querySelector("#inf-constraints");
+    const addBtn = container.querySelector("#add-inf-constraint");
+    const runBtn = container.querySelector("#run-phase-one-btn");
+    const plotContainer = container.querySelector("#plot-container");
+    const statusDiv = container.querySelector("#inf-status");
+
+    let constraints = [[-1, 0, -2], [0, -1, -3], [1, 1, 4]]; // Default: x1>=2, x2>=3, x1+x2<=4
+
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xScale = d3.scaleLinear().domain([0, 5]).range([0, width]);
-    const yScale = d3.scaleLinear().domain([0, 5]).range([height, 0]);
+    const x = d3.scaleLinear().domain([0, 5]).range([0, width]);
+    const y = d3.scaleLinear().domain([0, 5]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xScale));
-    svg.append("g").call(d3.axisLeft(yScale));
-
-    // Constraints: x >= 2, y >= 3, x + y <= 4
-    // Constraint 1: x >= 2
-    svg.append("line").attr("x1", xScale(2)).attr("y1", yScale(0)).attr("x2", xScale(2)).attr("y2", yScale(5)).attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
-    // Constraint 2: y >= 3
-    svg.append("line").attr("x1", xScale(0)).attr("y1", yScale(3)).attr("x2", xScale(5)).attr("y2", yScale(3)).attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
-    // Constraint 3: x + y <= 4
-    svg.append("line").attr("x1", xScale(0)).attr("y1", yScale(4)).attr("x2", xScale(4)).attr("y2", yScale(0)).attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
-
+    const pyodide = await getPyodide();
+    await pyodide.loadPackage("cvxpy");
     const pythonCode = `
 import cvxpy as cp
+import numpy as np
+import json
 
-def solve_phase1():
+def solve_phase1(A_val, b_val):
     x = cp.Variable(2)
-    s = cp.Variable() # slack variable
+    s = cp.Variable()
+    A = np.array(A_val)
+    b = np.array(b_val)
 
-    # Original constraints:
-    # x[0] >= 2
-    # x[1] >= 3
-    # x[0] + x[1] <= 4
+    constraints = [A @ x <= b + s, s >= 0]
+    prob = cp.Problem(cp.Minimize(s), constraints)
+    prob.solve()
 
-    constraints = [
-        x[0] >= 2 - s,
-        x[1] >= 3 - s,
-        x[0] + x[1] <= 4 + s,
-        s >= 0
-    ]
-
-    objective = cp.Minimize(s)
-    problem = cp.Problem(objective, constraints)
-    problem.solve()
-
-    return {
-        "status": problem.status,
-        "s_value": s.value,
-        "x_value": x.value.tolist() if x.value is not None else "N/A"
-    }
+    return json.dumps({
+        "s_val": s.value,
+        "x_val": x.value.tolist() if x.value is not None else None,
+        "is_feasible": s.value < 1e-6
+    })
 `;
     await pyodide.runPythonAsync(pythonCode);
+    const solve_phase1 = pyodide.globals.get('solve_phase1');
 
-    async function runPhaseI() {
-        const resultPy = await pyodide.runPythonAsync('solve_phase1()');
-        const result = resultPy.toJs();
+    function renderConstraints() {
+        constraintsContainer.innerHTML = '';
+        svg.selectAll(".constraint-line").remove();
 
-        statusDisplay.innerHTML = \`
-            <p>Phase I Solver Status: \${result.status}</p>
-            <p>Optimal slack variable s: \${result.s_value.toFixed(4)}</p>
-            <p>Resulting point x: \${JSON.stringify(result.x_value)}</p>
-            <p><b>Conclusion:</b> Since the optimal value of s is greater than 0, the original problem is <b>infeasible</b>.</p>
-        \`;
+        constraints.forEach((c, i) => {
+            const div = document.createElement("div");
+            div.innerHTML = `<input value="${c[0]}">x₁ + <input value="${c[1]}">x₂ ≤ <input value="${c[2]}"> <button data-idx="${i}">X</button>`;
+            div.querySelectorAll('input').forEach((input, j) => {
+                input.type = "number"; input.step="0.1";
+                input.addEventListener('change', (e) => constraints[i][j] = +e.target.value);
+            });
+            div.querySelector('button').addEventListener('click', () => { constraints.splice(i, 1); renderConstraints(); });
+            constraintsContainer.appendChild(div);
 
-        if (result.x_value !== "N/A") {
-            svg.selectAll("circle.sol").remove();
-            svg.append("circle")
-               .attr("class", "sol")
-               .attr("cx", xScale(result.x_value[0]))
-               .attr("cy", yScale(result.x_value[1]))
-               .attr("r", 6)
-               .attr("fill", "var(--color-accent)");
-        }
+            const [a1, a2, b] = c;
+            let p1, p2;
+            if(Math.abs(a2) > 1e-6) {
+                p1 = {x: 0, y: b/a2}; p2 = {x: 5, y: (b-5*a1)/a2};
+            } else {
+                p1 = {x: b/a1, y: 0}; p2 = {x: b/a1, y: 5};
+            }
+            svg.append("line").attr("class", "constraint-line")
+                .attr("x1", x(p1.x)).attr("y1", y(p1.y))
+                .attr("x2", x(p2.x)).attr("y2", y(p2.y))
+                .attr("stroke", "var(--color-primary)");
+        });
     }
 
-    runBtn.addEventListener("click", runPhaseI);
-}
+    async function run() {
+        runBtn.disabled = true;
+        const A = constraints.map(c => c.slice(0, 2));
+        const b = constraints.map(c => c[2]);
 
-initInfeasibilityDetection(".widget-container");
+        const result = await solve_phase1(A, b).then(r => JSON.parse(r));
+
+        svg.selectAll(".sol-point").remove();
+        if (result.is_feasible) {
+            statusDiv.innerHTML = `<p style="color:var(--color-success)">Feasible! A solution is x = [${result.x_val.map(v=>v.toFixed(2)).join(', ')}]</p>`;
+            svg.append("circle").attr("class", "sol-point")
+                .attr("cx", x(result.x_val[0])).attr("cy", y(result.x_val[1]))
+                .attr("r", 5).attr("fill", "var(--color-success)");
+        } else {
+            statusDiv.innerHTML = `<p style="color:var(--color-danger)">Infeasible. The minimum slack required is s = ${result.s_val.toFixed(3)}</p>`;
+        }
+        runBtn.disabled = false;
+    }
+
+    addBtn.addEventListener("click", () => { constraints.push([0,0,0]); renderConstraints(); });
+    runBtn.addEventListener("click", run);
+
+    renderConstraints();
+    run();
+}

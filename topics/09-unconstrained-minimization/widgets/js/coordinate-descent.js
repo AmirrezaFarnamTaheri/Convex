@@ -1,99 +1,88 @@
+/**
+ * Widget: Coordinate Descent Visualizer
+ *
+ * Description: Animates the steps of coordinate descent, showing how it optimizes along one axis at a time.
+ */
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-async function initCoordinateDescent(containerId) {
-    const pyodide = await getPyodide();
-    const container = document.querySelector(containerId);
-    const restartBtn = container.querySelector("#restart-cd-btn");
+export async function initCoordinateDescent(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-    const margin = {top: 20, right: 20, bottom: 30, left: 40};
-    const width = 500 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    container.innerHTML = `
+        <div class="cd-visualizer-widget">
+            <div class="widget-controls">
+                <button id="run-cd-btn">Run Coordinate Descent</button>
+            </div>
+            <div id="plot-container"></div>
+            <p class="widget-instructions">The algorithm alternates between optimizing with respect to x₁ and x₂.</p>
+        </div>
+    `;
 
-    const svg = d3.select("#coordinate-descent-plot-container").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+    const runBtn = container.querySelector("#run-cd-btn");
+    const plotContainer = container.querySelector("#plot-container");
+
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xScale = d3.scaleLinear().domain([-4, 4]).range([0, width]);
-    const yScale = d3.scaleLinear().domain([-4, 4]).range([height, 0]);
+    const x = d3.scaleLinear().domain([-4, 4]).range([0, width]);
+    const y = d3.scaleLinear().domain([-4, 4]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xScale));
-    svg.append("g").call(d3.axisLeft(yScale));
-
-    const pythonSetupCode = `
+    const pyodide = await getPyodide();
+    const pythonCode = `
 import numpy as np
+import json
 
-def get_cd_path():
-    # f(x,y) = (x-1)**2 + (y-2)**2 + 0.1 * (x*y)
-    # df/dx = 2*(x-1) + 0.1*y => x = 1 - 0.05*y
-    # df/dy = 2*(y-2) + 0.1*x => y = 2 - 0.05*x
+def get_cd_data():
+    path = [np.array([-3.5, -3.0])]
+    for i in range(10):
+        p = path[-1].copy()
+        if i % 2 == 0: # Update x1
+            p[0] = 1 - 0.2 * p[1]
+        else: # Update x2
+            p[1] = 1 - 0.2 * p[0]
+        path.append(p)
 
-    path = [np.array([-3.0, -3.0])]
-    for i in range(15):
-        current_pos = path[-1].copy()
-        if i % 2 == 0: # Update x
-            current_pos[0] = 1 - 0.05 * current_pos[1]
-        else: # Update y
-            current_pos[1] = 2 - 0.05 * current_pos[0]
-        path.append(current_pos)
-    return [p.tolist() for p in path]
+    xx, yy = np.meshgrid(np.linspace(-4, 4, 50), np.linspace(-4, 4, 50))
+    zz = (xx-1)**2 + (yy-1)**2 + 0.4 * (xx*yy)
 
-def get_contours():
-    xx, yy = np.meshgrid(np.linspace(-4, 4, 100), np.linspace(-4, 4, 100))
-    zz = (xx-1)**2 + (yy-2)**2 + 0.1 * (xx*yy)
-    return {"x": xx[0].tolist(), "y": yy[:,0].tolist(), "z": zz.flatten().tolist()}
-
-path_data = get_cd_path()
-contour_data = get_contours()
+    return json.dumps({"path": np.array(path).tolist(), "contours": zz.flatten().tolist()})
 `;
-    await pyodide.runPythonAsync(pythonSetupCode);
+    await pyodide.runPythonAsync(pythonCode);
+    const get_cd_data = pyodide.globals.get('get_cd_data');
 
-    async function runAnimation() {
-        svg.selectAll(".contour, .path-line, .path-point").remove();
+    async function run() {
+        runBtn.disabled = true;
+        svg.selectAll(".contour, .cd-path").remove();
 
-        const pathPy = await pyodide.runPythonAsync('path_data');
-        const contourPy = await pyodide.runPythonAsync('contour_data');
-        const path = pathPy.toJs();
-        const contourData = contourPy.toJs();
+        const data = await get_cd_data().then(r => JSON.parse(r));
 
-        // Draw contours
-        const contours = d3.contours()
-            .size([contourData.x.length, contourData.y.length])
-            .thresholds(d3.range(0, 50, 2))
-            (contourData.z);
+        svg.append("g").attr("class", "contour")
+            .selectAll("path").data(d3.contours().size([50,50]).thresholds(20)(data.contours)).join("path")
+            .attr("d", d3.geoPath(d3.geoIdentity().scale(width/49)))
+            .attr("fill", "none").attr("stroke", "var(--color-surface-1)");
 
-        svg.append("g")
-            .attr("class", "contour")
-            .selectAll("path")
-            .data(contours)
-            .enter().append("path")
-            .attr("d", d3.geoPath(d3.geoIdentity().scale(width / contourData.x.length)))
-            .attr("fill", "none")
-            .attr("stroke", "var(--color-surface-1)");
+        const path = svg.append("path").attr("class", "cd-path").datum(data.path)
+            .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])))
+            .attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
 
-        // Animate path
-        const pathLine = svg.append("path")
-            .attr("class", "path-line")
-            .datum(path)
-            .attr("fill", "none")
-            .attr("stroke", "var(--color-accent)")
-            .attr("stroke-width", 2)
-            .attr("d", d3.line().x(d => xScale(d[0])).y(d => yScale(d[1])));
+        const totalLength = path.node().getTotalLength();
+        path.attr("stroke-dasharray", `${totalLength} ${totalLength}`).attr("stroke-dashoffset", totalLength)
+            .transition().duration(2000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
 
-        const totalLength = pathLine.node().getTotalLength();
-
-        pathLine
-            .attr("stroke-dasharray", totalLength + " " + totalLength)
-            .attr("stroke-dashoffset", totalLength)
-            .transition()
-            .duration(3000)
-            .ease(d3.easeLinear)
-            .attr("stroke-dashoffset", 0);
+        setTimeout(() => runBtn.disabled = false, 2000);
     }
 
-    restartBtn.addEventListener("click", runAnimation);
-    runAnimation();
+    runBtn.addEventListener("click", run);
+    run();
 }
-
-initCoordinateDescent(".widget-container");

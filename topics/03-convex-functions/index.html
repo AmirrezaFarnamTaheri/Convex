@@ -86,8 +86,8 @@
 
       <!-- Widget 2 -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Hessian Explorer</h3>
-        <p>Visualize the Hessian of a function and check for positive semi-definiteness.</p>
+        <h3 style="margin-top: 0;">Hessian Eigenvalue Heatmap</h3>
+        <p>Visualize the minimum eigenvalue of the Hessian to check for convexity.</p>
         <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
           <!-- Widget will be rendered here -->
         </div>
@@ -171,8 +171,8 @@
     initJensenVisualizer('widget-1');
   </script>
   <script type="module">
-    import { initHessianExplorer } from './widgets/js/hessian-explorer.js';
-    initHessianExplorer('widget-2');
+    import { initHessianHeatmap } from './widgets/js/hessian-heatmap.js';
+    initHessianHeatmap('widget-2');
   </script>
   <script type="module">
     import { initTangentLineExplorer } from './widgets/js/tangent-line-explorer.js';

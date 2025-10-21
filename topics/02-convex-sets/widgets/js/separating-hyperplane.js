@@ -1,91 +1,139 @@
 /**
  * Widget: Separating Hyperplane Visualizer
  *
- * Description: Allows users to place two convex sets and watch the algorithm find a separating hyperplane between them.
+ * Description: Allows users to draw two convex sets and watch the algorithm find a separating hyperplane between them.
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-export function initSeparatingHyperplane(containerId) {
+export async function initSeparatingHyperplane(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
-    const controls = document.createElement("div");
-    controls.innerHTML = `<button id="find_hyperplane">Find Hyperplane</button>`;
-    container.appendChild(controls);
+    container.innerHTML = `
+        <div class="separating-hyperplane-widget">
+            <div class="widget-controls">
+                <p><strong>Instructions:</strong> Draw two separate, convex shapes.</p>
+                <button id="find-hyperplane-btn">Find Separating Hyperplane</button>
+                <button id="reset-drawing-btn">Reset</button>
+            </div>
+            <div id="drawing-area-hyperplane" style="position: relative;"></div>
+        </div>
+    `;
 
-    const margin = {top: 20, right: 30, bottom: 40, left: 40},
-        width = 500 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+    const drawingArea = container.querySelector("#drawing-area-hyperplane");
+    const findBtn = container.querySelector("#find-hyperplane-btn");
+    const resetBtn = container.querySelector("#reset-drawing-btn");
 
-    const svg = d3.select(container).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top - margin.bottom)
-        .append("g")
+    const margin = {top: 10, right: 10, bottom: 10, left: 10};
+    const width = drawingArea.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(drawingArea).append("svg")
+        .attr("width", "100%")
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-10, 10]).range([0, width]);
-    svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+    let points1 = [], points2 = [];
+    let currentDrawing = 1;
+    let isDrawing = false;
 
-    const y = d3.scaleLinear().domain([-10, 10]).range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
-
-    // Draggable circles representing convex sets
-    const circle1 = { x: -5, y: -5, r: 2 };
-    const circle2 = { x: 5, y: 5, r: 2 };
+    const line = d3.line().curve(d3.curveBasis);
+    const path1 = svg.append("path").attr("fill", "var(--color-primary-light)").attr("stroke", "var(--color-primary)");
+    const path2 = svg.append("path").attr("fill", "var(--color-accent-light)").attr("stroke", "var(--color-accent)");
+    const hyperplane = svg.append("line").attr("stroke", "var(--color-danger)").attr("stroke-width", 2.5).style("display", "none");
 
     const drag = d3.drag()
-        .on("drag", function(event, d) {
-            d.x = x.invert(event.x);
-            d.y = y.invert(event.y);
-            d3.select(this)
-                .attr("cx", x(d.x))
-                .attr("cy", y(d.y));
-            svg.select(".hyperplane").remove(); // Remove hyperplane on drag
+        .on("start", (event) => {
+            isDrawing = true;
+            const currentPoints = (currentDrawing === 1) ? points1 : points2;
+            currentPoints.length = 0; // Clear current polygon
+            currentPoints.push(d3.pointer(event, svg.node()));
+            hyperplane.style("display", "none");
+        })
+        .on("drag", (event) => {
+            if (!isDrawing) return;
+            const currentPoints = (currentDrawing === 1) ? points1 : points2;
+            currentPoints.push(d3.pointer(event, svg.node()));
+            if (currentDrawing === 1) path1.attr("d", line(currentPoints) + "Z");
+            else path2.attr("d", line(currentPoints) + "Z");
+        })
+        .on("end", () => {
+            isDrawing = false;
+            currentDrawing = (currentDrawing === 1) ? 2 : 1; // Switch to drawing the other polygon
         });
+    svg.call(drag);
 
-    svg.append("circle")
-        .data([circle1])
-        .attr("cx", d => x(d.x))
-        .attr("cy", d => y(d.y))
-        .attr("r", x(circle1.r) - x(0))
-        .attr("fill", "red")
-        .call(drag);
+    const pyodide = await getPyodide();
+    await pyodide.loadPackage("shapely");
+    const pythonCode = `
+import numpy as np
+from shapely.geometry import Polygon
+import json
 
-    svg.append("circle")
-        .data([circle2])
-        .attr("cx", d => x(d.x))
-        .attr("cy", d => y(d.y))
-        .attr("r", x(circle2.r) - x(0))
-        .attr("fill", "blue")
-        .call(drag);
+def find_separating_hyperplane(poly1_pts, poly2_pts):
+    poly1 = Polygon(poly1_pts)
+    poly2 = Polygon(poly2_pts)
 
+    if not poly1.is_valid or not poly2.is_valid or poly1.intersects(poly2):
+        return {"error": "Polygons must be valid and disjoint."}
 
-    d3.select("#find_hyperplane").on("click", () => {
-        svg.select(".hyperplane").remove();
+    # Find closest points between the two convex hulls
+    p1, p2 = min(
+        ((p1, p2) for p1 in poly1.exterior.coords for p2 in poly2.exterior.coords),
+        key=lambda points: (points[0][0]-points[1][0])**2 + (points[0][1]-points[1][1])**2
+    )
 
-        const mid_x = (circle1.x + circle2.x) / 2;
-        const mid_y = (circle1.y + circle2.y) / 2;
-        const dx = circle2.x - circle1.x;
-        const dy = circle2.y - circle1.y;
+    mid_point = ((p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2)
+    direction_vec = (p2[0] - p1[0], p2[1] - p1[1])
 
-        const tangent = { x: -dy, y: dx };
+    # Hyperplane normal is the direction vector
+    a = direction_vec[0]
+    b = direction_vec[1]
 
-        const p1 = { x: mid_x + 10 * tangent.x, y: mid_y + 10 * tangent.y };
-        const p2 = { x: mid_x - 10 * tangent.x, y: mid_y - 10 * tangent.y };
+    # Offset c = a*x + b*y
+    c = a * mid_point[0] + b * mid_point[1]
 
-        svg.append("line")
-            .attr("class", "hyperplane")
-            .attr("x1", x(p1.x))
-            .attr("y1", y(p1.y))
-            .attr("x2", x(p2.x))
-            .attr("y2", y(p2.y))
-            .attr("stroke", "black")
-            .attr("stroke-width", 2);
+    return {"a": a, "b": b, "c": c}
+`;
+    await pyodide.runPythonAsync(pythonCode);
+    const py_find_hyperplane = pyodide.globals.get('find_separating_hyperplane');
+
+    async function findAndDrawHyperplane() {
+        if (points1.length < 3 || points2.length < 3) return;
+
+        const result = await py_find_hyperplane(points1, points2).then(r => r.toJs());
+
+        if (result.error) {
+            console.warn(result.error);
+            return;
+        }
+
+        const { a, b, c } = result;
+        // Draw the line ax + by = c
+        let x1, y1, x2, y2;
+        if (Math.abs(b) > 1e-6) { // Not a vertical line
+            x1 = -1000; y1 = (c - a*x1) / b;
+            x2 = 1000; y2 = (c - a*x2) / b;
+        } else { // Vertical line
+            y1 = -1000; x1 = c / a;
+            y2 = 1000; x2 = c / a;
+        }
+
+        hyperplane
+            .attr("x1", x1).attr("y1", y1)
+            .attr("x2", x2).attr("y2", y2)
+            .style("display", "block");
+    }
+
+    findBtn.addEventListener("click", findAndDrawHyperplane);
+    resetBtn.addEventListener("click", () => {
+        points1 = []; points2 = [];
+        path1.attr("d", null);
+        path2.attr("d", null);
+        hyperplane.style("display", "none");
+        currentDrawing = 1;
     });
 }

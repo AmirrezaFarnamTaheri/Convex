@@ -6,67 +6,56 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export async function initJensenVisualizer(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
-    // --- CONFIGURATION ---
+    container.innerHTML = `
+        <div class="jensen-visualizer-widget">
+            <div class="widget-controls">
+                <label for="jensen-func-select">Function:</label>
+                <select id="jensen-func-select"></select>
+                <label for="jensen-t-slider">θ (theta):</label>
+                <input type="range" id="jensen-t-slider" min="0" max="1" step="0.01" value="0.5">
+                <span id="t-value-display">0.50</span>
+                <button id="jensen-reset-btn">Reset Points</button>
+            </div>
+            <div id="jensen-plot-container"></div>
+        </div>
+    `;
+
+    const funcSelect = container.querySelector("#jensen-func-select");
+    const tSlider = container.querySelector("#jensen-t-slider");
+    const tValueDisplay = container.querySelector("#t-value-display");
+    const resetBtn = container.querySelector("#jensen-reset-btn");
+    const plotContainer = container.querySelector("#jensen-plot-container");
+
     const functions = {
-        "x^2": { func: x => x**2, domain: { x: [-5, 5], y: [0, 25] } },
-        "e^x": { func: x => Math.exp(x), domain: { x: [-3, 3], y: [0, 20] } },
-        "sin(x)": { func: x => Math.sin(x), domain: { x: [-6, 6], y: [-1.5, 1.5] } },
-        "-log(x)": { func: x => -Math.log(x), domain: { x: [0.1, 5], y: [-2, 3] } },
+        "x² (Convex)": { func: x => x**2, domain: [-5, 5] },
+        "eˣ (Convex)": { func: x => Math.exp(x), domain: [-3, 3] },
+        "sin(x) (Non-Convex)": { func: x => Math.sin(x), domain: [-6, 6] },
+        "-log(x) (Convex)": { func: x => -Math.log(x), domain: [0.1, 5] },
     };
-    let selectedFunctionName = "x^2";
+    let selectedFunctionName = Object.keys(functions)[0];
     let points = [];
-    let t = 0.5; // Interpolation factor
+    let theta = 0.5;
 
-    // --- UI CONTROLS ---
-    const controls = document.createElement("div");
-    controls.style.cssText = "padding: 10px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;";
-
-    const dropdown = document.createElement("select");
     Object.keys(functions).forEach(name => {
         const option = document.createElement("option");
-        option.value = option.textContent = name;
-        dropdown.appendChild(option);
-    });
-    dropdown.addEventListener("change", () => {
-        selectedFunctionName = dropdown.value;
-        reset();
+        option.value = name;
+        option.textContent = name;
+        funcSelect.appendChild(option);
     });
 
-    const tLabel = document.createElement("label");
-    tLabel.textContent = "t:";
-    const tSlider = document.createElement("input");
-    tSlider.type = "range";
-    tSlider.min = 0;
-    tSlider.max = 1;
-    tSlider.step = 0.01;
-    tSlider.value = t;
-    tSlider.addEventListener("input", () => {
-        t = parseFloat(tSlider.value);
-        if (points.length === 2) updateInterpolation();
-    });
-
-    const resetButton = document.createElement("button");
-    resetButton.textContent = "Reset Points";
-    resetButton.addEventListener("click", reset);
-
-    controls.append("Function:", dropdown, tLabel, tSlider, resetButton);
-    container.appendChild(controls);
-
-    // --- D3.js PLOT ---
-    const margin = { top: 10, right: 10, bottom: 20, left: 30 };
-    const width = container.clientWidth - margin.left - margin.right;
+    const margin = { top: 30, right: 20, bottom: 40, left: 50 };
+    const width = plotContainer.clientWidth - margin.left - margin.right;
     const height = 350 - margin.top - margin.bottom;
 
-    const svg = d3.select(container).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    svg.append("text").attr("x", width/2).attr("y", -10).attr("text-anchor", "middle").style("font-size", "16px").text("Jensen's Inequality: f(θx + (1-θ)y) ≤ θf(x) + (1-θ)f(y)");
 
     const x = d3.scaleLinear().range([0, width]);
     const y = d3.scaleLinear().range([height, 0]);
@@ -75,26 +64,18 @@ export async function initJensenVisualizer(containerId) {
     svg.append("g").attr("class", "y-axis");
 
     const line = d3.line().x(d => x(d.x)).y(d => y(d.y));
-    const path = svg.append("path").attr("fill", "none").attr("stroke", "steelblue").attr("stroke-width", 2);
-
+    const path = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
     const interactionGroup = svg.append("g");
-
-    const interactionLayer = svg.append("rect")
-        .attr("width", width)
-        .attr("height", height)
-        .style("fill", "none")
-        .style("pointer-events", "all")
-        .on("click", handleClick);
+    svg.append("rect").attr("width", width).attr("height", height).style("fill", "none").style("pointer-events", "all").on("click", handleClick);
 
     function drawFunction() {
         const { func, domain } = functions[selectedFunctionName];
-        x.domain(domain.x);
-        y.domain(domain.y);
-
+        x.domain(domain);
+        const yData = d3.range(domain[0], domain[1], 0.05).map(val => func(val));
+        y.domain(d3.extent(yData)).nice();
         svg.select(".x-axis").call(d3.axisBottom(x));
         svg.select(".y-axis").call(d3.axisLeft(y));
-
-        const data = d3.range(domain.x[0], domain.x[1], 0.05).map(val => ({ x: val, y: func(val) }));
+        const data = d3.range(domain[0], domain[1], 0.05).map(val => ({ x: val, y: func(val) }));
         path.datum(data).attr("d", line);
     }
 
@@ -106,55 +87,38 @@ export async function initJensenVisualizer(containerId) {
 
     function handleClick(event) {
         if (points.length >= 2) return;
-
-        const [mx, my] = d3.pointer(event);
+        const [mx] = d3.pointer(event, svg.node());
         const xVal = x.invert(mx);
         const yVal = functions[selectedFunctionName].func(xVal);
         points.push({ x: xVal, y: yVal });
 
-        interactionGroup.append("circle")
-            .attr("cx", x(xVal)).attr("cy", y(yVal))
-            .attr("r", 5).attr("fill", "red");
-
+        interactionGroup.append("circle").attr("cx", x(xVal)).attr("cy", y(yVal)).attr("r", 5).attr("fill", "var(--color-accent)");
         if (points.length === 2) {
             points.sort((a, b) => a.x - b.x);
-
-            interactionGroup.append("line")
-                .attr("class", "chord-line")
-                .attr("x1", x(points[0].x)).attr("y1", y(points[0].y))
-                .attr("x2", x(points[1].x)).attr("y2", y(points[1].y))
-                .attr("stroke", "orange").attr("stroke-width", 2).attr("stroke-dasharray", "4");
-
+            interactionGroup.append("line").attr("class", "chord-line").attr("x1", x(points[0].x)).attr("y1", y(points[0].y)).attr("x2", x(points[1].x)).attr("y2", y(points[1].y)).attr("stroke", "var(--color-text-secondary)").attr("stroke-width", 2).attr("stroke-dasharray", "4");
             updateInterpolation();
         }
     }
 
     function updateInterpolation() {
-        const p1 = points[0];
-        const p2 = points[1];
-        const x_t = (1 - t) * p1.x + t * p2.x;
-        const y_func = functions[selectedFunctionName].func(x_t);
-        const y_chord = (1 - t) * p1.y + t * p2.y;
+        if (points.length < 2) return;
+        tValueDisplay.textContent = theta.toFixed(2);
+        const [p1, p2] = points;
+        const x_theta = (1 - theta) * p1.x + theta * p2.x;
+        const y_func = functions[selectedFunctionName].func(x_theta);
+        const y_chord = (1 - theta) * p1.y + theta * p2.y;
 
-        interactionGroup.selectAll(".interp-dot").remove();
+        const isConvex = y_func <= y_chord + 1e-6;
 
-        interactionGroup.append("circle")
-            .attr("class", "interp-dot")
-            .attr("cx", x(x_t)).attr("cy", y(y_func))
-            .attr("r", 5).attr("fill", "purple");
-
-        interactionGroup.append("circle")
-            .attr("class", "interp-dot")
-            .attr("cx", x(x_t)).attr("cy", y(y_chord))
-            .attr("r", 5).attr("fill", "green");
-
-        interactionGroup.append("line")
-            .attr("class", "interp-dot")
-            .attr("x1", x(x_t)).attr("y1", y(y_func))
-            .attr("x2", x(x_t)).attr("y2", y(y_chord))
-            .attr("stroke", y_func <= y_chord + 1e-6 ? "green" : "red")
-            .attr("stroke-width", 2);
+        interactionGroup.selectAll(".interp-viz").remove();
+        interactionGroup.append("circle").attr("class", "interp-viz").attr("cx", x(x_theta)).attr("cy", y(y_func)).attr("r", 5).attr("fill", "var(--color-primary)");
+        interactionGroup.append("circle").attr("class", "interp-viz").attr("cx", x(x_theta)).attr("cy", y(y_chord)).attr("r", 5).attr("fill", isConvex ? "var(--color-success)" : "var(--color-danger)");
+        interactionGroup.append("line").attr("class", "interp-viz").attr("x1", x(x_theta)).attr("y1", y(y_func)).attr("x2", x(x_theta)).attr("y2", y(y_chord)).attr("stroke", isConvex ? "var(--color-success)" : "var(--color-danger)").attr("stroke-width", 2);
     }
+
+    funcSelect.addEventListener("change", (e) => { selectedFunctionName = e.target.value; reset(); });
+    tSlider.addEventListener("input", (e) => { theta = +e.target.value; updateInterpolation(); });
+    resetBtn.addEventListener("click", reset);
 
     reset();
 }

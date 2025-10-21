@@ -1,134 +1,115 @@
+/**
+ * Widget: Step Size Selector
+ *
+ * Description: Shows how different step sizes (too large, too small, just right) affect the convergence of gradient descent.
+ */
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-async function initStepSize(containerId) {
-    const pyodide = await getPyodide();
-    const container = document.querySelector(containerId);
+export async function initStepSize(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-    const functionSelect = container.querySelector("#function-select");
-    const stepSizeSlider = container.querySelector("#step-size-slider");
-    const startXSlider = container.querySelector("#start-x-slider");
-    const startYSlider = container.querySelector("#start-y-slider");
-    const restartBtn = container.querySelector("#restart-btn");
+    container.innerHTML = `
+        <div class="step-size-widget">
+            <div class="widget-controls">
+                <label>Function:</label> <select id="ss-func-select">
+                    <option value="x**2 + 5*y**2">Well-conditioned</option>
+                    <option value="x**2 + 25*y**2">Ill-conditioned</option>
+                </select>
+                <label>Step Size (α): <span id="ss-alpha-val">0.05</span></label>
+                <input type="range" id="ss-alpha-slider" min="0.01" max="0.1" step="0.005" value="0.05">
+            </div>
+            <div id="plot-container"></div>
+            <p class="widget-instructions">Click to set a start point. Adjust the step size to see convergence, slow progress, or divergence.</p>
+        </div>
+    `;
 
-    const margin = {top: 20, right: 20, bottom: 30, left: 40};
-    const width = 500 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    const funcSelect = container.querySelector("#ss-func-select");
+    const alphaSlider = container.querySelector("#ss-alpha-slider");
+    const alphaVal = container.querySelector("#ss-alpha-val");
+    const plotContainer = container.querySelector("#plot-container");
 
-    const svg = d3.select("#step-size-plot-container").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+    let startPoint = {x: 3, y: 3};
+
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xScale = d3.scaleLinear().domain([-4, 4]).range([0, width]);
-    const yScale = d3.scaleLinear().domain([-4, 4]).range([height, 0]);
+    const x = d3.scaleLinear().domain([-4, 4]).range([0, width]);
+    const y = d3.scaleLinear().domain([-4, 4]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xScale));
-    svg.append("g").call(d3.axisLeft(yScale));
+    const pyodide = await getPyodide();
+    await pyodide.loadPackage("sympy");
 
-    const pythonSetupCode = `
-import numpy as np
+    const pythonCode = `
 import sympy
+import numpy as np
+import json
 
 x, y = sympy.symbols('x y')
 
-def get_gradient_func(f_str):
+def get_gd_path_and_contours(f_str, start_pt, alpha):
     f = sympy.sympify(f_str)
-    grad = [sympy.diff(f, var) for var in (x, y)]
-    return sympy.lambdify((x, y), grad, 'numpy')
+    grad_f = sympy.lambdify((x, y), [sympy.diff(f, x), sympy.diff(f, y)], 'numpy')
 
-def run_gd(f_str, start_x, start_y, alpha, iters=50):
-    grad_func = get_gradient_func(f_str)
-    path = [np.array([start_x, start_y])]
-    for _ in range(iters):
-        current_pos = path[-1]
-        step = alpha * np.array(grad_func(current_pos[0], current_pos[1]))
-        if np.linalg.norm(step) < 1e-4:
+    path = [np.array(start_pt)]
+    p = np.array(start_pt)
+    for _ in range(50):
+        grad = np.array(grad_f(p[0], p[1]))
+        p_next = p - alpha * grad
+        path.append(p_next)
+        if np.linalg.norm(p_next - p) < 1e-3 or np.linalg.norm(p_next) > 1e4:
             break
-        path.append(current_pos - step)
-        if np.linalg.norm(path[-1]) > 1e4: # Divergence check
-            break
-    return [p.tolist() for p in path]
+        p = p_next
 
-def get_contour_data(f_str):
-    f = sympy.sympify(f_str)
-    f_lambda = sympy.lambdify((x, y), f, 'numpy')
-    xx, yy = np.meshgrid(np.linspace(-4, 4, 100), np.linspace(-4, 4, 100))
-    zz = f_lambda(xx, yy)
-    return {"x": xx[0].tolist(), "y": yy[:,0].tolist(), "z": zz.flatten().tolist()}
+    f_np = sympy.lambdify((x, y), f, 'numpy')
+    xx, yy = np.meshgrid(np.linspace(-4, 4, 50), np.linspace(-4, 4, 50))
+    zz = f_np(xx, yy)
+
+    return json.dumps({"path": np.array(path).tolist(), "contours": zz.flatten().tolist()})
 `;
-    await pyodide.runPythonAsync(pythonSetupCode);
+    await pyodide.runPythonAsync(pythonCode);
+    const get_gd_path_and_contours = pyodide.globals.get('get_gd_path_and_contours');
 
-    let animationPath;
+    async function update() {
+        const funcStr = funcSelect.value;
+        const alpha = +alphaSlider.value;
+        alphaVal.textContent = alpha.toFixed(3);
 
-    async function runAnimation() {
-        svg.selectAll(".contour, .path-line, .path-point").remove();
+        const data = await get_gd_path_and_contours(funcStr, [startPoint.x, startPoint.y], alpha).then(r => JSON.parse(r));
 
-        const funcStr = functionSelect.value;
-        const alpha = +stepSizeSlider.value;
-        const startX = +startXSlider.value;
-        const startY = +startYSlider.value;
+        svg.selectAll(".contour").remove();
+        svg.append("g").attr("class", "contour")
+            .selectAll("path").data(d3.contours().size([50,50]).thresholds(20)(data.contours)).join("path")
+            .attr("d", d3.geoPath(d3.geoIdentity().scale(width/49)))
+            .attr("fill", "none").attr("stroke", "var(--color-surface-1)");
 
-        // Draw contours
-        const contourDataPy = await pyodide.runPythonAsync(`get_contour_data('${funcStr}')`);
-        const { x: contourX, y: contourY, z: contourZ } = contourDataPy.toJs();
+        svg.selectAll(".gd-path").remove();
+        svg.append("path").attr("class", "gd-path").datum(data.path)
+            .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])))
+            .attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
 
-        const contours = d3.contours()
-            .size([contourX.length, contourY.length])
-            .thresholds(d3.range(0, 100, 2))
-            (contourZ);
-
-        svg.append("g")
-            .attr("class", "contour")
-            .selectAll("path")
-            .data(contours)
-            .enter().append("path")
-            .attr("d", d3.geoPath(d3.geoIdentity().scale(width / contourX.length)))
-            .attr("fill", "none")
-            .attr("stroke", "var(--color-surface-1)");
-
-        // Get GD Path
-        const pathPy = await pyodide.runPythonAsync(`run_gd('${funcStr}', ${startX}, ${startY}, ${alpha})`);
-        const path = pathPy.toJs();
-
-        // Animate path
-        const pathLine = svg.append("path")
-            .attr("class", "path-line")
-            .datum(path)
-            .attr("fill", "none")
-            .attr("stroke", "var(--color-accent)")
-            .attr("stroke-width", 2)
-            .attr("d", d3.line().x(d => xScale(d[0])).y(d => yScale(d[1])));
-
-        const totalLength = pathLine.node().getTotalLength();
-
-        pathLine
-            .attr("stroke-dasharray", totalLength + " " + totalLength)
-            .attr("stroke-dashoffset", totalLength)
-            .transition()
-            .duration(2000)
-            .ease(d3.easeLinear)
-            .attr("stroke-dashoffset", 0);
-
-        svg.selectAll(".path-point")
-            .data(path)
-            .enter().append("circle")
-            .attr("class", "path-point")
-            .attr("cx", d => xScale(d[0]))
-            .attr("cy", d => yScale(d[1]))
-            .attr("r", 0)
-            .transition()
-            .delay((d, i) => i * (2000 / path.length))
-            .attr("r", 4)
-            .attr("fill", "var(--color-primary)");
+        svg.selectAll(".start-point").remove();
+        svg.append("circle").attr("class", "start-point").attr("cx", x(startPoint.x)).attr("cy", y(startPoint.y)).attr("r", 5).attr("fill", "var(--color-danger)");
     }
 
-    [stepSizeSlider, startXSlider, startYSlider, functionSelect].forEach(el => {
-        el.addEventListener("input", runAnimation);
-    });
-    restartBtn.addEventListener("click", runAnimation);
+    svg.append("rect").attr("width", width).attr("height", height).style("fill", "none").style("pointer-events", "all")
+        .on("click", (event) => {
+            const [mx, my] = d3.pointer(event, svg.node());
+            startPoint = {x: x.invert(mx), y: y.invert(my)};
+            update();
+        });
 
-    runAnimation();
+    funcSelect.addEventListener("change", update);
+    alphaSlider.addEventListener("input", update);
+    update();
 }
-
-initStepSize(".widget-container");

@@ -7,86 +7,110 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export function initTangentLineExplorer(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
-    const margin = {top: 20, right: 30, bottom: 40, left: 40},
-        width = 500 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+    container.innerHTML = `
+        <div class="tangent-explorer-widget">
+            <div class="widget-controls">
+                <label for="tangent-func-select">Function:</label>
+                <select id="tangent-func-select"></select>
+            </div>
+            <div id="plot-container"></div>
+            <div class="widget-output" id="inequality-text"></div>
+        </div>
+    `;
 
-    const svg = d3.select(container).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top - margin.bottom)
-        .append("g")
+    const funcSelect = container.querySelector("#tangent-func-select");
+    const plotContainer = container.querySelector("#plot-container");
+    const inequalityText = container.querySelector("#inequality-text");
+
+    const functions = {
+        "x² (Convex)": { func: x => x**2, grad: x => 2*x, domain: [-5, 5] },
+        "eˣ (Convex)": { func: x => Math.exp(x), grad: x => Math.exp(x), domain: [-3, 3] },
+        "x³ (Non-Convex)": { func: x => x**3, grad: x => 3*x**2, domain: [-3, 3] },
+        "cos(x) (Non-Convex)": { func: x => Math.cos(x), grad: x => -Math.sin(x), domain: [-6, 6]},
+    };
+    let selectedFunctionName = Object.keys(functions)[0];
+    let tangentX = 1;
+
+    Object.keys(functions).forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        funcSelect.appendChild(option);
+    });
+
+    const margin = {top: 20, right: 20, bottom: 40, left: 50};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 350 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-5, 5]).range([0, width]);
-    svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+    const x = d3.scaleLinear().range([0, width]);
+    const y = d3.scaleLinear().range([height, 0]);
 
-    const y = d3.scaleLinear().domain([0, 25]).range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
+    svg.append("g").attr("class", "x-axis").attr("transform", `translate(0,${height})`);
+    svg.append("g").attr("class", "y-axis");
 
-    // Function and its derivative
-    const f = x_val => x_val*x_val;
-    const grad_f = x_val => 2*x_val;
+    const path = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2.5);
+    const tangentLine = svg.append("line").attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
+    const tangentPoint = svg.append("circle").attr("r", 6).attr("fill", "var(--color-accent)").style("cursor", "pointer");
 
-    // Draw the function
-    const line = d3.line()
-        .x(d => x(d))
-        .y(d => y(f(d)));
+    const drag = d3.drag().on("drag", function(event) {
+        tangentX = x.invert(event.x);
+        const { domain } = functions[selectedFunctionName];
+        tangentX = Math.max(domain[0], Math.min(domain[1], tangentX)); // Clamp to domain
+        update();
+    });
 
-    svg.append("path")
-        .datum(d3.range(-5, 5.1, 0.1))
-        .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 2)
-        .attr("d", line);
-
-    const dragPoint = { x: 2, y: f(2) };
-
-    const drag = d3.drag()
-        .on("drag", function(event, d) {
-            d.x = x.invert(event.x);
-            d.y = f(d.x);
-            update();
-        });
+    svg.append("rect").attr("width", width).attr("height", height).style("fill", "none").style("pointer-events", "all").call(drag);
 
     function update() {
-        svg.selectAll(".drag-point").remove();
-        svg.selectAll(".tangent-line").remove();
+        const { func, grad, domain } = functions[selectedFunctionName];
+        x.domain(domain);
+        const data = d3.range(domain[0], domain[1] + 0.1, 0.1);
+        const yData = data.map(func);
+        y.domain([d3.min(yData), d3.max(yData)]).nice();
 
-        // Draggable point
-        svg.append("circle")
-            .data([dragPoint])
-            .attr("class", "drag-point")
-            .attr("cx", d => x(d.x))
-            .attr("cy", d => y(d.y))
-            .attr("r", 7)
-            .attr("fill", "red")
-            .call(drag);
+        svg.select(".x-axis").call(d3.axisBottom(x));
+        svg.select(".y-axis").call(d3.axisLeft(y));
 
-        // Tangent line
-        const slope = grad_f(dragPoint.x);
-        const intercept = dragPoint.y - slope * dragPoint.x;
-        const y1 = slope * (-5) + intercept;
-        const y2 = slope * (5) + intercept;
+        path.datum(data).attr("d", d3.line().x(d => x(d)).y(d => y(func(d))));
 
-        svg.append("line")
-            .attr("class", "tangent-line")
-            .attr("x1", x(-5))
-            .attr("y1", y(y1))
-            .attr("x2", x(5))
-            .attr("y2", y(y2))
-            .attr("stroke", "black")
-            .attr("stroke-width", 2);
+        const tangentY = func(tangentX);
+        const slope = grad(tangentX);
+        tangentPoint.attr("cx", x(tangentX)).attr("cy", y(tangentY));
 
+        const intercept = tangentY - slope * tangentX;
+        const y1 = slope * domain[0] + intercept;
+        const y2 = slope * domain[1] + intercept;
+        tangentLine.attr("x1", x(domain[0])).attr("y1", y(y1)).attr("x2", x(domain[1])).attr("y2", y(y2));
+
+        // Check if f(y) >= f(x) + f'(x)(y-x) holds for all y
+        let is_convex_locally = true;
+        for (const d of data) {
+            if (func(d) < tangentY + slope * (d - tangentX) - 1e-6) {
+                is_convex_locally = false;
+                break;
+            }
+        }
+
+        inequalityText.innerHTML = `For a convex function, the tangent line is a global underestimator.
+            <br>Status: <strong style="color:${is_convex_locally ? 'var(--color-success)' : 'var(--color-danger)'};">
+            ${is_convex_locally ? 'Condition Holds' : 'Condition Violated'}
+            </strong>`;
     }
 
-    // Initial draw
+    funcSelect.addEventListener("change", (e) => {
+        selectedFunctionName = e.target.value;
+        const { domain } = functions[selectedFunctionName];
+        tangentX = (domain[0] + domain[1]) / 2;
+        update();
+    });
+
     update();
 }

@@ -1,13 +1,47 @@
+/**
+ * Widget: Model Comparison Dashboard
+ *
+ * Description: A dashboard to compare the performance of different classifiers on a given dataset.
+ */
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-async function initModelComparison(containerId) {
-    const pyodide = await getPyodide();
-    const container = document.querySelector(containerId);
-    const resultsTbody = container.querySelector("#results-tbody");
+export async function initModelComparison(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
+    container.innerHTML = `
+        <div class="model-comparison-widget">
+            <div class="widget-controls">
+                <label>Dataset:</label>
+                <select id="dataset-select">
+                    <option value="moons">Moons</option>
+                    <option value="circles">Circles</option>
+                    <option value="blobs">Blobs</option>
+                </select>
+                <button id="regenerate-data-btn">Regenerate Data</button>
+            </div>
+            <div class="comparison-grid">
+                <div class="plot-cell"><h5>Logistic Regression</h5><div id="logistic-plot"></div><p id="logistic-acc"></p></div>
+                <div class="plot-cell"><h5>SVM (RBF)</h5><div id="svm-plot"></div><p id="svm-acc"></p></div>
+                <div class="plot-cell"><h5>Decision Tree</h5><div id="tree-plot"></div><p id="tree-acc"></p></div>
+                <div class="plot-cell"><h5>KNN (k=3)</h5><div id="knn-plot"></div><p id="knn-acc"></p></div>
+            </div>
+        </div>
+    `;
+
+    const datasetSelect = container.querySelector("#dataset-select");
+    const regenBtn = container.querySelector("#regenerate-data-btn");
+
+    const margin = {top: 10, right: 10, bottom: 30, left: 40};
+    const width = 250 - margin.left - margin.right;
+    const height = 250 - margin.top - margin.bottom;
+
+    const pyodide = await getPyodide();
+    await pyodide.loadPackage("scikit-learn");
     const pythonCode = `
 import numpy as np
-from sklearn.datasets import make_moons
+from sklearn.datasets import make_moons, make_circles, make_blobs
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
@@ -15,127 +49,94 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
+import json
 
-X, y = make_moons(n_samples=200, noise=0.3, random_state=42)
-X = StandardScaler().fit_transform(X)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.4, random_state=42)
-
-h = .02
-x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
-y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
-xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-                     np.arange(y_min, y_max, h))
+datasets = {
+    "moons": make_moons(n_samples=200, noise=0.3, random_state=np.random.randint(1000)),
+    "circles": make_circles(n_samples=200, noise=0.2, factor=0.5, random_state=np.random.randint(1000)),
+    "blobs": make_blobs(n_samples=200, centers=2, cluster_std=1.5, random_state=np.random.randint(1000))
+}
 
 models = {
+    "logistic": LogisticRegression(solver='lbfgs'),
     "svm": SVC(gamma=2, C=1),
-    "logistic": LogisticRegression(C=0.1),
-    "knn": KNeighborsClassifier(3),
-    "tree": DecisionTreeClassifier(max_depth=5)
+    "tree": DecisionTreeClassifier(max_depth=5),
+    "knn": KNeighborsClassifier(3)
 }
 
-results = {}
+def process_dataset(dataset_name):
+    X, y = datasets[dataset_name]
+    X = StandardScaler().fit_transform(X)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4)
 
-for name, clf in models.items():
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
+    x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
+    y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.1), np.arange(y_min, y_max, 0.1))
 
-    Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
-    Z = Z.reshape(xx.shape)
+    results = {}
+    for name, clf in models.items():
+        clf.fit(X_train, y_train)
+        accuracy = clf.score(X_test, y_test)
+        Z = clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+        results[name] = {"accuracy": accuracy, "Z": Z.tolist()}
 
-    results[name] = {
-        "accuracy": accuracy,
-        "Z": Z.tolist()
-    }
-
-initial_data = {
-    "X_train": X_train.tolist(), "y_train": y_train.tolist(),
-    "X_test": X_test.tolist(), "y_test": y_test.tolist(),
-    "xx": xx.tolist(), "yy": yy.tolist(),
-    "x_min": x_min, "x_max": x_max, "y_min": y_min, "y_max": y_max,
-    "results": results
-}
-initial_data
+    return json.dumps({
+        "X": X.tolist(), "y": y.tolist(), "xx": xx[0].tolist(), "yy": yy[:,0].tolist(),
+        "domain": [x_min, x_max, y_min, y_max], "results": results
+    })
 `;
-    const data = await pyodide.runPythonAsync(pythonCode);
-    const { X_train, y_train, X_test, y_test, xx, yy, x_min, x_max, y_min, y_max, results } = data.toJs();
-    const color = d3.scaleOrdinal(d3.schemeCategory10).domain([0, 1]);
+    await pyodide.runPythonAsync(pythonCode);
+    const process_dataset = pyodide.globals.get('process_dataset');
 
-    const margin = {top: 20, right: 20, bottom: 30, left: 40};
-    const width = 400 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    async function update() {
+        regenBtn.disabled = true;
+        const dataset = datasetSelect.value;
+        const data = await process_dataset(dataset).then(r => JSON.parse(r));
 
-    const xScale = d3.scaleLinear().domain([x_min, x_max]).range([0, width]);
-    const yScale = d3.scaleLinear().domain([y_min, y_max]).range([height, 0]);
+        const x = d3.scaleLinear().domain(data.domain.slice(0,2)).range([0, width]);
+        const y = d3.scaleLinear().domain(data.domain.slice(2,4)).range([height, 0]);
 
-    function plotDecisionBoundary(plotId, Z_data, title) {
-        const svg = d3.select(plotId).append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+        for (const model_name in data.results) {
+            const plotDiv = container.querySelector(`#${model_name}-plot`);
+            plotDiv.innerHTML = '';
+            const accP = container.querySelector(`#${model_name}-acc`);
+            accP.textContent = `Accuracy: ${data.results[model_name].accuracy.toFixed(2)}`;
 
-        svg.append("g")
-            .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(xScale));
+            const svg = d3.select(plotDiv).append("svg")
+                .attr("width", width+margin.left+margin.right).attr("height", height+margin.top+margin.bottom)
+              .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        svg.append("g")
-            .call(d3.axisLeft(yScale));
+            // Boundary
+            const Z = data.results[model_name].Z;
+            const colors = ["var(--color-primary-light)", "var(--color-accent-light)"];
+            svg.append("image")
+                .attr("width", width).attr("height", height)
+                .attr("preserveAspectRatio", "none")
+                .attr("xlink:href", () => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = data.xx.length; canvas.height = data.yy.length;
+                    const context = canvas.getContext("2d");
+                    const imageData = context.createImageData(canvas.width, canvas.height);
+                    for(let j=0, k=0; j<canvas.height; j++){
+                        for(let i=0; i<canvas.width; i++, k++){
+                            const c = d3.rgb(colors[Z[j][i]]);
+                            imageData.data.set([c.r, c.g, c.b, 128], k*4);
+                        }
+                    }
+                    context.putImageData(imageData, 0, 0);
+                    return canvas.toDataURL();
+                });
 
-        const contour = d3.contour()
-            .x((d, i) => xScale(xx[0][i % xx[0].length]))
-            .y((d, i) => yScale(yy[Math.floor(i / xx[0].length)][0]))
-            .size([xx[0].length, xx.length])
-            .thresholds([0.5]);
-
-        svg.append("g")
-            .selectAll("path")
-            .data(d3.contours().size([xx[0].length, xx.length]).thresholds([0.5])(Z_data.flat()))
-            .enter().append("path")
-            .attr("d", d3.geoPath())
-            .attr("fill", color(1))
-            .attr("opacity", 0.5);
-
-        svg.selectAll("circle.train")
-            .data(X_train)
-            .enter().append("circle")
-            .attr("class", "train")
-            .attr("cx", d => xScale(d[0]))
-            .attr("cy", d => yScale(d[1]))
-            .attr("r", 4)
-            .attr("fill", (d, i) => color(y_train[i]));
-
-        svg.selectAll("circle.test")
-            .data(X_test)
-            .enter().append("circle")
-            .attr("class", "test")
-            .attr("cx", d => xScale(d[0]))
-            .attr("cy", d => yScale(d[1]))
-            .attr("r", 4)
-            .attr("stroke", (d, i) => color(y_test[i]))
-            .attr("fill", "none");
-
-        svg.append("text")
-            .attr("x", width / 2)
-            .attr("y", 0 - (margin.top / 2) + 10)
-            .attr("text-anchor", "middle")
-            .style("font-size", "16px")
-            .attr("fill", "var(--color-text-main)")
-            .text(title);
+            // Points
+            svg.selectAll("circle").data(data.X).join("circle")
+                .attr("cx", d=>x(d[0])).attr("cy", d=>y(d[1])).attr("r", 3)
+                .attr("fill", (d,i)=> data.y[i]===0 ? "var(--color-primary)" : "var(--color-accent)");
+        }
+        regenBtn.disabled = false;
     }
 
-    plotDecisionBoundary("#svm-plot", results.svm.Z, "SVM");
-    plotDecisionBoundary("#logistic-plot", results.logistic.Z, "Logistic Regression");
-    plotDecisionBoundary("#knn-plot", results.knn.Z, "K-Nearest Neighbors");
-    plotDecisionBoundary("#tree-plot", results.tree.Z, "Decision Tree");
-
-    for (const model in results) {
-        const row = resultsTbody.insertRow();
-        const cell1 = row.insertCell(0);
-        const cell2 = row.insertCell(1);
-        cell1.textContent = model.toUpperCase();
-        cell2.textContent = results[model].accuracy.toFixed(3);
-    }
+    datasetSelect.addEventListener("change", update);
+    regenBtn.addEventListener("click", update);
+    update();
 }
-
-initModelComparison(".widget-container");

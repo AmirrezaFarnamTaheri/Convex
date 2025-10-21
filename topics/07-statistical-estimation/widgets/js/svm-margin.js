@@ -7,109 +7,91 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export function initSVMMargin(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
-    const margin = {top: 20, right: 30, bottom: 40, left: 40},
-        width = 500 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+    container.innerHTML = `
+        <div class="svm-margin-widget">
+            <div id="plot-container"></div>
+            <p class="widget-instructions">Drag the outlined points (support vectors) to see how the decision boundary and margin change.</p>
+            <div class="widget-output" id="margin-output"></div>
+        </div>
+    `;
 
-    const svg = d3.select(container).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top - margin.bottom)
-        .append("g")
+    const plotContainer = container.querySelector("#plot-container");
+    const outputDiv = container.querySelector("#margin-output");
+
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-10, 10]).range([0, width]);
-    svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+    const x = d3.scaleLinear().domain([-5, 5]).range([0, width]);
+    const y = d3.scaleLinear().domain([-5, 5]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    const y = d3.scaleLinear().domain([-10, 10]).range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
-
-    // Data points
-    const points = [
-        {x: -5, y: -5, class: -1}, {x: -3, y: -2, class: -1, support: true},
-        {x: 5, y: 5, class: 1}, {x: 3, y: 2, class: 1, support: true}
+    let points = [
+        {x: -3, y: -2, class: -1}, {x: -2, y: 1, class: -1, is_sv: true},
+        {x: 3, y: 2, class: 1}, {x: 2, y: -1, class: 1, is_sv: true}
     ];
 
-    const drag = d3.drag()
-        .on("drag", function(event, d) {
-            if (!d.support) return;
-            d.x = x.invert(event.x);
-            d.y = y.invert(event.y);
-            update();
-        });
+    const drag = d3.drag().on("drag", function(event, d) {
+        if (!d.is_sv) return;
+        const [mx, my] = d3.pointer(event, svg.node());
+        d.x = x.invert(mx);
+        d.y = y.invert(my);
+        update();
+    });
+
+    const boundary = svg.append("line").attr("stroke", "var(--color-text-main)").attr("stroke-width", 2.5);
+    const margin_p = svg.append("line").attr("stroke", "var(--color-accent)").attr("stroke-width", 1.5).attr("stroke-dasharray", "4 4");
+    const margin_n = svg.append("line").attr("stroke", "var(--color-primary)").attr("stroke-width", 1.5).attr("stroke-dasharray", "4 4");
 
     function update() {
-        svg.selectAll("*").remove(); // Clear for simplicity
-
-        // Re-add axes
-        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-        svg.append("g").call(d3.axisLeft(y));
-
-        // Draw points
-        svg.selectAll(".datapoint")
-            .data(points)
-            .enter()
-            .append("circle")
-            .attr("class", "datapoint")
-            .attr("cx", d => x(d.x))
-            .attr("cy", d => y(d.y))
-            .attr("r", 5)
-            .attr("fill", d => d.class === -1 ? "red" : "blue")
+        svg.selectAll(".datapoint").data(points).join("circle").attr("class", "datapoint")
+            .attr("cx", d=>x(d.x)).attr("cy", d=>y(d.y)).attr("r", 5)
+            .attr("fill", d=>d.class===-1 ? "var(--color-primary)" : "var(--color-accent)")
+            .style("cursor", d=>d.is_sv ? "move" : "default")
             .call(drag);
 
-        // Highlight support vectors
-        svg.selectAll(".support-vector")
-            .data(points.filter(d => d.support))
-            .enter()
-            .append("circle")
-            .attr("class", "support-vector")
-            .attr("cx", d => x(d.x))
-            .attr("cy", d => y(d.y))
-            .attr("r", 10)
-            .attr("fill", "none")
-            .attr("stroke", "black");
+        svg.selectAll(".sv-highlight").data(points.filter(p=>p.is_sv)).join("circle").attr("class", "sv-highlight")
+            .attr("cx", d=>x(d.x)).attr("cy", d=>y(d.y)).attr("r", 10)
+            .attr("fill", "none").attr("stroke", d=>d.class===-1 ? "var(--color-primary)" : "var(--color-accent)");
 
+        const sv_p = points.find(p => p.is_sv && p.class === 1);
+        const sv_n = points.find(p => p.is_sv && p.class === -1);
 
-        // Calculate and draw decision boundary and margins
-        const sv1 = points.find(d => d.support && d.class === -1);
-        const sv2 = points.find(d => d.support && d.class === 1);
+        // w is orthogonal to the vector connecting the support vectors
+        const w = {x: sv_p.x - sv_n.x, y: sv_p.y - sv_n.y};
+        const w_norm_sq = w.x*w.x + w.y*w.y;
 
-        const w = {x: sv2.x - sv1.x, y: sv2.y - sv1.y};
-        const b = ((sv2.x*sv2.x + sv2.y*sv2.y) - (sv1.x*sv1.x + sv1.y*sv1.y)) / 2;
+        // b = - (w.p_p + w.p_n)/2
+        const b = - (w.x * (sv_p.x + sv_n.x) + w.y * (sv_p.y + sv_n.y)) / 2;
 
-        const db_y1 = (b - w.x * -10) / w.y;
-        const db_y2 = (b - w.x * 10) / w.y;
-        draw_line(-10, db_y1, 10, db_y2, "black", "none");
+        const margin_val = 2 / Math.sqrt(w_norm_sq);
+        outputDiv.innerHTML = `Margin: <strong>${margin_val.toFixed(2)}</strong>`;
 
-        const m1_y1 = (b + 1 - w.x * -10) / w.y;
-        const m1_y2 = (b + 1 - w.x * 10) / w.y;
-        draw_line(-10, m1_y1, 10, m1_y2, "blue", "5,5");
+        const drawHyperplane = (line_el, offset) => {
+            let p1, p2;
+            if (Math.abs(w.y) > 1e-6) { // Not a vertical line
+                p1 = {x: -5, y: (-b - offset - w.x*(-5)) / w.y};
+                p2 = {x: 5, y: (-b - offset - w.x*5) / w.y};
+            } else { // Vertical line
+                p1 = {y: -5, x: (-b - offset) / w.x};
+                p2 = {y: 5, x: (-b - offset) / w.x};
+            }
+            line_el.attr("x1", x(p1.x)).attr("y1", y(p1.y)).attr("x2", x(p2.x)).attr("y2", y(p2.y));
+        };
 
-        const m2_y1 = (b - 1 - w.x * -10) / w.y;
-        const m2_y2 = (b - 1 - w.x * 10) / w.y;
-        draw_line(-10, m2_y1, 10, m2_y2, "red", "5,5");
-
+        drawHyperplane(boundary, 0);
+        drawHyperplane(margin_p, 1);
+        drawHyperplane(margin_n, -1);
     }
 
-    function draw_line(x1, y1, x2, y2, color, dasharray) {
-         svg.append("line")
-            .attr("x1", x(x1))
-            .attr("y1", y(y1))
-            .attr("x2", x(x2))
-            .attr("y2", y(y2))
-            .attr("stroke", color)
-            .attr("stroke-width", 2)
-            .attr("stroke-dasharray", dasharray);
-    }
-
-
-    // Initial draw
     update();
 }

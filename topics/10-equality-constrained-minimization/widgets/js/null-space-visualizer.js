@@ -1,188 +1,113 @@
-import "https://d3js.org/d3.v7.min.js";
+/**
+ * Widget: Null-Space Method Visualizer
+ *
+ * Description: Visualizes how the null-space method works for a simple equality-constrained QP.
+ */
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initNullSpaceVisualizer(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found`);
-        return;
-    }
-
-    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
-
-    const pyodide = await getPyodide();
+    if (!container) return;
 
     container.innerHTML = `
-    <div style="display: flex; flex-direction: column; height: 100%;">
-      <div style="flex-grow: 1; position: relative;" id="vis-main"></div>
-      <div style="padding: 10px; font-family: sans-serif; font-size: 14px;">
-         <p><strong>Objective:</strong> minimize f(x) = x₁² + x₂²</p>
-         <p><strong>Constraint:</strong> x₁ + 2x₂ = 2</p>
-      </div>
-    </div>
-  `;
+        <div class="null-space-widget">
+            <div class="widget-controls">
+                <p><strong>Problem:</strong> min ½xᵀPx s.t. Ax=b</p>
+                <div>A = [<input type="number" step="0.1" value="1">, <input type="number" step="0.1" value="2">]</div>
+                <div>b = [<input type="number" step="0.1" value="2">]</div>
+                <button id="ns-solve-btn">Solve</button>
+            </div>
+            <div id="plot-container"></div>
+        </div>
+    `;
 
-    const state = {
-        P: [[2, 0], [0, 2]],
-        q: [0, 0],
-        A: [[1, 2]],
-        b: [2],
-    };
+    const solveBtn = container.querySelector("#ns-solve-btn");
+    const plotContainer = container.querySelector("#plot-container");
+    const A_inputs = container.querySelectorAll(".widget-controls input").slice(0, 2);
+    const b_input = container.querySelector(".widget-controls input[type='number']:last-of-type");
 
-    const width = container.querySelector('#vis-main').clientWidth;
-    const height = container.querySelector('#vis-main').clientHeight;
-    const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
 
-    const svg = d3.select(container.querySelector('#vis-main')).append("svg")
-        .attr("width", width)
-        .attr("height", height);
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xScale = d3.scaleLinear().domain([-4, 4]).range([margin.left, width - margin.right]);
-    const yScale = d3.scaleLinear().domain([-4, 4]).range([height - margin.bottom, margin.top]);
+    const x = d3.scaleLinear().domain([-3, 3]).range([0, width]);
+    const y = d3.scaleLinear().domain([-3, 3]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    // Python function to solve the QP
-    const solveQP = await pyodide.runPythonAsync(`
-    def solve(P_js, q_js, A_js, b_js):
-        P = np.array(P_js)
-        q = np.array(q_js)
-        A = np.array(A_js)
-        b = np.array(b_js)
+    const pyodide = await getPyodide();
+    await pyodide.loadPackage(["scipy"]);
+    const pythonCode = `
+import numpy as np
+from scipy.linalg import null_space
+import json
 
-        # Unconstrained minimum
-        x_unc = -np.linalg.inv(P) @ q
+def solve_null_space(P, q, A, b):
+    # Find a particular solution x_p
+    x_p = np.linalg.lstsq(A, b, rcond=None)[0]
 
-        # Find a particular solution to Ax = b
-        x_p = np.linalg.pinv(A) @ b
+    # Find null space basis F
+    F = null_space(A)
 
-        # Find a basis for the nullspace of A
-        F = null_space(A)
+    if F.shape[1] == 0: # No null space, x_p is the only solution
+        return json.dumps({"x_p": x_p.tolist(), "F": [], "x_star": x_p.tolist()})
 
-        if F.shape[1] == 0: # No nullspace
-            return {
-                "x_unc": x_unc.tolist(),
-                "x_p": x_p.tolist(),
-                "F": [],
-                "x_star": x_p.tolist(),
-                "z_star": []
-            }
+    # Solve the reduced problem for z
+    P_hat = F.T @ P @ F
+    q_hat = F.T @ P @ x_p + F.T @ q
+    z_star = -np.linalg.inv(P_hat) @ q_hat
 
-        # Reduced problem objective
-        P_hat = F.T @ P @ F
-        q_hat = (F.T @ P @ x_p + F.T @ q)
+    x_star = x_p + F @ z_star
 
-        # Solve for z
-        z_star = -np.linalg.inv(P_hat) @ q_hat
+    return json.dumps({
+        "x_p": x_p.tolist(),
+        "F": F.T.tolist()[0], # Assuming 1D null space
+        "z_star": z_star.tolist()[0],
+        "x_star": x_star.tolist()
+    })
+`;
+    await pyodide.runPythonAsync(pythonCode);
+    const solve_null_space = pyodide.globals.get('solve_null_space');
 
-        # Optimal solution
-        x_star = x_p + F @ z_star
+    async function update() {
+        const P = [[1,0],[0,1]];
+        const q = [0,0];
+        const A = [[+A_inputs[0].value, +A_inputs[1].value]];
+        const b = [+b_input.value];
 
-        return {
-            "x_unc": x_unc.flatten().tolist(),
-            "x_p": x_p.flatten().tolist(),
-            "F": F.flatten().tolist(),
-            "x_star": x_star.flatten().tolist(),
-            "z_star": z_star.flatten().tolist()
-        }
-    solve
-  `);
+        const sol = await solve_null_space(P, q, A, b).then(r => JSON.parse(r));
 
-    const solution = solveQP(state.P, state.q, state.A, state.b);
-
-    function render() {
         svg.selectAll("*").remove();
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+        svg.append("g").call(d3.axisLeft(y));
 
-        // Add definitions for arrowheads
-        svg.append('defs').append('marker')
-            .attr('id', 'arrow')
-            .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 8)
-            .attr('refY', 0)
-            .attr('markerWidth', 6)
-            .attr('markerHeight', 6)
-            .attr('orient', 'auto')
-            .append('path')
-            .attr('d', 'M0,-5L10,0L0,5')
-            .attr('class','arrowHead');
+        // Contours of objective
+        const contours = d3.range(0.5, 4, 0.5).map(r => d3.range(0,2*Math.PI,0.1).map(a => [r*Math.cos(a), r*Math.sin(a)]));
+        svg.append("g").selectAll("path").data(contours).join("path")
+            .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))).attr("stroke", "var(--color-surface-1)");
 
-        // Draw grid
-        const grid = g => g
-            .attr("stroke", "currentColor")
-            .attr("stroke-opacity", 0.1);
+        // Constraint line
+        const [a1, a2] = A[0];
+        const b1 = b[0];
+        const p1 = [-3, (b1 - a1*(-3))/a2];
+        const p2 = [3, (b1 - a1*3)/a2];
+        svg.append("line").attr("x1",x(p1[0])).attr("y1",y(p1[1])).attr("x2",x(p2[0])).attr("y2",y(p2[1])).attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
 
-        g => g.call(g => g.selectAll("line").data(xScale.ticks()).join("line")
-                .attr("x1", d => 0.5 + xScale(d)).attr("x2", d => 0.5 + xScale(d))
-                .attr("y1", margin.top).attr("y2", height - margin.bottom))
-            .call(grid);
-
-        svg.append("g").call(g => g.selectAll("line").data(yScale.ticks()).join("line")
-            .attr("y1", d => 0.5 + yScale(d)).attr("y2", d => 0.5 + yScale(d))
-            .attr("x1", margin.left).attr("x2", width - margin.right))
-            .call(grid);
-
-        // Draw axes
-        svg.append("g")
-           .attr("transform", `translate(0,${yScale(0)})`)
-           .call(d3.axisBottom(xScale).ticks(5));
-        svg.append("g")
-            .attr("transform", `translate(${xScale(0)},0)`)
-            .call(d3.axisLeft(yScale).ticks(5));
-
-        // Draw objective contours
-        const contours = d3.range(1, 10).map(d => d * d * 0.5);
-        const contourData = [];
-        for (let r of contours) {
-            const points = [];
-            for (let i = 0; i < 2 * Math.PI; i += 0.1) {
-                points.push([Math.sqrt(2*r) * Math.cos(i), Math.sqrt(2*r) * Math.sin(i)]);
-            }
-            contourData.push(points);
-        }
-
-        svg.append("g")
-            .selectAll("path")
-            .data(contourData)
-            .join("path")
-            .attr("d", d3.line().x(p => xScale(p[0])).y(p => yScale(p[1])))
-            .attr("stroke", "#80ffb0")
-            .attr("stroke-width", 1)
-            .attr("fill", "none");
-
-        // Draw constraint line Ax = b
-        const x1 = xScale.domain()[0], x2 = xScale.domain()[1];
-        const y1 = (state.b[0] - state.A[0][0] * x1) / state.A[0][1];
-        const y2 = (state.b[0] - state.A[0][0] * x2) / state.A[0][1];
-        svg.append("line")
-            .attr("x1", xScale(x1)).attr("y1", yScale(y1))
-            .attr("x2", xScale(x2)).attr("y2", yScale(y2))
-            .attr("stroke", "#7cc5ff")
-            .attr("stroke-width", 2);
-
-        // Draw points and vectors
-        const { x_p, F, x_star, z_star } = solution;
-
-        // Draw x_p (particular solution)
-        svg.append("circle").attr("cx", xScale(x_p[0])).attr("cy", yScale(x_p[1])).attr("r", 5).attr("fill", "orange");
-        svg.append("text").attr("x", xScale(x_p[0])+5).attr("y", yScale(x_p[1])-5).text("x_p").attr("fill", "orange").style("font-size", "14px");
-
-        // Draw null space vector F from x_p
-        svg.append("line")
-            .attr("x1", xScale(x_p[0])).attr("y1", yScale(x_p[1]))
-            .attr("x2", xScale(x_p[0] + F[0])).attr("y2", yScale(x_p[1] + F[1]))
-            .attr("stroke", "red").attr("stroke-width", 2).attr("marker-end", "url(#arrow)");
-        svg.append("text").attr("x", xScale(x_p[0] + F[0] * 0.5)+5).attr("y", yScale(x_p[1] + F[1] * 0.5)).text("F").attr("fill", "red").style("font-size", "14px");
-
-        // Draw the z*F vector from x_p
-        svg.append("line")
-            .attr("x1", xScale(x_p[0])).attr("y1", yScale(x_p[1]))
-            .attr("x2", xScale(x_p[0] + F[0] * z_star[0])).attr("y2", yScale(x_p[1] + F[1] * z_star[0]))
-            .attr("stroke", "magenta").attr("stroke-width", 2).attr("marker-end", "url(#arrow)");
-        svg.append("text").attr("x", xScale(x_p[0] + F[0] * z_star[0] * 0.5)+5).attr("y", yScale(x_p[1] + F[1] * z_star[0] * 0.5)).text("z*F").attr("fill", "magenta").style("font-size", "14px");
-
-        // Draw x_star (optimal solution)
-        svg.append("circle").attr("cx", xScale(x_star[0])).attr("cy", yScale(x_star[1])).attr("r", 6).attr("fill", "gold");
-        svg.append("text").attr("x", xScale(x_star[0])+8).attr("y", yScale(x_star[1])-8).text("x*").attr("fill", "gold").style("font-size", "16px");
+        // Visualization
+        const [xp, F, z, xstar] = [sol.x_p, sol.F, sol.z_star, sol.x_star];
+        svg.append("circle").attr("cx", x(xp[0])).attr("cy", y(xp[1])).attr("r", 5).attr("fill", "orange").append("title").text("x_p (Particular Solution)");
+        svg.append("line").attr("x1", x(xp[0])).attr("y1", y(xp[1])).attr("x2", x(xp[0]+F[0])).attr("y2", y(xp[1]+F[1])).attr("stroke", "var(--color-accent)").attr("stroke-width", 2).attr("marker-end", "url(#arrow)").append("title").text("F (Null Space Basis)");
+        svg.append("line").attr("x1", x(xp[0])).attr("y1", y(xp[1])).attr("x2", x(xstar[0])).attr("y2", y(xstar[1])).attr("stroke", "var(--color-danger)").attr("stroke-width", 2).attr("marker-end", "url(#arrow)").append("title").text("z*F");
+        svg.append("circle").attr("cx", x(xstar[0])).attr("cy", y(xstar[1])).attr("r", 6).attr("fill", "var(--color-success)").append("title").text("x* (Optimal Solution)");
     }
 
-    render();
-    solveQP.destroy();
+    solveBtn.addEventListener("click", update);
+    update();
 }

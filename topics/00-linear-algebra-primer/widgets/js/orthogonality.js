@@ -13,17 +13,23 @@ export function initOrthogonality(containerId) {
     }
 
     container.innerHTML = `
-        <div id="plot"></div>
-        <div id="output"></div>
+        <div class="orthogonality-widget">
+            <div id="plot-container"></div>
+            <div id="output-container" class="widget-output"></div>
+        </div>
     `;
 
-    const margin = {top: 20, right: 30, bottom: 40, left: 40},
-        width = 500 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+    const plotContainer = container.querySelector("#plot-container");
+    const outputContainer = container.querySelector("#output-container");
 
-    const svg = d3.select("#plot").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top - margin.bottom)
+    const margin = {top: 20, right: 20, bottom: 40, left: 40},
+        width = plotContainer.clientWidth - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%")
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
         .append("g")
         .attr("transform", `translate(${width/2 + margin.left},${height/2 + margin.top})`);
 
@@ -31,56 +37,74 @@ export function initOrthogonality(containerId) {
     const y = d3.scaleLinear().domain([-10, 10]).range([height/2, -height/2]);
 
     // Add X and Y axes
-    svg.append("g").call(d3.axisBottom(x));
-    svg.append("g").call(d3.axisLeft(y));
+    svg.append("g").attr("class", "axis").call(d3.axisBottom(x));
+    svg.append("g").attr("class", "axis").call(d3.axisLeft(y));
 
 
-    let vec1 = {x: 5, y: 5};
-    let vec2 = {x: -5, y: 5};
+    let vecA = {x: 5, y: 5, id: 'a'};
+    let vecB = {x: -5, y: 5, id: 'b'};
 
     const drag = d3.drag()
+        .on("start", (event, d) => d3.select(event.sourceEvent.target).raise())
         .on("drag", function(event, d) {
-            d.x = x.invert(event.x);
-            d.y = y.invert(event.y);
+            const [mx, my] = d3.pointer(event, svg.node());
+            d.x = x.invert(mx);
+            d.y = y.invert(my);
             update();
         });
 
     function update() {
-        svg.selectAll(".vector").remove();
+        const dotProduct = vecA.x * vecB.x + vecA.y * vecB.y;
+        const magA = Math.sqrt(vecA.x**2 + vecA.y**2);
+        const magB = Math.sqrt(vecB.x**2 + vecB.y**2);
+        const angle = Math.acos(dotProduct / (magA * magB)) * (180 / Math.PI);
 
-        draw_vector(vec1, "blue");
-        draw_vector(vec2, "red");
+        // Projection of A onto B
+        const projScalar = dotProduct / (magB**2);
+        const projVec = { x: projScalar * vecB.x, y: projScalar * vecB.y };
 
-        // Calculate dot product and angle
-        const dot_product = vec1.x * vec2.x + vec1.y * vec2.y;
-        const mag1 = Math.sqrt(vec1.x**2 + vec1.y**2);
-        const mag2 = Math.sqrt(vec2.x**2 + vec2.y**2);
-        const angle = Math.acos(dot_product / (mag1 * mag2)) * (180 / Math.PI);
-
-        document.getElementById("output").innerHTML = `
-            <p>Dot Product: ${dot_product.toFixed(2)}</p>
-            <p>Angle: ${angle.toFixed(2)}°</p>
+        outputContainer.innerHTML = `
+            <p><strong>Vector A:</strong> [${vecA.x.toFixed(2)}, ${vecA.y.toFixed(2)}]</p>
+            <p><strong>Vector B:</strong> [${vecB.x.toFixed(2)}, ${vecB.y.toFixed(2)}]</p>
+            <p><strong>Dot Product (A ⋅ B):</strong> ${dotProduct.toFixed(2)}</p>
+            <p><strong>Angle:</strong> ${angle.toFixed(2)}°</p>
         `;
+
+        drawVector(vecA, "var(--color-primary)", "A");
+        drawVector(vecB, "var(--color-accent)", "B");
+        drawProjection(projVec);
     }
 
-    function draw_vector(vec, color) {
+    function drawVector(vec, color, label) {
+        svg.selectAll(`.vector-${vec.id}`).remove();
+
         svg.append("line")
-            .attr("class", "vector")
-            .attr("x1", x(0))
-            .attr("y1", y(0))
-            .attr("x2", x(vec.x))
-            .attr("y2", y(vec.y))
+            .attr("class", `vector vector-${vec.id}`)
+            .attr("x1", x(0)).attr("y1", y(0))
+            .attr("x2", x(vec.x)).attr("y2", y(vec.y))
             .attr("stroke", color)
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 3);
 
         svg.append("circle")
             .data([vec])
-            .attr("class", "vector")
-            .attr("cx", x(vec.x))
-            .attr("cy", y(vec.y))
-            .attr("r", 7)
+            .attr("class", `vector-handle vector-${vec.id}`)
+            .attr("cx", x(vec.x)).attr("cy", y(vec.y))
+            .attr("r", 8)
             .attr("fill", color)
+            .style("cursor", "pointer")
             .call(drag);
+    }
+
+    function drawProjection(proj) {
+        svg.selectAll(".projection").remove();
+
+        svg.append("line")
+            .attr("class", "projection")
+            .attr("x1", x(0)).attr("y1", y(0))
+            .attr("x2", x(proj.x)).attr("y2", y(proj.y))
+            .attr("stroke", "var(--color-text-main)")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "4 4");
     }
 
     // Initial draw

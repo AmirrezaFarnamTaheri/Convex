@@ -1,111 +1,160 @@
 /**
  * Widget: LP Visualizer & Simplex Animator
  */
-
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-const pyodidePromise = getPyodide();
-
 export async function initLPVisualizer(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) { console.error(`Container #${containerId} not found.`); return; }
+    if (!container) return;
 
-    let c = [-1, -2];
-    let A = [[1, 1], [-1, 1], [1, -1]];
-    let b = [4, 2, 2];
+    container.innerHTML = `
+        <div class="lp-visualizer-widget">
+            <div class="widget-controls">
+                <h4>Objective: Maximize cᵀx</h4>
+                c = [<input type="number" id="c1" value="1" step="0.1">, <input type="number" id="c2" value="2" step="0.1">]
+                <h4>Constraints: Ax ≤ b</h4>
+                <div id="lp-constraints"></div>
+                <button id="add-lp-constraint">+ Add</button>
+                <button id="run-simplex-btn">Animate Simplex</button>
+            </div>
+            <div id="plot-container"></div>
+        </div>
+    `;
 
-    // --- UI CONTROLS ---
-    const controls = document.createElement("div");
-    controls.style.cssText = "padding: 10px; display: flex; gap: 15px; align-items: center;";
-    const startButton = document.createElement("button");
-    startButton.textContent = "Animate Simplex";
-    startButton.onclick = runAnimation;
-    controls.appendChild(startButton);
-    container.appendChild(controls);
+    const plotContainer = container.querySelector("#plot-container");
+    const constraintsContainer = container.querySelector("#lp-constraints");
+    const addBtn = container.querySelector("#add-lp-constraint");
+    const runBtn = container.querySelector("#run-simplex-btn");
+    const c1_in = container.querySelector("#c1");
+    const c2_in = container.querySelector("#c2");
 
-    // --- D3.js PLOT ---
-    const margin = { top: 10, right: 10, bottom: 20, left: 30 };
-    const width = container.clientWidth - margin.left - margin.right;
-    const height = 350 - margin.top - margin.bottom;
+    let constraints = [[-1, 1, 1], [1, 1, 3], [1, 0, 2]]; // Default Ax <= b
 
-    const svg = d3.select(container).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-1, 5]).range([0, width]);
-    const y = d3.scaleLinear().domain([-1, 5]).range([height, 0]);
+    const x = d3.scaleLinear().domain([-1, 4]).range([0, width]);
+    const y = d3.scaleLinear().domain([-1, 4]).range([height, 0]);
 
     svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
     svg.append("g").call(d3.axisLeft(y));
 
-    const feasibleRegionGroup = svg.append("g");
-    const simplexPathGroup = svg.append("g");
+    const contourGroup = svg.append("g");
+    const feasibleRegion = svg.append("path").attr("fill", "var(--color-primary-light)").attr("opacity", 0.7);
+    const simplexPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-danger)").attr("stroke-width", 3);
+    const simplexPoints = svg.append("g");
 
-    async function drawFeasibleRegion() {
-        const pyodide = await pyodidePromise;
-        await pyodide.globals.set("A_ub", A);
-        await pyodide.globals.set("b_ub", b);
-        const code = `
-from scipy.spatial import HalfspaceIntersection
+    const pyodide = await getPyodide();
+    await pyodide.loadPackage("scipy");
+
+    const pythonCode = `
 import numpy as np
-interior_point = np.array([0.5, 0.5]) # A guess for an interior point
-halfspaces = np.c_[A_ub, -np.array(b_ub)]
-hs = HalfspaceIntersection(halfspaces, interior_point)
-vertices = hs.intersections
-ch = np.arctan2(vertices[:,1] - np.mean(vertices[:,1]), vertices[:,0] - np.mean(vertices[:,0]))
-vertices = vertices[np.argsort(ch)]
-vertices.tolist()
-        `;
-        try {
-            const vertices = await pyodide.runPythonAsync(code).then(v => v.toJs());
-            feasibleRegionGroup.selectAll("polygon")
-                .data([vertices])
-                .join("polygon")
-                .attr("points", d => d.map(p => `${x(p[0])},${y(p[1])}`).join(" "))
-                .attr("fill", "lightblue")
-                .attr("stroke", "black");
-        } catch (e) {
-            console.error("Could not compute feasible region:", e);
-        }
-    }
-
-    async function runAnimation() {
-        simplexPathGroup.selectAll("*").remove();
-        const pyodide = await pyodidePromise;
-        await pyodide.globals.set("c", c);
-        await pyodide.globals.set("A_ub", A);
-        await pyodide.globals.set("b_ub", b);
-        const code = `
 from scipy.optimize import linprog
-path = []
-def callback(res):
-    path.append(res.x.tolist())
-res = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=[(0, None), (0, None)], method='highs-ds', callback=callback)
-path
-        `;
-        const path = await pyodide.runPythonAsync(code).then(p => p.toJs());
+from shapely.geometry import Polygon, HalfPlane
+import json
 
-        for (let i = 0; i < path.length; i++) {
-            const point = path[i];
-            simplexPathGroup.append("circle")
-                .attr("cx", x(point[0]))
-                .attr("cy", y(point[1]))
-                .attr("r", 5)
-                .attr("fill", "orange");
+def solve_lp(c, A, b):
+    # We maximize by negating c
+    path = []
+    res = linprog(-np.array(c), A_ub=A, b_ub=b, bounds=[(0, None), (0, None)], method='highs-ds', callback=lambda res: path.append(res.x.tolist()))
 
-            if (i > 0) {
-                const prevPoint = path[i-1];
-                simplexPathGroup.append("line")
-                    .attr("x1", x(prevPoint[0])).attr("y1", y(prevPoint[1]))
-                    .attr("x2", x(point[0])).attr("y2", y(point[1]))
-                    .attr("stroke", "red").attr("stroke-width", 2);
-            }
-            await new Promise(r => setTimeout(r, 500));
+    # Calculate feasible region vertices
+    try:
+        bounds = 100
+        feasible_poly = Polygon([(-bounds,-bounds), (bounds,-bounds), (bounds,bounds), (-bounds,bounds)])
+        all_A = np.vstack([A, [[-1,0], [0,-1]]]) # Add non-negativity constraints
+        all_b = np.hstack([b, [0,0]])
+        for i in range(all_A.shape[0]):
+            a = all_A[i]
+            b_val = all_b[i]
+            p_on_boundary = a * b_val / np.dot(a, a) if np.dot(a, a) > 1e-9 else np.zeros(2)
+            feasible_poly = feasible_poly.intersection(HalfPlane(p_on_boundary, -a))
+
+        vertices = list(feasible_poly.exterior.coords) if not feasible_poly.is_empty else []
+    except Exception:
+        vertices = []
+
+    return json.dumps({"path": path, "vertices": vertices, "solution": res.x.tolist() if res.success else None})
+`;
+    await pyodide.runPythonAsync(pythonCode);
+    const solve_lp = pyodide.globals.get('solve_lp');
+
+    async function update() {
+        runBtn.disabled = true;
+        const c = [+c1_in.value, +c2_in.value];
+        const A = constraints.map(row => row.slice(0, 2));
+        const b = constraints.map(row => row[2]);
+
+        const result = await solve_lp(c, A, b).then(r => JSON.parse(r));
+
+        // Draw feasible region
+        if (result.vertices.length > 0) {
+            feasibleRegion.attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(result.vertices) + "Z");
+        } else {
+            feasibleRegion.attr("d", null);
         }
+
+        // Draw objective contours
+        contourGroup.selectAll("*").remove();
+        if (result.solution) {
+            const levels = d3.range(0, c[0]*result.solution[0] + c[1]*result.solution[1], 2);
+            levels.forEach(level => {
+                let p1, p2;
+                if (Math.abs(c[1]) > 1e-6) {
+                    p1 = [-1, (level - c[0]*(-1))/c[1]];
+                    p2 = [4, (level - c[0]*4)/c[1]];
+                } else {
+                    p1 = [level/c[0], -1];
+                    p2 = [level/c[0], 4];
+                }
+                contourGroup.append("line").attr("x1", x(p1[0])).attr("y1", y(p1[1])).attr("x2", x(p2[0])).attr("y2", y(p2[1])).attr("stroke", "var(--color-text-secondary)").attr("stroke-dasharray", "4 4");
+            });
+        }
+
+        // Animate simplex path
+        simplexPath.datum(result.path).attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])));
+        const totalLength = simplexPath.node()?.getTotalLength() || 0;
+        simplexPath.attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(1500).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
+
+        simplexPoints.selectAll("*").remove();
+        result.path.forEach((p, i) => {
+            simplexPoints.append("circle").attr("cx", x(p[0])).attr("cy", y(p[1])).attr("r", 0).attr("fill", "var(--color-danger)").transition().delay(i * 300).attr("r", 5);
+        });
+
+        runBtn.disabled = false;
     }
 
-    drawFeasibleRegion();
+    function renderConstraints() {
+        constraintsContainer.innerHTML = '';
+        constraints.forEach((c, i) => {
+            const div = document.createElement("div");
+            div.innerHTML = `
+                <input type="number" value="${c[0]}" step="0.1"> x₁ +
+                <input type="number" value="${c[1]}" step="0.1"> x₂ ≤
+                <input type="number" value="${c[2]}" step="0.1">
+                <button data-index="${i}">X</button>
+            `;
+            div.querySelectorAll('input').forEach((input, j) => {
+                input.addEventListener('change', (e) => constraints[i][j] = +e.target.value);
+            });
+            div.querySelector('button').addEventListener('click', () => {
+                constraints.splice(i, 1);
+                renderConstraints();
+            });
+            constraintsContainer.appendChild(div);
+        });
+    }
+
+    addBtn.addEventListener('click', () => { constraints.push([0,0,0]); renderConstraints(); });
+    runBtn.addEventListener('click', update);
+
+    renderConstraints();
 }

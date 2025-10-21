@@ -2,29 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Condition Number & Convergence Race</title>
-    <link rel="stylesheet" href="../../../shared/styles/widget-theme.css">
+    <title>Condition Number & Convergence</title>
     <style>
-        .race-container {
+        .condition-number-widget {
             display: flex;
-            gap: 20px;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
         }
-        .plot-container {
-            width: 400px;
-            height: 400px;
-            border: 1px solid var(--color-surface-1);
+        .plots {
+            display: flex;
+            gap: 1rem;
         }
     </style>
 </head>
 <body>
-    <div class="widget-container">
-        <div class="race-container">
-            <div id="low-cond-plot" class="plot-container"></div>
-            <div id="high-cond-plot" class="plot-container"></div>
+    <div class="condition-number-widget">
+        <div class="controls">
+            <label for="kappa-slider">Condition Number (κ):</label>
+            <input type="range" id="kappa-slider" min="1" max="100" value="10">
+            <span id="kappa-value">10</span>
+        </div>
+        <div class="plots">
+            <div id="plot-container"></div>
         </div>
     </div>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script type="module" src="js/condition-number.js"></script>
+    <script type="module">
+        import { initConditionNumberRace } from './js/condition-number.js';
+        initConditionNumberRace('.condition-number-widget');
+    </script>
 </body>
 </html>

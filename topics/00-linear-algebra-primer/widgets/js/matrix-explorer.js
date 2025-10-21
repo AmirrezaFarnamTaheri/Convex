@@ -25,10 +25,14 @@ export async function initEigenvalueExplorer(containerId) {
 
     // --- UI CONTROLS ---
     const controls = document.createElement("div");
-    controls.style.cssText = "padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;";
+    controls.className = "matrix-controls";
 
+    const matrixLabels = ['a', 'b', 'c', 'd'];
     const sliders = [];
-    ['m00', 'm01', 'm10', 'm11'].forEach((id, i) => {
+    matrixLabels.forEach((label, i) => {
+        const controlGroup = document.createElement("div");
+        const labelEl = document.createElement("label");
+        labelEl.textContent = `Matrix[${Math.floor(i/2)}, ${i%2}]`;
         const slider = document.createElement("input");
         slider.type = "range";
         slider.min = -2;
@@ -42,13 +46,14 @@ export async function initEigenvalueExplorer(containerId) {
             if(i === 2) { matrix[0][1] = parseFloat(slider.value); sliders[1].value = slider.value; }
             updateVisualization();
         };
-        controls.appendChild(slider);
+        controlGroup.append(labelEl, slider);
+        controls.appendChild(controlGroup);
         sliders.push(slider);
     });
     container.appendChild(controls);
 
     // --- D3.js PLOT ---
-    const margin = { top: 10, right: 10, bottom: 20, left: 30 };
+    const margin = { top: 40, right: 20, bottom: 40, left: 40 };
     const width = container.clientWidth - margin.left - margin.right;
     const height = 350 - margin.top - margin.bottom;
 
@@ -58,6 +63,13 @@ export async function initEigenvalueExplorer(containerId) {
         .append("g")
         .attr("transform", `translate(${margin.left + width/2},${margin.top + height/2})`);
 
+    svg.append("text")
+        .attr("x", 0)
+        .attr("y", -height/2 - 10)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("Eigenvectors & Quadratic Form (xᵀAx=1)");
+
     const x = d3.scaleLinear().domain([-2, 2]).range([-width/2, width/2]);
     const y = d3.scaleLinear().domain([-2, 2]).range([height/2, -height/2]);
 
@@ -65,26 +77,32 @@ export async function initEigenvalueExplorer(containerId) {
     svg.append("g").call(d3.axisLeft(y));
 
     const quadraticFormPath = svg.append("path")
-        .attr("fill", "lightblue")
-        .style("opacity", 0.5);
+        .attr("fill", "var(--color-primary-light)")
+        .attr("stroke", "var(--color-primary)")
+        .style("opacity", 0.7);
     const eigenvectors = svg.append("g");
 
     async function updateVisualization() {
-        const pyodide = await pyodidePromise;
         await pyodide.globals.set("mat_val", matrix);
         const code = `
 import numpy as np
 mat = np.array(mat_val)
 try:
     eigvals, eigvecs = np.linalg.eigh(mat)
-    if np.all(eigvals > 1e-6):
-        radii = 1 / np.sqrt(eigvals)
-        angle = np.degrees(np.arctan2(eigvecs[1, 0], eigvecs[0, 0]))
-        result = {"vals": eigvals.tolist(), "vecs": eigvecs.T.tolist(), "radii": radii.tolist(), "angle": angle}
-    else:
-        result = {"vals": eigvals.tolist(), "vecs": eigvecs.T.tolist(), "radii": None, "angle": None}
+    # Check if matrix is positive definite to draw ellipse
+    is_pd = np.all(eigvals > 1e-6)
+    radii = 1 / np.sqrt(np.abs(eigvals)) if is_pd else None
+    angle = np.degrees(np.arctan2(eigvecs[1, 0], eigvecs[0, 0])) if is_pd else 0
+
+    result = {
+        "vals": eigvals.tolist(),
+        "vecs": eigvecs.T.tolist(),
+        "radii": radii.tolist() if radii is not None else None,
+        "angle": angle,
+        "is_pd": is_pd
+    }
 except np.linalg.LinAlgError:
-    result = {"vals": [], "vecs": [], "radii": None, "angle": None}
+    result = {"vals": [], "vecs": [], "radii": None, "angle": 0, "is_pd": False}
 result
         `;
         const result = await pyodide.runPythonAsync(code).then(r => r.toJs());
@@ -96,10 +114,10 @@ result
             .attr("y1", y(0))
             .attr("x2", (d, i) => x(d[0] * result.vals[i]))
             .attr("y2", (d, i) => y(d[1] * result.vals[i]))
-            .attr("stroke", (d,i) => result.vals[i] > 0 ? "green" : "red")
-            .attr("stroke-width", 2);
+            .attr("stroke", (d,i) => result.vals[i] > 0 ? "var(--color-accent)" : "var(--color-danger)")
+            .attr("stroke-width", 3);
 
-        if(result.radii) {
+        if(result.is_pd && result.radii) {
             const angleRad = result.angle * Math.PI / 180;
             const ellipseData = d3.range(0, 2 * Math.PI + 0.1, 0.1).map(angle => {
                  const x_ = result.radii[0] * Math.cos(angle);
@@ -108,9 +126,13 @@ result
                  const rotated_y = x_ * Math.sin(angleRad) + y_ * Math.cos(angleRad);
                  return [rotated_x, rotated_y];
             });
-            quadraticFormPath.datum(ellipseData).attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])));
+            quadraticFormPath
+                .datum(ellipseData)
+                .transition()
+                .duration(200)
+                .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])));
         } else {
-            quadraticFormPath.attr("d", null);
+            quadraticFormPath.transition().duration(200).attr("d", null);
         }
     }
 

@@ -7,72 +7,97 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export function initOperationsPreserving(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
     container.innerHTML = `
-        <label for="a_slider">Scale (a):</label>
-        <input id="a_slider" type="range" min="0.1" max="5" value="1" step="0.1">
-        <span id="a_val">1.0</span>
-        <br>
-        <label for="b_slider">Translate (b):</label>
-        <input id="b_slider" type="range" min="-5" max="5" value="0" step="0.1">
-        <span id="b_val">0.0</span>
-        <div id="plot"></div>
+        <div class="operations-preserving-widget">
+            <div class="widget-controls">
+                <label for="op-preserving-select">Operation:</label>
+                <select id="op-preserving-select">
+                    <option value="sum">Non-negative Weighted Sum</option>
+                    <option value="affine">Composition with Affine Map</option>
+                </select>
+                <div id="op-specific-controls"></div>
+            </div>
+            <div id="plot-container"></div>
+        </div>
     `;
 
-    const margin = {top: 20, right: 30, bottom: 40, left: 40},
-        width = 500 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+    const opSelect = container.querySelector("#op-preserving-select");
+    const controlsContainer = container.querySelector("#op-specific-controls");
+    const plotContainer = container.querySelector("#plot-container");
 
-    const svg = d3.select("#plot").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top - margin.bottom)
-        .append("g")
+    const margin = {top: 20, right: 20, bottom: 40, left: 50};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 350 - margin.top - margin.bottom;
+
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-10, 10]).range([0, width]);
-    svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+    const x = d3.scaleLinear().domain([-5, 5]).range([0, width]);
+    const y = d3.scaleLinear().domain([0, 25]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    const y = d3.scaleLinear().domain([0, 100]).range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
+    const path1 = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 1.5).attr("stroke-dasharray", "5,5");
+    const path2 = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 1.5).attr("stroke-dasharray", "5,5");
+    const resultPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-danger)").attr("stroke-width", 3);
 
-    // Original convex function f(x) = x^2
-    const f = x_val => x_val*x_val;
+    const funcs = {
+        f1: x => x**2,
+        f2: x => Math.exp(0.5 * x)
+    };
 
     function update() {
-        svg.selectAll(".transformed-function").remove();
+        const operation = opSelect.value;
+        controlsContainer.innerHTML = '';
 
-        const a = +document.getElementById("a_slider").value;
-        const b = +document.getElementById("b_slider").value;
-        document.getElementById("a_val").textContent = a.toFixed(1);
-        document.getElementById("b_val").textContent = b.toFixed(1);
+        const data = d3.range(-5, 5.1, 0.1);
+        const line = d3.line().x(d => x(d.x)).y(d => y(d.y));
 
-        // Transformed function: f(ax + b) = (ax + b)^2
-        const transformed_f = x_val => f(a * x_val + b);
+        if (operation === 'sum') {
+            controlsContainer.innerHTML = `
+                <label>w₁:</label><input type="range" id="w1" min="0" max="5" step="0.1" value="1">
+                <label>w₂:</label><input type="range" id="w2" min="0" max="5" step="0.1" value="1">
+            `;
+            const w1 = controlsContainer.querySelector("#w1");
+            const w2 = controlsContainer.querySelector("#w2");
 
-        const line = d3.line()
-            .x(d => x(d))
-            .y(d => y(transformed_f(d)));
+            const drawSum = () => {
+                const weight1 = +w1.value;
+                const weight2 = +w2.value;
+                path1.datum(data.map(d => ({x: d, y: funcs.f1(d)}))).attr("d", line);
+                path2.datum(data.map(d => ({x: d, y: funcs.f2(d)}))).attr("d", line);
+                resultPath.datum(data.map(d => ({x: d, y: weight1 * funcs.f1(d) + weight2 * funcs.f2(d)}))).attr("d", line);
+            };
+            w1.addEventListener('input', drawSum);
+            w2.addEventListener('input', drawSum);
+            drawSum();
 
-        svg.append("path")
-            .datum(d3.range(-10, 10.1, 0.1))
-            .attr("class", "transformed-function")
-            .attr("fill", "none")
-            .attr("stroke", "purple")
-            .attr("stroke-width", 2)
-            .attr("d", line);
+        } else if (operation === 'affine') {
+            controlsContainer.innerHTML = `
+                f(ax + b): <label>a:</label><input type="range" id="a" min="-2" max="2" step="0.1" value="1">
+                <label>b:</label><input type="range" id="b" min="-3" max="3" step="0.1" value="0">
+            `;
+            const a = controlsContainer.querySelector("#a");
+            const b = controlsContainer.querySelector("#b");
+
+            const drawAffine = () => {
+                const scale = +a.value;
+                const translate = +b.value;
+                path1.datum(data.map(d => ({x: d, y: funcs.f1(d)}))).attr("d", line);
+                path2.attr("d", null);
+                resultPath.datum(data.map(d => ({x: d, y: funcs.f1(scale * d + translate)}))).attr("d", line);
+            };
+            a.addEventListener('input', drawAffine);
+            b.addEventListener('input', drawAffine);
+            drawAffine();
+        }
     }
 
-
-    d3.select("#a_slider").on("input", update);
-    d3.select("#b_slider").on("input", update);
-
-    // Initial draw
+    opSelect.addEventListener("change", update);
     update();
 }

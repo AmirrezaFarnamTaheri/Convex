@@ -1,129 +1,118 @@
-import "https://d3js.org/d3.v7.min.js";
+/**
+ * Widget: Newton Step in IPM
+ *
+ * Description: Shows a single Newton step within an interior-point method,
+ *              including the centering and affine steps.
+ */
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initNewtonStepIPM(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found`);
-        return;
-    }
-
-    container.innerHTML = `<div class="widget-loading-indicator">Initializing Pyodide...</div>`;
-
-    const pyodide = await getPyodide();
+    if (!container) return;
 
     container.innerHTML = `
-    <div style="display: flex; flex-direction: column; height: 100%;">
-      <div style="flex-grow: 1; position: relative;" id="vis-newton-ipm"></div>
-      <div style="padding: 10px; font-family: sans-serif; font-size: 14px; text-align: center;">
-         <p>A single Newton step for an LP, showing the affine and centering directions.</p>
-      </div>
-    </div>
-  `;
+        <div class="newton-step-widget">
+            <div class="widget-controls">
+                <label>Barrier Param (t): <span id="t-val-ns">1.0</span></label>
+                <input type="range" id="t-slider-ns" min="-1" max="2" step="0.1" value="0">
+            </div>
+            <div id="plot-container"></div>
+            <p class="widget-instructions">Drag the red point (xₖ) to see the Newton step components at different locations.</p>
+        </div>
+    `;
 
-    // This is a conceptual visualization, so we'll use pre-calculated vectors
-    // that represent a typical Newton step for an IPM.
-    const state = {
-        x_k: [2, 1.5],
-        dx_aff: [1.5, 1.5], // Affine step, points towards the optimum
-        dx_cent: [-0.5, 1], // Centering step, points towards the central path
-        alpha: 0.8 // Step size
-    };
-    state.dx_nt = [state.dx_aff[0] + state.dx_cent[0], state.dx_aff[1] + state.dx_cent[1]];
-    state.x_next = [state.x_k[0] + state.alpha * state.dx_nt[0], state.x_k[1] + state.alpha * state.dx_nt[1]];
+    const tSlider = container.querySelector("#t-slider-ns");
+    const tVal = container.querySelector("#t-val-ns");
+    const plotContainer = container.querySelector("#plot-container");
 
+    let xk = {x: 0.2, y: 0.2};
 
-    const width = container.querySelector('#vis-newton-ipm').clientWidth;
-    const height = container.querySelector('#vis-newton-ipm').clientHeight;
-    const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
 
-    const svg = d3.select(container.querySelector('#vis-newton-ipm')).append("svg")
-        .attr("width", width)
-        .attr("height", height);
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xScale = d3.scaleLinear().domain([0, 5]).range([margin.left, width - margin.right]);
-    const yScale = d3.scaleLinear().domain([0, 5]).range([height - margin.bottom, margin.top]);
+    const x = d3.scaleLinear().domain([-0.1, 1.1]).range([0, width]);
+    const y = d3.scaleLinear().domain([-0.1, 1.1]).range([height, 0]);
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    function render() {
-        svg.selectAll("*").remove();
+    // Feasible region & central path
+    svg.append("rect").attr("x",x(0)).attr("y",y(1)).attr("width",x(1)-x(0)).attr("height",y(0)-y(1)).attr("fill","var(--color-primary-light)").attr("opacity",0.5);
+    const central_path = d3.range(0.1, 20, 0.5).map(t_val => [(t_val*1-1)/(2*t_val), (t_val*2-1)/(2*t_val)]);
+    svg.append("path").datum(central_path).attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))).attr("fill", "none").attr("stroke", "var(--color-danger)").attr("stroke-dasharray", "4 4");
 
-        svg.append('defs').append('marker')
-            .attr('id', 'arrow-ipm')
-            .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 8).attr('refY', 0)
-            .attr('markerWidth', 6).attr('markerHeight', 6)
-            .attr('orient', 'auto')
-            .append('path').attr('d', 'M0,-5L10,0L0,5');
+    const pyodide = await getPyodide();
+    const pythonCode = `
+import numpy as np
+import json
 
-        // Draw grid and axes
-        const grid = g => g.attr("stroke", "currentColor").attr("stroke-opacity", 0.1);
-        svg.append("g").call(g => g.selectAll("line").data(xScale.ticks()).join("line")
-            .attr("x1", d => 0.5 + xScale(d)).attr("x2", d => 0.5 + xScale(d))
-            .attr("y1", margin.top).attr("y2", height - margin.bottom)).call(grid);
-        svg.append("g").call(g => g.selectAll("line").data(yScale.ticks()).join("line")
-            .attr("y1", d => 0.5 + yScale(d)).attr("y2", d => 0.5 + yScale(d))
-            .attr("x1", margin.left).attr("x2", width - margin.right)).call(grid);
-        svg.append("g").attr("transform", `translate(0,${yScale(0)})`).call(d3.axisBottom(xScale).ticks(5));
-        svg.append("g").attr("transform", `translate(${xScale(0)},0)`).call(d3.axisLeft(yScale).ticks(5));
+c = np.array([-1.0, -2.0])
+A = np.array([[-1,0], [0,-1], [1,0], [0,1]])
+b = np.array([0,0,1,1])
 
-        // Draw feasible region
-        const feasibleRegionData = [[1,1], [4,1], [4,4], [1,4]];
-        svg.append("polygon")
-            .attr("points", feasibleRegionData.map(p => [xScale(p[0]), yScale(p[1])].join(",")).join(" "))
-            .attr("fill", "#7cc5ff").attr("fill-opacity", 0.3)
-            .attr("stroke", "#7cc5ff").attr("stroke-width", 2);
+def get_newton_step(xk, t):
+    x = np.array(xk)
+    # Barrier grad and hessian
+    #phi = -np.sum(np.log(b - A @ x))
+    g_phi = (A.T / (b - A @ x)).sum(axis=1)
+    H_phi = A.T @ np.diag(1/((b - A @ x)**2)) @ A
 
-        // Draw central path (conceptual)
-        const centralPathData = d3.range(1, 4, 0.1).map(d => [d, d]);
-        svg.append("path")
-            .datum(centralPathData)
-            .attr("fill", "none").attr("stroke", "gold").attr("stroke-width", 2).attr("stroke-dasharray", "4 4")
-            .attr("d", d3.line().x(d => xScale(d[0])).y(d => yScale(d[1])));
+    # Full gradient and hessian of barrier objective
+    g = t * c + g_phi
+    H = H_phi
 
-        // Draw optimum
-        const optimum = {x: 4, y: 4};
-        svg.append("circle").attr("cx", xScale(optimum.x)).attr("cy", yScale(optimum.y)).attr("r", 5).attr("fill", "gold");
-        svg.append("text").attr("x", xScale(optimum.x)+5).attr("y", yScale(optimum.y)-5).text("x*");
+    # Newton step dx = -H^-1 * g
+    dx = -np.linalg.inv(H) @ g
 
-        const { x_k, dx_aff, dx_cent, dx_nt, x_next, alpha } = state;
+    # Affine step: dx_aff = - (1/t) * H^-1 * c
+    dx_aff = -(1/t) * np.linalg.inv(H) @ (t*c)
 
-        // Draw current point
-        svg.append("circle").attr("cx", xScale(x_k[0])).attr("cy", yScale(x_k[1])).attr("r", 5).attr("fill", "red");
-        svg.append("text").attr("x", xScale(x_k[0])+5).attr("y", yScale(x_k[1])-5).text("x_k").attr("fill", "red");
+    # Centering step: dx_cent = - H^-1 * g_phi
+    dx_cent = -np.linalg.inv(H) @ g_phi
 
-        // Draw vectors from x_k
-        // Affine step
-        svg.append("line")
-            .attr("x1", xScale(x_k[0])).attr("y1", yScale(x_k[1]))
-            .attr("x2", xScale(x_k[0] + dx_aff[0])).attr("y2", yScale(x_k[1] + dx_aff[1]))
-            .attr("stroke", "orange").attr("stroke-width", 2).attr("marker-end", "url(#arrow-ipm)");
-        svg.append("text").attr("x", xScale(x_k[0] + dx_aff[0] * 0.5)+5).attr("y", yScale(x_k[1] + dx_aff[1] * 0.5)).text("dx_aff").attr("fill", "orange");
+    return json.dumps({
+        "dx": dx.tolist(),
+        "dx_aff": dx_aff.tolist(),
+        "dx_cent": dx_cent.tolist(),
+    })
+`;
+    await pyodide.runPythonAsync(pythonCode);
+    const get_newton_step = pyodide.globals.get('get_newton_step');
 
-        // Centering step
-        svg.append("line")
-            .attr("x1", xScale(x_k[0])).attr("y1", yScale(x_k[1]))
-            .attr("x2", xScale(x_k[0] + dx_cent[0])).attr("y2", yScale(x_k[1] + dx_cent[1]))
-            .attr("stroke", "cyan").attr("stroke-width", 2).attr("marker-end", "url(#arrow-ipm)");
-        svg.append("text").attr("x", xScale(x_k[0] + dx_cent[0] * 0.5)-25).attr("y", yScale(x_k[1] + dx_cent[1] * 0.5)).text("dx_cent").attr("fill", "cyan");
+    const k_point = svg.append("circle").attr("r", 5).attr("fill", "var(--color-danger)").style("cursor", "move");
+    const aff_vec = svg.append("line").attr("stroke", "var(--color-primary)").attr("marker-end", "url(#arrow)");
+    const cent_vec = svg.append("line").attr("stroke", "var(--color-accent)").attr("marker-end", "url(#arrow)");
+    const nt_vec = svg.append("line").attr("stroke", "white").attr("stroke-dasharray", "3,3");
 
-        // Full Newton step (dx_nt)
-         svg.append("line")
-            .attr("x1", xScale(x_k[0])).attr("y1", yScale(x_k[1]))
-            .attr("x2", xScale(x_k[0] + dx_nt[0])).attr("y2", yScale(x_k[1] + dx_nt[1]))
-            .attr("stroke", "magenta").attr("stroke-width", 2).attr("stroke-dasharray", "5 5");
+    async function update() {
+        const t = 10**(+tSlider.value);
+        tVal.textContent = t.toExponential(1);
 
-        // The actual step taken (alpha * dx_nt)
-         svg.append("line")
-            .attr("x1", xScale(x_k[0])).attr("y1", yScale(x_k[1]))
-            .attr("x2", xScale(x_next[0])).attr("y2", yScale(x_next[1]))
-            .attr("stroke", "magenta").attr("stroke-width", 2).attr("marker-end", "url(#arrow-ipm)");
-        svg.append("text").attr("x", xScale(x_k[0] + alpha*dx_nt[0]*0.5)+5).attr("y", yScale(x_k[1] + alpha*dx_nt[1]*0.5)).text("α·dx_nt").attr("fill", "magenta");
+        k_point.attr("cx", x(xk.x)).attr("cy", y(xk.y));
 
-        // Draw next point
-        svg.append("circle").attr("cx", xScale(x_next[0])).attr("cy", yScale(x_next[1])).attr("r", 5).attr("fill", "red").attr("fill-opacity", 0.5);
-        svg.append("text").attr("x", xScale(x_next[0])+5).attr("y", yScale(x_next[1])-5).text("x_k+1").attr("fill", "red").attr("fill-opacity", 0.7);
+        const step = await get_newton_step([xk.x, xk.y], t).then(r => JSON.parse(r));
 
+        aff_vec.attr("x1", x(xk.x)).attr("y1", y(xk.y)).attr("x2", x(xk.x + step.dx_aff[0])).attr("y2", y(xk.y + step.dx_aff[1]));
+        cent_vec.attr("x1", x(xk.x)).attr("y1", y(xk.y)).attr("x2", x(xk.x + step.dx_cent[0])).attr("y2", y(xk.y + step.dx_cent[1]));
+        nt_vec.attr("x1", x(xk.x)).attr("y1", y(xk.y)).attr("x2", x(xk.x + step.dx[0])).attr("y2", y(xk.y + step.dx[1]));
     }
 
-    render();
+    const drag = d3.drag().on("drag", (event) => {
+        const [mx,my] = d3.pointer(event, svg.node());
+        xk = {x: x.invert(mx), y: y.invert(my)};
+        // Ensure point stays inside feasible set
+        xk.x = Math.max(1e-3, Math.min(1-1e-3, xk.x));
+        xk.y = Math.max(1e-3, Math.min(1-1e-3, xk.y));
+        update();
+    });
+    k_point.call(drag);
+    tSlider.addEventListener("input", update);
+    update();
 }

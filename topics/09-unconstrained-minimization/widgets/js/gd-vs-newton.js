@@ -6,119 +6,107 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-
 export async function initGDvsNewton(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
     container.innerHTML = `
-        <div id="plot"></div>
-        <button id="run_comparison">Run Comparison</button>
+        <div class="gd-vs-newton-widget">
+            <div class="widget-controls">
+                <button id="run-race-btn">Run Race</button>
+                <div class="legend">
+                    <span style="color:var(--color-primary);">―</span> Gradient Descent
+                    <span style="color:var(--color-accent); margin-left: 10px;">―</span> Newton's Method
+                </div>
+            </div>
+            <div id="plot-container"></div>
+            <p class="widget-instructions">Click "Run Race" to see the optimization paths. The problem is minimizing the non-convex Rosenbrock function.</p>
+        </div>
     `;
 
-    let pyodide = await getPyodide();
-    await pyodide.loadPackage("numpy");
+    const runBtn = container.querySelector("#run-race-btn");
+    const plotContainer = container.querySelector("#plot-container");
 
-    const margin = {top: 20, right: 30, bottom: 40, left: 40},
-        width = 500 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+    const margin = {top: 20, right: 20, bottom: 40, left: 40};
+    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
 
-    const svg = d3.select("#plot").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top - margin.bottom)
-        .append("g")
+    const svg = d3.select(plotContainer).append("svg")
+        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
     const x = d3.scaleLinear().domain([-2, 2]).range([0, width]);
-    svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
-
     const y = d3.scaleLinear().domain([-1, 3]).range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
+    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
 
-    // Rosenbrock function
-    const rosenbrock = (x, y) => (1 - x)**2 + 100 * (y - x*x)**2;
+    const pyodide = await getPyodide();
+    const pythonCode = `
+import numpy as np
+import json
 
-    // Contour plot
-    const contours = d3.contourDensity()
-        .x(d => x(d.x))
-        .y(d => y(d.y))
-        .size([width, height])
-        .bandwidth(15)
-        (getContourData());
+def rosenbrock(x, y):
+    return (1 - x)**2 + 100 * (y - x**2)**2
 
-    svg.selectAll("path.contour")
-        .data(contours)
-        .enter()
-        .append("path")
-        .attr("class", "contour")
-        .attr("d", d3.geoPath())
-        .attr("fill", "none")
-        .attr("stroke", "#ccc");
+def grad_rosenbrock(p):
+    x, y = p
+    return np.array([-2*(1-x) - 400*x*(y-x**2), 200*(y-x**2)])
 
-    function getContourData() {
-        const data = [];
-        for (let i = 0; i < 10000; i++) {
-            const px = Math.random() * 4 - 2;
-            const py = Math.random() * 4 - 1;
-            data.push({x: px, y: py, value: rosenbrock(px, py)});
-        }
-        return data;
+def hess_rosenbrock(p):
+    x, y = p
+    return np.array([[1200*x**2 - 400*y + 2, -400*x], [-400*x, 200]])
+
+def run_paths():
+    start_point = np.array([-1.5, 2.5])
+
+    # GD
+    path_gd = [start_point.tolist()]
+    p_gd = start_point.copy()
+    for _ in range(50):
+        p_gd -= 0.0012 * grad_rosenbrock(p_gd)
+        path_gd.append(p_gd.tolist())
+        if np.linalg.norm(grad_rosenbrock(p_gd)) < 1e-3: break
+
+    # Newton
+    path_newton = [start_point.tolist()]
+    p_newton = start_point.copy()
+    for _ in range(6):
+        p_newton -= np.linalg.inv(hess_rosenbrock(p_newton)) @ grad_rosenbrock(p_newton)
+        path_newton.append(p_newton.tolist())
+        if np.linalg.norm(grad_rosenbrock(p_newton)) < 1e-3: break
+
+    return json.dumps({"gd": path_gd, "newton": path_newton})
+`;
+    await pyodide.runPythonAsync(pythonCode);
+    const run_paths = pyodide.globals.get('run_paths');
+
+    // Contours
+    const grid = d3.range(-2, 2.1, 0.1).flatMap(i => d3.range(-1, 3.1, 0.1).map(j => ({x: i, y: j, v: (1 - i)**2 + 100 * (j - i*i)**2})));
+    const contours = d3.contourDensity().x(d=>x(d.x)).y(d=>y(d.y)).weight(d=>d.v).thresholds(30)(grid);
+    svg.append("g").selectAll("path").data(contours).join("path")
+        .attr("d", d3.geoPath()).attr("fill", "none").attr("stroke", "var(--color-surface-1)");
+
+    const gdPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
+    const newtonPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
+
+    async function run() {
+        runBtn.disabled = true;
+        const paths = await run_paths().then(r => JSON.parse(r));
+
+        const animate = (pathEl, data) => {
+            pathEl.datum(data).attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])));
+            const totalLength = pathEl.node().getTotalLength();
+            pathEl.attr("stroke-dasharray", `${totalLength} ${totalLength}`).attr("stroke-dashoffset", totalLength)
+                .transition().duration(2000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
+        };
+
+        animate(gdPath, paths.gd);
+        animate(newtonPath, paths.newton);
+
+        setTimeout(() => runBtn.disabled = false, 2000);
     }
 
-    async function run_comparison() {
-        svg.selectAll(".path").remove();
-
-        const result = await pyodide.runPythonAsync(`
-            import numpy as np
-
-            def grad_rosenbrock(x):
-                return np.array([-2*(1-x[0]) - 400*x[0]*(x[1]-x[0]**2), 200*(x[1]-x[0]**2)])
-
-            def hess_rosenbrock(x):
-                return np.array([[2 - 400*x[1] + 1200*x[0]**2, -400*x[0]], [-400*x[0], 200]])
-
-            x_gd = np.array([-1.5, 2.5])
-            path_gd = [x_gd.tolist()]
-            for _ in range(100):
-                x_gd = x_gd - 0.001 * grad_rosenbrock(x_gd)
-                path_gd.append(x_gd.tolist())
-
-            x_newton = np.array([-1.5, 2.5])
-            path_newton = [x_newton.tolist()]
-            for _ in range(5):
-                x_newton = x_newton - np.linalg.inv(hess_rosenbrock(x_newton)) @ grad_rosenbrock(x_newton)
-                path_newton.append(x_newton.tolist())
-
-            {"gd": path_gd, "newton": path_newton}
-        `);
-
-        const path_gd = result.get("gd").toJs();
-        const path_newton = result.get("newton").toJs();
-
-        draw_path(path_gd, "blue", "Gradient Descent");
-        draw_path(path_newton, "red", "Newton's Method");
-    }
-
-    const line = d3.line()
-        .x(d => x(d[0]))
-        .y(d => y(d[1]));
-
-    function draw_path(path_data, color, name) {
-        svg.append("path")
-            .datum(path_data)
-            .attr("class", "path")
-            .attr("fill", "none")
-            .attr("stroke", color)
-            .attr("stroke-width", 2)
-            .attr("d", line);
-    }
-
-
-    d3.select("#run_comparison").on("click", run_comparison);
+    runBtn.addEventListener("click", run);
 }
