@@ -4,7 +4,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ---
 
-## Lecture 00: Linear Algebra Primer (7 Widgets)
+## Lecture 00: Linear Algebra Primer (8 Widgets)
 
 - **[x] Norm Geometry Visualizer (HIGH)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/norm-geometry-visualizer.js`
@@ -142,7 +142,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ---
 
-## Lecture 03: Convex Functions (7 Widgets)
+## Lecture 03: Convex Functions (8 Widgets)
 
 - **[x] Jensen's Inequality Interactive Proof (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/jensen-visualizer.js`
@@ -197,7 +197,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 ## Lecture 04: Convex Opt Problems (8 Widgets)
 
 - **[x] Problem Form Recognizer (HIGH)**
-  - **Location:** `topics/04-convex-opt-problems/widgets/js/problem-recognizer.js`
+  - **Location:** `topics/04-convex-opt-problems/widgets/js/problem-form-recognizer.js`
   - **Description:** Users can input a simple optimization problem, and the tool will attempt to classify it as LP, QP, etc.
   - **Dependencies:** Pyodide (CVXPY).
   - **Status:** Completed
@@ -543,12 +543,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Description:** Shows the path of solutions as the penalty parameter increases in the penalty method.
   - **Dependencies:** D3.js.
   - **Status:** Completed
-
-- **[ ] Barrier Method Progression (LOW)**
-  - **Location:** `topics/10-equality-constrained-minimization/widgets/js/barrier-method.js`
-  - **Description:** (Duplicate, see Lecture 11)
-  - **Dependencies:**
-  - **Status:** Planned
 
 - **[ ] Constraint Qualification Checker (LOW)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/constraint-qualification.js`

@@ -1,17 +1,5 @@
 import "https://d3js.org/d3.v7.min.js";
-import {
-    loadPyodide
-} from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
-
-async function getPyodide() {
-    if (!window.pyodide) {
-        window.pyodide = await loadPyodide({
-            indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/"
-        });
-        await window.pyodide.loadPackage("cvxpy");
-    }
-    return window.pyodide;
-}
+import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
 export async function initShadowPrices(containerId) {
     const container = document.getElementById(containerId);
