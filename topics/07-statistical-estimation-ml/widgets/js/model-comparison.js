@@ -22,10 +22,11 @@ export async function initModelComparison(containerId) {
                 <button id="regenerate-data-btn">Regenerate Data</button>
             </div>
             <div class="comparison-grid">
-                <div class="plot-cell"><h5>Logistic Regression</h5><div id="logistic-plot"></div><p id="logistic-acc"></p></div>
-                <div class="plot-cell"><h5>SVM (RBF)</h5><div id="svm-plot"></div><p id="svm-acc"></p></div>
-                <div class="plot-cell"><h5>Decision Tree</h5><div id="tree-plot"></div><p id="tree-acc"></p></div>
-                <div class="plot-cell"><h5>KNN (k=3)</h5><div id="knn-plot"></div><p id="knn-acc"></p></div>
+                <div class="plot-cell"><h5>Logistic Regression</h5><div id="logistic-plot"></div><p id="logistic-acc"></p><div id="logistic-cm"></div></div>
+                <div class="plot-cell"><h5>SVM (RBF)</h5><div id="svm-plot"></div><p id="svm-acc"></p><div id="svm-cm"></div></div>
+                <div class="plot-cell"><h5>Decision Tree</h5><div id="tree-plot"></div><p id="tree-acc"></p><div id="tree-cm"></div></div>
+                <div class="plot-cell"><h5>KNN (k=3)</h5><div id="knn-plot"></div><p id="knn-acc"></p><div id="knn-cm"></div></div>
+                <div class="plot-cell"><h5>Random Forest</h5><div id="forest-plot"></div><p id="forest-acc"></p><div id="forest-cm"></div></div>
             </div>
         </div>
     `;
@@ -48,7 +49,8 @@ from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix
 import json
 
 datasets = {
@@ -61,7 +63,8 @@ models = {
     "logistic": LogisticRegression(solver='lbfgs'),
     "svm": SVC(gamma=2, C=1),
     "tree": DecisionTreeClassifier(max_depth=5),
-    "knn": KNeighborsClassifier(3)
+    "knn": KNeighborsClassifier(3),
+    "forest": RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1)
 }
 
 def process_dataset(dataset_name):
@@ -76,9 +79,11 @@ def process_dataset(dataset_name):
     results = {}
     for name, clf in models.items():
         clf.fit(X_train, y_train)
-        accuracy = clf.score(X_test, y_test)
+        y_pred = clf.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+        cm = confusion_matrix(y_test, y_pred).tolist()
         Z = clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-        results[name] = {"accuracy": accuracy, "Z": Z.tolist()}
+        results[name] = {"accuracy": accuracy, "Z": Z.tolist(), "cm": cm}
 
     return json.dumps({
         "X": X.tolist(), "y": y.tolist(), "xx": xx[0].tolist(), "yy": yy[:,0].tolist(),
@@ -100,12 +105,20 @@ def process_dataset(dataset_name):
             const plotDiv = container.querySelector(`#${model_name}-plot`);
             plotDiv.innerHTML = '';
             const accP = container.querySelector(`#${model_name}-acc`);
+            const cmDiv = container.querySelector(`#${model_name}-cm`);
             accP.textContent = `Accuracy: ${data.results[model_name].accuracy.toFixed(2)}`;
 
             const svg = d3.select(plotDiv).append("svg")
                 .attr("width", width+margin.left+margin.right).attr("height", height+margin.top+margin.bottom)
               .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // Confusion Matrix
+            const cm = data.results[model_name].cm;
+            cmDiv.innerHTML = `<table>
+                <tr><td>${cm[0][0]}</td><td>${cm[0][1]}</td></tr>
+                <tr><td>${cm[1][0]}</td><td>${cm[1][1]}</td></tr>
+            </table>`;
 
             // Boundary
             const Z = data.results[model_name].Z;

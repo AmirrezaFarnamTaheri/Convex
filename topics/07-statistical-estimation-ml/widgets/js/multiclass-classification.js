@@ -16,6 +16,7 @@ export async function initMultiClass(containerId) {
                 <label>Strategy:</label>
                 <select id="mc-model-select">
                     <option value="ovr">One-vs-Rest (OvR)</option>
+                    <option value="ovo">One-vs-One (OvO)</option>
                     <option value="multinomial">Softmax (Multinomial)</option>
                 </select>
                 <label>Add Class:</label>
@@ -70,6 +71,7 @@ export async function initMultiClass(containerId) {
     const pythonCode = `
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+from sklearn.multiclass import OneVsOneClassifier
 import json
 
 def get_multiclass_boundary(points, model_type, domain_x, domain_y, grid_size=50):
@@ -79,14 +81,25 @@ def get_multiclass_boundary(points, model_type, domain_x, domain_y, grid_size=50
     X = np.array([[p['x'], p['y']] for p in points])
     y = np.array([p['class'] for p in points])
 
-    clf = LogisticRegression(multi_class=model_type, solver='lbfgs', C=1)
+    if model_type == 'ovo':
+        clf = OneVsOneClassifier(LogisticRegression(solver='lbfgs'))
+    else:
+        clf = LogisticRegression(multi_class=model_type, solver='lbfgs', C=1)
+
     clf.fit(X, y)
 
     xx, yy = np.meshgrid(np.linspace(domain_x[0], domain_x[1], grid_size),
                          np.linspace(domain_y[0], domain_y[1], grid_size))
 
     Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
-    return json.dumps(Z.reshape(xx.shape).tolist())
+
+    try:
+        Z_proba = clf.predict_proba(np.c_[xx.ravel(), yy.ravel()]).reshape(grid_size, grid_size, -1)
+    except AttributeError: # OVO doesn't have predict_proba by default
+        Z_proba = np.zeros((grid_size, grid_size, len(clf.classes_)))
+
+
+    return json.dumps({"Z": Z.reshape(xx.shape).tolist(), "proba": Z_proba.tolist(), "classes": clf.classes_.tolist()})
 `;
     await pyodide.runPythonAsync(pythonCode);
     const get_multiclass_boundary = pyodide.globals.get('get_multiclass_boundary');
@@ -99,9 +112,9 @@ def get_multiclass_boundary(points, model_type, domain_x, domain_y, grid_size=50
 
     async function updateBoundary() {
         const model_type = modelSelect.value;
-        const boundary_json = await get_multiclass_boundary(points, model_type, x.domain(), y.domain());
-        if (!boundary_json) return;
-        const Z = JSON.parse(boundary_json);
+        const result_json = await get_multiclass_boundary(points, model_type, x.domain(), y.domain());
+        if (!result_json) return;
+        const result = JSON.parse(result_json);
 
         // This approach is more robust for showing decision regions
         backgroundGroup.selectAll("image").remove();
@@ -112,7 +125,7 @@ def get_multiclass_boundary(points, model_type, domain_x, domain_y, grid_size=50
         const imageData = context.createImageData(50, 50);
         for (let j = 0, k = 0; j < 50; ++j) {
             for (let i = 0; i < 50; ++i, ++k) {
-                const c = d3.rgb(colors[Z[j][i]]);
+                const c = d3.rgb(colors[result.Z[j][i]]);
                 imageData.data[k * 4] = c.r;
                 imageData.data[k * 4 + 1] = c.g;
                 imageData.data[k * 4 + 2] = c.b;
@@ -124,7 +137,18 @@ def get_multiclass_boundary(points, model_type, domain_x, domain_y, grid_size=50
         backgroundGroup.append("image")
             .attr("width", width).attr("height", height)
             .attr("preserveAspectRatio", "none")
-            .attr("xlink:href", canvas.toDataURL());
+            .attr("xlink:href", canvas.toDataURL())
+            .on("mousemove", (event) => {
+                const [mx, my] = d3.pointer(event, svg.node());
+                const grid_x = Math.floor(mx/width * 50);
+                const grid_y = Math.floor(my/height * 50);
+                const probs = result.proba[grid_y][grid_x];
+
+                const tooltip = d3.select(plotContainer).selectAll(".tooltip").data([0]).join("div").attr("class", "tooltip");
+                tooltip.style("left", `${mx + margin.left + 10}px`).style("top", `${my + margin.top}px`)
+                    .html(probs.map((p,i) => `P(C${result.classes[i]}): ${p.toFixed(2)}`).join('<br>'));
+            })
+            .on("mouseout", () => d3.select(plotContainer).select(".tooltip").remove());
     }
 
     resetBtn.addEventListener("click", () => {
