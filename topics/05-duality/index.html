@@ -92,6 +92,15 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+
+      <!-- Widget 3 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">KKT Condition Checker</h3>
+        <p>Check which KKT conditions are satisfied for a given solution.</p>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Readings -->
@@ -139,10 +148,17 @@
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
   <!-- Widget loaders -->
-  <script type="module" src="./widgets/js/lagrangian-explainer.js"></script>
+  <script type="module">
+    import { initLagrangianExplainer } from './widgets/js/lagrangian-explainer.js';
+    initLagrangianExplainer('widget-1');
+  </script>
   <script type="module">
     import { initDualityVisualizer } from './widgets/js/duality-visualizer.js';
     initDualityVisualizer('widget-2');
+  </script>
+  <script type="module">
+    import { initKKTChecker } from './widgets/js/kkt-checker.js';
+    initKKTChecker('widget-3');
   </script>
 
   <!-- Global utilities -->

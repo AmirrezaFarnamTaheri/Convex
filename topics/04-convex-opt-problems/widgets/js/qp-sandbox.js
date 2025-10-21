@@ -8,12 +8,12 @@ async function getPyodide() {
         window.pyodide = await loadPyodide({
             indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/",
         });
-        await window.pyodide.loadPackage(["numpy"]);
+        await window.pyodide.loadPackage(["numpy", "cvxpy"]);
     }
     return window.pyodide;
 }
 
-export async function initGdVsNewton(containerId) {
+export async function initQPSandbox(containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container #${containerId} not found`);
@@ -21,5 +21,5 @@ export async function initGdVsNewton(containerId) {
     }
 
     // Widget UI and logic will go here
-    container.innerHTML = `<p>GD vs Newton Widget</p>`;
+    container.innerHTML = `<p>QP Sandbox Widget</p>`;
 }

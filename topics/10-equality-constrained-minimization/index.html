@@ -92,6 +92,15 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+
+      <!-- Widget 3 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Feasible vs. Interior-Point Methods</h3>
+        <p>Compares the paths taken by a feasible descent method and an interior-point method.</p>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Readings -->
@@ -139,8 +148,18 @@
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
   <!-- Widget loaders -->
-  <script type="module" src="./widgets/js/null-space-visualizer.js"></script>
-  <script type="module" src="./widgets/js/projected-gd.js"></script>
+  <script type="module">
+        import { initNullSpaceVisualizer } from './widgets/js/null-space-visualizer.js';
+        initNullSpaceVisualizer('widget-1');
+  </script>
+  <script type="module">
+        import { initProjectedGradientDescent } from './widgets/js/projected-gd.js';
+        initProjectedGradientDescent('widget-2');
+  </script>
+  <script type="module">
+    import { initFeasibleVsInterior } from './widgets/js/feasible-vs-interior.js';
+    initFeasibleVsInterior('widget-3');
+  </script>
 
   <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>

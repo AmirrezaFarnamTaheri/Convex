@@ -1,4 +1,3 @@
-import "https://d3js.org/d3.v7.min.js";
 import {
     loadPyodide
 } from "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.mjs";
@@ -8,12 +7,12 @@ async function getPyodide() {
         window.pyodide = await loadPyodide({
             indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/",
         });
-        await window.pyodide.loadPackage(["numpy"]);
+        await window.pyodide.loadPackage(["numpy", "sympy"]);
     }
     return window.pyodide;
 }
 
-export async function initGdVsNewton(containerId) {
+export async function initKKTChecker(containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container #${containerId} not found`);
@@ -21,5 +20,5 @@ export async function initGdVsNewton(containerId) {
     }
 
     // Widget UI and logic will go here
-    container.innerHTML = `<p>GD vs Newton Widget</p>`;
+    container.innerHTML = `<p>KKT Checker Widget</p>`;
 }

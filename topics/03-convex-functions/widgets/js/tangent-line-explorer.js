@@ -1,6 +1,6 @@
 import "https://d3js.org/d3.v7.min.js";
 
-export async function initLagrangianExplainer(containerId) {
+export async function initTangentLineExplorer(containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container #${containerId} not found`);

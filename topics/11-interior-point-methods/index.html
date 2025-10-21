@@ -92,6 +92,15 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+
+      <!-- Widget 3 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Newton Step in IPM</h3>
+        <p>Shows a single Newton step within an interior-point method.</p>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Readings -->
@@ -143,7 +152,14 @@
     import { initBarrierPathTracer } from './widgets/js/barrier-method-path-tracer.js';
     initBarrierPathTracer('widget-1');
   </script>
-  <script type="module" src="./widgets/js/lp-simplex-vs-ip.js"></script>
+  <script type="module">
+    import { initSimplexVsIPM } from './widgets/js/lp-simplex-vs-ip.js';
+    initSimplexVsIPM('widget-2');
+  </script>
+  <script type="module">
+    import { initNewtonStepIPM } from './widgets/js/newton-step-ipm.js';
+    initNewtonStepIPM('widget-3');
+  </script>
 
   <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>

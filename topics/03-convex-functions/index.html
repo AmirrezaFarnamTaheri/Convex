@@ -92,6 +92,33 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+
+      <!-- Widget 3 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Tangent Line Explorer</h3>
+        <p>The tangent line is always a global underestimator.</p>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 4 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Epigraph Visualizer</h3>
+        <p>Shows the 2D graph of a function and allows the user to toggle the visualization of its epigraph.</p>
+        <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 5 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Operations Preserving Convexity</h3>
+        <p>Interactive tool to show how operations like composition with an affine map preserve convexity.</p>
+        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Readings -->
@@ -146,6 +173,18 @@
   <script type="module">
     import { initHessianExplorer } from './widgets/js/hessian-explorer.js';
     initHessianExplorer('widget-2');
+  </script>
+  <script type="module">
+    import { initTangentLineExplorer } from './widgets/js/tangent-line-explorer.js';
+    initTangentLineExplorer('widget-3');
+  </script>
+  <script type="module">
+    import { initEpigraphVisualizer } from './widgets/js/epigraph-visualizer.js';
+    initEpigraphVisualizer('widget-4');
+  </script>
+  <script type="module">
+    import { initOperationsPreserving } from './widgets/js/operations-preserving.js';
+    initOperationsPreserving('widget-5');
   </script>
 
   <!-- Global utilities -->

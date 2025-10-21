@@ -13,7 +13,7 @@ async function getPyodide() {
     return window.pyodide;
 }
 
-export async function initGdVsNewton(containerId) {
+export async function initNewtonStepIPM(containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container #${containerId} not found`);
@@ -21,5 +21,5 @@ export async function initGdVsNewton(containerId) {
     }
 
     // Widget UI and logic will go here
-    container.innerHTML = `<p>GD vs Newton Widget</p>`;
+    container.innerHTML = `<p>Newton Step IPM Widget</p>`;
 }

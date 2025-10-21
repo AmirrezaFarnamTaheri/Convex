@@ -92,6 +92,15 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+
+      <!-- Widget 3 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Convergence Rate Comparison</h3>
+        <p>Plots the convergence rates of different first-order methods.</p>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Readings -->
@@ -143,7 +152,14 @@
     import { initGradientDescentVisualizer } from './widgets/js/gradient-descent-visualizer.js';
     initGradientDescentVisualizer('widget-1');
   </script>
-  <script type="module" src="./widgets/js/gd-vs-newton-race.js"></script>
+  <script type="module">
+    import { initGdVsNewton } from './widgets/js/gd-vs-newton-race.js';
+    initGdVsNewton('widget-2');
+  </script>
+  <script type="module">
+    import { initConvergenceRate } from './widgets/js/convergence-rate.js';
+    initConvergenceRate('widget-3');
+  </script>
 
   <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>
