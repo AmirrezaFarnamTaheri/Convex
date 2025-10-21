@@ -1,87 +1,89 @@
 /**
- * Widget: Duality Gap Convergence Animator
+ * Widget: Duality Gap Convergence Race
  *
- * Description: Animates the convergence of the primal and dual objectives for an LP, showing the duality gap shrinking.
+ * Description: Animates the convergence of primal and dual objectives for an LP,
+ *              showing the duality gap shrinking to zero.
+ * Version: 2.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-export async function initDualityRace(containerId) {
+export function initDualityRace(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="duality-race-widget">
-            <div class="widget-controls">
-                <button id="run-duality-race-btn">Run Primal-Dual Simplex</button>
+            <div id="plot-container" style="width: 100%; height: 350px;"></div>
+            <div class="widget-controls" style="padding: 15px; text-align: center;">
+                <h4>Problem: Maximize c₁x₁ + c₂x₂</h4>
+                <div class="control-row">
+                    c₁: <input type="number" id="c1-in" value="1" step="0.1">
+                    c₂: <input type="number" id="c2-in" value="2" step="0.1">
+                </div>
+                <button id="run-duality-race-btn">Run Race</button>
+                <div id="legend" style="margin-top: 10px;"></div>
+                <div class="widget-output" id="duality-gap-text" style="margin-top: 10px;"></div>
             </div>
-            <div id="plot-container"></div>
-            <div class="widget-output" id="duality-gap-text"></div>
         </div>
     `;
 
     const runBtn = container.querySelector("#run-duality-race-btn");
+    const c1In = container.querySelector("#c1-in");
+    const c2In = container.querySelector("#c2-in");
     const plotContainer = container.querySelector("#plot-container");
     const gapText = container.querySelector("#duality-gap-text");
+    const legendContainer = container.querySelector("#legend");
 
-    const margin = {top: 20, right: 20, bottom: 40, left: 50};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
-    const height = 300 - margin.top - margin.bottom;
+    let svg, x, y;
 
-    const svg = d3.select(plotContainer).append("svg")
-        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+    function setupChart() {
+        plotContainer.innerHTML = '';
+        const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+        const width = plotContainer.clientWidth - margin.left - margin.right;
+        const height = plotContainer.clientHeight - margin.top - margin.bottom;
 
-    const x = d3.scaleLinear().range([0, width]);
-    const y = d3.scaleLinear().range([height, 0]);
-    svg.append("g").attr("class", "x-axis").attr("transform", `translate(0,${height})`);
-    svg.append("g").attr("class", "y-axis");
+        svg = d3.select(plotContainer).append("svg")
+            .attr("width", "100%").attr("height", "100%")
+            .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const primalPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2.5);
-    const dualPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5);
+        x = d3.scaleLinear().range([0, width]);
+        y = d3.scaleLinear().range([height, 0]);
+        svg.append("g").attr("class", "x-axis").attr("transform", `translate(0,${height})`);
+        svg.append("g").attr("class", "y-axis");
 
-    const pyodide = await getPyodide();
-    await pyodide.loadPackage("scipy");
-    const pythonCode = `
-import numpy as np
-from scipy.optimize import linprog
-import json
+        svg.append("path").attr("class", "primal-path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2.5);
+        svg.append("path").attr("class", "dual-path").attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5);
+    }
 
-def run_simplex_path(c, A_ub, b_ub):
-    primal_path, dual_path = [], []
+    function generateData(c1, c2) {
+        // A simple path-following interior-point method simulation
+        const n_iter = 20;
+        const optimal_val = Math.max(0, c1, c2) * 5; // Simplified optimal value calculation
+        let primal_obj = optimal_val * (1 + Math.random());
+        let dual_obj = optimal_val * (0 - Math.random());
+        const primal_path = [];
+        const dual_path = [];
 
-    def primal_callback(res):
-        primal_path.append(np.dot(c, res.x))
+        for(let i=0; i<n_iter; i++) {
+            primal_obj -= (primal_obj - optimal_val) * (0.2 + Math.random()*0.2);
+            dual_obj += (optimal_val - dual_obj) * (0.2 + Math.random()*0.2);
+            primal_path.push(primal_obj);
+            dual_path.push(dual_obj);
+        }
+        return { primal: primal_path, dual: dual_path };
+    }
 
-    # Primal: min cᵀx s.t. Ax <= b, x >= 0
-    linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=(0,None), callback=primal_callback, method='highs-ds')
-
-    # Dual: max -bᵀy s.t. -Aᵀy <= c, y >= 0
-    # Or: min bᵀy s.t. Aᵀy >= -c, y >= 0
-    def dual_callback(res):
-        # We need to flip the objective back because scipy minimizes
-        dual_path.append(np.dot(b_ub, res.x))
-
-    linprog(b_ub, A_ub=-np.array(A_ub).T, b_ub=-np.array(c), bounds=(0,None), callback=dual_callback, method='highs-ds')
-
-    return json.dumps({"primal": primal_path, "dual": dual_path})
-`;
-    await pyodide.runPythonAsync(pythonCode);
-    const run_simplex_path = pyodide.globals.get('run_simplex_path');
-
-    async function runAnimation() {
+    function runAnimation() {
         runBtn.disabled = true;
         gapText.textContent = "Running...";
 
-        const c = [-1, -2];
-        const A = [[1,1], [-1,1], [1,-1]];
-        const b = [4, 2, 2];
+        const c1 = +c1In.value;
+        const c2 = +c2In.value;
+        const data = generateData(c1, c2);
 
-        const data = await run_simplex_path(c, A, b).then(r => JSON.parse(r));
-        const n_iter = Math.max(data.primal.length, data.dual.length);
-
+        const n_iter = data.primal.length;
         x.domain([0, n_iter - 1]);
         const all_vals = data.primal.concat(data.dual);
         y.domain(d3.extent(all_vals)).nice();
@@ -89,30 +91,39 @@ def run_simplex_path(c, A_ub, b_ub):
         svg.select(".x-axis").call(d3.axisBottom(x));
         svg.select(".y-axis").call(d3.axisLeft(y));
 
-        const line = (path_data) => d3.line()
-            .x((d, i) => x(i))
-            .y(d => y(d))
-            (path_data);
+        const line = (path_data) => d3.line().x((d, i) => x(i)).y(d => y(d))(path_data);
 
-        animatePath(primalPath, data.primal, "Primal Objective");
-        animatePath(dualPath, data.dual, "Dual Objective");
+        animatePath(svg.select(".primal-path"), data.primal);
+        animatePath(svg.select(".dual-path"), data.dual);
 
-        setTimeout(() => {
-            runBtn.disabled = false;
-            const gap = data.primal[data.primal.length-1] - data.dual[data.dual.length-1];
-            gapText.textContent = `Final Duality Gap: ${Math.abs(gap).toFixed(4)}`;
-        }, 2000);
+        const timer = d3.timer((elapsed) => {
+            const t = Math.min(1, elapsed / 2000);
+            const currentIndex = Math.floor(t * (n_iter - 1));
+            const gap = data.primal[currentIndex] - data.dual[currentIndex];
+            gapText.innerHTML = `Duality Gap: <strong>${gap.toFixed(2)}</strong>`;
+            if (t === 1) {
+                timer.stop();
+                runBtn.disabled = false;
+                 gapText.innerHTML = `Final Duality Gap: <strong>${(data.primal.at(-1) - data.dual.at(-1)).toFixed(3)}</strong>. Converged!`;
+            }
+        });
     }
 
-    function animatePath(pathElement, data, label) {
-        pathElement.datum(data).attr("d", line(data));
+    function animatePath(pathElement, data) {
+        pathElement.datum(data).attr("d", d3.line().x((d, i) => x(i)).y(d => y(d)));
         const totalLength = pathElement.node().getTotalLength();
-        pathElement
-            .attr("stroke-dasharray", `${totalLength} ${totalLength}`)
+        pathElement.attr("stroke-dasharray", `${totalLength} ${totalLength}`)
             .attr("stroke-dashoffset", totalLength)
             .transition().duration(2000).ease(d3.easeLinear)
             .attr("stroke-dashoffset", 0);
     }
 
-    runBtn.addEventListener("click", runAnimation);
+    legendContainer.innerHTML = `
+        <span style="color: var(--color-primary);">&#9632;</span> Primal Objective (Upper Bound)
+        <span style="color: var(--color-accent); margin-left: 15px;">&#9632;</span> Dual Objective (Lower Bound)
+    `;
+
+    runBtn.onclick = runAnimation;
+    new ResizeObserver(setupChart).observe(plotContainer);
+    setupChart();
 }

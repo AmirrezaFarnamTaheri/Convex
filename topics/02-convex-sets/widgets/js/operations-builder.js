@@ -1,125 +1,105 @@
 /**
- * Widget: Operations Preserve Convexity Builder
+ * Widget: Operations that Preserve Convexity
  *
- * Description: A tool where users can apply operations (intersection, affine transformation) to pre-defined convex sets to see the result.
+ * Description: Interactively apply operations (intersection, affine transform)
+ *              to convex sets to demonstrate that the result is also convex.
+ * Version: 2.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { getPyodide } from "../../../../static/js/pyodide-manager.js";
+import { polygonClip } from "d3-polygon";
 
-export async function initOperationsBuilder(containerId) {
+export function initOperationsBuilder(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="operations-builder-widget">
-            <div class="widget-controls">
+            <div id="plot-container" style="width: 100%; height: 400px; cursor: move;"></div>
+            <div class="widget-controls" style="padding: 15px;">
                 <label for="op-select">Operation:</label>
                 <select id="op-select">
                     <option value="intersection">Intersection</option>
                     <option value="affine">Affine Transformation</option>
                 </select>
-                <div id="affine-controls" style="display:none;">
-                    <p>Transform: <strong>y = Ax + b</strong></p>
-                    A = [<input type="number" step="0.1" value="1">, <input type="number" step="0.1" value="0.5">;
-                    <input type="number" step="0.1" value="0.5">, <input type="number" step="0.1" value="1">]
-                    b = [<input type="number" step="0.1" value="1">, <input type="number" step="0.1" value="1">]
-                </div>
+                <div id="affine-info" class="widget-output" style="margin-top: 10px; display: none;"></div>
             </div>
-            <div id="plot-container"></div>
         </div>
     `;
 
     const opSelect = container.querySelector("#op-select");
-    const affineControls = container.querySelector("#affine-controls");
     const plotContainer = container.querySelector("#plot-container");
-    const affineInputs = affineControls.querySelectorAll('input');
+    const affineInfo = container.querySelector("#affine-info");
 
-    const margin = {top: 20, right: 20, bottom: 20, left: 20};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
-
-    const svg = d3.select(plotContainer).append("svg")
-        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .append("g")
-        .attr("transform", `translate(${width/2 + margin.left},${height/2 + margin.top})`);
-
-    const x = d3.scaleLinear().domain([-10, 10]).range([-width/2, width/2]);
-    const y = d3.scaleLinear().domain([-10, 10]).range([height/2, -height/2]);
-
-    svg.append("g").call(d3.axisBottom(x));
-    svg.append("g").call(d3.axisLeft(y));
-
-    let set1 = d3.range(0, 2*Math.PI, 0.2).map(a => [3*Math.cos(a) - 2, 3*Math.sin(a)]);
+    let svg, x, y;
+    let set1 = d3.range(0, 2 * Math.PI, 0.2).map(a => [3 * Math.cos(a) - 2, 3 * Math.sin(a)]);
     let set2 = [[2, -4], [6, -4], [6, 4], [2, 4]];
+    let affine = { A: [[1, 0.5], [0.5, 1]], b: [1, 1] };
 
-    const pyodide = await getPyodide();
-    await pyodide.loadPackage("shapely");
-    const pythonCode = `
-import numpy as np
-from shapely.geometry import Polygon, Point
-from shapely.affinity import affine_transform
-import json
+    function setupChart() {
+        plotContainer.innerHTML = '';
+        const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+        const width = plotContainer.clientWidth - margin.left - margin.right;
+        const height = plotContainer.clientHeight - margin.top - margin.bottom;
 
-def get_intersection(poly1_pts, poly2_pts):
-    poly1 = Polygon(poly1_pts)
-    poly2 = Polygon(poly2_pts)
-    intersection = poly1.intersection(poly2)
-    return list(intersection.exterior.coords) if not intersection.is_empty else []
+        svg = d3.select(plotContainer).append("svg")
+            .attr("width", "100%").attr("height", "100%")
+            .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-def apply_affine(poly_pts, A, b):
-    # A is a 2x2 matrix, b is a 2-vector
-    # Shapely's affine_transform takes [a, b, c, d, xoff, yoff]
-    # corresponding to [A00, A01, A10, A11, b0, b1]
-    matrix = [A[0][0], A[0][1], A[1][0], A[1][1], b[0], b[1]]
-    poly = Polygon(poly_pts)
-    transformed_poly = affine_transform(poly, matrix)
-    return list(transformed_poly.exterior.coords)
-`;
-    await pyodide.runPythonAsync(pythonCode);
-    const get_intersection = pyodide.globals.get('get_intersection');
-    const apply_affine = pyodide.globals.get('apply_affine');
+        x = d3.scaleLinear().domain([-10, 10]).range([0, width]);
+        y = d3.scaleLinear().domain([-10, 10]).range([height, 0]);
 
-    const set1_path = svg.append("path").attr("fill", "var(--color-primary-light)").attr("stroke", "var(--color-primary)").style("cursor", "move");
-    const set2_path = svg.append("path").attr("fill", "var(--color-accent-light)").attr("stroke", "var(--color-accent)").style("cursor", "move");
-    const result_path = svg.append("path").attr("fill", "var(--color-danger)").attr("opacity", 0.7);
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+        svg.append("g").call(d3.axisLeft(y));
 
-    async function update() {
-        const operation = opSelect.value;
-        affineControls.style.display = (operation === 'affine') ? 'block' : 'none';
+        const lineGen = d3.line().x(d => x(d[0])).y(d => y(d[1]));
 
-        set1_path.attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(set1) + "Z");
-        set2_path.attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(set2) + "Z").style("display", operation === 'intersection' ? 'block' : 'none');
-
-        if (operation === 'intersection') {
-            const result = await get_intersection(set1, set2).then(r => r.toJs());
-            if (result.length > 0) {
-                result_path.attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(result) + "Z").style("display", "block");
-            } else {
-                result_path.style("display", "none");
-            }
-        } else { // Affine
-            const A = [[+affineInputs[0].value, +affineInputs[1].value], [+affineInputs[2].value, +affineInputs[3].value]];
-            const b = [+affineInputs[4].value, +affineInputs[5].value];
-            const result = await apply_affine(set1, A, b).then(r => r.toJs());
-            result_path.attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(result) + "Z").style("display", "block");
-        }
+        svg.append("path").attr("class", "set1-path").datum(set1).attr("d", lineGen).attr("fill", "var(--color-primary-light)").call(dragBehavior(set1));
+        svg.append("path").attr("class", "set2-path").datum(set2).attr("d", lineGen).attr("fill", "var(--color-accent-light)").call(dragBehavior(set2));
+        svg.append("path").attr("class", "result-path").attr("fill", "var(--color-danger)").attr("opacity", 0.7);
     }
 
     const dragBehavior = (poly) => d3.drag()
         .on("drag", (event) => {
-            const {dx, dy} = event;
-            for(let i=0; i<poly.length; i++) {
-                poly[i][0] += x.invert(dx) - x.invert(0);
-                poly[i][1] += y.invert(dy) - y.invert(0);
-            }
+            const dx = x.invert(event.dx) - x.invert(0);
+            const dy = y.invert(event.dy) - y.invert(0);
+            poly.forEach(p => { p[0] += dx; p[1] += dy; });
             update();
         });
 
-    set1_path.call(dragBehavior(set1));
-    set2_path.call(dragBehavior(set2));
-    opSelect.addEventListener("change", update);
-    affineInputs.forEach(i => i.addEventListener("input", update));
+    function update() {
+        const operation = opSelect.value;
+        const lineGen = d3.line().x(d => x(d[0])).y(d => y(d[1]));
 
+        svg.select(".set1-path").attr("d", lineGen(set1) + "Z");
+        svg.select(".set2-path").attr("d", lineGen(set2) + "Z").style("display", operation === 'intersection' ? 'block' : 'none');
+        affineInfo.style.display = operation === 'affine' ? 'block' : 'none';
+
+        if (operation === 'intersection') {
+            const intersection = polygonClip(set1, set2);
+            if (intersection) {
+                svg.select(".result-path").datum(intersection).attr("d", lineGen(intersection) + "Z").style("display", "block");
+            } else {
+                svg.select(".result-path").style("display", "none");
+            }
+        } else { // Affine
+            const transformedSet = set1.map(p => [
+                affine.A[0][0] * p[0] + affine.A[0][1] * p[1] + affine.b[0],
+                affine.A[1][0] * p[0] + affine.A[1][1] * p[1] + affine.b[1]
+            ]);
+            svg.select(".result-path").datum(transformedSet).attr("d", lineGen(transformedSet) + "Z").style("display", "block");
+
+            affineInfo.innerHTML = `
+                Transforming with <strong>y = Ax + b</strong>.
+                (This is a preset transformation for demonstration).
+            `;
+        }
+    }
+
+    opSelect.addEventListener("change", update);
+
+    new ResizeObserver(setupChart).observe(plotContainer);
+    setupChart();
     update();
 }

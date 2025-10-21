@@ -1,160 +1,188 @@
 /**
  * Widget: LP Visualizer & Simplex Animator
+ *
+ * Description: Interactively define a 2D Linear Program, visualize the feasible region,
+ *              and animate the steps of the simplex algorithm.
+ * Version: 2.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { getPyodide } from "../../../../static/js/pyodide-manager.js";
+import { polygonClip } from "d3-polygon";
 
 export async function initLPVisualizer(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="lp-visualizer-widget">
-            <div class="widget-controls">
+            <div id="plot-container" style="width: 100%; height: 400px; cursor: crosshair;"></div>
+            <div class="widget-controls" style="padding: 15px;">
                 <h4>Objective: Maximize cᵀx</h4>
                 c = [<input type="number" id="c1" value="1" step="0.1">, <input type="number" id="c2" value="2" step="0.1">]
-                <h4>Constraints: Ax ≤ b</h4>
-                <div id="lp-constraints"></div>
-                <button id="add-lp-constraint">+ Add</button>
+                <h4 style="margin-top:10px;">Constraints: Ax ≤ b</h4>
+                <p class="widget-instructions">Click-drag on the plot to add constraints. Non-negativity (x₁, x₂ ≥ 0) is assumed.</p>
+                <div id="lp-constraints-list"></div>
                 <button id="run-simplex-btn">Animate Simplex</button>
+                <button id="clear-constraints-btn">Clear Constraints</button>
+                <div id="lp-solution-text" class="widget-output" style="margin-top: 10px;"></div>
             </div>
-            <div id="plot-container"></div>
         </div>
     `;
 
     const plotContainer = container.querySelector("#plot-container");
-    const constraintsContainer = container.querySelector("#lp-constraints");
-    const addBtn = container.querySelector("#add-lp-constraint");
+    const constraintsList = container.querySelector("#lp-constraints-list");
     const runBtn = container.querySelector("#run-simplex-btn");
+    const clearBtn = container.querySelector("#clear-constraints-btn");
+    const solutionText = container.querySelector("#lp-solution-text");
     const c1_in = container.querySelector("#c1");
     const c2_in = container.querySelector("#c2");
 
-    let constraints = [[-1, 1, 1], [1, 1, 3], [1, 0, 2]]; // Default Ax <= b
+    const initialConstraints = [[-1, 1, 1], [1, 1, 3], [1, 0, 2]];
+    let constraints = [...initialConstraints]; // Default a1, a2, b
+    let svg, x, y;
 
-    const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    function setupChart() {
+        plotContainer.innerHTML = '';
+        const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+        const width = plotContainer.clientWidth - margin.left - margin.right;
+        const height = plotContainer.clientHeight - margin.top - margin.bottom;
 
-    const svg = d3.select(plotContainer).append("svg")
-        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        svg = d3.select(plotContainer).append("svg")
+            .attr("width", "100%").attr("height", "100%")
+            .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-1, 4]).range([0, width]);
-    const y = d3.scaleLinear().domain([-1, 4]).range([height, 0]);
+        x = d3.scaleLinear().domain([-1, 4]).range([0, width]);
+        y = d3.scaleLinear().domain([-1, 4]).range([height, 0]);
 
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-    svg.append("g").call(d3.axisLeft(y));
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+        svg.append("g").call(d3.axisLeft(y));
 
-    const contourGroup = svg.append("g");
-    const feasibleRegion = svg.append("path").attr("fill", "var(--color-primary-light)").attr("opacity", 0.7);
-    const simplexPath = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-danger)").attr("stroke-width", 3);
-    const simplexPoints = svg.append("g");
+        svg.append("g").attr("class", "content");
 
-    const pyodide = await getPyodide();
-    await pyodide.loadPackage("scipy");
+        const drag = d3.drag()
+            .on("start", (event) => {
+                const [x0, y0] = d3.pointer(event, svg.node());
+                svg.append("line").attr("class", "drag-line")
+                    .attr("x1", x0).attr("y1", y0).attr("x2", x0).attr("y2", y0)
+                    .attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
+            })
+            .on("drag", (event) => svg.select(".drag-line").attr("x2", event.x).attr("y2", event.y))
+            .on("end", (event) => {
+                const [x0, y0] = [svg.select(".drag-line").attr("x1"), svg.select(".drag-line").attr("y1")];
+                const [x1, y1] = d3.pointer(event, svg.node());
+                svg.select(".drag-line").remove();
 
-    const pythonCode = `
-import numpy as np
-from scipy.optimize import linprog
-from shapely.geometry import Polygon, HalfPlane
-import json
+                const p1 = [x.invert(x0), y.invert(y0)];
+                const p2 = [x.invert(x1), y.invert(y1)];
+                let normal = [y0 - y1, x1 - x0];
+                const norm = Math.sqrt(normal[0]**2 + normal[1]**2);
+                if (norm < 1e-6) return;
+                normal = normal.map(n => n / norm);
 
-def solve_lp(c, A, b):
-    # We maximize by negating c
-    path = []
-    res = linprog(-np.array(c), A_ub=A, b_ub=b, bounds=[(0, None), (0, None)], method='highs-ds', callback=lambda res: path.append(res.x.tolist()))
-
-    # Calculate feasible region vertices
-    try:
-        bounds = 100
-        feasible_poly = Polygon([(-bounds,-bounds), (bounds,-bounds), (bounds,bounds), (-bounds,bounds)])
-        all_A = np.vstack([A, [[-1,0], [0,-1]]]) # Add non-negativity constraints
-        all_b = np.hstack([b, [0,0]])
-        for i in range(all_A.shape[0]):
-            a = all_A[i]
-            b_val = all_b[i]
-            p_on_boundary = a * b_val / np.dot(a, a) if np.dot(a, a) > 1e-9 else np.zeros(2)
-            feasible_poly = feasible_poly.intersection(HalfPlane(p_on_boundary, -a))
-
-        vertices = list(feasible_poly.exterior.coords) if not feasible_poly.is_empty else []
-    except Exception:
-        vertices = []
-
-    return json.dumps({"path": path, "vertices": vertices, "solution": res.x.tolist() if res.success else None})
-`;
-    await pyodide.runPythonAsync(pythonCode);
-    const solve_lp = pyodide.globals.get('solve_lp');
-
-    async function update() {
-        runBtn.disabled = true;
-        const c = [+c1_in.value, +c2_in.value];
-        const A = constraints.map(row => row.slice(0, 2));
-        const b = constraints.map(row => row[2]);
-
-        const result = await solve_lp(c, A, b).then(r => JSON.parse(r));
-
-        // Draw feasible region
-        if (result.vertices.length > 0) {
-            feasibleRegion.attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1]))(result.vertices) + "Z");
-        } else {
-            feasibleRegion.attr("d", null);
-        }
-
-        // Draw objective contours
-        contourGroup.selectAll("*").remove();
-        if (result.solution) {
-            const levels = d3.range(0, c[0]*result.solution[0] + c[1]*result.solution[1], 2);
-            levels.forEach(level => {
-                let p1, p2;
-                if (Math.abs(c[1]) > 1e-6) {
-                    p1 = [-1, (level - c[0]*(-1))/c[1]];
-                    p2 = [4, (level - c[0]*4)/c[1]];
-                } else {
-                    p1 = [level/c[0], -1];
-                    p2 = [level/c[0], 4];
-                }
-                contourGroup.append("line").attr("x1", x(p1[0])).attr("y1", y(p1[1])).attr("x2", x(p2[0])).attr("y2", y(p2[1])).attr("stroke", "var(--color-text-secondary)").attr("stroke-dasharray", "4 4");
+                const b = normal[0] * p1[0] + normal[1] * p1[1];
+                constraints.push([normal[0], normal[1], b]);
+                updateFeasibleRegion();
             });
-        }
 
-        // Animate simplex path
-        simplexPath.datum(result.path).attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])));
-        const totalLength = simplexPath.node()?.getTotalLength() || 0;
-        simplexPath.attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(1500).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
-
-        simplexPoints.selectAll("*").remove();
-        result.path.forEach((p, i) => {
-            simplexPoints.append("circle").attr("cx", x(p[0])).attr("cy", y(p[1])).attr("r", 0).attr("fill", "var(--color-danger)").transition().delay(i * 300).attr("r", 5);
-        });
-
-        runBtn.disabled = false;
+        svg.call(drag);
     }
 
-    function renderConstraints() {
-        constraintsContainer.innerHTML = '';
+    function updateFeasibleRegion() {
+        renderConstraintsList();
+
+        let subjectPolygon = [[-10,-10], [10,-10], [10,10], [-10,10]];
+        const allConstraints = [...constraints, [-1, 0, 0], [0, -1, 0]]; // Add non-negativity
+
+        allConstraints.forEach(c => {
+            const clipPolygon = halfPlaneToPolygon({ a: c.slice(0, 2), b: c[2] });
+            subjectPolygon = polygonClip(clipPolygon, subjectPolygon);
+        });
+
+        svg.select(".content").selectAll("*").remove(); // Clear previous visuals
+        const lineGen = d3.line().x(d => x(d[0])).y(d => y(d[1]));
+
+        if (subjectPolygon) {
+            svg.select(".content").append("path").attr("class", "feasible-region")
+                .datum(subjectPolygon).attr("d", lineGen).attr("fill", "var(--color-primary-light)");
+        }
+        return subjectPolygon;
+    }
+
+    function halfPlaneToPolygon({ a, b }) {
+        const p1 = [a[0]*b, a[1]*b];
+        const p2 = [p1[0] - a[1]*20, p1[1] + a[0]*20];
+        const p3 = [p1[0] + a[1]*20, p1[1] - a[0]*20];
+        const p4 = [p3[0] - a[0]*20, p3[1] - a[1]*20];
+        const p5 = [p2[0] - a[0]*20, p2[1] - a[1]*20];
+        return [p2, p3, p4, p5];
+    }
+
+    function renderConstraintsList() {
+        constraintsList.innerHTML = '';
         constraints.forEach((c, i) => {
             const div = document.createElement("div");
-            div.innerHTML = `
-                <input type="number" value="${c[0]}" step="0.1"> x₁ +
-                <input type="number" value="${c[1]}" step="0.1"> x₂ ≤
-                <input type="number" value="${c[2]}" step="0.1">
-                <button data-index="${i}">X</button>
-            `;
-            div.querySelectorAll('input').forEach((input, j) => {
-                input.addEventListener('change', (e) => constraints[i][j] = +e.target.value);
-            });
-            div.querySelector('button').addEventListener('click', () => {
-                constraints.splice(i, 1);
-                renderConstraints();
-            });
-            constraintsContainer.appendChild(div);
+            div.innerHTML = `<span>${c[0].toFixed(2)}x₁ + ${c[1].toFixed(2)}x₂ ≤ ${c[2].toFixed(2)}</span>
+                             <button data-index="${i}">✖</button>`;
+            div.querySelector('button').onclick = () => { constraints.splice(i, 1); updateFeasibleRegion(); };
+            constraintsList.appendChild(div);
         });
     }
 
-    addBtn.addEventListener('click', () => { constraints.push([0,0,0]); renderConstraints(); });
-    runBtn.addEventListener('click', update);
+    async function runSimplex() {
+        const region = updateFeasibleRegion();
+        solutionText.innerHTML = "";
+        if (!region || region.length < 3) {
+            solutionText.innerHTML = "Feasible region is empty or unbounded.";
+            return;
+        }
 
-    renderConstraints();
+        const c = [+c1_in.value, +c2_in.value];
+        let vertices = region.slice(0, region.length - 1);
+
+        // Sort vertices to trace the perimeter
+        const center = vertices.reduce((acc, v) => [acc[0] + v[0], acc[1] + v[1]], [0,0]).map(v => v/vertices.length);
+        vertices.sort((a,b) => Math.atan2(a[1]-center[1], a[0]-center[0]) - Math.atan2(b[1]-center[1], b[0]-center[0]));
+
+        let path = [];
+        let maxObjective = -Infinity;
+        let bestVertex = null;
+
+        for (const vertex of vertices) {
+            path.push(vertex);
+            const obj = c[0] * vertex[0] + c[1] * vertex[1];
+            if (obj > maxObjective) {
+                maxObjective = obj;
+                bestVertex = vertex;
+            }
+
+            svg.select(".content").selectAll(".vertex").data(vertices)
+                .join("circle").attr("class", "vertex").attr("cx", d => x(d[0])).attr("cy", d => y(d[1]))
+                .attr("r", 4).attr("fill", "var(--color-text-main)");
+
+            svg.select(".content").append("circle").attr("class", "current-vertex")
+                .attr("cx", x(vertex[0])).attr("cy", y(vertex[1]))
+                .attr("r", 6).attr("fill", "var(--color-accent)")
+                .transition().duration(400).attr("r", 8).transition().attr("r", 6);
+
+            await new Promise(resolve => setTimeout(resolve, 400));
+        }
+
+        svg.select(".content").append("circle").attr("class", "optimal-vertex")
+            .attr("cx", x(bestVertex[0])).attr("cy", y(bestVertex[1]))
+            .attr("r", 8).attr("fill", "var(--color-success)");
+
+        solutionText.innerHTML = `<strong>Solution:</strong> [${bestVertex[0].toFixed(2)}, ${bestVertex[1].toFixed(2)}]<br>
+                                  <strong>Optimal Value:</strong> ${maxObjective.toFixed(3)}`;
+    }
+
+    runBtn.onclick = runSimplex;
+    clearBtn.onclick = () => {
+        constraints = [...initialConstraints];
+        updateFeasibleRegion();
+        solutionText.innerHTML = "";
+    };
+    new ResizeObserver(setupChart).observe(plotContainer);
+    setupChart();
+    updateFeasibleRegion();
 }

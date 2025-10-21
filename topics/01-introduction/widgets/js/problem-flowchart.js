@@ -1,76 +1,86 @@
 /**
  * Widget: Problem Flowchart
  *
- * Description: An interactive flowchart that guides users through classifying an optimization problem.
+ * Description: An interactive, custom-built flowchart to classify optimization problems.
+ * Version: 2.0.0
  */
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.js";
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export function initProblemFlowchart(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
+    const flowchartData = {
+        start: { text: "Is the problem convex?", type: 'decision', yes: 'convex', no: 'non-convex' },
+        'non-convex': { text: "General Non-linear Program (NLP)", type: 'terminal', desc: "Hard to solve globally." },
+        convex: { text: "Objective & Constraints Type?", type: 'decision', options: [
+            { text: "Linear", target: "linear_obj" },
+            { text: "Quadratic", target: "quad_obj" },
+            { text: "General Convex", target: "general_convex" }
+        ]},
+        linear_obj: { text: "Linear Constraints?", type: 'decision', yes: 'lp', no: 'conic_constraints' },
+        lp: { text: "Linear Program (LP)", type: 'terminal', desc: "Fast, reliable solvers exist." },
+        conic_constraints: { text: "Conic Constraints?", type: 'decision', yes: 'socp', no: 'gp' },
+        socp: { text: "Second-Order Cone Program (SOCP)", type: 'terminal', desc: "More general than LPs." },
+        gp: { text: "Geometric Program (GP)", type: 'terminal', desc: "Can be transformed to convex." },
+        quad_obj: { text: "Linear Constraints?", type: 'decision', yes: 'qp', no: 'quad_constraints' },
+        qp: { text: "Quadratic Program (QP)", type: 'terminal', desc: "Minimizes a quadratic over a polyhedron." },
+        quad_constraints: { text: "Quadratic Constraints?", type: 'decision', yes: 'qcqp', no: 'sdp_q' },
+        qcqp: { text: "Quadratically Constrained QP (QCQP)", type: 'terminal', desc: "All constraints are quadratic." },
+        sdp_q: { text: "Semidefinite Program (SDP)", type: 'terminal', desc: "Optimization over the cone of PSD matrices." },
+        general_convex: { text: "General Convex Program", type: 'terminal', desc: "Solved with methods like interior-point." }
+    };
+
+    let history = ['start'];
+
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="problem-flowchart-widget">
-            <p class="widget-instructions">Click through the flowchart to classify your optimization problem.</p>
-            <div id="mermaid-container"></div>
-            <button id="reset-flowchart">Reset</button>
+            <div id="flowchart-display" style="padding: 20px; border: 1px solid var(--color-surface-1); border-radius: 8px; text-align: center;"></div>
+            <div id="flowchart-controls" style="margin-top: 15px; text-align: center;"></div>
+            <div id="flowchart-info" class="widget-output" style="margin-top: 15px;"></div>
         </div>
     `;
 
-    const mermaidContainer = container.querySelector("#mermaid-container");
-    const resetButton = container.querySelector("#reset-flowchart");
+    const display = container.querySelector("#flowchart-display");
+    const controls = container.querySelector("#flowchart-controls");
+    const info = container.querySelector("#flowchart-info");
 
-    const graphDefinition = `
-    graph TD
-        A(Start) --> B{Is it a convex problem?};
-        B -- No --> B_no[General Non-linear Program];
-        B -- Yes --> C{Objective & Constraints Type};
+    function render() {
+        const currentId = history[history.length - 1];
+        const node = flowchartData[currentId];
 
-        C --> D{Linear Objective?};
-        D -- Yes --> E{Linear Constraints?};
-        E -- Yes --> LP[Linear Program (LP)];
-        E -- No --> F{Conic Constraints?};
-        F -- Yes --> SOCP[Second-Order Cone Program (SOCP)];
-        F -- No --> GP[Geometric Program];
+        display.innerHTML = `<h3>${node.text}</h3>`;
+        controls.innerHTML = '';
+        info.innerHTML = node.desc ? `<p>${node.desc}</p>` : '';
 
-        C --> G{Quadratic Objective?};
-        G -- Yes --> H{Linear Constraints?};
-        H -- Yes --> QP[Quadratic Program (QP)];
-        H -- No --> I{Quadratic Constraints?};
-        I -- Yes --> QCQP[Quadratically Constrained QP];
-        I -- No --> SDP_Q[Semidefinite Program (SDP)];
+        const backButton = document.createElement('button');
+        backButton.textContent = 'Back';
+        backButton.disabled = history.length === 1;
+        backButton.onclick = () => { history.pop(); render(); };
+        controls.appendChild(backButton);
 
-        C --> J{General Convex Objective?};
-        J -- Yes --> K[General Convex Program];
+        if (node.type === 'decision') {
+            if (node.options) {
+                node.options.forEach(opt => {
+                    const button = document.createElement('button');
+                    button.textContent = opt.text;
+                    button.onclick = () => { history.push(opt.target); render(); };
+                    controls.appendChild(button);
+                });
+            } else {
+                const yesButton = document.createElement('button');
+                yesButton.textContent = 'Yes';
+                yesButton.onclick = () => { history.push(node.yes); render(); };
+                controls.appendChild(yesButton);
 
-        %% Styling
-        classDef final fill:#2ecc71,stroke:#27ae60,color:#fff;
-        class LP,SOCP,GP,QP,QCQP,SDP_Q,K,B_no final;
-    `;
-
-    const renderFlowchart = () => {
-        mermaidContainer.innerHTML = `<div class="mermaid">${graphDefinition}</div>`;
-        mermaid.run({
-            nodes: document.querySelectorAll('.mermaid'),
-        });
-    };
-
-    resetButton.addEventListener("click", renderFlowchart);
-
-    mermaid.initialize({
-        startOnLoad: false,
-        theme: 'base',
-        themeVariables: {
-            background: '#1a1d24',
-            primaryColor: '#2e323b',
-            primaryTextColor: '#e0e0e0',
-            lineColor: '#a0a0a0',
-            textColor: '#e0e0e0',
+                const noButton = document.createElement('button');
+                noButton.textContent = 'No';
+                noButton.onclick = () => { history.push(node.no); render(); };
+                controls.appendChild(noButton);
+            }
         }
-    });
+    }
 
-    renderFlowchart();
+    render();
 }

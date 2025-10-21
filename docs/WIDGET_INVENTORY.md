@@ -1,13 +1,13 @@
 # Widget Inventory
 
 ## Summary
-- **Total Planned:** 102 widgets
-- **Completed:** 75
+- **Total Planned:** 100 widgets
+- **Completed:** 73
 - **In Progress:** 0
 - **Not Started:** 27
 
 ## By Priority
-- **High Priority:** 33/33 Completed
+- **High Priority:** 31/31 Completed
 - **Medium Priority:** 34/41 Completed
 - **Low Priority:** 8/31 Completed
 
@@ -17,8 +17,8 @@
 | 00 LA Primer | 8 | 8 | ✅ Complete |
 | 01 Intro | 6 | 5 | ⏳ In Progress |
 | 02 Convex Sets | 7 | 5 | ⏳ In Progress |
-| 03 Convex Functions | 8 | 6 | ⏳ In Progress |
-| 04 Convex Opt Problems | 8 | 6 | ⏳ In Progress |
+| 03 Convex Functions | 7 | 5 | ⏳ In Progress |
+| 04 Convex Opt Problems | 7 | 5 | ⏳ In Progress |
 | 05 Duality | 8 | 6 | ⏳ In Progress |
 | 06 Approx & Fitting | 8 | 6 | ⏳ In Progress |
 | 07 Stat Estimation & ML | 9 | 7 | ⏳ In Progress |
@@ -26,4 +26,4 @@
 | 09 Unconstrained Min | 9 | 7 | ⏳ In Progress |
 | 10 Equality-Constrained Min | 8 | 6 | ⏳ In Progress |
 | 11 Interior-Point Methods | 9 | 7 | ⏳ In Progress |
-| **Total**| **102** | **75** | |
+| **Total**| **100** | **73** | |

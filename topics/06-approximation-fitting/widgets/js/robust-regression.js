@@ -1,110 +1,169 @@
 /**
- * Widget: Robust Regression vs Least Squares
+ * Widget: Robust Regression vs. Least Squares
  *
- * Description: Compares the results of standard least squares and a robust method (Huber regression) when outliers are present.
+ * Description: Compares standard least squares with a robust method (Huber regression)
+ *              to show how the latter is less sensitive to outliers.
+ * Version: 2.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-export async function initRobustRegression(containerId) {
+export function initRobustRegression(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="robust-regression-widget">
-            <div class="widget-controls">
+            <div id="plot-container" style="width: 100%; height: 400px;"></div>
+            <div class="widget-controls" style="padding: 15px;">
+                <p class="widget-instructions">Click to add points. Try adding outliers far from the main trend.</p>
                 <button id="clear-rr-btn">Clear Points</button>
-                <div class="legend">
-                    <span style="color:var(--color-primary);">■</span> Data Points
-                    <span style="color:var(--color-danger); margin-left: 10px;">―</span> Least Squares
-                    <span style="color:var(--color-success); margin-left: 10px;">―</span> Huber (Robust)
+                <div id="huber-delta-control">
+                    <label>Huber Delta: <span id="huber-delta-val">1.0</span></label>
+                    <input type="range" id="huber-delta-slider" min="0.1" max="3" step="0.1" value="1">
                 </div>
+                <div class="legend" style="margin-top: 10px;">
+                    <span style="color:var(--color-primary); font-weight:bold;">●</span> Data Points |
+                    <span style="color:var(--color-danger); margin-left: 10px; font-weight:bold;">―</span> Least Squares |
+                    <span style="color:var(--color-success); margin-left: 10px; font-weight:bold;">―</span> Huber (Robust) |
+                    <span style="color:var(--color-accent); margin-left: 10px; font-weight:bold;">―</span> RANSAC
+                </div>
+                 <div id="residuals-display"></div>
             </div>
-            <div id="plot-container"></div>
-            <p class="widget-instructions">Click to add points. Try adding an outlier far from the main trend.</p>
         </div>
     `;
 
     const clearBtn = container.querySelector("#clear-rr-btn");
+    const huberDeltaSlider = container.querySelector("#huber-delta-slider");
+    const huberDeltaVal = container.querySelector("#huber-delta-val");
+    const residualsDisplay = container.querySelector("#residuals-display");
     const plotContainer = container.querySelector("#plot-container");
 
     let points = [ {x: -3, y: -2.5}, {x: -2, y: -1.5}, {x: -1, y: -0.5}, {x: 0, y: 0.5}, {x: 1, y: 1.5}, {x: 2, y: 2.5} ];
+    let svg, x, y;
 
-    const margin = {top: 20, right: 20, bottom: 40, left: 50};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    function setupChart() {
+        plotContainer.innerHTML = '';
+        const margin = {top: 20, right: 20, bottom: 40, left: 50};
+        const width = plotContainer.clientWidth - margin.left - margin.right;
+        const height = plotContainer.clientHeight - margin.top - margin.bottom;
 
-    const svg = d3.select(plotContainer).append("svg")
-        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        svg = d3.select(plotContainer).append("svg")
+            .attr("width", "100%").attr("height", "100%")
+            .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-5, 5]).range([0, width]);
-    const y = d3.scaleLinear().domain([-5, 5]).range([height, 0]);
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-    svg.append("g").call(d3.axisLeft(y));
+        x = d3.scaleLinear().domain([-5, 5]).range([0, width]);
+        y = d3.scaleLinear().domain([-5, 5]).range([height, 0]);
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
+        svg.append("g").call(d3.axisLeft(y));
 
-    const pointsGroup = svg.append("g");
-    const lsLine = svg.append("path").attr("stroke", "var(--color-danger)").attr("stroke-width", 2.5).attr("fill", "none");
-    const huberLine = svg.append("path").attr("stroke", "var(--color-success)").attr("stroke-width", 2.5).attr("fill", "none");
+        svg.append("g").attr("class", "points-group");
+        svg.append("path").attr("class", "ls-line").attr("stroke", "var(--color-danger)").attr("stroke-width", 2.5).attr("fill", "none");
+        svg.append("path").attr("class", "huber-line").attr("stroke", "var(--color-success)").attr("stroke-width", 2.5).attr("fill", "none");
+        svg.append("path").attr("class", "ransac-line").attr("stroke", "var(--color-accent)").attr("stroke-width", 2.5).attr("fill", "none");
 
-    svg.append("rect").attr("width", width).attr("height", height).style("fill", "none").style("pointer-events", "all")
-        .on("click", (event) => {
-            const [mx, my] = d3.pointer(event, svg.node());
-            points.push({ x: x.invert(mx), y: y.invert(my) });
-            drawPoints();
-            updateRegressions();
-        });
+        svg.append("rect").attr("width", width).attr("height", height).style("fill", "none").style("pointer-events", "all")
+            .on("click", (event) => {
+                const [mx, my] = d3.pointer(event, svg.node());
+                points.push({ x: x.invert(mx), y: y.invert(my) });
+                update();
+            });
+    }
 
-    const pyodide = await getPyodide();
-    await pyodide.loadPackage("scikit-learn");
-    const pythonCode = `
-from sklearn.linear_model import LinearRegression, HuberRegressor
-import numpy as np
+    // --- JS REGRESSION IMPLEMENTATIONS ---
+    function leastSquares(data) {
+        if (data.length < 2) return null;
+        const sumX = d3.sum(data, d => d.x);
+        const sumY = d3.sum(data, d => d.y);
+        const sumXY = d3.sum(data, d => d.x * d.y);
+        const sumX2 = d3.sum(data, d => d.x * d.x);
+        const n = data.length;
 
-def fit_regressions(points_data):
-    if len(points_data) < 2:
-        return None
+        const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        const b = (sumY - m * sumX) / n;
+        return { m, b };
+    }
 
-    X = np.array([p['x'] for p in points_data]).reshape(-1, 1)
-    y = np.array([p['y'] for p in points_data])
+    function huberRegression(data, delta = 1.0, max_iter=100, tol=1e-4) {
+        if (data.length < 2) return null;
+        let { m, b } = leastSquares(data); // Start with LS solution
 
-    line_x = np.array([[-5], [5]])
+        for (let i = 0; i < max_iter; i++) {
+            let weights = data.map(d => {
+                const residual = Math.abs(d.y - (m * d.x + b));
+                return residual < delta ? 1 : delta / residual;
+            });
 
-    ls = LinearRegression().fit(X, y)
-    ls_line_y = ls.predict(line_x)
+            const sumW = d3.sum(weights);
+            const sumWX = d3.sum(data, (d, j) => weights[j] * d.x);
+            const sumWY = d3.sum(data, (d, j) => weights[j] * d.y);
+            const sumWXY = d3.sum(data, (d, j) => weights[j] * d.x * d.y);
+            const sumWX2 = d3.sum(data, (d, j) => weights[j] * d.x * d.x);
 
-    huber = HuberRegressor().fit(X, y)
-    huber_line_y = huber.predict(line_x)
+            const new_m = (sumW * sumWXY - sumWX * sumWY) / (sumW * sumWX2 - sumWX * sumWX);
+            const new_b = (sumWY - new_m * sumWX) / sumW;
 
-    return {"ls_line": ls_line_y.tolist(), "huber_line": huber_line_y.tolist()}
-`;
-    await pyodide.runPythonAsync(pythonCode);
-    const fit_regressions = pyodide.globals.get('fit_regressions');
+            if (Math.abs(new_m - m) < tol && Math.abs(new_b - b) < tol) break;
+            m = new_m; b = new_b;
+        }
+        return { m, b };
+    }
 
-    function drawPoints() {
-        pointsGroup.selectAll("circle").data(points).join("circle")
+    function ransac(data, n=2, k=10, t=1, d=Math.floor(data.length*0.6)) {
+        if (data.length < 2) return null;
+        let best_model = null;
+        let best_inliers = [];
+
+        for(let i=0; i<k; i++) {
+            const sample = d3.shuffle(data.slice()).slice(0, n);
+            const model = leastSquares(sample);
+            if(!model) continue;
+
+            const inliers = data.filter(p => Math.abs(p.y - (model.m*p.x + model.b)) < t);
+            if (inliers.length > best_inliers.length) {
+                best_inliers = inliers;
+                best_model = model;
+            }
+        }
+        return leastSquares(best_inliers);
+    }
+
+    function update() {
+        huberDeltaVal.textContent = (+huberDeltaSlider.value).toFixed(1);
+        svg.select(".points-group").selectAll("circle").data(points).join("circle")
             .attr("cx", d => x(d.x)).attr("cy", d => y(d.y))
             .attr("r", 5).attr("fill", "var(--color-primary)");
+
+        const ls_params = leastSquares(points);
+        const huber_params = huberRegression(points, +huberDeltaSlider.value);
+        const ransac_params = ransac(points);
+
+        const lineGenerator = (params) => {
+            if (!params) return null;
+            const [x1, x2] = x.domain();
+            return d3.line()([[x1, params.m * x1 + params.b], [x2, params.m * x2 + params.b]]);
+        };
+        const line = d3.line().x(d => x(d[0])).y(d => y(d[1]));
+
+        svg.select(".ls-line").datum(ls_params).transition().duration(200).attr("d", d => line(lineGenerator(d)));
+        svg.select(".huber-line").datum(huber_params).transition().duration(200).attr("d", d => line(lineGenerator(d)));
+        svg.select(".ransac-line").datum(ransac_params).transition().duration(200).attr("d", d => line(lineGenerator(d)));
+
+        const mse = (data, model) => d3.mean(data, p => (p.y - (model.m*p.x + model.b))**2);
+        residualsDisplay.innerHTML = `<strong>Mean Squared Error:</strong><br>
+            LS: ${mse(points, ls_params).toFixed(3)} |
+            Huber: ${mse(points, huber_params).toFixed(3)} |
+            RANSAC: ${mse(points, ransac_params).toFixed(3)}`;
     }
 
-    async function updateRegressions() {
-        const lines = await fit_regressions(points).then(l => l ? l.toJs() : null);
-        if (!lines) return;
-
-        const lineGenerator = d3.line().x((d, i) => x(i === 0 ? -5 : 5)).y(d => y(d));
-        lsLine.datum(lines.ls_line).transition().duration(200).attr("d", lineGenerator);
-        huberLine.datum(lines.huber_line).transition().duration(200).attr("d", lineGenerator);
-    }
-
-    clearBtn.addEventListener("click", () => {
+    clearBtn.onclick = () => {
         points = [];
-        lsLine.attr("d", null);
-        huberLine.attr("d", null);
-        drawPoints();
-    });
+        update();
+    };
 
-    drawPoints();
-    updateRegressions();
+    huberDeltaSlider.oninput = update;
+    new ResizeObserver(setupChart).observe(plotContainer);
+    setupChart();
+    update();
 }

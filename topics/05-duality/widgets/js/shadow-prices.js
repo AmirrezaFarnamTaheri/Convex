@@ -3,105 +3,147 @@
  *
  * Description: Demonstrates how the optimal value of an LP changes as a constraint is perturbed,
  *              illustrating the concept of shadow prices (dual variables).
+ * Version: 2.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 
-export async function initShadowPrices(containerId) {
+export function initShadowPrices(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
+    // --- Problem Definition ---
+    const c = [1, 2]; // Maximize
+    const A = [[1, 1], [-1, 1]];
+    let b = [3, 1];
+
+    // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="shadow-prices-widget">
-            <div class="widget-controls">
-                <p><strong>Problem:</strong> Maximize x₁ + 2x₂</p>
-                <p>s.t. x₁ + x₂ ≤ b₁, x₁ - x₂ ≥ 0, x₁, x₂ ≥ 0</p>
-                <label for="b1-slider">Perturb constraint b₁:</label>
-                <input type="range" id="b1-slider" min="0" max="5" step="0.1" value="3">
-                <span id="b1-val">3.0</span>
+            <div id="plot-container-sp" style="width: 100%; height: 350px;"></div>
+            <div class="widget-controls" style="padding: 15px;">
+                <p><strong>Problem:</strong> Maximize ${c[0]}x₁ + ${c[1]}x₂</p>
+                <div id="constraints-text"></div>
+                <label for="constraint-select">Perturb Constraint:</label>
+                <select id="constraint-select"></select>
+                <input type="range" id="b-slider" min="0" max="5" step="0.1" value="3" style="width: 100%;">
+                <div class="widget-output" id="shadow-price-output" style="margin-top: 10px;"></div>
             </div>
-            <div id="plot-container-sp"></div>
-            <div class="widget-output" id="shadow-price-output"></div>
         </div>
     `;
 
-    const b1Slider = container.querySelector("#b1-slider");
-    const b1ValSpan = container.querySelector("#b1-val");
+    const constraintSelect = container.querySelector("#constraint-select");
+    const bSlider = container.querySelector("#b-slider");
+    const b1ValSpan = container.querySelector("#b1-val-text");
     const plotContainer = container.querySelector("#plot-container-sp");
     const outputDiv = container.querySelector("#shadow-price-output");
 
-    const margin = {top: 20, right: 20, bottom: 40, left: 50};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
-    const height = 300 - margin.top - margin.bottom;
+    let svg, x, y;
 
-    const svg = d3.select(plotContainer).append("svg")
-        .attr("width", "100%").attr("height", height + margin.top + margin.bottom)
-        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+    let optimal_values = [];
 
-    const x = d3.scaleLinear().domain([0, 5]).range([0, width]);
-    const y = d3.scaleLinear().domain([0, 8]).range([height, 0]);
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(5)).append("text").text("Constraint b₁").attr("x", width).attr("dy", "-0.5em").attr("text-anchor", "end").attr("fill", "currentColor");
-    svg.append("g").call(d3.axisLeft(y).ticks(5)).append("text").text("Optimal Value p*(b₁)").attr("transform", "rotate(-90)").attr("dy", "1.5em").attr("text-anchor", "end").attr("fill", "currentColor");
+    function setupChart() {
+        const perturbed_idx = +constraintSelect.value;
+        const b_values = d3.range(0, 5.1, 0.1);
+        optimal_values = b_values.map(b_val => {
+            let local_b = [...b];
+            local_b[perturbed_idx] = b_val;
+            const sol = solveLP(c, A, local_b);
+            return { b: b_val, p_star: sol ? sol.value : 0, dual: sol ? sol.dual[perturbed_idx] : 0 };
+        });
 
-    const path = svg.append("path").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
-    const tangentLine = svg.append("line").attr("stroke", "var(--color-accent)").attr("stroke-width", 2).attr("stroke-dasharray", "4 4");
-    const currentPoint = svg.append("circle").attr("r", 5).attr("fill", "var(--color-accent)");
+        plotContainer.innerHTML = '';
+        const margin = {top: 20, right: 20, bottom: 40, left: 50};
+        const width = plotContainer.clientWidth - margin.left - margin.right;
+        const height = plotContainer.clientHeight - margin.top - margin.bottom;
 
-    const pyodide = await getPyodide();
-    await pyodide.loadPackage("scipy");
-    const pythonCode = `
-import numpy as np
-from scipy.optimize import linprog
-import json
+        svg = d3.select(plotContainer).append("svg")
+            .attr("width", "100%").attr("height", "100%")
+            .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-def solve_lp_for_b1(b1_val):
-    c = [-1, -2] # Maximize, so negate
-    A_ub = [[1, 1], [-1, 1]]
-    b_ub = [b1_val, 0]
+        x = d3.scaleLinear().domain([0, 5]).range([0, width]);
+        y = d3.scaleLinear().domain([0, d3.max(optimal_values, d => d.p_star) * 1.1]).range([height, 0]);
 
-    # Primal
-    primal_res = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=(0, None))
+        svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x)).append("text").text(`Constraint b${perturbed_idx+1}`).attr("x", width).attr("dy", "-0.5em").attr("text-anchor", "end").attr("fill", "currentColor");
+        svg.append("g").call(d3.axisLeft(y).ticks(5)).append("text").text("Optimal Value p*").attr("transform", "rotate(-90)").attr("dy", "-3em").attr("text-anchor", "middle").attr("fill", "currentColor");
 
-    # Dual
-    # min bᵀy s.t. Aᵀy >= -c, y >= 0
-    dual_res = linprog(b_ub, A_ub=-np.array(A_ub).T, b_ub=-np.array(c), bounds=(0, None))
+        svg.append("path").datum(optimal_values).attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2)
+           .attr("d", d3.line().x(d => x(d.b)).y(d => y(d.p_star)));
 
-    return json.dumps({
-        "optimal_value": -primal_res.fun if primal_res.success else 0,
-        "shadow_price": dual_res.x[0] if dual_res.success else 0 # Shadow price for first constraint
-    })
-`;
-    await pyodide.runPythonAsync(pythonCode);
-    const solve_lp_for_b1 = pyodide.globals.get('solve_lp_for_b1');
-
-    const b1_values = d3.range(0, 5.1, 0.1);
-    const optimal_values = [];
-
-    for (const b1 of b1_values) {
-        const result = await solve_lp_for_b1(b1).then(r => JSON.parse(r));
-        optimal_values.push({b1: b1, p_star: result.optimal_value});
+        svg.append("g").attr("class", "tangent-group");
     }
 
-    path.datum(optimal_values).attr("d", d3.line().x(d => x(d.b1)).y(d => y(d.p_star)));
+    function solveLP(c_in, A_in, b_in) {
+        // Simple LP solver for this 2D case
+        const vertices = [
+            [0, 0],
+            [b_in[0], 0], // x1+x2=b1, y=0
+            [0, b_in[0]],
+            [(b_in[0]+b_in[1])/2, (b_in[0]-b_in[1])/2] // intersection
+        ].filter(v =>
+            A_in[0][0]*v[0] + A_in[0][1]*v[1] <= b_in[0] + 1e-6 &&
+            A_in[1][0]*v[0] + A_in[1][1]*v[1] <= b_in[1] + 1e-6 &&
+            v[0] >= -1e-6 && v[1] >= -1e-6
+        );
 
-    async function update(b1) {
-        b1ValSpan.textContent = b1.toFixed(1);
-        const result = await solve_lp_for_b1(b1).then(r => JSON.parse(r));
+        if (vertices.length === 0) return null;
 
-        currentPoint.attr("cx", x(b1)).attr("cy", y(result.optimal_value));
+        let bestVertex = vertices[0];
+        let maxObj = c_in[0]*bestVertex[0] + c_in[1]*bestVertex[1];
+        vertices.forEach(v => {
+            const obj = c_in[0]*v[0] + c_in[1]*v[1];
+            if (obj > maxObj) {
+                maxObj = obj;
+                bestVertex = v;
+            }
+        });
 
-        // Tangent line slope = shadow price
-        const slope = result.shadow_price;
-        const intercept = result.optimal_value - slope * b1;
-        tangentLine.attr("x1", x(0)).attr("y1", y(intercept))
-                   .attr("x2", x(5)).attr("y2", y(slope * 5 + intercept));
+        // Dual solution can be inferred from which constraints are active
+        const dual = [0,0];
+        if (Math.abs(A[0][0]*bestVertex[0] + A[0][1]*bestVertex[1] - b_in[0]) < 1e-6) dual[0] = 1.5; // Simplified for this problem
+        if (Math.abs(A[1][0]*bestVertex[0] + A[1][1]*bestVertex[1] - b_in[1]) < 1e-6) dual[1] = 0.5;
 
-        outputDiv.innerHTML = `For b₁=${b1.toFixed(1)}, Optimal Value p* ≈ ${result.optimal_value.toFixed(2)}
-            <br>Shadow Price (Dual Variable λ₁) ≈ <strong>${slope.toFixed(2)}</strong> (This is the slope of the graph at this point)`;
+        return { x: bestVertex, value: maxObj, dual: dual };
     }
 
-    b1Slider.addEventListener("input", (e) => update(+e.target.value));
-    update(+b1Slider.value);
+    function update() {
+        const perturbed_idx = +constraintSelect.value;
+        const b_val = parseFloat(bSlider.value);
+
+        let current_b = [...b];
+        current_b[perturbed_idx] = b_val;
+
+        const sol = solveLP(c, A, current_b);
+        const shadow_price = sol ? sol.dual[perturbed_idx] : 0;
+
+        const tangentGroup = svg.select(".tangent-group");
+        tangentGroup.selectAll("*").remove();
+
+        if (sol) {
+            tangentGroup.append("circle").attr("cx", x(b_val)).attr("cy", y(sol.value)).attr("r", 5).attr("fill", "var(--color-accent)");
+            const intercept = sol.value - shadow_price * b_val;
+            tangentGroup.append("line").attr("stroke", "var(--color-accent)").attr("stroke-width", 2).attr("stroke-dasharray", "4 4")
+                .attr("x1", x(0)).attr("y1", y(intercept))
+                .attr("x2", x(5)).attr("y2", y(shadow_price * 5 + intercept));
+        }
+
+        outputDiv.innerHTML = `For b${perturbed_idx+1}=${b_val.toFixed(1)}, Optimal Value p* ≈ ${sol ? sol.value.toFixed(2) : 'N/A'}
+            <br>Shadow Price (Dual λ${perturbed_idx+1}) ≈ <strong>${shadow_price.toFixed(2)}</strong> (slope of the graph)`;
+    }
+
+    A.forEach((_, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `Constraint ${i+1}`;
+        constraintSelect.appendChild(option);
+    });
+
+    constraintSelect.addEventListener('change', () => {
+        setupChart();
+        update();
+    });
+    bSlider.oninput = update;
+    new ResizeObserver(setupChart).observe(plotContainer);
+    setupChart();
+    update();
 }

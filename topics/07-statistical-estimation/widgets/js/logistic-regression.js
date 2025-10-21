@@ -18,6 +18,11 @@ export async function initLogisticRegression(containerId) {
                     <option value="0">Class 0</option>
                     <option value="1">Class 1</option>
                 </select>
+                <label>Optimizer:</label>
+                <select id="optimizer-select">
+                    <option value="SGD">SGD</option>
+                    <option value="Adam">Adam</option>
+                </select>
                 <button id="logreg-train-btn">Train Model</button>
                 <button id="logreg-reset-btn">Reset</button>
             </div>
@@ -31,6 +36,7 @@ export async function initLogisticRegression(containerId) {
     const classSelect = container.querySelector("#logreg-class-select");
     const trainBtn = container.querySelector("#logreg-train-btn");
     const resetBtn = container.querySelector("#logreg-reset-btn");
+    const optimizerSelect = container.querySelector("#optimizer-select");
     const boundaryPlot = container.querySelector("#logreg-boundary-plot");
     const likelihoodPlot = container.querySelector("#logreg-likelihood-plot");
 
@@ -62,9 +68,11 @@ import numpy as np
 from sklearn.linear_model import SGDClassifier
 import json
 
-def train_logistic_step(X, y, iter):
+def train_logistic_step(X, y, optimizer, iter):
     # Use SGDClassifier to train incrementally
     model = SGDClassifier(loss='log_loss', learning_rate='constant', eta0=0.1, max_iter=1, warm_start=True)
+    if optimizer == 'Adam':
+        model.learning_rate = 'adaptive'
 
     likelihoods = []
     coefs = []
@@ -72,7 +80,9 @@ def train_logistic_step(X, y, iter):
     for i in range(iter):
         model.fit(X, y)
         p = model.predict_proba(X)
-        likelihood = -np.mean(y * np.log(p[:,1]) + (1-y) * np.log(1-p[:,0]))
+        # Avoid log(0)
+        p = np.clip(p, 1e-9, 1 - 1e-9)
+        likelihood = -np.mean(y * np.log(p[:,1]) + (1-y) * np.log(p[:,0]))
         likelihoods.append(likelihood)
         coefs.append(model.coef_[0].tolist() + [model.intercept_[0]])
 
@@ -93,8 +103,9 @@ def train_logistic_step(X, y, iter):
 
         const X = points.map(p => [p.x, p.y]);
         const y = points.map(p => p.class);
+        const optimizer = optimizerSelect.value;
 
-        const result = await train_logistic_step(X, y, 100).then(r => JSON.parse(r));
+        const result = await train_logistic_step(X, y, optimizer, 100).then(r => JSON.parse(r));
         const n_iter = result.likelihoods.length;
 
         const x_like = d3.scaleLinear().domain([0, n_iter]).range([0, width]);
@@ -105,6 +116,12 @@ def train_logistic_step(X, y, iter):
 
         const line = d3.line().x((d,i) => x_like(i)).y(d => y_like(d));
         svgLike.append("path").datum(result.likelihoods).attr("d", line).attr("fill", "none").attr("stroke", "var(--color-success)").attr("stroke-width", 2);
+
+        // Draw coefficient path
+        const coef_x = d3.scaleLinear().domain(d3.extent(result.coefs, d => d[0])).range([0, width]);
+        const coef_y = d3.scaleLinear().domain(d3.extent(result.coefs, d => d[1])).range([height2, 0]);
+        svgLike.append("path").datum(result.coefs).attr("d", d3.line().x(d => coef_x(d[0])).y(d => coef_y(d[1])))
+            .attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 1).attr("opacity", 0.5);
 
         // Animate boundary
         result.coefs.forEach((coef, i) => {

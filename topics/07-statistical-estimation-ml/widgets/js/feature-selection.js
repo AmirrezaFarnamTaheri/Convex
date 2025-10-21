@@ -13,19 +13,27 @@ export async function initFeatureSelection(containerId) {
     container.innerHTML = `
         <div class="feature-selection-widget">
             <div class="widget-controls">
+                <label>Dataset:</label>
+                <select id="fs-dataset-select">
+                    <option value="informative">Informative Features</option>
+                    <option value="redundant">Redundant Features</option>
+                </select>
                 <label>Regularization Strength (C⁻¹): smaller C = stronger regularization</label>
                 <input type="range" id="fs-c-slider" min="-2" max="2" step="0.1" value="0">
                 <span id="c-val-display">C = 1.0</span>
             </div>
             <div id="plot-container"></div>
+            <div id="corr-matrix-container" style="width: 100%; height: 250px;"></div>
             <div class="widget-output" id="sparsity-output"></div>
         </div>
     `;
 
+    const datasetSelect = container.querySelector("#fs-dataset-select");
     const cSlider = container.querySelector("#fs-c-slider");
     const cValDisplay = container.querySelector("#c-val-display");
     const plotContainer = container.querySelector("#plot-container");
     const sparsityOutput = container.querySelector("#sparsity-output");
+    const corrMatrixContainer = container.querySelector("#corr-matrix-container");
 
     const margin = {top: 30, right: 20, bottom: 40, left: 50};
     const width = plotContainer.clientWidth - margin.left - margin.right;
@@ -47,17 +55,27 @@ from sklearn.datasets import make_classification
 from sklearn.linear_model import LogisticRegression
 import json
 
-X, y = make_classification(n_samples=100, n_features=20, n_informative=5, n_redundant=5, n_classes=2, random_state=42)
-# Scale features for better performance
-X = (X - X.mean(axis=0)) / X.std(axis=0)
+def generate_data(dataset_type):
+    if dataset_type == 'informative':
+        X, y = make_classification(n_samples=100, n_features=20, n_informative=8, n_redundant=2, n_classes=2, random_state=42)
+    else: # redundant
+        X, y = make_classification(n_samples=100, n_features=20, n_informative=4, n_redundant=8, n_repeated=4, n_classes=2, random_state=42)
 
-def get_coefs(C):
+    X = (X - X.mean(axis=0)) / X.std(axis=0)
+    corr_matrix = np.corrcoef(X, rowvar=False).tolist()
+
+    return {"X": X, "y": y, "corr": corr_matrix}
+
+def get_coefs(X, y, C):
     clf = LogisticRegression(penalty='l1', C=C, solver='liblinear', random_state=42, tol=1e-6, max_iter=500)
     clf.fit(X, y)
     return clf.coef_.flatten().tolist()
 `;
     await pyodide.runPythonAsync(pythonCode);
+    const generate_data = pyodide.globals.get('generate_data');
     const get_coefs = pyodide.globals.get('get_coefs');
+
+    let current_data;
 
     const n_features = 20;
     const x = d3.scaleBand().domain(d3.range(n_features)).range([0, width]).padding(0.3);
@@ -68,35 +86,57 @@ def get_coefs(C):
     const bars = svg.append("g");
     svg.append("line").attr("x1", 0).attr("x2", width).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "var(--color-text-secondary)").attr("stroke-width", 0.5);
 
-    async function update(C) {
+    function drawCorrMatrix(corr) {
+        corrMatrixContainer.innerHTML = '';
+        const size = corrMatrixContainer.clientHeight;
+        const matrix_svg = d3.select(corrMatrixContainer).append("svg").attr("width", size).attr("height", size).attr("viewBox", `0 0 ${size} ${size}`);
+        const color = d3.scaleDiverging(d3.interpolatePiYG).domain([-1, 0, 1]);
+        const padding = 0.05;
+        const x_corr = d3.scaleBand().domain(d3.range(n_features)).range([0, size]).padding(padding);
+
+        for(let i=0; i<n_features; i++) {
+            for(let j=0; j<n_features; j++) {
+                matrix_svg.append("rect")
+                    .attr("x", x_corr(i)).attr("y", x_corr(j))
+                    .attr("width", x_corr.bandwidth()).attr("height", x_corr.bandwidth())
+                    .attr("fill", color(corr[i][j]));
+            }
+        }
+    }
+
+    async function updateCoefficients(C) {
         cValDisplay.textContent = `C = ${C.toExponential(1)}`;
 
-        const coefs = await get_coefs(C).then(c => c.toJs());
+        const coefs = await get_coefs(current_data.X, current_data.y, C).then(c => c.toJs());
         const non_zero = coefs.filter(c => Math.abs(c) > 1e-5).length;
         sparsityOutput.textContent = `${non_zero} of ${n_features} features are non-zero.`;
 
         y.domain(d3.extent([-0.1, 0.1, ...coefs])).nice();
         yAxis.transition().duration(200).call(d3.axisLeft(y));
 
-        bars.selectAll("rect").data(coefs).join(
-            enter => enter.append("rect")
-                        .attr("x", (d,i) => x(i))
-                        .attr("y", y(0))
-                        .attr("width", x.bandwidth())
-                        .attr("height", 0),
-            update => update,
-            exit => exit.remove()
-        )
-        .transition().duration(200)
-        .attr("y", d => y(Math.max(0, d)))
-        .attr("height", d => Math.abs(y(d) - y(0)))
-        .attr("fill", d => d > 0 ? "var(--color-accent)" : "var(--color-primary)");
+        bars.selectAll("rect").data(coefs).join("rect")
+            .transition().duration(200)
+            .attr("x", (d,i) => x(i))
+            .attr("y", d => y(Math.max(0, d)))
+            .attr("width", x.bandwidth())
+            .attr("height", d => Math.abs(y(d) - y(0)))
+            .attr("fill", d => d > 0 ? "var(--color-accent)" : "var(--color-primary)");
+    }
+
+    async function changeDataset() {
+        const dataset_type = datasetSelect.value;
+        current_data = await generate_data(dataset_type).then(d => d.toJs({create_proxies: false}));
+        drawCorrMatrix(current_data.corr);
+        const C = Math.pow(10, +cSlider.value);
+        updateCoefficients(C);
     }
 
     cSlider.addEventListener("input", () => {
         const C = Math.pow(10, +cSlider.value);
-        update(C);
+        updateCoefficients(C);
     });
 
-    update(1.0);
+    datasetSelect.addEventListener("change", changeDataset);
+
+    changeDataset();
 }

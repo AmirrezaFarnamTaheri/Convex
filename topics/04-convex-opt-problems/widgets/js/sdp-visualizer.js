@@ -1,8 +1,9 @@
 /**
- * Widget: SDP Visualizer
+ * Widget: SDP Cone Visualizer
  *
  * Description: Visualizes the cone of positive semidefinite 2x2 symmetric matrices.
- *              A matrix [[x, y], [y, z]] is PSD iff x>=0, z>=0, and xz - y² >= 0.
+ *              A matrix [[x, z], [z, y]] is PSD iff x≥0, y≥0, and xy - z² ≥ 0.
+ * Version: 2.0.0
  */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128/build/three.module.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.128/examples/jsm/controls/OrbitControls.js";
@@ -11,106 +12,134 @@ export function initSDPVisualizer(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    container.innerHTML = `<div id="sdp-scene-container" style="height: 400px; position: relative;"></div>`;
+    // --- WIDGET LAYOUT ---
+    container.innerHTML = `
+        <div class="sdp-visualizer-widget">
+            <div id="sdp-scene-container" style="width: 100%; height: 400px; position: relative;"></div>
+            <div class="widget-controls" style="padding: 15px;">
+                <h4>Matrix Controls</h4>
+                <div class="control-row">
+                    <label for="x-slider">x (M₁₁):</label>
+                    <input type="range" id="x-slider" min="0" max="4" step="0.1" value="2">
+                </div>
+                <div class="control-row">
+                    <label for="y-slider">y (M₂₂):</label>
+                    <input type="range" id="y-slider" min="0" max="4" step="0.1" value="2">
+                </div>
+                <div class="control-row">
+                    <label for="z-slider">z (M₁₂):</label>
+                    <input type="range" id="z-slider" min="-3" max="3" step="0.1" value="1">
+                </div>
+                <div id="matrix-display" class="widget-output" style="margin-top: 10px;"></div>
+            </div>
+        </div>
+    `;
     const sceneContainer = container.querySelector("#sdp-scene-container");
+    const xSlider = container.querySelector("#x-slider");
+    const ySlider = container.querySelector("#y-slider");
+    const zSlider = container.querySelector("#z-slider");
+    const matrixDisplay = container.querySelector("#matrix-display");
+
+    let pointSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(0.15, 32, 32),
+        new THREE.MeshBasicMaterial({ color: 'red' })
+    );
 
     // --- SCENE SETUP ---
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color("hsl(225, 18%, 13%)");
-    const camera = new THREE.PerspectiveCamera(60, sceneContainer.clientWidth / 400, 0.1, 1000);
+    const bodyStyles = window.getComputedStyle(document.body);
+    const bgColor = bodyStyles.getPropertyValue('--color-background') || '#0b0d12';
+    scene.background = new THREE.Color(bgColor.trim());
+
+    const camera = new THREE.PerspectiveCamera(60, sceneContainer.clientWidth / sceneContainer.clientHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(sceneContainer.clientWidth, 400);
+    renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
     sceneContainer.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    camera.position.set(5, 5, 5);
-    controls.target.set(0, 0, 0);
+    camera.position.set(3, 3, 3);
+    controls.target.set(1.5, 1.5, 0);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    const light = new THREE.DirectionalLight(0xffffff, 0.8);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const light = new THREE.DirectionalLight(0xffffff, 0.6);
     light.position.set(5, 10, 7.5);
     scene.add(light);
 
     // --- AXES ---
-    const axesHelper = new THREE.AxesHelper(5);
+    const axesHelper = new THREE.AxesHelper(4);
     scene.add(axesHelper);
-    // Add labels for axes
-    const loader = new THREE.FontLoader();
-    loader.load('https://cdn.jsdelivr.net/npm/three@0.128/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+
+    const fontLoader = new THREE.FontLoader();
+    fontLoader.load('https://cdn.jsdelivr.net/npm/three@0.128/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+        const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
         const createLabel = (text, position) => {
-            const geo = new THREE.TextGeometry(text, { font: font, size: 0.5, height: 0.1 });
-            const mat = new THREE.MeshStandardMaterial({ color: 0xffffff });
-            const mesh = new THREE.Mesh(geo, mat);
-            mesh.position.copy(position);
-            scene.add(mesh);
+            const textGeo = new THREE.TextGeometry(text, { font: font, size: 0.2, height: 0.02 });
+            const textMesh = new THREE.Mesh(textGeo, textMaterial);
+            textMesh.position.copy(position);
+            scene.add(textMesh);
         };
-        createLabel('x', new THREE.Vector3(5.5, 0, 0));
-        createLabel('y', new THREE.Vector3(0, 5.5, 0));
-        createLabel('z', new THREE.Vector3(0, 0, 5.5));
+        createLabel('x (M₁₁)', new THREE.Vector3(4.1, 0, 0));
+        createLabel('y (M₂₂)', new THREE.Vector3(0, 4.1, 0));
+        createLabel('z (M₁₂)', new THREE.Vector3(0, 0, 3.1));
     });
 
-
     // --- PSD CONE GEOMETRY ---
-    const coneResolution = 50;
-    const coneHeight = 4;
-    const coneRadius = Math.sqrt(coneHeight * coneHeight); // Since xz=y^2, if x=z=H, y=H
+    // The surface is xy = z², with x>=0, y>=0.
+    const geometry = new THREE.ParametricGeometry((u, v, target) => {
+        const s = u * 4; // s from 0 to 4
+        const t = (v - 0.5) * 4; // t from -2 to 2
 
-    const geometry = new THREE.BufferGeometry();
-    const vertices = [];
-    const indices = [];
+        const x = s*s;
+        const y = t*t;
+        const z = s*t;
 
-    // Parametric surface for xz = y^2
-    for (let i = 0; i < coneResolution; i++) {
-        for (let j = 0; j < coneResolution; j++) {
-            const u = i / (coneResolution-1); // maps to radius
-            const v = j / (coneResolution-1); // maps to angle
+        // Map to axes: M11 -> x, M22 -> y, M12 -> z
+        target.set(x, y, z);
+    }, 60, 60);
 
-            const r = u * coneRadius;
-            const theta = v * 2 * Math.PI;
+    const material = new THREE.MeshStandardMaterial({
+        color: 'cyan',
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.8
+    });
+    const surface = new THREE.Mesh(geometry, material);
+    scene.add(surface);
+    scene.add(pointSphere);
 
-            // We have x>=0, z>=0, xz-y^2 >= 0
-            // Let x = r*cos(theta), y = ???, z=r*sin(theta) is not right
-            // Let's use a different parameterization
-            // x = s^2, z = t^2, y = s*t
-            const s = (u-0.5) * 4;
-            const t = (v-0.5) * 4;
+    function updatePoint() {
+        const x = +xSlider.value;
+        const y = +ySlider.value;
+        const z = +zSlider.value;
+        pointSphere.position.set(x, y, z);
+        const det = x * y - z * z;
+        const isPSD = det >= 0;
+        pointSphere.material.color.set(isPSD ? 'var(--color-success)' : 'var(--color-danger)');
 
-            const x = s*s;
-            const z = t*t;
-            const y = s*t;
-
-            if (x < coneHeight && z < coneHeight) {
-                // Map to Three.js axes: x -> X, z -> Y, y -> Z
-                vertices.push(x, z, y);
-            }
-        }
+        matrixDisplay.innerHTML = `
+            <p>M = <span class="matrix">[[${x.toFixed(1)}, ${z.toFixed(1)}], [${z.toFixed(1)}, ${y.toFixed(1)}]]</span></p>
+            <p>Determinant: <strong>${det.toFixed(2)}</strong></p>
+            <p>Status: <strong style="color: ${isPSD ? 'var(--color-success)' : 'var(--color-danger)'}">${isPSD ? 'Positive Semidefinite' : 'Not PSD'}</strong></p>
+        `;
     }
 
-    // We can't easily create indices for this, so we'll use a point cloud.
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    const material = new THREE.PointsMaterial({ color: 'cyan', size: 0.05 });
-    const points = new THREE.Points(geometry, material);
-    scene.add(points);
+    xSlider.addEventListener('input', updatePoint);
+    ySlider.addEventListener('input', updatePoint);
+    zSlider.addEventListener('input', updatePoint);
 
-    // Let's also try a mesh surface using a different parameterization that's easier to triangulate
-    // x = r, z = y^2/r
-    const mesh_geometry = new THREE.ParametricGeometry((u, v, target) => {
-        const x = u * 4; // u in [0,1] -> x in [0,4]
-        const y = (v-0.5) * 4; // v in [0,1] -> y in [-2,2]
-        const z = (y*y) / x;
-        if(z > 4) return;
-        target.set(x, z, y);
-    }, 40, 40);
-
-    const mesh_material = new THREE.MeshStandardMaterial({ color: 'cyan', side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
-    const surface = new THREE.Mesh(mesh_geometry, mesh_material);
-    scene.add(surface);
-
-
+    // --- ANIMATION & RESIZE ---
     function animate() {
         requestAnimationFrame(animate);
         controls.update();
         renderer.render(scene, camera);
     }
+
+    new ResizeObserver(() => {
+        camera.aspect = sceneContainer.clientWidth / sceneContainer.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
+    }).observe(sceneContainer);
+
+    updatePoint();
     animate();
 }

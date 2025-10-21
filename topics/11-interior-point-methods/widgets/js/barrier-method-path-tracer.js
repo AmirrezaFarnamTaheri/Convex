@@ -14,20 +14,36 @@ export async function initBarrierPathTracer(containerId) {
     container.innerHTML = `
         <div class="barrier-tracer-widget">
             <div class="widget-controls">
-                <label>Barrier Param (t): <span id="t-val-display">1.0</span></label>
-                <input type="range" id="t-slider" min="-1" max="3" step="0.1" value="0">
+                <div class="control-group">
+                    <label>Feasible Set:</label>
+                    <select id="bt-set-select">
+                        <option value="box">Box</option>
+                        <option value="polytope">Polytope</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Barrier Param (t): <span id="t-val-display">1.0</span></label>
+                    <input type="range" id="t-slider" min="-1" max="3" step="0.1" value="0">
+                </div>
             </div>
             <div id="plot-container"></div>
-            <p class="widget-instructions">Adjust 't' to see how the minimizer of the barrier objective approaches the true LP solution.</p>
+            <p class="widget-instructions">Drag the objective vector (red arrow) and adjust 't' to see the barrier objective's contours and minimizer.</p>
         </div>
     `;
 
     const tSlider = container.querySelector("#t-slider");
     const tValDisplay = container.querySelector("#t-val-display");
+    const setSelect = container.querySelector("#bt-set-select");
     const plotContainer = container.querySelector("#plot-container");
 
+    let c = [-1, -2]; // Objective vector
+    const sets = {
+        "box": { A: [[-1,0], [0,-1], [1,0], [0,1]], b: [0,0,1,1], domain: [-0.1, 1.1] },
+        "polytope": { A: [[-1,0], [0,-1], [1,1], [0.2, 1]], b: [0,0,1.5,1.2], domain: [-0.1, 1.6] }
+    };
+
     const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const width = (plotContainer.clientWidth || 600) - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
     const svg = d3.select(plotContainer).append("svg")
@@ -36,14 +52,10 @@ export async function initBarrierPathTracer(containerId) {
       .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([-0.1, 1.1]).range([0, width]);
-    const y = d3.scaleLinear().domain([-0.1, 1.1]).range([height, 0]);
-    svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-    svg.append("g").call(d3.axisLeft(y));
-
-    // Feasible region: 0 <= x,y <= 1
-    svg.append("rect").attr("x", x(0)).attr("y", y(1)).attr("width", x(1)-x(0)).attr("height", y(0)-y(1))
-        .attr("fill", "var(--color-primary-light)").attr("opacity", 0.5);
+    const x = d3.scaleLinear().range([0, width]);
+    const y = d3.scaleLinear().range([height, 0]);
+    const xAxis = svg.append("g").attr("transform", `translate(0,${height})`);
+    const yAxis = svg.append("g");
 
     const pyodide = await getPyodide();
     await pyodide.loadPackage("scipy");
@@ -52,47 +64,86 @@ import numpy as np
 from scipy.optimize import minimize
 import json
 
-c = np.array([-1.0, -2.0]) # Objective: max x + 2y
-# Constraints: x<=1, y<=1, x>=0, y>=0
-A = np.array([[-1,0], [0,-1], [1,0], [0,1]])
-b = np.array([0,0,1,1])
+def get_barrier_data(set_A, set_b, c_vec, t):
+    A = np.array(set_A)
+    b = np.array(set_b)
+    c = np.array(c_vec)
 
-def barrier_objective(x, t):
-    if np.any(b - A @ x <= 1e-6): return np.inf
-    return t * (c @ x) - np.sum(np.log(b - A @ x))
+    def barrier_objective(x):
+        residuals = b - A @ x
+        if np.any(residuals <= 1e-6): return np.inf
+        return t * (c @ x) - np.sum(np.log(residuals))
 
-def get_central_path():
-    path = []
-    for t_exp in np.linspace(-1, 3, 50):
-        t = 10**t_exp
-        res = minimize(lambda x: barrier_objective(x, t), np.array([0.5, 0.5]), method='Nelder-Mead')
-        if res.success:
-            path.append(res.x.tolist())
-    return json.dumps(path)
+    # Find minimizer
+    res = minimize(barrier_objective, np.mean(A, axis=0), method='Nelder-Mead', tol=1e-5)
+    x_star = res.x.tolist() if res.success else None
+
+    # Generate contours
+    domain = np.linspace(A.min()-0.1, A.max()+0.1, 50) # Heuristic for domain
+    xx, yy = np.meshgrid(np.linspace(x_star[0]-1, x_star[0]+1, 50), np.linspace(x_star[1]-1, x_star[1]+1, 50))
+    points = np.vstack([xx.ravel(), yy.ravel()])
+    zz = np.array([barrier_objective(p) for p in points.T]).reshape(50,50)
+
+    return json.dumps({"x_star": x_star, "contours": zz.tolist()})
 `;
     await pyodide.runPythonAsync(pythonCode);
-    const get_central_path = pyodide.globals.get('get_central_path');
-    const path_data = await get_central_path().then(r => JSON.parse(r));
+    const get_barrier_data = pyodide.globals.get('get_barrier_data');
 
-    svg.append("path").datum(path_data)
-        .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])))
-        .attr("fill", "none").attr("stroke", "var(--color-danger)").attr("stroke-width", 2).attr("stroke-dasharray", "4 4");
-
-    const solutionPoint = svg.append("circle").attr("r", 5).attr("fill", "var(--color-accent)");
+    const visGroup = svg.append("g");
 
     async function update() {
         const t = 10**(+tSlider.value);
         tValDisplay.textContent = t.toExponential(1);
+        const currentSet = sets[setSelect.value];
 
-        // Find current point on path by interpolation
-        const t_vals = d3.range(-1, 3, 4/50).map(v => 10**v);
-        const bisect = d3.bisector(d => d).left;
-        const idx = bisect(t_vals, t);
-        const pt = path_data[idx] || path_data[path_data.length-1];
+        x.domain(currentSet.domain);
+        y.domain(currentSet.domain);
+        xAxis.call(d3.axisBottom(x));
+        yAxis.call(d3.axisLeft(y));
 
-        solutionPoint.attr("cx", x(pt[0])).attr("cy", y(pt[1]));
+        visGroup.selectAll("*").remove();
+
+        // Feasible region
+        // This is a bit of a hack for visualization; assumes vertices are where constraints meet
+        // A proper way would be to find vertices, e.g., using a vertex enumeration algorithm.
+        const feasible_poly = [[0,0],[1,0],[1,0.2],[0.5,1],[0,1.2]]; // Manual for polytope
+        const poly_to_draw = setSelect.value === 'box' ? [[0,0],[1,0],[1,1],[0,1]] : feasible_poly;
+        visGroup.append("path").datum(poly_to_draw)
+            .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])) + "Z")
+            .attr("fill", "var(--color-primary-light)").attr("opacity", 0.5);
+
+        const data = await get_barrier_data(currentSet.A, currentSet.b, c, t).then(r => JSON.parse(r));
+
+        if (data.contours) {
+            const contours = d3.contours().thresholds(20)(data.contours.flat());
+            visGroup.append("g").selectAll("path").data(contours)
+              .join("path").attr("d", d3.geoPath(d3.geoIdentity().scale(width / (currentSet.domain[1]-currentSet.domain[0]) / 24))) // Scale is tricky
+              .attr("fill", "none").attr("stroke", "var(--color-surface-1)").attr("opacity", 0.7);
+        }
+
+        if (data.x_star) {
+            visGroup.append("circle").attr("cx", x(data.x_star[0])).attr("cy", y(data.x_star[1]))
+                .attr("r", 5).attr("fill", "var(--color-accent)");
+        }
+
+        const c_end = [ -c[0] * 0.2, -c[1] * 0.2 ];
+        visGroup.append("line").attr("x1", x(0)).attr("y1", y(0)).attr("x2", x(c_end[0])).attr("y2", y(c_end[1]))
+            .attr("stroke", "var(--color-danger)").attr("stroke-width", 3).attr("marker-end", "url(#arrow-c)");
+        visGroup.append("circle").attr("cx", x(c_end[0])).attr("cy", y(c_end[1])).attr("r", 7)
+            .attr("fill", "transparent").style("cursor", "move")
+            .call(d3.drag().on("drag", function(event) {
+                const new_c_end = [x.invert(event.x), y.invert(event.y)];
+                const norm = Math.sqrt(new_c_end[0]**2 + new_c_end[1]**2) || 1;
+                c = [-new_c_end[0]/norm, -new_c_end[1]/norm];
+                update();
+            }));
     }
 
+    svg.append("defs").append("marker").attr("id", "arrow-c").attr("viewBox", "0 -5 10 10")
+        .attr("refX", 10).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6)
+        .attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--color-danger)");
+
     tSlider.addEventListener("input", update);
+    setSelect.addEventListener("change", update);
     update();
 }

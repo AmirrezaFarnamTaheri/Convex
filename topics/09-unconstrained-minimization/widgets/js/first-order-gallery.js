@@ -12,18 +12,33 @@ export async function initFirstOrderGallery(containerId) {
 
     container.innerHTML = `
         <div class="fo-gallery-widget">
+            <div id="plot-container" style="position: relative;"></div>
             <div class="widget-controls" id="gallery-controls">
-                <p>Comparing paths on the Rosenbrock function:</p>
+                 <div class="control-group">
+                    <label>Step Size (α): <span id="gallery-alpha-val">0.001</span></label>
+                    <input type="range" id="gallery-alpha-slider" min="0.0001" max="0.002" step="0.0001" value="0.0012">
+                </div>
+                 <div class="control-group">
+                    <label>Momentum (β): <span id="gallery-beta-val">0.90</span></label>
+                    <input type="range" id="gallery-beta-slider" min="0.5" max="0.99" step="0.01" value="0.9">
+                </div>
+                <button id="gallery-reset-btn">Reset Start</button>
             </div>
-            <div id="plot-container"></div>
+             <div class="widget-controls" id="gallery-toggles" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;"></div>
         </div>
     `;
 
-    const controlsContainer = container.querySelector("#gallery-controls");
+    const togglesContainer = container.querySelector("#gallery-toggles");
     const plotContainer = container.querySelector("#plot-container");
+    const alphaSlider = container.querySelector("#gallery-alpha-slider");
+    const betaSlider = container.querySelector("#gallery-beta-slider");
+    const resetBtn = container.querySelector("#gallery-reset-btn");
+
+    let startPoint = [-1.5, 2.5];
+    const defaultStartPoint = [-1.5, 2.5];
 
     const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const width = (plotContainer.clientWidth || 600) - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
     const svg = d3.select(plotContainer).append("svg")
@@ -44,36 +59,39 @@ import json
 
 def rosenbrock_grad(p):
     x, y = p
-    return np.array([-2*(1-x)-400*x*(y-x**2), 200*(y-x**2)])
+    return np.array([-2*(1-x) - 400*x*(y-x**2), 200*(y-x**2)])
 
-def run_all_paths():
-    start_pos = np.array([-1.5, 2.5])
+def run_all_paths(start_pos_list, alpha, beta, n_iter=100):
+    start_pos = np.array(start_pos_list)
+    alpha, beta = float(alpha), float(beta)
 
     # GD
     path_gd = [start_pos]; p = start_pos.copy()
-    for _ in range(50): p -= 0.0012 * rosenbrock_grad(p); path_gd.append(p.copy())
+    for _ in range(n_iter): p -= alpha * rosenbrock_grad(p); path_gd.append(p.copy())
 
     # Momentum
     path_mom = [start_pos]; p = start_pos.copy(); v = np.zeros(2)
-    for _ in range(50): v = 0.9 * v + 0.001 * rosenbrock_grad(p); p -= v; path_mom.append(p.copy())
+    for _ in range(n_iter): v = beta * v + alpha * rosenbrock_grad(p); p -= v; path_mom.append(p.copy())
 
     # Nesterov
     path_nag = [start_pos]; p = start_pos.copy(); v = np.zeros(2)
-    for _ in range(50):
-        p_ahead = p - 0.9 * v
-        v = 0.9 * v + 0.001 * rosenbrock_grad(p_ahead)
+    for _ in range(n_iter):
+        p_ahead = p - beta * v
+        v = beta * v + alpha * rosenbrock_grad(p_ahead)
         p -= v
         path_nag.append(p.copy())
 
-    # Adam
-    path_adam = [start_pos]; p=start_pos.copy(); m=np.zeros(2); v=np.zeros(2)
-    for t in range(1, 51):
+    # Adam - fixed reasonable parameters for this function
+    path_adam = [start_pos]; p=start_pos.copy(); m=np.zeros(2); v_adam=np.zeros(2)
+    beta1, beta2, eps = 0.9, 0.999, 1e-8
+    alpha_adam = 0.03
+    for t in range(1, n_iter + 1):
         grad = rosenbrock_grad(p)
-        m = 0.9 * m + 0.1 * grad
-        v = 0.999 * v + 0.001 * (grad**2)
-        m_hat = m / (1 - 0.9**t)
-        v_hat = v / (1 - 0.999**t)
-        p -= 0.03 * m_hat / (np.sqrt(v_hat) + 1e-8)
+        m = beta1 * m + (1 - beta1) * grad
+        v_adam = beta2 * v_adam + (1 - beta2) * (grad**2)
+        m_hat = m / (1 - beta1**t)
+        v_hat = v_adam / (1 - beta2**t)
+        p -= alpha_adam * m_hat / (np.sqrt(v_hat) + eps)
         path_adam.append(p.copy())
 
     xx, yy = np.meshgrid(np.linspace(-2, 2, 50), np.linspace(-1, 3, 50))
@@ -81,33 +99,74 @@ def run_all_paths():
 
     return json.dumps({
         "paths": {"GD": np.array(path_gd).tolist(), "Momentum": np.array(path_mom).tolist(), "Nesterov": np.array(path_nag).tolist(), "Adam": np.array(path_adam).tolist()},
-        "contours": zz.flatten().tolist()
+        "contours": zz.tolist()
     })
 `;
     await pyodide.runPythonAsync(pythonCode);
-    const data = await pyodide.globals.get('run_all_paths')().then(r => JSON.parse(r));
+    const run_all_paths = pyodide.globals.get('run_all_paths');
 
-    svg.append("g").selectAll("path").data(d3.contours().size([50,50]).thresholds([2, 5, 10, 25, 50, 100, 200])(data.contours)).join("path")
-        .attr("d", d3.geoPath(d3.geoIdentity().scale(width/49)))
-        .attr("fill", "none").attr("stroke", "var(--color-surface-1)");
-
+    const contourGroup = svg.append("g");
+    const pathGroup = svg.append("g");
     const colors = d3.scaleOrdinal(d3.schemeTableau10);
-    const line = d3.line().x(d=>x(d[0])).y(d=>y(d[1]));
+    const line = d3.line().x(d => x(d[0])).y(d => y(d[1]));
     const methodPaths = {};
 
-    for (const methodName in data.paths) {
-        methodPaths[methodName] = svg.append("path")
-            .datum(data.paths[methodName])
-            .attr("d", line)
-            .attr("fill", "none")
-            .attr("stroke", colors(methodName))
-            .attr("stroke-width", 2.5);
+    async function update() {
+        const alpha = +alphaSlider.value;
+        const beta = +betaSlider.value;
+        container.querySelector("#gallery-alpha-val").textContent = alpha.toFixed(4);
+        container.querySelector("#gallery-beta-val").textContent = beta.toFixed(2);
 
+        const data = await run_all_paths(startPoint, alpha, beta).then(r => JSON.parse(r));
+
+        contourGroup.selectAll("path").data(d3.contours().thresholds(np.logspace(0, 3, 15))(data.contours.flat()))
+            .join("path")
+            .attr("d", d3.geoPath(d3.geoIdentity().scale(width / 49).translate([0.5, 0.5])))
+            .attr("fill", "none").attr("stroke", "var(--color-surface-1)").attr("stroke-width", 0.5);
+
+        pathGroup.selectAll("*").remove();
+
+        for (const methodName in data.paths) {
+            const path = pathGroup.append("path")
+                .datum(data.paths[methodName])
+                .attr("d", line)
+                .attr("fill", "none")
+                .attr("stroke", colors(methodName))
+                .attr("stroke-width", 2);
+            methodPaths[methodName].path = path;
+            path.style("display", methodPaths[methodName].visible ? "block" : "none");
+        }
+
+        pathGroup.append("circle").attr("cx", x(startPoint[0])).attr("cy", y(startPoint[1])).attr("r", 7)
+            .attr("fill", "var(--color-primary)").style("cursor", "move").call(d3.drag().on("drag", function(event) {
+                startPoint = [x.invert(event.x), y.invert(event.y)];
+                update();
+            }));
+    }
+
+    // Initial setup of toggles
+    ["GD", "Momentum", "Nesterov", "Adam"].forEach(methodName => {
+        methodPaths[methodName] = { path: null, visible: true };
         const checkbox = document.createElement("label");
         checkbox.innerHTML = `<input type="checkbox" checked value="${methodName}"> <span style="color:${colors(methodName)}">${methodName}</span>`;
         checkbox.querySelector('input').addEventListener('change', (e) => {
-            methodPaths[methodName].style("display", e.target.checked ? "block" : "none");
+            methodPaths[methodName].visible = e.target.checked;
+            if (methodPaths[methodName].path) {
+                methodPaths[methodName].path.style("display", e.target.checked ? "block" : "none");
+            }
         });
-        controlsContainer.appendChild(checkbox);
-    }
+        togglesContainer.appendChild(checkbox);
+    });
+
+    [alphaSlider, betaSlider].forEach(s => s.addEventListener("input", update));
+    resetBtn.addEventListener("click", () => {
+        startPoint = [...defaultStartPoint];
+        update();
+    });
+
+    // Using np.logspace for better contour visualization on Rosenbrock
+    pyodide.runPython('import numpy as np');
+    const np = pyodide.globals.get('np');
+
+    update();
 }

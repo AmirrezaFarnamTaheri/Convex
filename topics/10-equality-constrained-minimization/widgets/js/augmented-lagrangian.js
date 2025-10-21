@@ -13,22 +13,29 @@ export async function initAugmentedLagrangian(containerId) {
     container.innerHTML = `
         <div class="al-widget">
             <div class="widget-controls">
-                <label>Initial ρ: <span id="rho-val">1.0</span></label>
-                <input type="range" id="rho-slider" min="0.5" max="5" step="0.5" value="1.0">
-                <button id="run-al-btn">Run</button>
+                <div class="control-group">
+                    <label>Initial ρ: <span id="rho-val">1.0</span></label>
+                    <input type="range" id="rho-slider" min="0.5" max="10" step="0.5" value="1.0">
+                </div>
+                <button id="al-reset-btn">Reset</button>
             </div>
             <div id="plot-container"></div>
-            <p class="widget-instructions">Visualizes minimizing x₁²+x₂² s.t. x₁+x₂=1. The path shows the unconstrained minimization steps for Lρ before each λ update.</p>
+            <p class="widget-instructions">Drag the start point. Inner loops (green) minimize Lρ; outer steps update λ.</p>
+            <div id="al-output" class="widget-output"></div>
         </div>
     `;
 
     const rhoSlider = container.querySelector("#rho-slider");
     const rhoVal = container.querySelector("#rho-val");
-    const runBtn = container.querySelector("#run-al-btn");
+    const resetBtn = container.querySelector("#al-reset-btn");
     const plotContainer = container.querySelector("#plot-container");
+    const outputDiv = container.querySelector("#al-output");
+
+    let startPoint = [-1.5, -1.0];
+    const defaultStartPoint = [-1.5, -1.0];
 
     const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = plotContainer.clientWidth - margin.left - margin.right;
+    const width = (plotContainer.clientWidth || 600) - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
     const svg = d3.select(plotContainer).append("svg")
@@ -42,64 +49,95 @@ export async function initAugmentedLagrangian(containerId) {
     svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
     svg.append("g").call(d3.axisLeft(y));
 
+    const pathGroup = svg.append("g");
+
     const pyodide = await getPyodide();
     const pythonCode = `
 import numpy as np
 import json
 
-def run_al(rho_init):
-    path = [np.array([-1.5, -1.0])]
+def run_al(rho_init, start_point_list):
+    outer_paths = []
+    x_current = np.array(start_point_list)
     lam = 0.0
-    rho = rho_init
+    rho = float(rho_init)
 
-    for k in range(5): # Outer loops
-        x = path[-1].copy()
+    for k in range(8): # Max outer loops
+        inner_path = [x_current.copy()]
         for _ in range(20): # Inner loops (GD on L_rho)
-            grad = np.array([2*x[0] + lam + rho*(x[0]+x[1]-1),
-                             2*x[1] + lam + rho*(x[0]+x[1]-1)])
-            x = x - 0.1 * grad
-            path.append(x.copy())
-        lam += rho * (x[0] + x[1] - 1)
+            grad = np.array([2*x_current[0] + lam + rho*(x_current[0]+x_current[1]-1),
+                             2*x_current[1] + lam + rho*(x_current[0]+x_current[1]-1)])
+            x_next = x_current - 0.1 * grad
+            inner_path.append(x_next.copy())
+            if np.linalg.norm(x_next - x_current) < 1e-3:
+                break
+            x_current = x_next
+
+        outer_paths.append(np.array(inner_path).tolist())
+
+        residual = x_current[0] + x_current[1] - 1
+        if np.abs(residual) < 1e-4:
+            break
+
+        lam += rho * residual
         rho *= 1.5
 
-    return json.dumps(np.array(path).tolist())
+    return json.dumps({"paths": outer_paths, "final_x": x_current.tolist(), "final_lambda": lam, "outer_iter": k + 1})
 `;
     await pyodide.runPythonAsync(pythonCode);
     const run_al = pyodide.globals.get('run_al');
 
-    async function run() {
-        runBtn.disabled = true;
+    async function update() {
         const rho_init = +rhoSlider.value;
         rhoVal.textContent = rho_init.toFixed(1);
 
-        svg.selectAll(".al-path, .contour, .constraint").remove();
+        pathGroup.selectAll("*").remove();
 
-        // Contours of original objective
-        const contours = d3.range(0.5, 4, 0.5).map(r => d3.range(0,2*Math.PI+0.1,0.1).map(a => [r*Math.cos(a), r*Math.sin(a)]));
-        svg.append("g").attr("class", "contour")
-            .selectAll("path").data(contours).join("path")
-            .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])))
-            .attr("stroke", "var(--color-surface-1)");
+        const result = await run_al(rho_init, startPoint).then(r => JSON.parse(r));
 
-        // Constraint line
-        svg.append("line").attr("class", "constraint")
-            .attr("x1", x(-2)).attr("y1", y(3)).attr("x2", x(3)).attr("y2", y(-2))
-            .attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
+        const outer_color = d3.scaleSequential(d3.interpolateBlues).domain([0, result.paths.length]);
 
-        const path_data = await run_al(rho_init).then(r => JSON.parse(r));
+        result.paths.forEach((inner_path, i) => {
+            const path = pathGroup.append("path").datum(inner_path)
+                .attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1])))
+                .attr("fill", "none")
+                .attr("stroke", i === 0 ? "var(--color-accent)" : outer_color(i))
+                .attr("stroke-width", 2);
 
-        const path = svg.append("path").attr("class", "al-path").datum(path_data)
-            .attr("d", d3.line().x(d=>x(d[0])).y(d=>y(d[1])))
-            .attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
+            const totalLength = path.node().getTotalLength();
+            if (totalLength > 0) {
+                path.attr("stroke-dasharray", `${totalLength} ${totalLength}`)
+                    .attr("stroke-dashoffset", totalLength)
+                    .transition().delay(i*500).duration(500).ease(d3.easeLinear)
+                    .attr("stroke-dashoffset", 0);
+            }
+        });
 
-        const totalLength = path.node().getTotalLength();
-        path.attr("stroke-dasharray", `${totalLength} ${totalLength}`).attr("stroke-dashoffset", totalLength)
-            .transition().duration(2500).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
+        pathGroup.append("circle").attr("cx", x(startPoint[0])).attr("cy", y(startPoint[1])).attr("r", 7)
+            .attr("fill", "var(--color-danger)").style("cursor", "move")
+            .call(d3.drag().on("drag", function(event) {
+                startPoint = [x.invert(event.x), y.invert(event.y)];
+                update();
+            }));
 
-        setTimeout(() => runBtn.disabled = false, 2500);
+        outputDiv.innerHTML = `Converged in <strong>${result.outer_iter}</strong> outer iterations.<br>
+                               x ≈ (${result.final_x[0].toFixed(3)}, ${result.final_x[1].toFixed(3)}),
+                               λ ≈ ${result.final_lambda.toFixed(3)}`;
     }
 
-    rhoSlider.addEventListener("input", () => rhoVal.textContent = (+rhoSlider.value).toFixed(1));
-    runBtn.addEventListener("click", run);
-    run();
+    // Draw static elements once
+    const contours = d3.range(0.25, 4, 0.25).map(r => d3.range(0, 2 * Math.PI + 0.1, 0.1).map(a => [r * Math.cos(a), r * Math.sin(a)]));
+    svg.append("g").selectAll("path").data(contours).join("path")
+        .attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1])))
+        .attr("stroke", "var(--color-surface-1)").attr("stroke-width", 0.5);
+    svg.append("line").attr("x1", x(-2)).attr("y1", y(3)).attr("x2", x(3)).attr("y2", y(-2))
+        .attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
+
+    rhoSlider.addEventListener("input", update);
+    resetBtn.addEventListener("click", () => {
+        startPoint = [...defaultStartPoint];
+        rhoSlider.value = 1.0;
+        update();
+    });
+    update();
 }

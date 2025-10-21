@@ -18,9 +18,19 @@ export async function initNaiveBayes(containerId) {
                 <div id="nb-x2-plot"></div>
             </div>
         </div>
+        <div class="widget-controls" style="padding: 15px;">
+            <p><strong>Class 0 (Blue):</strong></p>
+            <label>Mean (μ₀):</label> <input type="range" class="mean-slider" data-class="0" data-dim="0" min="-4" max="0" step="0.1" value="-2">
+            <label>Var (σ₀²):</label> <input type="range" class="var-slider" data-class="0" data-dim="0" min="0.5" max="3" step="0.1" value="1.2">
+            <p><strong>Class 1 (Green):</strong></p>
+            <label>Mean (μ₁):</label> <input type="range" class="mean-slider" data-class="1" data-dim="0" min="0" max="4" step="0.1" value="2">
+            <label>Var (σ₁²):</label> <input type="range" class="var-slider" data-class="1" data-dim="0" min="0.5" max="3" step="0.1" value="1.2">
+            <div id="prior-display" class="widget-output"></div>
+        </div>
         <p class="widget-instructions">Hover over the main plot to see the conditional probabilities for each feature.</p>
     `;
 
+    const priorDisplay = container.querySelector("#prior-display");
     const mainPlot = container.querySelector("#nb-main-plot");
     const x1Plot = container.querySelector("#nb-x1-plot");
     const x2Plot = container.querySelector("#nb-x2-plot");
@@ -85,15 +95,30 @@ export async function initNaiveBayes(containerId) {
 
     // Draw PDFs
     const line = (x_scale, y_scale) => d3.line().x(d=>x_scale(d.x)).y(d=>y_scale(d.y));
-    const pdfData1_c0 = x2.ticks(100).map(d => ({x:d, y:gaussianPDF(d, data.means[0][0], data.vars[0][0])}));
-    const pdfData1_c1 = x2.ticks(100).map(d => ({x:d, y:gaussianPDF(d, data.means[1][0], data.vars[1][0])}));
-    pdfPath1_c0.datum(pdfData1_c0).attr("d", line(x2, y2));
-    pdfPath1_c1.datum(pdfData1_c1).attr("d", line(x2, y2));
 
-    const pdfData2_c0 = x3.ticks(100).map(d => ({x:d, y:gaussianPDF(d, data.means[0][1], data.vars[0][1])}));
-    const pdfData2_c1 = x3.ticks(100).map(d => ({x:d, y:gaussianPDF(d, data.means[1][1], data.vars[1][1])}));
-    pdfPath2_c0.datum(pdfData2_c0).attr("d", line(x3, y3));
-    pdfPath2_c1.datum(pdfData2_c1).attr("d", line(x3, y3));
+    function updateDistributions() {
+        const means = [[0,0],[0,0]];
+        const variances = [[0,0],[0,0]];
+        container.querySelectorAll(".mean-slider").forEach(s => means[+s.dataset.class][+s.dataset.dim] = +s.value);
+        container.querySelectorAll(".var-slider").forEach(s => variances[+s.dataset.class][+s.dataset.dim] = +s.value);
+
+        const pdfData1_c0 = x2.ticks(100).map(d => ({x:d, y:gaussianPDF(d, means[0][0], variances[0][0])}));
+        const pdfData1_c1 = x2.ticks(100).map(d => ({x:d, y:gaussianPDF(d, means[1][0], variances[1][0])}));
+        pdfPath1_c0.datum(pdfData1_c0).attr("d", line(x2, y2));
+        pdfPath1_c1.datum(pdfData1_c1).attr("d", line(x2, y2));
+
+        const pdfData2_c0 = x3.ticks(100).map(d => ({x:d, y:gaussianPDF(d, means[0][1], variances[0][1])}));
+        const pdfData2_c1 = x3.ticks(100).map(d => ({x:d, y:gaussianPDF(d, means[1][1], variances[1][1])}));
+        pdfPath2_c0.datum(pdfData2_c0).attr("d", line(x3, y3));
+        pdfPath2_c1.datum(pdfData2_c1).attr("d", line(x3, y3));
+
+        const n_c0 = data.y.filter(d=>d===0).length;
+        const n_c1 = data.y.length - n_c0;
+        priorDisplay.innerHTML = `Priors: P(C₀) = ${ (n_c0/data.y.length).toFixed(2) }, P(C₁) = ${ (n_c1/data.y.length).toFixed(2) }`;
+    }
+
+    container.querySelectorAll("input[type=range]").forEach(s => s.addEventListener("input", updateDistributions));
+    updateDistributions();
 
     svg1.on("mousemove", (event) => {
         const [mx, my] = d3.pointer(event, svg1.node());
