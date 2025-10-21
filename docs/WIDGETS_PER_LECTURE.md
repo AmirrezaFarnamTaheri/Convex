@@ -7,7 +7,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 ## Lecture 00: Linear Algebra Primer (7 Widgets)
 
 - **[x] Norm Geometry Visualizer (HIGH)**
-  - **Location:** `topics/00-linear-algebra-primer/widgets/js/norm-geometry.js`
+  - **Location:** `topics/00-linear-algebra-primer/widgets/js/norm-geometry-visualizer.js`
   - **Description:** Interactively displays the unit balls for ℓ₁, ℓ₂, and ℓ∞ norms to build geometric intuition.
   - **Dependencies:** D3.js for SVG rendering.
   - **Status:** Completed
@@ -24,11 +24,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy for computation).
   - **Status:** Completed
 
-- **[x] Eigenvalue Decomposition & PSD Explorer (HIGH)**
+- **[ ] Eigenvalue Decomposition & PSD Explorer (HIGH)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/eigen-psd.js`
   - **Description:** Shows the geometric interpretation of eigenvalues/eigenvectors for a 2x2 matrix and visualizes its quadratic form to check for positive semidefiniteness.
   - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Completed
+  - **Status:** Planned
 
 - **[ ] Condition Number & Convergence Race (LOW)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/condition-number.js`
@@ -37,7 +37,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Status:** Planned
 
 - **[x] Hessian Landscape Visualizer (HIGH)**
-  - **Location:** `topics/00-linear-algebra-primer/widgets/js/hessian-landscape.js`
+  - **Location:** `topics/00-linear-algebra-primer/widgets/js/hessian-landscape-visualizer.js`
   - **Description:** Renders the 3D surface of a quadratic function and its Hessian matrix, linking eigenvalues to curvature.
   - **Dependencies:** Three.js, Pyodide (NumPy).
   - **Status:** Completed
@@ -47,6 +47,12 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Description:** Lets users perform a low-rank approximation of an image by selecting the number of singular values to use.
   - **Dependencies:** Canvas, Pyodide (NumPy, Scikit-image).
   - **Status:** Planned
+
+- **[x] Matrix Explorer (MEDIUM)**
+  - **Location:** `topics/00-linear-algebra-primer/widgets/js/matrix-explorer.js`
+  - **Description:** An interactive tool to explore matrix properties.
+  - **Dependencies:** D3.js.
+  - **Status:** Completed
 
 ---
 
@@ -93,7 +99,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 ## Lecture 02: Convex Sets (7 Widgets)
 
 - **[x] Convex Set Detector (HIGH)**
-  - **Location:** `topics/02-convex-sets/widgets/js/convex-set-detector.js`
+  - **Location:** `topics/02-convex-sets/widgets/js/convex-set-checker.js`
   - **Description:** Users can draw a 2D shape, and the widget checks if it's convex by sampling pairs of points.
   - **Dependencies:** Canvas API, Pyodide (NumPy).
   - **Status:** Completed
@@ -108,6 +114,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Location:** `topics/02-convex-sets/widgets/js/polyhedron-visualizer.js`
   - **Description:** Users can add or modify linear inequalities (Ax <= b) and see the resulting 2D polyhedron update in real-time.
   - **Dependencies:** D3.js, Pyodide (NumPy for constraint solving).
+  - **Status:** Completed
+- **[x] Polyhedron Visualizer (Alternate) (HIGH)**
+  - **Location:** `topics/02-convex-sets/widgets/js/polyhedron-viz.js`
+  - **Description:** An alternate visualization of a polyhedron.
+  - **Dependencies:** D3.js.
   - **Status:** Completed
 
 - **[x] Separating Hyperplane Theorem Visualizer (HIGH)**
@@ -139,7 +150,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 ## Lecture 03: Convex Functions (7 Widgets)
 
 - **[x] Jensen's Inequality Interactive Proof (HIGH)**
-  - **Location:** `topics/03-convex-functions/widgets/js/jensen-inequality.js`
+  - **Location:** `topics/03-convex-functions/widgets/js/jensen-visualizer.js`
   - **Description:** Users can pick a point λ on the line between x and y and see that f(λx + (1-λ)y) is always below the chord.
   - **Dependencies:** D3.js.
   - **Status:** Completed
@@ -156,9 +167,15 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[x] Hessian Eigenvalue Heatmap (HIGH)**
+- **[ ] Hessian Eigenvalue Heatmap (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/hessian-heatmap.js`
   - **Description:** Displays a 2D function's value as a heatmap and overlays the eigenvalues of the Hessian at each point, showing where it is convex.
+  - **Dependencies:** D3.js, Pyodide (NumPy).
+  - **Status:** Planned
+
+- **[x] Hessian Explorer (HIGH)**
+  - **Location:** `topics/03-convex-functions/widgets/js/hessian-explorer.js`
+  - **Description:** An interactive tool to explore the properties of the Hessian matrix.
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
@@ -202,11 +219,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (CVXPY).
   - **Status:** Completed
 
-- **[ ] SDP Visualizer (MEDIUM)**
+- **[x] SDP Visualizer (MEDIUM)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/sdp-visualizer.js`
   - **Description:** Visualizes the cone of positive semidefinite matrices in 3D (for 2x2 matrices).
   - **Dependencies:** Three.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] SOCP Explorer (LOW)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/socp-explorer.js`
@@ -226,11 +243,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** None (Static).
   - **Status:** Planned
 
-- **[ ] Problem Reformulation Tool (MEDIUM)**
+- **[x] Problem Reformulation Tool (MEDIUM)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/reformulation-tool.js`
   - **Description:** Shows how a problem can be reformulated to fit a standard form (e.g., absolute value to linear constraints).
   - **Dependencies:** Pyodide (SymPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
@@ -242,17 +259,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[x] Primal-Dual Geometry Visualizer (HIGH)**
-  - **Location:** `topics/05-duality/widgets/js/primal-dual-geometry.js`
+- **[x] Duality Visualizer (HIGH)**
+  - **Location:** `topics/05-duality/widgets/js/duality-visualizer.js`
   - **Description:** Shows the geometric relationship between the primal and dual problems for a 2D LP.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Weak vs Strong Duality Race (MEDIUM)**
+- **[x] Weak vs Strong Duality Race (MEDIUM)**
   - **Location:** `topics/05-duality/widgets/js/duality-race.js`
   - **Description:** Animates the convergence of the primal and dual objectives, showing the duality gap shrinking.
   - **Dependencies:** D3.js or Chart.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] KKT Condition Checker (HIGH)**
   - **Location:** `topics/05-duality/widgets/js/kkt-checker.js`
@@ -260,11 +277,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Pyodide (SymPy, NumPy).
   - **Status:** Completed
 
-- **[ ] Shadow Prices & Sensitivity Analysis (MEDIUM)**
+- **[x] Shadow Prices & Sensitivity Analysis (MEDIUM)**
   - **Location:** `topics/05-duality/widgets/js/shadow-prices.js`
   - **Description:** Allows users to perturb a constraint in a simple problem and see how the optimal value changes, illustrating the concept of shadow prices.
   - **Dependencies:** D3.js, Pyodide (CVXPY).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Duality Gap Monitor (LOW)**
   - **Location:** `topics/05-duality/widgets/js/duality-gap-monitor.js`
@@ -278,27 +295,27 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Planned
 
-- **[ ] Complementary Slackness Explorer (MEDIUM)**
+- **[x] Complementary Slackness Explorer (MEDIUM)**
   - **Location:** `topics/05-duality/widgets/js/complementary-slackness.js`
   - **Description:** An interactive tool that demonstrates the complementary slackness conditions for a simple LP.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
 ## Lecture 06: Approximation & Fitting (8 Widgets)
 
 - **[x] Least Squares Playground (HIGH)**
-  - **Location:** `topics/06-approximation-fitting/widgets/js/least-squares.js`
+  - **Location:** `topics/06-approximation-fitting/widgets/js/least-squares-regularization.js`
   - **Description:** Users can add/remove data points and see the least-squares regression line update instantly.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[x] Regularization Path Explorer (HIGH)**
+- **[ ] Regularization Path Explorer (HIGH)**
   - **Location:** `topics/06-approximation-fitting/widgets/js/regularization-path.js`
   - **Description:** Shows how the coefficients of a linear model change as the regularization parameter (lambda) for Lasso or Ridge is varied.
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
-  - **Status:** Completed
+  - **Status:** Planned
 
 - **[x] Robust Regression vs LS (MEDIUM)**
   - **Location:** `topics/06-approximation-fitting/widgets/js/robust-regression.js`
@@ -312,11 +329,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
-- **[ ] Matrix Completion Visualizer (MEDIUM)**
+- **[x] Matrix Completion Visualizer (MEDIUM)**
   - **Location:** `topics/06-approximation-fitting/widgets/js/matrix-completion.js`
   - **Description:** Users can hide entries of a low-rank matrix (e.g., an image) and watch an algorithm recover the missing values.
   - **Dependencies:** Canvas, Pyodide (NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Robust PCA Visualizer (LOW)**
   - **Location:** `topics/06-approximation-fitting/widgets/js/robust-pca.js`
@@ -330,36 +347,36 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Planned
 
-- **[ ] Regularization Theory Tool (MEDIUM)**
+- **[x] Regularization Theory Tool (MEDIUM)**
   - **Location:** `topics/06-approximation-fitting/widgets/js/regularization-theory.js`
   - **Description:** Visualizes the geometry of different regularizers (L1, L2, Elastic Net).
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
 ## Lecture 07: Statistical Estimation & ML (9 Widgets)
 
 - **[x] Classification Boundary Visualizer (HIGH)**
-  - **Location:** `topics/07-statistical-estimation-ml/widgets/js/classification-boundary.js`
+  - **Location:** `topics/07-statistical-estimation/widgets/js/classification-boundary.js`
   - **Description:** Visualizes the decision boundary for classifiers like Logistic Regression and SVM on a 2D dataset.
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
   - **Status:** Completed
 
 - **[x] Logistic Regression Solver (HIGH)**
-  - **Location:** `topics/07-statistical-estimation-ml/widgets/js/logistic-regression.js`
+  - **Location:** `topics/07-statistical-estimation/widgets/js/logistic-regression.js`
   - **Description:** An interactive solver for logistic regression, showing the likelihood function and convergence.
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
 - **[x] SVM Margin Maximizer (HIGH)**
-  - **Location:** `topics/07-statistical-estimation-ml/widgets/js/svm-margin.js`
+  - **Location:** `topics/07-statistical-estimation/widgets/js/svm-margin.js`
   - **Description:** Users can drag support vectors and see how the SVM margin and decision boundary change.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
 - **[ ] Naive Bayes Visualization (MEDIUM)**
-  - **Location:** `topics/07-statistical-estimation-ml/widgets/js/naive-bayes.js`
+  - **Location:** `topics/07-statistical-estimation/widgets/js/naive-bayes.js`
   - **Description:** Visualizes the conditional probabilities used in a Naive Bayes classifier.
   - **Dependencies:** D3.js.
   - **Status:** Planned
@@ -404,17 +421,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
-- **[ ] Chebyshev Center Explorer (MEDIUM)**
+- **[x] Chebyshev Center Explorer (MEDIUM)**
   - **Location:** `topics/08-geometric-problems/widgets/js/chebyshev-center.js`
   - **Description:** Finds the largest circle that can fit inside a user-defined polyhedron.
   - **Dependencies:** D3.js, Pyodide (CVXPY).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Best-Fit Shape Finder (MEDIUM)**
+- **[x] Best-Fit Shape Finder (MEDIUM)**
   - **Location:** `topics/08-geometric-problems/widgets/js/best-fit-shape.js`
   - **Description:** Finds the best-fitting line or plane to a set of points.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Distance Between Convex Sets (HIGH)**
   - **Location:** `topics/08-geometric-problems/widgets/js/distance-between-sets.js`
@@ -434,24 +451,24 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Planned
 
-- **[ ] Matrix Rank Minimization (MEDIUM)**
+- **[x] Matrix Rank Minimization (MEDIUM)**
   - **Location:** `topics/08-geometric-problems/widgets/js/rank-minimization.js`
   - **Description:** A toy example demonstrating rank minimization via the nuclear norm heuristic.
   - **Dependencies:** Pyodide (NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Robust Geometry Optimizer (MEDIUM)**
+- **[x] Robust Geometry Optimizer (MEDIUM)**
   - **Location:** `topics/08-geometric-problems/widgets/js/robust-geometry.js`
   - **Description:** Compares a standard geometric optimization with its robust counterpart.
   - **Dependencies:** D3.js, Pyodide (CVXPY).
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
 ## Lecture 09: Unconstrained Minimization (9 Widgets)
 
 - **[x] Gradient Descent Visualizer (HIGH)**
-  - **Location:** `topics/09-unconstrained-minimization/widgets/js/gradient-descent.js`
+  - **Location:** `topics/09-unconstrained-minimization/widgets/js/gradient-descent-visualizer.js`
   - **Description:** Animates the steps of gradient descent on a 2D contour plot of a selectable function.
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
@@ -459,6 +476,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
 - **[x] Gradient Descent vs Newton Race (HIGH)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/gd-vs-newton.js`
   - **Description:** A side-by-side animation comparing the convergence of Gradient Descent and Newton's method.
+  - **Dependencies:** D3.js, Pyodide (NumPy).
+  - **Status:** Completed
+- **[x] Gradient Descent vs Newton Race (Alternate) (HIGH)**
+  - **Location:** `topics/09-unconstrained-minimization/widgets/js/gd-vs-newton-race.js`
+  - **Description:** An alternate animation comparing the convergence of Gradient Descent and Newton's method.
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
@@ -509,13 +531,13 @@ This document provides a comprehensive list of all planned interactive widgets, 
 ## Lecture 10: Equality-Constrained Minimization (8 Widgets)
 
 - **[x] Null-Space Method Visualizer (HIGH)**
-  - **Location:** `topics/10-equality-constrained-minimization/widgets/js/null-space-method.js`
+  - **Location:** `topics/10-equality-constrained-minimization/widgets/js/null-space-visualizer.js`
   - **Description:** Visualizes how the null-space method works for a simple equality-constrained QP.
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
 - **[x] Projected Gradient Descent (HIGH)**
-  - **Location:** `topics/10-equality-constrained-minimization/widgets/js/projected-gradient.js`
+  - **Location:** `topics/10-equality-constrained-minimization/widgets/js/projected-gd.js`
   - **Description:** Animates projected gradient descent, showing the gradient step and the projection back onto the feasible set.
   - **Dependencies:** D3.js.
   - **Status:** Completed
@@ -561,7 +583,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 ## Lecture 11: Interior-Point Methods (9 Widgets)
 
 - **[x] Barrier Method Path Tracer (HIGH)**
-  - **Location:** `topics/11-interior-point-methods/widgets/js/barrier-path.js`
+  - **Location:** `topics/11-interior-point-methods/widgets/js/barrier-method-path-tracer.js`
   - **Description:** Traces the central path as the barrier parameter `t` is increased, showing how the solutions approach the true optimum.
   - **Dependencies:** D3.js.
   - **Status:** Completed
