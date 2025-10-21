@@ -48,12 +48,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Canvas, Pyodide (NumPy, Scikit-image).
   - **Status:** Planned
 
-- **[x] Matrix Explorer (MEDIUM)**
-    - **Location:** `topics/00-linear-algebra-primer/widgets/js/matrix-explorer.js`
-    - **Description:** An interactive explorer for matrices.
-    - **Dependencies:** D3.js.
-    - **Status:** Completed
-
 ---
 
 ## Lecture 01: Introduction (6 Widgets)
@@ -88,11 +82,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** None (static HTML/CSS/JS).
   - **Status:** Planned
 
-- **[ ] Convergence Comparison (HIGH)**
+- **[x] Convergence Comparison (HIGH)**
   - **Location:** `topics/01-introduction/widgets/js/convergence-comparison.js`
   - **Description:** A simple animated plot comparing the convergence rates of a convex solver vs. a generic nonconvex solver on a sample problem.
   - **Dependencies:** D3.js or Chart.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
@@ -140,12 +134,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Planned
 
-- **[x] Polyhedron Visualizer (Alternate) (HIGH)**
-    - **Location:** `topics/02-convex-sets/widgets/js/polyhedron-viz.js`
-    - **Description:** An alternate visualizer for polyhedrons.
-    - **Dependencies:** D3.js.
-    - **Status:** Completed
-
 ---
 
 ## Lecture 03: Convex Functions (7 Widgets)
@@ -191,12 +179,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Description:** A gallery of common convex functions with an interface to check their properties (e.g., is it differentiable?).
   - **Dependencies:** None (Static).
   - **Status:** Planned
-
-- **[x] Hessian Explorer (HIGH)**
-    - **Location:** `topics/03-convex-functions/widgets/js/hessian-explorer.js`
-    - **Description:** An interactive explorer for Hessian matrices.
-    - **Dependencies:** D3.js.
-    - **Status:** Completed
 
 ---
 
@@ -403,7 +385,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 - **[ ] Feature Selection via Sparsity (MEDIUM)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/feature-selection.js`
   - **Description:** Shows how L1 regularization in logistic regression can drive feature coefficients to zero.
-  - **Dependencies:** D3.s, Pyodide (Scikit-learn).
+  - **Dependencies:** D3.js, Pyodide (Scikit-learn).
   - **Status:** Planned
 
 - **[ ] Model Comparison Dashboard (MEDIUM)**
@@ -411,12 +393,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Description:** A dashboard to compare the performance of different classifiers on a given dataset.
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
   - **Status:** Planned
-
-- **[x] SVM Margin Visualizer (HIGH)**
-    - **Location:** `topics/07-statistical-estimation/widgets/js/svm-margin-viz.js`
-    - **Description:** An alternate visualizer for SVM margins.
-    - **Dependencies:** D3.js.
-    - **Status:** Completed
 
 ---
 
@@ -428,11 +404,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
-- **[x] Chebyshev Center Explorer (MEDIUM)**
+- **[ ] Chebyshev Center Explorer (MEDIUM)**
   - **Location:** `topics/08-geometric-problems/widgets/js/chebyshev-center.js`
   - **Description:** Finds the largest circle that can fit inside a user-defined polyhedron.
   - **Dependencies:** D3.js, Pyodide (CVXPY).
-  - **Status:** Completed
+  - **Status:** Planned
 
 - **[ ] Best-Fit Shape Finder (MEDIUM)**
   - **Location:** `topics/08-geometric-problems/widgets/js/best-fit-shape.js`
@@ -525,24 +501,24 @@ This document provides a comprehensive list of all planned interactive widgets, 
 - **[ ] First-Order Method Gallery (MEDIUM)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/first-order-gallery.js`
   - **Description:** A gallery comparing the paths taken by various first-order methods on the same problem.
-  - **Dependencies:** D3.s.
+  - **Dependencies:** D3.js.
   - **Status:** Planned
 
 ---
 
 ## Lecture 10: Equality-Constrained Minimization (8 Widgets)
 
-- **[x] Null-Space Method Visualizer (HIGH)**
+- **[ ] Null-Space Method Visualizer (HIGH)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/null-space-method.js`
   - **Description:** Visualizes how the null-space method works for a simple equality-constrained QP.
   - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Completed
+  - **Status:** Planned
 
-- **[x] Projected Gradient Descent (HIGH)**
+- **[ ] Projected Gradient Descent (HIGH)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/projected-gradient.js`
   - **Description:** Animates projected gradient descent, showing the gradient step and the projection back onto the feasible set.
   - **Dependencies:** D3.js.
-  - **Status:** Completed
+  - **Status:** Planned
 
 - **[ ] Augmented Lagrangian Method (MEDIUM)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/augmented-lagrangian.js`
@@ -574,11 +550,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Planned
 
-- **[x] Feasible vs Interior-Point Methods (HIGH)**
+- **[ ] Feasible vs Interior-Point Methods (HIGH)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/feasible-vs-interior.js`
   - **Description:** Compares the paths taken by a feasible descent method and an interior-point method.
   - **Dependencies:** D3.js.
-  - **Status:** Completed
+  - **Status:** Planned
 
 ---
 
@@ -596,17 +572,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Three.js.
   - **Status:** Planned
 
-- **[x] Newton Step in IPM (HIGH)**
+- **[ ] Newton Step in IPM (HIGH)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/newton-step-ipm.js`
   - **Description:** Shows a single Newton step within an interior-point method, including the centering and affine steps.
-  - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Completed
+  - **dependencies:** D3.js, Pyodide (NumPy).
+  - **Status:** Planned
 
-- **[x] LP via Simplex vs IPM (HIGH)**
+- **[ ] LP via Simplex vs IPM (HIGH)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/simplex-vs-ipm.js`
   - **Description:** A side-by-side comparison of the path taken by the Simplex algorithm (along the exterior) and an interior-point method (through the interior).
   - **Dependencies:** D3.js.
-  - **Status:** Completed
+  - **Status:** Planned
 
 - **[ ] Conic Problem Solver (MEDIUM)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/conic-solver.js`
@@ -637,8 +613,3 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Description:** A plot showing the number of iterations for an IPM as problem size grows, illustrating the near-constant iteration count.
   - **Dependencies:** D3.js or Chart.js.
   - **Status:** Planned
-- **[x] Barrier Method Path Tracer (Alternate) (HIGH)**
-    - **Location:** `topics/11-interior-point-methods/widgets/js/barrier-method-path-tracer.js`
-    - **Description:** An alternate visualizer for barrier method path tracing.
-    - **Dependencies:** D3.js.
-    - **Status:** Completed
