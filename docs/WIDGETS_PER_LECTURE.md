@@ -508,17 +508,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ## Lecture 10: Equality-Constrained Minimization (8 Widgets)
 
-- **[ ] Null-Space Method Visualizer (HIGH)**
+- **[x] Null-Space Method Visualizer (HIGH)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/null-space-method.js`
   - **Description:** Visualizes how the null-space method works for a simple equality-constrained QP.
   - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Projected Gradient Descent (HIGH)**
+- **[x] Projected Gradient Descent (HIGH)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/projected-gradient.js`
   - **Description:** Animates projected gradient descent, showing the gradient step and the projection back onto the feasible set.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Augmented Lagrangian Method (MEDIUM)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/augmented-lagrangian.js`
@@ -550,11 +550,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Planned
 
-- **[ ] Feasible vs Interior-Point Methods (HIGH)**
+- **[x] Feasible vs Interior-Point Methods (HIGH)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/feasible-vs-interior.js`
   - **Description:** Compares the paths taken by a feasible descent method and an interior-point method.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
@@ -572,17 +572,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Three.js.
   - **Status:** Planned
 
-- **[ ] Newton Step in IPM (HIGH)**
+- **[x] Newton Step in IPM (HIGH)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/newton-step-ipm.js`
   - **Description:** Shows a single Newton step within an interior-point method, including the centering and affine steps.
   - **dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] LP via Simplex vs IPM (HIGH)**
-  - **Location:** `topics/11-interior-point-methods/widgets/js/simplex-vs-ipm.js`
+- **[x] LP via Simplex vs IPM (HIGH)**
+  - **Location:** `topics/11-interior-point-methods/widgets/js/lp-simplex-vs-ip.js`
   - **Description:** A side-by-side comparison of the path taken by the Simplex algorithm (along the exterior) and an interior-point method (through the interior).
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[ ] Conic Problem Solver (MEDIUM)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/conic-solver.js`
