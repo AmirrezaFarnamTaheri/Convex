@@ -19,8 +19,9 @@
 - Purpose: Reuse across multiple lectures/widgets
 
 ### Image Assets
-- Lecture-specific: `/topics/NN-slug/images/diagrams/`, `/topics/NN-slug/images/examples/`
-- Shared: `/static/img/`
+- Lecture-specific: `/static/assets/topics/NN-slug/`
+- Shared illustrations: `/static/assets/shared/illustrations/`
+- Branding: `/static/assets/branding/`
 - Format: `kebab-case-descriptor.svg` or `.png`
 - Examples: `jensen-inequality-illustration.svg`, `portfolio-allocation.jpg`
 

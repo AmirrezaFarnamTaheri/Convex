@@ -254,13 +254,16 @@ convex-optimization-course/
 │   │   ├── widgets-loader.js          [Auto-load widgets for each lecture]
 │   │   ├── math-renderer.js           [LaTeX rendering wrapper]
 │   │   └── analytics.js               [Optional: Plausible/Fathom setup]
-│   └── img/
-│       ├── logo.svg                   [Course logo]
-│       ├── favicon.ico                [Browser icon]
-│       └── icons/
-│           ├── exercise-icon.svg
-│           ├── video-icon.svg
-│           └── pdf-icon.svg
+│   └── assets/
+│       ├── branding/
+│       │   ├── logo.svg               [Course logo]
+│       │   └── favicon.ico            [Browser icon]
+│       ├── topics/
+│       │   └── 00-linear-algebra-primer/
+│       │       └── …                  [Lecture-scoped imagery & animations]
+│       └── shared/
+│           └── illustrations/
+│               └── …                  [Reusable diagrams across lectures]
 │
 ├── /lib/
 │   ├── math/

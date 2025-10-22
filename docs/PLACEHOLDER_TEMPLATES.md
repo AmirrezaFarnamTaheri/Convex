@@ -22,7 +22,7 @@ Below are ready-to-use starter templates for each lecture and widget type.
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <img src="../../static/img/logo.svg" class="logo" alt="logo" />
+        <img src="../../static/assets/branding/logo.svg" class="logo" alt="logo" />
         <a href="../../index.html" style="text-decoration:none;color:inherit">
           <strong>Convex Optimization</strong>
         </a>

@@ -338,13 +338,16 @@ convex-optimization-course/
 │   │   ├── widgets-loader.js          [Auto-load widgets for each lecture]
 │   │   ├── math-renderer.js           [LaTeX rendering wrapper]
 │   │   └── analytics.js               [Optional: Plausible/Fathom setup]
-│   └── img/
-│       ├── logo.svg                   [Course logo]
-│       ├── favicon.ico                [Browser icon]
-│       └── icons/
-│           ├── exercise-icon.svg
-│           ├── video-icon.svg
-│           └── pdf-icon.svg
+│   └── assets/
+│       ├── branding/
+│       │   ├── logo.svg               [Course logo]
+│       │   └── favicon.ico            [Browser icon]
+│       ├── topics/
+│       │   └── 00-linear-algebra-primer/
+│       │       └── …                  [Lecture-scoped imagery & animations]
+│       └── shared/
+│           └── illustrations/
+│               └── …                  [Reusable diagrams across lectures]
 │
 ├── /lib/
 │   ├── math/
@@ -389,7 +392,7 @@ Below are ready-to-use starter templates for each lecture and widget type.
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <img src="../../static/img/logo.svg" class="logo" alt="logo" />
+        <img src="../../static/assets/branding/logo.svg" class="logo" alt="logo" />
         <a href="../../index.html" style="text-decoration:none;color:inherit">
           <strong>Convex Optimization</strong>
         </a>
