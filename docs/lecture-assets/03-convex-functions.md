@@ -1,4 +1,0 @@
-- **File:** `convex-function-chord-illustration.png`
-- **Source:** https://dilipkumar.medium.com/convex-function-769bfb75e5e1
-- **License:** Screenshot of a copyrighted source, used for educational purposes under fair use.
-- **Relevance:** Clearly illustrates the fundamental property of a convex function: the chord between any two points on the graph lies above the graph itself. This provides a strong visual intuition for the mathematical definition.

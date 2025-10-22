@@ -1,0 +1,4 @@
+- **Filename:** `convex-function-illustration.svg`
+- **Source URL:** https://en.wikipedia.org/wiki/File:ConvexFunction.svg
+- **License:** Creative Commons Attribution-Share Alike 3.0 Unported
+- **Description:** An illustration of a convex function, showing that the line segment between any two points on the function's graph lies above the graph. This directly illustrates the core property of convex functions.
