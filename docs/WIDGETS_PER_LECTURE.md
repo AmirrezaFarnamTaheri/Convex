@@ -82,11 +82,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Real-World Problem Gallery (LOW)**
+- **[x] Real-World Problem Gallery (LOW)**
   - **Location:** `topics/01-introduction/widgets/js/problem-gallery.js`
   - **Description:** A simple, filterable gallery of cards, each describing a real-world application of convex optimization.
   - **Dependencies:** None (static HTML/CSS/JS).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Convergence Comparison (HIGH)**
   - **Location:** `topics/01-introduction/widgets/js/convergence-comparison.js`
@@ -128,21 +128,21 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Cone Geometry & Properties (LOW)**
+- **[x] Cone Geometry & Properties (LOW)**
   - **Location:** `topics/02-convex-sets/widgets/js/cone-geometry.js`
   - **Description:** Visualizes different types of cones (norm cones, positive semidefinite cone) in 2D or 3D.
   - **Dependencies:** D3.js or Three.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Convex Set Operations Composer (LOW)**
+- **[x] Convex Set Operations Composer (LOW)**
   - **Location:** `topics/02-convex-sets/widgets/js/operations-composer.js`
   - **Description:** A drag-and-drop interface for composing multiple operations on sets.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
-## Lecture 03: Convex Functions (8 Widgets)
+## Lecture 03: Convex Functions (7 Widgets)
 
 - **[x] Jensen's Inequality Interactive Proof (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/jensen-visualizer.js`
@@ -174,21 +174,21 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Strongly Convex vs Merely Convex Comparison (LOW)**
+- **[x] Strongly Convex vs Merely Convex Comparison (LOW)**
   - **Location:** `topics/03-convex-functions/widgets/js/strong-convexity.js`
   - **Description:** Compares the graphs of a convex function and a strongly convex function, highlighting the quadratic lower bound.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Convex Function Library & Properties Checker (LOW)**
+- **[x] Convex Function Library & Properties Checker (LOW)**
   - **Location:** `topics/03-convex-functions/widgets/js/function-library.js`
   - **Description:** A gallery of common convex functions with an interface to check their properties (e.g., is it differentiable?).
   - **Dependencies:** None (Static).
-  - **Status:** Planned
+  - **Status:** Completed
 
 ---
 
-## Lecture 04: Convex Opt Problems (8 Widgets)
+## Lecture 04: Convex Opt Problems (7 Widgets)
 
 - **[x] Problem Form Recognizer (HIGH)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/problem-form-recognizer.js`
@@ -214,17 +214,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Three.js.
   - **Status:** Completed
 
-- **[ ] SOCP Explorer (LOW)**
+- **[x] SOCP Explorer (LOW)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/socp-explorer.js`
   - **Description:** Shows the geometry of the second-order cone and a simple SOCP problem.
   - **Dependencies:** Three.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Solver Selection Guide (LOW)**
+- **[x] Solver Selection Guide (LOW)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/solver-guide.js`
   - **Description:** Helps users choose an appropriate solver based on problem characteristics.
   - **Dependencies:** None (Static).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Problem Reformulation Tool (MEDIUM)**
   - **Location:** `topics/04-convex-opt-problems/widgets/js/reformulation-tool.js`
@@ -266,17 +266,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (CVXPY).
   - **Status:** Completed
 
-- **[ ] Duality Gap Monitor (LOW)**
+- **[x] Duality Gap Monitor (LOW)**
   - **Location:** `topics/05-duality/widgets/js/duality-gap-monitor.js`
   - **Description:** A simple monitor that plots the duality gap for an iterative algorithm.
   - **Dependencies:** D3.js or Chart.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Dual Decomposition Visualizer (LOW)**
+- **[x] Dual Decomposition Visualizer (LOW)**
   - **Location:** `topics/05-duality/widgets/js/dual-decomposition.js`
   - **Description:** Visualizes how a problem can be decomposed into smaller subproblems using duality.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Complementary Slackness Explorer (MEDIUM)**
   - **Location:** `topics/05-duality/widgets/js/complementary-slackness.js`
@@ -318,17 +318,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Canvas, Pyodide (NumPy).
   - **Status:** Completed
 
-- **[ ] Robust PCA Visualizer (LOW)**
+- **[x] Robust PCA Visualizer (LOW)**
   - **Location:** `topics/06-approximation-fitting/widgets/js/robust-pca.js`
   - **Description:** Compares standard PCA with Robust PCA on a dataset with corrupted entries.
   - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Fitting Function Gallery (LOW)**
+- **[x] Fitting Function Gallery (LOW)**
   - **Location:** `topics/06-approximation-fitting/widgets/js/fitting-gallery.js`
   - **Description:** A gallery showing different basis functions for fitting data (e.g., polynomials, splines, Fourier series).
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Regularization Theory Tool (MEDIUM)**
   - **Location:** `topics/06-approximation-fitting/widgets/js/regularization-theory.js`
@@ -370,11 +370,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
   - **Status:** Completed
 
-- **[ ] Mixture Model Solver (LOW)**
+- **[x] Mixture Model Solver (LOW)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/mixture-model.js`
   - **Description:** Animates the Expectation-Maximization algorithm for a Gaussian Mixture Model.
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] ROC Curve & Threshold Explorer (LOW)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/roc-curve.js`
@@ -422,17 +422,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (CVXPY).
   - **Status:** Completed
 
-- **[ ] Facility Location Problem (LOW)**
+- **[x] Facility Location Problem (LOW)**
   - **Location:** `topics/08-geometric-problems/widgets/js/facility-location.js`
   - **Description:** A simple interactive example of a facility location problem.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Packing Problem (LOW)**
+- **[x] Packing Problem (LOW)**
   - **Location:** `topics/08-geometric-problems/widgets/js/packing-problem.js`
   - **Description:** Visualizes a simple circle packing problem.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Matrix Rank Minimization (MEDIUM)**
   - **Location:** `topics/08-geometric-problems/widgets/js/rank-minimization.js`
@@ -486,11 +486,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed (2025-10-21)
 
-- **[ ] Adaptive Methods (Adam, RMSprop) (LOW)**
+- **[x] Adaptive Methods (Adam, RMSprop) (LOW)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/adaptive-methods.js`
   - **Description:** Visual comparison of adaptive learning rate methods like Adam and RMSprop.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Coordinate Descent Visualizer (MEDIUM)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/coordinate-descent.js`
@@ -506,7 +506,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ---
 
-## Lecture 10: Equality-Constrained Minimization (8 Widgets)
+## Lecture 10: Equality-Constrained Minimization (7 Widgets)
 
 - **[x] Null-Space Method Visualizer (HIGH)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/null-space-visualizer.js`
@@ -532,11 +532,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Constraint Qualification Checker (LOW)**
+- **[x] Constraint Qualification Checker (LOW)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/constraint-qualification.js`
   - **Description:** A tool to check constraint qualifications like LICQ for a given set of constraints.
   - **Dependencies:** Pyodide (SymPy).
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Infeasibility Detection (MEDIUM)**
   - **Location:** `topics/10-equality-constrained-minimization/widgets/js/infeasibility-detection.js`
@@ -590,17 +590,17 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Self-Concordant Functions Explorer (LOW)**
+- **[x] Self-Concordant Functions Explorer (LOW)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/self-concordant.js`
   - **Description:** An interactive plot to explore the properties of self-concordant functions.
   - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
-- **[ ] Warm Start & Predictor-Corrector (LOW)**
+- **[x] Warm Start & Predictor-Corrector (LOW)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/warm-start.js`
   - **Description:** Compares the convergence of an IPM with and without a warm start.
   - **Dependencies:** D3.js or Chart.js.
-  - **Status:** Planned
+  - **Status:** Completed
 
 - **[x] Large-Scale IPM Behavior (MEDIUM)**
   - **Location:** `topics/11-interior-point-methods/widgets/js/large-scale-ipm.js`

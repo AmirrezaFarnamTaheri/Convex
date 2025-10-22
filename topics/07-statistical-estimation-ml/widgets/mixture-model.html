@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mixture Model Solver</title>
+    <link rel="stylesheet" href="../../../../shared/styles/widget-theme.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js"></script>
+    <style>
+        #mixture-model-container {
+            padding: 1rem;
+            text-align: center;
+        }
+        #mixture-model-visualization {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            margin: auto;
+            border: 1px solid var(--color-surface-1);
+        }
+    </style>
+</head>
+<body>
+    <div id="mixture-model-container">
+        <h2>Gaussian Mixture Model (EM Algorithm)</h2>
+        <div id="mixture-model-visualization"></div>
+    </div>
+    <script type="module" src="js/mixture-model.js"></script>
+</body>
+</html>
