@@ -1,0 +1,4 @@
+- **File:** `saddle-point-illustration.png`
+- **Source:** https://statisticaloddsandends.wordpress.com/2023/02/25/saddle-point-theorem-for-convex-optimization/
+- **License:** Screenshot of a copyrighted source (with attribution), used for educational purposes under fair use.
+- **Relevance:** This image provides an excellent 3D visualization of a saddle point, which is a core concept in Lagrangian duality. It clearly shows the min-max structure, where the point is a minimum along one axis (primal variables) and a maximum along another (dual variables), helping to build intuition for the dual problem.

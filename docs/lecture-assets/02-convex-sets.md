@@ -1,5 +1,4 @@
-### `quick-hull-animation.gif`
-
-* **URL Source**: [https://commons.wikimedia.org/wiki/File:Quick_hull_construction_animation.gif](https://commons.wikimedia.org/wiki/File:Quick_hull_construction_animation.gif)
-* **License**: Creative Commons CC0 1.0 Universal Public Domain Dedication
-* **Description**: This animated GIF demonstrates the Quickhull algorithm for constructing the convex hull of a set of points. The convex hull is a fundamental concept in the study of convex sets, and this animation provides a clear, intuitive visualization of how it is constructed.
+- **File:** `separating-hyperplane-theorem.png`
+- **Source:** https://commons.wikimedia.org/wiki/File:Separating_axis_theorem2008.png
+- **License:** Public Domain
+- **Description:** An illustration of the separating hyperplane theorem (also known as the separating axis theorem) for two convex sets. This visualizes a key concept in convex geometry where a line (or hyperplane in higher dimensions) can be drawn to separate two disjoint convex shapes.

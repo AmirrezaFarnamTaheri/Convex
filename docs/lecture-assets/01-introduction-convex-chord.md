@@ -1,0 +1,4 @@
+- **File:** `convex_function_chord.gif`
+- **Source:** https://www.solver.com/convex-optimization
+- **License:** Copyright Frontline Systems, Inc. Used for educational purposes.
+- **Description:** An animation illustrating the definition of a convex function. The chord connecting two points on the function's graph always lies above the graph itself. This visual is fundamental to understanding the geometric properties of convex functions, a key topic in the introduction.
