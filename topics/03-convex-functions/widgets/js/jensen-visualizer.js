@@ -38,7 +38,7 @@ export function initJensenVisualizer(containerId) {
     const tSlider = container.querySelector("#jensen-t-slider");
     const tValueDisplay = container.querySelector("#t-value-display");
     const clearBtn = container.querySelector("#jensen-clear-btn");
-    const plotContainer = container.querySelector("#jensen-plot-container");
+    const plotContainer = container.querySelector("#plot-container");
     const output = container.querySelector("#jensen-output");
 
     const functions = {

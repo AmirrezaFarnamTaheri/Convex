@@ -376,11 +376,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (Scikit-learn).
   - **Status:** Planned
 
-- **[ ] ROC Curve & Threshold Explorer (LOW)**
+- **[x] ROC Curve & Threshold Explorer (LOW)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/roc-curve.js`
-  - **Description:** Allows users to adjust the classification threshold and see the effect on the ROC curve.
-  - **Dependencies:** D3.js or Chart.js.
-  - **Status:** Planned
+  - **Description:** Interactive tool to explore the ROC curve and see how classification threshold affects TPR and FPR. Includes confusion matrix and performance metrics.
+  - **Dependencies:** D3.js, Pyodide (scikit-learn).
+  - **Status:** Completed (2025-10-21)
 
 - **[x] Feature Selection via Sparsity (MEDIUM)**
   - **Location:** `topics/07-statistical-estimation-ml/widgets/js/feature-selection.js`
@@ -480,11 +480,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[ ] Momentum & Acceleration (LOW)**
+- **[x] Momentum & Acceleration (LOW)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/momentum.js`
-  - **Description:** Compares standard gradient descent with momentum-based methods like Nesterov accelerated gradient.
-  - **Dependencies:** D3.js.
-  - **Status:** Planned
+  - **Description:** Compares standard gradient descent with Classical Momentum and Nesterov Accelerated Gradient. Shows convergence paths and speedup metrics on various test functions.
+  - **Dependencies:** D3.js, Pyodide (NumPy).
+  - **Status:** Completed (2025-10-21)
 
 - **[ ] Adaptive Methods (Adam, RMSprop) (LOW)**
   - **Location:** `topics/09-unconstrained-minimization/widgets/js/adaptive-methods.js`
