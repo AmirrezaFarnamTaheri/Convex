@@ -1,0 +1,4 @@
+- **Filename:** `convex_vs_non_convex.jpg`
+- **Source URL:** https://en.wikipedia.org/wiki/Convex_function
+- **License:** Creative Commons Attribution-ShareAlike 4.0 International
+- **Description:** A clear visual comparison between a convex function (left) and a non-convex function (right). The line segment connecting two points on the graph of the convex function lies above the graph, while for the non-convex function, it passes below.

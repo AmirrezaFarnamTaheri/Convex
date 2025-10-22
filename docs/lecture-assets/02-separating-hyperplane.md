@@ -1,0 +1,4 @@
+- **Filename:** `separating_hyperplane.png`
+- **Source URL:** https://en.wikipedia.org/wiki/Hyperplane_separation_theorem
+- **License:** Creative Commons Attribution-ShareAlike 3.0 Unported
+- **Description:** This image illustrates the separating hyperplane theorem. It shows two disjoint convex sets in a 2D plane, with a line (a hyperplane in 2D) separating them. This demonstrates that for any two disjoint convex sets, there exists a hyperplane such that the sets lie on opposite sides of it.

@@ -1,0 +1,4 @@
+- **Filename:** `eigenvectors.gif`
+- **Source URL:** https://glowingpython.blogspot.com/2011/09/eigenvectors-animated-gif.html
+- **License:** Unknown (assumed to be fair use for educational purposes)
+- **Description:** This animation visualizes the concept of eigenvectors and eigenvalues. The red arrows represent the eigenvectors of a linear transformation. When the transformation is applied, the eigenvectors are simply scaled, and the scaling factor is the eigenvalue. The blue vector represents a non-eigenvector, which changes direction when the transformation is applied.
