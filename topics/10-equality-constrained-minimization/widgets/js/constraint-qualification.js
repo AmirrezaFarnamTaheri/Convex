@@ -27,32 +27,44 @@ def check_licq(constraints_str):
         constraints = []
         for line in constraints_str.strip().split('\\n'):
             if '<=' in line:
-                expr_str = line.split('<=')[0].strip()
-                constraints.append(sympy.sympify(expr_str))
+                expr_str, const_str = line.split('<=')
+                constraints.append(sympy.sympify(expr_str.strip()) - sympy.sympify(const_str.strip()))
             elif '>=' in line:
-                expr_str = line.split('>=')[0].strip()
-                constraints.append(-sympy.sympify(expr_str))
+                expr_str, const_str = line.split('>=')
+                constraints.append(sympy.sympify(const_str.strip()) - sympy.sympify(expr_str.strip()))
 
         if not constraints:
             return "No constraints provided."
 
         gradients = [sympy.Matrix([c.diff(x), c.diff(y)]) for c in constraints]
 
-        # This is a simplification. A full implementation would need to
-        # evaluate the gradients at a specific point.
-        # For now, we check for linear independence of the gradient vectors.
-        if len(gradients) == 1:
-            return "LICQ is satisfied."
+        # We need a point to check LICQ. For this demo, we'll try to solve
+        # for a point on the boundary of the first two constraints.
+        point = {}
+        if len(constraints) >= 2:
+            try:
+                solution = sympy.solve(constraints[:2], (x, y))
+                if solution:
+                    point = {x: solution[x], y: solution[y]}
+            except Exception:
+                pass # Can't solve for a point
 
-        # Check for linear independence of the first two gradients as a demo
-        if len(gradients) >= 2:
-            matrix = gradients[0].row_join(gradients[1])
-            if matrix.rank() == 2:
-                 return "LICQ is satisfied (for the first two constraints)."
-            else:
-                 return "LICQ may not be satisfied."
+        if not point:
+            return "Could not find a point to check. Please provide a simpler set of constraints for this demo."
 
-        return "Checking for more than 2 constraints is not implemented in this demo."
+        active_gradients = []
+        for i, c in enumerate(constraints):
+            if abs(c.subs(point).evalf()) < 1e-6:
+                active_gradients.append(gradients[i])
+
+        if not active_gradients:
+            return "No active constraints at the solution point. LICQ is satisfied."
+
+        matrix = sympy.Matrix.hstack(*active_gradients)
+        if matrix.rank() == len(active_gradients):
+            return f"LICQ is satisfied at {point}."
+        else:
+            return f"LICQ is NOT satisfied at {point}."
 
     except Exception as e:
         return f"Error: {e}"
