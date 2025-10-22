@@ -1,0 +1,4 @@
+- **File:** `least-squares-fit.gif`
+- **Source:** https://www.usgs.gov/media/images/leastsquaresgif
+- **License:** Public Domain (as a work of the U.S. federal government).
+- **Relevance:** This animation provides a clear and dynamic illustration of the least squares fitting process. It shows a line iteratively adjusting to minimize the distance to a set of data points, which is the core concept of this lecture.

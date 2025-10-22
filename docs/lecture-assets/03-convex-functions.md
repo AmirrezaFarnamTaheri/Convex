@@ -1,11 +1,4 @@
-### `convex-function-graph.svg`
-
-* **URL Source**: [https://commons.wikimedia.org/wiki/File:Convex_function.svg](https://commons.wikimedia.org/wiki/File:Convex_function.svg)
-* **License**: Public Domain
-* **Description**: This SVG diagram illustrates the definition of a convex function. It shows that the line segment between any two points on the graph of the function lies above or on the graph.
-
-### `convex-function-graph-1.png`
-
-* **URL Source**: [https://commons.wikimedia.org/wiki/File:Convex-function-graph-1.png](https://commons.wikimedia.org/wiki/File:Convex-function-graph-1.png)
-* **License**: Creative Commons Attribution-Share Alike 3.0 Unported
-* **Description**: This PNG image provides another illustration of a convex function, showing the characteristic upward curve.
+- **File:** `convex-function-chord-illustration.png`
+- **Source:** https://dilipkumar.medium.com/convex-function-769bfb75e5e1
+- **License:** Screenshot of a copyrighted source, used for educational purposes under fair use.
+- **Relevance:** Clearly illustrates the fundamental property of a convex function: the chord between any two points on the graph lies above the graph itself. This provides a strong visual intuition for the mathematical definition.

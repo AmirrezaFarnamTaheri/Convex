@@ -1,11 +1,4 @@
-### `hierarchy-of-convex-optimization-problems.svg`
-
-* **URL Source**: [https://commons.wikimedia.org/wiki/File:Hierarchy_compact_convex.svg](https://commons.wikimedia.org/wiki/File:Hierarchy_compact_convex.svg)
-* **License**: Public Domain
-* **Description**: This SVG diagram provides a clear hierarchical representation of common convex optimization problems, showing the relationships between Linear Programs (LPs), Quadratic Programs (QPs), Second-Order Cone Programs (SOCPs), and Semidefinite Programs (SDPs).
-
-### `convex-problem-examples.svg`
-
-* **URL Source**: [https://commons.wikimedia.org/wiki/File:Convex_function.svg](https://commons.wikimedia.org/wiki/File:Convex_function.svg)
-* **License**: Public Domain
-* **Description**: This SVG diagram illustrates the definition of a convex function, which is the foundation of a convex optimization problem. It shows that the line segment between any two points on the graph of the function lies above or on the graph.
+- **File:** `linear-programming-feasible-region.svg`
+- **Source:** https://commons.wikimedia.org/wiki/File:Linear_Programming_Feasible_Region.svg
+- **License:** Public Domain
+- **Relevance:** This SVG provides a clear, standard illustration of a feasible region for a Linear Program (LP). It visually demonstrates how a set of linear inequality constraints defines a convex polygonal region, which is a fundamental concept in understanding the geometry of convex optimization problems.
