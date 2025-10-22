@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cone Geometry & Properties</title>
+    <link rel="stylesheet" href="../../../../shared/styles/widget-theme.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <style>
+        #cone-geometry-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        .cone-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .cone-controls label {
+            font-size: 0.9em;
+        }
+        .cone-controls select {
+            padding: 0.5rem;
+            border: 1px solid var(--color-surface-1);
+            background-color: var(--color-background);
+            color: var(--color-text-main);
+            border-radius: 4px;
+        }
+        #cone-visualization {
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="cone-geometry-container">
+        <div class="cone-controls">
+            <label for="cone-type-select">Select Cone Type:</label>
+            <select id="cone-type-select">
+                <option value="norm-cone">Norm Cone</option>
+                <option value="psd-cone">Positive Semidefinite Cone (2x2)</option>
+            </select>
+        </div>
+        <div id="cone-visualization">
+            <!-- D3.js visualization will be rendered here -->
+        </div>
+    </div>
+    <script type="module" src="js/cone-geometry.js"></script>
+</body>
+</html>
