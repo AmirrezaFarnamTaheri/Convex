@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
 </head>
 <body>
-  <!-- Header with navigation -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -27,184 +26,227 @@
     </div>
   </header>
 
-  <!-- Main content -->
   <main class="container" style="padding: 32px 0 60px;">
-    <!-- Lecture header -->
     <article class="card" style="margin-bottom: 32px;">
       <h1 style="margin-top: 0;">00. Linear Algebra Primer</h1>
       <div class="meta">
         Date: 2025-10-14 · Duration: 60 min · Tags: prerequisites, review, linear-algebra
       </div>
-
-      <!-- Brief introduction -->
       <section style="margin-top: 16px;">
-        <p><strong>Overview:</strong> Essential review: norms, inner products, eigenvalues, PSD matrices, quadratic forms. Start here if you need background.</p>
+        <p><strong>Overview:</strong> This lecture provides a rigorous, from-scratch review of the essential linear algebra concepts needed for convex optimization. We will cover vectors, norms, inner products, orthogonality, projections, least squares, and robust solution methods like QR and SVD. This module is designed for newcomers but is thorough enough to serve as a reference.</p>
         <p><strong>Prerequisites:</strong> None</p>
       </section>
     </article>
 
-    <!-- Learning objectives -->
     <section class="card" style="margin-bottom: 32px;">
       <h2>Learning Objectives</h2>
-      <p>After this lecture, you should understand:</p>
+      <p>After this lecture, you should be able to:</p>
       <ul style="line-height: 1.8;">
-        <li>Vector norms, inner products, and their geometric interpretations.</li>
-        <li>Eigenvalues, eigenvectors, and the properties of Positive Semidefinite (PSD) matrices.</li>
-        <li>The connection between quadratic forms and matrix properties.</li>
+        <li>Understand fundamental objects like vectors, matrices, and subspaces.</li>
+        <li>Work with inner products, norms, and understand their geometric interpretations.</li>
+        <li>Explain orthogonality, projections, and their application in least squares.</li>
+        <li>Recognize positive semidefinite (PSD) matrices and their connection to quadratic forms.</li>
+        <li>Select appropriate numerical methods (QR, SVD) for solving linear systems robustly.</li>
       </ul>
     </section>
 
-    <!-- Main lecture content -->
     <section class="card" style="margin-bottom: 32px;">
-      <h2>Key Concepts</h2>
-
-      <h3>Concept 1: Norms and Inner Products</h3>
-      <p>Detailed explanation with inline LaTeX: The inner product of two vectors is defined as $\langle x, y \rangle = x^T y$.</p>
-      <p>Visual intuition: The inner product relates to the angle between two vectors.</p>
-
-      <h3>Concept 2: Eigenvalues and PSD Matrices</h3>
-      <p>A matrix $A$ is PSD if $x^T A x \ge 0$ for all $x$.</p>
-
-      <!-- Include images as needed -->
-      <figure style="margin: 16px 0; text-align: center;">
-        <img src="../../static/assets/topics/00-linear-algebra-primer/eigenvectors.gif" alt="Visualization of eigenvectors and eigenvalues" style="max-width: 100%; height: auto;" />
-        <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
-          An animation showing how eigenvectors (red) are scaled by a linear transformation.
-        </figcaption>
-      </figure>
+      <h2>0. Notation and Basic Objects</h2>
+      <p>We begin by defining the fundamental objects of linear algebra.</p>
+      <ul>
+        <li><b>Scalars:</b> Real numbers, e.g., $a \in \mathbb{R}$.</li>
+        <li><b>Vectors:</b> Column vectors $x \in \mathbb{R}^n$, which are $n \times 1$ matrices.</li>
+        <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$ with entries $a_{ij}$.</li>
+        <li><b>Transpose:</b> $A^\top \in \mathbb{R}^{n \times m}$ with $(A^\top)_{ij} = a_{ji}$.</li>
+        <li><b>Identity:</b> $I_n$, an $n \times n$ matrix with ones on the diagonal.</li>
+        <li><b>Standard Basis:</b> $e_1, \dots, e_n$, where $e_i$ has a 1 in position $i$ and zeros elsewhere.</li>
+      </ul>
+      <p>A function $T:\mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$. Every linear map can be represented by a matrix $A$ such that $T(x) = Ax$.</p>
     </section>
 
-    <!-- Interactive widgets -->
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>1. The Four Fundamental Subspaces</h2>
+      <p>For any matrix $A \in \mathbb{R}^{m \times n}$, we have four fundamental subspaces:</p>
+      <ul>
+        <li><b>Column Space (Range):</b> $\mathcal{R}(A) = \{Ax \mid x \in \mathbb{R}^n\} \subseteq \mathbb{R}^m$.</li>
+        <li><b>Nullspace (Kernel):</b> $\mathcal{N}(A) = \{x \in \mathbb{R}^n \mid Ax=0\}$.</li>
+        <li><b>Row Space:</b> $\mathcal{R}(A^\top) \subseteq \mathbb{R}^n$.</li>
+        <li><b>Left Nullspace:</b> $\mathcal{N}(A^\top) = \{y \in \mathbb{R}^m \mid A^\top y=0\}$.</li>
+      </ul>
+      <p>These spaces satisfy two crucial orthogonality conditions: $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$ and $\mathcal{R}(A^\top) \perp \mathcal{N}(A)$. The dimensions are related by the <b>rank-nullity theorem</b>: $\dim \mathcal{N}(A) + \mathrm{rank}(A) = n$.</p>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>2. Inner Products, Norms, and Angles</h2>
+      <p>The <b>standard inner product</b> is $\langle x, y \rangle = x^\top y = \sum_i x_i y_i$. A <b>norm</b> $\|\cdot\|$ is a measure of vector length. The three most common norms are:</p>
+      <ul>
+        <li><b>$\ell_2$ (Euclidean):</b> $\|x\|_2 = \sqrt{\sum_i x_i^2}$</li>
+        <li><b>$\ell_1$ (Manhattan):</b> $\|x\|_1 = \sum_i |x_i|$</li>
+        <li><b>$\ell_\infty$ (Chebyshev):</b> $\|x\|_\infty = \max_i |x_i|$</li>
+      </ul>
+      <p>The <b>Cauchy-Schwarz inequality</b> states $|x^\top y| \le \|x\|_2 \|y\|_2$. The angle between vectors is defined by $\cos\theta = \frac{x^\top y}{\|x\|_2\|y\|_2}$.</p>
+      <h4>Advanced Topics:</h4>
+      <ul>
+          <li><b>Dual Norms:</b> The dual norm is defined as $\|y\|_* = \sup_{\|x\|\le 1} x^\top y$. Key pairs: $(\|\cdot\|_2)^* = \|\cdot\|_2$, $(\|\cdot\|_1)^* = \|\cdot\|_\infty$, and $(\|\cdot\|_\infty)^* = \|\cdot\|_1$.</li>
+          <li><b>Hölder's Inequality:</b> A generalization of Cauchy-Schwarz, $x^\top y \le \|x\| \|y\|_*$.</li>
+          <li><b>Matrix Inner Product:</b> For matrices, the Frobenius inner product is $\langle X, Y \rangle = \mathrm{tr}(X^\top Y)$, inducing the Frobenius norm $\|X\|_F$.</li>
+          <li><b>Loewner Order:</b> For symmetric matrices, $X \succeq Y \iff X-Y \succeq 0$.</li>
+          <li><b>Componentwise Order:</b> For vectors, $x \ge 0$ means $x_i \ge 0$ for all $i$.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>3. Orthogonality and QR Decomposition</h2>
+      <p>A set of vectors $\{q_1, \dots, q_k\}$ is <b>orthonormal</b> if $q_i^\top q_j = \delta_{ij}$. A square matrix $Q$ with orthonormal columns is <b>orthogonal</b>, satisfying $Q^\top Q = I$. The <b>Gram-Schmidt</b> process is an algorithm for constructing an orthonormal basis from a set of linearly independent vectors.</p>
+      <p>The <b>QR decomposition</b> factors a matrix $A \in \mathbb{R}^{m \times n}$ into $A=QR$, where $Q$ has orthonormal columns and $R$ is upper triangular. This is a key tool for solving linear systems robustly.</p>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>4. Positive Semidefinite Matrices</h2>
+      <p>A symmetric matrix $Q$ is:</p>
+      <ul>
+        <li><b>Positive Semidefinite (PSD), $Q \succeq 0$</b>, if $x^\top Q x \ge 0$ for all $x$. This is equivalent to all eigenvalues being non-negative.</li>
+        <li><b>Positive Definite (PD), $Q \succ 0$</b>, if $x^\top Q x > 0$ for all $x \neq 0$. This is equivalent to all eigenvalues being positive.</li>
+      </ul>
+      <p>The expression $x^\top Q x$ is a <b>quadratic form</b>. If $Q \succ 0$, the set $\{x \mid x^\top Q x \le 1\}$ defines an ellipsoid.</p>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>5. Projections</h2>
+      <p>The <b>orthogonal projection</b> of a vector $b$ onto a subspace $\mathcal{S}$ is the unique vector $p \in \mathcal{S}$ that minimizes $\|b-p\|_2$. The residual $b-p$ is orthogonal to $\mathcal{S}$.</p>
+      <ul>
+        <li>If columns of $Q$ form an orthonormal basis for $\mathcal{S}$, the projection matrix is $P = QQ^\top$.</li>
+        <li>If columns of $A$ form a basis for $\mathcal{S}$, $P = A(A^\top A)^{-1}A^\top$.</li>
+        <li>To project onto an <b>affine set</b> $\{x \mid Fx=g\}$, find a particular solution $x_0$, and project onto the nullspace of $F$.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>6. Least Squares</h2>
+      <p>The least squares problem seeks to find an $x$ that minimizes $\|Ax-b\|_2^2$. The solution $x^\star$ must satisfy the <b>normal equations</b>: $A^\top A x^\star = A^\top b$. Geometrically, $Ax^\star$ is the projection of $b$ onto the column space of $A$.</p>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>7. SVD and the Pseudoinverse</h2>
+      <p>The <b>Singular Value Decomposition (SVD)</b> factors any matrix $A$ as $A = U\Sigma V^\top$, where $U$ and $V$ are orthogonal and $\Sigma$ is diagonal with non-negative singular values. The SVD provides the <b>pseudoinverse</b> $A^+ = V\Sigma^+ U^\top$, which gives the minimum-norm solution to the least squares problem: $x^\star = A^+ b$. The condition number $\kappa(A) = \sigma_{\max}/\sigma_{\min}$ measures the sensitivity of the solution to perturbations.</p>
+    </section>
+
     <section class="card" id="widgets" style="margin-bottom: 32px;">
       <h2>Interactive Widgets</h2>
-      <p>Below are tools to explore the concepts interactively. Try tweaking parameters to build intuition.</p>
+      <p>Explore the concepts from this lecture interactively. Adjust parameters and observe the outcomes to build a strong geometric intuition.</p>
 
-      <!-- Widget 1 -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Norm Geometry Visualizer</h3>
-        <p>Unit balls for common vector norms. Click a button to see the shape of all vectors with that norm equal to 1.</p>
-        <div id="widget-1" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+        <p>Interactively displays the unit balls for ℓ₁, ℓ₂, and ℓ∞ norms to build geometric intuition.</p>
+        <div id="widget-norm-geometry" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <!-- Widget 2 -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Matrix Explorer</h3>
-        <p>Eigenvalue/PSD visualizer</p>
-        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 3 -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Hessian Landscape Visualizer</h3>
-        <p>Renders the 3D surface of a quadratic function.</p>
-        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 4 (if exists) -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Orthogonality & Projection Explorer</h3>
         <p>Allows users to drag two vectors and see their dot product, angle, and orthogonal projection update in real-time.</p>
-        <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
+        <div id="widget-orthogonality" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <!-- Widget 5 (if exists) -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Rank & Nullspace Visualizer</h3>
         <p>Visualizes the four fundamental subspaces of a user-defined 2x3 or 3x2 matrix.</p>
-        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
+        <div id="widget-rank-nullspace" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Eigenvalue Decomposition & PSD Explorer</h3>
+        <p>Shows the geometric interpretation of eigenvalues/eigenvectors for a 2x2 matrix and visualizes its quadratic form to check for positive semidefiniteness.</p>
+        <div id="widget-eigen-psd" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Condition Number & Convergence Race</h3>
+        <p>Demonstrates how a high condition number slows down iterative solvers by comparing two systems of linear equations.</p>
+        <div id="widget-condition-number" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Hessian Landscape Visualizer</h3>
+        <p>Renders the 3D surface of a quadratic function and its Hessian matrix, linking eigenvalues to curvature.</p>
+        <div id="widget-hessian-landscape" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">SVD & Low-Rank Approximation</h3>
+        <p>Lets users perform a low-rank approximation of an image by selecting the number of singular values to use.</p>
+        <div id="widget-svd-approximator" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Matrix Explorer</h3>
+        <p>An interactive tool to explore matrix properties like eigenvalues, determinant, and trace.</p>
+        <div id="widget-matrix-explorer" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
     </section>
 
-    <!-- Readings -->
     <section class="card" id="readings" style="margin-bottom: 32px;">
       <h2>Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Appendix A</li>
-        <li><strong>Course slides:</strong> [Link if available]</li>
       </ul>
     </section>
 
-    <!-- Example problems -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Example Problems</h2>
-
-      <h3>Example 1: Checking for PSD</h3>
-      <p>Given a 2x2 matrix, determine if it's PSD.</p>
-
-      <h3>Example 2: Calculating Vector Norms</h3>
-      <p>Calculate the L1, L2, and L-infinity norms of a vector.</p>
-    </section>
-
-    <!-- Exercises (optional) -->
     <section class="card" style="margin-bottom: 32px;">
       <h2>Exercises</h2>
-      <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
       <ol style="line-height: 2;">
         <li>Prove that the eigenvalues of a symmetric matrix are real.</li>
-        <li>Show that $A^T A$ is always PSD.</li>
+        <li>Show that $A^T A$ is always PSD for any matrix $A$.</li>
+        <li>Apply Gram-Schmidt to the vectors $a_1=(1,1,0), a_2=(1,0,1), a_3=(0,1,1)$.</li>
+        <li>Derive the projector onto the span of a single non-zero vector $u$.</li>
       </ol>
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <p style="margin: 0;">
-        © <span id="year"></span> Convex Optimization Course ·
-        <a href="../../README.md" style="color: var(--brand);">About</a>
-      </p>
+      <p style="margin: 0;">© <span id="year"></span> Convex Optimization Course · <a href="../../README.md" style="color: var(--brand);">About</a></p>
     </div>
   </footer>
 
-  <!-- Load Pyodide for Python widgets (optional) -->
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
-  <!-- Widget loaders -->
-  <script type="module">
-    import { initNormGeometryVisualizer } from './widgets/js/norm-geometry-visualizer.js';
-    initNormGeometryVisualizer('widget-1');
-  </script>
-  <script type="module">
-    import { initEigenvalueExplorer } from './widgets/js/matrix-explorer.js';
-    initEigenvalueExplorer('widget-2');
-  </script>
-  <script type="module">
-    import { initHessianLandscapeVisualizer } from './widgets/js/hessian-landscape-visualizer.js';
-    initHessianLandscapeVisualizer('widget-3');
-  </script>
-  <script type="module">
-    import { initOrthogonality } from './widgets/js/orthogonality.js';
-    initOrthogonality('widget-4');
-  </script>
-  <script type="module">
-    import { initRankNullspace } from './widgets/js/rank-nullspace.js';
-    initRankNullspace('widget-5');
-  </script>
-
-  <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+
+  <!-- Widget Loaders -->
   <script type="module">
-    import { initConditionNumber } from './widgets/js/condition-number.js';
-    initConditionNumber('widget-condition-number');
+    import { initNormGeometryVisualizer } from './widgets/js/norm-geometry-visualizer.js';
+    initNormGeometryVisualizer('widget-norm-geometry');
+  </script>
+  <script type="module">
+    import { initOrthogonality } from './widgets/js/orthogonality.js';
+    initOrthogonality('widget-orthogonality');
+  </script>
+  <script type="module">
+    import { initRankNullspace } from './widgets/js/rank-nullspace.js';
+    initRankNullspace('widget-rank-nullspace');
   </script>
   <script type="module">
     import { initEigenPsd } from './widgets/js/eigen-psd.js';
     initEigenPsd('widget-eigen-psd');
   </script>
   <script type="module">
+    import { initConditionNumber } from './widgets/js/condition-number.js';
+    initConditionNumber('widget-condition-number');
+  </script>
+  <script type="module">
+    import { initHessianLandscapeVisualizer } from './widgets/js/hessian-landscape-visualizer.js';
+    initHessianLandscapeVisualizer('widget-hessian-landscape');
+  </script>
+  <script type="module">
     import { initSvdApproximator } from './widgets/js/svd-approximator.js';
     initSvdApproximator('widget-svd-approximator');
+  </script>
+  <script type="module">
+    import { initMatrixExplorer } from './widgets/js/matrix-explorer.js';
+    initMatrixExplorer('widget-matrix-explorer');
   </script>
 </body>
 </html>
