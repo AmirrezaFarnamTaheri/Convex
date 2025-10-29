@@ -31,7 +31,7 @@ const problems = [
     }
 ];
 
-function initProblemGallery(containerId) {
+export function initProblemGallery(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
@@ -64,5 +64,3 @@ function initProblemGallery(containerId) {
 
     renderGallery();
 }
-
-initProblemGallery('problem-gallery-container');

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>00. Linear Algebra Primer — Convex Optimization</title>
   <link rel="stylesheet" href="../../static/css/styles.css" />
+  <link rel="stylesheet" href="/static/css/modern-widgets.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
 </head>
@@ -192,6 +193,18 @@
   <script src="../../static/js/math-renderer.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  <script type="module">
+    import { initConditionNumber } from './widgets/js/condition-number.js';
+    initConditionNumber('widget-condition-number');
+  </script>
+  <script type="module">
+    import { initEigenPsd } from './widgets/js/eigen-psd.js';
+    initEigenPsd('widget-eigen-psd');
+  </script>
+  <script type="module">
+    import { initSvdApproximator } from './widgets/js/svd-approximator.js';
+    initSvdApproximator('widget-svd-approximator');
   </script>
 </body>
 </html>
