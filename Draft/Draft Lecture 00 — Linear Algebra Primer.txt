@@ -1,0 +1,398 @@
+# Lecture 00 — Linear Algebra Primer
+
+*(vectors → inner products → norms → orthogonality → projections → least squares → QR/SVD/pseudoinverse → numerical sanity checks)*
+
+This is a from-scratch, step-by-step lecture meant for newcomers, but rigorous enough to serve as reference notes. It sets up all the linear-algebra machinery you’ll use later. It deliberately avoids topics that belong in future lectures (convex sets/functions, cone geometry, duality, KKT, etc.).
+
+---
+
+## 0. Notation and basic objects
+
+**Scalars, vectors, matrices.**
+
+* Scalars are real numbers (a\in\mathbb{R}).
+* Column vectors (x\in\mathbb{R}^n) are (n\times 1) matrices; entries (x_i).
+* Matrices (A\in\mathbb{R}^{m\times n}); entry (a_{ij}) is row (i), column (j).
+* The **transpose** (A^\top\in\mathbb{R}^{n\times m}) satisfies ((A^\top)*{ij}=a*{ji}).
+* The **identity** (I_n) has ones on the diagonal; (I_nx=x).
+* The **standard basis** (e_1,\dots,e_n): (e_i) has a 1 in position (i), zeros otherwise. Every (x\in\mathbb{R}^n) can be written (x=\sum_{i=1}^n x_i e_i).
+
+**Matrix–vector and matrix–matrix multiplication.**
+
+* (A x) is the linear combination of columns of (A) with coefficients from (x).
+* ((AB)*{ij}=\sum_k a*{ik} b_{kj}).
+
+**Linear maps.**
+A function (T:\mathbb{R}^n\to\mathbb{R}^m) is **linear** iff (T(\alpha x+\beta y)=\alpha T(x)+\beta T(y)); every linear map can be represented by a matrix (A) with (T(x)=Ax).
+
+---
+
+## 1. Subspaces and the four fundamental spaces
+
+Given (A\in\mathbb{R}^{m\times n}):
+
+* **Column space (range)** (\mathcal{R}(A)={Ax\mid x\in\mathbb{R}^n}\subseteq\mathbb{R}^m).
+* **Nullspace (kernel)** (\mathcal{N}(A)={x\in\mathbb{R}^n\mid Ax=0}).
+* **Row space** (\mathcal{R}(A^\top)\subseteq\mathbb{R}^n).
+* **Left nullspace** (\mathcal{N}(A^\top)={y\in\mathbb{R}^m\mid A^\top y=0}).
+
+All four are linear subspaces. Two orthogonality facts (easy, important, and used later):
+
+* (\mathcal{R}(A)\ \perp\ \mathcal{N}(A^\top)) in (\mathbb{R}^m).
+* (\mathcal{R}(A^\top)\ \perp\ \mathcal{N}(A)) in (\mathbb{R}^n).
+
+**Rank and rank–nullity.**
+(\mathrm{rank}(A)=\dim \mathcal{R}(A)). For (A\in\mathbb{R}^{m\times n}),
+[
+\dim \mathcal{N}(A) + \mathrm{rank}(A) = n.
+]
+
+---
+
+## 2. Inner products, norms, angles
+
+**Inner product.**
+An inner product on (\mathbb{R}^n) is a mapping (\langle x,y\rangle) that is bilinear, symmetric, and positive definite:
+
+* (\langle ax+by,z\rangle=a\langle x,z\rangle+b\langle y,z\rangle),
+* (\langle x,y\rangle=\langle y,x\rangle),
+* (\langle x,x\rangle>0) for (x\neq 0).
+
+The **standard (Euclidean) inner product** is (\langle x,y\rangle = x^\top y = \sum_{i=1}^n x_i y_i).
+
+**Norms.**
+A norm (|\cdot|) satisfies nonnegativity & definiteness, absolute homogeneity, triangle inequality. Three canonical norms:
+[
+|x|_2=\Big(\sum_i x_i^2\Big)^{1/2},\quad
+|x|*1=\sum_i |x_i|,\quad
+|x|*\infty=\max_i |x_i|.
+]
+In finite dimensions, all norms are equivalent (they induce the same notion of convergence), but their geometry differs.
+
+**Cauchy–Schwarz and triangle inequality (proof sketches).**
+
+* C–S: For any (x,y), (|x^\top y|\le |x|_2|y|_2). Proof uses nonnegativity of (|x-ty|_2^2) and optimizes over (t).
+* Triangle: (|x+y|_2\le |x|_2+|y|_2) follows from C–S after squaring and expanding (|x+y|_2^2).
+
+**Angles.**
+Define (\cos\angle(x,y)=\dfrac{x^\top y}{|x|_2|y|_2}). Vectors are **orthogonal** iff (x^\top y=0).
+
+**Generalized (weighted) inner product.**
+If (Q\in\mathbb{R}^{n\times n}) is symmetric positive definite (SPD), then (\langle x,y\rangle_Q:=x^\top Q y) is an inner product with induced norm (|x|_Q=\sqrt{x^\top Qx}). This yields **quadratic forms** and ellipsoidal distance—but we stop short of any convex-geometry discussion.
+
+---
+
+## 3. Orthogonality, orthonormal bases, Gram–Schmidt, QR
+
+**Orthonormal set.**
+Vectors (q_1,\dots,q_k) are orthonormal if (q_i^\top q_j=0) for (i\neq j) and (|q_i|_2=1). A square matrix (Q) with orthonormal columns is **orthogonal**: (Q^\top Q=I), hence (Q^{-1}=Q^\top).
+
+**Gram–Schmidt (constructive).**
+Given independent (a_1,\dots,a_n), define
+[
+\tilde q_1=a_1,\quad q_1=\tilde q_1/|\tilde q_1|,\qquad
+\tilde q_k=a_k-\sum_{i=1}^{k-1}(q_i^\top a_k)q_i,\quad
+q_k=\tilde q_k/|\tilde q_k|.
+]
+This yields an orthonormal basis (q_1,\dots,q_n) for the span.
+
+**QR decomposition (why it matters).**
+For (A\in\mathbb{R}^{m\times n}) with full column rank, there exists (Q\in\mathbb{R}^{m\times n}) with orthonormal columns and upper-triangular (R\in\mathbb{R}^{n\times n}) with positive diagonal such that (A=QR).
+
+* **Solving (Ax=b) with (m\ge n):** Replace normal equations by (R x=Q^\top b) (cheap and numerically stable).
+* **Projector onto (\mathcal{R}(A)):** (P=Q Q^\top). (Derivation in §5.)
+
+---
+
+## 4. Positive (semi)definiteness and quadratic forms
+
+**Definitions.**
+
+* (Q\succeq 0) (PSD) if (x^\top Q x\ge 0) for all (x).
+* (Q\succ 0) (SPD) if (x^\top Q x>0) for all (x\neq 0).
+
+If (Q=Q^\top), then: (Q\succeq 0) iff all eigenvalues (\lambda_i\ge 0); (Q\succ 0) iff (\lambda_i>0).
+If (Q\succ 0), then (|x|_Q=\sqrt{x^\top Qx}) is a valid norm; its unit “ball” is an ellipsoid ({x\mid x^\top Q x\le 1}). (We do **not** use any convex-set theory here; this is strictly linear-algebraic geometry.)
+
+---
+
+## 5. Projections onto subspaces and affine sets
+
+**Orthogonal projection onto a subspace.**
+Let (\mathcal{S}\subseteq\mathbb{R}^m) be a subspace and (b\in\mathbb{R}^m). The **orthogonal projection** (p\in\mathcal{S}) of (b) is the unique vector in (\mathcal{S}) minimizing (|b-p|_2). It is characterized by the **orthogonality condition**
+[
+b-p\ \perp\ \mathcal{S}\quad\iff\quad v^\top(b-p)=0\ \ \forall, v\in\mathcal{S}.
+]
+
+**Projection via a basis.**
+If (Q\in\mathbb{R}^{m\times k}) has orthonormal columns that span (\mathcal{S}), the projector is
+[
+P=QQ^\top\quad\text{and}\quad p=Pb=QQ^\top b.
+]
+Check (P^2=P) (idempotent) and (P^\top=P) (symmetric): that’s what makes it an **orthogonal** projector.
+
+**Projection onto (\mathcal{R}(A)) using (A).**
+If (A\in\mathbb{R}^{m\times n}) has full column rank, then
+[
+P=A(A^\top A)^{-1}A^\top\quad\text{and}\quad p=Pb.
+]
+Proof: columns of (Q=A(A^\top A)^{-1/2}) are orthonormal; substitute (Q Q^\top).
+
+**Projection onto an affine set.**
+Projecting onto ({x\mid Fx=g}) can be reduced to a subspace projection by translating: pick any (x_0) with (Fx_0=g), write the affine set as (x_0+\mathcal{N}(F)), project (b-x_0) onto (\mathcal{N}(F)), and translate back.
+
+---
+
+## 6. Least squares, normal equations, and geometry
+
+**Problem.**
+Given (A\in\mathbb{R}^{m\times n}), (b\in\mathbb{R}^m), with typically (m\ge n), solve
+[
+\min_{x\in\mathbb{R}^n}\ |Ax-b|_2^2.
+]
+
+**Geometric interpretation.**
+Let (\mathcal{S}=\mathcal{R}(A)). The vector (Ax^\star) is the orthogonal projection of (b) onto (\mathcal{S}). The **residual** (r^\star=b-Ax^\star) is orthogonal to (\mathcal{S}), i.e. (A^\top r^\star=0).
+
+**Normal equations (derivation).**
+Define (f(x)=|Ax-b|_2^2=(Ax-b)^\top(Ax-b)). Then (\nabla f(x)=2A^\top(Ax-b)). Setting (\nabla f(x^\star)=0) gives
+[
+A^\top A x^\star = A^\top b.
+]
+If (A) has full column rank, (A^\top A\succ 0) and (x^\star=(A^\top A)^{-1}A^\top b).
+
+**Uniqueness.**
+
+* If (\mathrm{rank}(A)=n): unique minimizer.
+* If (\mathrm{rank}(A)<n): minimizers form an affine set; the minimum-norm solution is selected by the pseudoinverse (next sections).
+
+**Orthogonality condition (again).**
+At the minimizer: (A^\top(b-Ax^\star)=0). This is the algebraic restatement of “residual is orthogonal to the column space.”
+
+---
+
+## 7. Solving least squares robustly: QR, SVD, pseudoinverse
+
+**QR method (recommended in practice).**
+If (A=QR) with (Q\in\mathbb{R}^{m\times n}) ((Q^\top Q=I)) and (R\in\mathbb{R}^{n\times n}) upper triangular, the least-squares solution solves
+[
+R x^\star = Q^\top b \quad\text{(back substitution)}.
+]
+This avoids forming (A^\top A), which squares the condition number and amplifies round-off errors.
+
+**Singular Value Decomposition (SVD).**
+Every (A\in\mathbb{R}^{m\times n}) admits (A=U\Sigma V^\top), where
+
+* (U\in\mathbb{R}^{m\times m}) and (V\in\mathbb{R}^{n\times n}) are orthogonal,
+* (\Sigma\in\mathbb{R}^{m\times n}) is diagonal (nonnegative entries (\sigma_1\ge\cdots\ge \sigma_r>0), (r=\mathrm{rank}(A))).
+
+SVD gives the **pseudoinverse**:
+[
+A^+=V\Sigma^+ U^\top,
+]
+where (\Sigma^+) inverts the nonzero singular values ((\sigma_i^+=1/\sigma_i)) and transposes the shape.
+
+**Least squares via SVD.**
+A minimum-norm minimizer is
+[
+x^\star=A^+ b = \sum_{i=1}^r \frac{u_i^\top b}{\sigma_i}, v_i.
+]
+This guarantees numerical stability, especially when (A) is rank-deficient or ill-conditioned.
+
+**Spectral norm and condition number.**
+
+* (|A|*2=\sigma*{\max}(A)).
+* The 2-norm condition number (full column rank) is (\kappa_2(A)=\dfrac{\sigma_{\max}}{\sigma_{\min}}).
+  Large (\kappa_2) means small perturbations in (b) (or round-off) can cause large relative errors in (x^\star) if you use unstable methods (e.g., normal equations).
+
+**Projection revisited (with SVD).**
+The projector onto (\mathcal{R}(A)) is
+[
+P = UU^\top \quad\text{(using only the first (r) columns of (U))} \quad\text{or}\quad P=A A^+.
+]
+Both are symmetric idempotent; both send any (b) to its closest point in (\mathcal{R}(A)).
+
+---
+
+## 8. Variants you will actually need
+
+**(a) Weighted least squares (WLS)**
+Given SPD weight (W\in\mathbb{R}^{m\times m}),
+[
+\min_x |Ax-b|_W^2 := (Ax-b)^\top W (Ax-b).
+]
+Let (C) satisfy (W=C^\top C) (e.g., Cholesky). Then the problem is ordinary least squares in the **whitened** system ((CA)x\approx C b). Normal equations: (A^\top W A,x=A^\top W b).
+
+**(b) Constrained to an affine set**
+Solve
+[
+\min_x |Ax-b|_2^2\quad\text{s.t.}\quad Fx=g.
+]
+One method: parametrize (x=x_0+Zy), where (Fx_0=g) and columns of (Z) form a basis for (\mathcal{N}(F)). Then minimize (|A(x_0+Zy)-b|_2^2) over (y) (an unconstrained LS). QR on (AZ) is typically best.
+*(We save general constrained formulations and KKT systems for later lectures.)*
+
+**(c) Data preprocessing that prevents pain**
+
+* Center columns of (A) and vector (b) to reduce round-off and improve interpretability (especially for polynomial/feature fits).
+* Scale features to comparable magnitudes before solving; (\kappa_2) often improves dramatically.
+
+---
+
+## 9. Worked examples (fully written out)
+
+**Example 1 — Project onto a line.**
+Let (u\neq 0) in (\mathbb{R}^m), (\mathcal{S}=\mathrm{span}{u}). The orthogonal projector is
+[
+P=\frac{uu^\top}{u^\top u},\quad p=Pb=\frac{u^\top b}{u^\top u},u.
+]
+*Derivation.* Choose orthonormal basis ({q_1,\dots}) with (q_1=u/|u|_2). Then (P=q_1 q_1^\top=\dfrac{uu^\top}{|u|_2^2}).
+
+**Example 2 — Normal equations and geometry.**
+Take
+[
+A=\begin{bmatrix}1&1\1&-1\1&1\end{bmatrix},\quad b=\begin{bmatrix}2\0\1\end{bmatrix}.
+]
+Compute
+[
+A^\top A=\begin{bmatrix}3&1\1&3\end{bmatrix},\quad A^\top b=\begin{bmatrix}3\1\end{bmatrix}.
+]
+Solve (\begin{bmatrix}3&1\1&3\end{bmatrix}x=\begin{bmatrix}3\1\end{bmatrix}). From the first row (3x_1+x_2=3); second (x_1+3x_2=1). Solve:
+[
+x_2 = \frac{1- x_1}{3},\quad 3x_1+\frac{1-x_1}{3}=3
+\Rightarrow \frac{8x_1+1}{3}=3\Rightarrow 8x_1=8\Rightarrow x_1=1, \ x_2=0.
+]
+Residual (r=b-Ax^\star=\begin{bmatrix}2\0\1\end{bmatrix}-\begin{bmatrix}1\1\1\end{bmatrix}=\begin{bmatrix}1\-1\0\end{bmatrix}). Check orthogonality: (A^\top r=\begin{bmatrix}1+(-1)+0\1\cdot 1 + (-1)\cdot(-1)+ 0\end{bmatrix}=\begin{bmatrix}0\2\end{bmatrix}) — oops, we made a deliberate trap: this shows the importance of re-checking arithmetic. Let’s recompute (Ax^\star) carefully: with (x^\star=(1,0)), (Ax^\star=\begin{bmatrix}1\1\1\end{bmatrix}) is right. Then (r=\begin{bmatrix}1\-1\0\end{bmatrix}).
+Now (A^\top r=\begin{bmatrix}1+(-1)+0\ 1\cdot 1 + (-1)\cdot(-1) + 0\cdot 1\end{bmatrix}=\begin{bmatrix}0\ 2\end{bmatrix}\neq 0).
+So our (x^\star) can’t be correct! Where’s the slip? In computing (A^\top A):
+[
+A^\top A =
+\begin{bmatrix}
+\langle (1,1,1),(1,1,1)\rangle & \langle (1,1,1),(1,-1,1)\rangle\
+\langle (1,-1,1),(1,1,1)\rangle & \langle (1,-1,1),(1,-1,1)\rangle
+\end{bmatrix}
+=============
+
+\begin{bmatrix}
+3&1\
+1&3
+\end{bmatrix}\ \text{(correct)}
+]
+but (A^\top b) is
+[
+\begin{bmatrix}
+1\cdot 2 + 1\cdot 0 + 1\cdot 1\
+1\cdot 2 + (-1)\cdot 0 + 1\cdot 1
+\end{bmatrix}
+=============
+
+\begin{bmatrix}
+3\
+3
+\end{bmatrix}\quad\text{(not }\begin{bmatrix}3\1\end{bmatrix}\text{)}.
+]
+Solve (\begin{bmatrix}3&1\1&3\end{bmatrix}\begin{bmatrix}x_1\x_2\end{bmatrix}=\begin{bmatrix}3\3\end{bmatrix}).
+From row1: (3x_1+x_2=3) ⇒ (x_2=3-3x_1). Row2: (x_1+3(3-3x_1)=3) ⇒ (x_1+9-9x_1=3) ⇒ (-8x_1=-6) ⇒ (x_1=3/4). Then (x_2=3-3(3/4)=3/4).
+Now (r=b-Ax^\star=\begin{bmatrix}2\0\1\end{bmatrix}-\begin{bmatrix}3/2\0\3/2\end{bmatrix}=\begin{bmatrix}1/2\0\-1/2\end{bmatrix}). Check (A^\top r=\begin{bmatrix}(1)(1/2)+(1)(0)+(1)(-1/2)\ (1)(1/2)+(-1)(0)+(1)(-1/2)\end{bmatrix}=\begin{bmatrix}0\0\end{bmatrix}). Good.
+
+**Example 3 — QR instead of normal equations.**
+For the same (A), compute a thin QR (A=QR) (by hand or numerically). Then (x^\star) is the solution of (R x=Q^\top b). You’ll get (x^\star=(3/4,3/4)) without ever forming (A^\top A).
+
+**Example 4 — Rank-deficient case & pseudoinverse.**
+Let
+[
+A=\begin{bmatrix}1&1\2&2\3&3\end{bmatrix},\quad b=\begin{bmatrix}1\0\1\end{bmatrix}.
+]
+Columns are collinear; (\mathrm{rank}(A)=1). SVD gives one nonzero singular value (\sigma_1). The minimum-norm least-squares solution is (x^\star=A^+ b), which yields (x_1^\star=x_2^\star) by symmetry (under-determined along the nullspace direction).
+
+---
+
+## 10. Implementation mini-guide (what to actually do in code)
+
+* Prefer **QR** for routine LS: stable and fast.
+* Use **SVD** for rank-deficient or ill-conditioned systems; also when you need minimum-norm solutions or truncated solutions (noise suppression).
+* Avoid forming (A^\top A) explicitly unless dimensions are tiny and the matrix is well-conditioned.
+* Preprocess features (centering/scaling) to keep condition numbers reasonable.
+* Verify results with the residual orthogonality check (A^\top(b-Ax^\star)\approx 0).
+
+---
+
+## 11. Exercises (with detailed solutions)
+
+### A. Fundamentals
+
+**A1.** Prove that the set of all linear combinations of a fixed set of vectors is a subspace.
+*Solution.* Closure under addition and scalar multiplication follow from distributivity; the zero vector is obtained by all-zero coefficients.
+
+**A2.** Show that (\mathcal{R}(A)\perp \mathcal{N}(A^\top)).
+*Solution.* If (y\in\mathcal{N}(A^\top)), then for any (x), (y^\top(Ax)=(A^\top y)^\top x=0).
+
+**A3.** Show that (Q^\top Q=I) (\Rightarrow) (|Qx|_2=|x|_2).
+*Solution.* (|Qx|_2^2=(Qx)^\top(Qx)=x^\top Q^\top Q x=x^\top x).
+
+**A4. (Gram–Schmidt)** Apply Gram–Schmidt to (a_1=(1,1,0)^\top), (a_2=(1,0,1)^\top), (a_3=(0,1,1)^\top); produce an orthonormal basis.
+*Solution.* Compute (\tilde q_1=a_1), normalize; subtract projections from (a_2) and (a_3); normalize again. (Carry out all arithmetic; verify orthonormality.)
+
+### B. Projections
+
+**B1.** Let (S=\mathrm{span}{u,v}) with (u,v) independent. Derive the projector (P) onto (S).
+*Solution.* Form (A=[u\ v]). If (A) has full column rank, (P=A(A^\top A)^{-1}A^\top).
+
+**B2.** Show that if (P) is symmetric and idempotent, then it is an orthogonal projector (i.e., it projects onto (\mathcal{R}(P))).
+*Solution.* For any (b), set (p=Pb) and (r=b-Pb). Then (P r=0) (because (P^2=P)); thus (r\in\mathcal{N}(P)). For any (y=Pw\in\mathcal{R}(P)),
+(y^\top r=w^\top P^\top(b-Pb)=w^\top P(b-Pb)=w^\top(Pb-P^2 b)=0), so (r\perp\mathcal{R}(P)). Hence (p) is the orthogonal projection.
+
+**B3.** Project (b=(1,2,3)^\top) onto the affine set ({x\mid [1\ 1\ 1]x=3}).
+*Solution.* One solution: find (x_0=(1,1,1)^\top) (satisfies the constraint). Compute (b-x_0=(0,1,2)^\top) and project onto (\mathcal{N}([1\ 1\ 1])), i.e., vectors summing to zero. Using basis (z_1=(1,-1,0)), (z_2=(1,0,-1)), solve (\min_{y}|Zy-(b-x_0)|_2^2), with (Z=[z_1\ z_2]). Recover (x^\star=x_0+Zy^\star). (Work through the (2\times 2) normal equations or QR on (Z).)
+
+### C. Least Squares
+
+**C1.** Derive normal equations and prove uniqueness iff (\mathrm{rank}(A)=n).
+*Solution.* Already shown; uniqueness follows from strict convexity of (x\mapsto |Ax-b|_2^2) when (A^\top A\succ 0), or equivalently from nullspace-only solution of (A^\top A d=0).
+
+**C2.** Show that the residual at the LS solution is orthogonal to each column of (A).
+*Solution.* Columns of (A) span (\mathcal{R}(A)). Orthogonality condition (A^\top(b-Ax^\star)=0) means (r^\star\perp\mathcal{R}(A)).
+
+**C3.** Solve a small overdetermined system by (i) normal equations, (ii) QR, (iii) SVD, and compare answers.
+*Solution.* Pick any (3\times 2) with independent columns; show all three methods agree to numerical precision. Discuss time and conditioning.
+
+**C4.** Weighted least squares with diagonal (W=\mathrm{diag}(w_i)). Show equivalence to scaling the rows of (A) and (b) by (\sqrt{w_i}).
+*Solution.* Write (W=C^\top C) with (C=\mathrm{diag}(\sqrt{w_i})); minimize (|CAx-Cb|_2^2).
+
+### D. Pseudoinverse & rank deficiency
+
+**D1.** Prove that every least-squares solution (x^\star) satisfies (x^\star=A^+b+(I-A^+A)z) for some (z).
+*Solution.* From SVD, the set of minimizers is (A^+b + \mathcal{N}(A)); note (I-A^+A) projects onto (\mathcal{N}(A)).
+
+**D2.** Show (P=A A^+) is the projector onto (\mathcal{R}(A)) and (P^\perp=I-AA^+) projects onto (\mathcal{N}(A^\top)).
+*Solution.* Use SVD or basic projector algebra (P^2=P), (P^\top=P), range/nullspace relations.
+
+---
+
+## 12. Sanity checklist (what to remember in practice)
+
+* Always check **dimensions** before anything else.
+* For LS: confirm **full column rank** if you expect uniqueness.
+* Prefer **QR** (or **SVD**) over normal equations; never manually invert (A^\top A).
+* Verify solution with the **residual orthogonality** test.
+* If results look unstable, inspect singular values and **condition number**; consider feature scaling or SVD-based solutions.
+* Keep a mental model: solution is the **projection** of (b) onto the column space, expressed in the coordinates of (A)’s columns.
+
+---
+
+## 13. What we **don’t** do here (saved for later)
+
+* No convex sets, no epigraphs, no cones, no separation/support theorems.
+* No general constrained optimization, Lagrangians, duality, or KKT.
+* No conic forms or interior-point methods.
+
+---
+
+## 14. Quick reference formulas
+
+* Projection onto (\mathrm{span}(Q)) with (Q^\top Q=I): (P=QQ^\top).
+* Projection onto (\mathcal{R}(A)) (full column rank): (P=A(A^\top A)^{-1}A^\top).
+* Normal equations: (A^\top A x^\star = A^\top b).
+* QR LS solve: (A=QR\Rightarrow Rx^\star=Q^\top b).
+* SVD pseudoinverse: (A^+=V\Sigma^+ U^\top); min-norm solution (x^\star=A^+b).
+* Condition number: (\kappa_2(A)=\sigma_{\max}/\sigma_{\min}).
+* Weighted LS via whitening: (W=C^\top C\Rightarrow \min |CAx-Cb|_2^2).

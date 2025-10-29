@@ -1,0 +1,113 @@
+
+From that audit, the only item that’s still **under-delivered** relative to the slides/exercises is a clean, explicit treatment of **closure/topological notions** for convex sets (the exercises reference “closure” directly). Everything else in the updated Note 02 and the two exercise PDFs is already covered by our Lectures 00–03 plus the supplements we added.
+
+Below I’m delivering the remaining missing piece—concise but rigorous—and a handful of targeted exercises with solutions that match the style/level seen in your exercise PDFs.
+
+---
+
+# Addendum for Lecture 02 — Topological notions (closure, interior, boundary, relative interior)
+
+## Definitions (finite-dimensional (\mathbb{R}^n))
+
+* **Closure**: (\mathrm{cl},C) is the set of all limit points of (C) (the smallest closed set containing (C)).
+* **Interior**: (\mathrm{int},C) is the set of points in (C) with an open ball fully contained in (C).
+* **Boundary**: (\partial C := \mathrm{cl},C \setminus \mathrm{int},C).
+* **Affine hull**: (\mathrm{aff},C) is the smallest affine set containing (C).
+* **Relative interior**: (\mathrm{ri},C) is the interior of (C) **relative to** (\mathrm{aff},C) (open balls taken in the subspace topology of (\mathrm{aff},C)).
+
+  * **Relative boundary**: (\mathrm{rbd},C := \mathrm{cl}_{\mathrm{aff} C} (C)\setminus \mathrm{ri},C).
+
+> Why we need these: many convex sets live in lower-dimensional affine subspaces (e.g., a simplex in (\mathbb{R}^n)). The “interior” in (\mathbb{R}^n) can be empty, but the **relative** interior is not.
+
+## Basic facts (all for convex (C,D\subset\mathbb{R}^n))
+
+1. **Convexity persists**
+
+   * (\mathrm{cl},C) is convex.
+   * (\mathrm{int},C) (if nonempty) is convex.
+   * (\mathrm{ri},C) is convex and **nonempty whenever (C) is nonempty**.
+
+2. **Monotonicity**
+   If (C\subset D), then (\mathrm{cl},C\subset \mathrm{cl},D), (\mathrm{int},C\subset \mathrm{int},D) (when both interiors are taken in the same ambient space), and (\mathrm{ri},C\subset \mathrm{ri},D) (relative to a shared affine hull).
+
+3. **Closure & convex hull commute**
+   [
+   \mathrm{cl}(\mathrm{conv},S) ;=; \mathrm{conv}(\mathrm{cl},S).
+   ]
+   (Handy in proofs by approximation.)
+
+4. **Operations**
+
+   * **Minkowski sum**: (\mathrm{ri}(C+D) = \mathrm{ri},C + \mathrm{ri},D).
+   * **Affine image** (f(x)=Ax+b): (f(\mathrm{ri},C) = \mathrm{ri},f(C)).
+   * **Intersection (qualification)**: if (\mathrm{ri},C \cap \mathrm{ri},D \neq \emptyset), then
+     [
+     \mathrm{ri}(C\cap D) ;=; \mathrm{ri},C \cap \mathrm{ri},D.
+     ]
+
+5. **Projections/linear images and closedness (caution)**
+   Linear images preserve convexity, but **might not** preserve closedness in general. (They do for many important families, e.g., polyhedra.)
+
+6. **Thickenings are convex and closed**
+   For (\varepsilon\ge 0), the (\varepsilon)-thickening
+   [
+   C_\varepsilon := {,y \mid \mathrm{dist}(y,C)\le \varepsilon,}
+   ]
+   is convex and closed when (C) is convex (distance to a convex set is convex and continuous).
+
+## Canonical examples (compute (\mathrm{cl},\ \mathrm{int},\ \mathrm{ri}))
+
+* **Affine subspace** (A={x\mid Fx=g}): (\mathrm{cl},A=A); (\mathrm{int},A=\emptyset) in (\mathbb{R}^n) unless (A=\mathbb{R}^n); (\mathrm{ri},A=A).
+* **Simplex** (\Delta^n={x\ge 0,\ \mathbf{1}^\top x=1}): (\mathrm{cl},\Delta^n=\Delta^n); (\mathrm{int},\Delta^n=\emptyset) in (\mathbb{R}^n); (\mathrm{ri},\Delta^n={x>0,\ \mathbf{1}^\top x=1}).
+* **Second-order cone** (\mathcal{Q}={(x,t):|x|_2\le t}): closed; (\mathrm{int},\mathcal{Q}={(x,t):|x|_2<t}); (\mathrm{ri},\mathcal{Q}=\mathrm{int},\mathcal{Q}) (full-dimensional).
+* **PSD cone** (\mathbb{S}^n_+): closed; (\mathrm{int}={X\succ 0}) (positive definite); (\mathrm{ri}=\mathrm{int}) (full-dimensional in (\mathbb{S}^n)).
+
+## Micro-proof sketches you can put on the board
+
+* **(\mathrm{cl},C) convex**: if (x_k\to x\in \mathrm{cl},C) and (y_k\to y\in \mathrm{cl},C) with (x_k,y_k\in C), then for any (\theta\in[0,1]), (\theta x_k+(1-\theta)y_k\in C) and (\theta x_k+(1-\theta) y_k \to \theta x + (1-\theta) y), so the limit sits in (\mathrm{cl},C).
+* **(\mathrm{int},C) convex**: if (x,y\in \mathrm{int},C), there are balls (B(x,r_x), B(y,r_y)\subset C). Interpolate both centers and radii to find a ball around any (\theta x + (1-\theta) y) that stays in (C).
+* **(\mathrm{ri},C) nonempty for nonempty convex (C)**: take any (x_1\in C). If (C={x_1}) it’s trivially full interior relative to its affine hull. If (C) has more points, build a finite-dimensional affine hull from a maximal affinely independent subset and use the previous ball argument in that subspace.
+
+---
+
+## Targeted exercises (with solutions)
+
+**T1.** Prove: if (C) is convex, then (\mathrm{cl},C) and (\mathrm{int},C) are convex.
+*Solution.* As above (limit/ball arguments).
+
+**T2.** Let (C\subset \mathbb{R}^n) be convex and nonempty. Show (\mathrm{ri},C\neq \emptyset) and (\mathrm{ri},C\subset C\subset \mathrm{cl},C).
+*Solution.* Use the affine-hull argument and the definitions; inclusions are immediate from definitions.
+
+**T3.** Compute (\mathrm{cl},\ \mathrm{int},\ \mathrm{ri}) for each:
+(a) line segment ([a,b]); (b) open segment ((a,b)); (c) ray ({a+\theta d\mid \theta\ge 0}).
+*Solutions.*
+(a) (\mathrm{cl}=[a,b]), (\mathrm{int}=\emptyset) (in (\mathbb{R}^n)), (\mathrm{ri}=(a,b)).
+(b) (\mathrm{cl}=[a,b]), (\mathrm{int}=\emptyset), (\mathrm{ri}=(a,b)).
+(c) (\mathrm{cl}={a+\theta d\mid \theta\ge 0}), (\mathrm{int}=\emptyset), (\mathrm{ri}={a+\theta d\mid \theta> 0}).
+
+**T4.** Show (\mathrm{ri}(C+D)=\mathrm{ri},C+\mathrm{ri},D).
+*Solution.* Minkowski sums commute with taking interiors in the appropriate affine hull; one inclusion is direct, the other uses small-ball arguments in (\mathrm{aff} C + \mathrm{aff} D).
+
+**T5.** For the simplex (\Delta^n), prove (\mathrm{ri},\Delta^n = {x>0,\ \mathbf{1}^\top x=1}).
+*Solution.* In (\mathrm{aff},\Delta^n={x\mid \mathbf{1}^\top x=1}), an open ball around a point stays in (\Delta^n) iff all coordinates are strictly positive.
+
+**T6.** Let (C) be convex and (\varepsilon\ge 0). Show (C_\varepsilon = {y\mid \mathrm{dist}(y,C)\le \varepsilon}) is convex and closed.
+*Solution.* (y\mapsto \mathrm{dist}(y,C)) is convex and continuous; sublevel sets of convex continuous functions are convex and closed.
+
+---
+
+## Where this plugs in
+
+* **Lecture 02**: insert this addendum as a short section “Topological toolkit: (\mathrm{cl},\ \mathrm{int},\ \mathrm{ri})” right after the operations that preserve convexity.
+* **Exercises**: add T1–T6 as **Part C: Topology of Convex Sets** (2 pages). They match exactly the kind of “closure” references seen in the current 3-page exercises.
+
+---
+
+## Quick status recap (what’s covered vs. your sources)
+
+* From **Updated Note 02** and the two PDFs in the **exercises ZIP**, the only gap left was an explicit treatment of **closure/topological notions**. Delivered above.
+* Previously flagged gaps (now fixed):
+
+  * **Lecture 00 addendum**: dual norms & Hölder; trace/Frobenius inner product; Loewner order; componentwise order; projection onto affine sets.
+  * **Lecture 01 addendum**: explicit constraint grammar (norm bounds, PSD, componentwise); symbol conventions.
+  * **Lecture 02 supplement**: perspective & linear-fractional sets; proper cones/generalized inequalities; dual cones; separation/support—plus a small exercise supplement.

@@ -1,0 +1,268 @@
+# Lecture 03 — Convex Functions
+
+*(definition → epigraphs → Jensen → first-/second-order tests → extended-value modeling → operations that preserve convexity → strong convexity & smoothness → subgradients & normal cones → canonical examples → worked problems with solutions)*
+
+Scope guard: only convex **functions** today. No optimization algorithms, no duality/Fenchel conjugates, no KKT. We’ll use the geometry you built in Lecture 02 (convex sets, separation/support).
+
+---
+
+## 0) Learning objectives
+
+By the end you can:
+
+1. Recognize and prove convexity of functions via **epigraphs**, **Jensen’s inequality**, **first-/second-order** tests.
+2. Model constraints and piecewise definitions with **extended-value** functions (indicators, distance, gauges).
+3. Use the core **preserving operations** (nonnegative sums; pointwise sup; affine pre-/post-composition; monotone composition; perspective; linear-fractional post-composition of epigraphs).
+4. Work fluently with **strong convexity**, **Lipschitz gradients**, and **smoothness** bounds.
+5. Compute and reason with **subgradients**, **subdifferentials**, and the **normal cone** through examples you’ll actually use (norms, max, hinge, logistic, log-sum-exp, quadratic).
+
+---
+
+## 1) Definition & three equivalent views
+
+### 1.1 Epigraph definition (primary)
+
+For (f:\mathbb{R}^n\to\mathbb{R}\cup{+\infty}), the **epigraph** is
+[
+\operatorname{epi} f ;=; {(x,t)\in\mathbb{R}^{n+1}\mid f(x)\le t}.
+]
+**Convex function** means (\operatorname{epi} f) is a **convex set**.
+This unifies everything with Lecture 02: function convexity ⇔ a certain set (its epi) is convex.
+
+### 1.2 Jensen’s inequality (segment inequality)
+
+(f) is convex ⇔ for all (x,y) and (\theta\in[0,1]),
+[
+f(\theta x+(1-\theta)y)\ \le\ \theta f(x) + (1-\theta) f(y).
+]
+**Sketch**: draw the epi; convexity of the epi means the chord above the graph lies in the epi, which is exactly the inequality.
+
+### 1.3 First- and second-order tests (differentiable cases)
+
+* If (f) is differentiable:
+  (f) convex ⇔ (\forall x,y),
+  [
+  f(y)\ \ge\ f(x)+\nabla f(x)^\top (y-x)\quad\text{(global underestimator / supporting hyperplane).}
+  ]
+* If (f\in C^2):
+  (f) convex ⇔ (\nabla^2 f(x)\succeq 0) for all (x) in its domain.
+
+> Intuition thread: the epigraph has a supporting hyperplane at each point; its normal encodes a subgradient; with differentiability, that normal is ((\nabla f(x),-1)).
+
+---
+
+## 2) Extended-value modeling: proper, closed, convex
+
+We allow (f:\mathbb{R}^n\to\mathbb{R}\cup{+\infty}). Values (+\infty) **exclude** points (a clean way to encode constraints).
+
+* **Proper**: not identically (+\infty), never (-\infty).
+* **Closed**: epi is a closed set.
+* **Indicator** of a set (C):
+  [
+  \delta_C(x) = \begin{cases}
+  0,& x\in C\
+  +\infty,& x\notin C
+  \end{cases}
+  \quad\Rightarrow\quad \operatorname{epi}\delta_C = C\times[0,+\infty).
+  ]
+  If (C) convex, (\delta_C) is proper, closed, convex (PCC).
+
+**Distance** to a set (C): (d_C(x) = \inf_{y\in C}|x-y|) is convex when (C) is convex.
+**Gauge** of a convex set (K\ni 0): (\gamma_K(x):=\inf{\lambda>0\mid x\in \lambda K}) is convex; it’s a norm if (K) is centrally symmetric and absorbing.
+
+> Why this matters: you can fold “constraints” into the objective as indicators without changing convexity. This is the algebra of modeling.
+
+---
+
+## 3) Operations that preserve convexity (function edition)
+
+Let (f,g:\mathbb{R}^n\to\overline{\mathbb{R}}) be convex; (\alpha,\beta\ge 0).
+
+* **Nonnegative sum**: (\alpha f+\beta g) is convex.
+* **Pointwise supremum**: if (f_i) are convex, (f(x)=\sup_i f_i(x)) is convex (epi is intersection of their epis).
+* **Affine composition (pre)**: (x\mapsto f(Ax+b)) is convex (epi inverse image under affine map).
+* **Affine composition (post)**: (x\mapsto a^\top x + b) preserves convexity but is just affine.
+* **Monotone composition**: if (h:\mathbb{R}\to\mathbb{R}) is convex and **nondecreasing**, and (g) is convex, then (h\circ g) is convex. If (h) is convex and **nonincreasing**, then (h\circ g) is generally **not** convex unless (g) is concave.
+* **Perspective of a function**: for (t>0),
+  [
+  f^\pi(x,t)=t, f(x/t)
+  ]
+  is convex on ({(x,t)\mid t>0}) when (f) is convex. (This mirrors the set perspective from Lecture 02.)
+* **Linear-fractional post-composition of epigraph**: if (f) is convex and you transform ((x,t)\mapsto (Ax+b,,c^\top x+d)) with positive denominator and then take the perspective, the resulting “re-scaled” function remains convex on its domain. (Useful for robust models; we keep it conceptual here.)
+
+---
+
+## 4) Strong convexity, smoothness, and Lipschitz gradients
+
+These are **properties** of convex functions you’ll need later—no algorithms today.
+
+* **(\mu)-strong convexity** ((\mu>0)):
+  [
+  f(y)\ \ge\ f(x)+\nabla f(x)^\top(y-x)+\frac{\mu}{2}|y-x|_2^2.
+  ]
+  If (f\in C^2), strong convexity ⇔ (\nabla^2 f(x)\succeq \mu I) for all (x).
+
+* **(L)-smooth (gradient-Lipschitz)**:
+  [
+  |\nabla f(y)-\nabla f(x)|_2 \le L|y-x|_2.
+  ]
+  If (f\in C^2), smoothness ⇔ (\nabla^2 f(x)\preceq L I) for all (x).
+
+* **Quadratic upper/lower models** (Descent Lemma / Co-coercivity hints): for (L)-smooth (f),
+  [
+  f(y)\ \le\ f(x)+\nabla f(x)^\top(y-x)+\frac{L}{2}|y-x|_2^2 .
+  ]
+
+> Geometric read: strong convexity says the graph curves up at least like a parabola; smoothness bounds how fast the slope can change.
+
+---
+
+## 5) Subgradients and normal cones
+
+When (f) may be nonsmooth, the gradient generalizes to a **subgradient**.
+
+* **Subgradient** at (x) is (g) with
+  [
+  f(y)\ \ge\ f(x)+g^\top(y-x)\quad\forall y.
+  ]
+* The set of all subgradients is the **subdifferential** (\partial f(x)) (a closed, convex set; nonempty for closed proper convex (f) at points in (\operatorname{ri}(\operatorname{dom} f))).
+
+**Indicator & normal cone.** For (f=\delta_C) with (C) convex,
+[
+\partial\delta_C(x)=N_C(x):={v\mid v^\top(y-x)\le 0\ \ \forall y\in C},
+]
+the **normal cone** at (x\in C). This fuses Lecture 02’s supporting hyperplanes with function language.
+
+**Core calculus (no proofs today, but know them):**
+
+* **Sum rule**: (\partial (\alpha f+\beta g)(x)=\alpha \partial f(x)+\beta \partial g(x)) (Minkowski sum) if both are closed proper convex and qualification holds (e.g., ri dom intersections).
+* **Affine pre-composition**: (\partial (f\circ A)(x) = A^\top \partial f(Ax)).
+* **Pointwise maximum**: if (f=\max_i f_i) and the maximizers at (x) are (I(x)), then
+  [
+  \partial f(x)=\operatorname{conv}{\partial f_i(x)\mid i\in I(x)}.
+  ]
+
+> Mental model: subgradients give all supporting hyperplanes to the epigraph at ((x,f(x))).
+
+---
+
+## 6) Canonical convex functions (and why)
+
+1. **Quadratic with PSD matrix**: (f(x)=\tfrac12 x^\top Q x + q^\top x + r) is convex iff (Q\succeq 0).
+
+   * (\nabla f(x)=Qx+q,\ \nabla^2 f(x)=Q).
+   * If (Q\succeq \mu I), (f) is (\mu)-strongly convex.
+
+2. **Norms and seminorms**:
+
+   * Every norm (|\cdot|) is convex; its **support function** is the dual norm (|\cdot|_*).
+   * Subgradients:
+
+     * (\partial |x|_2 = \begin{cases}\left{\frac{x}{|x|_2}\right}, & x\ne 0\ {g:|g|_2\le 1},& x=0\end{cases})
+     * (\partial |x|_1 = {g:\ g_i=\operatorname{sign}(x_i)\ \text{if }x_i\ne 0,\ \ g_i\in[-1,1]\ \text{if }x_i=0}).
+
+3. **Max and pointwise sup**: (f(x)=\max_{i\le m} a_i^\top x+b_i) is convex; its subdifferential at (x) is the convex hull of active (a_i)’s.
+
+4. **Absolute value & hinge**: (|x|) is convex; **hinge** ((1-z)_+=\max(0,1-z)) is convex (max of affine terms).
+
+5. **Log-sum-exp (lse)**: (\operatorname{lse}(z)=\log\sum_{i=1}^m e^{z_i}) is convex; smooth “max”.
+
+   * (\nabla \operatorname{lse}(z)=\operatorname{softmax}(z)).
+   * (\nabla^2 \operatorname{lse}(z)=\operatorname{Diag}(p)-pp^\top\succeq 0) with (p=\mathrm{softmax}(z)).
+
+6. **Logistic loss**: (\ell(u)=\log(1+e^{-u})) is convex;
+   (\ell'(u)=-\sigma(-u)), (\ell''(u)=\sigma(u)\sigma(-u)\in(0,1/4]).
+
+7. **Perspective-generated functions**: if (f) convex, then (g(x,t)=t,f(x/t)) is convex for (t>0).
+
+   * Example: (f(x)=|x|_2) ⇒ (g(x,t)=|x|_2) (homogeneous); (f(x)=|x|_2^2) ⇒ (g(x,t)=|x|_2^2/t) is jointly convex on (t>0).
+
+8. **Distance and projection**: (x\mapsto \tfrac12\operatorname{dist}(x,C)^2) is convex for convex (C), differentiable with (\nabla = x-\Pi_C(x)).
+
+---
+
+## 7) Worked examples (chalk-ready)
+
+**E1 — Proving convexity via epi and perspective**
+Show (f(x,t)=|x|_2^2/t) is convex on ({t>0}).
+*Way 1:* Known result: perspective of a convex function is convex; here (f_0(u)=|u|_2^2) is convex, (f(u,t)=t f_0(u/t)) with (u=x).
+*Way 2:* Direct Hessian check: write (g(x,t)=|x|^2/t), compute the block Hessian and verify PSD on (t>0).
+
+**E2 — Max of affine functions**
+Let (f(x)=\max(a_1^\top x+b_1,\dots,a_m^\top x+b_m)).
+(a) Convexity: obvious by Jensen or epi (epi is intersection of halfspaces).
+(b) Subgradient at (x): (\partial f(x)=\operatorname{conv}{a_i\mid i\in I(x)}), (I(x)) the active set.
+
+**E3 — LSE smooths max**
+Prove (\operatorname{lse}(z)\ge \max_i z_i) and (\operatorname{lse}(z)\le \max_i z_i+\log m).
+Compute gradient and Hessian; show PSD via ( \operatorname{Diag}(p)-pp^\top\succeq 0) (variance matrix).
+
+**E4 — Strong convexity of a quadratic**
+For (Q\succeq \mu I), show (\tfrac12 x^\top Q x) is (\mu)-strongly convex.
+Use the lower quadratic bound from Hessian (\nabla^2 f=Q\succeq \mu I).
+
+**E5 — Distance-square gradient**
+(f(x)=\tfrac12\operatorname{dist}(x,C)^2). Show (f) is convex and (\nabla f(x)=x-\Pi_C(x)) (the projection).
+Sketch: Use Moreau decomposition for normal cone or differentiate the optimal value of (\min_{y\in C}\tfrac12|x-y|^2) via Danskin; or direct geometry: (x-\Pi_C(x)) is orthogonal to (C) at the projection point.
+
+---
+
+## 8) Problem set (with concise solutions)
+
+### P3.1 (Classify + justify)
+
+For each function, say “convex / not convex” and give a one-line reason:
+
+1. (f(x)=|Ax-b|_2).
+2. (f(x)=|x|_2^2 - |x|_1).
+3. (f(x)=\max{x_1+x_2,\ 2x_1-x_2,\ -x_2}).
+4. (f(x)=\log!\big(\sum_i e^{a_i^\top x}\big)).
+5. (f(x)=\tfrac{|x|_2^2}{c^\top x + d}) on ({c^\top x + d>0}).
+
+**Solutions.** 1) Convex (norm of affine). 2) Not convex (difference of convex; counterexample via curvature). 3) Convex (max of affines). 4) Convex (lse of affine forms). 5) Convex (perspective/linear-fractional of a convex quadratic).
+
+### P3.2 (First-/second-order tests)
+
+(a) Show (f(x)=|Ax-b|*2^2) is convex with (\nabla^2 f(x)=2A^\top A\succeq 0).
+(b) If (A) has full column rank, (f) is (2\sigma*{\min}(A)^2)-strongly convex.
+
+### P3.3 (Subgradients of norms and max)
+
+(a) Give (\partial |x|_1).
+(b) For (f(x)=\max_i a_i^\top x), give (\partial f(x)).
+**Solutions.** As listed in §6(2) & §7(E2).
+
+### P3.4 (Perspective)
+
+Let (f(x)=\phi(|x|*2)) where (\phi:\mathbb{R}*+\to\mathbb{R}) is convex and nondecreasing. Show (g(x,t):=t,\phi(|x|_2/t)) is convex on (t>0).
+**Solution.** Composition of the perspective with a convex nondecreasing outer (\phi) preserves convexity.
+
+### P3.5 (Strong convexity by Hessian bounds)
+
+Given (f(x)=h(Ax)) with (h\in C^2) convex and (\nabla^2 h(z)\succeq \mu I) for all (z), show (f) is (\mu \sigma_{\min}(A)^2)-strongly convex.
+**Solution.** (\nabla^2 f(x)=A^\top \nabla^2 h(Ax) A \succeq \mu A^\top A \succeq \mu\sigma_{\min}(A)^2 I).
+
+### P3.6 (Distance & normal cone)
+
+Let (C) be closed convex, (f=\delta_C). Show (\partial f(x)=N_C(x)).
+**Solution.** From definition of subgradient and Lecture-02 supporting hyperplane theorem.
+
+---
+
+## 9) Pocket card (what to remember)
+
+* **Convex ⇔ epi convex ⇔ Jensen ⇔ first-order support; C²: Hessian PSD.**
+* **Modeling:** use **extended value** (indicators, distance, gauge).
+* **Preserving ops:** nonnegative sums, sup, affine pre-composition, monotone outer functions, **perspective**.
+* **Geometry link:** subgradient = supporting hyperplane normal to the epi; indicator’s subdifferential = **normal cone**.
+* **Quantitative structure:** (\mu)-strong convexity ↔ (\nabla^2 f\succeq \mu I); (L)-smooth ↔ (\nabla^2 f\preceq L I).
+
+---
+
+## 10) Deliverables for your repo
+
+* `03-convex-functions/notes.md` — everything above in clean narrative form (with tiny figures for epi & perspective).
+* `03-convex-functions/pset.md` — P3.1–P3.6, with the short solutions included.
+* `03-convex-functions/board-proofs.md` — 1-page derivations for: Jensen ⇔ epi, perspective convexity, lse Hessian PSD, normal cone = indicator subdifferential.
+
+If you want these as actual files right now (Markdown and a small printable PDF), I can generate and hand them over. Next logical lecture after this is **Convex Optimization Problems** (canonical forms, equivalences, and modeling patterns), where we’ll glue sets + functions into full problem statements.
