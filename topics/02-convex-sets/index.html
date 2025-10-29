@@ -75,26 +75,58 @@
 
     <section class="card" style="margin-bottom: 32px;">
         <h2>4. Operations Preserving Convexity</h2>
-        <p>Proving convexity from the definition can be tedious. It's often easier to build up complex convex sets from simple ones using operations that preserve convexity.</p>
+        <p>Proving convexity from the definition can be tedious. It's often easier to show that a complex set is convex by constructing it from simpler convex sets using operations that are known to preserve convexity.</p>
+
+        <h4>Intersection</h4>
+        <p>The intersection of any number of convex sets is convex.
+        <br><b>Proof:</b> Let $C_i$ be a collection of convex sets for $i$ in some index set $I$. Let $C = \cap_{i \in I} C_i$. Consider any two points $x, y \in C$. By definition of intersection, $x \in C_i$ and $y \in C_i$ for all $i \in I$. Since each $C_i$ is convex, the line segment $\theta x + (1-\theta)y$ for $\theta \in [0,1]$ is in $C_i$ for all $i$. Therefore, the line segment is in their intersection $C$. Thus, $C$ is convex.</p>
+
+        <h4>Affine Functions</h4>
+        <p>Applying an affine function to a convex set preserves convexity. Let $f(x) = Ax+b$ be an affine function.</p>
         <ul>
-            <li><b>Intersection:</b> The intersection of any number of convex sets is convex.</li>
-            <li><b>Affine functions:</b> The image and preimage of a convex set under an affine function are convex.</li>
-            <li><b>Perspective and linear-fractional functions.</b></li>
+            <li><b>Image:</b> If $C$ is a convex set, then the image $f(C) = \{f(x) \mid x \in C\}$ is convex.
+            <br><b>Proof:</b> Take two points $y_1, y_2 \in f(C)$. Then there exist $x_1, x_2 \in C$ such that $y_1=f(x_1)$ and $y_2=f(x_2)$. For $\theta \in [0,1]$, consider the point $\theta y_1 + (1-\theta)y_2$. We have:
+            $$ \theta y_1 + (1-\theta)y_2 = \theta(Ax_1+b) + (1-\theta)(Ax_2+b) = A(\theta x_1 + (1-\theta)x_2) + b $$
+            Since $C$ is convex, $\theta x_1 + (1-\theta)x_2 \in C$. Therefore, the point is of the form $f(\text{point in } C)$, so it is in $f(C)$.</li>
+            <li><b>Preimage:</b> If $D$ is a convex set, then the preimage $f^{-1}(D) = \{x \mid f(x) \in D\}$ is convex.
+            <br><b>Proof:</b> Take two points $x_1, x_2 \in f^{-1}(D)$. Then $f(x_1) \in D$ and $f(x_2) \in D$. Since $D$ is convex, for $\theta \in [0,1]$, the point $\theta f(x_1) + (1-\theta)f(x_2)$ is in $D$. We have:
+            $$ \theta f(x_1) + (1-\theta)f(x_2) = \theta(Ax_1+b) + (1-\theta)(Ax_2+b) = f(\theta x_1 + (1-\theta)x_2) $$
+            This shows that $f$ applied to the line segment is in $D$, so the line segment itself is in the preimage.</li>
         </ul>
+        <p><b>Example:</b> An ellipsoid is the preimage of a Euclidean ball under an affine mapping, which proves it is convex.</p>
+
+        <h4>Perspective and Linear-Fractional Functions</h4>
+        <p>Perspective functions and linear-fractional functions also preserve convexity. These are particularly important in projective geometry and have applications in areas like computer vision.</p>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
         <h2>5. Separating and Supporting Hyperplanes</h2>
-        <p>The <b>separating hyperplane theorem</b> states that for any two disjoint convex sets $C$ and $D$, there exists a hyperplane that separates them. The <b>supporting hyperplane theorem</b> states that for any boundary point of a convex set, there exists a hyperplane that "supports" the set at that point.</p>
+        <p>The <b>Separating Hyperplane Theorem</b> is a foundational result in convex geometry. It states that if $C$ and $D$ are two disjoint nonempty convex sets, there exists a hyperplane that separates them. That is, there exists a vector $a \neq 0$ and a scalar $b$ such that $a^\top x \le b$ for all $x \in C$ and $a^\top y \ge b$ for all $y \in D$.</p>
+
+        <h5>Proof Sketch for Separating Hyperplane Theorem</h5>
+        <p>While a full rigorous proof is beyond the scope of this primer, the intuition is as follows:</p>
+        <ol>
+            <li>Consider the set $S = C - D = \{c-d \mid c \in C, d \in D\}$. This set is convex and does not contain the origin (since $C$ and $D$ are disjoint).</li>
+            <li>Find the point $p$ in the closure of $S$ that is closest to the origin. This point exists and is unique.</li>
+            <li>The hyperplane with normal vector $p$ passing through the point $p/2$ will separate the sets $C$ and $D$.</li>
+        </ol>
+
+        <p>The <b>Supporting Hyperplane Theorem</b> is a closely related result. It states that for any nonempty convex set $C$ and any point $x_0$ on its boundary, there exists a supporting hyperplane to $C$ at $x_0$. That is, there is a vector $a \neq 0$ such that $a^\top x \le a^\top x_0$ for all $x \in C$.</p>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
         <h2>6. Dual Cones</h2>
-        <p>The <b>dual cone</b> of a cone $K$ is defined as $K^* = \{y \mid y^\top x \ge 0 \text{ for all } x \in K\}$.</p>
+        <p>The <b>dual cone</b> of a cone $K$ is defined as $K^* = \{y \mid y^\top x \ge 0 \text{ for all } x \in K\}$. The dual cone is always a closed, convex cone, regardless of whether $K$ is.</p>
+
+        <h4>Self-Dual Cones</h4>
+        <p>Some of the most important cones are <b>self-dual</b>, meaning $K^* = K$.</p>
         <ul>
-            <li>The non-negative orthant $\mathbb{R}^n_+$ is self-dual.</li>
-            <li>The second-order cone is self-dual.</li>
-            <li>The positive semidefinite cone $\mathbb{S}^n_+$ is self-dual.</li>
+            <li><b>The non-negative orthant $\mathbb{R}^n_+$ is self-dual.</b>
+            <br><b>Proof:</b> We need to show that $y^\top x \ge 0$ for all $x \ge 0$ if and only if $y \ge 0$.
+            ($\Leftarrow$) If $y \ge 0$ and $x \ge 0$, then $y^\top x = \sum_i y_i x_i$ is a sum of non-negative terms, so it is non-negative.
+            ($\Rightarrow$) Suppose $y$ is not in $\mathbb{R}^n_+$. Then at least one component $y_k < 0$. We can choose a vector $x = e_k$ (the $k$-th standard basis vector), which is in $\mathbb{R}^n_+$. Then $y^\top x = y_k < 0$. This violates the condition for being in the dual cone. Therefore, $y$ must be in $\mathbb{R}^n_+$.</li>
+            <li><b>The second-order cone is self-dual.</b></li>
+            <li><b>The positive semidefinite cone $\mathbb{S}^n_+$ is self-dual.</b></li>
         </ul>
     </section>
 

@@ -59,7 +59,25 @@
       & Ax = b
       \end{aligned}
       $$
-      where the objective function $f_0$ and inequality constraint functions $f_i$ are all <b>convex functions</b>, and the equality constraints are affine. The key takeaway is that in a convex problem, <b>every local minimum is a global minimum</b>, which makes them computationally tractable.</p>
+      where the objective function $f_0$ and inequality constraint functions $f_i$ are all <b>convex functions</b>, and the equality constraints are affine. This structure is powerful because it guarantees two crucial properties: the feasible set is convex, and every local minimum is a global minimum.</p>
+
+      <h4>Why Local Optima are Global in Convex Problems</h4>
+      <p>This is the single most important property of convex optimization. Let's prove it by contradiction.</p>
+      <ol>
+        <li>Let $\mathcal{F}$ be the feasible set of the problem. Because all constraint functions are convex (or affine, which is a special case), the feasible set $\mathcal{F}$ is a convex set.</li>
+        <li>Suppose $x^*$ is a local minimum, but it is <em>not</em> a global minimum. This means there exists some other feasible point $y \in \mathcal{F}$ such that $f_0(y) < f_0(x^*)$.</li>
+        <li>Since $x^*$ is a local minimum, there exists a small neighborhood around it (say, a ball of radius $\epsilon > 0$) where for any feasible point $z$ in that neighborhood, $f_0(z) \ge f_0(x^*)$.</li>
+        <li>Now, consider a point $z$ on the line segment between $x^*$ and $y$: $z = \theta y + (1-\theta)x^*$ for some small $\theta \in (0, 1]$. Since the feasible set $\mathcal{F}$ is convex, this point $z$ must also be feasible.</li>
+        <li>By choosing a small enough $\theta$, we can make $z$ arbitrarily close to $x^*$. Specifically, we can choose $\theta$ such that $\|z - x^*\|_2 = \|\theta(y - x^*)\|_2 = \theta\|y - x^*\|_2 < \epsilon$. This means $z$ is in the local neighborhood of $x^*$.</li>
+        <li>Because the objective function $f_0$ is convex, we know that:
+        $$ f_0(z) = f_0(\theta y + (1-\theta)x^*) \le \theta f_0(y) + (1-\theta)f_0(x^*) $$</li>
+        <li>We assumed $f_0(y) < f_0(x^*)$. Substituting this into the inequality:
+        $$ f_0(z) < \theta f_0(x^*) + (1-\theta)f_0(x^*) = f_0(x^*) $$</li>
+        <li>So we have found a feasible point $z$ in the local neighborhood of $x^*$ for which $f_0(z) < f_0(x^*)$. This contradicts our initial assumption that $x^*$ is a local minimum.</li>
+        <li>Therefore, our assumption must be false. Any local minimum $x^*$ must also be a global minimum.</li>
+      </ol>
+      <p>This property is what allows for the development of efficient, reliable algorithms for solving convex problems. We don't have to worry about getting "stuck" in a suboptimal valley.</p>
+
       <h4>A Note on Notation:</h4>
       <ul>
         <li><b>Componentwise Inequalities:</b> $x \ge 0$ means $x_i \ge 0$ for all $i$.</li>
@@ -71,29 +89,68 @@
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>2. Canonical Convex Problem Families</h2>
-      <p>Many real-world problems can be formulated as one of a few standard types of convex problems.</p>
+      <p>Many real-world problems can be formulated as one of a few standard types of convex problems. Recognizing these forms is a key step in modeling.</p>
+
+      <h4>Linear Program (LP)</h4>
+      <p>An LP minimizes a linear objective subject to linear inequality and equality constraints.
+      <br><b>Standard Form:</b> $\min_x c^\top x$ subject to $Ax \le b, Fx=g$.
+      <br><b>Example: Resource Allocation.</b> A factory produces two products, A and B. Each product requires a certain amount of two raw materials, M1 and M2. The factory has a limited supply of M1 and M2. The goal is to maximize profit.
       <ul>
-        <li><b>Linear Program (LP):</b> Minimizing a linear objective subject to linear constraints.</li>
-        <li><b>Quadratic Program (QP):</b> Minimizing a convex quadratic objective subject to linear constraints.</li>
-        <li><b>Second-Order Cone Program (SOCP):</b> An LP with additional second-order cone constraints of the form $\|A_i x + b_i\|_2 \le c_i^\top x + d_i$.</li>
-        <li><b>Semidefinite Program (SDP):</b> Optimization over the cone of positive semidefinite matrices.</li>
+        <li>$x_A, x_B$: units of product A and B to produce.</li>
+        <li>Profit: $p_A x_A + p_B x_B$.</li>
+        <li>Material 1 constraint: $m_{1A}x_A + m_{1B}x_B \le \text{supply}_1$.</li>
+        <li>Material 2 constraint: $m_{2A}x_A + m_{2B}x_B \le \text{supply}_2$.</li>
+        <li>Non-negativity: $x_A \ge 0, x_B \ge 0$.</li>
       </ul>
+      This is a classic LP.</p>
+
+      <h4>Quadratic Program (QP)</h4>
+      <p>A QP minimizes a convex quadratic objective subject to linear constraints.
+      <br><b>Standard Form:</b> $\min_x \frac{1}{2}x^\top Qx + c^\top x$ subject to $Ax \le b, Fx=g$, where $Q \succeq 0$.
+      <br><b>Example: Portfolio Optimization.</b> An investor wants to allocate capital among a set of assets to minimize risk (variance) for a target expected return.
+      <ul>
+        <li>$w$: a vector of weights for each asset.</li>
+        <li>Risk (Variance): $w^\top \Sigma w$, where $\Sigma$ is the covariance matrix of asset returns.</li>
+        <li>Target Return: $\mu^\top w \ge R_{\text{target}}$.</li>
+        <li>Budget: $\mathbf{1}^\top w = 1$.</li>
+      </ul>
+      This is a QP, as the covariance matrix $\Sigma$ is PSD.</p>
+
+      <h4>Second-Order Cone Program (SOCP)</h4>
+      <p>An SOCP is an LP with additional second-order cone constraints.
+      <br><b>Standard Form:</b> $\min_x c^\top x$ subject to $\|A_i x + b_i\|_2 \le c_i^\top x + d_i, Fx=g$.
+      <br><b>Example: Robust Least Squares.</b> We want to solve a least squares problem, but there is uncertainty in the data matrix $A$. We can model this by assuming the true matrix is within a certain "distance" of our measured matrix $A_0$. This leads to a robust formulation that can be cast as an SOCP.</p>
+
+      <h4>Semidefinite Program (SDP)</h4>
+      <p>An SDP is an optimization problem over the cone of positive semidefinite matrices.
+      <br><b>Standard Form:</b> $\min_X \langle C, X \rangle$ subject to $\mathcal{A}(X)=b, X \succeq 0$.
+      <br><b>Example: Minimum Volume Enclosing Ellipsoid (MVEE).</b> Given a set of points, find the smallest ellipsoid that contains all of them. This geometric problem can be formulated as an SDP, where the matrix variable represents the ellipsoid's shape.</p>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>3. The "Loss + Regularizer" Paradigm</h2>
-      <p>Many problems in statistics and machine learning follow a common template:
+      <p>A vast number of problems in statistics and machine learning can be expressed in the following form:
       $$
-      \min_x \quad \underbrace{\text{loss}(x)}_{\text{fit data}} + \underbrace{\lambda \cdot \text{regularizer}(x)}_{\text{prevent overfitting}} \quad \text{s.t.} \quad x \in \mathcal{C}
+      \min_x \quad \underbrace{\text{loss}(f(x; \text{data}))}_{\text{Data Fidelity Term}} + \underbrace{\lambda \cdot \text{regularizer}(x)}_{\text{Model Complexity Penalty}}
       $$
-      Common convex choices include:
+      This is a powerful framework for balancing two competing goals: fitting the observed data and keeping the model simple enough to avoid overfitting and generalize to new data. The parameter $\lambda \ge 0$ controls this tradeoff.</p>
+
+      <h4>The Bias-Variance Tradeoff</h4>
+      <p>The statistical motivation for this paradigm is the <b>bias-variance tradeoff</b>. A model with low bias is flexible and can fit the training data well, but it may be sensitive to noise (high variance). A model with low variance is stable, but it may not be flexible enough to capture the underlying trend (high bias). Regularization is a way to control this tradeoff. By penalizing complex models, we introduce some bias, but we can significantly reduce the variance, leading to better predictive performance.</p>
+
+      <h4>Common Loss Functions (Convex)</h4>
       <ul>
-        <li><b>Loss functions:</b> Least squares, logistic loss.</li>
-        <li><b>Regularizers:</b> Ridge ($\|x\|_2^2$), LASSO ($\|x\|_1$).</li>
-        <li><b>Constraint sets:</b> Box constraints, simplex constraints.</li>
+        <li><b>Least Squares:</b> $\|Ax-b\|_2^2$. Used for regression problems, assuming Gaussian noise.</li>
+        <li><b>Logistic Loss:</b> $\sum_i \log(1+\exp(-y_i a_i^\top x))$. Used for binary classification.</li>
+        <li><b>Hinge Loss:</b> $\sum_i \max(0, 1 - y_i(w^\top x_i + b))$. The basis for Support Vector Machines.</li>
       </ul>
-      The sum of convex functions is convex, making this a powerful and flexible modeling tool.
-      </p>
+
+      <h4>Common Regularizers (Convex)</h4>
+      <ul>
+        <li><b>Ridge Regression ($\ell_2$ Regularization):</b> $\lambda \|x\|_2^2$. This penalizes large coefficients, leading to "shrinkage." Geometrically, it corresponds to finding the point where the elliptical contours of the least squares loss first touch a spherical constraint region. It is effective for improving prediction accuracy.</li>
+        <li><b>LASSO ($\ell_1$ Regularization):</b> $\lambda \|x\|_1$. This penalizes the sum of absolute values of the coefficients. Because the $\ell_1$ "ball" has sharp corners at the axes, this penalty tends to drive many coefficients to exactly zero, producing a "sparse" solution. This is extremely useful for feature selection.</li>
+      </ul>
+      <p>The sum of two convex functions (the loss and the regularizer) is convex, so problems of this form can be solved efficiently.</p>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
