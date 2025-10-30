@@ -56,7 +56,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ---
 
-## Lecture 01: Introduction (6 Widgets)
+## Lecture 01: Introduction (4 Widgets)
 
 - **[x] Convex vs Nonconvex Explorer (HIGH)**
   - **Location:** `topics/01-introduction/widgets/js/convex-vs-nonconvex.js`
@@ -76,27 +76,15 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** A library like Mermaid.js or custom SVG.
   - **Status:** Completed
 
-- **[x] Convex Combination Animation (MEDIUM)**
-  - **Location:** `topics/01-introduction/widgets/js/convex-combination.js`
-  - **Description:** Animates the concept of a convex combination by showing the line segment between two points remaining within a set.
-  - **Dependencies:** D3.js.
-  - **Status:** Completed
-
 - **[x] Real-World Problem Gallery (LOW)**
   - **Location:** `topics/01-introduction/widgets/js/problem-gallery.js`
   - **Description:** A simple, filterable gallery of cards, each describing a real-world application of convex optimization.
   - **Dependencies:** None (static HTML/CSS/JS).
   - **Status:** Completed
 
-- **[x] Convergence Comparison (HIGH)**
-  - **Location:** `topics/01-introduction/widgets/js/convergence-comparison.js`
-  - **Description:** A simple animated plot comparing the convergence rates of a convex solver vs. a generic nonconvex solver on a sample problem.
-  - **Dependencies:** D3.js or Chart.js.
-  - **Status:** Completed
-
 ---
 
-## Lecture 02: Convex Sets (7 Widgets)
+## Lecture 02: Convex Sets (5 Widgets)
 
 - **[x] Convex Set Detector (HIGH)**
   - **Location:** `topics/02-convex-sets/widgets/js/convex-set-checker.js`
@@ -125,18 +113,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
 - **[x] Operations Preserve Convexity Builder (MEDIUM)**
   - **Location:** `topics/02-convex-sets/widgets/js/operations-builder.js`
   - **Description:** A tool where users can apply operations (intersection, affine transformation) to pre-defined convex sets to see the result.
-  - **Dependencies:** D3.js.
-  - **Status:** Completed
-
-- **[x] Cone Geometry & Properties (LOW)**
-  - **Location:** `topics/02-convex-sets/widgets/js/cone-geometry.js`
-  - **Description:** Visualizes different types of cones (norm cones, positive semidefinite cone) in 2D or 3D.
-  - **Dependencies:** D3.js or Three.js.
-  - **Status:** Completed
-
-- **[x] Convex Set Operations Composer (LOW)**
-  - **Location:** `topics/02-convex-sets/widgets/js/operations-composer.js`
-  - **Description:** A drag-and-drop interface for composing multiple operations on sets.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
