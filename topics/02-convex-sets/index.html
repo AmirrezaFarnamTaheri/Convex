@@ -20,6 +20,8 @@
       </div>
       <nav class="nav">
         <a href="../../index.html#sessions">All Lectures</a>
+        <a href="../01-introduction/index.html">← Previous: Introduction</a>
+        <a href="../03-convex-functions/index.html">Next: Convex Functions →</a>
         <a href="#readings">Readings</a>
       </nav>
     </div>
@@ -32,8 +34,10 @@
         Date: 2025-10-28 · Duration: 90 min · Tags: sets, geometry, foundational, theory
       </div>
       <section style="margin-top: 16px;">
-        <p><strong>Overview:</strong> This lecture builds the geometric foundation upon which all of convex optimization rests. We move from the abstract notion of a "convex problem" to the tangible concept of a "convex set." We will rigorously define affine and convex sets, and the related concepts of convex combinations and convex hulls. A significant portion of this lecture is a "grand tour" of the canonical examples of convex sets that appear in nearly every application: hyperplanes, balls, ellipsoids, polyhedra, and the cones used in advanced modeling (norm cones and the positive semidefinite cone). We will then establish a powerful toolkit of operations that preserve convexity, allowing us to build complex convex sets from simple ones. Finally, we will delve into the deep theory of separating and supporting hyperplanes, which provide the geometric basis for duality theory, optimality conditions, and many algorithms.</p>
-        <p><strong>Prerequisites:</strong> <a href="../01-introduction/index.html">01-introduction</a></p>
+        <p><strong>Overview:</strong> This lecture builds the geometric foundation upon which all of convex optimization rests. We move from the abstract notion of a "convex problem" in <a href="../01-introduction/index.html">Lecture 01</a> to the tangible concept of a "convex set." We rigorously define affine and convex sets, convex combinations, and convex hulls. The lecture features a "grand tour" of canonical convex sets that appear in nearly every application: hyperplanes, halfspaces, balls, ellipsoids, polyhedra, and the cones used in advanced modeling (norm cones and the PSD cone). We establish a powerful toolkit of operations that preserve convexity, enabling us to construct complex convex sets from simple ones. Finally, we delve into the deep theory of separating and supporting hyperplanes, which provide the geometric foundation for duality theory, optimality conditions, and algorithms.</p>
+        <p><strong>Prerequisites:</strong> <a href="../00-linear-algebra-primer/index.html">Lecture 00: Linear Algebra Primer</a> (especially vector spaces, norms, and PSD matrices) and <a href="../01-introduction/index.html">Lecture 01: Introduction</a> (definition of convex problems).</p>
+        <p><strong>Scope Guard:</strong> No function-level convexity here (that's Lecture 03: Convex Functions), no duality or KKT conditions (that's later), and no algorithms. This is purely about <i>sets</i>—their definitions, properties, and geometric structure.</p>
+        <p><strong>Connections:</strong> The PSD cone introduced here directly extends the matrix theory from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a>. The feasible sets of LPs, QPs, SOCPs, and SDPs from <a href="../01-introduction/index.html">Lecture 01</a> are all convex sets by the theory we develop here. The separating hyperplane theorem is the geometric foundation for duality (Lecture 05) and KKT conditions (Lecture 06).</p>
       </section>
     </article>
 
@@ -41,15 +45,31 @@
       <h2>Learning Objectives</h2>
       <p>After this lecture, you will be able to:</p>
       <ul style="line-height: 1.8;">
-        <li><b>Define and Differentiate Combinations:</b> Define and provide geometric interpretations for affine, convex, and conic combinations.</li>
-        <li><b>Identify Canonical Convex Sets:</b> Recognize and mathematically describe key convex sets, including polyhedra, norm balls, ellipsoids, and the positive semidefinite cone.</li>
-        <li><b>Apply Operations that Preserve Convexity:</b> Prove that a complex set is convex by constructing it from simpler convex sets using operations like intersection and affine mappings.</li>
-        <li><b>Understand Separation Theorems:</b> Explain the geometric intuition and theoretical significance of the separating and supporting hyperplane theorems.</li>
-        <li><b>Define and Use Dual Cones:</b> Define the dual of a cone and prove basic properties, such as the self-duality of the non-negative orthant.</li>
+        <li><b>Define Affine and Convex Sets:</b> Articulate precise definitions and provide geometric interpretations for affine sets, convex sets, convex combinations, and convex hulls.</li>
+        <li><b>Recognize Canonical Convex Sets:</b> Identify by sight hyperplanes, halfspaces, norm balls, ellipsoids, polyhedra, second-order cones, and the PSD cone $\mathbb{S}^n_+$.</li>
+        <li><b>Apply Convexity-Preserving Operations:</b> Prove complex sets are convex by building them from simpler convex sets using intersection, affine mapping, and Minkowski sum.</li>
+        <li><b>Use the Separating Hyperplane Theorem:</b> State the theorem, sketch its proof, and explain why it's the geometric foundation for duality and optimality conditions.</li>
+        <li><b>Work with Dual Cones:</b> Define dual cones, prove self-duality of important cones ($\mathbb{R}^n_+$, second-order cone, $\mathbb{S}^n_+$), and use them in modeling.</li>
+        <li><b>Verify Convexity in Practice:</b> Given a set definition, determine whether it's convex using first principles or composition rules.</li>
       </ul>
     </section>
 
-    <section class="card" style="margin-bottom: 32px;">
+    <!-- TABLE OF CONTENTS -->
+    <section class="card" style="margin-bottom: 32px; background: var(--panel);">
+      <h2>Table of Contents</h2>
+      <ol style="line-height: 1.8;">
+        <li><a href="#section-1">The Building Blocks: Affine and Convex Sets</a></li>
+        <li><a href="#section-2">Canonical Convex Sets: A Visual Dictionary</a></li>
+        <li><a href="#section-3">The Algebra of Convexity: Operations that Preserve Convexity</a></li>
+        <li><a href="#section-4">The Deep Geometry: Separating and Supporting Hyperplanes</a></li>
+        <li><a href="#section-5">Dual Cones</a></li>
+        <li><a href="#section-6">Problem Set with Solutions</a></li>
+        <li><a href="#section-7">Pocket Card Summary</a></li>
+      </ol>
+    </section>
+
+    <!-- SECTION 1: BUILDING BLOCKS -->
+    <section class="card" id="section-1" style="margin-bottom: 32px;">
         <h2>1. The Building Blocks: Affine and Convex Sets</h2>
         <p>The geometry of our feasible sets begins with two fundamental types of combinations.</p>
         <ul>
@@ -72,7 +92,8 @@
       </div>
     </section>
 
-    <section class="card" style="margin-bottom: 32px;">
+    <!-- SECTION 2: CANONICAL CONVEX SETS -->
+    <section class="card" id="section-2" style="margin-bottom: 32px;">
       <h2>2. Canonical Convex Sets: A Visual Dictionary</h2>
       <p>The following sets are the fundamental building blocks you will encounter in almost every optimization model. Recognizing them is a critical skill.</p>
 
@@ -106,7 +127,8 @@
         </p>
     </section>
 
-    <section class="card" style="margin-bottom: 32px;">
+    <!-- SECTION 3: OPERATIONS -->
+    <section class="card" id="section-3" style="margin-bottom: 32px;">
         <h2>3. The Algebra of Convexity: Operations that Preserve Convexity</h2>
         <p>Proving that a set is convex from the first-principles definition can be tedious. A far more powerful and common approach is to construct a complex set from simpler sets that are known to be convex, using operations that are guaranteed to preserve convexity.</p>
 
@@ -131,7 +153,8 @@
       </div>
     </section>
 
-    <section class="card" style="margin-bottom: 32px;">
+    <!-- SECTION 4: SEPARATING HYPERPLANES -->
+    <section class="card" id="section-4" style="margin-bottom: 32px;">
         <h2>4. The Deep Geometry: Separating and Supporting Hyperplanes</h2>
         <p>These theorems are among the most profound results in convex geometry. They provide the geometric foundation for optimality conditions, duality theory, and many algorithms. Their essence is that convex sets, unlike many non-convex ones, can always be "separated" or "supported" by a simple hyperplane.</p>
 
@@ -156,7 +179,8 @@
         <p>A closely related result, the Supporting Hyperplane Theorem states that for any nonempty convex set $C$ and any point $x_0$ on its boundary, there exists a supporting hyperplane to $C$ at $x_0$. This means there is a vector $a \neq 0$ such that $a^\top x \le a^\top x_0$ for all $x \in C$. Geometrically, this says that at every boundary point, you can find a hyperplane that touches the set at that point and keeps the entire set to one side.</p>
     </section>
 
-    <section class="card" style="margin-bottom: 32px;">
+    <!-- SECTION 5: DUAL CONES -->
+    <section class="card" id="section-5" style="margin-bottom: 32px;">
         <h2>5. Dual Cones</h2>
         <p>The concept of duality is central to optimization. The geometric starting point for this is the dual cone. The <b>dual cone</b> of a cone $K$ is defined as the set of all vectors that make a non-negative inner product with every vector in $K$:
         $$ K^* = \{y \mid y^\top x \ge 0 \text{ for all } x \in K\} $$
@@ -183,9 +207,10 @@
       </ul>
     </section>
 
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Exercises</h2>
-      <p>Test your understanding of the geometry of convex sets.</p>
+    <!-- SECTION 6: PROBLEM SET -->
+    <section class="card" id="section-6" style="margin-bottom: 32px;">
+      <h2>Problem Set with Solutions</h2>
+      <p>Test your understanding of the geometry of convex sets. These problems cover all major topics from this lecture.</p>
       <ol style="line-height: 2;">
         <li><b>Set Properties:</b> Show that the set of points closer to a given point $x_0$ than a given set $S \subseteq \mathbb{R}^n$, defined as $C = \{x \mid \|x-x_0\|_2 \le \|x-y\|_2 \text{ for all } y \in S\}$, is convex.</li>
         <li><b>Operations:</b> Prove that the intersection of a convex set and an affine set is convex using the basic definitions.</li>
@@ -224,6 +249,80 @@
             </p>
         </li>
       </ol>
+    </section>
+
+    <!-- SECTION 7: POCKET CARD SUMMARY -->
+    <section class="card" id="section-7" style="margin-bottom: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 12px;">
+      <h2 style="color: white; margin-top: 0;">Pocket Card Summary</h2>
+      <p style="color: rgba(255,255,255,0.95);"><i>Print or save this quick reference for studying and problem-solving.</i></p>
+
+      <div style="background: rgba(255,255,255,0.15); padding: 16px; border-radius: 8px; margin: 16px 0;">
+        <h3 style="color: white; margin-top: 0;">Core Definitions</h3>
+        <ul style="line-height: 1.8; color: rgba(255,255,255,0.95);">
+          <li><b>Affine set:</b> Contains full line through any two points: $\theta x_1 + (1-\theta)x_2 \in C$ for all $\theta \in \mathbb{R}$</li>
+          <li><b>Convex set:</b> Contains line segment: $\theta x_1 + (1-\theta)x_2 \in C$ for $\theta \in [0,1]$</li>
+          <li><b>Convex combination:</b> $\sum_{i=1}^k \theta_i x_i$ where $\theta_i \ge 0$, $\sum \theta_i = 1$</li>
+          <li><b>Convex hull:</b> $\mathrm{conv}(S)$ = smallest convex set containing $S$ = all convex combinations of points from $S$</li>
+        </ul>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.15); padding: 16px; border-radius: 8px; margin: 16px 0;">
+        <h3 style="color: white; margin-top: 0;">Canonical Convex Sets</h3>
+        <ul style="line-height: 1.8; color: rgba(255,255,255,0.95);">
+          <li><b>Hyperplane:</b> $\{x \mid a^\top x = b\}$</li>
+          <li><b>Halfspace:</b> $\{x \mid a^\top x \le b\}$</li>
+          <li><b>Norm ball:</b> $\{x \mid \|x - x_c\| \le r\}$</li>
+          <li><b>Ellipsoid:</b> $\{x \mid (x-x_c)^\top P^{-1}(x-x_c) \le 1\}$, $P \succ 0$</li>
+          <li><b>Polyhedron:</b> $\{x \mid Ax \le b, Cx = d\}$</li>
+          <li><b>Second-order cone:</b> $\{(x,t) \mid \|x\|_2 \le t\}$</li>
+          <li><b>PSD cone:</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$</li>
+        </ul>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.15); padding: 16px; border-radius: 8px; margin: 16px 0;">
+        <h3 style="color: white; margin-top: 0;">Convexity-Preserving Operations</h3>
+        <ul style="line-height: 1.8; color: rgba(255,255,255,0.95);">
+          <li><b>Intersection:</b> $\bigcap_{i} C_i$ is convex if each $C_i$ is convex</li>
+          <li><b>Affine image:</b> If $C$ convex, then $\{Ax + b \mid x \in C\}$ is convex</li>
+          <li><b>Affine preimage:</b> If $D$ convex, then $\{x \mid Ax + b \in D\}$ is convex</li>
+          <li><b>Scaling:</b> $\alpha C = \{\alpha x \mid x \in C\}$ is convex for $\alpha \in \mathbb{R}$</li>
+          <li><b>Sum (Minkowski):</b> $C_1 + C_2 = \{x_1 + x_2 \mid x_1 \in C_1, x_2 \in C_2\}$ is convex</li>
+        </ul>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.15); padding: 16px; border-radius: 8px; margin: 16px 0;">
+        <h3 style="color: white; margin-top: 0;">Key Theorems</h3>
+        <ul style="line-height: 1.8; color: rgba(255,255,255,0.95);">
+          <li><b>Separating Hyperplane:</b> If $C$ and $D$ are disjoint convex sets, there exists $a \neq 0$, $b$ such that $a^\top x \le b$ for all $x \in C$ and $a^\top y \ge b$ for all $y \in D$</li>
+          <li><b>Supporting Hyperplane:</b> For any convex set $C$ and boundary point $x_0$, there exists $a \neq 0$ such that $a^\top x \le a^\top x_0$ for all $x \in C$</li>
+        </ul>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.15); padding: 16px; border-radius: 8px; margin: 16px 0;">
+        <h3 style="color: white; margin-top: 0;">Dual Cones</h3>
+        <ul style="line-height: 1.8; color: rgba(255,255,255,0.95);">
+          <li><b>Definition:</b> $K^* = \{y \mid y^\top x \ge 0 \text{ for all } x \in K\}$</li>
+          <li><b>Self-dual cones:</b> $\mathbb{R}^n_+$, second-order cone, $\mathbb{S}^n_+$</li>
+          <li><b>Properties:</b> $K^*$ always closed and convex; $(K^*)^* = \overline{\mathrm{conv}(K)}$</li>
+        </ul>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.15); padding: 16px; border-radius: 8px; margin: 16px 0;">
+        <h3 style="color: white; margin-top: 0;">Quick Verification Checklist</h3>
+        <p style="color: rgba(255,255,255,0.95);"><b>To prove a set $C$ is convex:</b></p>
+        <ol style="line-height: 1.8; color: rgba(255,255,255,0.95);">
+          <li>Check if it's a canonical convex set (hyperplane, ball, polyhedron, etc.)</li>
+          <li>Try to express it as an intersection of convex sets</li>
+          <li>Try to express it as an affine preimage of a known convex set</li>
+          <li>As a last resort, verify the definition directly: for any $x_1, x_2 \in C$ and $\theta \in [0,1]$, show $\theta x_1 + (1-\theta)x_2 \in C$</li>
+        </ol>
+      </div>
+
+      <div style="text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.3);">
+        <p style="color: rgba(255,255,255,0.9); font-size: 0.9em; margin: 0;">
+          <b>Master these concepts:</b> They are the geometric foundation for everything that follows in convex optimization.
+        </p>
+      </div>
     </section>
   </main>
 
