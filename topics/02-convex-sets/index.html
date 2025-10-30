@@ -156,13 +156,17 @@
     <!-- SECTION 4: SEPARATING HYPERPLANES -->
     <section class="card" id="section-4" style="margin-bottom: 32px;">
         <h2>4. The Deep Geometry: Separating and Supporting Hyperplanes</h2>
-        <p>These theorems are foundational results in convex geometry that formalize the intuitive idea that a convex set can be "separated" from a point or another set by a hyperplane.</p>
+        <p>These theorems are among the most profound results in convex geometry. They provide the geometric foundation for optimality conditions, duality theory, and many algorithms. Their essence is that convex sets, unlike many non-convex ones, can always be "separated" or "supported" by a simple hyperplane.</p>
 
         <h4>The Separating Hyperplane Theorem</h4>
-        <p>If $C$ and $D$ are two disjoint nonempty convex sets, there exists a hyperplane that separates them. That is, there exists a vector $a \neq 0$ such that $a^\top x \le a^\top y$ for all $x \in C$ and $y \in D$. This theorem is the geometric basis for duality theory in optimization.</p>
+        <p>The theorem states that if $C$ and $D$ are two disjoint nonempty convex sets, there exists a hyperplane that separates them. That is, there exists a vector $a \neq 0$ and a scalar $b$ such that $a^\top x \le b$ for all $x \in C$ and $a^\top y \ge b$ for all $y \in D$. If the sets are closed and at least one is bounded, they can be strictly separated ($<$ and $>$).</p>
         <div class="proof">
-            <h4>Proof Sketch</h4>
-            <p>The proof involves finding the two closest points in the sets $C$ and $D$, say $c^*$ and $d^*$. The hyperplane that is orthogonal to the segment connecting these two points and passes through its midpoint will separate the two sets.</p>
+            <h4>Proof Sketch for the Separating Hyperplane Theorem</h4>
+            <ol>
+                <li><strong>Construct a new set:</strong> Consider the set $S = C - D = \{c-d \mid c \in C, d \in D\}$. This set is convex (it's the Minkowski sum of $C$ and $-D$). Since $C$ and $D$ are disjoint, the origin is not in $S$.</li>
+                <li><strong>Find the closest point to the origin:</strong> Let $p$ be the point in the closure of $S$ that is closest to the origin. Since $S$ is a closed convex set not containing the origin, such a unique point $p$ exists and is non-zero. This point is the projection of the origin onto $S$.</li>
+                <li><strong>Construct the hyperplane:</strong> The key insight is that the hyperplane with normal vector $p$ passing through the point $p/2$ will separate the origin from the set $S$. A bit more work shows this same hyperplane (or a shifted version) separates $C$ and $D$. The separating hyperplane is given by $a=p$ and $b=p^\top(p/2)$.</li>
+            </ol>
         </div>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">

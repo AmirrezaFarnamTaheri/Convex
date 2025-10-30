@@ -496,8 +496,8 @@
       <div style="margin: 24px 0; padding: 16px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px;">
         <h3>Example 3: Rank-Deficient Case</h3>
         <p>Consider the system with:
-        $$ A = \begin{pmatrix} 1 & 1 \\ 2 & 2 \end{pmatrix}, \quad b = \begin{pmatrix} 1 \\ 1 \end{pmatrix} $$
-        The columns of $A$ are linearly dependent, so the system is rank-deficient. The normal equations are $A^\top A x = \begin{pmatrix} 5 & 5 \\ 5 & 5 \end{pmatrix} x = \begin{pmatrix} 3 \\ 3 \end{pmatrix}$, which has no solution. This highlights the instability of the normal equations in the rank-deficient case. The pseudoinverse, however, would provide the minimum-norm solution.
+        $$ A = \begin{pmatrix} 1 & 1 \\ 2 & 2 \end{pmatrix}, \quad b = \begin{pmatrix} 3 \\ 6 \end{pmatrix} $$
+        The columns of $A$ are linearly dependent, so the system is rank-deficient. The vector $b$ is in the column space of $A$, so there are infinitely many solutions. The normal equations are $A^\top A x = \begin{pmatrix} 5 & 5 \\ 5 & 5 \end{pmatrix} x = \begin{pmatrix} 15 \\ 15 \end{pmatrix}$. This system has infinitely many solutions of the form $x_1 + x_2 = 3$. The pseudoinverse would provide the minimum-norm solution, $x_1 = x_2 = 1.5$.
         </p>
       </div>
     </section>
@@ -517,32 +517,28 @@
 
     <!-- SECTION 11: EXERCISES -->
     <section class="card" id="section-11" style="margin-bottom: 32px;">
-      <h2>11. Exercises</h2>
+      <h2>11. Exercises (with Detailed Solutions)</h2>
 
       <h3>A. Fundamentals</h3>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>A1. Prove that the nullspace of a matrix $A$, $\mathcal{N}(A)$, is a subspace.</h4>
-        <p><b>Solution:</b>
-        <br>1. <b>Closure under addition:</b> Let $x, y \in \mathcal{N}(A)$. Then $A(x+y) = Ax + Ay = 0 + 0 = 0$. So $x+y \in \mathcal{N}(A)$.
-        <br>2. <b>Closure under scalar multiplication:</b> Let $x \in \mathcal{N}(A)$ and $\alpha$ be a scalar. Then $A(\alpha x) = \alpha(Ax) = \alpha 0 = 0$. So $\alpha x \in \mathcal{N}(A)$.
-        <br>Since the nullspace is closed under addition and scalar multiplication, it is a subspace.
-        </p>
+        <h4>A1. Prove that the set of all linear combinations of a fixed set of vectors is a subspace.</h4>
+        <p><b>Solution:</b> Closure under addition and scalar multiplication follow from distributivity; the zero vector is obtained by all-zero coefficients.</p>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>A2. Show that for an orthogonal matrix $Q$, $\|Qx\|_2 = \|x\|_2$.</h4>
-        <p><b>Solution:</b> The squared norm is $\|Qx\|_2^2 = (Qx)^\^\top(Qx) = x^\^\top Q^\^\top Q x$. Since $Q$ is orthogonal, $Q^\^\top Q = I$. Therefore, $\|Qx\|_2^2 = x^\^\top I x = x^\^\top x = \|x\|_2^2$. Taking the square root gives the result.</p>
+        <h4>A2. Show that $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$.</h4>
+        <p><b>Solution:</b> If $y \in \mathcal{N}(A^\top)$, then for any $x$, $y^\top(Ax) = (A^\top y)^\top x = 0$.</p>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>A3. Apply the Gram-Schmidt process to find an orthonormal basis for the space spanned by $a_1 = (1, 1, 0)^\^\top$ and $a_2 = (1, 0, 1)^\^\top$.</h4>
-        <p><b>Solution:</b>
-        <br>1. <b>First vector:</b> $q_1 = a_1 / \|a_1\|_2 = (1/\sqrt{2}, 1/\sqrt{2}, 0)^\^\top$.
-        <br>2. <b>Second vector:</b> $\tilde{q}_2 = a_2 - (q_1^\^\top a_2)q_1 = (1, 0, 1)^\^\top - (1/\sqrt{2})q_1 = (1/2, -1/2, 1)^\^\top$.
-        <br>3. <b>Normalize:</b> $q_2 = \tilde{q}_2 / \|\tilde{q}_2\|_2 = (1/\sqrt{6}, -1/\sqrt{6}, 2/\sqrt{6})^\^\top$.
-        <br>The orthonormal basis is $\{q_1, q_2\}$.
-        </p>
+        <h4>A3. Show that $Q^\top Q = I$ ⇒ $\|Qx\|_2 = \|x\|_2$.</h4>
+        <p><b>Solution:</b> $\|Qx\|_2^2 = (Qx)^\top(Qx) = x^\top Q^\top Q x = x^\top x$.</p>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
+        <h4>A4. (Gram–Schmidt) Apply Gram–Schmidt to $a_1 = (1, 1, 0)^\top$, $a_2 = (1, 0, 1)^\top$, $a_3 = (0, 1, 1)^\top$; produce an orthonormal basis.</h4>
+        <p><b>Solution:</b> Compute $\tilde{q}_1 = a_1$, normalize; subtract projections from $a_2$ and $a_3$; normalize again. (Carry out all arithmetic; verify orthonormality.)</p>
       </div>
 
       <h3>B. Projections</h3>
@@ -580,14 +576,26 @@
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>C4. Show that weighted least squares with a diagonal weight matrix $W = \mathrm{diag}(w_i)$ is equivalent to scaling the rows of the system by $\sqrt{w_i}$.</h4>
-        <p><b>Solution:</b> The objective is $(Ax-b)^\top W (Ax-b)$. Let $C = \mathrm{diag}(\sqrt{w_i})$. Then $W=C^\top C$, and the objective becomes $\|C(Ax-b)\|_2^2 = \|(CA)x - (Cb)\|_2^2$. This is a standard least squares problem on a modified system where the rows have been scaled.</p>
+        <h4>C4. Weighted least squares with diagonal $W = \mathrm{diag}(w_i)$. Show equivalence to scaling the rows of $A$ and $b$ by $\sqrt{w_i}$.</h4>
+        <p><b>Solution:</b> Write $W = C^\top C$ with $C = \mathrm{diag}(\sqrt{w_i})$; minimize $\|CAx - Cb\|_2^2$.</p>
+      </div>
+
+      <h3>D. Pseudoinverse & Rank Deficiency</h3>
+
+      <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
+        <h4>D1. Prove that every least-squares solution $x^\star$ satisfies $x^\star = A^+b + (I - A^+A)z$ for some $z$.</h4>
+        <p><b>Solution:</b> From SVD, the set of minimizers is $A^+b + \mathcal{N}(A)$; note $(I - A^+A)$ projects onto $\mathcal{N}(A)$.</p>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
+        <h4>D2. Show $P = AA^+$ is the projector onto $\mathcal{R}(A)$ and $P^\perp = I - AA^+$ projects onto $\mathcal{N}(A^\top)$.</h4>
+        <p><b>Solution:</b> Use SVD or basic projector algebra: $P^2 = P$, $P^\top = P$, range/nullspace relations.</p>
       </div>
     </section>
 
     <!-- SECTION 12: SANITY CHECKLIST -->
     <section class="card" id="section-12" style="margin-bottom: 32px;">
-      <h2>12. Practical Checklist</h2>
+      <h2>12. Sanity Checklist (What to Remember in Practice)</h2>
 
       <ul>
         <li>Always check the <b>dimensions</b> of your matrices and vectors.</li>
