@@ -52,28 +52,72 @@
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>0. Notation and Basic Objects</h2>
-      <p>We begin by defining the fundamental objects of linear algebra.</p>
+      <p>Linear algebra is the study of vectors, matrices, and the linear transformations that relate them. We begin by defining these fundamental objects with greater precision.</p>
       <ul>
-        <li><b>Scalars:</b> Real numbers, e.g., $a \in \mathbb{R}$.</li>
-        <li><b>Vectors:</b> Column vectors $x \in \mathbb{R}^n$, which are $n \times 1$ matrices.</li>
-        <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$ with entries $a_{ij}$.</li>
-        <li><b>Transpose:</b> $A^\top \in \mathbb{R}^{n \times m}$ with $(A^\top)_{ij} = a_{ji}$.</li>
-        <li><b>Identity:</b> $I_n$, an $n \times n$ matrix with ones on the diagonal.</li>
-        <li><b>Standard Basis:</b> $e_1, \dots, e_n$, where $e_i$ has a 1 in position $i$ and zeros elsewhere.</li>
+        <li><b>Scalars:</b> A scalar is simply a real number, such as $a \in \mathbb{R}$. Scalars are used to "scale" vectors, changing their magnitude.</li>
+        <li><b>Vectors:</b> A vector $x \in \mathbb{R}^n$ is an ordered list of $n$ real numbers, which we write as a column matrix (an $n \times 1$ matrix). Geometrically, a vector can be viewed in two ways: as a <b>point</b> in an $n$-dimensional space, or as an <b>arrow</b> originating from the origin and pointing to that point, representing direction and magnitude.</li>
+        <li><b>Matrices:</b> A matrix $A \in \mathbb{R}^{m \times n}$ is a rectangular array of numbers with $m$ rows and $n$ columns. Its primary role is to represent a <b>linear transformation</b>, a function that maps vectors from an $n$-dimensional space to an $m$-dimensional space. The entry in the $i$-th row and $j$-th column is denoted $a_{ij}$.</li>
+        <li><b>Transpose:</b> The transpose of a matrix, $A^\top \in \mathbb{R}^{n \times m}$, is obtained by swapping its rows and columns. That is, $(A^\top)_{ij} = a_{ji}$. The transpose is a fundamental operation with deep connections to the four fundamental subspaces.</li>
+        <li><b>Identity Matrix:</b> The identity matrix $I_n$ is a square $n \times n$ matrix with ones on the main diagonal and zeros everywhere else. It represents a transformation that leaves every vector unchanged, i.e., $I_n x = x$ for all $x \in \mathbb{R}^n$.</li>
+        <li><b>Standard Basis:</b> The standard basis for $\mathbb{R}^n$ is the set of vectors $\{e_1, e_2, \dots, e_n\}$, where each $e_i$ is a vector with a 1 in the $i$-th position and zeros elsewhere. Any vector $x = (x_1, \dots, x_n)$ can be uniquely expressed as a linear combination of basis vectors: $x = x_1 e_1 + x_2 e_2 + \dots + x_n e_n$.</li>
       </ul>
-      <p>A function $T:\mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$. Every linear map can be represented by a matrix $A$ such that $T(x) = Ax$.</p>
+      <h4>Linearity: The Core Principle</h4>
+      <p>A function (or transformation) $T:\mathbb{R}^n \to \mathbb{R}^m$ is defined as <b>linear</b> if it satisfies two properties for all vectors $x, y \in \mathbb{R}^n$ and all scalars $\alpha, \beta \in \mathbb{R}$:</p>
+      <ol>
+        <li><b>Additivity:</b> $T(x + y) = T(x) + T(y)$ (The transform of a sum is the sum of the transforms).</li>
+        <li><b>Homogeneity:</b> $T(\alpha x) = \alpha T(x)$ (Scaling a vector and then transforming it is the same as transforming it and then scaling).</li>
+      </ol>
+      <p>These two properties can be combined into a single statement: $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$. This principle of <b>superposition</b> is the bedrock of linear algebra. It implies that if we know how a transformation acts on the basis vectors, we know how it acts on any vector in the space. Every linear map can be represented by a matrix $A$ such that $T(x) = Ax$. The columns of this matrix are simply the transformations of the standard basis vectors: $A = [T(e_1) \ T(e_2) \ \dots \ T(e_n)]$.</p>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>1. The Four Fundamental Subspaces</h2>
-      <p>For any matrix $A \in \mathbb{R}^{m \times n}$, we have four fundamental subspaces. Understanding their relationships is key to understanding linear algebra.</p>
+      <p>For any matrix $A \in \mathbb{R}^{m \times n}$, which represents a linear map from $\mathbb{R}^n$ to $\mathbb{R}^m$, there are four associated subspaces that provide a complete geometric understanding of the transformation. These subspaces are vector spaces in their own right.</p>
+
+      <h4>Geometric Interpretation</h4>
       <ul>
-        <li><b>Column Space (Range):</b> $\mathcal{R}(A) = \{Ax \mid x \in \mathbb{R}^n\} \subseteq \mathbb{R}^m$. This is the set of all possible outputs of the linear transformation represented by $A$. It is the span of the columns of $A$.</li>
-        <li><b>Nullspace (Kernel):</b> $\mathcal{N}(A) = \{x \in \mathbb{R}^n \mid Ax=0\}$. This is the set of all input vectors that are mapped to the zero vector.</li>
-        <li><b>Row Space:</b> $\mathcal{R}(A^\top) \subseteq \mathbb{R}^n$. This is the span of the rows of $A$.</li>
-        <li><b>Left Nullspace:</b> $\mathcal{N}(A^\top) = \{y \in \mathbb{R}^m \mid A^\top y=0\}$.</li>
+        <li>
+          <b>Column Space (Range):</b> $\mathcal{R}(A) = \{Ax \mid x \in \mathbb{R}^n\} \subseteq \mathbb{R}^m$.
+          <br>
+          This subspace is the <b>span of the columns</b> of $A$. Geometrically, it is the set of all possible output vectors. Think of it as the "image" of the input space after the transformation. If $A$ is $3 \times 2$, the column space is, at most, a plane in the 3D output space. The dimension of this space is the <b>rank</b> of the matrix.
+        </li>
+        <li>
+          <b>Nullspace (Kernel):</b> $\mathcal{N}(A) = \{x \in \mathbb{R}^n \mid Ax=0\}$.
+          <br>
+          This subspace consists of all input vectors in $\mathbb{R}^n$ that are "squashed" to the zero vector in $\mathbb{R}^m$. If the nullspace contains more than just the zero vector, the transformation is "lossy" – it collapses certain dimensions of the input space. The dimension of this space is the <b>nullity</b>.
+        </li>
+        <li>
+          <b>Row Space:</b> $\mathcal{R}(A^\top) \subseteq \mathbb{R}^n$.
+          <br>
+          This is the span of the rows of $A$. It lives in the input space $\mathbb{R}^n$. The row space is the orthogonal complement of the nullspace, a critical relationship we will prove.
+        </li>
+        <li>
+          <b>Left Nullspace:</b> $\mathcal{N}(A^\top) = \{y \in \mathbb{R}^m \mid A^\top y=0\}$.
+          <br>
+          This subspace lives in the output space $\mathbb{R}^m$ and is the orthogonal complement of the column space. It consists of all vectors in the output space that are orthogonal to every column of $A$.
+        </li>
       </ul>
-      <p>These spaces satisfy two crucial orthogonality conditions: $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$ and $\mathcal{R}(A^\top) \perp \mathcal{N}(A)$. The dimensions of these spaces are related by one of the most important theorems in linear algebra.</p>
+      <div style="text-align:center; margin: 24px 0;">
+        <img src="../../static/assets/images/00-linear-algebra-primer/four_subspaces.svg" alt="Diagram of the Four Fundamental Subspaces" style="width: 80%; max-width: 500px;">
+        <p style="font-size: 0.9em; color: var(--color-text-secondary);"><i>The Fundamental Theorem of Linear Algebra, Part 1: The domain $\mathbb{R}^n$ is split into the row space and the nullspace, while the codomain $\mathbb{R}^m$ is split into the column space and the left nullspace.</i></p>
+      </div>
+      <p>These spaces satisfy two crucial orthogonality conditions, which form the first part of the Fundamental Theorem of Linear Algebra.</p>
+
+      <h5>Proof of Orthogonality Conditions</h5>
+      <p>Let's prove that $\mathcal{R}(A^\top) \perp \mathcal{N}(A)$.</p>
+      <ol>
+        <li>Let $x$ be any vector in the row space, $\mathcal{R}(A^\top)$. By definition, this means $x$ can be written as a linear combination of the rows of $A$. This is equivalent to saying there exists some vector $y \in \mathbb{R}^m$ such that $x = A^\top y$.</li>
+        <li>Let $z$ be any vector in the nullspace, $\mathcal{N}(A)$. By definition, this means $Az = 0$.</li>
+        <li>To show orthogonality, we must show that their inner product is zero. Let's compute it:
+        $$ \langle x, z \rangle = x^\top z = (A^\top y)^\top z = (y^\top A) z = y^\top (Az) $$
+        </li>
+        <li>Since $z$ is in the nullspace, we know that $Az = 0$. Therefore:
+        $$ \langle x, z \rangle = y^\top (0) = 0 $$
+        </li>
+        <li>Since we chose arbitrary vectors from each subspace and their dot product is zero, the two subspaces are orthogonal. The proof that $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$ follows the exact same logic, just by starting with the matrix $A^\top$ instead of $A$.</li>
+      </ol>
+
+      <p>Their dimensions are related by one of the most important theorems in linear algebra, which connects the "input" and "output" perspectives.</p>
 
       <h4>The Rank-Nullity Theorem</h4>
       <p>The <b>rank</b> of a matrix $A$, denoted $\mathrm{rank}(A)$, is the dimension of its column space. The <b>nullity</b> of $A$, denoted $\mathrm{nullity}(A)$, is the dimension of its nullspace. The Rank-Nullity Theorem states that for any $m \times n$ matrix $A$:
@@ -105,12 +149,38 @@
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>2. Inner Products, Norms, and Angles</h2>
-      <p>The <b>standard inner product</b> (or dot product) on $\mathbb{R}^n$ is defined as $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$. It is a bilinear, symmetric, and positive-definite function. A <b>norm</b> $\|\cdot\|$ is a function that assigns a strictly positive length or size to each vector in a vector space, except for the zero vector. The three most common vector norms are:</p>
+      <p>While subspaces describe the geometry of linear transformations, inner products, norms, and angles allow us to introduce concepts of measurement: length, distance, and orientation.</p>
+
+      <h4>The Inner Product: Measuring Alignment</h4>
+      <p>The <b>standard inner product</b> (or dot product) on $\mathbb{R}^n$ is defined as $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$. It is a function that takes two vectors and returns a scalar. Fundamentally, it measures the alignment of two vectors.</p>
       <ul>
-        <li><b>$\ell_2$ (Euclidean):</b> $\|x\|_2 = \sqrt{\sum_i x_i^2} = \sqrt{x^\top x}$. This is the standard notion of distance.</li>
-        <li><b>$\ell_1$ (Manhattan):</b> $\|x\|_1 = \sum_i |x_i|$. This measures distance by summing the absolute differences of the coordinates.</li>
-        <li><b>$\ell_\infty$ (Chebyshev):</b> $\|x\|_\infty = \max_i |x_i|$. This is the maximum absolute coordinate.</li>
+          <li>If $\langle x, y \rangle > 0$, the vectors are pointing in a similar direction.</li>
+          <li>If $\langle x, y \rangle < 0$, they are pointing in opposite directions.</li>
+          <li>If $\langle x, y \rangle = 0$, they are <b>orthogonal</b> (perpendicular).</li>
       </ul>
+      <p>More formally, an inner product is any function that is bilinear, symmetric, and positive-definite.</p>
+
+      <h4>Norms: Measuring Length</h4>
+      <p>A <b>norm</b> $\|\cdot\|$ is a function that assigns a strictly positive length or size to each vector in a vector space (except for the zero vector, which has zero length). A norm must satisfy three properties: non-negativity, positive homogeneity ($\|\alpha x\| = |\alpha| \|x\|$), and the triangle inequality ($\|x+y\| \le \|x\| + \|y\|$). The most common vector norms are:</p>
+      <ul>
+        <li><b>$\ell_2$ (Euclidean):</b> $\|x\|_2 = \sqrt{\sum_i x_i^2} = \sqrt{x^\top x}$. This is our standard notion of "straight-line" distance, derived directly from the Pythagorean theorem. It is induced by the standard inner product.</li>
+        <li><b>$\ell_1$ (Manhattan or Taxicab):</b> $\|x\|_1 = \sum_i |x_i|$. This measures distance as if you were constrained to travel along a grid, like the streets of Manhattan. It is often used in optimization and machine learning as a regularizer to promote sparsity (solutions with many zero entries).</li>
+        <li><b>$\ell_\infty$ (Chebyshev or Max):</b> $\|x\|_\infty = \max_i |x_i|$. This is the maximum absolute coordinate of the vector. It measures the greatest deviation along any single axis.</li>
+      </ul>
+      <p>The set of all points for which $\|x\| \le 1$ is called the <b>unit ball</b>. The geometry of the unit ball is different for each norm and reveals its underlying character.</p>
+      <div id="widget-norm-geometry-container" style="margin: 24px 0;">
+        <h4 style="margin-bottom: 8px;">Interactive: Norm Geometry Visualizer</h4>
+        <p style="margin-bottom: 16px;">Use the widget below to see the shape of the unit balls for the $\ell_1$, $\ell_2$, and $\ell_\infty$ norms. Notice how the $\ell_2$ ball is a perfect circle, the $\ell_1$ ball is a diamond, and the $\ell_\infty$ ball is a square. This geometric difference is why these norms have such different properties in applications.</p>
+        <div id="widget-norm-geometry" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
+      </div>
+
+      <h4>Geometric Interpretation of the Dot Product</h4>
+      <p>The dot product has a deep geometric interpretation. The formula $\langle x, y \rangle = \|x\|_2 \|y\|_2 \cos\theta$ reveals that the dot product is the product of the lengths of the two vectors and the cosine of the angle between them. This means the dot product is a measure of how much one vector "points in the direction" of another.</p>
+      <div id="widget-dot-product-container" style="margin: 24px 0;">
+        <h4 style="margin-bottom: 8px;">Interactive: Dot Product Visualizer</h4>
+        <p style="margin-bottom: 16px;">The widget below shows two vectors and their dot product. Drag the vectors and observe how the dot product changes as the angle between them changes. When the vectors are orthogonal, the dot product is zero. When they point in the same direction, the dot product is maximized.</p>
+        <div id="widget-dot-product" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
+      </div>
 
       <h4>The Cauchy-Schwarz Inequality</h4>
       <p>One of the most fundamental inequalities in mathematics, the Cauchy-Schwarz inequality, relates the inner product of two vectors to their $\ell_2$ norms. It states that for any vectors $x, y \in \mathbb{R}^n$:
@@ -147,17 +217,25 @@
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>3. Orthogonality and QR Decomposition</h2>
-      <p>A set of vectors $\{q_1, \dots, q_k\}$ is <b>orthonormal</b> if $q_i^\top q_j = \delta_{ij}$, where $\delta_{ij}$ is the Kronecker delta. A square matrix $Q$ with orthonormal columns is <b>orthogonal</b>, satisfying $Q^\top Q = I$, which implies $Q^{-1} = Q^\top$.</p>
+      <p>Orthogonality is a generalization of perpendicularity to higher dimensions. It is a cornerstone of linear algebra, providing both theoretical elegance and computational stability.</p>
+      <p>A set of vectors $\{q_1, \dots, q_k\}$ is <b>orthogonal</b> if their inner products are all zero, i.e., $\langle q_i, q_j \rangle = 0$ for all $i \ne j$. If, in addition, each vector has a norm of 1 ($\|q_i\|_2 = 1$), the set is <b>orthonormal</b>. In this case, $q_i^\top q_j = \delta_{ij}$, where $\delta_{ij}$ is the Kronecker delta (1 if $i=j$, 0 otherwise). A square matrix $Q$ with orthonormal columns is an <b>orthogonal matrix</b>. Such matrices are geometrically special: they represent rigid transformations like rotations and reflections. A key property is that they preserve lengths and angles, and their inverse is simply their transpose: $Q^\top Q = I \implies Q^{-1} = Q^\top$.</p>
 
-      <h4>The Gram-Schmidt Process</h4>
-      <p>The <b>Gram-Schmidt</b> process is a fundamental algorithm that takes a set of linearly independent vectors $\{a_1, \dots, a_n\}$ and produces an orthonormal set $\{q_1, \dots, q_n\}$ that spans the same subspace.</p>
+      <h4>The Gram-Schmidt Process: Building an Orthonormal Basis</h4>
+      <p>How do we construct an orthonormal basis from an arbitrary basis? The <b>Gram-Schmidt process</b> is the standard algorithm for this task. Given a set of linearly independent vectors $\{a_1, \dots, a_n\}$, it systematically produces an orthonormal set $\{q_1, \dots, q_n\}$ that spans the exact same subspace.</p>
+      <p>The geometric intuition is to build the basis one vector at a time. For each new vector, we subtract the parts of it that lie in the direction of the previously constructed basis vectors. This leaves only the component that is orthogonal to the subspace we've built so far. We then normalize this new vector to unit length and add it to our basis.</p>
       <p>The process is iterative:</p>
       <ol>
-        <li>For the first vector: $\tilde{q}_1 = a_1$, and normalize it: $q_1 = \tilde{q}_1 / \|\tilde{q}_1\|_2$.</li>
-        <li>For each subsequent vector $a_k$, subtract its projection onto the subspace spanned by the previously found orthonormal vectors:
+        <li><b>Start:</b> Take the first vector, $a_1$. Make it orthogonal by doing nothing (yet). Let $\tilde{q}_1 = a_1$. Then normalize it to get the first basis vector: $q_1 = \tilde{q}_1 / \|\tilde{q}_1\|_2$.</li>
+        <li><b>Iterate:</b> For each subsequent vector $a_k$, find the component of $a_k$ that is already in the span of the vectors we've found so far $\{q_1, \dots, q_{k-1}\}$. This is its orthogonal projection onto that subspace. The formula for this projection is $\sum_{i=1}^{k-1} \langle a_k, q_i \rangle q_i$.</li>
+        <li><b>Subtract:</b> Subtract this projection from $a_k$ to get a vector $\tilde{q}_k$ that is guaranteed to be orthogonal to all previous $q_i$:
         $$ \tilde{q}_k = a_k - \sum_{i=1}^{k-1} \langle a_k, q_i \rangle q_i $$</li>
-        <li>Normalize the resulting vector: $q_k = \tilde{q}_k / \|\tilde{q}_k\|_2$.</li>
+        <li><b>Normalize:</b> Finally, normalize this new vector to get the next orthonormal basis vector: $q_k = \tilde{q}_k / \|\tilde{q}_k\|_2$.</li>
       </ol>
+      <div id="widget-orthogonality-container" style="margin: 24px 0;">
+        <h4 style="margin-bottom: 8px;">Interactive: Orthogonality & Projection Explorer</h4>
+        <p style="margin-bottom: 16px;">The widget below demonstrates the core operation of Gram-Schmidt. Drag the vectors $a$ and $b$. The widget calculates the projection of $a$ onto $b$, which is the piece of $a$ that lies in the direction of $b$. Gram-Schmidt uses this to remove that piece, leaving only the orthogonal part.</p>
+        <div id="widget-orthogonality" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
+      </div>
 
       <h5>Worked Example: Gram-Schmidt</h5>
       <p>Let's apply the Gram-Schmidt process to the vectors $a_1 = (1, 1, 0)$, $a_2 = (1, 0, 1)$, and $a_3 = (0, 1, 1)$.</p>
@@ -185,22 +263,60 @@
       <p>The resulting orthonormal basis is $\{q_1, q_2, q_3\}$.</p>
 
       <p>The <b>QR decomposition</b> factors a matrix $A \in \mathbb{R}^{m \times n}$ into $A=QR$, where $Q$ has orthonormal columns and $R$ is upper triangular. This is a key tool for solving linear systems robustly.</p>
+
+      <h4>Geometric Interpretation of QR Decomposition</h4>
+      <p>The QR decomposition can be understood as a geometric process. The Gram-Schmidt algorithm transforms the columns of A into an orthonormal basis, which is represented by the matrix Q. The matrix R then stores the information about how the original columns of A are represented in the new orthonormal basis.</p>
+      <div id="widget-qr-decomposition-container" style="margin: 24px 0;">
+        <h4 style="margin-bottom: 8px;">Interactive: QR Decomposition Visualizer</h4>
+        <p style="margin-bottom: 16px;">The widget below shows a matrix A and its QR decomposition. You can manipulate the columns of A and see how the Q and R matrices change. This visualization helps to build an intuition for how the QR decomposition works.</p>
+        <div id="widget-qr-decomposition" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
+      </div>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
-      <h2>4. Positive Semidefinite Matrices</h2>
-      <p>A symmetric matrix $Q \in \mathbb{S}^n$ is:</p>
+      <h2>4. Determinants and Their Properties</h2>
+      <p>The determinant of a square matrix is a scalar value that provides information about the matrix's properties. Geometrically, the absolute value of the determinant represents the scaling factor of the volume of a unit cube after being transformed by the matrix.</p>
       <ul>
-        <li><b>Positive Semidefinite (PSD), $Q \succeq 0$</b>, if the quadratic form $x^\top Q x \ge 0$ for all $x \in \mathbb{R}^n$.</li>
-        <li><b>Positive Definite (PD), $Q \succ 0$</b>, if $x^\top Q x > 0$ for all non-zero $x \in \mathbb{R}^n$.</li>
+        <li><b>Invertibility:</b> A matrix is invertible if and only if its determinant is non-zero.</li>
+        <li><b>Multiplicativity:</b> For square matrices $A$ and $B$ of the same size, $\det(AB) = \det(A)\det(B)$.</li>
+        <li><b>Transpose:</b> The determinant of a matrix is equal to the determinant of its transpose, $\det(A) = \det(A^\top)$.</li>
       </ul>
-      <p>The expression $x^\top Q x$ is a <b>quadratic form</b>. Geometrically, it describes the curvature of a multi-dimensional paraboloid. The definiteness of the matrix $Q$ determines the shape of this paraboloid.</p>
+
+      <h5>Proof of the Multiplicative Property</h5>
+      <p>The proof that $\det(AB) = \det(A)\det(B)$ is non-trivial and relies on the properties of elementary matrices.</p>
+      <ol>
+        <li>An <b>elementary matrix</b> $E$ is a matrix that differs from the identity matrix by a single elementary row operation.</li>
+        <li>It can be shown that for any elementary matrix $E$, $\det(EA) = \det(E)\det(A)$.</li>
+        <li>If $A$ is not invertible, then $\det(A) = 0$. In this case, $AB$ is also not invertible, so $\det(AB) = 0$. The property holds: $0 = 0 \cdot \det(B)$.</li>
+        <li>If $A$ is invertible, it can be written as a product of elementary matrices: $A = E_1 E_2 \dots E_k$.</li>
+        <li>Using the property from step 2 repeatedly, we have:
+        $$ \det(A) = \det(E_1) \det(E_2) \dots \det(E_k) $$</li>
+        <li>Now consider $\det(AB)$:
+        $$ \det(AB) = \det(E_1 E_2 \dots E_k B) = \det(E_1)\det(E_2 \dots E_k B) = \dots = \det(E_1)\det(E_2)\dots\det(E_k)\det(B) $$</li>
+        <li>Substituting back $\det(A)$, we get the desired result: $\det(AB) = \det(A)\det(B)$.</li>
+      </ol>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>5. Positive Semidefinite Matrices</h2>
+      <p>Positive semidefinite (PSD) matrices are a class of matrices that are fundamental to convex optimization. They generalize the concept of a non-negative real number and are essential for defining convex quadratic functions and second-order cone programs.</p>
+      <p>A symmetric matrix $Q \in \mathbb{S}^n$ (the set of symmetric $n \times n$ matrices) is:</p>
+      <ul>
+        <li><b>Positive Semidefinite (PSD), denoted $Q \succeq 0$</b>, if the associated <b>quadratic form</b> $x^\top Q x \ge 0$ for all non-zero $x \in \mathbb{R}^n$.</li>
+        <li><b>Positive Definite (PD), denoted $Q \succ 0$</b>, if the quadratic form is strictly positive, $x^\top Q x > 0$, for all non-zero $x \in \mathbb{R}^n$.</li>
+      </ul>
+      <p>Geometrically, the quadratic form $f(x) = x^\top Q x$ describes a multi-dimensional paraboloid. The definiteness of the matrix $Q$ determines the shape of this surface. If $Q$ is positive definite, the surface is a convex bowl with a unique minimum at the origin. If it is positive semidefinite, the bowl is flat in some directions. This geometric view is the reason PSD matrices are so central to optimization.</p>
 
       <h4>Eigenvalue Characterization of Definiteness</h4>
       <p>A crucial property is that the definiteness of a symmetric matrix is completely determined by the signs of its eigenvalues.</p>
       <p><b>Theorem:</b> A symmetric matrix $Q$ is PSD if and only if all its eigenvalues are non-negative. It is PD if and only if all its eigenvalues are positive.</p>
 
-      <h5>Proof:</h5>
+      <h5>The Spectral Theorem</h5>
+      <p>The proof of this characterization relies on the <b>Spectral Theorem</b>, a cornerstone result which states that any symmetric matrix $A$ can be diagonalized by an orthogonal matrix. That is, there exists an orthogonal matrix $V$ and a diagonal matrix $\Lambda$ such that:
+      $$ A = V \Lambda V^\top $$
+      The columns of $V$ are the orthonormal eigenvectors of $A$, and the diagonal entries of $\Lambda$ are the corresponding eigenvalues.</p>
+
+      <h5>Proof of Eigenvalue Characterization:</h5>
       <p>Let $Q$ be a symmetric matrix. By the Spectral Theorem, it has an eigendecomposition $Q = V \Lambda V^\top$, where $V$ is an orthogonal matrix whose columns are the eigenvectors of $Q$, and $\Lambda$ is a diagonal matrix of the corresponding eigenvalues $\lambda_i$.</p>
       <ol>
         <li>($\Rightarrow$) Assume $Q \succeq 0$. Let $v_i$ be an eigenvector with eigenvalue $\lambda_i$. Then:
@@ -215,34 +331,76 @@
 
       <h4>Geometric Interpretation: Ellipsoids</h4>
       <p>If a matrix $P$ is positive definite, the set of points $\{x \mid x^\top P x \le 1\}$ defines an ellipsoid. The eigenvectors of $P$ determine the principal axes of the ellipsoid, and the lengths of the semi-axes are inversely proportional to the square roots of the eigenvalues. This geometric view is fundamental in many areas of convex optimization, from designing robust systems to understanding the geometry of duality.</p>
+
+      <div id="widget-ellipsoid-container" style="margin: 24px 0;">
+        <h4 style="margin-bottom: 8px;">Interactive: Ellipsoid Visualizer</h4>
+        <p style="margin-bottom: 16px;">The widget below shows an ellipsoid defined by a 2x2 positive definite matrix. You can manipulate the entries of the matrix and see how the shape and orientation of the ellipsoid change. This visualization helps to build an intuition for the connection between positive definite matrices and ellipsoids.</p>
+        <div id="widget-ellipsoid" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
+      </div>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>5. Projections</h2>
-      <p>The <b>orthogonal projection</b> of a vector $b$ onto a subspace $\mathcal{S}$ is the unique vector $p \in \mathcal{S}$ that minimizes $\|b-p\|_2$. The residual $b-p$ is orthogonal to $\mathcal{S}$.</p>
+      <p>An orthogonal projection is a fundamental operation that finds the "closest" point in a subspace to a given point. It is the geometric foundation of least squares and many other optimization methods.</p>
+      <p>The <b>orthogonal projection</b> of a vector $b$ onto a subspace $\mathcal{S}$ is the unique vector $p \in \mathcal{S}$ that minimizes the Euclidean distance $\|b-p\|_2$. This minimizing vector is special: the residual vector, $r = b-p$, is orthogonal to the entire subspace $\mathcal{S}$.</p>
+
+      <h4>Constructing the Projection Matrix</h4>
+      <p>The projection itself is a linear transformation, so it can be represented by a <b>projection matrix</b> $P$. The formula for $P$ depends on the basis you have for the subspace $\mathcal{S}$.</p>
       <ul>
-        <li>If columns of $Q$ form an orthonormal basis for $\mathcal{S}$, the projection matrix is $P = QQ^\top$.</li>
-        <li>If columns of $A$ form a basis for $\mathcal{S}$, $P = A(A^\top A)^{-1}A^\top$.</li>
-        <li>To project onto an <b>affine set</b> $\{x \mid Fx=g\}$, find a particular solution $x_0$, and project onto the nullspace of $F$.</li>
+        <li><b>Orthonormal Basis:</b> If the columns of a matrix $Q$ form an orthonormal basis for $\mathcal{S}$, the projection is simple. The projection of $b$ is $p = QQ^\top b$, so the projection matrix is $P = QQ^\top$.</li>
+        <li><b>General Basis:</b> If the columns of a matrix $A$ form any basis for $\mathcal{S}$ (not necessarily orthonormal), the calculation is more involved. The projection matrix is $P = A(A^\top A)^{-1}A^\top$. This formula is so important it is worth re-deriving from the orthogonality principle.</li>
       </ul>
+
+      <h4>Projection onto an Affine Set</h4>
+      <p>The concept of projection can be extended from subspaces to <b>affine sets</b>. An affine set has the form $\{x \mid Fx=g\}$, which is a subspace shifted by a particular solution $x_0$. To project a point $b$ onto this set, you first find any particular solution $x_0$ that satisfies $Fx_0=g$. Then, you compute the projection of the vector $b-x_0$ onto the nullspace of $F$. The final projection is this result added back to $x_0$.</p>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
-      <h2>6. Least Squares</h2>
-      <p>The least squares problem seeks to find an $x$ that minimizes $\|Ax-b\|_2^2$. The solution $x^\star$ must satisfy the <b>normal equations</b>: $A^\top A x^\star = A^\top b$. Geometrically, $Ax^\star$ is the projection of $b$ onto the column space of $A$.</p>
+      <h2>6. The Least Squares Problem</h2>
+      <p>The least squares problem is one of the most common optimization problems in statistics and engineering. It arises when we have an overdetermined system of linear equations, $Ax=b$, where there is no exact solution. This typically happens when there are more equations ($m$) than unknowns ($n$). The goal is to find the "best" approximate solution.</p>
+      <p>The problem is formally stated as finding an $x$ that minimizes the squared $\ell_2$-norm of the residual:
+      $$ \text{minimize} \quad \|Ax-b\|_2^2 $$
+      The solution $x^\star$ can be found by geometric means. The vector $Ax$ must be a vector within the column space of $A$. We are therefore looking for the vector in $\mathcal{R}(A)$ that is closest to $b$. This is precisely the orthogonal projection of $b$ onto the column space of $A$. Let's call this projection $p$.
+      The residual, $b-p = b-Ax^\star$, must be orthogonal to the entire column space. This means it must be orthogonal to every column of $A$. We can write this condition compactly as:
+      $$ A^\top (b - Ax^\star) = 0 $$
+      Rearranging this gives the famous <b>normal equations</b>:
+      $$ A^\top A x^\star = A^\top b $$
+      If the columns of $A$ are linearly independent, then the matrix $A^\top A$ is invertible, and we can solve for the unique least squares solution: $x^\star = (A^\top A)^{-1}A^\top b$.
+      </p>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>7. SVD and the Pseudoinverse</h2>
-      <p>The <b>Singular Value Decomposition (SVD)</b> is arguably one of the most important matrix factorizations. It asserts that any matrix $A \in \mathbb{R}^{m \times n}$ can be decomposed as:
+      <p>The <b>Singular Value Decomposition (SVD)</b> is one of the most powerful and versatile matrix factorizations in numerical linear algebra. It provides a deep understanding of a matrix's structure and geometry, and it is the foundation for numerous applications, including dimensionality reduction, robust regression, and image compression.</p>
+      <p>The SVD asserts that any matrix $A \in \mathbb{R}^{m \times n}$ can be decomposed into the product of three other matrices:
       $$ A = U\Sigma V^\top $$
       where:
       <ul>
-        <li>$U \in \mathbb{R}^{m \times m}$ is an orthogonal matrix whose columns (left singular vectors) form an orthonormal basis for the codomain.</li>
-        <li>$\Sigma \in \mathbb{R}^{m \times n}$ is a diagonal matrix with non-negative singular values ($\sigma_1 \ge \sigma_2 \ge \dots \ge 0$) on its diagonal.</li>
-        <li>$V \in \mathbb{R}^{n \times n}$ is an orthogonal matrix whose columns (right singular vectors) form an orthonormal basis for the domain.</li>
+        <li>$U \in \mathbb{R}^{m \times m}$ is an <b>orthogonal matrix</b>. Its columns, called the <b>left singular vectors</b>, form an orthonormal basis for the codomain, $\mathbb{R}^m$.</li>
+        <li>$\Sigma \in \mathbb{R}^{m \times n}$ is a <b>rectangular diagonal matrix</b>. Its diagonal entries, $\sigma_1 \ge \sigma_2 \ge \dots \ge \sigma_r > 0$ (where $r$ is the rank of $A$), are the <b>singular values</b> of $A$. All other entries are zero.</li>
+        <li>$V \in \mathbb{R}^{n \times n}$ is an <b>orthogonal matrix</b>. Its columns, called the <b>right singular vectors</b>, form an orthonormal basis for the domain, $\mathbb{R}^n$.</li>
       </ul>
-      Geometrically, the SVD states that any linear transformation can be decomposed into a rotation ($V^\top$), a scaling along the coordinate axes ($\Sigma$), and another rotation ($U$).</p>
+      <p>Geometrically, the SVD provides a complete picture of a linear transformation. It states that any transformation $A$ can be broken down into three fundamental operations:
+      <ol>
+        <li>A <b>rotation or reflection</b> in the input space (described by $V^\top$).</li>
+        <li>A <b>scaling</b> along the principal axes (described by $\Sigma$).</li>
+        <li>A <b>rotation or reflection</b> in the output space (described by $U$).</li>
+      </ol>
+      </p>
+
+      <h4>SVD and the Four Fundamental Subspaces</h4>
+      <p>The SVD provides an orthonormal basis for all four fundamental subspaces:</p>
+      <ul>
+        <li>The first $r$ columns of $U$ form a basis for the <b>column space</b>, $\mathcal{R}(A)$.</li>
+        <li>The last $m-r$ columns of $U$ form a basis for the <b>left nullspace</b>, $\mathcal{N}(A^\top)$.</li>
+        <li>The first $r$ columns of $V$ form a basis for the <b>row space</b>, $\mathcal{R}(A^\top)$.</li>
+        <li>The last $n-r$ columns of $V$ form a basis for the <b>nullspace</b>, $\mathcal{N}(A)$.</li>
+      </ul>
+
+      <div style="text-align:center; margin: 24px 0;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/SVD_V_Sigma_U_T.svg" alt="Diagram of the SVD" style="width: 100%; max-width: 600px; background: white; padding: 16px; border-radius: 10px;">
+        <p style="font-size: 0.9em; color: var(--color-text-secondary);"><i>Visual representation of the SVD factorization. The matrix A is decomposed into a rotation (Vᵀ), a scaling (Σ), and another rotation (U). Source: Wikipedia.</i></p>
+      </div>
 
       <h4>Constructing the SVD</h4>
       <p>The components of the SVD are found via the eigendecomposition of $A^\top A$ and $AA^\top$.</p>
@@ -250,6 +408,22 @@
         <li>The right singular vectors, the columns of $V$, are the eigenvectors of the symmetric PSD matrix $A^\top A$.</li>
         <li>The left singular vectors, the columns of $U$, are the eigenvectors of $AA^\top$.</li>
         <li>The non-zero singular values are the square roots of the non-zero eigenvalues of both $A^\top A$ and $AA^\top$.</li>
+      </ol>
+
+      <h5>Proof of Existence of SVD</h5>
+      <p>The proof of the SVD's existence is constructive and elegant, relying on the Spectral Theorem and an inductive argument.</p>
+      <ol>
+        <li>The matrix $A^\top A$ is a symmetric, positive semidefinite matrix. By the Spectral Theorem, it has a set of orthonormal eigenvectors, $\{v_i\}$, with non-negative eigenvalues $\lambda_i$.</li>
+        <li>The singular values are defined as $\sigma_i = \sqrt{\lambda_i}$. The right singular vectors are the eigenvectors $\{v_i\}$.</li>
+        <li>Let $r$ be the rank of $A$. The first $r$ singular values are positive. For these, we define the left singular vectors as $u_i = \frac{1}{\sigma_i}Av_i$.</li>
+        <li>We need to show these $\{u_i\}$ vectors are orthonormal. Let's compute their inner product:
+        $$ \langle u_i, u_j \rangle = \left(\frac{1}{\sigma_i}Av_i\right)^\top \left(\frac{1}{\sigma_j}Av_j\right) = \frac{1}{\sigma_i\sigma_j} v_i^\top (A^\top A) v_j $$
+        </li>
+        <li>Since $v_j$ is an eigenvector of $A^\top A$ with eigenvalue $\lambda_j = \sigma_j^2$, we have $(A^\top A)v_j = \sigma_j^2 v_j$. Substituting this in:
+        $$ \langle u_i, u_j \rangle = \frac{\sigma_j^2}{\sigma_i\sigma_j} v_i^\top v_j = \frac{\sigma_j}{\sigma_i} \delta_{ij} $$
+        This is 1 if $i=j$ and 0 otherwise, confirming orthonormality.</li>
+        <li>If $r < m$, the set of $\{u_i\}$ is not a full basis for $\mathbb{R}^m$. We can extend it to a full orthonormal basis using the Gram-Schmidt process.</li>
+        <li>By construction, we have $Av_i = \sigma_i u_i$. This can be written in matrix form as $AV = U\Sigma$. Since $V$ is orthogonal, we can multiply by $V^\top$ to get the SVD: $A = U\Sigma V^\top$.</li>
       </ol>
 
       <h5>Worked Example: SVD</h5>
@@ -267,6 +441,14 @@
       </ol>
 
       <p>The <b>pseudoinverse</b> $A^+ = V\Sigma^+ U^\top$, where $\Sigma^+$ is formed by taking the reciprocal of the non-zero singular values, gives the minimum-norm solution to the least squares problem: $x^\star = A^+ b$. The condition number $\kappa(A) = \sigma_{\max}/\sigma_{\min}$ measures the sensitivity of the solution to perturbations.</p>
+
+      <h4>Low-Rank Approximation</h4>
+      <p>The SVD provides the best low-rank approximation of a matrix. The Eckart-Young-Mirsky theorem states that the best rank-k approximation of a matrix A is given by summing the first k outer products of the left and right singular vectors, weighted by the singular values.</p>
+      <div id="widget-low-rank-approximation-container" style="margin: 24px 0;">
+        <h4 style="margin-bottom: 8px;">Interactive: Low-Rank Approximation Visualizer</h4>
+        <p style="margin-bottom: 16px;">The widget below shows an image and its low-rank approximation using SVD. You can adjust the rank of the approximation and see how the quality of the image changes. This visualization helps to build an intuition for how SVD can be used for data compression.</p>
+        <div id="widget-low-rank-approximation" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
+      </div>
     </section>
 
     <section class="card" id="widgets" style="margin-bottom: 32px;">
@@ -276,49 +458,49 @@
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Rank & Nullspace Visualizer</h3>
         <p>This widget allows you to define a 2x3 or 3x2 matrix and visualizes the four fundamental subspaces. Experiment with different matrices to see how the dimensions of the subspaces change and to confirm the Rank-Nullity Theorem in action.</p>
-        <div id="widget-rank-nullspace" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+        <div id="widget-rank-nullspace" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Norm Geometry Visualizer</h3>
         <p>Interactively displays the unit balls for ℓ₁, ℓ₂, and ℓ∞ norms to build geometric intuition.</p>
-        <div id="widget-norm-geometry" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+        <div id="widget-norm-geometry" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Orthogonality & Projection Explorer</h3>
         <p>Allows users to drag two vectors and see their dot product, angle, and orthogonal projection update in real-time.</p>
-        <div id="widget-orthogonality" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+        <div id="widget-orthogonality" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Eigenvalue Decomposition & PSD Explorer</h3>
         <p>Shows the geometric interpretation of eigenvalues/eigenvectors for a 2x2 matrix and visualizes its quadratic form to check for positive semidefiniteness.</p>
-        <div id="widget-eigen-psd" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+        <div id="widget-eigen-psd" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Condition Number & Convergence Race</h3>
         <p>Demonstrates how a high condition number slows down iterative solvers by comparing two systems of linear equations.</p>
-        <div id="widget-condition-number" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+        <div id="widget-condition-number" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Hessian Landscape Visualizer</h3>
         <p>Renders the 3D surface of a quadratic function and its Hessian matrix, linking eigenvalues to curvature.</p>
-        <div id="widget-hessian-landscape" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+        <div id="widget-hessian-landscape" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">SVD & Low-Rank Approximation</h3>
         <p>Lets users perform a low-rank approximation of an image by selecting the number of singular values to use.</p>
-        <div id="widget-svd-approximator" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+        <div id="widget-svd-approximator" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Matrix Explorer</h3>
         <p>An interactive tool to explore matrix properties like eigenvalues, determinant, and trace.</p>
-        <div id="widget-matrix-explorer" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+        <div id="widget-matrix-explorer" class="widget-container" style="width: 100%; height: 400px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--panel);"></div>
       </div>
     </section>
 
@@ -385,6 +567,22 @@
   <script type="module">
     import { initMatrixExplorer } from './widgets/js/matrix-explorer.js';
     initMatrixExplorer('widget-matrix-explorer');
+  </script>
+  <script type="module">
+    import { initDotProduct } from './widgets/js/dot-product.js';
+    initDotProduct('widget-dot-product');
+  </script>
+  <script type="module">
+    import { initQrDecomposition } from './widgets/js/qr-decomposition.js';
+    initQrDecomposition('widget-qr-decomposition');
+  </script>
+  <script type="module">
+    import { initEllipsoid } from './widgets/js/ellipsoid.js';
+    initEllipsoid('widget-ellipsoid');
+  </script>
+  <script type="module">
+    import { initLowRankApproximation } from './widgets/js/low-rank-approximation.js';
+    initLowRankApproximation('widget-low-rank-approximation');
   </script>
 </body>
 </html>
