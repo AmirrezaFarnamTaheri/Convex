@@ -1,0 +1,38 @@
+<svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 600; fill: #333; }
+      .label { font-family: 'Inter', sans-serif; font-size: 14px; fill: #555; }
+      .point { fill: #3b82f6; }
+      .hull-line { stroke: #60a5fa; stroke-width: 2.5; fill: #dbeafe; fill-opacity: 0.6; }
+    </style>
+  </defs>
+
+  <!-- Left Side: Original Points -->
+  <rect x="1" y="1" width="298" height="298" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="150" y="30" text-anchor="middle" class="title">A Set of Points</text>
+  <circle class="point" cx="80" cy="100" r="5"/>
+  <circle class="point" cx="120" cy="200" r="5"/>
+  <circle class="point" cx="150" cy="120" r="5"/>
+  <circle class="point" cx="220" cy="180" r="5"/>
+  <circle class="point" cx="200" cy="80" r="5"/>
+  <circle class="point" cx="160" cy="160" r="5"/>
+  <text x="150" y="280" text-anchor="middle" class="label">An arbitrary collection of points, S.</text>
+
+
+  <!-- Right Side: Convex Hull -->
+  <rect x="301" y="1" width="298" height="298" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="450" y="30" text-anchor="middle" class="title">Convex Hull of the Set</text>
+  <path class="hull-line" d="M 380,100 L 500,80 L 520,180 L 420,200 Z"/>
+
+  <circle class="point" cx="380" cy="100" r="5"/>
+  <circle class="point" cx="420" cy="200" r="5"/>
+  <circle class="point" cx="450" cy="120" r="5"/>
+  <circle class="point" cx="520" cy="180" r="5"/>
+  <circle class="point" cx="500" cy="80" r="5"/>
+  <circle class="point" cx="460" cy="160" r="5"/>
+
+  <text x="450" y="270" text-anchor="middle" class="label">The smallest convex set that</text>
+  <text x="450" y="285" text-anchor="middle" class="label">contains all points in S.</text>
+
+</svg>
