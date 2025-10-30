@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
 </head>
 <body>
-  <!-- Header with navigation -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -27,184 +26,365 @@
     </div>
   </header>
 
-  <!-- Main content -->
   <main class="container" style="padding: 32px 0 60px;">
-    <!-- Lecture header -->
     <article class="card" style="margin-bottom: 32px;">
       <h1 style="margin-top: 0;">00. Linear Algebra Primer</h1>
       <div class="meta">
         Date: 2025-10-14 · Duration: 60 min · Tags: prerequisites, review, linear-algebra
       </div>
-
-      <!-- Brief introduction -->
       <section style="margin-top: 16px;">
-        <p><strong>Overview:</strong> Essential review: norms, inner products, eigenvalues, PSD matrices, quadratic forms. Start here if you need background.</p>
+        <p><strong>Overview:</strong> This lecture provides a rigorous, from-scratch review of the essential linear algebra concepts needed for convex optimization. We will cover vectors, norms, inner products, orthogonality, projections, least squares, and robust solution methods like QR and SVD. This module is designed for newcomers but is thorough enough to serve as a reference.</p>
         <p><strong>Prerequisites:</strong> None</p>
       </section>
     </article>
 
-    <!-- Learning objectives -->
     <section class="card" style="margin-bottom: 32px;">
       <h2>Learning Objectives</h2>
-      <p>After this lecture, you should understand:</p>
+      <p>After this lecture, you should be able to:</p>
       <ul style="line-height: 1.8;">
-        <li>Vector norms, inner products, and their geometric interpretations.</li>
-        <li>Eigenvalues, eigenvectors, and the properties of Positive Semidefinite (PSD) matrices.</li>
-        <li>The connection between quadratic forms and matrix properties.</li>
+        <li>Understand fundamental objects like vectors, matrices, and subspaces.</li>
+        <li>Work with inner products, norms, and understand their geometric interpretations.</li>
+        <li>Explain orthogonality, projections, and their application in least squares.</li>
+        <li>Recognize positive semidefinite (PSD) matrices and their connection to quadratic forms.</li>
+        <li>Select appropriate numerical methods (QR, SVD) for solving linear systems robustly.</li>
       </ul>
     </section>
 
-    <!-- Main lecture content -->
     <section class="card" style="margin-bottom: 32px;">
-      <h2>Key Concepts</h2>
-
-      <h3>Concept 1: Norms and Inner Products</h3>
-      <p>Detailed explanation with inline LaTeX: The inner product of two vectors is defined as $\langle x, y \rangle = x^T y$.</p>
-      <p>Visual intuition: The inner product relates to the angle between two vectors.</p>
-
-      <h3>Concept 2: Eigenvalues and PSD Matrices</h3>
-      <p>A matrix $A$ is PSD if $x^T A x \ge 0$ for all $x$.</p>
-
-      <!-- Include images as needed -->
-      <figure style="margin: 16px 0; text-align: center;">
-        <img src="../../static/assets/topics/00-linear-algebra-primer/eigenvectors.gif" alt="Visualization of eigenvectors and eigenvalues" style="max-width: 100%; height: auto;" />
-        <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
-          An animation showing how eigenvectors (red) are scaled by a linear transformation.
-        </figcaption>
-      </figure>
+      <h2>0. Notation and Basic Objects</h2>
+      <p>We begin by defining the fundamental objects of linear algebra.</p>
+      <ul>
+        <li><b>Scalars:</b> Real numbers, e.g., $a \in \mathbb{R}$.</li>
+        <li><b>Vectors:</b> Column vectors $x \in \mathbb{R}^n$, which are $n \times 1$ matrices.</li>
+        <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$ with entries $a_{ij}$.</li>
+        <li><b>Transpose:</b> $A^\top \in \mathbb{R}^{n \times m}$ with $(A^\top)_{ij} = a_{ji}$.</li>
+        <li><b>Identity:</b> $I_n$, an $n \times n$ matrix with ones on the diagonal.</li>
+        <li><b>Standard Basis:</b> $e_1, \dots, e_n$, where $e_i$ has a 1 in position $i$ and zeros elsewhere.</li>
+      </ul>
+      <p>A function $T:\mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$. Every linear map can be represented by a matrix $A$ such that $T(x) = Ax$.</p>
     </section>
 
-    <!-- Interactive widgets -->
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>1. The Four Fundamental Subspaces</h2>
+      <p>For any matrix $A \in \mathbb{R}^{m \times n}$, we have four fundamental subspaces. Understanding their relationships is key to understanding linear algebra.</p>
+      <ul>
+        <li><b>Column Space (Range):</b> $\mathcal{R}(A) = \{Ax \mid x \in \mathbb{R}^n\} \subseteq \mathbb{R}^m$. This is the set of all possible outputs of the linear transformation represented by $A$. It is the span of the columns of $A$.</li>
+        <li><b>Nullspace (Kernel):</b> $\mathcal{N}(A) = \{x \in \mathbb{R}^n \mid Ax=0\}$. This is the set of all input vectors that are mapped to the zero vector.</li>
+        <li><b>Row Space:</b> $\mathcal{R}(A^\top) \subseteq \mathbb{R}^n$. This is the span of the rows of $A$.</li>
+        <li><b>Left Nullspace:</b> $\mathcal{N}(A^\top) = \{y \in \mathbb{R}^m \mid A^\top y=0\}$.</li>
+      </ul>
+      <p>These spaces satisfy two crucial orthogonality conditions: $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$ and $\mathcal{R}(A^\top) \perp \mathcal{N}(A)$. The dimensions of these spaces are related by one of the most important theorems in linear algebra.</p>
+
+      <h4>The Rank-Nullity Theorem</h4>
+      <p>The <b>rank</b> of a matrix $A$, denoted $\mathrm{rank}(A)$, is the dimension of its column space. The <b>nullity</b> of $A$, denoted $\mathrm{nullity}(A)$, is the dimension of its nullspace. The Rank-Nullity Theorem states that for any $m \times n$ matrix $A$:
+      $$
+      \mathrm{rank}(A) + \mathrm{nullity}(A) = n
+      $$
+      This means that the number of dimensions "lost" by the transformation (the nullity) plus the number of dimensions "preserved" (the rank) must equal the total number of dimensions of the input space.</p>
+
+      <h5>Proof of the Rank-Nullity Theorem</h5>
+      <p>Let's construct a proof from first principles.</p>
+      <ol>
+        <li>Let the nullity of $A$ be $k$, so $\dim(\mathcal{N}(A)) = k$.</li>
+        <li>Choose a basis for the nullspace: $\{v_1, v_2, \dots, v_k\}$.</li>
+        <li>Since these vectors are in $\mathbb{R}^n$, we can extend this basis to a full basis for $\mathbb{R}^n$: $\{v_1, \dots, v_k, u_1, \dots, u_{n-k}\}$. There are $n-k$ such vectors.</li>
+        <li>Now, consider any vector $x \in \mathbb{R}^n$. We can write it as a linear combination of our basis vectors:
+        $$ x = \sum_{i=1}^k c_i v_i + \sum_{j=1}^{n-k} d_j u_j $$</li>
+        <li>Let's apply the transformation $A$ to $x$:
+        $$ Ax = A\left(\sum_{i=1}^k c_i v_i + \sum_{j=1}^{n-k} d_j u_j\right) = \sum_{i=1}^k c_i (Av_i) + \sum_{j=1}^{n-k} d_j (Au_j) $$</li>
+        <li>By definition, every $v_i$ is in the nullspace, so $Av_i = 0$. The equation simplifies to:
+        $$ Ax = \sum_{j=1}^{n-k} d_j (Au_j) $$</li>
+        <li>This shows that the set $\{Au_1, \dots, Au_{n-k}\}$ spans the column space $\mathcal{R}(A)$.</li>
+        <li>To complete the proof, we just need to show that these vectors are linearly independent. Suppose there is a linear combination that equals zero:
+        $$ \sum_{j=1}^{n-k} d_j (Au_j) = 0 \implies A\left(\sum_{j=1}^{n-k} d_j u_j\right) = 0 $$</li>
+        <li>This implies that the vector $\sum_{j=1}^{n-k} d_j u_j$ is in the nullspace of $A$. But this vector must be a linear combination of the nullspace basis vectors $\{v_i\}$. It is also, by definition, a linear combination of the $\{u_j\}$ vectors. Since the full basis $\{v_1, \dots, v_k, u_1, \dots, u_{n-k}\}$ is linearly independent, the only way a vector can be a combination of both is if it is the zero vector. This forces all coefficients $d_j$ to be zero.</li>
+        <li>Therefore, the vectors $\{Au_1, \dots, Au_{n-k}\}$ are linearly independent and form a basis for the column space. The dimension of the column space, i.e., the rank, is $n-k$.</li>
+        <li>We have $\mathrm{rank}(A) = n-k$ and $\mathrm{nullity}(A) = k$. Summing them gives: $(n-k) + k = n$. This completes the proof.</li>
+      </ol>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>2. Inner Products, Norms, and Angles</h2>
+      <p>The <b>standard inner product</b> (or dot product) on $\mathbb{R}^n$ is defined as $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$. It is a bilinear, symmetric, and positive-definite function. A <b>norm</b> $\|\cdot\|$ is a function that assigns a strictly positive length or size to each vector in a vector space, except for the zero vector. The three most common vector norms are:</p>
+      <ul>
+        <li><b>$\ell_2$ (Euclidean):</b> $\|x\|_2 = \sqrt{\sum_i x_i^2} = \sqrt{x^\top x}$. This is the standard notion of distance.</li>
+        <li><b>$\ell_1$ (Manhattan):</b> $\|x\|_1 = \sum_i |x_i|$. This measures distance by summing the absolute differences of the coordinates.</li>
+        <li><b>$\ell_\infty$ (Chebyshev):</b> $\|x\|_\infty = \max_i |x_i|$. This is the maximum absolute coordinate.</li>
+      </ul>
+
+      <h4>The Cauchy-Schwarz Inequality</h4>
+      <p>One of the most fundamental inequalities in mathematics, the Cauchy-Schwarz inequality, relates the inner product of two vectors to their $\ell_2$ norms. It states that for any vectors $x, y \in \mathbb{R}^n$:
+      $$
+      |\langle x, y \rangle| \le \|x\|_2 \|y\|_2
+      $$
+      Equality holds if and only if $x$ and $y$ are linearly dependent (one is a scalar multiple of the other).
+      </p>
+      <h5>Proof of the Cauchy-Schwarz Inequality</h5>
+      <p>The proof is surprisingly elegant and relies on the fact that the squared $\ell_2$ norm of any vector is non-negative.</p>
+      <ol>
+        <li>Consider an arbitrary scalar $t \in \mathbb{R}$ and the vector $x - ty$. The squared norm of this vector is always non-negative:
+        $$ \|x - ty\|_2^2 \ge 0 $$</li>
+        <li>Let's expand the squared norm using the properties of the inner product:
+        $$ \|x - ty\|_2^2 = \langle x - ty, x - ty \rangle = \langle x, x \rangle - 2t\langle x, y \rangle + t^2\langle y, y \rangle \ge 0 $$</li>
+        <li>This expression is a quadratic polynomial in the variable $t$: $(\|y\|_2^2)t^2 - (2\langle x, y \rangle)t + (\|x\|_2^2) \ge 0$.</li>
+        <li>A quadratic polynomial $at^2+bt+c$ is non-negative for all $t$ if and only if its discriminant $b^2-4ac$ is less than or equal to zero. In our case, $a = \|y\|_2^2$, $b = -2\langle x, y \rangle$, and $c = \|x\|_2^2$.
+        $$ (-2\langle x, y \rangle)^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$</li>
+        <li>Simplifying this gives:
+        $$ 4\langle x, y \rangle^2 - 4\|x\|_2^2 \|y\|_2^2 \le 0 \implies \langle x, y \rangle^2 \le \|x\|_2^2 \|y\|_2^2 $$</li>
+        <li>Taking the square root of both sides yields the Cauchy-Schwarz inequality: $|\langle x, y \rangle| \le \|x\|_2 \|y\|_2$.</li>
+      </ol>
+      <p>The angle between two vectors can be defined using this inequality: $\cos\theta = \frac{\langle x, y \rangle}{\|x\|_2\|y\|_2}$.</p>
+
+      <h4>Advanced Topics:</h4>
+      <ul>
+          <li><b>Dual Norms:</b> The dual norm is defined as $\|y\|_* = \sup_{\|x\|\le 1} x^\top y$. Key pairs: $(\|\cdot\|_2)^* = \|\cdot\|_2$, $(\|\cdot\|_1)^* = \|\cdot\|_\infty$, and $(\|\cdot\|_\infty)^* = \|\cdot\|_1$.</li>
+          <li><b>Hölder's Inequality:</b> A generalization of Cauchy-Schwarz, $x^\top y \le \|x\| \|y\|_*$.</li>
+          <li><b>Matrix Inner Product:</b> For matrices, the Frobenius inner product is $\langle X, Y \rangle = \mathrm{tr}(X^\top Y)$, inducing the Frobenius norm $\|X\|_F$.</li>
+          <li><b>Loewner Order:</b> For symmetric matrices, $X \succeq Y \iff X-Y \succeq 0$.</li>
+          <li><b>Componentwise Order:</b> For vectors, $x \ge 0$ means $x_i \ge 0$ for all $i$.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>3. Orthogonality and QR Decomposition</h2>
+      <p>A set of vectors $\{q_1, \dots, q_k\}$ is <b>orthonormal</b> if $q_i^\top q_j = \delta_{ij}$, where $\delta_{ij}$ is the Kronecker delta. A square matrix $Q$ with orthonormal columns is <b>orthogonal</b>, satisfying $Q^\top Q = I$, which implies $Q^{-1} = Q^\top$.</p>
+
+      <h4>The Gram-Schmidt Process</h4>
+      <p>The <b>Gram-Schmidt</b> process is a fundamental algorithm that takes a set of linearly independent vectors $\{a_1, \dots, a_n\}$ and produces an orthonormal set $\{q_1, \dots, q_n\}$ that spans the same subspace.</p>
+      <p>The process is iterative:</p>
+      <ol>
+        <li>For the first vector: $\tilde{q}_1 = a_1$, and normalize it: $q_1 = \tilde{q}_1 / \|\tilde{q}_1\|_2$.</li>
+        <li>For each subsequent vector $a_k$, subtract its projection onto the subspace spanned by the previously found orthonormal vectors:
+        $$ \tilde{q}_k = a_k - \sum_{i=1}^{k-1} \langle a_k, q_i \rangle q_i $$</li>
+        <li>Normalize the resulting vector: $q_k = \tilde{q}_k / \|\tilde{q}_k\|_2$.</li>
+      </ol>
+
+      <h5>Worked Example: Gram-Schmidt</h5>
+      <p>Let's apply the Gram-Schmidt process to the vectors $a_1 = (1, 1, 0)$, $a_2 = (1, 0, 1)$, and $a_3 = (0, 1, 1)$.</p>
+      <ol>
+        <li><b>Step 1:</b> Start with $a_1$.
+        <p>$\tilde{q}_1 = a_1 = (1, 1, 0)$.</p>
+        <p>Normalize it: $\|a_1\|_2 = \sqrt{1^2+1^2+0^2} = \sqrt{2}$.</p>
+        <p>$q_1 = \frac{1}{\sqrt{2}}(1, 1, 0) = (\frac{1}{\sqrt{2}}, \frac{1}{\sqrt{2}}, 0)$.</p>
+        </li>
+        <li><b>Step 2:</b> Process $a_2$.
+        <p>Subtract the projection of $a_2$ onto $q_1$: $\langle a_2, q_1 \rangle = 1 \cdot \frac{1}{\sqrt{2}} + 0 \cdot \frac{1}{\sqrt{2}} + 1 \cdot 0 = \frac{1}{\sqrt{2}}$.</p>
+        <p>$\tilde{q}_2 = a_2 - \langle a_2, q_1 \rangle q_1 = (1, 0, 1) - \frac{1}{\sqrt{2}} (\frac{1}{\sqrt{2}}, \frac{1}{\sqrt{2}}, 0) = (1, 0, 1) - (\frac{1}{2}, \frac{1}{2}, 0) = (\frac{1}{2}, -\frac{1}{2}, 1)$.</p>
+        <p>Normalize $\tilde{q}_2$: $\|\tilde{q}_2\|_2 = \sqrt{(\frac{1}{2})^2 + (-\frac{1}{2})^2 + 1^2} = \sqrt{\frac{1}{4} + \frac{1}{4} + 1} = \sqrt{\frac{3}{2}}$.</p>
+        <p>$q_2 = \sqrt{\frac{2}{3}}(\frac{1}{2}, -\frac{1}{2}, 1) = (\frac{1}{\sqrt{6}}, -\frac{1}{\sqrt{6}}, \frac{2}{\sqrt{6}})$.</p>
+        </li>
+        <li><b>Step 3:</b> Process $a_3$.
+        <p>Subtract the projections of $a_3$ onto $q_1$ and $q_2$.</p>
+        <p>$\langle a_3, q_1 \rangle = 0 \cdot \frac{1}{\sqrt{2}} + 1 \cdot \frac{1}{\sqrt{2}} + 1 \cdot 0 = \frac{1}{\sqrt{2}}$.</p>
+        <p>$\langle a_3, q_2 \rangle = 0 \cdot \frac{1}{\sqrt{6}} + 1 \cdot (-\frac{1}{\sqrt{6}}) + 1 \cdot \frac{2}{\sqrt{6}} = \frac{1}{\sqrt{6}}$.</p>
+        <p>$\tilde{q}_3 = a_3 - \langle a_3, q_1 \rangle q_1 - \langle a_3, q_2 \rangle q_2 = (0, 1, 1) - \frac{1}{\sqrt{2}}(\frac{1}{\sqrt{2}}, \frac{1}{\sqrt{2}}, 0) - \frac{1}{\sqrt{6}}(\frac{1}{\sqrt{6}}, -\frac{1}{\sqrt{6}}, \frac{2}{\sqrt{6}}) = (0, 1, 1) - (\frac{1}{2}, \frac{1}{2}, 0) - (\frac{1}{6}, -\frac{1}{6}, \frac{2}{6}) = (-\frac{2}{3}, \frac{2}{3}, \frac{2}{3})$.</p>
+        <p>Normalize $\tilde{q}_3$: $\|\tilde{q}_3\|_2 = \sqrt{(-\frac{2}{3})^2 + (\frac{2}{3})^2 + (\frac{2}{3})^2} = \sqrt{\frac{12}{9}} = \frac{2}{\sqrt{3}}$.</p>
+        <p>$q_3 = \frac{\sqrt{3}}{2}(-\frac{2}{3}, \frac{2}{3}, \frac{2}{3}) = (-\frac{1}{\sqrt{3}}, \frac{1}{\sqrt{3}}, \frac{1}{\sqrt{3}})$.</p>
+        </li>
+      </ol>
+      <p>The resulting orthonormal basis is $\{q_1, q_2, q_3\}$.</p>
+
+      <p>The <b>QR decomposition</b> factors a matrix $A \in \mathbb{R}^{m \times n}$ into $A=QR$, where $Q$ has orthonormal columns and $R$ is upper triangular. This is a key tool for solving linear systems robustly.</p>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>4. Positive Semidefinite Matrices</h2>
+      <p>A symmetric matrix $Q \in \mathbb{S}^n$ is:</p>
+      <ul>
+        <li><b>Positive Semidefinite (PSD), $Q \succeq 0$</b>, if the quadratic form $x^\top Q x \ge 0$ for all $x \in \mathbb{R}^n$.</li>
+        <li><b>Positive Definite (PD), $Q \succ 0$</b>, if $x^\top Q x > 0$ for all non-zero $x \in \mathbb{R}^n$.</li>
+      </ul>
+      <p>The expression $x^\top Q x$ is a <b>quadratic form</b>. Geometrically, it describes the curvature of a multi-dimensional paraboloid. The definiteness of the matrix $Q$ determines the shape of this paraboloid.</p>
+
+      <h4>Eigenvalue Characterization of Definiteness</h4>
+      <p>A crucial property is that the definiteness of a symmetric matrix is completely determined by the signs of its eigenvalues.</p>
+      <p><b>Theorem:</b> A symmetric matrix $Q$ is PSD if and only if all its eigenvalues are non-negative. It is PD if and only if all its eigenvalues are positive.</p>
+
+      <h5>Proof:</h5>
+      <p>Let $Q$ be a symmetric matrix. By the Spectral Theorem, it has an eigendecomposition $Q = V \Lambda V^\top$, where $V$ is an orthogonal matrix whose columns are the eigenvectors of $Q$, and $\Lambda$ is a diagonal matrix of the corresponding eigenvalues $\lambda_i$.</p>
+      <ol>
+        <li>($\Rightarrow$) Assume $Q \succeq 0$. Let $v_i$ be an eigenvector with eigenvalue $\lambda_i$. Then:
+        $$ v_i^\top Q v_i = v_i^\top (\lambda_i v_i) = \lambda_i (v_i^\top v_i) = \lambda_i \|v_i\|_2^2 \ge 0 $$
+        Since $v_i$ is an eigenvector, it is non-zero, so $\|v_i\|_2^2 > 0$. This implies $\lambda_i \ge 0$.</li>
+        <li>($\Leftarrow$) Assume all eigenvalues $\lambda_i \ge 0$. Let $x$ be any vector in $\mathbb{R}^n$. Since the eigenvectors form an orthonormal basis, we can express $x$ as a linear combination of them: $x = \sum_i c_i v_i$. Now consider the quadratic form:
+        $$ x^\top Q x = (\sum_i c_i v_i)^\top Q (\sum_j c_j v_j) = (\sum_i c_i v_i^\top) (\sum_j c_j \lambda_j v_j) $$
+        Since $v_i^\top v_j = \delta_{ij}$, this simplifies to:
+        $$ x^\top Q x = \sum_i c_i^2 \lambda_i \|v_i\|_2^2 = \sum_i c_i^2 \lambda_i $$
+        Because $c_i^2 \ge 0$ and we assumed $\lambda_i \ge 0$, the sum must be non-negative. Thus, $x^\top Q x \ge 0$, and $Q$ is PSD. The proof for positive definiteness is analogous.</li>
+      </ol>
+
+      <h4>Geometric Interpretation: Ellipsoids</h4>
+      <p>If a matrix $P$ is positive definite, the set of points $\{x \mid x^\top P x \le 1\}$ defines an ellipsoid. The eigenvectors of $P$ determine the principal axes of the ellipsoid, and the lengths of the semi-axes are inversely proportional to the square roots of the eigenvalues. This geometric view is fundamental in many areas of convex optimization, from designing robust systems to understanding the geometry of duality.</p>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>5. Projections</h2>
+      <p>The <b>orthogonal projection</b> of a vector $b$ onto a subspace $\mathcal{S}$ is the unique vector $p \in \mathcal{S}$ that minimizes $\|b-p\|_2$. The residual $b-p$ is orthogonal to $\mathcal{S}$.</p>
+      <ul>
+        <li>If columns of $Q$ form an orthonormal basis for $\mathcal{S}$, the projection matrix is $P = QQ^\top$.</li>
+        <li>If columns of $A$ form a basis for $\mathcal{S}$, $P = A(A^\top A)^{-1}A^\top$.</li>
+        <li>To project onto an <b>affine set</b> $\{x \mid Fx=g\}$, find a particular solution $x_0$, and project onto the nullspace of $F$.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>6. Least Squares</h2>
+      <p>The least squares problem seeks to find an $x$ that minimizes $\|Ax-b\|_2^2$. The solution $x^\star$ must satisfy the <b>normal equations</b>: $A^\top A x^\star = A^\top b$. Geometrically, $Ax^\star$ is the projection of $b$ onto the column space of $A$.</p>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>7. SVD and the Pseudoinverse</h2>
+      <p>The <b>Singular Value Decomposition (SVD)</b> is arguably one of the most important matrix factorizations. It asserts that any matrix $A \in \mathbb{R}^{m \times n}$ can be decomposed as:
+      $$ A = U\Sigma V^\top $$
+      where:
+      <ul>
+        <li>$U \in \mathbb{R}^{m \times m}$ is an orthogonal matrix whose columns (left singular vectors) form an orthonormal basis for the codomain.</li>
+        <li>$\Sigma \in \mathbb{R}^{m \times n}$ is a diagonal matrix with non-negative singular values ($\sigma_1 \ge \sigma_2 \ge \dots \ge 0$) on its diagonal.</li>
+        <li>$V \in \mathbb{R}^{n \times n}$ is an orthogonal matrix whose columns (right singular vectors) form an orthonormal basis for the domain.</li>
+      </ul>
+      Geometrically, the SVD states that any linear transformation can be decomposed into a rotation ($V^\top$), a scaling along the coordinate axes ($\Sigma$), and another rotation ($U$).</p>
+
+      <h4>Constructing the SVD</h4>
+      <p>The components of the SVD are found via the eigendecomposition of $A^\top A$ and $AA^\top$.</p>
+      <ol>
+        <li>The right singular vectors, the columns of $V$, are the eigenvectors of the symmetric PSD matrix $A^\top A$.</li>
+        <li>The left singular vectors, the columns of $U$, are the eigenvectors of $AA^\top$.</li>
+        <li>The non-zero singular values are the square roots of the non-zero eigenvalues of both $A^\top A$ and $AA^\top$.</li>
+      </ol>
+
+      <h5>Worked Example: SVD</h5>
+      <p>Let's compute the SVD for $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$.</p>
+      <ol>
+        <li><b>Compute $A^\top A$:</b>
+        $$ A^\top A = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix} \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix} = \begin{pmatrix} 1 & 1 \\ 1 & 2 \end{pmatrix} $$</li>
+        <li><b>Find eigenvalues and eigenvectors of $A^\top A$ to get $V$ and $\Sigma$:</b>
+        <p>The characteristic equation is $\det(A^\top A - \lambda I) = (1-\lambda)(2-\lambda) - 1 = \lambda^2 - 3\lambda + 1 = 0$.</p>
+        <p>The eigenvalues are $\lambda = \frac{3 \pm \sqrt{9-4}}{2} = \frac{3 \pm \sqrt{5}}{2}$.</p>
+        <p>The singular values are $\sigma_1 = \sqrt{\frac{3+\sqrt{5}}{2}}$ and $\sigma_2 = \sqrt{\frac{3-\sqrt{5}}{2}}$. So, $\Sigma = \begin{pmatrix} \sigma_1 & 0 \\ 0 & \sigma_2 \end{pmatrix}$.</p>
+        <p>The corresponding eigenvectors (which form the columns of $V$) can be found by solving $(A^\top A - \lambda I)v = 0$. After normalization, we get $V$.</p></li>
+        <li><b>Find $U$:</b>
+        <p>The columns of $U$ are found from $u_i = \frac{1}{\sigma_i}Av_i$. For example, $u_1 = \frac{1}{\sigma_1}Av_1$. After finding the normalized eigenvectors $v_i$, we can compute the columns of $U$.</p></li>
+      </ol>
+
+      <p>The <b>pseudoinverse</b> $A^+ = V\Sigma^+ U^\top$, where $\Sigma^+$ is formed by taking the reciprocal of the non-zero singular values, gives the minimum-norm solution to the least squares problem: $x^\star = A^+ b$. The condition number $\kappa(A) = \sigma_{\max}/\sigma_{\min}$ measures the sensitivity of the solution to perturbations.</p>
+    </section>
+
     <section class="card" id="widgets" style="margin-bottom: 32px;">
       <h2>Interactive Widgets</h2>
-      <p>Below are tools to explore the concepts interactively. Try tweaking parameters to build intuition.</p>
+      <p>Explore the concepts from this lecture interactively. Adjust parameters and observe the outcomes to build a strong geometric intuition.</p>
 
-      <!-- Widget 1 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Rank & Nullspace Visualizer</h3>
+        <p>This widget allows you to define a 2x3 or 3x2 matrix and visualizes the four fundamental subspaces. Experiment with different matrices to see how the dimensions of the subspaces change and to confirm the Rank-Nullity Theorem in action.</p>
+        <div id="widget-rank-nullspace" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Norm Geometry Visualizer</h3>
-        <p>Unit balls for common vector norms. Click a button to see the shape of all vectors with that norm equal to 1.</p>
-        <div id="widget-1" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+        <p>Interactively displays the unit balls for ℓ₁, ℓ₂, and ℓ∞ norms to build geometric intuition.</p>
+        <div id="widget-norm-geometry" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <!-- Widget 2 -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Matrix Explorer</h3>
-        <p>Eigenvalue/PSD visualizer</p>
-        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 3 -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Hessian Landscape Visualizer</h3>
-        <p>Renders the 3D surface of a quadratic function.</p>
-        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 4 (if exists) -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Orthogonality & Projection Explorer</h3>
         <p>Allows users to drag two vectors and see their dot product, angle, and orthogonal projection update in real-time.</p>
-        <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
+        <div id="widget-orthogonality" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <!-- Widget 5 (if exists) -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Rank & Nullspace Visualizer</h3>
-        <p>Visualizes the four fundamental subspaces of a user-defined 2x3 or 3x2 matrix.</p>
-        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
+        <h3 style="margin-top: 0;">Eigenvalue Decomposition & PSD Explorer</h3>
+        <p>Shows the geometric interpretation of eigenvalues/eigenvectors for a 2x2 matrix and visualizes its quadratic form to check for positive semidefiniteness.</p>
+        <div id="widget-eigen-psd" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Condition Number & Convergence Race</h3>
+        <p>Demonstrates how a high condition number slows down iterative solvers by comparing two systems of linear equations.</p>
+        <div id="widget-condition-number" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Hessian Landscape Visualizer</h3>
+        <p>Renders the 3D surface of a quadratic function and its Hessian matrix, linking eigenvalues to curvature.</p>
+        <div id="widget-hessian-landscape" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">SVD & Low-Rank Approximation</h3>
+        <p>Lets users perform a low-rank approximation of an image by selecting the number of singular values to use.</p>
+        <div id="widget-svd-approximator" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Matrix Explorer</h3>
+        <p>An interactive tool to explore matrix properties like eigenvalues, determinant, and trace.</p>
+        <div id="widget-matrix-explorer" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
     </section>
 
-    <!-- Readings -->
     <section class="card" id="readings" style="margin-bottom: 32px;">
       <h2>Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Appendix A</li>
-        <li><strong>Course slides:</strong> [Link if available]</li>
       </ul>
     </section>
 
-    <!-- Example problems -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Example Problems</h2>
-
-      <h3>Example 1: Checking for PSD</h3>
-      <p>Given a 2x2 matrix, determine if it's PSD.</p>
-
-      <h3>Example 2: Calculating Vector Norms</h3>
-      <p>Calculate the L1, L2, and L-infinity norms of a vector.</p>
-    </section>
-
-    <!-- Exercises (optional) -->
     <section class="card" style="margin-bottom: 32px;">
       <h2>Exercises</h2>
-      <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
       <ol style="line-height: 2;">
         <li>Prove that the eigenvalues of a symmetric matrix are real.</li>
-        <li>Show that $A^T A$ is always PSD.</li>
+        <li>Show that $A^T A$ is always PSD for any matrix $A$.</li>
+        <li>Apply Gram-Schmidt to the vectors $a_1=(1,1,0), a_2=(1,0,1), a_3=(0,1,1)$.</li>
+        <li>Derive the projector onto the span of a single non-zero vector $u$.</li>
       </ol>
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <p style="margin: 0;">
-        © <span id="year"></span> Convex Optimization Course ·
-        <a href="../../README.md" style="color: var(--brand);">About</a>
-      </p>
+      <p style="margin: 0;">© <span id="year"></span> Convex Optimization Course · <a href="../../README.md" style="color: var(--brand);">About</a></p>
     </div>
   </footer>
 
-  <!-- Load Pyodide for Python widgets (optional) -->
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
-  <!-- Widget loaders -->
-  <script type="module">
-    import { initNormGeometryVisualizer } from './widgets/js/norm-geometry-visualizer.js';
-    initNormGeometryVisualizer('widget-1');
-  </script>
-  <script type="module">
-    import { initEigenvalueExplorer } from './widgets/js/matrix-explorer.js';
-    initEigenvalueExplorer('widget-2');
-  </script>
-  <script type="module">
-    import { initHessianLandscapeVisualizer } from './widgets/js/hessian-landscape-visualizer.js';
-    initHessianLandscapeVisualizer('widget-3');
-  </script>
-  <script type="module">
-    import { initOrthogonality } from './widgets/js/orthogonality.js';
-    initOrthogonality('widget-4');
-  </script>
-  <script type="module">
-    import { initRankNullspace } from './widgets/js/rank-nullspace.js';
-    initRankNullspace('widget-5');
-  </script>
-
-  <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+
+  <!-- Widget Loaders -->
   <script type="module">
-    import { initConditionNumber } from './widgets/js/condition-number.js';
-    initConditionNumber('widget-condition-number');
+    import { initNormGeometryVisualizer } from './widgets/js/norm-geometry-visualizer.js';
+    initNormGeometryVisualizer('widget-norm-geometry');
+  </script>
+  <script type="module">
+    import { initOrthogonality } from './widgets/js/orthogonality.js';
+    initOrthogonality('widget-orthogonality');
+  </script>
+  <script type="module">
+    import { initRankNullspace } from './widgets/js/rank-nullspace.js';
+    initRankNullspace('widget-rank-nullspace');
   </script>
   <script type="module">
     import { initEigenPsd } from './widgets/js/eigen-psd.js';
     initEigenPsd('widget-eigen-psd');
   </script>
   <script type="module">
+    import { initConditionNumber } from './widgets/js/condition-number.js';
+    initConditionNumber('widget-condition-number');
+  </script>
+  <script type="module">
+    import { initHessianLandscapeVisualizer } from './widgets/js/hessian-landscape-visualizer.js';
+    initHessianLandscapeVisualizer('widget-hessian-landscape');
+  </script>
+  <script type="module">
     import { initSvdApproximator } from './widgets/js/svd-approximator.js';
     initSvdApproximator('widget-svd-approximator');
+  </script>
+  <script type="module">
+    import { initMatrixExplorer } from './widgets/js/matrix-explorer.js';
+    initMatrixExplorer('widget-matrix-explorer');
   </script>
 </body>
 </html>

@@ -3,14 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>01. Introduction: What & Why of Convex Optimization — Convex Optimization</title>
+  <title>01. Introduction to Convex Optimization — Convex Optimization</title>
   <link rel="stylesheet" href="../../static/css/styles.css" />
   <link rel="stylesheet" href="/static/css/modern-widgets.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
 </head>
 <body>
-  <!-- Header with navigation -->
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -27,161 +26,228 @@
     </div>
   </header>
 
-  <!-- Main content -->
   <main class="container" style="padding: 32px 0 60px;">
-    <!-- Lecture header -->
     <article class="card" style="margin-bottom: 32px;">
       <h1 style="margin-top: 0;">01. Introduction: What & Why of Convex Optimization</h1>
       <div class="meta">
         Date: 2025-10-21 · Duration: 90 min · Tags: intro, motivation, overview
       </div>
-
-      <!-- Brief introduction -->
       <section style="margin-top: 16px;">
-        <p><strong>Overview:</strong> Optimization landscape, convex vs nonconvex, examples in ML, control, and geometry.</p>
-        <p><strong>Prerequisites:</strong> None</p>
+        <p><strong>Overview:</strong> This lecture introduces the fundamental concepts of convex optimization. We define what makes a problem "convex," explore why this property is so important, and provide a high-level tour of common problem families and applications in machine learning, control, and finance.</p>
+        <p><strong>Prerequisites:</strong> 00-linear-algebra-primer</p>
       </section>
     </article>
 
-    <!-- Learning objectives -->
     <section class="card" style="margin-bottom: 32px;">
       <h2>Learning Objectives</h2>
-      <p>After this lecture, you should understand:</p>
+      <p>After this lecture, you should be able to:</p>
       <ul style="line-height: 1.8;">
-        <li>The basic components of an optimization problem.</li>
-        <li>The key differences between convex and non-convex optimization.</li>
-        <li>Real-world applications of convex optimization.</li>
+        <li>Define a convex optimization problem and explain why convexity guarantees that local optima are global optima.</li>
+        <li>Recognize common families of convex problems: LPs, QPs, SOCPs, and SDPs.</li>
+        <li>Understand the "loss + regularizer + constraints" modeling paradigm.</li>
+        <li>Formulate simple real-world problems in a convex framework.</li>
       </ul>
-      <!-- Include images as needed -->
-      <figure style="margin: 16px 0; text-align: center;">
-        <img src="../../static/assets/topics/01-introduction/convex_function_chord.gif" alt="Illustration of a convex function" style="max-width: 100%; height: auto;" />
-        <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
-          A convex function's chord lies above the function graph.
-        </figcaption>
-      </figure>
     </section>
 
-    <!-- Main lecture content -->
     <section class="card" style="margin-bottom: 32px;">
-      <h2>Key Concepts</h2>
+      <h2>1. What is a Convex Optimization Problem?</h2>
+      <p>An optimization problem is <b>convex</b> if it has the form:
+      $$
+      \begin{aligned}
+      \min_{x \in \mathbb{R}^n} \quad & f_0(x) \\
+      \text{s.t.} \quad & f_i(x) \le 0, \quad i=1,\dots,m \\
+      & Ax = b
+      \end{aligned}
+      $$
+      where the objective function $f_0$ and inequality constraint functions $f_i$ are all <b>convex functions</b>, and the equality constraints are affine. This structure is powerful because it guarantees two crucial properties: the feasible set is convex, and every local minimum is a global minimum.</p>
 
-      <h3>Concept 1: The Optimization Problem</h3>
-      <p>Detailed explanation with inline LaTeX: An optimization problem has the form $\min_{x \in \mathcal{D}} f(x)$ subject to $g_i(x) \le 0$ and $h_j(x) = 0$.</p>
-      <p>Visual intuition: We are trying to find the lowest point in a landscape.</p>
+      <h4>Why Local Optima are Global in Convex Problems</h4>
+      <p>This is the single most important property of convex optimization. Let's prove it by contradiction.</p>
+      <ol>
+        <li>Let $\mathcal{F}$ be the feasible set of the problem. Because all constraint functions are convex (or affine, which is a special case), the feasible set $\mathcal{F}$ is a convex set.</li>
+        <li>Suppose $x^*$ is a local minimum, but it is <em>not</em> a global minimum. This means there exists some other feasible point $y \in \mathcal{F}$ such that $f_0(y) < f_0(x^*)$.</li>
+        <li>Since $x^*$ is a local minimum, there exists a small neighborhood around it (say, a ball of radius $\epsilon > 0$) where for any feasible point $z$ in that neighborhood, $f_0(z) \ge f_0(x^*)$.</li>
+        <li>Now, consider a point $z$ on the line segment between $x^*$ and $y$: $z = \theta y + (1-\theta)x^*$ for some small $\theta \in (0, 1]$. Since the feasible set $\mathcal{F}$ is convex, this point $z$ must also be feasible.</li>
+        <li>By choosing a small enough $\theta$, we can make $z$ arbitrarily close to $x^*$. Specifically, we can choose $\theta$ such that $\|z - x^*\|_2 = \|\theta(y - x^*)\|_2 = \theta\|y - x^*\|_2 < \epsilon$. This means $z$ is in the local neighborhood of $x^*$.</li>
+        <li>Because the objective function $f_0$ is convex, we know that:
+        $$ f_0(z) = f_0(\theta y + (1-\theta)x^*) \le \theta f_0(y) + (1-\theta)f_0(x^*) $$</li>
+        <li>We assumed $f_0(y) < f_0(x^*)$. Substituting this into the inequality:
+        $$ f_0(z) < \theta f_0(x^*) + (1-\theta)f_0(x^*) = f_0(x^*) $$</li>
+        <li>So we have found a feasible point $z$ in the local neighborhood of $x^*$ for which $f_0(z) < f_0(x^*)$. This contradicts our initial assumption that $x^*$ is a local minimum.</li>
+        <li>Therefore, our assumption must be false. Any local minimum $x^*$ must also be a global minimum.</li>
+      </ol>
+      <p>This property is what allows for the development of efficient, reliable algorithms for solving convex problems. We don't have to worry about getting "stuck" in a suboptimal valley.</p>
 
-      <h3>Concept 2: Convexity</h3>
-      <p>A set is convex if the line segment between any two points in the set is also in the set.</p>
-
+      <h4>A Note on Notation:</h4>
+      <ul>
+        <li><b>Componentwise Inequalities:</b> $x \ge 0$ means $x_i \ge 0$ for all $i$.</li>
+        <li><b>Symmetric Matrices:</b> The space of symmetric $n \times n$ matrices is denoted $\mathbb{S}^n$.</li>
+        <li><b>Positive Semidefinite (PSD):</b> $X \succeq 0$ means $v^\top X v \ge 0$ for all $v$. This is a common constraint in convex optimization.</li>
+        <li><b>Norm Constraints:</b> Constraints like $\|x\|_p \le r$ define convex sets and are frequently used.</li>
+      </ul>
     </section>
 
-    <!-- Interactive widgets -->
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>2. Canonical Convex Problem Families</h2>
+      <p>Many real-world problems can be formulated as one of a few standard types of convex problems. Recognizing these forms is a key step in modeling.</p>
+
+      <h4>Linear Program (LP)</h4>
+      <p>An LP minimizes a linear objective subject to linear inequality and equality constraints.
+      <br><b>Standard Form:</b> $\min_x c^\top x$ subject to $Ax \le b, Fx=g$.
+      <br><b>Example: Resource Allocation.</b> A factory produces two products, A and B. Each product requires a certain amount of two raw materials, M1 and M2. The factory has a limited supply of M1 and M2. The goal is to maximize profit.
+      <ul>
+        <li>$x_A, x_B$: units of product A and B to produce.</li>
+        <li>Profit: $p_A x_A + p_B x_B$.</li>
+        <li>Material 1 constraint: $m_{1A}x_A + m_{1B}x_B \le \text{supply}_1$.</li>
+        <li>Material 2 constraint: $m_{2A}x_A + m_{2B}x_B \le \text{supply}_2$.</li>
+        <li>Non-negativity: $x_A \ge 0, x_B \ge 0$.</li>
+      </ul>
+      This is a classic LP.</p>
+
+      <h4>Quadratic Program (QP)</h4>
+      <p>A QP minimizes a convex quadratic objective subject to linear constraints.
+      <br><b>Standard Form:</b> $\min_x \frac{1}{2}x^\top Qx + c^\top x$ subject to $Ax \le b, Fx=g$, where $Q \succeq 0$.
+      <br><b>Example: Portfolio Optimization.</b> An investor wants to allocate capital among a set of assets to minimize risk (variance) for a target expected return.
+      <ul>
+        <li>$w$: a vector of weights for each asset.</li>
+        <li>Risk (Variance): $w^\top \Sigma w$, where $\Sigma$ is the covariance matrix of asset returns.</li>
+        <li>Target Return: $\mu^\top w \ge R_{\text{target}}$.</li>
+        <li>Budget: $\mathbf{1}^\top w = 1$.</li>
+      </ul>
+      This is a QP, as the covariance matrix $\Sigma$ is PSD.</p>
+
+      <h4>Second-Order Cone Program (SOCP)</h4>
+      <p>An SOCP is an LP with additional second-order cone constraints.
+      <br><b>Standard Form:</b> $\min_x c^\top x$ subject to $\|A_i x + b_i\|_2 \le c_i^\top x + d_i, Fx=g$.
+      <br><b>Example: Robust Least Squares.</b> We want to solve a least squares problem, but there is uncertainty in the data matrix $A$. We can model this by assuming the true matrix is within a certain "distance" of our measured matrix $A_0$. This leads to a robust formulation that can be cast as an SOCP.</p>
+
+      <h4>Semidefinite Program (SDP)</h4>
+      <p>An SDP is an optimization problem over the cone of positive semidefinite matrices.
+      <br><b>Standard Form:</b> $\min_X \langle C, X \rangle$ subject to $\mathcal{A}(X)=b, X \succeq 0$.
+      <br><b>Example: Minimum Volume Enclosing Ellipsoid (MVEE).</b> Given a set of points, find the smallest ellipsoid that contains all of them. This geometric problem can be formulated as an SDP, where the matrix variable represents the ellipsoid's shape.</p>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>3. The "Loss + Regularizer" Paradigm</h2>
+      <p>A vast number of problems in statistics and machine learning can be expressed in the following form:
+      $$
+      \min_x \quad \underbrace{\text{loss}(f(x; \text{data}))}_{\text{Data Fidelity Term}} + \underbrace{\lambda \cdot \text{regularizer}(x)}_{\text{Model Complexity Penalty}}
+      $$
+      This is a powerful framework for balancing two competing goals: fitting the observed data and keeping the model simple enough to avoid overfitting and generalize to new data. The parameter $\lambda \ge 0$ controls this tradeoff.</p>
+
+      <h4>The Bias-Variance Tradeoff</h4>
+      <p>The statistical motivation for this paradigm is the <b>bias-variance tradeoff</b>. A model with low bias is flexible and can fit the training data well, but it may be sensitive to noise (high variance). A model with low variance is stable, but it may not be flexible enough to capture the underlying trend (high bias). Regularization is a way to control this tradeoff. By penalizing complex models, we introduce some bias, but we can significantly reduce the variance, leading to better predictive performance.</p>
+
+      <h4>Common Loss Functions (Convex)</h4>
+      <ul>
+        <li><b>Least Squares:</b> $\|Ax-b\|_2^2$. Used for regression problems, assuming Gaussian noise.</li>
+        <li><b>Logistic Loss:</b> $\sum_i \log(1+\exp(-y_i a_i^\top x))$. Used for binary classification.</li>
+        <li><b>Hinge Loss:</b> $\sum_i \max(0, 1 - y_i(w^\top x_i + b))$. The basis for Support Vector Machines.</li>
+      </ul>
+
+      <h4>Common Regularizers (Convex)</h4>
+      <ul>
+        <li><b>Ridge Regression ($\ell_2$ Regularization):</b> $\lambda \|x\|_2^2$. This penalizes large coefficients, leading to "shrinkage." Geometrically, it corresponds to finding the point where the elliptical contours of the least squares loss first touch a spherical constraint region. It is effective for improving prediction accuracy.</li>
+        <li><b>LASSO ($\ell_1$ Regularization):</b> $\lambda \|x\|_1$. This penalizes the sum of absolute values of the coefficients. Because the $\ell_1$ "ball" has sharp corners at the axes, this penalty tends to drive many coefficients to exactly zero, producing a "sparse" solution. This is extremely useful for feature selection.</li>
+      </ul>
+      <p>The sum of two convex functions (the loss and the regularizer) is convex, so problems of this form can be solved efficiently.</p>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+      <h2>4. Core Examples</h2>
+        <p><b>Least Squares (LS):</b> $\min_x \|Ax-b\|_2^2$. A fundamental QP.</p>
+        <p><b>LASSO:</b> $\min_x \|Ax-b\|_2^2 + \lambda \|x\|_1$. Used for sparse signal recovery.</p>
+        <p><b>Logistic Regression:</b> $\min_x \sum_i \log(1+\exp(-y_i a_i^\top x)) + \lambda \|x\|_2^2$. A workhorse of machine learning.</p>
+        <p><b>Support Vector Machine (SVM):</b> A QP for finding a maximum-margin separating hyperplane.</p>
+    </section>
+
     <section class="card" id="widgets" style="margin-bottom: 32px;">
       <h2>Interactive Widgets</h2>
-      <p>Below are tools to explore the concepts interactively. Try tweaking parameters to build intuition.</p>
+      <p>Explore the introductory concepts of convexity with these interactive tools.</p>
 
-      <!-- Widget 1 -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Convex vs. Nonconvex</h3>
-        <p>Explore different functions and see if they are convex.</p>
-        <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
+        <h3 style="margin-top: 0;">Convex vs Nonconvex Explorer</h3>
+        <p>Select different 1D functions and see a visual check of Jensen's inequality to classify them as convex or nonconvex.</p>
+        <div id="widget-convex-vs-nonconvex" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <!-- Widget 2 -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Landscape Viewer</h3>
-        <p>Visualize the landscape of different optimization problems.</p>
-        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
+        <h3 style="margin-top: 0;">Landscape Viewer (3D)</h3>
+        <p>A 3D surface plot where a marble "rolls" to the minimum, illustrating the concept of a global vs. local optimum.</p>
+        <div id="widget-landscape-viewer" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <!-- Widget 3 (if exists) -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Problem Classification Flowchart</h3>
-        <p>An interactive flowchart that guides users through classifying an optimization problem.</p>
-        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
+        <p>An interactive flowchart that guides users through classifying an optimization problem (e.g., LP, QP, convex, nonconvex).</p>
+        <div id="widget-problem-flowchart" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <!-- Widget 4 (if exists) -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
         <h3 style="margin-top: 0;">Convex Combination Animation</h3>
         <p>Animates the concept of a convex combination by showing the line segment between two points remaining within a set.</p>
-        <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
+        <div id="widget-convex-combination" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Real-World Problem Gallery</h3>
+        <p>A simple, filterable gallery of cards, each describing a real-world application of convex optimization.</p>
+        <div id="widget-problem-gallery" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Convergence Comparison</h3>
+        <p>A simple animated plot comparing the convergence rates of a convex solver vs. a generic nonconvex solver on a sample problem.</p>
+        <div id="widget-convergence-comparison" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
     </section>
 
-    <!-- Readings -->
     <section class="card" id="readings" style="margin-bottom: 32px;">
       <h2>Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 1</li>
-        <li><strong>Course slides:</strong> [Link if available]</li>
       </ul>
     </section>
 
-    <!-- Example problems -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Example Problems</h2>
-
-      <h3>Example 1: Portfolio Optimization</h3>
-      <p>A simple portfolio optimization problem.</p>
-
-      <h3>Example 2: Image Compression</h3>
-      <p>Using SVD for image compression.</p>
-    </section>
-
-    <!-- Exercises (optional) -->
     <section class="card" style="margin-bottom: 32px;">
       <h2>Exercises</h2>
-      <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
       <ol style="line-height: 2;">
-        <li>Is the set of positive semi-definite matrices a convex set?</li>
-        <li>Is the function $f(x) = x^3$ convex?</li>
+        <li>Classify the following as convex or not convex: (a) $\min -\|x\|_2$ s.t. $Ax \le b$, (b) $\min \|x\|_1$ s.t. $\|Bx-c\|_\infty \le 1$.</li>
+        <li>Show that the Chebyshev fitting problem $\min_x \|Ax-b\|_\infty$ can be formulated as an LP.</li>
+        <li>Write down the formulation for LASSO with an additional constraint that the solution must live on the probability simplex ($\mathbf{1}^\top x=1, x \ge 0$). Is the resulting problem convex?</li>
       </ol>
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <p style="margin: 0;">
-        © <span id="year"></span> Convex Optimization Course ·
-        <a href="../../README.md" style="color: var(--brand);">About</a>
-      </p>
+      <p style="margin: 0;">© <span id="year"></span> Convex Optimization Course · <a href="../../README.md" style="color: var(--brand);">About</a></p>
     </div>
   </footer>
 
-  <!-- Load Pyodide for Python widgets (optional) -->
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 
-  <!-- Widget loaders -->
-  <script type="module">
-    import { initConvexVsNonconvex } from './widgets/js/convex-vs-nonconvex.js';
-    initConvexVsNonconvex('widget-1');
-  </script>
-  <script type="module">
-    import { initLandscapeViewer } from './widgets/js/landscape-viewer.js';
-    initLandscapeViewer('widget-2');
-  </script>
-  <script type="module">
-    import { initProblemFlowchart } from './widgets/js/problem-flowchart.js';
-    initProblemFlowchart('widget-3');
-  </script>
-  <script type="module">
-    import { initConvexCombination } from './widgets/js/convex-combination.js';
-    initConvexCombination('widget-4');
-  </script>
-
-  <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Widget Loaders -->
+  <script type="module">
+    import { initConvexVsNonconvex } from './widgets/js/convex-vs-nonconvex.js';
+    initConvexVsNonconvex('widget-convex-vs-nonconvex');
+  </script>
+  <script type="module">
+    import { initLandscapeViewer } from './widgets/js/landscape-viewer.js';
+    initLandscapeViewer('widget-landscape-viewer');
+  </script>
+  <script type="module">
+    import { initProblemFlowchart } from './widgets/js/problem-flowchart.js';
+    initProblemFlowchart('widget-problem-flowchart');
+  </script>
+  <script type="module">
+    import { initConvexCombination } from './widgets/js/convex-combination.js';
+    initConvexCombination('widget-convex-combination');
   </script>
   <script type="module">
     import { initProblemGallery } from './widgets/js/problem-gallery.js';
