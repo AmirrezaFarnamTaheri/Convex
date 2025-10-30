@@ -131,29 +131,23 @@
       </div>
 
       <h3 style="margin-top: 32px;">The Crown Jewel: Every Local Minimum is Global</h3>
-      <p>This is the single most important property in all of convex optimization. In nonconvex problems, algorithms get "stuck" in local minima. Convexity eliminates this problem <i>entirely</i>.</p>
+        <p>This property is what makes convex optimization so powerful. In nonconvex problems, algorithms can get stuck in local minima, but for convex problems, any local minimum is guaranteed to be the best possible solution.</p>
 
       <div class="proof" style="margin: 24px 0; padding: 16px; background: #f8f9fa; border-left: 4px solid var(--brand); border-radius: 4px;">
         <h4>Proof: Any Local Minimum is a Global Minimum</h4>
-        <p><b>Setup:</b></p>
-        <ul>
-          <li>Let $\mathcal{F}$ be the feasible set (all $x$ satisfying constraints). Because inequality constraints are convex functions and equalities are affine, $\mathcal{F}$ is a convex set (we'll prove this rigorously in <a href="../02-convex-sets/index.html">Lecture 02</a>).</li>
-          <li>Let $x^* \in \mathcal{F}$ be a <b>local minimum</b>: there exists $\epsilon > 0$ such that for all feasible $z$ with $\|z - x^*\|_2 < \epsilon$, we have $f_0(z) \ge f_0(x^*)$.</li>
-          <li><b>Goal:</b> Show $x^*$ is also a <b>global minimum</b>, i.e., $f_0(x) \ge f_0(x^*)$ for <i>all</i> $x \in \mathcal{F}$.</li>
-        </ul>
-
-        <p><b>Proof by Contradiction:</b></p>
+        <p>The proof is by contradiction. We start by assuming the opposite of what we want to prove and show that this leads to a logical inconsistency.</p>
         <ol>
-          <li><b>Assume</b> $x^*$ is local but not global. Then there exists $y \in \mathcal{F}$ with $f_0(y) < f_0(x^*)$.</li>
-          <li><b>Construct a point on the path:</b> For $\theta \in (0, 1)$, define $z(\theta) = \theta y + (1-\theta) x^*$. Since $\mathcal{F}$ is convex, $z(\theta) \in \mathcal{F}$.</li>
-          <li><b>Make it arbitrarily close to $x^*$:</b> $\|z(\theta) - x^*\|_2 = \theta \|y - x^*\|_2$. Choose $\theta$ small enough so that $z(\theta)$ is in the local neighborhood of $x^*$.</li>
-          <li><b>Apply Jensen's inequality:</b> Since $f_0$ is convex:
-          $$ f_0(z(\theta)) \le \theta f_0(y) + (1-\theta) f_0(x^*) < \theta f_0(x^*) + (1-\theta) f_0(x^*) = f_0(x^*) $$
-          (using $f_0(y) < f_0(x^*)$ from our assumption).</li>
-          <li><b>Contradiction:</b> We found $z(\theta) \in \mathcal{F}$ inside the local neighborhood with $f_0(z(\theta)) < f_0(x^*)$, contradicting the definition of local minimum.</li>
+            <li><b>Assumption:</b> Suppose $x^*$ is a local minimum, but it is <em>not</em> a global minimum.</li>
+            <li><b>Implication of the Assumption:</b> If $x^*$ is not a global minimum, it means there must be some other point $y$ in the feasible set such that the function value at $y$ is lower, i.e., $f_0(y) < f_0(x^*)$.</li>
+            <li><b>Construct a Point on the Line Segment:</b> Since the feasible set is convex, every point on the line segment connecting $x^*$ and $y$ must also be in the feasible set. We can represent any such point as $z(\theta) = \theta y + (1-\theta)x^*$ for any $\theta \in [0, 1]$.</li>
+            <li><b>Apply Convexity of the Objective Function:</b> The definition of a convex function $f_0$ tells us that for any two points and any $\theta \in [0, 1]$:
+            $$ f_0(z(\theta)) = f_0(\theta y + (1-\theta)x^*) \le \theta f_0(y) + (1-\theta)f_0(x^*) $$</li>
+            <li><b>Use the Assumption Again:</b> We assumed that $f_0(y) < f_0(x^*)$. Substituting this into the inequality from the previous step gives:
+            $$ f_0(z(\theta)) < \theta f_0(x^*) + (1-\theta)f_0(x^*) = f_0(x^*) $$
+            This shows that the function value at any point on the line segment (for $\theta > 0$) is strictly less than the value at $x^*$.</li>
+            <li><b>The Contradiction:</b> A local minimum $x^*$ is defined as a point where all nearby points have a function value that is greater than or equal to $f_0(x^*)$. However, we can choose $\theta$ to be very small, making the point $z(\theta)$ arbitrarily close to $x^*$. But we just proved that $f_0(z(\theta)) < f_0(x^*)$. This contradicts the definition of a local minimum.</li>
+            <li><b>Conclusion:</b> Our initial assumption must be false. Therefore, any local minimum $x^*$ must also be a global minimum.</li>
         </ol>
-
-        <p><b>Conclusion:</b> Our assumption was false. Therefore, every local minimum is global. <b>Q.E.D.</b></p>
       </div>
 
       <div style="margin: 24px 0; text-align: center;">
@@ -490,29 +484,29 @@ print(x.value)
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h4>Solutions</h4>
         <ol type="a">
-          <li><b>Convex.</b> Quadratic objective + affine equality.</li>
-          <li><b>Not Convex.</b> $f(x) = -\|x\|_2$ is concave (minimizing concave = nonconvex).</li>
-          <li><b>Convex.</b> $\|x\|_1$ convex; $\|Bx - c\|_\infty$ convex (composition with affine).</li>
-          <li><b>Convex.</b> $Q \succeq 0$ makes $x^\top Q x$ convex; linear inequalities are convex.</li>
-          <li><b>Not Convex.</b> Integrality constraints $x_i \in \{0,1\}$ destroy convexity (discrete set).</li>
+          <li><b>Convex.</b> The objective is a convex quadratic function and the constraint is affine.</li>
+          <li><b>Not Convex.</b> The function $f(x) = -\|x\|_2$ is concave, and minimizing a concave function is not a convex problem.</li>
+          <li><b>Convex.</b> The objective and constraints are both norms, which are convex functions.</li>
+          <li><b>Convex.</b> The matrix $Q$ is PSD, so the objective is a convex quadratic. The constraints are linear.</li>
+          <li><b>Not Convex.</b> The feasible set is not convex because of the integer constraints.</li>
         </ol>
       </div>
 
-      <h3>P1.2 — Chebyshev Fitting as an LP</h3>
-      <p>Show that $\min_x \|Ax - b\|_\infty$ is equivalent to:</p>
-      $$ \min_{x, t}\ t \quad \text{s.t.} \quad -t\mathbf{1} \le Ax - b \le t\mathbf{1} $$
+      <h3>P1.2 — Chebyshev Fitting</h3>
+      <p>Show that the Chebyshev fitting problem, $\min_x \|Ax - b\|_\infty$, can be formulated as an LP.</p>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h4>Solution</h4>
-        <p>$\|u\|_\infty \le t$ if and only if $-t \le u_i \le t$ for all $i$. Substituting $u = Ax - b$ gives the LP formulation.</p>
+        <p>The problem is equivalent to minimizing a variable $t$ subject to the constraint $\|Ax-b\|_\infty \le t$. This inequality can be rewritten as $-t \le (Ax-b)_i \le t$ for all $i$, which is a set of linear constraints. The resulting problem is an LP:
+        $$ \min_{x, t}\ t \quad \text{s.t.} \quad -t\mathbf{1} \le Ax - b \le t\mathbf{1} $$</p>
       </div>
 
-      <h3>P1.3 — Ridge vs. LASSO Geometry</h3>
-      <p>In one sentence, why does ridge shrink but not zero coefficients, while LASSO promotes sparsity?</p>
+      <h3>P1.3 — Ridge vs. LASSO</h3>
+      <p>Explain the geometric difference between the regularizers for Ridge regression ($\|x\|_2^2$) and LASSO ($\|x\|_1$).</p>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h4>Solution</h4>
-        <p>Ridge ball ($\|x\|_2 \le t$) is round; LASSO ball ($\|x\|_1 \le t$) is pointy at axes. Loss contours first touch LASSO ball at corners → exact zeros (sparsity).</p>
+        <p>The unit ball of the L2 norm is spherical, while the unit ball of the L1 norm has sharp corners at the axes. The level sets of the loss function are more likely to intersect the L1 ball at a corner, leading to a sparse solution where some components are exactly zero.</p>
       </div>
 
       <h3>P1.4 — Simplex-Constrained LS</h3>
