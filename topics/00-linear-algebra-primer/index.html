@@ -28,22 +28,22 @@
 
   <main class="container" style="padding: 32px 0 60px;">
     <article class="card" style="margin-bottom: 32px;">
-      <h1 style="margin-top: 0;">00. A Zero-to-Hero Primer on Linear Algebra</h1>
+      <h1 style="margin-top: 0;">00. A Primer on Linear Algebra</h1>
       <div class="meta">
         Date: 2025-10-14 · Duration: 90 min · Tags: prerequisites, review, linear-algebra, foundational
       </div>
       <section style="margin-top: 16px;">
-        <p><strong>Overview:</strong> Welcome to the starting point of your journey into convex optimization. This lecture provides a rigorous, from-scratch review of the essential linear algebra concepts that form the bedrock of the entire field. We build theory step-by-step, starting from fundamental objects like vectors and matrices, moving through inner products, norms, orthogonality, projections, and the geometry of linear systems. This lecture deliberately avoids topics belonging to future lectures (convex sets/functions, cone geometry, duality, KKT), focusing exclusively on the linear-algebraic machinery you need.</p>
-        <p><strong>Prerequisites:</strong> None. This is where the journey begins.</p>
-        <p><strong>Forward Connections:</strong> The projection techniques developed here are central to <a href="../01-introduction/index.html">Lecture 01</a>'s least squares models. PSD matrices enable convex quadratic programs in <a href="../01-introduction/index.html">Lecture 01</a>. The four fundamental subspaces provide geometric intuition for feasible sets in <a href="../02-convex-sets/index.html">Lecture 02</a>.</p>
+        <p><strong>Overview:</strong> This lecture reviews the essential linear algebra concepts that form the bedrock of convex optimization. We build the theory step-by-step, starting from fundamental objects like vectors and matrices, moving through inner products, norms, orthogonality, projections, and the geometry of linear systems. This lecture focuses exclusively on the linear-algebraic machinery you need, deliberately avoiding topics from future lectures like convex sets or duality.</p>
+        <p><strong>Prerequisites:</strong> None. This lecture is the starting point.</p>
+        <p><strong>Forward Connections:</strong> The projection techniques developed here are central to <a href="../01-introduction/index.html">Lecture 01</a>'s least squares models. Positive Semidefinite (PSD) matrices are the foundation for convex quadratic programs in <a href="../01-introduction/index.html">Lecture 01</a>. The four fundamental subspaces provide geometric intuition for feasible sets in <a href="../02-convex-sets/index.html">Lecture 02</a>.</p>
       </section>
     </article>
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>Learning Objectives</h2>
-      <p>After this lecture, you will have deep, practical, and theoretical mastery of:</p>
+      <p>After this lecture, you will be able to work with:</p>
       <ul style="line-height: 1.8;">
-        <li><b>Fundamental Objects and Subspaces:</b> Vectors, matrices, the four fundamental subspaces, and the Rank-Nullity Theorem with complete proofs.</li>
+        <li><b>Fundamental Objects and Subspaces:</b> Vectors, matrices, the four fundamental subspaces, and the Rank-Nullity Theorem with proof sketches.</li>
         <li><b>Inner Products and Norms:</b> Standard and generalized inner products, the three canonical vector norms, dual norms, Hölder's inequality, and the Cauchy-Schwarz inequality with proofs.</li>
         <li><b>Orthogonality and Projections:</b> Orthonormal bases, Gram-Schmidt process, QR decomposition, projection onto subspaces and affine sets.</li>
         <li><b>Positive Semidefinite Matrices:</b> Definitions, eigenvalue characterization, quadratic forms, ellipsoids, and the Loewner order.</li>
@@ -101,32 +101,37 @@
       </ul>
 
       <div style="margin: 24px 0; text-align: center;">
-        <img src="../../static/assets/topics/00-linear-algebra-primer/matrix-multiplication.gif"
+        <img src="../../static/assets/topics/00-linear-algebra-primer/matrix-multiplication-animation.svg"
              alt="Animated visualization of matrix multiplication process"
              style="max-width: 80%; height: auto; border: 1px solid var(--border); border-radius: 8px;" />
-        <p style="margin-top: 8px; font-size: 0.9em; color: var(--text-muted);"><i>Figure 0.2:</i> Animation showing the step-by-step process of matrix multiplication.</p>
+        <p style="margin-top: 8px; font-size: 0.9em; color: var(--text-muted);"><i>Figure 0.2:</i> A step-by-step animation of matrix multiplication. The highlighted row and column are combined to produce the highlighted entry in the result.</p>
       </div>
 
       <h3>Linear Maps</h3>
       <p>A function $T: \mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if and only if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$. Every linear map can be represented by a matrix $A$ with $T(x) = Ax$.</p>
 
       <h3>Componentwise Order Notation</h3>
-      <p>We write $x \ge 0$ to mean $x_i \ge 0$ for all $i$, and $x \le y$ to mean $x_i \le y_i$ for all $i$. The vector $\mathbf{1}$ denotes the all-ones vector. This notation is essential for <a href="../02-convex-sets/index.html">Lecture 02</a>'s treatment of polyhedra and cones.</p>
+      <p>A notation used throughout optimization is the componentwise order. For vectors $x, y \in \mathbb{R}^n$:
+      <ul>
+        <li>$x \ge 0$ means $x_i \ge 0$ for all $i=1, \dots, n$.</li>
+        <li>$x \le y$ means $x_i \le y_i$ for all $i=1, \dots, n$.</li>
+      </ul>
+      This provides a compact way to describe constraints, such as non-negativity. The vector $\mathbf{1}$ denotes the vector of all ones. This notation is essential for <a href="../02-convex-sets/index.html">Lecture 02</a>'s treatment of polyhedra and cones.</p>
     </section>
 
     <!-- SECTION 1: FOUR FUNDAMENTAL SUBSPACES -->
     <section class="card" id="section-1" style="margin-bottom: 32px;">
       <h2>1. Subspaces and the Four Fundamental Spaces</h2>
 
-      <p>Given $A \in \mathbb{R}^{m \times n}$, we have four fundamental subspaces:</p>
+      <p>A <b>linear subspace</b> is a set of vectors that is closed under addition and scalar multiplication. Given a matrix $A \in \mathbb{R}^{m \times n}$, we can define four fundamental subspaces that provide deep insights into the behavior of the linear map $T(x) = Ax$.</p>
       <ul>
-        <li><b>Column Space (Range):</b> $\mathcal{R}(A) = \{Ax \mid x \in \mathbb{R}^n\} \subseteq \mathbb{R}^m$</li>
-        <li><b>Nullspace (Kernel):</b> $\mathcal{N}(A) = \{x \in \mathbb{R}^n \mid Ax = 0\}$</li>
-        <li><b>Row Space:</b> $\mathcal{R}(A^\top) \subseteq \mathbb{R}^n$</li>
-        <li><b>Left Nullspace:</b> $\mathcal{N}(A^\top) = \{y \in \mathbb{R}^m \mid A^\top y = 0\}$</li>
+        <li><b>Column Space (Range):</b> $\mathcal{R}(A) = \{Ax \mid x \in \mathbb{R}^n\} \subseteq \mathbb{R}^m$. This is the set of all possible outputs of the linear map, i.e., the span of the columns of $A$.</li>
+        <li><b>Nullspace (Kernel):</b> $\mathcal{N}(A) = \{x \in \mathbb{R}^n \mid Ax = 0\}$. This is the set of all input vectors that are mapped to the zero vector.</li>
+        <li><b>Row Space:</b> $\mathcal{R}(A^\top) \subseteq \mathbb{R}^n$. This is the span of the rows of $A$.</li>
+        <li><b>Left Nullspace:</b> $\mathcal{N}(A^\top) = \{y \in \mathbb{R}^m \mid A^\top y = 0\}$. This is the nullspace of the transpose of $A$.</li>
       </ul>
 
-      <p>All four are linear subspaces. Two crucial orthogonality facts:</p>
+      <p>These subspaces are linked by two crucial orthogonality relationships:</p>
       <ul>
         <li>$\mathcal{R}(A) \perp \mathcal{N}(A^\top)$ in $\mathbb{R}^m$</li>
         <li>$\mathcal{R}(A^\top) \perp \mathcal{N}(A)$ in $\mathbb{R}^n$</li>
@@ -175,26 +180,32 @@
         <li>$\langle x, y \rangle = \langle y, x \rangle$</li>
         <li>$\langle x, x \rangle > 0$ for $x \neq 0$</li>
       </ul>
-      <p>The <b>standard (Euclidean) inner product</b> is $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$.</p>
+      <p>The <b>standard (Euclidean) inner product</b> is the most common example: $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$.</p>
 
       <div style="margin: 24px 0; text-align: center;">
         <img src="../../static/assets/topics/00-linear-algebra-primer/vector-addition-parallelogram.png"
              alt="Parallelogram law for vector addition"
              style="max-width: 70%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: white;" />
-        <p style="margin-top: 8px; font-size: 0.9em; color: var(--text-muted);"><i>Figure 2.1:</i> The parallelogram law of vector addition—geometric foundation for inner products.</p>
+        <p style="margin-top: 8px; font-size: 0.9em; color: var(--text-muted);"><i>Figure 2.1:</i> The parallelogram law of vector addition, a geometric reflection of the algebraic properties of inner products.</p>
       </div>
 
       <h3>Norms</h3>
-      <p>A norm $\|\cdot\|$ satisfies nonnegativity & definiteness, absolute homogeneity, and the triangle inequality. Three canonical norms:</p>
+      <p>A norm is a function that assigns a strictly positive length or size to each vector in a vector space, except for the zero vector. A norm $\|\cdot\|$ must satisfy:</p>
+      <ol>
+        <li><b>Non-negativity:</b> $\|x\| \ge 0$, and $\|x\| = 0$ if and only if $x=0$.</li>
+        <li><b>Absolute homogeneity:</b> $\|\alpha x\| = |\alpha| \|x\|$ for any scalar $\alpha$.</li>
+        <li><b>Triangle inequality:</b> $\|x+y\| \le \|x\| + \|y\|$.</li>
+      </ol>
+      <p>Three of the most widely used norms are:</p>
       $$
-      \|x\|_2 = \sqrt{\sum_i x_i^2}, \quad \|x\|_1 = \sum_i |x_i|, \quad \|x\|_\infty = \max_i |x_i|
+      \|x\|_2 = \sqrt{\sum_i x_i^2} \quad (\text{Euclidean norm}), \quad \|x\|_1 = \sum_i |x_i| \quad (\text{L1 norm}), \quad \|x\|_\infty = \max_i |x_i| \quad (\text{Infinity norm})
       $$
 
       <div style="margin: 24px 0; text-align: center;">
         <img src="../../static/assets/topics/00-linear-algebra-primer/vector-norms.svg"
              alt="Comparison of different norm unit balls"
              style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
-        <p style="margin-top: 8px; font-size: 0.9em; color: var(--text-muted);"><i>Figure 2.2:</i> Unit balls for different norms showing their geometric shapes.</p>
+        <p style="margin-top: 8px; font-size: 0.9em; color: var(--text-muted);"><i>Figure 2.2:</i> The "unit ball" (the set of all vectors with norm less than or equal to 1) for the L1, L2, and infinity norms. The different shapes illustrate how these norms measure distance differently.</p>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
@@ -207,34 +218,36 @@
 
       <div class="proof" style="margin: 24px 0; padding: 16px; background: #f8f9fa; border-left: 4px solid var(--brand); border-radius: 4px;">
         <h4>Proof of Cauchy–Schwarz: $|x^\top y| \le \|x\|_2 \|y\|_2$</h4>
-        <p>For any $t \in \mathbb{R}$, consider $\|x - ty\|_2^2 \ge 0$. Expanding:
-        $$ \|x - ty\|_2^2 = \|x\|_2^2 - 2t(x^\top y) + t^2 \|y\|_2^2 \ge 0 $$
-        This is a quadratic in $t$ that is always non-negative, so its discriminant must be non-positive:
-        $$ 4(x^\top y)^2 - 4\|x\|_2^2 \|y\|_2^2 \le 0 $$
-        Therefore $(x^\top y)^2 \le \|x\|_2^2 \|y\|_2^2$, which gives the Cauchy-Schwarz inequality.</p>
+        <p>Let's consider the expression $\|x - ty\|_2^2$ for any scalar $t$. Since the norm is always non-negative, we have:
+        $$ \|x - ty\|_2^2 = (x - ty)^\top(x - ty) = \|x\|_2^2 - 2t(x^\top y) + t^2 \|y\|_2^2 \ge 0 $$
+        This is a quadratic polynomial in $t$ that is always non-negative. For this to be true, the discriminant of the quadratic must be non-positive:
+        $$ ( -2(x^\top y) )^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$
+        $$ 4(x^\top y)^2 \le 4\|x\|_2^2 \|y\|_2^2 $$
+        Taking the square root of both sides gives the Cauchy-Schwarz inequality.</p>
       </div>
 
-      <p><b>Triangle Inequality:</b> $\|x + y\|_2 \le \|x\|_2 + \|y\|_2$ follows from Cauchy–Schwarz after squaring and expanding $\|x + y\|_2^2$.</p>
+      <p><b>Triangle Inequality:</b> The triangle inequality, $\|x + y\|_2 \le \|x\|_2 + \|y\|_2$, can be proven by squaring both sides and applying the Cauchy-Schwarz inequality to the inner product term.</p>
 
       <h3>Angles and Orthogonality</h3>
-      <p>Define $\cos \angle(x, y) = \frac{x^\top y}{\|x\|_2 \|y\|_2}$. Vectors are <b>orthogonal</b> if and only if $x^\top y = 0$.</p>
+      <p>The Cauchy-Schwarz inequality allows us to define the angle between two vectors:
+      $$ \cos \angle(x, y) = \frac{x^\top y}{\|x\|_2 \|y\|_2} $$
+      Since the magnitude of the right-hand side is guaranteed to be between -1 and 1. Two vectors are <b>orthogonal</b> if their inner product is zero, $x^\top y = 0$, which corresponds to a 90-degree angle.</p>
 
       <h3>Dual Norms and Hölder's Inequality</h3>
-      <p>For any norm $\|\cdot\|$, the <b>dual norm</b> is defined as:
-      $$ \|y\|_* = \sup_{\|x\| \le 1} x^\top y $$</p>
-      <p><b>Examples:</b></p>
+      <p>The concept of duality is central to optimization. For any norm $\|\cdot\|$, we can define a corresponding <b>dual norm</b>, denoted $\|\cdot\|_*$, as:
+      $$ \|y\|_* = \sup_{\|x\| \le 1} x^\top y $$
+      The dual norm measures the maximum "stretch" of a vector $y$ when applied to unit-norm vectors $x$. This definition leads to some important pairings:</p>
       <ul>
-        <li>$(\|\cdot\|_2)_* = \|\cdot\|_2$ (self-dual)</li>
-        <li>$(\|\cdot\|_1)_* = \|\cdot\|_\infty$</li>
-        <li>$(\|\cdot\|_\infty)_* = \|\cdot\|_1$</li>
+        <li>The dual of the L2 norm is the L2 norm itself (it is self-dual).</li>
+        <li>The dual of the L1 norm is the L-infinity norm.</li>
+        <li>The dual of the L-infinity norm is the L1 norm.</li>
       </ul>
 
       <div style="margin: 24px 0; padding: 16px; background: #fff8e1; border-left: 4px solid #ffa000; border-radius: 4px;">
-        <h4>⚡ Hölder's Inequality (Dual-Norm Cauchy–Schwarz)</h4>
-        <p>For any vectors $x, y$ and any norm $\|\cdot\|$:
-        $$ x^\top y \le \|x\| \cdot \|y\|_* $$
-        <b>Micro-proof:</b> $x^\top y \le \|x\| \sup_{\|z\| \le 1} z^\top y = \|x\| \cdot \|y\|_*$.</p>
-        <p><i>This result is essential for <a href="../02-convex-sets/index.html">Lecture 02</a>'s dual cone theory, particularly the $\ell_1/\ell_\infty$ cone duality.</i></p>
+        <h4>Hölder's Inequality: A Generalization of Cauchy-Schwarz</h4>
+        <p>Hölder's inequality is a direct consequence of the definition of the dual norm and provides a powerful bound on the inner product of two vectors:
+        $$ |x^\top y| \le \|x\| \cdot \|y\|_* $$
+        When the norm is the L2 norm, the dual norm is also the L2 norm, and we recover the Cauchy-Schwarz inequality. This inequality is essential for the study of dual cones in <a href="../02-convex-sets/index.html">Lecture 02</a> and for duality theory in general.</p>
       </div>
 
       <h3>Generalized (Weighted) Inner Product</h3>
@@ -250,29 +263,24 @@
 
     <!-- SECTION 3: ORTHOGONALITY AND QR -->
     <section class="card" id="section-3" style="margin-bottom: 32px;">
-      <h2>3. Orthogonality, Orthonormal Bases, Gram–Schmidt, QR</h2>
+      <h2>3. Orthogonality and Orthonormal Bases</h2>
 
       <h3>Orthonormal Sets</h3>
-      <p>Vectors $q_1, \dots, q_k$ are <b>orthonormal</b> if $q_i^\top q_j = 0$ for $i \neq j$ and $\|q_i\|_2 = 1$. A square matrix $Q$ with orthonormal columns is <b>orthogonal</b>: $Q^\top Q = I$, hence $Q^{-1} = Q^\top$.</p>
+      <p>A set of vectors $q_1, \dots, q_k$ is <b>orthonormal</b> if its elements are mutually orthogonal and each has a norm of 1. Formally, $q_i^\top q_j = \delta_{ij}$, where $\delta_{ij}$ is the Kronecker delta (1 if $i=j$, 0 otherwise). A square matrix $Q$ with orthonormal columns is an <b>orthogonal matrix</b>, satisfying the important property $Q^\top Q = I$, which means $Q^{-1} = Q^\top$. Orthonormal bases are computationally desirable because they are numerically stable and simplify many calculations, such as projections.</p>
 
-      <h3>Gram–Schmidt Process (Constructive)</h3>
-      <p>Given independent vectors $a_1, \dots, a_n$, define:
+      <h3>The Gram–Schmidt Process</h3>
+      <p>The Gram-Schmidt process is an algorithm for constructing an orthonormal basis from a set of linearly independent vectors. Starting with a vector, it iteratively subtracts the components that lie in the direction of the previously processed vectors, leaving a new, orthogonal vector that is then normalized.
       $$
-      \tilde{q}_1 = a_1, \quad q_1 = \tilde{q}_1 / \|\tilde{q}_1\|
+      \tilde{q}_k = a_k - \sum_{i=1}^{k-1} (q_i^\top a_k) q_i, \quad q_k = \frac{\tilde{q}_k}{\|\tilde{q}_k\|_2}
       $$
-      For $k = 2, \dots, n$:
-      $$
-      \tilde{q}_k = a_k - \sum_{i=1}^{k-1} (q_i^\top a_k) q_i, \quad q_k = \tilde{q}_k / \|\tilde{q}_k\|
-      $$
-      This yields an orthonormal basis $q_1, \dots, q_n$ for the span of $a_1, \dots, a_n$.</p>
+      </p>
 
-      <h3>QR Decomposition</h3>
-      <p>For $A \in \mathbb{R}^{m \times n}$ with full column rank, there exists $Q \in \mathbb{R}^{m \times n}$ with orthonormal columns and upper-triangular $R \in \mathbb{R}^{n \times n}$ with positive diagonal such that $A = QR$.</p>
-
-      <p><b>Why it matters:</b></p>
+      <h3>The QR Decomposition</h3>
+      <p>The QR decomposition expresses a matrix $A$ as the product of an orthonormal matrix $Q$ and an upper triangular matrix $R$. This decomposition is a direct outcome of the Gram-Schmidt process and is a cornerstone of numerical linear algebra. For a matrix $A \in \mathbb{R}^{m \times n}$ with full column rank, we can write $A = QR$, where $Q \in \mathbb{R}^{m \times n}$ has orthonormal columns and $R \in \mathbb{R}^{n \times n}$ is upper-triangular.
+      <br><b>Applications:</b></p>
       <ul>
-        <li><b>Solving $Ax = b$ with $m \ge n$:</b> Replace normal equations by $Rx = Q^\top b$ (cheap and numerically stable).</li>
-        <li><b>Projector onto $\mathcal{R}(A)$:</b> $P = QQ^\top$.</li>
+        <li><b>Solving Linear Systems:</b> The system $Ax=b$ becomes $QRx=b$, which simplifies to $Rx = Q^\top b$. This is easily solved using back substitution and is far more numerically stable than forming the normal equations.</li>
+        <li><b>Projections:</b> The projection onto the column space of $A$ is given by $P = QQ^\top$.</li>
       </ul>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
@@ -284,21 +292,22 @@
 
     <!-- SECTION 4: PSD MATRICES -->
     <section class="card" id="section-4" style="margin-bottom: 32px;">
-      <h2>4. Positive Semidefiniteness and Quadratic Forms</h2>
+      <h2>4. Positive Semidefinite Matrices</h2>
 
       <h3>Definitions</h3>
+      <p>A symmetric matrix $Q \in \mathbb{S}^n$ is:</p>
       <ul>
-        <li>$Q \succeq 0$ (PSD) if $x^\top Q x \ge 0$ for all $x$.</li>
-        <li>$Q \succ 0$ (SPD) if $x^\top Q x > 0$ for all $x \neq 0$.</li>
+        <li><b>Positive Semidefinite (PSD)</b>, written $Q \succeq 0$, if the quadratic form $x^\top Q x \ge 0$ for all vectors $x$.</li>
+        <li><b>Positive Definite (PD)</b>, written $Q \succ 0$, if $x^\top Q x > 0$ for all non-zero vectors $x$.</li>
       </ul>
 
-      <p>If $Q = Q^\top$, then:</p>
+      <p>These matrices are fundamental to convex optimization because they define convex quadratic functions. An equivalent and often more practical characterization is based on their eigenvalues:</p>
       <ul>
-        <li>$Q \succeq 0$ iff all eigenvalues $\lambda_i \ge 0$</li>
-        <li>$Q \succ 0$ iff all eigenvalues $\lambda_i > 0$</li>
+        <li>A matrix is PSD if and only if all of its eigenvalues are non-negative.</li>
+        <li>A matrix is PD if and only if all of its eigenvalues are strictly positive.</li>
       </ul>
 
-      <p>If $Q \succ 0$, then $\|x\|_Q = \sqrt{x^\top Q x}$ is a valid norm; its unit "ball" is an ellipsoid $\{x \mid x^\top Q x \le 1\}$. We do <b>not</b> use convex-set theory here; this is strictly linear-algebraic geometry.</p>
+      <p>A positive definite matrix $Q$ can be used to define a generalized norm, $\|x\|_Q = \sqrt{x^\top Q x}$. The unit ball for this norm, $\{x \mid x^\top Q x \le 1\}$, is an ellipsoid, whose geometry is determined by the eigenvalues and eigenvectors of $Q$.</p>
 
       <div style="margin: 24px 0; text-align: center;">
         <img src="../../static/assets/topics/00-linear-algebra-primer/eigenvalues-psd.png"
@@ -367,30 +376,27 @@
 
     <!-- SECTION 6: LEAST SQUARES -->
     <section class="card" id="section-6" style="margin-bottom: 32px;">
-      <h2>6. Least Squares, Normal Equations, and Geometry</h2>
+      <h2>6. The Method of Least Squares</h2>
 
-      <h3>The Problem</h3>
-      <p>Given $A \in \mathbb{R}^{m \times n}$, $b \in \mathbb{R}^m$, with typically $m \ge n$, solve:
+      <h3>The Problem: Overdetermined Systems</h3>
+      <p>Often in practice, we encounter a system of linear equations $Ax=b$ where there is no exact solution because the vector $b$ does not lie in the column space of $A$. This is common when $m > n$ (more equations than unknowns). The goal of least squares is to find the "best" approximate solution by minimizing the squared Euclidean norm of the residual vector $r = Ax-b$:
       $$ \min_{x \in \mathbb{R}^n} \|Ax - b\|_2^2 $$</p>
 
-      <h3>Geometric Interpretation</h3>
-      <p>Let $\mathcal{S} = \mathcal{R}(A)$. The vector $Ax^\star$ is the orthogonal projection of $b$ onto $\mathcal{S}$. The <b>residual</b> $r^\star = b - Ax^\star$ is orthogonal to $\mathcal{S}$, i.e., $A^\top r^\star = 0$.</p>
+      <h3>Geometric Interpretation: Projection</h3>
+      <p>The solution to the least squares problem has a clean geometric interpretation. The vector $Ax$ is always in the column space of $A$, $\mathcal{R}(A)$. The problem is therefore equivalent to finding the point in $\mathcal{R}(A)$ that is closest to $b$. This closest point is the <b>orthogonal projection</b> of $b$ onto $\mathcal{R}(A)$. Let this projection be $p = Ax^\star$. The residual vector $r^\star = b - Ax^\star$ must be orthogonal to the entire column space.</p>
 
-      <h3>Normal Equations (Derivation)</h3>
-      <p>Define $f(x) = \|Ax - b\|_2^2 = (Ax - b)^\top(Ax - b)$. Then:
-      $$ \nabla f(x) = 2A^\top(Ax - b) $$
-      Setting $\nabla f(x^\star) = 0$ gives:
+      <h3>The Normal Equations</h3>
+      <p>The orthogonality condition, $r^\star \perp \mathcal{R}(A)$, means that the residual must be orthogonal to every column of $A$. This can be expressed compactly as $A^\top r^\star = 0$. Substituting the definition of the residual, we get:
+      $$ A^\top(b - Ax^\star) = 0 $$
+      Rearranging this gives the celebrated <b>normal equations</b>:
       $$ A^\top A x^\star = A^\top b $$
-      If $A$ has full column rank, $A^\top A \succ 0$ and $x^\star = (A^\top A)^{-1} A^\top b$.</p>
+      If the matrix $A$ has linearly independent columns (full column rank), then $A^\top A$ is invertible, and we can write the unique solution as $x^\star = (A^\top A)^{-1} A^\top b$.</p>
 
-      <h3>Uniqueness</h3>
+      <h3>Uniqueness of the Solution</h3>
       <ul>
-        <li>If $\mathrm{rank}(A) = n$: unique minimizer</li>
-        <li>If $\mathrm{rank}(A) < n$: minimizers form an affine set; minimum-norm solution selected by pseudoinverse</li>
+        <li>If $A$ has full column rank ($\mathrm{rank}(A) = n$), the solution $x^\star$ is unique.</li>
+        <li>If $A$ is rank-deficient ($\mathrm{rank}(A) < n$), there are infinitely many solutions. In this case, the pseudoinverse is used to find the solution with the minimum norm.</li>
       </ul>
-
-      <h3>Orthogonality Condition (Again)</h3>
-      <p>At the minimizer: $A^\top(b - Ax^\star) = 0$. This is the algebraic restatement of "residual is orthogonal to the column space."</p>
 
       <div style="margin: 24px 0; padding: 16px; background: #e3f2fd; border-left: 4px solid #1976d2; border-radius: 4px;">
         <h4>🔗 Forward Connection to Lecture 01</h4>
@@ -414,24 +420,17 @@
         <li>$\Sigma \in \mathbb{R}^{m \times n}$ is diagonal with nonnegative entries $\sigma_1 \ge \cdots \ge \sigma_r > 0$, $r = \mathrm{rank}(A)$</li>
       </ul>
 
-      <p>SVD gives the <b>pseudoinverse</b>:
+      <p>The SVD provides the most robust method for computing the <b>pseudoinverse</b> of a matrix, denoted $A^+$:
       $$ A^+ = V\Sigma^+ U^\top $$
-      where $\Sigma^+$ inverts the nonzero singular values ($\sigma_i^+ = 1/\sigma_i$) and transposes the shape.</p>
+      where $\Sigma^+$ is formed by taking the reciprocal of the non-zero singular values and transposing the resulting matrix. The pseudoinverse provides the minimum-norm solution to the least squares problem:
+      $$ x^\star = A^+ b $$
+      This solution is numerically stable even when $A$ is rank-deficient or ill-conditioned.</p>
 
-      <h3>Least Squares via SVD</h3>
-      <p>A minimum-norm minimizer is:
-      $$ x^\star = A^+ b = \sum_{i=1}^r \frac{u_i^\top b}{\sigma_i} v_i $$
-      This guarantees numerical stability, especially when $A$ is rank-deficient or ill-conditioned.</p>
-
-      <h3>Spectral Norm and Condition Number</h3>
-      <ul>
-        <li>$\|A\|_2 = \sigma_{\max}(A)$</li>
-        <li>The 2-norm condition number (full column rank) is $\kappa_2(A) = \frac{\sigma_{\max}}{\sigma_{\min}}$</li>
-      </ul>
-      <p>Large $\kappa_2$ means small perturbations in $b$ (or round-off) can cause large relative errors in $x^\star$ if you use unstable methods (e.g., normal equations).</p>
+      <h3>The Condition Number</h3>
+      <p>The <b>condition number</b> of a matrix, $\kappa(A) = \frac{\sigma_{\max}}{\sigma_{\min}}$, measures how sensitive the solution of a linear system is to perturbations in the input data. A large condition number indicates that even small numerical errors can be greatly amplified. The normal equations are particularly susceptible to this, as $\kappa(A^\top A) = \kappa(A)^2$. This is why direct methods like QR and SVD are preferred in practice.</p>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Interactive Demo: SVD for Image Compression</h3>
+        <h3 style-top: 0;">Interactive Demo: SVD for Image Compression</h3>
         <p>See low-rank approximation in action. Load an image and reconstruct it using varying numbers of singular values. A surprisingly accurate approximation can be achieved with only a small fraction of the singular values.</p>
         <div id="widget-svd-approximator" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
@@ -475,33 +474,31 @@
       <h2>9. Worked Examples (Fully Written Out)</h2>
 
       <div style="margin: 24px 0; padding: 16px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px;">
-        <h3>Example 1 — Project onto a Line</h3>
-        <p>Let $u \neq 0$ in $\mathbb{R}^m$, $\mathcal{S} = \mathrm{span}\{u\}$. The orthogonal projector is:
-        $$ P = \frac{uu^\top}{u^\top u}, \quad p = Pb = \frac{u^\top b}{u^\top u} u $$
-        <b>Derivation:</b> Choose orthonormal basis $\{q_1, \dots\}$ with $q_1 = u/\|u\|_2$. Then $P = q_1 q_1^\top = \frac{uu^\top}{\|u\|_2^2}$.</p>
+        <h3>Example 1: Projection onto a Line</h3>
+        <p>Let's find the projection of the vector $b = (2, 3)^\top$ onto the line spanned by the vector $u = (1, 1)^\top$. The projection $p$ is given by the formula:
+        $$ p = \frac{u^\top b}{u^\top u} u = \frac{(1)(2) + (1)(3)}{(1)(1) + (1)(1)} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \frac{5}{2} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 2.5 \\ 2.5 \end{pmatrix} $$
+        The residual vector is $r = b - p = (2 - 2.5, 3 - 2.5)^\top = (-0.5, 0.5)^\top$. We can verify that the residual is orthogonal to the line: $u^\top r = (1)(-0.5) + (1)(0.5) = 0$.
+        </p>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px;">
-        <h3>Example 2 — Normal Equations and Geometry</h3>
-        <p>Take:
-        $$ A = \begin{bmatrix}1 & 1 \\ 1 & -1 \\ 1 & 1\end{bmatrix}, \quad b = \begin{bmatrix}2 \\ 0 \\ 1\end{bmatrix} $$
-        Compute:
-        $$ A^\top A = \begin{bmatrix}3 & 1 \\ 1 & 3\end{bmatrix}, \quad A^\top b = \begin{bmatrix}3 \\ 3\end{bmatrix} $$
-        Solve $\begin{bmatrix}3 & 1 \\ 1 & 3\end{bmatrix} x = \begin{bmatrix}3 \\ 3\end{bmatrix}$. From row 1: $3x_1 + x_2 = 3$ ⇒ $x_2 = 3 - 3x_1$. Row 2: $x_1 + 3(3 - 3x_1) = 3$ ⇒ $x_1 + 9 - 9x_1 = 3$ ⇒ $-8x_1 = -6$ ⇒ $x_1 = 3/4$. Then $x_2 = 3/4$.</p>
-        <p>Residual: $r = b - Ax^\star = \begin{bmatrix}2 \\ 0 \\ 1\end{bmatrix} - \begin{bmatrix}3/2 \\ 0 \\ 3/2\end{bmatrix} = \begin{bmatrix}1/2 \\ 0 \\ -1/2\end{bmatrix}$.</p>
-        <p>Check orthogonality: $A^\top r = \begin{bmatrix}0 \\ 0\end{bmatrix}$. ✓</p>
+        <h3>Example 2: Solving Least Squares with Normal Equations</h3>
+        <p>Let's solve the least squares problem for the system $Ax=b$ with:
+        $$ A = \begin{pmatrix} 1 & 1 \\ 1 & -1 \\ 1 & 1 \end{pmatrix}, \quad b = \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix} $$
+        First, we form the normal equations $A^\top A x = A^\top b$:
+        $$ A^\top A = \begin{pmatrix} 1 & 1 & 1 \\ 1 & -1 & 1 \end{pmatrix} \begin{pmatrix} 1 & 1 \\ 1 & -1 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix} $$
+        $$ A^\top b = \begin{pmatrix} 1 & 1 & 1 \\ 1 & -1 & 1 \end{pmatrix} \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix} = \begin{pmatrix} 3 \\ 3 \end{pmatrix} $$
+        We solve the system $\begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix} x = \begin{pmatrix} 3 \\ 3 \end{pmatrix}$, which yields the solution $x^\star = (3/4, 3/4)^\top$.
+        The projection is $p = Ax^\star = (3/2, 0, 3/2)^\top$, and the residual is $r = b - p = (1/2, 0, -1/2)^\top$. We can verify the orthogonality condition: $A^\top r = (0, 0)^\top$.
+        </p>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px;">
-        <h3>Example 3 — QR Instead of Normal Equations</h3>
-        <p>For the same $A$, compute a thin QR ($A = QR$) by hand or numerically. Then $x^\star$ is the solution of $Rx = Q^\top b$. You'll get $x^\star = (3/4, 3/4)$ without ever forming $A^\top A$.</p>
-      </div>
-
-      <div style="margin: 24px 0; padding: 16px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px;">
-        <h3>Example 4 — Rank-Deficient Case & Pseudoinverse</h3>
-        <p>Let:
-        $$ A = \begin{bmatrix}1 & 1 \\ 2 & 2 \\ 3 & 3\end{bmatrix}, \quad b = \begin{bmatrix}1 \\ 0 \\ 1\end{bmatrix} $$
-        Columns are collinear; $\mathrm{rank}(A) = 1$. SVD gives one nonzero singular value $\sigma_1$. The minimum-norm least-squares solution is $x^\star = A^+ b$, which yields $x_1^\star = x_2^\star$ by symmetry (under-determined along the nullspace direction).</p>
+        <h3>Example 3: Rank-Deficient Case</h3>
+        <p>Consider the system with:
+        $$ A = \begin{pmatrix} 1 & 1 \\ 2 & 2 \end{pmatrix}, \quad b = \begin{pmatrix} 1 \\ 1 \end{pmatrix} $$
+        The columns of $A$ are linearly dependent, so the system is rank-deficient. The normal equations are $A^\top A x = \begin{pmatrix} 5 & 5 \\ 5 & 5 \end{pmatrix} x = \begin{pmatrix} 3 \\ 3 \end{pmatrix}$, which has no solution. This highlights the instability of the normal equations in the rank-deficient case. The pseudoinverse, however, would provide the minimum-norm solution.
+        </p>
       </div>
     </section>
 
@@ -509,49 +506,43 @@
     <section class="card" id="section-10" style="margin-bottom: 32px;">
       <h2>10. Implementation Mini-Guide (What to Actually Do in Code)</h2>
 
-      <ul style="line-height: 2;">
-        <li><b>Prefer QR</b> for routine LS: stable and fast.</li>
-        <li><b>Use SVD</b> for rank-deficient or ill-conditioned systems; also when you need minimum-norm solutions or truncated solutions (noise suppression).</li>
-        <li><b>Avoid forming $A^\top A$</b> explicitly unless dimensions are tiny and the matrix is well-conditioned.</li>
-        <li><b>Preprocess features</b> (centering/scaling) to keep condition numbers reasonable.</li>
-        <li><b>Verify results</b> with the residual orthogonality check: $A^\top(b - Ax^\star) \approx 0$.</li>
+      <ul>
+        <li>For standard, well-conditioned problems, <b>QR decomposition</b> is the recommended method. It is numerically stable and computationally efficient.</li>
+        <li>For problems that are ill-conditioned or rank-deficient, the <b>SVD method</b> is the most robust choice. It is also necessary when the minimum-norm solution is required.</li>
+        <li>Avoid explicitly forming the product $A^\^\top A$ and solving the normal equations, as this squares the condition number and can lead to a loss of numerical precision.</li>
+        <li>Before solving, it is often a good practice to <b>preprocess data</b> by centering and scaling features. This can significantly improve the condition number.</li>
+        <li>Always <b>verify the solution</b> by checking that the residual is orthogonal to the column space: $A^\^\top(b - Ax^\*) \approx 0$.</li>
       </ul>
-
-      <div style="margin: 24px 0; padding: 16px; background: #fff3e0; border-left: 4px solid #f57c00; border-radius: 4px;">
-        <h4>⚠️ Common Numerical Pitfalls</h4>
-        <ul>
-          <li>Never manually invert $A^\top A$—use backslash/solve operators</li>
-          <li>Check condition number before trusting normal equations</li>
-          <li>For $\kappa_2(A) > 10^8$, switch to SVD</li>
-          <li>Always verify orthogonality of residuals post-solution</li>
-        </ul>
-      </div>
     </section>
 
     <!-- SECTION 11: EXERCISES -->
     <section class="card" id="section-11" style="margin-bottom: 32px;">
-      <h2>11. Exercises (with Detailed Solutions)</h2>
+      <h2>11. Exercises</h2>
 
       <h3>A. Fundamentals</h3>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>A1. Prove that the set of all linear combinations of a fixed set of vectors is a subspace.</h4>
-        <p><b>Solution:</b> Closure under addition and scalar multiplication follow from distributivity; the zero vector is obtained by all-zero coefficients.</p>
+        <h4>A1. Prove that the nullspace of a matrix $A$, $\mathcal{N}(A)$, is a subspace.</h4>
+        <p><b>Solution:</b>
+        <br>1. <b>Closure under addition:</b> Let $x, y \in \mathcal{N}(A)$. Then $A(x+y) = Ax + Ay = 0 + 0 = 0$. So $x+y \in \mathcal{N}(A)$.
+        <br>2. <b>Closure under scalar multiplication:</b> Let $x \in \mathcal{N}(A)$ and $\alpha$ be a scalar. Then $A(\alpha x) = \alpha(Ax) = \alpha 0 = 0$. So $\alpha x \in \mathcal{N}(A)$.
+        <br>Since the nullspace is closed under addition and scalar multiplication, it is a subspace.
+        </p>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>A2. Show that $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$.</h4>
-        <p><b>Solution:</b> If $y \in \mathcal{N}(A^\top)$, then for any $x$, $y^\top(Ax) = (A^\top y)^\top x = 0$.</p>
+        <h4>A2. Show that for an orthogonal matrix $Q$, $\|Qx\|_2 = \|x\|_2$.</h4>
+        <p><b>Solution:</b> The squared norm is $\|Qx\|_2^2 = (Qx)^\^\top(Qx) = x^\^\top Q^\^\top Q x$. Since $Q$ is orthogonal, $Q^\^\top Q = I$. Therefore, $\|Qx\|_2^2 = x^\^\top I x = x^\^\top x = \|x\|_2^2$. Taking the square root gives the result.</p>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>A3. Show that $Q^\top Q = I$ ⇒ $\|Qx\|_2 = \|x\|_2$.</h4>
-        <p><b>Solution:</b> $\|Qx\|_2^2 = (Qx)^\top(Qx) = x^\top Q^\top Q x = x^\top x$.</p>
-      </div>
-
-      <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>A4. (Gram–Schmidt) Apply Gram–Schmidt to $a_1 = (1, 1, 0)^\top$, $a_2 = (1, 0, 1)^\top$, $a_3 = (0, 1, 1)^\top$; produce an orthonormal basis.</h4>
-        <p><b>Solution:</b> Compute $\tilde{q}_1 = a_1$, normalize; subtract projections from $a_2$ and $a_3$; normalize again. (Carry out all arithmetic; verify orthonormality.)</p>
+        <h4>A3. Apply the Gram-Schmidt process to find an orthonormal basis for the space spanned by $a_1 = (1, 1, 0)^\^\top$ and $a_2 = (1, 0, 1)^\^\top$.</h4>
+        <p><b>Solution:</b>
+        <br>1. <b>First vector:</b> $q_1 = a_1 / \|a_1\|_2 = (1/\sqrt{2}, 1/\sqrt{2}, 0)^\^\top$.
+        <br>2. <b>Second vector:</b> $\tilde{q}_2 = a_2 - (q_1^\^\top a_2)q_1 = (1, 0, 1)^\^\top - (1/\sqrt{2})q_1 = (1/2, -1/2, 1)^\^\top$.
+        <br>3. <b>Normalize:</b> $q_2 = \tilde{q}_2 / \|\tilde{q}_2\|_2 = (1/\sqrt{6}, -1/\sqrt{6}, 2/\sqrt{6})^\^\top$.
+        <br>The orthonormal basis is $\{q_1, q_2\}$.
+        </p>
       </div>
 
       <h3>B. Projections</h3>
@@ -589,61 +580,40 @@
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>C4. Weighted least squares with diagonal $W = \mathrm{diag}(w_i)$. Show equivalence to scaling the rows of $A$ and $b$ by $\sqrt{w_i}$.</h4>
-        <p><b>Solution:</b> Write $W = C^\top C$ with $C = \mathrm{diag}(\sqrt{w_i})$; minimize $\|CAx - Cb\|_2^2$.</p>
-      </div>
-
-      <h3>D. Pseudoinverse & Rank Deficiency</h3>
-
-      <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>D1. Prove that every least-squares solution $x^\star$ satisfies $x^\star = A^+b + (I - A^+A)z$ for some $z$.</h4>
-        <p><b>Solution:</b> From SVD, the set of minimizers is $A^+b + \mathcal{N}(A)$; note $(I - A^+A)$ projects onto $\mathcal{N}(A)$.</p>
-      </div>
-
-      <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-        <h4>D2. Show $P = AA^+$ is the projector onto $\mathcal{R}(A)$ and $P^\perp = I - AA^+$ projects onto $\mathcal{N}(A^\top)$.</h4>
-        <p><b>Solution:</b> Use SVD or basic projector algebra: $P^2 = P$, $P^\top = P$, range/nullspace relations.</p>
+        <h4>C4. Show that weighted least squares with a diagonal weight matrix $W = \mathrm{diag}(w_i)$ is equivalent to scaling the rows of the system by $\sqrt{w_i}$.</h4>
+        <p><b>Solution:</b> The objective is $(Ax-b)^\top W (Ax-b)$. Let $C = \mathrm{diag}(\sqrt{w_i})$. Then $W=C^\top C$, and the objective becomes $\|C(Ax-b)\|_2^2 = \|(CA)x - (Cb)\|_2^2$. This is a standard least squares problem on a modified system where the rows have been scaled.</p>
       </div>
     </section>
 
     <!-- SECTION 12: SANITY CHECKLIST -->
     <section class="card" id="section-12" style="margin-bottom: 32px;">
-      <h2>12. Sanity Checklist (What to Remember in Practice)</h2>
+      <h2>12. Practical Checklist</h2>
 
-      <ul style="line-height: 2;">
-        <li>Always check <b>dimensions</b> before anything else.</li>
-        <li>For LS: confirm <b>full column rank</b> if you expect uniqueness.</li>
-        <li>Prefer <b>QR</b> (or <b>SVD</b>) over normal equations; never manually invert $A^\top A$.</li>
-        <li>Verify solution with the <b>residual orthogonality</b> test.</li>
-        <li>If results look unstable, inspect singular values and <b>condition number</b>; consider feature scaling or SVD-based solutions.</li>
-        <li>Keep a mental model: solution is the <b>projection</b> of $b$ onto the column space, expressed in the coordinates of $A$'s columns.</li>
+      <ul>
+        <li>Always check the <b>dimensions</b> of your matrices and vectors.</li>
+        <li>For least squares, check if your matrix has <b>full column rank</b> to determine if the solution is unique.</li>
+        <li>Prefer <b>QR</b> or <b>SVD</b> over the normal equations for better numerical stability.</li>
+        <li>If your results are unstable, check the <b>condition number</b> of your matrix and consider preprocessing your data.</li>
+        <li>Remember the geometric interpretation: the least squares solution is a <b>projection</b>.</li>
       </ul>
 
       <div style="margin: 24px 0; padding: 16px; background: #ffebee; border-left: 4px solid #c62828; border-radius: 4px;">
-        <h4>🚫 What We DON'T Do Here (Saved for Later)</h4>
-        <ul>
-          <li>No convex sets, no epigraphs, no cones, no separation/support theorems.</li>
-          <li>No general constrained optimization, Lagrangians, duality, or KKT.</li>
-          <li>No conic forms or interior-point methods.</li>
-        </ul>
+        <h4>Scope of this Lecture</h4>
+        <p>This lecture is focused exclusively on linear algebra. We have not covered concepts from optimization, such as convex sets, duality, or constrained optimization algorithms. These topics will be covered in subsequent lectures.</p>
       </div>
     </section>
 
     <!-- SECTION 13: QUICK REFERENCE -->
     <section class="card" id="section-13" style="margin-bottom: 32px;">
-      <h2>13. Quick Reference Formulas</h2>
+      <h2>13. Key Formulas</h2>
 
       <div style="margin: 24px 0; padding: 16px; background: #f5f5f5; border: 2px solid var(--brand); border-radius: 8px;">
-        <ul style="line-height: 2;">
-          <li><b>Projection onto $\mathrm{span}(Q)$</b> with $Q^\top Q = I$: $P = QQ^\top$</li>
-          <li><b>Projection onto $\mathcal{R}(A)$</b> (full column rank): $P = A(A^\top A)^{-1}A^\top$</li>
-          <li><b>Normal equations:</b> $A^\top A x^\star = A^\top b$</li>
-          <li><b>QR LS solve:</b> $A = QR \Rightarrow Rx^\star = Q^\top b$</li>
-          <li><b>SVD pseudoinverse:</b> $A^+ = V\Sigma^+ U^\top$; min-norm solution $x^\star = A^+b$</li>
-          <li><b>Condition number:</b> $\kappa_2(A) = \sigma_{\max} / \sigma_{\min}$</li>
-          <li><b>Weighted LS via whitening:</b> $W = C^\top C \Rightarrow \min \|CAx - Cb\|_2^2$</li>
-          <li><b>Dual norms:</b> $(\|\cdot\|_1)_* = \|\cdot\|_\infty$, $(\|\cdot\|_2)_* = \|\cdot\|_2$</li>
-          <li><b>Hölder's inequality:</b> $x^\top y \le \|x\| \cdot \|y\|_*$</li>
+        <ul>
+          <li><b>Normal Equations:</b> $A^\top A x^\star = A^\top b$</li>
+          <li><b>Projection onto $\mathcal{R}(A)$:</b> $P = A(A^\top A)^{-1}A^\top$</li>
+          <li><b>QR Solution:</b> $Rx^\star = Q^\top b$</li>
+          <li><b>Pseudoinverse:</b> $A^+ = V\Sigma^+ U^\top$</li>
+          <li><b>Condition Number:</b> $\kappa(A) = \sigma_{\max} / \sigma_{\min}$</li>
         </ul>
       </div>
     </section>

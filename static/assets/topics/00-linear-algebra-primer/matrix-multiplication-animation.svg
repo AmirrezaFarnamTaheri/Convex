@@ -1,0 +1,71 @@
+<svg width="500" height="200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="14">
+  <defs>
+    <style>
+      .matrix-val { text-anchor: middle; dominant-baseline: middle; }
+      .highlight { fill: #d6336c; }
+      .result { fill: #228be6; }
+      @keyframes highlight-row {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(5px); }
+      }
+      @keyframes highlight-col {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(5px); }
+      }
+      .row-1 { animation: highlight-row 3s ease-in-out infinite; }
+      .col-1 { animation: highlight-col 3s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- Matrix A -->
+  <g id="matrix-a">
+    <rect x="10" y="50" width="80" height="50" fill="none" stroke="#333" />
+    <text x="30" y="65" class="matrix-val row-1 highlight">1</text>
+    <text x="70" y="65" class="matrix-val row-1 highlight">2</text>
+    <text x="30" y="90" class="matrix-val">3</text>
+    <text x="70" y="90" class="matrix-val">4</text>
+  </g>
+
+  <!-- Matrix B -->
+  <g id="matrix-b">
+    <rect x="120" y="50" width="80" height="50" fill="none" stroke="#333" />
+    <text x="140" y="65" class="matrix-val col-1 highlight">5</text>
+    <text x="180" y="65" class="matrix-val">6</text>
+    <text x="140" y="90" class="matrix-val col-1 highlight">7</text>
+    <text x="180" y="90" class="matrix-val">8</text>
+  </g>
+
+  <!-- Result Matrix C -->
+  <g id="matrix-c">
+    <rect x="230" y="50" width="80" height="50" fill="none" stroke="#333" />
+    <text x="250" y="65" class="matrix-val result" id="c11">?</text>
+    <text x="290" y="65" class="matrix-val" id="c12">?</text>
+    <text x="250" y="90" class="matrix-val" id="c21">?</text>
+    <text x="290" y="90" class="matrix-val" id="c22">?</text>
+  </g>
+
+  <!-- Calculation Text -->
+  <text x="10" y="150" id="calc-text" font-size="16"></text>
+
+  <script>
+    const c11 = document.getElementById('c11');
+    const calcText = document.getElementById('calc-text');
+    const steps = [
+      { text: '(1 * 5) + (2 * 7) = 19', val: 19 },
+      { text: 'Next: (1 * 6) + (2 * 8) = 22', val: 22 },
+      { text: 'Next: (3 * 5) + (4 * 7) = 43', val: 43 },
+      { text: 'Finally: (3 * 6) + (4 * 8) = 50', val: 50 },
+    ];
+    let step = 0;
+    function updateCalculation() {
+      calcText.textContent = steps[step % 4].text;
+      if (step % 4 === 0) c11.textContent = steps[0].val;
+      if (step % 4 === 1) document.getElementById('c12').textContent = steps[1].val;
+      if (step % 4 === 2) document.getElementById('c21').textContent = steps[2].val;
+      if (step % 4 === 3) document.getElementById('c22').textContent = steps[3].val;
+      step++;
+    }
+    setInterval(updateCalculation, 3000);
+    updateCalculation();
+  </script>
+</svg>

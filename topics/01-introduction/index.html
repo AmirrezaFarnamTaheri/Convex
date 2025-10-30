@@ -131,29 +131,18 @@
       </div>
 
       <h3 style="margin-top: 32px;">The Crown Jewel: Every Local Minimum is Global</h3>
-      <p>This is the single most important property in all of convex optimization. In nonconvex problems, algorithms get "stuck" in local minima. Convexity eliminates this problem <i>entirely</i>.</p>
+        <p>This is the single most important property of convex optimization problems. In nonconvex optimization, algorithms can get "stuck" in local minima that are not globally optimal. Convexity eliminates this fundamental difficulty.</p>
 
       <div class="proof" style="margin: 24px 0; padding: 16px; background: #f8f9fa; border-left: 4px solid var(--brand); border-radius: 4px;">
-        <h4>Proof: Any Local Minimum is a Global Minimum</h4>
-        <p><b>Setup:</b></p>
-        <ul>
-          <li>Let $\mathcal{F}$ be the feasible set (all $x$ satisfying constraints). Because inequality constraints are convex functions and equalities are affine, $\mathcal{F}$ is a convex set (we'll prove this rigorously in <a href="../02-convex-sets/index.html">Lecture 02</a>).</li>
-          <li>Let $x^* \in \mathcal{F}$ be a <b>local minimum</b>: there exists $\epsilon > 0$ such that for all feasible $z$ with $\|z - x^*\|_2 < \epsilon$, we have $f_0(z) \ge f_0(x^*)$.</li>
-          <li><b>Goal:</b> Show $x^*$ is also a <b>global minimum</b>, i.e., $f_0(x) \ge f_0(x^*)$ for <i>all</i> $x \in \mathcal{F}$.</li>
-        </ul>
-
-        <p><b>Proof by Contradiction:</b></p>
-        <ol>
-          <li><b>Assume</b> $x^*$ is local but not global. Then there exists $y \in \mathcal{F}$ with $f_0(y) < f_0(x^*)$.</li>
-          <li><b>Construct a point on the path:</b> For $\theta \in (0, 1)$, define $z(\theta) = \theta y + (1-\theta) x^*$. Since $\mathcal{F}$ is convex, $z(\theta) \in \mathcal{F}$.</li>
-          <li><b>Make it arbitrarily close to $x^*$:</b> $\|z(\theta) - x^*\|_2 = \theta \|y - x^*\|_2$. Choose $\theta$ small enough so that $z(\theta)$ is in the local neighborhood of $x^*$.</li>
-          <li><b>Apply Jensen's inequality:</b> Since $f_0$ is convex:
-          $$ f_0(z(\theta)) \le \theta f_0(y) + (1-\theta) f_0(x^*) < \theta f_0(x^*) + (1-\theta) f_0(x^*) = f_0(x^*) $$
-          (using $f_0(y) < f_0(x^*)$ from our assumption).</li>
-          <li><b>Contradiction:</b> We found $z(\theta) \in \mathcal{F}$ inside the local neighborhood with $f_0(z(\theta)) < f_0(x^*)$, contradicting the definition of local minimum.</li>
-        </ol>
-
-        <p><b>Conclusion:</b> Our assumption was false. Therefore, every local minimum is global. <b>Q.E.D.</b></p>
+        <h4>Proof that any local minimum is a global minimum</h4>
+        <p>The proof is by contradiction. Assume that $x^*$ is a local minimum but not a global one. This means there is a feasible point $y$ such that $f_0(y) < f_0(x^*)$.
+        <br>Since the feasible set is convex, the line segment between $x^*$ and $y$, given by $z(\theta) = \theta y + (1-\theta)x^*$ for $\theta \in [0,1]$, is entirely within the feasible set.
+        <br>By the convexity of the objective function, we have:
+        $$ f_0(z(\theta)) \le \theta f_0(y) + (1-\theta)f_0(x^*) $$
+        Since $f_0(y) < f_0(x^*)$, we can write:
+        $$ f_0(z(\theta)) < \theta f_0(x^*) + (1-\theta)f_0(x^*) = f_0(x^*) $$
+        For small enough $\theta > 0$, the point $z(\theta)$ is arbitrarily close to $x^*$. However, we have shown that the function value at this nearby point is strictly less than at $x^*$, which contradicts the assumption that $x^*$ is a a local minimum. Thus, our initial assumption must be false.
+        </p>
       </div>
 
       <div style="margin: 24px 0; text-align: center;">
