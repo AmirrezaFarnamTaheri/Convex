@@ -20,7 +20,6 @@
       </div>
       <nav class="nav">
         <a href="../../index.html#sessions">All Lectures</a>
-        <a href="#widgets">Interactive</a>
         <a href="#readings">Readings</a>
       </nav>
     </div>
@@ -28,168 +27,202 @@
 
   <main class="container" style="padding: 32px 0 60px;">
     <article class="card" style="margin-bottom: 32px;">
-      <h1 style="margin-top: 0;">02. Convex Sets</h1>
+      <h1 style="margin-top: 0;">02. The Geometry of Feasibility: Convex Sets</h1>
       <div class="meta">
-        Date: 2025-10-28 · Duration: 90 min · Tags: sets, geometry, foundational
+        Date: 2025-10-28 · Duration: 90 min · Tags: sets, geometry, foundational, theory
       </div>
       <section style="margin-top: 16px;">
-        <p><strong>Overview:</strong> This lecture builds the geometric foundation for convex optimization. We will define affine and convex sets, convex combinations, and convex hulls. We will explore canonical examples of convex sets, such as hyperplanes, balls, ellipsoids, and cones, and discuss operations that preserve convexity. Finally, we will cover key theoretical concepts like separating and supporting hyperplanes.</p>
-        <p><strong>Prerequisites:</strong> 01-introduction</p>
+        <p><strong>Overview:</strong> This lecture builds the geometric foundation upon which all of convex optimization rests. We move from the abstract notion of a "convex problem" to the tangible concept of a "convex set." We will rigorously define affine and convex sets, and the related concepts of convex combinations and convex hulls. A significant portion of this lecture is a "grand tour" of the canonical examples of convex sets that appear in nearly every application: hyperplanes, balls, ellipsoids, polyhedra, and the cones used in advanced modeling (norm cones and the positive semidefinite cone). We will then establish a powerful toolkit of operations that preserve convexity, allowing us to build complex convex sets from simple ones. Finally, we will delve into the deep theory of separating and supporting hyperplanes, which provide the geometric basis for duality theory, optimality conditions, and many algorithms.</p>
+        <p><strong>Prerequisites:</strong> <a href="../01-introduction/index.html">01-introduction</a></p>
       </section>
     </article>
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>Learning Objectives</h2>
-      <p>After this lecture, you should be able to:</p>
+      <p>After this lecture, you will be able to:</p>
       <ul style="line-height: 1.8;">
-        <li>Define and differentiate between affine, convex, and conic combinations.</li>
-        <li>Identify common convex sets like polyhedra, norm balls, and the PSD cone.</li>
-        <li>Apply operations that preserve convexity to prove that more complex sets are convex.</li>
-        <li>Understand the geometric intuition behind the separating and supporting hyperplane theorems.</li>
-        <li>Define dual cones and their basic properties.</li>
+        <li><b>Define and Differentiate Combinations:</b> Define and provide geometric interpretations for affine, convex, and conic combinations.</li>
+        <li><b>Identify Canonical Convex Sets:</b> Recognize and mathematically describe key convex sets, including polyhedra, norm balls, ellipsoids, and the positive semidefinite cone.</li>
+        <li><b>Apply Operations that Preserve Convexity:</b> Prove that a complex set is convex by constructing it from simpler convex sets using operations like intersection and affine mappings.</li>
+        <li><b>Understand Separation Theorems:</b> Explain the geometric intuition and theoretical significance of the separating and supporting hyperplane theorems.</li>
+        <li><b>Define and Use Dual Cones:</b> Define the dual of a cone and prove basic properties, such as the self-duality of the non-negative orthant.</li>
       </ul>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
-        <h2>1. Affine and Convex Sets</h2>
-        <p>A set $C$ is <b>affine</b> if the line through any two distinct points in $C$ lies in $C$. Formally, for any $x_1, x_2 \in C$ and $\theta \in \mathbb{R}$, we have $\theta x_1 + (1-\theta) x_2 \in C$.</p>
-        <p>A set $C$ is <b>convex</b> if the line segment between any two points in $C$ lies in $C$. Formally, for any $x_1, x_2 \in C$ and $0 \le \theta \le 1$, we have $\theta x_1 + (1-\theta) x_2 \in C$. The <b>convex hull</b> of a set $S$, denoted $\mathrm{conv}(S)$, is the set of all convex combinations of points in $S$.</p>
-    </section>
-
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>2. Cones</h2>
-      <p>A set $K$ is a <b>cone</b> if for every $x \in K$ and $\theta \ge 0$, we have $\theta x \in K$. A <b>convex cone</b> is a cone that is also a convex set. A cone $K$ is <b>proper</b> if it is convex, closed, solid, and pointed.</p>
-    </section>
-
-    <section class="card" style="margin-bottom: 32px;">
-        <h2>3. Canonical Convex Sets</h2>
+        <h2>1. The Building Blocks: Affine and Convex Sets</h2>
+        <p>The geometry of our feasible sets begins with two fundamental types of combinations.</p>
         <ul>
-            <li><b>Hyperplanes and Halfspaces:</b> The sets $\{x \mid a^\top x = b\}$ and $\{x \mid a^\top x \le b\}$.</li>
-            <li><b>Euclidean Ball:</b> $B(c,r) = \{x \mid \|x-c\|_2 \le r\}$.</li>
-            <li><b>Ellipsoid:</b> $\mathcal{E} = \{x \mid (x-x_c)^\top P^{-1} (x-x_c) \le 1\}$ for $P \succ 0$.</li>
-            <li><b>Polyhedron:</b> The solution set of a finite number of linear equalities and inequalities, $\mathcal{P} = \{x \mid Ax \preceq b, Cx=d\}$.</li>
-            <li><b>Norm Cone:</b> Given a norm $\|\cdot\|$, the set $\{(x,t) \mid \|x\| \le t\}$. The second-order cone is a special case with the Euclidean norm.</li>
-            <li><b>Positive Semidefinite Cone ($\mathbb{S}^n_+$):</b> The set of symmetric positive semidefinite matrices.</li>
+            <li>An <b>affine combination</b> of points $x_1, \dots, x_k$ is a sum $\sum_{i=1}^k \theta_i x_i$ where the coefficients sum to one, $\sum \theta_i = 1$. These combinations define lines and planes.</li>
+            <li>A <b>convex combination</b> is an affine combination where the coefficients are also non-negative, $\theta_i \ge 0$. These combinations define line segments and filled-in shapes.</li>
         </ul>
+
+        <h4>Affine Sets</h4>
+        <p>A set $C$ is <b>affine</b> if it contains the entire line through any two distinct points in it. Formally, for any $x_1, x_2 \in C$ and any $\theta \in \mathbb{R}$, we have $\theta x_1 + (1-\theta) x_2 \in C$.
+        <br><b>Structure Theorem:</b> A nonempty set $C$ is affine if and only if it is a translated subspace, i.e., $C = S + x_0$ for some subspace $S$ and vector $x_0$. For example, the solution set of linear equations $Ax=b$ is an affine set.
+        </p>
+
+        <h4>Convex Sets</h4>
+        <p>A set $C$ is <b>convex</b> if the line segment between any two points in $C$ lies entirely in $C$. Formally, for any $x_1, x_2 \in C$ and $0 \le \theta \le 1$, we have $\theta x_1 + (1-\theta) x_2 \in C$. This is the geometric property that forbids "holes" or "inward dents" in the set. The <b>convex hull</b> of a set $S$, denoted $\mathrm{conv}(S)$, is the set of all possible convex combinations of points from $S$. It's the smallest convex set that contains $S$.</p>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive Demo: Convex Set Checker</h3>
+        <p>What does convexity look like in practice? Use this widget to draw your own 2D shapes. The tool will then test for convexity by randomly sampling pairs of points and checking if the line segment between them remains inside your shape. This provides a tangible way to build intuition for the definition.</p>
+        <div id="widget-convex-set-checker" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
-        <h2>4. Operations Preserving Convexity</h2>
-        <p>Proving convexity from the definition can be tedious. It's often easier to show that a complex set is convex by constructing it from simpler convex sets using operations that are known to preserve convexity.</p>
+      <h2>2. Canonical Convex Sets: A Visual Dictionary</h2>
+      <p>The following sets are the fundamental building blocks you will encounter in almost every optimization model. Recognizing them is a critical skill.</p>
+
+        <h4>Hyperplanes and Halfspaces</h4>
+        <p>A <b>hyperplane</b> is the set $\{x \mid a^\top x = b\}$ for $a \neq 0$. It's an affine, and therefore convex, set. A <b>halfspace</b> is the set $\{x \mid a^\top x \le b\}$, which is convex. Hyperplanes divide the space in two; halfspaces are everything on one side.</p>
+
+        <h4>Ellipsoids</h4>
+        <p>An <b>ellipsoid</b> is a set of the form $\mathcal{E} = \{x \mid (x-x_c)^\top P^{-1} (x-x_c) \le 1\}$ where $P$ is a symmetric positive definite matrix ($P \succ 0$). It can be seen as the result of stretching and rotating a Euclidean ball. Ellipsoids are convex, a fact we will prove shortly using our toolkit of convexity-preserving operations.</p>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Widget: Ellipsoid Explorer</h3>
+        <p>Manipulate the center $x_c$ and the matrix $P$ to see how an ellipsoid is defined. Observe how the eigenvalues and eigenvectors of $P$ correspond to the lengths and directions of the ellipsoid's principal axes. This provides a direct link between the algebraic definition and the geometric shape.</p>
+        <div id="widget-ellipsoid-explorer" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+        <h4>Polyhedra</h4>
+        <p>A <b>polyhedron</b> is the solution set of a finite number of linear equalities and inequalities, $\mathcal{P} = \{x \mid Ax \preceq b, Cx=d\}$. Since it's the intersection of halfspaces and hyperplanes (which are convex), a polyhedron is always convex. Bounded polyhedra are called polytopes. This class includes common shapes like boxes, simplices, and any feasible set of a Linear Program.</p>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Widget: Polyhedron Visualizer</h3>
+        <p>This tool allows you to build a 2D polyhedron by adding or modifying linear inequalities of the form $a_i^\top x \le b_i$. See in real-time how each new constraint "cuts away" a part of the space to form the final feasible region. This is the geometry of Linear Programming.</p>
+        <div id="widget-polyhedron-visualizer" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+        <h4>Cones</h4>
+        <p>A set $K$ is a <b>cone</b> if for every $x \in K$ and $\theta \ge 0$, we have $\theta x \in K$. A <b>convex cone</b> is a cone that is also a convex set. Important examples include:
+        <ul>
+            <li><b>The Norm Cone:</b> Given a norm $\|\cdot\|$, the set $\{(x,t) \mid \|x\| \le t\}$ is a convex cone. The most important instance is the <b>second-order cone</b> (or Lorentz cone), where the norm is the Euclidean norm.</li>
+            <li><b>The Positive Semidefinite (PSD) Cone ($\mathbb{S}^n_+$):</b> The set of all symmetric $n \times n$ matrices that are positive semidefinite. This is a crucial cone for advanced modeling, especially in control theory and combinatorial optimization via SDPs.</li>
+        </ul>
+        </p>
+    </section>
+
+    <section class="card" style="margin-bottom: 32px;">
+        <h2>3. The Algebra of Convexity: Operations that Preserve Convexity</h2>
+        <p>Proving that a set is convex from the first-principles definition can be tedious. A far more powerful and common approach is to construct a complex set from simpler sets that are known to be convex, using operations that are guaranteed to preserve convexity.</p>
 
         <h4>Intersection</h4>
-        <p>The intersection of any number of convex sets is convex.
-        <br><b>Proof:</b> Let $C_i$ be a collection of convex sets for $i$ in some index set $I$. Let $C = \cap_{i \in I} C_i$. Consider any two points $x, y \in C$. By definition of intersection, $x \in C_i$ and $y \in C_i$ for all $i \in I$. Since each $C_i$ is convex, the line segment $\theta x + (1-\theta)y$ for $\theta \in [0,1]$ is in $C_i$ for all $i$. Therefore, the line segment is in their intersection $C$. Thus, $C$ is convex.</p>
+        <p>The intersection of any collection of convex sets (finite or infinite) is convex.
+        <br><b>Proof:</b> Let $C = \cap_{i \in I} C_i$, where each $C_i$ is convex. Consider any two points $x, y \in C$. By the definition of intersection, $x$ and $y$ belong to every set $C_i$. Since each $C_i$ is convex, the line segment $\theta x + (1-\theta)y$ (for $\theta \in [0,1]$) must be in every $C_i$. Therefore, the segment lies in their intersection, $C$. Thus, $C$ is convex.</p>
 
         <h4>Affine Functions</h4>
-        <p>Applying an affine function to a convex set preserves convexity. Let $f(x) = Ax+b$ be an affine function.</p>
+        <p>Applying an affine function $f(x) = Ax+b$ to a convex set preserves convexity.
         <ul>
-            <li><b>Image:</b> If $C$ is a convex set, then the image $f(C) = \{f(x) \mid x \in C\}$ is convex.
-            <br><b>Proof:</b> Take two points $y_1, y_2 \in f(C)$. Then there exist $x_1, x_2 \in C$ such that $y_1=f(x_1)$ and $y_2=f(x_2)$. For $\theta \in [0,1]$, consider the point $\theta y_1 + (1-\theta)y_2$. We have:
-            $$ \theta y_1 + (1-\theta)y_2 = \theta(Ax_1+b) + (1-\theta)(Ax_2+b) = A(\theta x_1 + (1-\theta)x_2) + b $$
-            Since $C$ is convex, $\theta x_1 + (1-\theta)x_2 \in C$. Therefore, the point is of the form $f(\text{point in } C)$, so it is in $f(C)$.</li>
-            <li><b>Preimage:</b> If $D$ is a convex set, then the preimage $f^{-1}(D) = \{x \mid f(x) \in D\}$ is convex.
-            <br><b>Proof:</b> Take two points $x_1, x_2 \in f^{-1}(D)$. Then $f(x_1) \in D$ and $f(x_2) \in D$. Since $D$ is convex, for $\theta \in [0,1]$, the point $\theta f(x_1) + (1-\theta)f(x_2)$ is in $D$. We have:
-            $$ \theta f(x_1) + (1-\theta)f(x_2) = \theta(Ax_1+b) + (1-\theta)(Ax_2+b) = f(\theta x_1 + (1-\theta)x_2) $$
-            This shows that $f$ applied to the line segment is in $D$, so the line segment itself is in the preimage.</li>
+            <li><b>Image:</b> If $C$ is a convex set, then its image $f(C) = \{Ax+b \mid x \in C\}$ is convex.</li>
+            <li><b>Preimage:</b> If $D$ is a convex set, then its preimage $f^{-1}(D) = \{x \mid Ax+b \in D\}$ is convex.</li>
         </ul>
-        <p><b>Example:</b> An ellipsoid is the preimage of a Euclidean ball under an affine mapping, which proves it is convex.</p>
+        <b>Example Proof (Preimage):</b> Take two points $x_1, x_2$ in the preimage. This means $f(x_1) \in D$ and $f(x_2) \in D$. Since $D$ is convex, the segment $\theta f(x_1) + (1-\theta)f(x_2)$ is in $D$. Because $f$ is affine, this segment can be rewritten as $f(\theta x_1 + (1-\theta)x_2)$. Since this point's image is in $D$, the point itself, $\theta x_1 + (1-\theta)x_2$, must be in the preimage.
+        <br><b>Application:</b> We can now easily prove that an <b>ellipsoid</b> is convex. An ellipsoid is the set $\mathcal{E} = \{x \mid (x-x_c)^\top P^{-1} (x-x_c) \le 1\}$. This can be rewritten as $\mathcal{E} = \{x \mid \|P^{-1/2}(x-x_c)\|_2 \le 1\}$. This is precisely the preimage of the unit Euclidean ball (which is convex) under the affine mapping $f(x) = P^{-1/2}(x-x_c)$. Since the preimage of a convex set under an affine map is convex, the ellipsoid is convex.
+        </p>
 
-        <h4>Perspective and Linear-Fractional Functions</h4>
-        <p>Perspective functions and linear-fractional functions also preserve convexity. These are particularly important in projective geometry and have applications in areas like computer vision.</p>
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Widget: Convexity-Preserving Operations Builder</h3>
+        <p>This tool lets you see these abstract rules in action. Start with simple, pre-defined convex sets like a square and a disk. Apply operations like intersection, affine transformation (scaling, rotation, translation), and Minkowski sum to see how they combine to form new, more complex convex sets.</p>
+        <div id="widget-operations-builder" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
-        <h2>5. Separating and Supporting Hyperplanes</h2>
-        <p>The <b>Separating Hyperplane Theorem</b> is a foundational result in convex geometry. It states that if $C$ and $D$ are two disjoint nonempty convex sets, there exists a hyperplane that separates them. That is, there exists a vector $a \neq 0$ and a scalar $b$ such that $a^\top x \le b$ for all $x \in C$ and $a^\top y \ge b$ for all $y \in D$.</p>
+        <h2>4. The Deep Geometry: Separating and Supporting Hyperplanes</h2>
+        <p>These theorems are among the most profound results in convex geometry. They provide the geometric foundation for optimality conditions, duality theory, and many algorithms. Their essence is that convex sets, unlike many non-convex ones, can always be "separated" or "supported" by a simple hyperplane.</p>
 
-        <h5>Proof Sketch for Separating Hyperplane Theorem</h5>
-        <p>While a full rigorous proof is beyond the scope of this primer, the intuition is as follows:</p>
-        <ol>
-            <li>Consider the set $S = C - D = \{c-d \mid c \in C, d \in D\}$. This set is convex and does not contain the origin (since $C$ and $D$ are disjoint).</li>
-            <li>Find the point $p$ in the closure of $S$ that is closest to the origin. This point exists and is unique.</li>
-            <li>The hyperplane with normal vector $p$ passing through the point $p/2$ will separate the sets $C$ and $D$.</li>
-        </ol>
+        <h4>The Separating Hyperplane Theorem</h4>
+        <p>The theorem states that if $C$ and $D$ are two disjoint nonempty convex sets, there exists a hyperplane that separates them. That is, there exists a vector $a \neq 0$ and a scalar $b$ such that $a^\top x \le b$ for all $x \in C$ and $a^\top y \ge b$ for all $y \in D$. If the sets are closed and at least one is bounded, they can be strictly separated ($<$ and $>$).</p>
+        <div class="proof">
+            <h4>Proof Sketch for the Separating Hyperplane Theorem</h4>
+            <ol>
+                <li><strong>Construct a new set:</strong> Consider the set $S = C - D = \{c-d \mid c \in C, d \in D\}$. This set is convex (it's the Minkowski sum of $C$ and $-D$). Since $C$ and $D$ are disjoint, the origin is not in $S$.</li>
+                <li><strong>Find the closest point to the origin:</strong> Let $p$ be the point in the closure of $S$ that is closest to the origin. Since $S$ is a closed convex set not containing the origin, such a unique point $p$ exists and is non-zero. This point is the projection of the origin onto $S$.</li>
+                <li><strong>Construct the hyperplane:</strong> The key insight is that the hyperplane with normal vector $p$ passing through the point $p/2$ will separate the origin from the set $S$. A bit more work shows this same hyperplane (or a shifted version) separates $C$ and $D$. The separating hyperplane is given by $a=p$ and $b=p^\top(p/2)$.</li>
+            </ol>
+        </div>
 
-        <p>The <b>Supporting Hyperplane Theorem</b> is a closely related result. It states that for any nonempty convex set $C$ and any point $x_0$ on its boundary, there exists a supporting hyperplane to $C$ at $x_0$. That is, there is a vector $a \neq 0$ such that $a^\top x \le a^\top x_0$ for all $x \in C$.</p>
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Widget: Separating Hyperplane Visualizer</h3>
+        <p>This widget brings the theorem to life. You can place two (disjoint) convex sets in a 2D plane. The tool will then computationally find and draw the separating hyperplane between them. Experiment with moving the sets closer together or changing their shapes to see how the separating plane adjusts.</p>
+        <div id="widget-separating-hyperplane" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
+      </div>
+
+        <h4>The Supporting Hyperplane Theorem</h4>
+        <p>A closely related result, the Supporting Hyperplane Theorem states that for any nonempty convex set $C$ and any point $x_0$ on its boundary, there exists a supporting hyperplane to $C$ at $x_0$. This means there is a vector $a \neq 0$ such that $a^\top x \le a^\top x_0$ for all $x \in C$. Geometrically, this says that at every boundary point, you can find a hyperplane that touches the set at that point and keeps the entire set to one side.</p>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
-        <h2>6. Dual Cones</h2>
-        <p>The <b>dual cone</b> of a cone $K$ is defined as $K^* = \{y \mid y^\top x \ge 0 \text{ for all } x \in K\}$. The dual cone is always a closed, convex cone, regardless of whether $K$ is.</p>
+        <h2>5. Dual Cones</h2>
+        <p>The concept of duality is central to optimization. The geometric starting point for this is the dual cone. The <b>dual cone</b> of a cone $K$ is defined as the set of all vectors that make a non-negative inner product with every vector in $K$:
+        $$ K^* = \{y \mid y^\top x \ge 0 \text{ for all } x \in K\} $$
+        The dual cone is always a closed, convex cone, even if the original cone $K$ was not.
+        </p>
 
         <h4>Self-Dual Cones</h4>
-        <p>Some of the most important cones are <b>self-dual</b>, meaning $K^* = K$.</p>
+        <p>Some of the most important cones in optimization are <b>self-dual</b>, meaning $K^* = K$.
         <ul>
             <li><b>The non-negative orthant $\mathbb{R}^n_+$ is self-dual.</b>
             <br><b>Proof:</b> We need to show that $y^\top x \ge 0$ for all $x \ge 0$ if and only if $y \ge 0$.
             ($\Leftarrow$) If $y \ge 0$ and $x \ge 0$, then $y^\top x = \sum_i y_i x_i$ is a sum of non-negative terms, so it is non-negative.
-            ($\Rightarrow$) Suppose $y$ is not in $\mathbb{R}^n_+$. Then at least one component $y_k < 0$. We can choose a vector $x = e_k$ (the $k$-th standard basis vector), which is in $\mathbb{R}^n_+$. Then $y^\top x = y_k < 0$. This violates the condition for being in the dual cone. Therefore, $y$ must be in $\mathbb{R}^n_+$.</li>
+            ($\Rightarrow$) Suppose $y$ is not in $\mathbb{R}^n_+$. Then at least one component $y_k < 0$. We can choose a vector $x = e_k$ (the $k$-th standard basis vector), which is in $\mathbb{R}^n_+$. Then $y^\top x = y_k < 0$. This violates the condition for $y$ being in the dual cone. Therefore, $y$ must be in $\mathbb{R}^n_+$.</li>
             <li><b>The second-order cone is self-dual.</b></li>
             <li><b>The positive semidefinite cone $\mathbb{S}^n_+$ is self-dual.</b></li>
         </ul>
-    </section>
-
-    <section class="card" id="widgets" style="margin-bottom: 32px;">
-      <h2>Interactive Widgets</h2>
-      <p>Explore the geometry of convex sets with these interactive tools.</p>
-
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Convex Set Detector</h3>
-        <p>Users can draw a 2D shape, and the widget checks if it's convex by sampling pairs of points.</p>
-        <div id="widget-convex-set-checker" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
-      </div>
-
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Ellipsoid Explorer & Parameterization</h3>
-        <p>Visualizes a 2D ellipsoid defined by a matrix A and center x_c, allowing users to manipulate them and see the shape change.</p>
-        <div id="widget-ellipsoid-explorer" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
-      </div>
-
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Polyhedron Visualizer & Constraint Explorer</h3>
-        <p>Users can add or modify linear inequalities (Ax <= b) and see the resulting 2D polyhedron update in real-time.</p>
-        <div id="widget-polyhedron-visualizer" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
-      </div>
-
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Separating Hyperplane Theorem Visualizer</h3>
-        <p>Allows users to place two convex sets and watch the algorithm find a separating hyperplane between them.</p>
-        <div id="widget-separating-hyperplane" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
-      </div>
-
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Operations Preserve Convexity Builder</h3>
-        <p>A tool where users can apply operations (intersection, affine transformation) to pre-defined convex sets to see the result.</p>
-        <div id="widget-operations-builder" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
-      </div>
-
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Cone Geometry & Properties</h3>
-        <p>Visualizes different types of cones (norm cones, positive semidefinite cone) in 2D or 3D.</p>
-        <div id="widget-cone-geometry" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
-      </div>
-
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Convex Set Operations Composer</h3>
-        <p>A drag-and-drop interface for composing multiple operations on sets.</p>
-        <div id="widget-operations-composer" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
-      </div>
+        </p>
     </section>
 
     <section class="card" id="readings" style="margin-bottom: 32px;">
       <h2>Readings & Resources</h2>
       <ul class="link-list">
-        <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 2</li>
+        <li><strong>Required Reading:</strong> Boyd & Vandenberghe, <em>Convex Optimization</em>, Chapter 2. This chapter provides a comprehensive and rigorous treatment of all topics discussed here.</li>
       </ul>
     </section>
 
     <section class="card" style="margin-bottom: 32px;">
       <h2>Exercises</h2>
+      <p>Test your understanding of the geometry of convex sets.</p>
       <ol style="line-height: 2;">
-        <li>Show that the set of points closer to a given point than a given set is convex.</li>
-        <li>Prove that the intersection of a convex set and an affine set is convex.</li>
-        <li>What is the dual cone of the set of all vectors with non-positive components?</li>
+        <li><b>Set Properties:</b> Show that the set of points closer to a given point $x_0$ than a given set $S \subseteq \mathbb{R}^n$, defined as $C = \{x \mid \|x-x_0\|_2 \le \|x-y\|_2 \text{ for all } y \in S\}$, is convex.</li>
+        <li><b>Operations:</b> Prove that the intersection of a convex set and an affine set is convex using the basic definitions.</li>
+        <li><b>Dual Cones:</b> What is the dual cone of the set of all vectors with non-positive components, $K = \mathbb{R}^n_-$? Provide a proof.</li>
+      </ol>
+      <hr style="margin: 24px 0;">
+      <h3>Solutions</h3>
+      <ol>
+        <li><b>Solution (Closer Points):</b>
+            <p>The condition $\|x-x_0\|_2 \le \|x-y\|_2$ is equivalent to $\|x-x_0\|_2^2 \le \|x-y\|_2^2$. Expanding this out gives:
+            $$ x^\top x - 2x_0^\top x + x_0^\top x_0 \le x^\top x - 2y^\top x + y^\top y $$
+            $$ 2(y-x_0)^\top x \le y^\top y - x_0^\top x_0 $$
+            For a fixed $y$, the set of $x$ satisfying this is a halfspace. The set $C$ is the set of points satisfying this for *all* $y \in S$. Therefore, $C$ is the intersection of a collection of halfspaces:
+            $$ C = \bigcap_{y \in S} \{x \mid 2(y-x_0)^\top x \le \|y\|_2^2 - \|x_0\|_2^2 \} $$
+            Since each halfspace is a convex set, and the intersection of convex sets is convex, the set $C$ is convex.
+            </p>
+        </li>
+        <li><b>Solution (Intersection):</b>
+            <p>Let $C$ be a convex set and $A$ be an affine set. Let $S = C \cap A$. Consider any two points $x_1, x_2 \in S$.
+            <ul>
+                <li>Since $x_1, x_2 \in C$ and $C$ is convex, the segment $\theta x_1 + (1-\theta)x_2$ for $\theta \in [0,1]$ is in $C$.</li>
+                <li>Since $x_1, x_2 \in A$ and $A$ is affine, the entire line $\theta x_1 + (1-\theta)x_2$ for $\theta \in \mathbb{R}$ is in $A$. This of course includes the segment where $\theta \in [0,1]$.</li>
+            </ul>
+            Since the segment is in both $C$ and $A$, it must be in their intersection $S$. Therefore, $S$ is convex.
+            </p>
+        </li>
+        <li><b>Solution (Dual Cone):</b>
+            <p>Let $K = \mathbb{R}^n_- = \{x \mid x_i \le 0 \text{ for all } i\}$. The dual cone is $K^* = \{y \mid y^\top x \ge 0 \text{ for all } x \in K\}$.
+            We claim that $K^* = \mathbb{R}^n_-$.
+            <br><b>Proof:</b>
+            <ul>
+                <li>($\mathbb{R}^n_- \subseteq K^*$): Let $y \in \mathbb{R}^n_-$ (so $y_i \le 0$) and $x \in K$ (so $x_i \le 0$). Then $y^\top x = \sum_i y_i x_i$. Since each term $y_i x_i$ is a product of two non-positive numbers, it is non-negative. The sum is therefore non-negative, so $y^\top x \ge 0$. Thus $y \in K^*$.</li>
+                <li>($K^* \subseteq \mathbb{R}^n_-$): Let $y \in K^*$. Suppose, for the sake of contradiction, that $y$ is not in $\mathbb{R}^n_-$. This means there is at least one component $y_k > 0$. Let's choose a specific vector $x \in K$: $x = -e_k$ (a vector of zeros with -1 in the $k$-th position). Then the inner product is $y^\top x = y_k (-1) = -y_k < 0$. This contradicts the fact that $y \in K^*$, which requires the inner product to be non-negative for all vectors in $K$. Therefore, our assumption must be false, and $y$ must be in $\mathbb{R}^n_-$.</li>
+            </ul>
+            Since we have shown both inclusions, we conclude that the dual of the non-positive orthant is itself.
+            </p>
+        </li>
       </ol>
     </section>
   </main>
@@ -228,6 +261,9 @@
     import { initOperationsBuilder } from './widgets/js/operations-builder.js';
     initOperationsBuilder('widget-operations-builder');
   </script>
+
+  <!-- These widgets are not used in the enhanced version, so their loaders are commented out or removed -->
+  <!--
   <script type="module">
     import { initConeGeometry } from './widgets/js/cone-geometry.js';
     initConeGeometry('widget-cone-geometry');
@@ -236,5 +272,6 @@
     import { initOperationsComposer } from './widgets/js/operations-composer.js';
     initOperationsComposer('widget-operations-composer');
   </script>
+  -->
 </body>
 </html>
