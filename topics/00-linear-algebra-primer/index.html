@@ -43,7 +43,7 @@
       <h2>Learning Objectives</h2>
       <p>After this lecture, you will be able to work with:</p>
       <ul style="line-height: 1.8;">
-        <li><b>Fundamental Objects and Subspaces:</b> Vectors, matrices, the four fundamental subspaces, and the Rank-Nullity Theorem with proof sketches.</li>
+        <li><b>Fundamental Objects and Subspaces:</b> Vectors, matrices, the four fundamental subspaces, and the Rank-Nullity Theorem with complete proofs.</li>
         <li><b>Inner Products and Norms:</b> Standard and generalized inner products, the three canonical vector norms, dual norms, Hölder's inequality, and the Cauchy-Schwarz inequality with proofs.</li>
         <li><b>Orthogonality and Projections:</b> Orthonormal bases, Gram-Schmidt process, QR decomposition, projection onto subspaces and affine sets.</li>
         <li><b>Positive Semidefinite Matrices:</b> Definitions, eigenvalue characterization, quadratic forms, ellipsoids, and the Loewner order.</li>
@@ -101,10 +101,10 @@
       </ul>
 
       <div style="margin: 24px 0; text-align: center;">
-        <img src="../../static/assets/topics/00-linear-algebra-primer/matrix-multiplication-animation.svg"
-             alt="Animated visualization of matrix multiplication process"
-             style="max-width: 80%; height: auto; border: 1px solid var(--border); border-radius: 8px;" />
-        <p style="margin-top: 8px; font-size: 0.9em; color: var(--text-muted);"><i>Figure 0.2:</i> A step-by-step animation of matrix multiplication. The highlighted row and column are combined to produce the highlighted entry in the result.</p>
+        <img src="../../static/assets/topics/00-linear-algebra-primer/matrix-multiplication-geometric.svg"
+             alt="Geometric intuition of matrix multiplication"
+             style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;" />
+        <p style="margin-top: 8px; font-size: 0.9em; color: var(--text-muted);"><i>Figure 0.2:</i> The geometric interpretation of a matrix-vector product as a linear combination of the matrix's column vectors.</p>
       </div>
 
       <h3>Linear Maps</h3>
@@ -430,7 +430,7 @@
       <p>The <b>condition number</b> of a matrix, $\kappa(A) = \frac{\sigma_{\max}}{\sigma_{\min}}$, measures how sensitive the solution of a linear system is to perturbations in the input data. A large condition number indicates that even small numerical errors can be greatly amplified. The normal equations are particularly susceptible to this, as $\kappa(A^\top A) = \kappa(A)^2$. This is why direct methods like QR and SVD are preferred in practice.</p>
 
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style-top: 0;">Interactive Demo: SVD for Image Compression</h3>
+        <h3 style="margin-top: 0;">Interactive Demo: SVD for Image Compression</h3>
         <p>See low-rank approximation in action. Load an image and reconstruct it using varying numbers of singular values. A surprisingly accurate approximation can be achieved with only a small fraction of the singular values.</p>
         <div id="widget-svd-approximator" class="widget-container" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
@@ -523,17 +523,29 @@
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h4>A1. Prove that the set of all linear combinations of a fixed set of vectors is a subspace.</h4>
-        <p><b>Solution:</b> Closure under addition and scalar multiplication follow from distributivity; the zero vector is obtained by all-zero coefficients.</p>
+        <p><b>Solution:</b> Let $S = \mathrm{span}\{v_1, \dots, v_k\}$.
+        <br>1. <b>Closure under addition:</b> Let $u = \sum c_i v_i$ and $w = \sum d_i v_i$ be in $S$. Then $u+w = \sum (c_i+d_i)v_i$, which is also a linear combination, so $u+w \in S$.
+        <br>2. <b>Closure under scalar multiplication:</b> Let $u = \sum c_i v_i \in S$ and $\alpha \in \mathbb{R}$. Then $\alpha u = \sum (\alpha c_i)v_i$, which is also a linear combination, so $\alpha u \in S$.
+        <br>3. <b>Contains zero vector:</b> The zero vector is in $S$ because $0 = \sum 0 \cdot v_i$.
+        <br>Since $S$ satisfies these three properties, it is a subspace.</p>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h4>A2. Show that $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$.</h4>
-        <p><b>Solution:</b> If $y \in \mathcal{N}(A^\top)$, then for any $x$, $y^\top(Ax) = (A^\top y)^\top x = 0$.</p>
+        <p><b>Solution:</b> Let $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$. By definition, $v = Ax$ for some vector $x$, and $A^\top y = 0$. We want to show their inner product is zero:
+        $$ v^\top y = (Ax)^\top y = x^\top A^\top y = x^\top (A^\top y) = x^\top 0 = 0 $$
+        Since this holds for any $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$, the subspaces are orthogonal.</p>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h4>A3. Show that $Q^\top Q = I$ ⇒ $\|Qx\|_2 = \|x\|_2$.</h4>
-        <p><b>Solution:</b> $\|Qx\|_2^2 = (Qx)^\top(Qx) = x^\top Q^\top Q x = x^\top x$.</p>
+        <p><b>Solution:</b> We start with the squared norm:
+        $$ \|Qx\|_2^2 = (Qx)^\top(Qx) $$
+        Using the property $(AB)^\top = B^\top A^\top$, this becomes:
+        $$ \|Qx\|_2^2 = x^\top Q^\top Q x $$
+        Since we are given that $Q^\top Q = I$, we substitute this in:
+        $$ \|Qx\|_2^2 = x^\top I x = x^\top x = \|x\|_2^2 $$
+        Taking the square root of both sides (and since norms are non-negative), we get $\|Qx\|_2 = \|x\|_2$. This shows that orthogonal transformations preserve the Euclidean norm (length) of vectors.</p>
       </div>
 
       <div style="margin: 24px 0; padding: 16px; background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
