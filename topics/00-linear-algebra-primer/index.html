@@ -10,35 +10,36 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
 </head>
-<body class="lecture-page">
-  <header class="site-header">
-    <div class="container header-inner">
+<body>
+  <header class="site-header sticky">
+    <div class="container">
       <div class="brand">
-        <img src="../../static/assets/branding/logo.svg" class="logo" alt="logo" />
-        <a href="../../index.html" style="text-decoration:none;color:inherit">
-          <strong>Convex Optimization</strong>
+        <a href="../../index.html">
+          <img src="../../static/assets/branding/logo.svg" alt="Logo" />
+          <span>Convex Optimization</span>
         </a>
       </div>
       <nav class="nav">
         <a href="../../index.html#sessions">All Lectures</a>
-        <a href="../01-introduction/index.html">Next: Introduction →</a>
-        <a href="#readings">Readings</a>
+        <a href="../01-introduction/index.html">Next →</a>
       </nav>
     </div>
   </header>
 
-  <main class="container">
-    <article class="card">
-      <h1 style="margin-top: 0;">00. A Primer on Linear Algebra</h1>
-      <div class="meta">
-        Date: 2025-10-14 · Duration: 90 min · Tags: prerequisites, review, linear-algebra, foundational
+  <main class="container" style="padding-top: 2rem;">
+    <header class="lecture-header card">
+      <h1>00. A Primer on Linear Algebra</h1>
+      <div class="lecture-meta">
+        <span>Date: 2025-10-14</span>
+        <span>Duration: 90 min</span>
+        <span>Tags: prerequisites, review, linear-algebra, foundational</span>
       </div>
-      <section style="margin-top: 16px;">
+      <div class="lecture-summary">
         <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical toolkit necessary for optimization theory.</p>
         <p><strong>Prerequisites:</strong> None. This lecture is the starting point.</p>
         <p><strong>Forward Connections:</strong> Projection techniques introduced here appear in least squares methods (<a href="../01-introduction/index.html">Lecture 01</a>). Positive Semidefinite (PSD) matrices form the basis for convex quadratic programs (<a href="../01-introduction/index.html">Lecture 01</a>). The four fundamental subspaces provide geometric understanding of feasible sets (<a href="../02-convex-sets/index.html">Lecture 02</a>).</p>
-      </section>
-    </article>
+      </div>
+    </header>
 
     <section class="card">
       <h2>Learning Objectives</h2>
@@ -980,13 +981,12 @@
       </ul>
     </section>
 
+    <footer class="site-footer">
+      <div class="container">
+        <p>© <span id="year"></span> Convex Optimization Course</p>
+      </div>
+    </footer>
   </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p style="margin: 0;">© <span id="year"></span> Convex Optimization Course · <a href="../../README.md">About</a> · <a href="../01-introduction/index.html">Next: Introduction →</a></p>
-    </div>
-  </footer>
 
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
   <script src="../../static/js/math-renderer.js"></script>
