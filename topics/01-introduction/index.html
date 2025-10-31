@@ -35,9 +35,9 @@
         <span>Tags: intro, motivation, overview, modeling</span>
       </div>
       <div class="lecture-summary">
-        <p><strong>Overview:</strong> This foundational lecture introduces the universe of convex optimization. We define what makes a problem "convex," explore why this property is the critical dividing line between computational tractability and intractability, and prove that any local minimum is also global. We tour the canonical problem families (LP, QP, SOCP, SDP) that power modern applications, introduce the "loss + regularizer + constraints" modeling paradigm, and equip you with the practical skills to read, write, and sanity-check convex programs.</p>
-        <p><strong>Prerequisites:</strong> <a href="../00-linear-algebra-primer/index.html">Lecture 00: Linear Algebra Primer</a> is essential—especially projections, PSD matrices, and norms.</p>
-        <p><strong>Forward Connections:</strong> The least squares and QP examples draw directly from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a>'s projection theory. The feasible sets introduced here motivate <a href="../02-convex-sets/index.html">Lecture 02</a>'s geometric foundations.</p>
+        <p><strong>Overview:</strong> This lecture introduces convex optimization by defining what makes a problem "convex" and proving that any local minimum is also global. We examine the canonical problem families (LP, QP, SOCP, SDP) and present the "loss + regularizer + constraints" modeling framework.</p>
+        <p><strong>Prerequisites:</strong> <a href="../00-linear-algebra-primer/index.html">Lecture 00: Linear Algebra Primer</a> is required, particularly projections, PSD matrices, and norms.</p>
+        <p><strong>Forward Connections:</strong> Least squares and QP examples build on projection theory from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a>. Feasible sets introduced here connect to geometric concepts in <a href="../02-convex-sets/index.html">Lecture 02</a>.</p>
       </div>
     </header>
 
@@ -99,19 +99,33 @@
         <p>This property is what makes convex optimization so powerful. In nonconvex problems, algorithms can get stuck in local minima, but for convex problems, any local minimum is guaranteed to be the best possible solution.</p>
         <div class="proof">
           <h4>Proof: Any Local Minimum is a Global Minimum</h4>
-          <p>The proof is by contradiction. We assume a local minimum is not global and show this leads to an inconsistency.</p>
-          <ol>
-              <li><b>Assumption:</b> Let $x^*$ be a local minimum, and assume it is <em>not</em> a global minimum.</li>
-              <li><b>Implication:</b> This means there must exist another feasible point $y$ such that $f_0(y) < f_0(x^*)$.</li>
-              <li><b>Line Segment Construction:</b> Since the feasible set is convex, any point on the line segment between $x^*$ and $y$, defined as $z(\theta) = \theta y + (1-\theta)x^*$ for $\theta \in [0, 1]$, is also feasible.</li>
-              <li><b>Applying Function Convexity:</b> By the definition of a convex function $f_0$, we have:
-              $$ f_0(z(\theta)) = f_0(\theta y + (1-\theta)x^*) \le \theta f_0(y) + (1-\theta)f_0(x^*) $$</li>
-              <li><b>Using the Assumption:</b> Since we assumed $f_0(y) < f_0(x^*)$, we can substitute this into the inequality:
-              $$ f_0(z(\theta)) < \theta f_0(x^*) + (1-\theta)f_0(x^*) = f_0(x^*) $$
-              This holds for any $\theta \in (0, 1)$.</li>
-              <li><b>The Contradiction:</b> The result $f_0(z(\theta)) < f_0(x^*)$ means that we can find points $z(\theta)$ arbitrarily close to $x^*$ (by choosing a very small $\theta > 0$) that have a smaller objective value. This contradicts the definition of $x^*$ as a local minimum.</li>
-              <li><b>Conclusion:</b> Our initial assumption must be false. Therefore, any local minimum $x^*$ must also be a global minimum.</li>
-          </ol>
+
+          <div class="proof-step">
+            <strong>Step 1: Assume for contradiction.</strong> Let $x^*$ be a local minimum that is not a global minimum. Then there exists a feasible point $y$ with $f_0(y) < f_0(x^*)$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Construct line segment.</strong> Since the feasible set is convex, any point on the line segment between $x^*$ and $y$, given by $z(\theta) = \theta y + (1-\theta)x^*$ for $\theta \in [0, 1]$, is also feasible.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: Apply function convexity.</strong> By convexity of $f_0$:
+            $$ f_0(z(\theta)) = f_0(\theta y + (1-\theta)x^*) \le \theta f_0(y) + (1-\theta)f_0(x^*) $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 4: Use the assumption.</strong> Since $f_0(y) < f_0(x^*)$:
+            $$ f_0(z(\theta)) < \theta f_0(x^*) + (1-\theta)f_0(x^*) = f_0(x^*) $$
+            This holds for any $\theta \in (0, 1)$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 5: Derive contradiction.</strong> By choosing $\theta > 0$ sufficiently small, we can find points $z(\theta)$ arbitrarily close to $x^*$ with $f_0(z(\theta)) < f_0(x^*)$. This contradicts the assumption that $x^*$ is a local minimum.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 6: Conclude.</strong> Our assumption must be false. Therefore, any local minimum is also a global minimum.
+          </div>
         </div>
         <figure>
           <img src="../../static/assets/topics/01-introduction/convex_function_chord.gif" alt="Animated visualization of the chord property for convex functions" />

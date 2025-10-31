@@ -35,9 +35,9 @@
         <span>Tags: sets, geometry, foundational, theory</span>
       </div>
       <div class="lecture-summary">
-        <p><strong>Overview:</strong> This lecture introduces the geometric soul of convex optimization: the convex set. We define what makes a set "convex," explore canonical examples like polyhedra and cones, and develop a powerful algebra of operations that preserve convexity. The lecture culminates in the Separating and Supporting Hyperplane Theorems, fundamental results that provide the geometric intuition for duality theory and optimality conditions.</p>
-        <p><strong>Prerequisites:</strong> Solid understanding of linear algebra (<a href="../00-linear-algebra-primer/index.html">Lecture 00</a>) and the basic definition of a convex problem (<a href="../01-introduction/index.html">Lecture 01</a>).</p>
-        <p><strong>Connections:</strong> The feasible sets of LPs and QPs from Lecture 01 are proven convex here. The hyperplane theorems are the essential geometric foundation for duality (Lecture 05).</p>
+        <p><strong>Overview:</strong> This lecture presents the geometric foundations of convex optimization through the study of convex sets. We define convexity for sets, examine canonical examples such as polyhedra and cones, and establish operations that preserve convexity. The lecture concludes with the Separating and Supporting Hyperplane Theorems, which form the geometric basis for duality theory and optimality conditions.</p>
+        <p><strong>Prerequisites:</strong> Linear algebra (<a href="../00-linear-algebra-primer/index.html">Lecture 00</a>) and the definition of a convex problem (<a href="../01-introduction/index.html">Lecture 01</a>).</p>
+        <p><strong>Connections:</strong> Feasible sets from LP and QP formulations (Lecture 01) are shown to be convex. The hyperplane theorems provide geometric foundations for duality (Lecture 05).</p>
       </div>
     </header>
 
@@ -114,12 +114,22 @@
         <p>The intersection of any collection of convex sets is convex. This is one of the most useful properties. For example, a polyhedron is convex because it is an intersection of convex halfspaces.</p>
         <div class="proof">
           <h4>Proof: The intersection of convex sets is convex</h4>
-          <p>Let $C_i$ be a collection of convex sets for $i \in I$. Let $C = \cap_{i \in I} C_i$.
-          To show $C$ is convex, take any two points $x, y \in C$ and any $\theta \in [0, 1]$.
-          By definition of intersection, $x \in C_i$ and $y \in C_i$ for all $i \in I$.
-          Since each $C_i$ is convex, the line segment $\theta x + (1-\theta)y$ is in $C_i$ for all $i \in I$.
-          Therefore, the line segment is in their intersection, $C$.
-          Thus, $C$ is convex.</p>
+
+          <div class="proof-step">
+            <strong>Step 1: Setup.</strong> Let $C_i$ be a collection of convex sets for $i \in I$, and let $C = \cap_{i \in I} C_i$. Take any two points $x, y \in C$ and any $\theta \in [0, 1]$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Apply intersection property.</strong> By definition of intersection, both $x \in C_i$ and $y \in C_i$ for all $i \in I$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: Use convexity of each set.</strong> Since each $C_i$ is convex, the line segment point $\theta x + (1-\theta)y$ lies in $C_i$ for all $i \in I$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 4: Conclude.</strong> Therefore, $\theta x + (1-\theta)y \in C$, showing that $C$ is convex.
+          </div>
         </div>
         <h3>Affine Functions</h3>
         <p>Applying an affine function $f(x) = Ax+b$ preserves convexity.
@@ -172,13 +182,22 @@
           <p>Show that the set of points closer to a given point $x_0$ than to another point $y_0$, defined as $C = \{x \mid \|x-x_0\|_2 \le \|x-y_0\|_2\}$, is a convex set.</p>
           <div class="solution">
             <h4>Solution</h4>
-            <p>The defining inequality is $\|x-x_0\|_2 \le \|x-y_0\|_2$. Since both sides are non-negative, we can square them:
-            $$ \|x-x_0\|_2^2 \le \|x-y_0\|_2^2 $$
-            Expanding this gives $x^\top x - 2x_0^\top x + x_0^\top x_0 \le x^\top x - 2y_0^\top x + y_0^\top y_0$.
-            <br>The $x^\top x$ terms cancel, and we can rearrange to get:
-            $$ 2(y_0 - x_0)^\top x \le \|y_0\|_2^2 - \|x_0\|_2^2 $$
-            This is a single linear inequality of the form $a^\top x \le b$. The set of points satisfying such an inequality is a halfspace, which is a convex set.
-            </p>
+
+            <div class="proof-step">
+              <strong>Step 1: Square both sides.</strong> The defining inequality is $\|x-x_0\|_2 \le \|x-y_0\|_2$. Since both sides are non-negative, we can square:
+              $$ \|x-x_0\|_2^2 \le \|x-y_0\|_2^2 $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Expand and simplify.</strong> Expanding gives:
+              $$ x^\top x - 2x_0^\top x + x_0^\top x_0 \le x^\top x - 2y_0^\top x + y_0^\top y_0 $$
+              The $x^\top x$ terms cancel, leaving:
+              $$ 2(y_0 - x_0)^\top x \le \|y_0\|_2^2 - \|x_0\|_2^2 $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Recognize as halfspace.</strong> This is a linear inequality of the form $a^\top x \le b$. The set of points satisfying such an inequality is a halfspace, which is convex.
+            </div>
           </div>
         </div>
         <div class="problem">
@@ -186,13 +205,23 @@
           <p>Let $V$ be a linear subspace. What is its dual cone $V^*$? Provide a proof for your answer.</p>
           <div class="solution">
               <h4>Solution</h4>
-              <p>The dual cone of a subspace $V$ is its orthogonal complement, $V^\perp$.
-              <br><b>Proof:</b> The dual cone is $V^* = \{y \mid y^\top x \ge 0 \text{ for all } x \in V\}$.
-              <br>First, let's show $V^\perp \subseteq V^*$. If $y \in V^\perp$, then $y^\top x = 0$ for all $x \in V$. The condition $0 \ge 0$ is satisfied, so $y \in V^*$.
-              <br>Next, let's show $V^* \subseteq V^\perp$. Suppose $y \in V^*$, so $y^\top x \ge 0$ for all $x \in V$. Since $V$ is a subspace, if $x \in V$, then $-x \in V$ as well. So we must also have $y^\top (-x) \ge 0$, which implies $-y^\top x \ge 0$, or $y^\top x \le 0$.
-              <br>The only way for $y^\top x \ge 0$ and $y^\top x \le 0$ to both be true is if $y^\top x = 0$. This must hold for all $x \in V$, which is the definition of $y$ being in the orthogonal complement $V^\perp$.
-              <br>Thus, $V^* = V^\perp$.
-              </p>
+              <p>The dual cone of a subspace $V$ is its orthogonal complement, $V^\perp$.</p>
+
+              <div class="proof-step">
+                <strong>Step 1: Recall definition.</strong> The dual cone is $V^* = \{y \mid y^\top x \ge 0 \text{ for all } x \in V\}$.
+              </div>
+
+              <div class="proof-step">
+                <strong>Step 2: Show $V^\perp \subseteq V^*$.</strong> If $y \in V^\perp$, then $y^\top x = 0$ for all $x \in V$. Since $0 \ge 0$, we have $y \in V^*$.
+              </div>
+
+              <div class="proof-step">
+                <strong>Step 3: Show $V^* \subseteq V^\perp$.</strong> Suppose $y \in V^*$, so $y^\top x \ge 0$ for all $x \in V$. Since $V$ is a subspace, if $x \in V$, then $-x \in V$ as well. Therefore $y^\top (-x) \ge 0$, which implies $y^\top x \le 0$.
+              </div>
+
+              <div class="proof-step">
+                <strong>Step 4: Conclude.</strong> The only way for both $y^\top x \ge 0$ and $y^\top x \le 0$ to hold is if $y^\top x = 0$ for all $x \in V$. This is the definition of $y \in V^\perp$, so $V^* = V^\perp$.
+              </div>
           </div>
         </div>
         <div class="problem">
@@ -200,12 +229,23 @@
           <p>Show that the set $C = \{x \in \mathbb{R}^n \mid x^\top Q x + c^\top x + d \le 0\}$ is convex, given that $Q \in \mathbb{S}^n_+$ is a positive semidefinite matrix.</p>
           <div class="solution">
             <h4>Solution</h4>
-            <p>The function $f(x) = x^\top Q x + c^\top x + d$ is a convex function because its Hessian is $\nabla^2 f(x) = 2Q$, which is positive semidefinite.
-            The set $C$ is a sublevel set of this convex function, defined by $f(x) \le 0$.
-            Sublevel sets of convex functions are always convex. To prove this directly, take any $x, y \in C$ and $\theta \in [0, 1]$.
-            This means $f(x) \le 0$ and $f(y) \le 0$. By convexity of $f$:
-            $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \le \theta(0) + (1-\theta)(0) = 0 $$
-            Therefore, the point $\theta x + (1-\theta)y$ is in $C$, and the set is convex.</p>
+
+            <div class="proof-step">
+              <strong>Step 1: Identify as sublevel set.</strong> The function $f(x) = x^\top Q x + c^\top x + d$ is convex because its Hessian is $\nabla^2 f(x) = 2Q \succeq 0$. The set $C$ is the sublevel set $\{x \mid f(x) \le 0\}$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Setup convexity proof.</strong> Take any $x, y \in C$ and $\theta \in [0, 1]$. This means $f(x) \le 0$ and $f(y) \le 0$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Apply function convexity.</strong> By convexity of $f$:
+              $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \le \theta(0) + (1-\theta)(0) = 0 $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 4: Conclude.</strong> Therefore, $\theta x + (1-\theta)y \in C$, showing that $C$ is convex.
+            </div>
           </div>
         </div>
       </section>

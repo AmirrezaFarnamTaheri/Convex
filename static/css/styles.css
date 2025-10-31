@@ -2,32 +2,50 @@
 /* ---
    IMPORTS
 --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Code+Pro:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500;600&family=Crimson+Pro:wght@400;600&display=swap');
 
 /* ---
    ROOT & COLOR THEME
 --- */
 :root {
-  /* Color Palette */
-  --color-background: #0b0d12;
-  --color-surface-1: #151820;
-  --color-surface-2: #242833;
-  --color-border: #333845;
-  --color-text-main: #E0E0E0;
-  --color-text-muted: #949eb5;
-  --color-primary: #7cc5ff;
-  --color-accent: #80ffb0;
+  /* Enhanced Color Palette */
+  --color-background: #0a0c10;
+  --color-surface-1: #13151c;
+  --color-surface-2: #1c1f2b;
+  --color-surface-3: #252a3a;
+  --color-border: #2d3448;
+  --color-border-light: #3d4456;
+  --color-text-main: #e8eaf0;
+  --color-text-muted: #9ca3ba;
+  --color-primary: #6bb8ff;
+  --color-primary-light: #8fcdff;
+  --color-primary-dark: #4a9ae6;
+  --color-accent: #72f5a8;
+  --color-accent-secondary: #ff9d72;
   --color-heading: #ffffff;
+  --color-success: #5dd98d;
+  --color-warning: #ffb84d;
+  --color-info: #6bb8ff;
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: 'Source Code Pro', monospace;
+  --font-serif: 'Crimson Pro', Georgia, serif;
+  --font-mono: 'Source Code Pro', 'Courier New', monospace;
 
   /* Sizing & Spacing */
-  --border-radius: 10px;
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  --border-radius-lg: 16px;
   --spacing-unit: 8px;
-  --max-width: 850px;
-  --transition-speed: 0.25s;
+  --max-width: 900px;
+  --transition-speed: 0.3s;
+  --transition-speed-fast: 0.15s;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 24px rgba(107, 184, 255, 0.15);
 }
 
 /* ---
@@ -134,18 +152,37 @@ code {
 }
 
 .card {
-  background-color: var(--color-surface-1);
+  background: linear-gradient(135deg, var(--color-surface-1) 0%, var(--color-surface-2) 100%);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
-  padding: calc(var(--spacing-unit) * 5);
-  margin-bottom: calc(var(--spacing-unit) * 5);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: border-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+  padding: calc(var(--spacing-unit) * 6);
+  margin-bottom: calc(var(--spacing-unit) * 6);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-speed) ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  opacity: 0;
+  transition: opacity var(--transition-speed) ease;
 }
 
 .card:hover {
-  border-color: var(--color-primary);
-  transform: translateY(-4px);
+  border-color: var(--color-border-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+.card:hover::before {
+  opacity: 1;
 }
 
 .site-footer {
@@ -157,17 +194,216 @@ code {
   margin-top: calc(var(--spacing-unit) * 8);
 }
 
-/* Custom Block for Proofs */
+/* ---
+   ENHANCED ENVIRONMENT BLOCKS
+--- */
+
+/* Proof Block */
 .proof {
-  background-color: var(--color-surface-2);
-  border-left: 5px solid var(--color-primary);
-  border-radius: 8px;
-  padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 4);
-  margin: calc(var(--spacing-unit) * 4) 0;
+  background: linear-gradient(135deg, rgba(107, 184, 255, 0.05) 0%, rgba(107, 184, 255, 0.02) 100%);
+  border: 1px solid rgba(107, 184, 255, 0.3);
+  border-left: 4px solid var(--color-primary);
+  border-radius: var(--border-radius-sm);
+  padding: calc(var(--spacing-unit) * 4);
+  margin: calc(var(--spacing-unit) * 5) 0;
+  position: relative;
+  box-shadow: var(--shadow-sm);
 }
+
+.proof::before {
+  content: '📐 PROOF';
+  position: absolute;
+  top: -12px;
+  left: calc(var(--spacing-unit) * 2);
+  background: var(--color-surface-1);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(107, 184, 255, 0.3);
+}
+
 .proof h4 {
   color: var(--color-primary);
-  margin-top: 0;
+  margin-top: calc(var(--spacing-unit) * 2);
+  margin-bottom: calc(var(--spacing-unit) * 2);
+  font-size: 1.1rem;
+}
+
+.proof ol, .proof ul {
+  margin: calc(var(--spacing-unit) * 2) 0;
+  padding-left: calc(var(--spacing-unit) * 4);
+}
+
+.proof li {
+  margin-bottom: calc(var(--spacing-unit) * 2);
+  line-height: 1.8;
+}
+
+/* Proof Step with Curved Arrow */
+.proof-step {
+  position: relative;
+  padding-left: calc(var(--spacing-unit) * 5);
+  margin: calc(var(--spacing-unit) * 3) 0;
+}
+
+.proof-step::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 24px;
+  height: 24px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%236bb8ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17V7c0-4 2-6 6-6"/><path d="M17 7l-4-4-4 4"/></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.8;
+}
+
+/* Example Block */
+.example {
+  background: linear-gradient(135deg, rgba(114, 245, 168, 0.05) 0%, rgba(114, 245, 168, 0.02) 100%);
+  border: 1px solid rgba(114, 245, 168, 0.3);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--border-radius-sm);
+  padding: calc(var(--spacing-unit) * 4);
+  margin: calc(var(--spacing-unit) * 5) 0;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.example::before {
+  content: '💡 EXAMPLE';
+  position: absolute;
+  top: -12px;
+  left: calc(var(--spacing-unit) * 2);
+  background: var(--color-surface-1);
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(114, 245, 168, 0.3);
+}
+
+.example h4 {
+  color: var(--color-accent);
+  margin-top: calc(var(--spacing-unit) * 2);
+  margin-bottom: calc(var(--spacing-unit) * 2);
+  font-size: 1.1rem;
+}
+
+/* Solution Block */
+.solution {
+  background: linear-gradient(135deg, rgba(93, 217, 141, 0.05) 0%, rgba(93, 217, 141, 0.02) 100%);
+  border: 1px solid rgba(93, 217, 141, 0.3);
+  border-left: 4px solid var(--color-success);
+  border-radius: var(--border-radius-sm);
+  padding: calc(var(--spacing-unit) * 4);
+  margin: calc(var(--spacing-unit) * 4) 0;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.solution::before {
+  content: '✓ SOLUTION';
+  position: absolute;
+  top: -12px;
+  left: calc(var(--spacing-unit) * 2);
+  background: var(--color-surface-1);
+  color: var(--color-success);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(93, 217, 141, 0.3);
+}
+
+.solution h4 {
+  color: var(--color-success);
+  margin-top: calc(var(--spacing-unit) * 2);
+  margin-bottom: calc(var(--spacing-unit) * 2);
+  font-size: 1.1rem;
+}
+
+/* Problem Block */
+.problem {
+  background: linear-gradient(135deg, rgba(255, 184, 77, 0.05) 0%, rgba(255, 184, 77, 0.02) 100%);
+  border: 1px solid rgba(255, 184, 77, 0.25);
+  border-left: 4px solid var(--color-warning);
+  border-radius: var(--border-radius-sm);
+  padding: calc(var(--spacing-unit) * 4);
+  margin: calc(var(--spacing-unit) * 5) 0;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.problem::before {
+  content: '📝 PROBLEM';
+  position: absolute;
+  top: -12px;
+  left: calc(var(--spacing-unit) * 2);
+  background: var(--color-surface-1);
+  color: var(--color-warning);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 184, 77, 0.25);
+}
+
+.problem h3 {
+  color: var(--color-warning);
+  margin-top: calc(var(--spacing-unit) * 2);
+  margin-bottom: calc(var(--spacing-unit) * 2);
+  font-size: 1.2rem;
+}
+
+/* Insight/Note Block */
+.insight {
+  background: linear-gradient(135deg, rgba(255, 157, 114, 0.05) 0%, rgba(255, 157, 114, 0.02) 100%);
+  border: 1px solid rgba(255, 157, 114, 0.3);
+  border-left: 4px solid var(--color-accent-secondary);
+  border-radius: var(--border-radius-sm);
+  padding: calc(var(--spacing-unit) * 4);
+  margin: calc(var(--spacing-unit) * 5) 0;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.insight::before {
+  content: '⚡ INSIGHT';
+  position: absolute;
+  top: -12px;
+  left: calc(var(--spacing-unit) * 2);
+  background: var(--color-surface-1);
+  color: var(--color-accent-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 157, 114, 0.3);
+}
+
+.insight h4 {
+  color: var(--color-accent-secondary);
+  margin-top: calc(var(--spacing-unit) * 2);
+  margin-bottom: calc(var(--spacing-unit) * 2);
+  font-size: 1.1rem;
+}
+
+/* Subsection styling */
+.subsection {
+  margin: calc(var(--spacing-unit) * 5) 0;
+  padding: calc(var(--spacing-unit) * 3);
+  border-left: 2px solid var(--color-border);
+  padding-left: calc(var(--spacing-unit) * 4);
 }
 
 /* ---
