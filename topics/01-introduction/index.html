@@ -35,10 +35,9 @@
         <span>Tags: intro, motivation, overview, modeling</span>
       </div>
       <div class="lecture-summary">
-        <p><strong>Overview:</strong> This foundational lecture introduces the universe of convex optimization. We define what makes a problem "convex," explore why this property is the critical dividing line between computational tractability and intractability, and prove the crown jewel: that any local minimum is also global. We tour the canonical problem families (LP, QP, SOCP, SDP) that power modern applications, introduce the powerful "loss + regularizer + constraints" modeling paradigm, and equip you with the practical skills to read, write, and sanity-check convex programs.</p>
+        <p><strong>Overview:</strong> This foundational lecture introduces the universe of convex optimization. We define what makes a problem "convex," explore why this property is the critical dividing line between computational tractability and intractability, and prove that any local minimum is also global. We tour the canonical problem families (LP, QP, SOCP, SDP) that power modern applications, introduce the "loss + regularizer + constraints" modeling paradigm, and equip you with the practical skills to read, write, and sanity-check convex programs.</p>
         <p><strong>Prerequisites:</strong> <a href="../00-linear-algebra-primer/index.html">Lecture 00: Linear Algebra Primer</a> is essential—especially projections, PSD matrices, and norms.</p>
-        <p><strong>Scope Guard:</strong> No deep set theory (that's <a href="../02-convex-sets/index.html">Lecture 02</a>), no convex-function calculus/epigraphs (that's Lecture 03), and no KKT/duality/algorithms here. This is purely about problem structure, recognition, and formulation.</p>
-        <p><strong>Connections:</strong> The least squares and QP examples draw directly from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a>'s projection theory. The feasible sets introduced here motivate <a href="../02-convex-sets/index.html">Lecture 02</a>'s geometric foundations.</p>
+        <p><strong>Forward Connections:</strong> The least squares and QP examples draw directly from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a>'s projection theory. The feasible sets introduced here motivate <a href="../02-convex-sets/index.html">Lecture 02</a>'s geometric foundations.</p>
       </div>
     </header>
 
@@ -231,6 +230,17 @@
                 $$ \min_{x \in \mathbb{R}^2} \sum_{i=1}^{k} \|x - r_i\|_2^2 \quad \text{s.t.} \quad Cx \le d $$
                 This is a convex optimization problem.
             </div>
+        </div>
+        <div class="problem">
+          <h3>P1.3 — (New) Reformulation</h3>
+          <p>Show how to reformulate the following problem as a linear program:</p>
+          $$ \min_{x \in \mathbb{R}^n} \|Ax - b\|_1 \quad \text{s.t.} \quad \|x\|_\infty \le 1 $$
+          <div class="solution">
+            <h4>Solution</h4>
+            <p>We can introduce a new variable $t \in \mathbb{R}^m$ to represent the absolute values in the objective function. The problem can be rewritten as:</p>
+            $$ \min_{x, t} \mathbf{1}^\top t \quad \text{s.t.} \quad -t \le Ax - b \le t, \quad -1 \le x_i \le 1 \text{ for all } i $$
+            This is an LP because the objective and all constraints are linear.
+          </div>
         </div>
       </section>
 
