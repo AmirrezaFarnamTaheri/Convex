@@ -33,7 +33,7 @@
         Date: 2025-10-14 · Duration: 90 min · Tags: prerequisites, review, linear-algebra, foundational
       </div>
       <section style="margin-top: 16px;">
-        <p><strong>Overview:</strong> This lecture reviews the essential linear algebra concepts that form the bedrock of convex optimization. We build the theory step-by-step, starting from fundamental objects like vectors and matrices, moving through inner products, norms, orthogonality, projections, and the geometry of linear systems. This lecture focuses exclusively on the linear-algebraic machinery you need, deliberately avoiding topics from future lectures like convex sets or duality.</p>
+        <p><strong>Overview:</strong> This lecture reviews the essential linear algebra concepts that form the bedrock of convex optimization. We build the theory step-by-step, starting from fundamental objects like vectors and matrices, moving through inner products, norms, orthogonality, projections, and the geometry of linear systems. This lecture focuses exclusively on the linear-algebraic machinery you need.</p>
         <p><strong>Prerequisites:</strong> None. This lecture is the starting point.</p>
         <p><strong>Forward Connections:</strong> The projection techniques developed here are central to <a href="../01-introduction/index.html">Lecture 01</a>'s least squares models. Positive Semidefinite (PSD) matrices are the foundation for convex quadratic programs in <a href="../01-introduction/index.html">Lecture 01</a>. The four fundamental subspaces provide geometric intuition for feasible sets in <a href="../02-convex-sets/index.html">Lecture 02</a>.</p>
       </section>
@@ -155,7 +155,19 @@
       <h3>Rank and Rank–Nullity Theorem</h3>
       <p>$\mathrm{rank}(A) = \dim \mathcal{R}(A)$. For $A \in \mathbb{R}^{m \times n}$:
       $$ \dim \mathcal{N}(A) + \mathrm{rank}(A) = n $$
-      This fundamental dimension-counting result is the algebraic spine of linear algebra.</p>
+      This fundamental dimension-counting result is a cornerstone of linear algebra.</p>
+
+      <div class="proof">
+        <h4>Proof of the Rank-Nullity Theorem</h4>
+        <p>Let $\dim(\mathcal{N}(A)) = k$ and let $\{v_1, \dots, v_k\}$ be a basis for $\mathcal{N}(A)$. We can extend this to a basis for $\mathbb{R}^n$: $\{v_1, \dots, v_k, w_1, \dots, w_{n-k}\}$.
+        Any $x \in \mathbb{R}^n$ can be written as $x = \sum_{i=1}^k c_i v_i + \sum_{j=1}^{n-k} d_j w_j$.
+        Then $Ax = \sum_{i=1}^k c_i A v_i + \sum_{j=1}^{n-k} d_j A w_j = \sum_{j=1}^{n-k} d_j A w_j$ since $v_i \in \mathcal{N}(A)$.
+        This shows that the vectors $\{Aw_1, \dots, Aw_{n-k}\}$ span $\mathcal{R}(A)$. We can also show they are linearly independent.
+        Suppose $\sum_{j=1}^{n-k} d_j A w_j = 0$. Then $A(\sum_{j=1}^{n-k} d_j w_j) = 0$, so $\sum_{j=1}^{n-k} d_j w_j \in \mathcal{N}(A)$.
+        This means it can be written as a linear combination of $\{v_i\}$, which contradicts the linear independence of the basis for $\mathbb{R}^n$ unless all $d_j=0$.
+        Thus, $\{Aw_1, \dots, Aw_{n-k}\}$ is a basis for $\mathcal{R}(A)$, so $\mathrm{rank}(A) = \dim(\mathcal{R}(A)) = n-k = n - \dim(\mathcal{N}(A))$.
+        </p>
+      </div>
 
       <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive Visualizer: Rank & Nullspace</h3>
@@ -227,7 +239,14 @@
         Taking the square root of both sides gives the Cauchy-Schwarz inequality.</p>
       </div>
 
-      <p><b>Triangle Inequality:</b> The triangle inequality, $\|x + y\|_2 \le \|x\|_2 + \|y\|_2$, can be proven by squaring both sides and applying the Cauchy-Schwarz inequality to the inner product term.</p>
+      <div class="proof">
+        <h4>Proof of the Triangle Inequality: $\|x+y\|_2 \le \|x\|_2 + \|y\|_2$</h4>
+        <p>We start by squaring the left side:
+        $$ \|x+y\|_2^2 = (x+y)^\top(x+y) = x^\top x + 2x^\top y + y^\top y = \|x\|_2^2 + 2x^\top y + \|y\|_2^2 $$
+        By the Cauchy-Schwarz inequality, $x^\top y \le |x^\top y| \le \|x\|_2 \|y\|_2$. Substituting this into the equation:
+        $$ \|x+y\|_2^2 \le \|x\|_2^2 + 2\|x\|_2 \|y\|_2 + \|y\|_2^2 = (\|x\|_2 + \|y\|_2)^2 $$
+        Taking the square root of both sides gives the triangle inequality.</p>
+      </div>
 
       <h3>Angles and Orthogonality</h3>
       <p>The Cauchy-Schwarz inequality allows us to define the angle between two vectors:
@@ -252,7 +271,7 @@
       </div>
 
       <h3>Generalized (Weighted) Inner Product</h3>
-      <p>If $Q \in \mathbb{R}^{n \times n}$ is symmetric positive definite (SPD), then $\langle x, y \rangle_Q := x^\top Q y$ is an inner product with induced norm $\|x\|_Q = \sqrt{x^\top Q x}$. This yields <b>quadratic forms</b> and ellipsoidal distance, but we avoid convex-geometry discussions here.</p>
+      <p>If $Q \in \mathbb{R}^{n \times n}$ is symmetric positive definite (SPD), then $\langle x, y \rangle_Q := x^\top Q y$ is an inner product with induced norm $\|x\|_Q = \sqrt{x^\top Q x}$. This yields <b>quadratic forms</b> and ellipsoidal distance.</p>
 
       <h3>Matrix Inner Product and Frobenius Norm</h3>
       <p>For matrices $X, Y \in \mathbb{R}^{m \times n}$, the <b>trace inner product</b> is:
@@ -354,7 +373,7 @@
       <h3>Projection onto $\mathcal{R}(A)$ using $A$</h3>
       <p>If $A \in \mathbb{R}^{m \times n}$ has full column rank:
       $$ P = A(A^\top A)^{-1} A^\top \quad \text{and} \quad p = Pb $$
-      <b>Proof:</b> Columns of $Q = A(A^\top A)^{-1/2}$ are orthonormal; substitute into $P = QQ^\top$.</p>
+      </p>
 
       <h3>Projection onto an Affine Set</h3>
       <p>Projecting onto $\{x \mid Fx = g\}$ reduces to subspace projection by translating:</p>
@@ -381,7 +400,7 @@
       <h3>The Normal Equations</h3>
       <p>The orthogonality condition, $r^\star \perp \mathcal{R}(A)$, means that the residual must be orthogonal to every column of $A$. This can be expressed compactly as $A^\top r^\star = 0$. Substituting the definition of the residual, we get:
       $$ A^\top(b - Ax^\star) = 0 $$
-      Rearranging this gives the celebrated <b>normal equations</b>:
+      Rearranging this gives the <b>normal equations</b>:
       $$ A^\top A x^\star = A^\top b $$
       If the matrix $A$ has linearly independent columns (full column rank), then $A^\top A$ is invertible, and we can write the unique solution as $x^\star = (A^\top A)^{-1} A^\top b$.</p>
 
@@ -532,20 +551,16 @@
       </div>
 
       <div class="proof">
-        <h4>A4. (Gram–Schmidt) Apply Gram–Schmidt to $a_1 = (1, 1, 0)^\top$, $a_2 = (1, 0, 1)^\top$, $a_3 = (0, 1, 1)^\top$.</h4>
-        <p><b>Solution:</b> A full walkthrough of the arithmetic to produce an orthonormal basis, with verification at the end.</p>
-      </div>
-
-      <div class="proof">
-        <h4>A5. (New) Linear Independence and Span</h4>
-        <p>Consider the vectors $v_1 = (1, 2, 3)^\top$, $v_2 = (4, 5, 6)^\top$, and $v_3 = (7, 8, 9)^\top$.
-        <br>a) Are these vectors linearly independent?
-        <br>b) Does the vector $b = (1, 1, 1)^\top$ lie in the span of these vectors?</p>
-        <p><b>Solution:</b>
-        <br>a) To check for linear independence, we see if there's a non-trivial solution to $c_1 v_1 + c_2 v_2 + c_3 v_3 = 0$. This is equivalent to solving the linear system $Ac=0$ where $A$ has the vectors as columns.
-        $$ \begin{pmatrix} 1 & 4 & 7 \\ 2 & 5 & 8 \\ 3 & 6 & 9 \end{pmatrix} \begin{pmatrix} c_1 \\ c_2 \\ c_3 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \\ 0 \end{pmatrix} $$
-        Row reducing the matrix $A$ shows that it is not full rank. A non-trivial solution is $c_1=1, c_2=-2, c_3=1$. Since a non-trivial solution exists, the vectors are linearly dependent.
-        <br>b) For $b$ to be in the span, the system $Ac=b$ must have a solution. Row reducing the augmented matrix $[A|b]$ shows that the system is inconsistent. Thus, $b$ is not in the span of the vectors.</p>
+        <h4>A4. (New) Prove that if a set of vectors $\{v_1, \dots, v_k\}$ is orthogonal, it must be linearly independent.</h4>
+        <p><b>Solution:</b> Consider the equation $c_1 v_1 + \dots + c_k v_k = 0$. To show linear independence, we must show that all coefficients $c_i$ must be zero.
+        Take the inner product of both sides with any vector $v_j$ from the set:
+        $$ \langle v_j, c_1 v_1 + \dots + c_k v_k \rangle = \langle v_j, 0 \rangle = 0 $$
+        By linearity of the inner product:
+        $$ c_1 \langle v_j, v_1 \rangle + \dots + c_j \langle v_j, v_j \rangle + \dots + c_k \langle v_j, v_k \rangle = 0 $$
+        Since the set is orthogonal, $\langle v_j, v_i \rangle = 0$ for $i \neq j$. The equation simplifies to:
+        $$ c_j \langle v_j, v_j \rangle = c_j \|v_j\|_2^2 = 0 $$
+        Since the vectors are non-zero, $\|v_j\|_2^2 > 0$, which implies $c_j = 0$. Since this holds for any $j=1, \dots, k$, all coefficients are zero, and the set is linearly independent.
+        </p>
       </div>
 
       <h3>B. Projections</h3>
@@ -569,7 +584,10 @@
 
       <div class="proof">
         <h4>C1. Derive normal equations and prove uniqueness iff $\mathrm{rank}(A) = n$.</h4>
-        <p><b>Solution:</b> Already shown; uniqueness follows from strict convexity of $x \mapsto \|Ax - b\|_2^2$ when $A^\top A \succ 0$.</p>
+        <p><b>Solution:</b> The objective function is $f(x) = \|Ax-b\|_2^2 = x^\top A^\top A x - 2b^\top A x + b^\top b$. This is a quadratic function of $x$. To find the minimum, we take the gradient with respect to $x$ and set it to zero:
+        $$ \nabla_x f(x) = 2A^\top A x - 2A^\top b = 0 \implies A^\top A x = A^\top b $$
+        The solution is unique if and only if the matrix $A^\top A$ is invertible. This is true if and only if $A$ has full column rank, i.e., $\mathrm{rank}(A) = n$.
+        </p>
       </div>
 
       <div class="proof">
@@ -583,8 +601,13 @@
       </div>
 
       <div class="proof">
-        <h4>C4. Weighted least squares with diagonal $W = \mathrm{diag}(w_i)$. Show equivalence to scaling the rows of $A$ and $b$ by $\sqrt{w_i}$.</h4>
-        <p><b>Solution:</b> Write $W = C^\top C$ with $C = \mathrm{diag}(\sqrt{w_i})$; minimize $\|CAx - Cb\|_2^2$.</p>
+        <h4>C4. (New) Show that the projection matrix $P = A(A^\top A)^{-1}A^\top$ is idempotent ($P^2=P$) and symmetric ($P^\top = P$).</h4>
+        <p><b>Solution:</b>
+        <br><b>Symmetry:</b>
+        $$ P^\top = (A(A^\top A)^{-1}A^\top)^\top = (A^\top)^\top ((A^\top A)^{-1})^\top A^\top = A ((A^\top A)^\top)^{-1} A^\top = A (A^\top (A^\top)^\top)^{-1} A^\top = A(A^\top A)^{-1}A^\top = P $$
+        <br><b>Idempotency:</b>
+        $$ P^2 = (A(A^\top A)^{-1}A^\top)(A(A^\top A)^{-1}A^\top) = A(A^\top A)^{-1}(A^\top A)(A^\top A)^{-1}A^\top = A(A^\top A)^{-1} I A^\top = A(A^\top A)^{-1}A^\top = P $$
+        </p>
       </div>
 
       <h3>D. Pseudoinverse & Rank Deficiency</h3>

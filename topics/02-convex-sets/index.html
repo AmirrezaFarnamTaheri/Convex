@@ -37,7 +37,7 @@
       <div class="lecture-summary">
         <p><strong>Overview:</strong> This lecture introduces the geometric soul of convex optimization: the convex set. We define what makes a set "convex," explore canonical examples like polyhedra and cones, and develop a powerful algebra of operations that preserve convexity. The lecture culminates in the Separating and Supporting Hyperplane Theorems, fundamental results that provide the geometric intuition for duality theory and optimality conditions.</p>
         <p><strong>Prerequisites:</strong> Solid understanding of linear algebra (<a href="../00-linear-algebra-primer/index.html">Lecture 00</a>) and the basic definition of a convex problem (<a href="../01-introduction/index.html">Lecture 01</a>).</p>
-        <p><strong>Connections:</strong> The feasible sets of LPs and QPs from Lecture 01 are proven convex here. The hyperplane theorems are the essential geometric foundation for duality (Lecture 05) and KKT optimality conditions (Lecture 06).</p>
+        <p><strong>Connections:</strong> The feasible sets of LPs and QPs from Lecture 01 are proven convex here. The hyperplane theorems are the essential geometric foundation for duality (Lecture 05).</p>
       </div>
     </header>
 
@@ -103,7 +103,7 @@
         </div>
         <div class="subsection">
           <h3>Cones</h3>
-          <p>A set $K$ is a <b>cone</b> if for every $x \in K$ and $\theta \ge 0$, $\theta x \in K$. A <b>convex cone</b> is a cone that is also a convex set. Important examples include the <b>second-order cone</b> and the <b>positive semidefinite (PSD) cone</b> $\mathbb{S}^n_+$.</p>
+          <p>A set $K$ is a <b>cone</b> if for every $x \in K$ and $\theta \ge 0$, $\theta x \in K$. A <b>convex cone</b> is a cone that is also a convex set. Important examples include the <b>second-order cone</b> $\{ (x, t) \in \mathbb{R}^{n+1} \mid \|x\|_2 \le t \}$ and the <b>positive semidefinite (PSD) cone</b> $\mathbb{S}^n_+ = \{ X \in \mathbb{S}^n \mid X \succeq 0 \}$.</p>
         </div>
       </section>
 
@@ -112,6 +112,15 @@
         <p>We can prove a complex set is convex by building it from simpler convex sets using operations that preserve convexity.</p>
         <h3>Intersection</h3>
         <p>The intersection of any collection of convex sets is convex. This is one of the most useful properties. For example, a polyhedron is convex because it is an intersection of convex halfspaces.</p>
+        <div class="proof">
+          <h4>Proof: The intersection of convex sets is convex</h4>
+          <p>Let $C_i$ be a collection of convex sets for $i \in I$. Let $C = \cap_{i \in I} C_i$.
+          To show $C$ is convex, take any two points $x, y \in C$ and any $\theta \in [0, 1]$.
+          By definition of intersection, $x \in C_i$ and $y \in C_i$ for all $i \in I$.
+          Since each $C_i$ is convex, the line segment $\theta x + (1-\theta)y$ is in $C_i$ for all $i \in I$.
+          Therefore, the line segment is in their intersection, $C$.
+          Thus, $C$ is convex.</p>
+        </div>
         <h3>Affine Functions</h3>
         <p>Applying an affine function $f(x) = Ax+b$ preserves convexity.
         <ul>
@@ -184,6 +193,19 @@
               <br>The only way for $y^\top x \ge 0$ and $y^\top x \le 0$ to both be true is if $y^\top x = 0$. This must hold for all $x \in V$, which is the definition of $y$ being in the orthogonal complement $V^\perp$.
               <br>Thus, $V^* = V^\perp$.
               </p>
+          </div>
+        </div>
+        <div class="problem">
+          <h3>P2.3 — (New) Convexity of a Quadratic Set</h3>
+          <p>Show that the set $C = \{x \in \mathbb{R}^n \mid x^\top Q x + c^\top x + d \le 0\}$ is convex, given that $Q \in \mathbb{S}^n_+$ is a positive semidefinite matrix.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+            <p>The function $f(x) = x^\top Q x + c^\top x + d$ is a convex function because its Hessian is $\nabla^2 f(x) = 2Q$, which is positive semidefinite.
+            The set $C$ is a sublevel set of this convex function, defined by $f(x) \le 0$.
+            Sublevel sets of convex functions are always convex. To prove this directly, take any $x, y \in C$ and $\theta \in [0, 1]$.
+            This means $f(x) \le 0$ and $f(y) \le 0$. By convexity of $f$:
+            $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \le \theta(0) + (1-\theta)(0) = 0 $$
+            Therefore, the point $\theta x + (1-\theta)y$ is in $C$, and the set is convex.</p>
           </div>
         </div>
       </section>
