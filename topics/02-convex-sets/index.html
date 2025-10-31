@@ -91,6 +91,12 @@
           <img src="./assets/convex-hull.svg" alt="Illustration of a convex hull" />
           <figcaption>Figure 1.2: The convex hull of a set of points.</figcaption>
         </figure>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Tool: Convex Set Checker</h3>
+          <p>Draw any 2D shape by clicking points, and this tool will check if it's a convex set. It visualizes the convex hull to help you understand why a set is or isn't convex.</p>
+          <div id="widget-convex-set-checker" style="width: 100%; height: 450px; position: relative;"></div>
+        </div>
       </section>
 
       <section class="card" id="section-2">
@@ -104,13 +110,33 @@
           <h3>Ellipsoids and Norm Balls</h3>
           <p>An <b>ellipsoid</b> $\mathcal{E} = \{x \mid (x-x_c)^\top P^{-1} (x-x_c) \le 1\}$ (for $P \succ 0$) and a <b>norm ball</b> $\{x \mid \|x-x_c\| \le r\}$ are both convex.</p>
         </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Explorer: Ellipsoid Geometry</h3>
+          <p>Interactively explore ellipsoids by adjusting the positive definite matrix P. Visualize how eigenvalues and eigenvectors determine the ellipsoid's shape and orientation in 2D.</p>
+          <div id="widget-ellipsoid-explorer" style="width: 100%; height: 400px; position: relative;"></div>
+        </div>
+
         <div class="subsection">
           <h3>Polyhedra</h3>
           <p>A <b>polyhedron</b> is the solution set of a finite number of linear equalities and inequalities, $\mathcal{P} = \{x \mid Ax \preceq b, Cx=d\}$. As the intersection of halfspaces and hyperplanes, it is always convex.</p>
         </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Visualizer: Polyhedron Builder</h3>
+          <p>Define a polyhedron by adding linear inequality constraints. Watch how each halfspace intersects to form the polyhedral feasible region in 2D.</p>
+          <div id="widget-polyhedron-visualizer" style="width: 100%; height: 400px; position: relative;"></div>
+        </div>
+
         <div class="subsection">
           <h3>Cones</h3>
           <p>A set $K$ is a <b>cone</b> if for every $x \in K$ and $\theta \ge 0$, $\theta x \in K$. A <b>convex cone</b> is a cone that is also a convex set. Important examples include the <b>second-order cone</b> $\{ (x, t) \in \mathbb{R}^{n+1} \mid \|x\|_2 \le t \}$ and the <b>positive semidefinite (PSD) cone</b> $\mathbb{S}^n_+ = \{ X \in \mathbb{S}^n \mid X \succeq 0 \}$.</p>
+        </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Explorer: Cone Geometry</h3>
+          <p>Explore different types of cones including the nonnegative orthant, second-order cone, and their dual cones. Understand the geometry of these fundamental convex structures.</p>
+          <div id="widget-cone-geometry" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
       </section>
 
@@ -148,6 +174,12 @@
           <h4>Application: Proving an Ellipsoid is Convex</h4>
           <p>An ellipsoid $\mathcal{E} = \{x \mid \|P^{-1/2}(x-x_c)\|_2 \le 1\}$ is the preimage of the unit Euclidean ball (a convex set) under the affine map $f(x) = P^{-1/2}(x-x_c)$. Since the preimage of a convex set under an affine map is convex, the ellipsoid is convex.</p>
         </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Builder: Operations Preserving Convexity</h3>
+          <p>Explore how different operations preserve convexity. Combine convex sets using intersection, affine transformations, and other operations to build complex convex sets from simple building blocks.</p>
+          <div id="widget-operations-builder" style="width: 100%; height: 450px; position: relative;"></div>
+        </div>
       </section>
 
       <section class="card" id="section-4">
@@ -165,6 +197,12 @@
           <img src="./assets/supporting-hyperplane.svg" alt="Illustration of the Supporting Hyperplane Theorem" />
           <figcaption>Figure 4.2: A supporting hyperplane to a convex set at a boundary point.</figcaption>
         </figure>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Tool: Separating Hyperplane Explorer</h3>
+          <p>Draw two disjoint convex sets and find the separating hyperplane between them. Experiment with different shapes to understand when and how separation is possible.</p>
+          <div id="widget-separating-hyperplane" style="width: 100%; height: 450px; position: relative;"></div>
+        </div>
       </section>
 
       <section class="card" id="section-5">
@@ -789,6 +827,32 @@
   <script src="../../static/js/math-renderer.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Widget Loaders -->
+  <script type="module">
+    import { initConvexSetChecker } from './widgets/js/convex-set-checker.js';
+    initConvexSetChecker('widget-convex-set-checker');
+  </script>
+  <script type="module">
+    import { initEllipsoidExplorer } from './widgets/js/ellipsoid-explorer.js';
+    initEllipsoidExplorer('widget-ellipsoid-explorer');
+  </script>
+  <script type="module">
+    import { initPolyhedronVisualizer } from './widgets/js/polyhedron-visualizer.js';
+    initPolyhedronVisualizer('widget-polyhedron-visualizer');
+  </script>
+  <script type="module">
+    import { initConeGeometry } from './widgets/js/cone-geometry.js';
+    initConeGeometry('widget-cone-geometry');
+  </script>
+  <script type="module">
+    import { initOperationsBuilder } from './widgets/js/operations-builder.js';
+    initOperationsBuilder('widget-operations-builder');
+  </script>
+  <script type="module">
+    import { initSeparatingHyperplane } from './widgets/js/separating-hyperplane.js';
+    initSeparatingHyperplane('widget-separating-hyperplane');
   </script>
 </body>
 </html>
