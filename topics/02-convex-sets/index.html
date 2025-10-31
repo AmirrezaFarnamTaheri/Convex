@@ -38,7 +38,7 @@
       <div class="lecture-summary">
         <p><strong>Overview:</strong> This lecture presents the geometric foundations of convex optimization through the study of convex sets. We define convexity for sets, examine canonical examples such as polyhedra and cones, and establish operations that preserve convexity. The lecture concludes with the Separating and Supporting Hyperplane Theorems, which form the geometric basis for duality theory and optimality conditions.</p>
         <p><strong>Prerequisites:</strong> Linear algebra (<a href="../00-linear-algebra-primer/index.html">Lecture 00</a>) and the definition of a convex problem (<a href="../01-introduction/index.html">Lecture 01</a>).</p>
-        <p><strong>Connections:</strong> Feasible sets from LP and QP formulations (Lecture 01) are shown to be convex. The hyperplane theorems provide geometric foundations for duality (Lecture 05).</p>
+        <p><strong>Forward Connections:</strong> Feasible sets from LP and QP formulations (Lecture 01) are shown to be convex. The hyperplane theorems provide geometric foundations for duality (Lecture 05).</p>
       </div>
     </header>
 
@@ -66,7 +66,7 @@
         <li><a href="#section-8">Separating and Supporting Hyperplanes (with Proofs)</a></li>
         <li><a href="#section-9">Cones, Proper Cones, Dual Cones, Generalized Inequalities</a></li>
         <li><a href="#section-10">Vocabulary Parity (Slides ↔ Notes)</a></li>
-        <li><a href="#section-11">Additional Exercises (with Complete Solutions)</a></li>
+        <li><a href="#section-11">Additional Exercises</a></li>
         <li><a href="#section-12">Short "Searchable" Glossary</a></li>
       </ol>
     </nav>
@@ -91,6 +91,12 @@
           <img src="./assets/convex-hull.svg" alt="Illustration of a convex hull" />
           <figcaption>Figure 1.2: The convex hull of a set of points.</figcaption>
         </figure>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Tool: Convex Set Checker</h3>
+          <p>Draw any 2D shape by clicking points, and this tool will check if it's a convex set. It visualizes the convex hull to help you understand why a set is or isn't convex.</p>
+          <div id="widget-convex-set-checker" style="width: 100%; height: 450px; position: relative;"></div>
+        </div>
       </section>
 
       <section class="card" id="section-2">
@@ -104,13 +110,33 @@
           <h3>Ellipsoids and Norm Balls</h3>
           <p>An <b>ellipsoid</b> $\mathcal{E} = \{x \mid (x-x_c)^\top P^{-1} (x-x_c) \le 1\}$ (for $P \succ 0$) and a <b>norm ball</b> $\{x \mid \|x-x_c\| \le r\}$ are both convex.</p>
         </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Explorer: Ellipsoid Geometry</h3>
+          <p>Interactively explore ellipsoids by adjusting the positive definite matrix P. Visualize how eigenvalues and eigenvectors determine the ellipsoid's shape and orientation in 2D.</p>
+          <div id="widget-ellipsoid-explorer" style="width: 100%; height: 400px; position: relative;"></div>
+        </div>
+
         <div class="subsection">
           <h3>Polyhedra</h3>
           <p>A <b>polyhedron</b> is the solution set of a finite number of linear equalities and inequalities, $\mathcal{P} = \{x \mid Ax \preceq b, Cx=d\}$. As the intersection of halfspaces and hyperplanes, it is always convex.</p>
         </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Visualizer: Polyhedron Builder</h3>
+          <p>Define a polyhedron by adding linear inequality constraints. Watch how each halfspace intersects to form the polyhedral feasible region in 2D.</p>
+          <div id="widget-polyhedron-visualizer" style="width: 100%; height: 400px; position: relative;"></div>
+        </div>
+
         <div class="subsection">
           <h3>Cones</h3>
           <p>A set $K$ is a <b>cone</b> if for every $x \in K$ and $\theta \ge 0$, $\theta x \in K$. A <b>convex cone</b> is a cone that is also a convex set. Important examples include the <b>second-order cone</b> $\{ (x, t) \in \mathbb{R}^{n+1} \mid \|x\|_2 \le t \}$ and the <b>positive semidefinite (PSD) cone</b> $\mathbb{S}^n_+ = \{ X \in \mathbb{S}^n \mid X \succeq 0 \}$.</p>
+        </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Explorer: Cone Geometry</h3>
+          <p>Explore different types of cones including the nonnegative orthant, second-order cone, and their dual cones. Understand the geometry of these fundamental convex structures.</p>
+          <div id="widget-cone-geometry" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
       </section>
 
@@ -148,6 +174,12 @@
           <h4>Application: Proving an Ellipsoid is Convex</h4>
           <p>An ellipsoid $\mathcal{E} = \{x \mid \|P^{-1/2}(x-x_c)\|_2 \le 1\}$ is the preimage of the unit Euclidean ball (a convex set) under the affine map $f(x) = P^{-1/2}(x-x_c)$. Since the preimage of a convex set under an affine map is convex, the ellipsoid is convex.</p>
         </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Builder: Operations Preserving Convexity</h3>
+          <p>Explore how different operations preserve convexity. Combine convex sets using intersection, affine transformations, and other operations to build complex convex sets from simple building blocks.</p>
+          <div id="widget-operations-builder" style="width: 100%; height: 450px; position: relative;"></div>
+        </div>
       </section>
 
       <section class="card" id="section-4">
@@ -165,6 +197,12 @@
           <img src="./assets/supporting-hyperplane.svg" alt="Illustration of the Supporting Hyperplane Theorem" />
           <figcaption>Figure 4.2: A supporting hyperplane to a convex set at a boundary point.</figcaption>
         </figure>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Tool: Separating Hyperplane Explorer</h3>
+          <p>Draw two disjoint convex sets and find the separating hyperplane between them. Experiment with different shapes to understand when and how separation is possible.</p>
+          <div id="widget-separating-hyperplane" style="width: 100%; height: 450px; position: relative;"></div>
+        </div>
       </section>
 
       <section class="card" id="section-5">
@@ -261,7 +299,7 @@
       <section class="card" id="section-7">
         <h2>7. Topological Toolkit: Closure, Interior, Boundary, Relative Interior</h2>
 
-        <p>To rigorously work with convex sets, especially in optimization theory, we need precise notions of "inside," "outside," and "on the edge." This section provides the vocabulary.</p>
+        <p>To work precisely with convex sets in optimization theory, we need clear notions of "inside," "outside," and "on the edge." This section provides the vocabulary.</p>
 
         <h3>Basic Definitions</h3>
 
@@ -332,7 +370,7 @@
         </ul>
       </section>
 
-      <!-- SECTION 8: SEPARATING AND SUPPORTING HYPERPLANES (COMPREHENSIVE) -->
+      <!-- SECTION 8: SEPARATING AND SUPPORTING HYPERPLANES -->
       <section class="card" id="section-8">
         <h2>8. Separating and Supporting Hyperplanes (with Proofs)</h2>
 
@@ -574,9 +612,9 @@
         </ul>
       </section>
 
-      <!-- SECTION 11: ADDITIONAL EXERCISES WITH COMPLETE SOLUTIONS -->
+      <!-- SECTION 11: ADDITIONAL EXERCISES -->
       <section class="card" id="section-11">
-        <h2>11. Additional Exercises (with Complete Solutions)</h2>
+        <h2>11. Additional Exercises</h2>
 
         <h3>Exercise E2.1: Relative Interior of the Simplex</h3>
         <p><b>Problem:</b> Let $\Delta^n = \{x \in \mathbb{R}^n \mid x \ge 0, \mathbf{1}^\top x = 1\}$. Show that:
@@ -653,7 +691,7 @@
           </div>
         </div>
 
-        <h3>Exercise E2.4: SOC is Self-Dual (Detailed)</h3>
+        <h3>Exercise E2.4: SOC is Self-Dual</h3>
         <p><b>Problem:</b> Let $\mathcal{Q} = \{(x, t) \mid \|x\|_2 \le t\}$. Show $\mathcal{Q}^* = \mathcal{Q}$.</p>
 
         <div class="proof">
@@ -789,6 +827,32 @@
   <script src="../../static/js/math-renderer.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Widget Loaders -->
+  <script type="module">
+    import { initConvexSetChecker } from './widgets/js/convex-set-checker.js';
+    initConvexSetChecker('widget-convex-set-checker');
+  </script>
+  <script type="module">
+    import { initEllipsoidExplorer } from './widgets/js/ellipsoid-explorer.js';
+    initEllipsoidExplorer('widget-ellipsoid-explorer');
+  </script>
+  <script type="module">
+    import { initPolyhedronVisualizer } from './widgets/js/polyhedron-visualizer.js';
+    initPolyhedronVisualizer('widget-polyhedron-visualizer');
+  </script>
+  <script type="module">
+    import { initConeGeometry } from './widgets/js/cone-geometry.js';
+    initConeGeometry('widget-cone-geometry');
+  </script>
+  <script type="module">
+    import { initOperationsBuilder } from './widgets/js/operations-builder.js';
+    initOperationsBuilder('widget-operations-builder');
+  </script>
+  <script type="module">
+    import { initSeparatingHyperplane } from './widgets/js/separating-hyperplane.js';
+    initSeparatingHyperplane('widget-separating-hyperplane');
   </script>
 </body>
 </html>
