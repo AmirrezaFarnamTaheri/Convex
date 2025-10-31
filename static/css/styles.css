@@ -242,24 +242,48 @@ code {
   line-height: 1.8;
 }
 
-/* Proof Step with Curved Arrow */
+/* Proof Step with Enhanced Curved Arrow */
 .proof-step {
   position: relative;
-  padding-left: calc(var(--spacing-unit) * 5);
+  padding-left: calc(var(--spacing-unit) * 6);
   margin: calc(var(--spacing-unit) * 3) 0;
+  padding-top: calc(var(--spacing-unit) * 1);
+  padding-bottom: calc(var(--spacing-unit) * 1);
+  transition: all 0.2s ease;
+}
+
+.proof-step:hover {
+  background: rgba(107, 184, 255, 0.03);
+  border-radius: var(--border-radius-sm);
+  padding-right: calc(var(--spacing-unit) * 2);
 }
 
 .proof-step::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0.5em;
-  width: 24px;
-  height: 24px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%236bb8ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17V7c0-4 2-6 6-6"/><path d="M17 7l-4-4-4 4"/></svg>');
+  left: 8px;
+  top: 0.4em;
+  width: 28px;
+  height: 28px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%236bb8ff;stop-opacity:1" /><stop offset="100%" style="stop-color:%2372f5a8;stop-opacity:1" /></linearGradient></defs><path d="M 8 24 C 8 24, 8 12, 16 8 C 20 6, 24 6, 24 8" stroke="url(%23arrowGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 24 8 L 20 4 M 24 8 L 28 4" stroke="url(%23arrowGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>');
   background-size: contain;
   background-repeat: no-repeat;
-  opacity: 0.8;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 4px rgba(107, 184, 255, 0.3));
+  transition: all 0.2s ease;
+}
+
+.proof-step:hover::before {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(107, 184, 255, 0.5));
+  transform: scale(1.1);
+}
+
+.proof-step strong {
+  color: var(--color-primary-light);
+  font-weight: 600;
+  display: block;
+  margin-bottom: calc(var(--spacing-unit) * 1.5);
 }
 
 /* Example Block */
@@ -510,6 +534,267 @@ code {
 }
 
 /* ---
+   ENHANCED MATH FORMULA STYLING
+--- */
+
+/* Display Math Equations */
+.katex-display {
+  margin: calc(var(--spacing-unit) * 4) 0;
+  padding: calc(var(--spacing-unit) * 3);
+  background: linear-gradient(135deg, rgba(107, 184, 255, 0.04) 0%, rgba(114, 245, 168, 0.04) 100%);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid rgba(107, 184, 255, 0.15);
+  overflow-x: auto;
+  overflow-y: hidden;
+  transition: all 0.3s ease;
+}
+
+.katex-display:hover {
+  background: linear-gradient(135deg, rgba(107, 184, 255, 0.06) 0%, rgba(114, 245, 168, 0.06) 100%);
+  border-color: rgba(107, 184, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(107, 184, 255, 0.1);
+}
+
+/* Inline Math */
+.katex {
+  font-size: 1.05em;
+  color: var(--color-primary-light);
+}
+
+/* Math in Proofs */
+.proof .katex-display {
+  background: linear-gradient(135deg, rgba(107, 184, 255, 0.06) 0%, rgba(107, 184, 255, 0.03) 100%);
+  border-color: rgba(107, 184, 255, 0.2);
+}
+
+/* Math in Examples */
+.example .katex-display {
+  background: linear-gradient(135deg, rgba(114, 245, 168, 0.06) 0%, rgba(114, 245, 168, 0.03) 100%);
+  border-color: rgba(114, 245, 168, 0.2);
+}
+
+/* Math in Solutions */
+.solution .katex-display {
+  background: linear-gradient(135deg, rgba(93, 217, 141, 0.06) 0%, rgba(93, 217, 141, 0.03) 100%);
+  border-color: rgba(93, 217, 141, 0.2);
+}
+
+/* ---
+   ENHANCED WIDGET STYLING
+--- */
+.widget-container {
+  background: linear-gradient(135deg, var(--color-surface-1) 0%, var(--color-surface-2) 100%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: calc(var(--spacing-unit) * 4);
+  margin: calc(var(--spacing-unit) * 6) 0;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.widget-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  opacity: 0.6;
+}
+
+.widget-container:hover {
+  border-color: var(--color-border-light);
+  box-shadow: var(--shadow-lg), 0 0 24px rgba(107, 184, 255, 0.1);
+}
+
+.widget-container h3 {
+  color: var(--color-primary-light);
+  margin-top: 0;
+  margin-bottom: calc(var(--spacing-unit) * 2);
+  font-size: 1.3rem;
+}
+
+.widget-container p {
+  color: var(--color-text-muted);
+  margin-bottom: calc(var(--spacing-unit) * 3);
+}
+
+/* ---
+   TABLE OF CONTENTS ENHANCEMENTS
+--- */
+.table-of-contents {
+  background: linear-gradient(135deg, rgba(107, 184, 255, 0.03) 0%, rgba(114, 245, 168, 0.03) 100%);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
+}
+
+.table-of-contents h2 {
+  color: var(--color-primary-light);
+  border-bottom: 1px solid rgba(107, 184, 255, 0.2);
+}
+
+.table-of-contents ol {
+  list-style: none;
+  counter-reset: toc-counter;
+  padding-left: 0;
+}
+
+.table-of-contents ol li {
+  counter-increment: toc-counter;
+  margin: calc(var(--spacing-unit) * 2) 0;
+  padding-left: calc(var(--spacing-unit) * 4);
+  position: relative;
+}
+
+.table-of-contents ol li::before {
+  content: counter(toc-counter) ".";
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.table-of-contents a {
+  color: var(--color-text-main);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.table-of-contents a:hover {
+  color: var(--color-primary);
+  transform: translateX(4px);
+}
+
+/* ---
+   LECTURE HEADER ENHANCEMENTS
+--- */
+.lecture-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.lecture-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg,
+    var(--color-primary) 0%,
+    var(--color-accent) 50%,
+    var(--color-accent-secondary) 100%);
+  opacity: 0.7;
+}
+
+.lecture-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing-unit) * 3);
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: calc(var(--spacing-unit) * 3) 0;
+  padding: calc(var(--spacing-unit) * 2) 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.lecture-meta span {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing-unit) * 1);
+}
+
+.lecture-summary {
+  margin-top: calc(var(--spacing-unit) * 4);
+  line-height: 1.9;
+}
+
+.lecture-summary p {
+  margin-bottom: calc(var(--spacing-unit) * 3);
+}
+
+.lecture-summary strong {
+  color: var(--color-primary-light);
+  font-weight: 600;
+}
+
+/* ---
+   FIGURE AND IMAGE ENHANCEMENTS
+--- */
+figure {
+  margin: calc(var(--spacing-unit) * 6) 0;
+  text-align: center;
+}
+
+figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+figure img:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+figcaption {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-top: calc(var(--spacing-unit) * 2);
+  font-style: italic;
+}
+
+figcaption i {
+  color: var(--color-primary);
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* ---
+   LIST ENHANCEMENTS
+--- */
+ul, ol {
+  line-height: 1.9;
+}
+
+ul li, ol li {
+  margin-bottom: calc(var(--spacing-unit) * 1.5);
+}
+
+ul li b, ol li b {
+  color: var(--color-primary-light);
+  font-weight: 600;
+}
+
+/* ---
+   LINK ENHANCEMENTS
+--- */
+a {
+  position: relative;
+}
+
+a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  transition: width 0.3s ease;
+}
+
+a:hover::after {
+  width: 100%;
+}
+
+/* ---
    RESPONSIVE
 --- */
 @media (max-width: 650px) {
@@ -527,5 +812,20 @@ code {
   }
   .nav a {
     margin-left: 0;
+  }
+
+  .katex-display {
+    padding: calc(var(--spacing-unit) * 2);
+    margin: calc(var(--spacing-unit) * 3) 0;
+    font-size: 0.9em;
+  }
+
+  .proof-step {
+    padding-left: calc(var(--spacing-unit) * 5);
+  }
+
+  .widget-container {
+    padding: calc(var(--spacing-unit) * 3);
+    margin: calc(var(--spacing-unit) * 4) 0;
   }
 }
