@@ -1,60 +1,84 @@
-<svg width="600" height="250" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="14">
+<svg width="640" height="280" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+    <style>
+      .matrix-border { fill: none; stroke: #6bb8ff; stroke-width: 2; }
+      .matrix-val { fill: #e8eaf0; font-family: 'Inter', sans-serif; font-size: 14px; text-anchor: middle; }
+      .equals { fill: #9ca3ba; font-size: 24px; }
+      .separator { stroke: #3d4456; stroke-width: 1; stroke-dasharray: 3,3; }
+      .vec-a1 { stroke: #ff9d72; stroke-width: 2.5; }
+      .vec-a2 { stroke: #72f5a8; stroke-width: 2.5; }
+      .vec-result { stroke: #6bb8ff; stroke-width: 3; }
+      .vec-dashed { stroke-width: 2; stroke-dasharray: 5,3; opacity: 0.7; }
+      .label { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; }
+      .title { fill: #e8eaf0; font-family: 'Inter', sans-serif; font-size: 15px; text-anchor: middle; }
+    </style>
+    <marker id="arrow-a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff9d72"/>
+    </marker>
+    <marker id="arrow-a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#72f5a8"/>
+    </marker>
+    <marker id="arrow-result" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6bb8ff"/>
     </marker>
   </defs>
 
+  <!-- Background -->
+  <rect width="640" height="280" fill="#13151c"/>
+
   <!-- Matrix A -->
   <g id="matrix-a">
-    <rect x="10" y="50" width="80" height="50" fill="none" stroke="#333" />
-    <text x="30" y="75" class="matrix-val" fill="#d6336c">a₁</text>
-    <text x="70" y="75" class="matrix-val" fill="#228be6">a₂</text>
-    <line x1="50" y1="50" x2="50" y2="100" stroke="#ccc" stroke-dasharray="2,2"/>
+    <rect x="20" y="90" width="90" height="60" class="matrix-border"/>
+    <line x1="65" y1="90" x2="65" y2="150" class="separator"/>
+    <text x="42" y="124" class="matrix-val" fill="#ff9d72">a₁</text>
+    <text x="88" y="124" class="matrix-val" fill="#72f5a8">a₂</text>
   </g>
 
   <!-- Vector x -->
   <g id="vector-x">
-    <rect x="120" y="50" width="40" height="50" fill="none" stroke="#333" />
-    <text x="140" y="65" class="matrix-val">x₁</text>
-    <text x="140" y="90" class="matrix-val">x₂</text>
+    <rect x="145" y="90" width="45" height="60" class="matrix-border"/>
+    <text x="167" y="110" class="matrix-val">x₁</text>
+    <text x="167" y="140" class="matrix-val">x₂</text>
   </g>
 
   <!-- Result Vector b -->
   <g id="vector-b">
-    <rect x="230" y="50" width="40" height="50" fill="none" stroke="#333" />
-    <text x="250" y="75" class="matrix-val">b</text>
+    <rect x="270" y="90" width="45" height="60" class="matrix-border"/>
+    <text x="292" y="124" class="matrix-val">b</text>
   </g>
 
-  <text x="100" y="78" font-size="24">=</text>
-  <text x="185" y="78" font-size="24">=</text>
+  <text x="125" y="125" class="equals">=</text>
+  <text x="225" y="125" class="equals">=</text>
 
-  <!-- Geometric Intuition -->
-  <g transform="translate(350, 80)">
+  <!-- Title for geometric interpretation -->
+  <text x="480" y="35" class="title">Geometric View: b = x₁a₁ + x₂a₂</text>
+
+  <!-- Geometric Interpretation -->
+  <g transform="translate(400, 160)">
     <!-- Origin -->
-    <circle cx="0" cy="0" r="2" fill="#333" />
-    <text x="-15" y="5" font-size="12">O</text>
+    <circle cx="0" cy="0" r="3" fill="#9ca3ba"/>
+    <text x="-12" y="5" class="label" fill="#9ca3ba">O</text>
 
-    <!-- Vector a1 -->
-    <line x1="0" y1="0" x2="60" y2="-30" stroke="#d6336c" stroke-width="2" marker-end="url(#arrow)" />
-    <text x="30" y="-25" fill="#d6336c">a₁</text>
+    <!-- Base vector a1 -->
+    <line x1="0" y1="0" x2="70" y2="-35" class="vec-a1" marker-end="url(#arrow-a1)"/>
+    <text x="38" y="-28" class="label" fill="#ff9d72">a₁</text>
 
-    <!-- Vector a2 -->
-    <line x1="0" y1="0" x2="20" y2="40" stroke="#228be6" stroke-width="2" marker-end="url(#arrow)" />
-    <text x="5" y="20" fill="#228be6">a₂</text>
+    <!-- Base vector a2 -->
+    <line x1="0" y1="0" x2="25" y2="50" class="vec-a2" marker-end="url(#arrow-a2)"/>
+    <text x="8" y="28" class="label" fill="#72f5a8">a₂</text>
 
-    <!-- Scaled a1 -->
-    <line x1="0" y1="0" x2="90" y2="-45" stroke="#d6336c" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow)" />
-    <text x="95" y="-40" fill="#d6336c">x₁a₁</text>
+    <!-- Scaled a1 (x₁a₁) -->
+    <line x1="0" y1="0" x2="105" y2="-52.5" class="vec-a1 vec-dashed" marker-end="url(#arrow-a1)"/>
+    <text x="112" y="-48" class="label" fill="#ff9d72">x₁a₁</text>
 
-    <!-- Scaled a2 -->
-    <line x1="90" y1="-45" x2="120" y2="15" stroke="#228be6" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#arrow)" />
-    <text x="125" y="20" fill="#228be6">x₂a₂</text>
+    <!-- Scaled a2 from tip of x₁a₁ -->
+    <line x1="105" y1="-52.5" x2="142.5" y2="22.5" class="vec-a2 vec-dashed" marker-end="url(#arrow-a2)"/>
+    <text x="150" y="28" class="label" fill="#72f5a8">x₂a₂</text>
 
     <!-- Resultant vector b -->
-    <line x1="0" y1="0" x2="120" y2="15" stroke="#333" stroke-width="3" marker-end="url(#arrow)" />
-    <text x="60" y="15" fill="#333" font-weight="bold">b = x₁a₁ + x₂a₂</text>
+    <line x1="0" y1="0" x2="142.5" y2="22.5" class="vec-result" marker-end="url(#arrow-result)"/>
+    <text x="75" y="20" class="label" fill="#6bb8ff" font-weight="600">b</text>
   </g>
 
-  <text x="10" y="200" font-size="16">Matrix-vector product as a linear combination of columns</text>
+  <text x="320" y="265" class="title" font-size="13px">Matrix-vector multiplication as a linear combination of column vectors</text>
 </svg>

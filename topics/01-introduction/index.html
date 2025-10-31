@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../../static/css/styles.css" />
   <link rel="stylesheet" href="/static/css/modern-widgets.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
 </head>
 <body>
@@ -45,7 +46,7 @@
       <h2>Learning Objectives</h2>
       <ul>
         <li><b>Define Convex Problems:</b> Articulate the precise three-part definition and distinguish convex from nonconvex problems.</li>
-        <li><b>Prove Global Optimality:</b> Walk through the rigorous proof that every local minimum is global, and explain why this property is transformative.</li>
+        <li><b>Prove Global Optimality:</b> Walk through the rigorous proof that every local minimum is global, and understand why this property fundamentally changes optimization.</li>
         <li><b>Recognize Canonical Families:</b> Identify LP, QP, SOCP, SDP by sight and know which real-world scenarios each family models.</li>
         <li><b>Apply Loss + Regularizer Paradigm:</b> Formulate problems using the "loss + regularizer + constraints" template and explain the bias-variance tradeoff.</li>
         <li><b>Use Safe Rewrites:</b> Transform norms, absolute values, and max functions into standard convex forms.</li>
@@ -98,7 +99,7 @@
 
       <section class="card" id="section-2">
         <h2>2. The Crown Jewel: Local = Global</h2>
-        <p>This property is what makes convex optimization so powerful. In nonconvex problems, algorithms can get stuck in local minima, but for convex problems, any local minimum is guaranteed to be the best possible solution.</p>
+        <p>This property is what makes convex optimization fundamentally different from general optimization. In nonconvex problems, algorithms can get stuck in local minima, but for convex problems, any local minimum is guaranteed to be the global solution.</p>
         <div class="proof">
           <h4>Proof: Any Local Minimum is a Global Minimum</h4>
 
@@ -196,7 +197,7 @@
 
       <section class="card" id="section-4">
         <h2>4. The Loss + Regularizer Paradigm</h2>
-        <p>Many problems in statistics and machine learning use a powerful modeling template:</p>
+        <p>Many problems in statistics and machine learning use this modeling template:</p>
         $$
         \min_x \quad \underbrace{\text{loss}(x; \text{data})}_{\text{Data Fidelity}} + \underbrace{\lambda \cdot \text{regularizer}(x)}_{\text{Model Complexity}}
         $$
@@ -207,7 +208,7 @@
         </ul>
         <div class="insight">
           <h4>⚡ Why LASSO Promotes Sparsity</h4>
-          <p>The $\ell_1$ "ball" has sharp corners at the coordinate axes. When the contours of the loss function expand, they are more likely to first touch the $\ell_1$ region at one of these corners, where many coordinates are exactly zero. This geometric property makes LASSO a powerful tool for feature selection.</p>
+          <p>The $\ell_1$ "ball" has sharp corners at the coordinate axes. When the contours of the loss function expand, they are more likely to first touch the $\ell_1$ region at one of these corners, where many coordinates are exactly zero. This geometric property makes LASSO effective for feature selection.</p>
         </div>
       </section>
 

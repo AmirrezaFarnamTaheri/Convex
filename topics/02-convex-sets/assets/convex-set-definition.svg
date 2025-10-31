@@ -1,37 +1,42 @@
 <svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      .title { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 600; fill: #333; }
-      .label { font-family: 'Inter', sans-serif; font-size: 14px; fill: #555; }
-      .convex-shape { fill: #dbeafe; stroke: #60a5fa; stroke-width: 2; }
-      .non-convex-shape { fill: #fee2e2; stroke: #ef4444; stroke-width: 2; }
-      .segment-good { stroke: #16a34a; stroke-width: 2.5; marker-start: url(#dot-good); marker-end: url(#dot-good); }
-      .segment-bad { stroke: #dc2626; stroke-width: 2.5; marker-start: url(#dot-bad); marker-end: url(#dot-bad); }
-      .segment-line { stroke-dasharray: 4 4; stroke: #999; stroke-width: 1.5; }
+      .title { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 600; fill: #e8eaf0; }
+      .label { font-family: 'Inter', sans-serif; font-size: 14px; fill: #9ca3ba; }
     </style>
     <marker id="dot-good" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8">
-      <circle cx="5" cy="5" r="4" fill="#16a34a" />
+      <circle cx="5" cy="5" r="4" fill="#72f5a8" />
     </marker>
     <marker id="dot-bad" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8">
-      <circle cx="5" cy="5" r="4" fill="#dc2626" />
+      <circle cx="5" cy="5" r="4" fill="#ff9d72" />
     </marker>
+    <linearGradient id="convexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6bb8ff;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#72f5a8;stop-opacity:0.1" />
+    </linearGradient>
+    <linearGradient id="nonConvexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff9d72;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#ffb84d;stop-opacity:0.1" />
+    </linearGradient>
   </defs>
 
+  <!-- Background -->
+  <rect width="600" height="300" fill="#13151c"/>
+
   <!-- Left Side: Convex Set -->
-  <rect x="1" y="1" width="298" height="298" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="1" y="1" width="298" height="298" fill="none" stroke="#2d3448" stroke-width="1.5"/>
   <text x="150" y="30" text-anchor="middle" class="title">Convex Set</text>
-  <path class="convex-shape" d="M 50,150 C 50,80 250,80 250,150 S 50,220 50,150 Z" transform="rotate(-15 150 150)"/>
-  <line class="segment-good" x1="100" y1="120" x2="180" y2="180"/>
+  <path fill="url(#convexGrad)" stroke="#6bb8ff" stroke-width="2.5" d="M 50,150 C 50,80 250,80 250,150 S 50,220 50,150 Z" transform="rotate(-15 150 150)"/>
+  <line stroke="#72f5a8" stroke-width="3" marker-start="url(#dot-good)" marker-end="url(#dot-good)" x1="100" y1="120" x2="180" y2="180"/>
   <text x="150" y="270" text-anchor="middle" class="label">The line segment between any</text>
   <text x="150" y="285" text-anchor="middle" class="label">two points stays inside the set.</text>
 
-
   <!-- Right Side: Non-Convex Set -->
-  <rect x="301" y="1" width="298" height="298" fill="none" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="301" y="1" width="298" height="298" fill="none" stroke="#2d3448" stroke-width="1.5"/>
   <text x="450" y="30" text-anchor="middle" class="title">Non-Convex Set</text>
-  <path class="non-convex-shape" d="M 350,150 C 350,80 550,80 550,150 C 550,220 350,220 350,150 C 450,150 450,200 350,150 Z"/>
-  <line class="segment-bad" x1="380" y1="110" x2="520" y2="130"/>
-  <path class="segment-line" d="M 380,110 L 520,130"/>
+  <path fill="url(#nonConvexGrad)" stroke="#ff9d72" stroke-width="2.5" d="M 350,150 C 350,80 550,80 550,150 C 550,220 350,220 350,150 C 450,150 450,200 350,150 Z"/>
+  <line stroke="#ff9d72" stroke-width="3" marker-start="url(#dot-bad)" marker-end="url(#dot-bad)" x1="380" y1="110" x2="520" y2="130"/>
+  <path stroke-dasharray="4 4" stroke="#9ca3ba" stroke-width="1.5" fill="none" d="M 380,110 L 520,130"/>
   <text x="450" y="270" text-anchor="middle" class="label">Part of the line segment</text>
   <text x="450" y="285" text-anchor="middle" class="label">goes outside the set.</text>
 
