@@ -1,0 +1,92 @@
+{
+  "lecture": "02-convex-sets",
+  "problems": [
+    {
+      "id": "02-001",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "easy",
+      "title": "P1 — Epigraph of a norm is convex",
+      "statement": "Let S = {(x,t) ∈ ℝⁿ×ℝ | |x| ≤ t}. Show that S ⊂ ℝⁿ⁺¹ is convex.\n\nRecall: A set C is convex if for all u,v ∈ C and θ ∈ [0,1], the convex combination θu + (1-θ)v ∈ C.",
+      "hints": [
+        "Start by taking two arbitrary points (x₁,t₁), (x₂,t₂) ∈ S and a coefficient θ ∈ [0,1]",
+        "Use the definition of S: this means |x₁| ≤ t₁ and |x₂| ≤ t₂",
+        "For the convex combination (x̄,t̄) = θ(x₁,t₁) + (1-θ)(x₂,t₂), you need to show |x̄| ≤ t̄",
+        "Apply the triangle inequality: |θx₁ + (1-θ)x₂| ≤ |θx₁| + |(1-θ)x₂|",
+        "Use positive homogeneity of norms: |θx₁| = θ|x₁| for θ ≥ 0",
+        "Combine with the feasibility conditions |x₁| ≤ t₁ and |x₂| ≤ t₂"
+      ],
+      "solution": "## Solution (Direct, Step by Step)\n\nLet (x₁,t₁), (x₂,t₂) ∈ S. By definition of S:\n\n|x₁| ≤ t₁,    |x₂| ≤ t₂\n\nFix any θ ∈ [0,1]. Consider the convex combination:\n\n(x̄,t̄) = θ(x₁,t₁) + (1-θ)(x₂,t₂) = (θx₁ + (1-θ)x₂, θt₁ + (1-θ)t₂)\n\nWe must show (x̄,t̄) ∈ S, i.e., |x̄| ≤ t̄.\n\n### Step 1 (Triangle inequality)\n\n|θx₁ + (1-θ)x₂| ≤ |θx₁| + |(1-θ)x₂|\n\n### Step 2 (Positive homogeneity of norms)\n\n|θx₁| = θ|x₁|,    |(1-θ)x₂| = (1-θ)|x₂|\n\n### Step 3 (Combine with feasibility of the endpoints)\n\n|x̄| ≤ θ|x₁| + (1-θ)|x₂| ≤ θt₁ + (1-θ)t₂ = t̄\n\nThus (x̄,t̄) ∈ S. Since (x₁,t₁), (x₂,t₂) and θ were arbitrary, S is convex. ∎\n\n## Alternative Solution (Epigraph viewpoint)\n\nThe map f(x) = |x| is convex. The **epigraph** of f,\n\nepi f = {(x,t) | f(x) ≤ t}\n\nis always convex for any convex function f. Here epi f = S, therefore S is convex. ∎\n\n## Key Insights\n\n1. **Geometric interpretation**: The set S is the region \"above\" the norm cone in ℝⁿ⁺¹\n2. **Epigraph property**: Any convex function has a convex epigraph—this is a fundamental connection between convex functions and convex sets\n3. **Norm properties used**: Triangle inequality and positive homogeneity (both defining properties of norms)",
+      "learningObjectives": [
+        "convexity-definition",
+        "triangle-inequality",
+        "norm-properties",
+        "epigraph-concept",
+        "convex-combinations",
+        "proof-technique"
+      ],
+      "estimatedTime": 15,
+      "relatedProblems": ["02-002", "02-003", "02-005"],
+      "notes": "This is a fundamental problem that connects convex sets and convex functions through the epigraph. The direct proof reinforces basic properties of norms and convex combinations. The alternative solution introduces the powerful epigraph viewpoint that will be used extensively in convex analysis."
+    },
+    {
+      "id": "02-002",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "easy",
+      "title": "P2 — Convex hull is convex",
+      "statement": "Let x₁, ..., xₖ ∈ ℝⁿ. Define\n\nC = {∑ᵢ₌₁ᵏ θᵢxᵢ | θᵢ ≥ 0, ∑ᵢ₌₁ᵏ θᵢ = 1}\n\nShow that C is convex.",
+      "hints": [
+        "Pick two arbitrary points u, v ∈ C and express them using the definition",
+        "For u ∈ C, write u = ∑ᵢ₌₁ᵏ θᵢxᵢ with θᵢ ≥ 0 and ∑θᵢ = 1",
+        "For v ∈ C, write v = ∑ᵢ₌₁ᵏ φᵢxᵢ with φᵢ ≥ 0 and ∑φᵢ = 1",
+        "Form the convex combination λu + (1-λ)v for λ ∈ [0,1]",
+        "Expand: λu + (1-λ)v = ∑ᵢ₌₁ᵏ [λθᵢ + (1-λ)φᵢ]xᵢ",
+        "Verify that the new coefficients λθᵢ + (1-λ)φᵢ are nonnegative and sum to 1"
+      ],
+      "solution": "## Solution (Direct Coefficient Bookkeeping)\n\nPick two points of C:\n\nu = ∑ᵢ₌₁ᵏ θᵢxᵢ,    v = ∑ᵢ₌₁ᵏ φᵢxᵢ\n\nwith θᵢ, φᵢ ≥ 0 and ∑ᵢ θᵢ = ∑ᵢ φᵢ = 1.\n\nFix λ ∈ [0,1]. Then:\n\nλu + (1-λ)v = ∑ᵢ₌₁ᵏ [λθᵢ + (1-λ)φᵢ]xᵢ\n\n### Nonnegativity\n\nEach coefficient λθᵢ + (1-λ)φᵢ ≥ 0 because:\n- λ ≥ 0, θᵢ ≥ 0 ⟹ λθᵢ ≥ 0\n- (1-λ) ≥ 0, φᵢ ≥ 0 ⟹ (1-λ)φᵢ ≥ 0\n\n### Sum-to-one\n\n∑ᵢ₌₁ᵏ [λθᵢ + (1-λ)φᵢ] = λ∑ᵢ θᵢ + (1-λ)∑ᵢ φᵢ = λ·1 + (1-λ)·1 = 1\n\nHence λu + (1-λ)v ∈ C. Therefore C is convex. ∎\n\n## Alternative Solution (Induction on k)\n\n**Base case (k=2)**: This is exactly the definition of convexity—the convex hull of two points is the line segment between them, which is clearly convex.\n\n**Inductive step**: Assume the claim holds for k-1 points. For k points, write any point in C as:\n\n∑ᵢ₌₁ᵏ θᵢxᵢ = α(∑ᵢ₌₁ᵏ⁻¹ (θᵢ/α)xᵢ) + (1-α)xₖ\n\nwhere α = ∑ᵢ₌₁ᵏ⁻¹ θᵢ ∈ [0,1].\n\n**Case 1**: If α = 0, then the point is just xₖ ∈ C.\n\n**Case 2**: If α > 0, note that θᵢ/α ≥ 0 and ∑ᵢ₌₁ᵏ⁻¹ (θᵢ/α) = 1. By the induction hypothesis, the parenthesis ∑ᵢ₌₁ᵏ⁻¹ (θᵢ/α)xᵢ lies in the convex hull of {x₁,...,xₖ₋₁}.\n\nTaking a convex combination (with weights α and 1-α) with xₖ keeps us in the convex hull of all k points.\n\nTaking any convex combination of two points in C (each expressible in this form) keeps us in C by the base case. ∎\n\n## Key Insights\n\n1. **Convex hull definition**: C is precisely the convex hull of {x₁,...,xₖ}, denoted conv({x₁,...,xₖ})\n2. **Coefficient preservation**: Convex combinations preserve the affine combination structure (nonnegativity and sum-to-one)\n3. **Inductive reasoning**: The convex hull can be built incrementally by adding one point at a time\n4. **Smallest convex set**: The convex hull is the smallest convex set containing the given points",
+      "learningObjectives": [
+        "convex-hull",
+        "convexity-definition",
+        "affine-combinations",
+        "proof-by-induction",
+        "coefficient-bookkeeping",
+        "convex-combinations"
+      ],
+      "estimatedTime": 20,
+      "relatedProblems": ["02-001", "02-008", "02-012"],
+      "notes": "This problem establishes that the convex hull—one of the most important constructions in convex geometry—is itself convex. The direct proof emphasizes careful coefficient tracking, while the inductive proof provides geometric intuition about building convex hulls incrementally. This result is foundational for understanding that 'convex hull' is the smallest convex set containing a given set of points."
+    },
+    {
+      "id": "02-003",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "medium",
+      "title": "P3 — Inner product induced by A ≻ 0; Cauchy–Schwarz; ellipsoid is convex",
+      "statement": "Let A ∈ Sⁿ₊₊ (symmetric positive definite). Define ⟨x,y⟩_A := xᵀAy for x,y ∈ ℝⁿ.\n\n1. Show ⟨·,·⟩_A is an inner product.\n\n2. Prove the Cauchy–Schwarz inequality:\n   |⟨x,y⟩_A|² ≤ ⟨x,x⟩_A · ⟨y,y⟩_A    (∀x,y)\n\n3. Prove the set E = {x ∈ ℝⁿ | xᵀAx ≤ 1} is convex.",
+      "hints": [
+        "Part 1: Verify the three inner product axioms—bilinearity, symmetry, and positive definiteness",
+        "For bilinearity: Use (αx₁ + βx₂)ᵀAy = αx₁ᵀAy + βx₂ᵀAy",
+        "For symmetry: Use that A = Aᵀ, so xᵀAy = yᵀAx",
+        "For positive definiteness: Use that A ≻ 0 means xᵀAx > 0 for all x ≠ 0",
+        "Part 2, Method A: Consider the quadratic 0 ≤ ⟨x-αy, x-αy⟩_A for any α ∈ ℝ and examine its discriminant",
+        "Part 2, Method B: Use A^(1/2) and reduce to the standard Euclidean Cauchy–Schwarz",
+        "Part 3: Define the A-norm |x|_A = √(xᵀAx) and show it's a norm, then use that norm balls are convex"
+      ],
+      "solution": "## Part 1 — Inner Product Axioms\n\nWe verify the three axioms:\n\n### (i) Bilinearity\n\nFor any scalars α, β and vectors x₁, x₂, y:\n\n⟨αx₁ + βx₂, y⟩_A = (αx₁ + βx₂)ᵀAy = αx₁ᵀAy + βx₂ᵀAy = α⟨x₁,y⟩_A + β⟨x₂,y⟩_A\n\nSimilarly, linearity holds in the second slot:\n\n⟨x, αy₁ + βy₂⟩_A = α⟨x,y₁⟩_A + β⟨x,y₂⟩_A\n\n### (ii) Symmetry\n\nSince A = Aᵀ:\n\n⟨x,y⟩_A = xᵀAy = (xᵀAy)ᵀ = yᵀAᵀx = yᵀAx = ⟨y,x⟩_A\n\n### (iii) Positive Definiteness\n\nFor x ≠ 0:\n\n⟨x,x⟩_A = xᵀAx > 0\n\nbecause A ≻ 0 (positive definite). Also, ⟨0,0⟩_A = 0ᵀA0 = 0.\n\nThus ⟨·,·⟩_A is an inner product. ∎\n\n## Part 2 — Cauchy–Schwarz Inequality\n\n### Method A (One-variable quadratic)\n\nFor any α ∈ ℝ:\n\n0 ≤ ⟨x - αy, x - αy⟩_A = ⟨x,x⟩_A - 2α⟨x,y⟩_A + α²⟨y,y⟩_A\n\nThe right side is a quadratic in α that is nonnegative for all α. Therefore, its discriminant must be nonpositive:\n\n(2⟨x,y⟩_A)² - 4⟨x,x⟩_A⟨y,y⟩_A ≤ 0\n\nThis gives:\n\n|⟨x,y⟩_A|² ≤ ⟨x,x⟩_A · ⟨y,y⟩_A ∎\n\n### Method B (Reduce to Euclidean Cauchy–Schwarz)\n\nLet B = A^(1/2) ≻ 0 (the unique positive definite square root of A). Then:\n\n⟨x,y⟩_A = xᵀAy = xᵀ(B²)y = (Bx)ᵀ(By) = ⟨Bx, By⟩₂\n\nwhere ⟨·,·⟩₂ is the standard Euclidean inner product. By the standard Cauchy–Schwarz inequality in ℝⁿ:\n\n|⟨x,y⟩_A| = |⟨Bx, By⟩₂| ≤ |Bx|₂ · |By|₂\n\nNow:\n\n|Bx|₂ = √((Bx)ᵀ(Bx)) = √(xᵀBᵀBx) = √(xᵀAx) = √⟨x,x⟩_A\n\nSimilarly, |By|₂ = √⟨y,y⟩_A. Therefore:\n\n|⟨x,y⟩_A| ≤ √⟨x,x⟩_A · √⟨y,y⟩_A\n\nSquaring both sides gives the result. ∎\n\n## Part 3 — Ellipsoid is Convex\n\nDefine the **A-norm**:\n\n|x|_A := √(xᵀAx) = √⟨x,x⟩_A\n\nSince ⟨·,·⟩_A is an inner product, |·|_A is a norm. The set\n\nE = {x | |x|_A ≤ 1}\n\nis the closed unit ball of the norm |·|_A, which is convex.\n\n### Direct verification\n\nFor x, y ∈ E and θ ∈ [0,1], we use the **triangle inequality** for the norm |·|_A:\n\n|θx + (1-θ)y|_A ≤ |θx|_A + |(1-θ)y|_A\n\nBy **positive homogeneity** of norms:\n\n|θx|_A = θ|x|_A,    |(1-θ)y|_A = (1-θ)|y|_A\n\nSince x, y ∈ E, we have |x|_A ≤ 1 and |y|_A ≤ 1. Therefore:\n\n|θx + (1-θ)y|_A ≤ θ|x|_A + (1-θ)|y|_A ≤ θ·1 + (1-θ)·1 = 1\n\nHence θx + (1-θ)y ∈ E. Therefore E is convex. ∎\n\n## Key Insights\n\n1. **Induced inner products**: Any positive definite matrix A induces an inner product on ℝⁿ\n2. **Generalized norms**: The induced inner product gives rise to a norm |·|_A, called the A-norm or energy norm\n3. **Ellipsoids are norm balls**: The set E is an ellipsoid (when A ≻ 0), and it's the unit ball of |·|_A\n4. **Cauchy–Schwarz is universal**: The Cauchy–Schwarz inequality holds for any inner product space\n5. **Connection to geometry**: The quadratic form xᵀAx ≤ 1 defines an ellipsoid centered at the origin with shape determined by the eigenvectors of A and radii determined by A's eigenvalues\n6. **Transformation perspective**: Under the change of variables z = A^(1/2)x, the ellipsoid E becomes the standard Euclidean unit ball in the z-coordinates",
+      "learningObjectives": [
+        "inner-product-axioms",
+        "positive-definite-matrices",
+        "cauchy-schwarz-inequality",
+        "norms-from-inner-products",
+        "ellipsoid-convexity",
+        "matrix-square-root",
+        "quadratic-forms",
+        "triangle-inequality"
+      ],
+      "estimatedTime": 35,
+      "relatedProblems": ["02-001", "02-013", "02-010"],
+      "notes": "This is a rich problem that connects linear algebra, inner product spaces, and convex geometry. Part 1 reinforces the abstract definition of inner products. Part 2 shows that Cauchy–Schwarz is a property of ALL inner products, not just the Euclidean one. Part 3 demonstrates that ellipsoids are convex by showing they are unit balls of induced norms. The two methods for proving Cauchy–Schwarz (discriminant vs. reduction to Euclidean case) illustrate different proof strategies—one purely algebraic, one geometric via transformation."
+    }
+  ]
+}
