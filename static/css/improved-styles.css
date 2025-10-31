@@ -1,0 +1,190 @@
+/* improved-styles.css */
+
+/* ---
+   COLOR SCHEMES
+--- */
+
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: 'Crimson Pro', Georgia, serif;
+  --font-mono: 'Source Code Pro', 'Courier New', monospace;
+  --spacing-unit: 8px;
+  --transition-speed: 0.3s;
+  --transition-speed-fast: 0.15s;
+}
+
+.dark-theme {
+  --color-background: #0d1117;
+  --color-surface-1: #161b22;
+  --color-surface-2: #21262d;
+  --color-surface-3: #30363d;
+  --color-border: #30363d;
+  --color-border-light: #8b949e;
+  --color-text-main: #c9d1d9;
+  --color-text-muted: #8b949e;
+  --color-primary: #58a6ff;
+  --color-primary-light: #79c0ff;
+  --color-primary-dark: #388bfd;
+  --color-accent: #3fb950;
+  --color-accent-secondary: #ff7b72;
+  --color-heading: #ffffff;
+}
+
+.light-theme {
+  --color-background: #ffffff;
+  --color-surface-1: #f6f8fa;
+  --color-surface-2: #e1e4e8;
+  --color-surface-3: #d1d5da;
+  --color-border: #d1d5da;
+  --color-border-light: #8b949e;
+  --color-text-main: #24292e;
+  --color-text-muted: #586069;
+  --color-primary: #0366d6;
+  --color-primary-light: #005cc5;
+  --color-primary-dark: #0366d6;
+  --color-accent: #22863a;
+  --color-accent-secondary: #d73a49;
+  --color-heading: #24292e;
+}
+
+.solarized-theme {
+  --color-background: #002b36;
+  --color-surface-1: #073642;
+  --color-surface-2: #586e75;
+  --color-surface-3: #657b83;
+  --color-border: #657b83;
+  --color-border-light: #839496;
+  --color-text-main: #839496;
+  --color-text-muted: #586e75;
+  --color-primary: #268bd2;
+  --color-primary-light: #93a1a1;
+  --color-primary-dark: #2aa198;
+  --color-accent: #859900;
+  --color-accent-secondary: #dc322f;
+  --color-heading: #93a1a1;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-main);
+  font-family: var(--font-sans);
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.theme-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+}
+
+.theme-button {
+  background-color: var(--color-surface-1);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.palette-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.theme-options {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.theme-options button {
+  background: none;
+  border: none;
+  color: var(--color-text-main);
+  cursor: pointer;
+  padding: 8px 12px;
+  width: 100%;
+  text-align: left;
+  border-radius: 4px;
+}
+
+.theme-options button:hover {
+  background-color: var(--color-surface-2);
+}
+
+.lecture-container {
+  display: flex;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+#toc-container {
+  padding: 1.5rem;
+  background-color: var(--color-surface-1);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+#toc-container h2 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  color: var(--color-heading);
+}
+
+#toc {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#toc ul {
+  list-style: none;
+  padding-left: 1rem;
+}
+
+#toc a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  display: block;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color var(--transition-speed-fast), color var(--transition-speed-fast);
+}
+
+#toc a:hover {
+  background-color: var(--color-surface-2);
+  color: var(--color-primary);
+}
+
+#toc a.active {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+}
+
+.lecture-content {
+  flex-grow: 1;
+  padding-left: 2rem;
+}

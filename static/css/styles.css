@@ -3,6 +3,7 @@
    IMPORTS
 --- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500;600&family=Crimson+Pro:wght@400;600&display=swap');
+@import url('improved-styles.css');
 
 /* ---
    ROOT & COLOR THEME
@@ -311,9 +312,13 @@ code {
   top: 0.4em;
   width: 28px;
   height: 28px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none"><defs><linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%236bb8ff;stop-opacity:1" /><stop offset="100%" style="stop-color:%2372f5a8;stop-opacity:1" /></linearGradient></defs><path d="M 8 24 C 8 24, 8 12, 16 8 C 20 6, 24 6, 24 8" stroke="url(%23arrowGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 24 8 L 20 4 M 24 8 L 28 4" stroke="url(%23arrowGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-  background-size: contain;
-  background-repeat: no-repeat;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M 8 24 Q 12 10, 24 8" stroke="%23000" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M 20 4 L 24 8 L 20 12" stroke="%23000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M 8 24 Q 12 10, 24 8" stroke="%23000" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M 20 4 L 24 8 L 20 12" stroke="%23000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   opacity: 0.9;
   filter: drop-shadow(0 0 4px rgba(107, 184, 255, 0.3));
   transition: all 0.2s ease;
