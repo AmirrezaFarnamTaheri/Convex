@@ -98,7 +98,13 @@
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Visualizer: Convex Combinations</h3>
-          <p>Explore how convex combinations work by adjusting the parameter θ ∈ [0,1]. Watch how the point moves along the line segment between two points, always staying within the feasible region.</p>
+          <p><b>Understand the Building Block of Convexity:</b> A convex combination of two points $x$ and $y$ is any point of the form $\theta y + (1-\theta)x$ where $\theta \in [0,1]$. This widget lets you:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Adjust θ with a slider:</b> Watch the point smoothly move along the line segment from $x$ (when $\theta=0$) to $y$ (when $\theta=1$)</li>
+            <li><b>Visualize the line segment:</b> See how all points on this segment are "between" the two endpoints</li>
+            <li><b>See why sets are convex:</b> If a set contains both $x$ and $y$, and is convex, it must contain the entire segment</li>
+          </ul>
+          <p><i>Foundation concept:</i> This simple idea—that you can "blend" two points—is the geometric essence of convexity. Convex functions satisfy $f(\theta y + (1-\theta)x) \le \theta f(y) + (1-\theta)f(x)$, meaning the function value along the chord stays below (or on) the graph.</p>
           <div id="widget-convex-combination" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
       </section>
@@ -143,19 +149,50 @@
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Explorer: Convex vs Non-Convex Functions</h3>
-          <p>Test Jensen's inequality by selecting two points on different functions. See directly whether a function is convex, concave, or neither by checking if the chord lies above, below, or crosses the curve.</p>
+          <p><b>Test the Definition Visually:</b> This tool lets you verify whether functions satisfy the defining inequality of convexity. Select two points $x$ and $y$ on various functions and observe:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>The chord (line segment):</b> Connects $(x, f(x))$ to $(y, f(y))$ in the graph</li>
+            <li><b>Jensen's inequality:</b> For a convex function, the chord must lie above or on the curve: $f(\theta y + (1-\theta)x) \le \theta f(y) + (1-\theta)f(x)$</li>
+            <li><b>Visual test:</b>
+              <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
+                <li><b>Convex:</b> Chord always above the curve (like $x^2$)</li>
+                <li><b>Concave:</b> Chord always below the curve (like $\sqrt{x}$)</li>
+                <li><b>Neither:</b> Chord crosses the curve (like $\sin(x)$)</li>
+              </ul>
+            </li>
+          </ul>
+          <p><i>Key insight:</i> This simple geometric test—checking if chords lie above the function—is how we verify convexity in practice. It's equivalent to checking if the second derivative is non-negative!</p>
           <div id="widget-convex-vs-nonconvex" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Visualizer: Optimization Landscape Viewer</h3>
-          <p>Explore 3D landscapes of convex and non-convex functions. Drop a "marble" to simulate gradient descent and observe how convex landscapes always lead to the global minimum, while non-convex ones can get stuck.</p>
+          <h3 style="margin-top: 0;">Interactive 3D Explorer: Optimization Landscape Viewer</h3>
+          <p><b>Experience Why Local = Global Matters:</b> This 3D visualization brings optimization landscapes to life. You can:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Explore different landscapes:</b> Switch between convex functions (paraboloid, quadratic) and non-convex functions (Rosenbrock, Rastrigin)</li>
+            <li><b>Drop a "marble":</b> Simulates gradient descent starting from any point you click</li>
+            <li><b>Observe convergence behavior:</b>
+              <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
+                <li><b>Convex landscapes:</b> The marble always rolls to the unique global minimum, regardless of starting point</li>
+                <li><b>Non-convex landscapes:</b> The marble can get trapped in local minima—the final destination depends on where you start!</li>
+              </ul>
+            </li>
+            <li><b>Rotate and zoom:</b> Get a full 3D perspective of the optimization surface</li>
+          </ul>
+          <p><i>Why this is revolutionary:</i> In convex optimization, you don't need clever initialization or multiple restarts—any reasonable algorithm will find the global optimum. This is why convex problems are "solved" in practice.</p>
           <div id="widget-landscape-viewer" style="width: 100%; height: 450px; position: relative;"></div>
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Demo: Convergence Comparison</h3>
-          <p>Watch the convergence behavior of optimization algorithms on convex vs non-convex problems. Observe how convex problems converge reliably to the optimal solution.</p>
+          <h3 style="margin-top: 0;">Interactive Demo: Convergence Rate Comparison</h3>
+          <p><b>Compare Algorithm Performance:</b> Watch different optimization algorithms race to the solution on convex and non-convex problems. This demo visualizes:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Gradient Descent:</b> The workhorse algorithm, follows the steepest downhill direction</li>
+            <li><b>Newton's Method:</b> Uses second-order information (Hessian) for faster convergence</li>
+            <li><b>Momentum methods:</b> Accelerated variants that "remember" previous directions</li>
+            <li><b>Convergence plots:</b> Track the objective value and gradient norm over iterations</li>
+          </ul>
+          <p><i>Observe the difference:</i> On convex problems, all methods reliably converge to the same optimum—the only question is speed. On non-convex problems, different methods may converge to different local minima, and convergence is not guaranteed!</p>
           <div id="widget-convergence-comparison" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
       </section>
@@ -219,14 +256,30 @@
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Explorer: Problem Classification Flowchart</h3>
-          <p>Use this interactive flowchart to classify your optimization problem. Answer questions about your objective and constraints to determine which problem family (LP, QP, SOCP, SDP) your problem belongs to.</p>
+          <h3 style="margin-top: 0;">Interactive Tool: Problem Classification Flowchart</h3>
+          <p><b>Identify Your Problem Type:</b> Not sure whether your optimization problem is an LP, QP, SOCP, or SDP? This interactive flowchart guides you through a series of questions to classify your problem:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Start with the objective:</b> Is it linear, quadratic, or involves norms?</li>
+            <li><b>Examine constraints:</b> Do you have linear inequalities, second-order cone constraints, or matrix constraints?</li>
+            <li><b>Follow the decision tree:</b> Each answer narrows down the problem family</li>
+            <li><b>Get the classification:</b> Learn which solver and modeling framework to use</li>
+          </ul>
+          <p><i>Why classification matters:</i> Different problem families require different solvers and have different computational complexity. An LP can be solved much faster than an SDP, so correctly identifying your problem structure can lead to dramatic speedups. Plus, knowing the problem type helps you choose the right modeling language (CVXPY, JuMP, YALMIP).</p>
           <div id="widget-problem-flowchart" style="width: 100%; height: 450px; position: relative;"></div>
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Gallery: Real-World Applications</h3>
-          <p>Explore a gallery of real-world optimization problems from finance, operations research, machine learning, and more. See how abstract mathematical formulations map to practical applications.</p>
+          <p><b>See Convex Optimization in Action:</b> This gallery showcases how the abstract problem families (LP, QP, SOCP, SDP) appear in real-world applications across diverse fields:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Finance:</b> Portfolio optimization (QP), option pricing, risk management</li>
+            <li><b>Machine Learning:</b> Support Vector Machines (QP), LASSO regression (QP with $\ell_1$), neural network training</li>
+            <li><b>Operations Research:</b> Supply chain optimization (LP), scheduling, resource allocation</li>
+            <li><b>Signal Processing:</b> Compressed sensing (SOCP), filter design, spectrum estimation</li>
+            <li><b>Control Theory:</b> Model predictive control (QP), robust control (SDP), H-infinity control</li>
+            <li><b>Statistics:</b> Maximum likelihood estimation, experimental design (SDP)</li>
+          </ul>
+          <p><i>Practical insight:</i> For each application, the gallery shows the mathematical formulation, explains the variables and constraints, and links to the underlying problem family. This helps bridge the gap between abstract theory and practical modeling.</p>
           <div id="widget-problem-gallery" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
       </section>
