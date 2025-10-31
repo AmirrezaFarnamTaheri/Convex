@@ -202,6 +202,119 @@
       "estimatedTime": 20,
       "relatedProblems": ["02-004", "02-006", "04-005"],
       "notes": "Cartesian products are fundamental in optimization when dealing with multiple independent variables or subsystems. Unlike Minkowski sums (where nonconvex + nonconvex can yield convex), products have a strict equivalence: the product is convex iff each factor is convex. This makes products simpler to analyze but also means there's no 'lucky accident' where nonconvexity disappears. The projection viewpoint in the alternative proof foreshadows important concepts in constraint elimination and variable projection in optimization."
+    },
+    {
+      "id": "02-008",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "medium",
+      "title": "BV 2.1 — Two-point convexity implies k-point convexity",
+      "statement": "Let C ⊂ ℝⁿ be convex. For any k ≥ 2, any x₁, ..., xₖ ∈ C, and any weights θ₁, ..., θₖ ≥ 0 with ∑ᵢ₌₁ᵏ θᵢ = 1, prove\n\nθ₁x₁ + ⋯ + θₖxₖ ∈ C\n\nRecall: A set C is convex if for all x, y ∈ C and θ ∈ [0,1], θx + (1-θ)y ∈ C.",
+      "hints": [
+        "Use induction on k, the number of points",
+        "Base case k=2: This is exactly the definition of convexity",
+        "Inductive step: Assume the result holds for k-1 points",
+        "For k points, separate out the last point: write ∑ᵢ₌₁ᵏ θᵢxᵢ = α(∑ᵢ₌₁ᵏ⁻¹ (θᵢ/α)xᵢ) + (1-α)xₖ where α = ∑ᵢ₌₁ᵏ⁻¹ θᵢ",
+        "Handle two cases: α = 0 (all weight on xₖ) and α > 0 (apply induction hypothesis)",
+        "Note that when α > 0, the coefficients θᵢ/α are nonnegative and sum to 1"
+      ],
+      "solution": "## Proof (Induction on k)\n\n### Base case (k = 2)\n\nThis is exactly the definition of convexity: for x₁, x₂ ∈ C and θ₁, θ₂ ≥ 0 with θ₁ + θ₂ = 1,\n\nθ₁x₁ + θ₂x₂ ∈ C\n\nThis holds by assumption since C is convex. ✓\n\n### Inductive step\n\n**Assumption**: The claim holds for k-1 ≥ 2 points.\n\n**Goal**: Prove it for k points.\n\n### Step 1 (Separate the last point)\n\nLet x₁, ..., xₖ ∈ C and θ₁, ..., θₖ ≥ 0 with ∑ᵢ₌₁ᵏ θᵢ = 1. Define:\n\nα = ∑ᵢ₌₁ᵏ⁻¹ θᵢ,    β = θₖ\n\nNote that α, β ≥ 0 and α + β = 1.\n\n### Step 2 (Case analysis)\n\n**Case 1: α = 0**\n\nThen β = 1, so the point is simply:\n\n∑ᵢ₌₁ᵏ θᵢxᵢ = θₖxₖ = xₖ ∈ C ✓\n\n**Case 2: α > 0**\n\nDefine normalized weights for the first k-1 points:\n\nθ̂ᵢ = θᵢ/α    for i = 1, ..., k-1\n\n### Step 3 (Verify normalization)\n\nFor each i: θ̂ᵢ = θᵢ/α ≥ 0 (since θᵢ ≥ 0 and α > 0)\n\nSum: ∑ᵢ₌₁ᵏ⁻¹ θ̂ᵢ = ∑ᵢ₌₁ᵏ⁻¹ (θᵢ/α) = (1/α)∑ᵢ₌₁ᵏ⁻¹ θᵢ = (1/α)·α = 1 ✓\n\n### Step 4 (Apply induction hypothesis)\n\nBy the induction hypothesis, since we have k-1 points with weights summing to 1:\n\nx̂ := ∑ᵢ₌₁ᵏ⁻¹ θ̂ᵢxᵢ ∈ C\n\n### Step 5 (Combine with the k-th point)\n\nNow rewrite the original sum:\n\n∑ᵢ₌₁ᵏ θᵢxᵢ = ∑ᵢ₌₁ᵏ⁻¹ θᵢxᵢ + θₖxₖ\n           = α(∑ᵢ₌₁ᵏ⁻¹ (θᵢ/α)xᵢ) + βxₖ\n           = αx̂ + βxₖ\n\n### Step 6 (Apply two-point convexity)\n\nSince x̂ ∈ C and xₖ ∈ C, and α + β = 1 with α, β ≥ 0, by the definition of convexity (base case):\n\nαx̂ + βxₖ ∈ C\n\nTherefore ∑ᵢ₌₁ᵏ θᵢxᵢ ∈ C. ✓\n\n### Conclusion\n\nBy mathematical induction, the statement holds for all k ≥ 2. ∎\n\n## Geometric Intuition\n\nThis result says that **convexity defined for pairs of points automatically extends to arbitrary finite convex combinations**. You can think of it as:\n\n1. Start with k points in C\n2. Take their weighted average (with weights summing to 1)\n3. The result is still in C\n\nThe proof works by **reducing k points to 2 points**:\n- Group the first k-1 points into one \"meta-point\" (their weighted average)\n- Combine this meta-point with the k-th point using two-point convexity\n\n## Key Insights\n\n1. **Definition suffices**: The two-point definition of convexity is complete—it implies all finite convex combinations\n2. **Inductive structure**: This is a classic example of structural induction in geometry\n3. **Convex combinations**: Points of the form ∑θᵢxᵢ with θᵢ ≥ 0, ∑θᵢ = 1 are called convex combinations\n4. **Finite vs. infinite**: This result is for *finite* sums; infinite sums require closure arguments\n5. **Fundamental property**: This characterizes the convex hull: conv({x₁,...,xₖ}) = all convex combinations of {x₁,...,xₖ}\n6. **Coefficient preservation**: The key is that convex combinations of convex combinations remain convex combinations",
+      "learningObjectives": [
+        "proof-by-induction",
+        "convexity-definition",
+        "convex-combinations",
+        "coefficient-normalization",
+        "case-analysis",
+        "convex-hull"
+      ],
+      "estimatedTime": 20,
+      "relatedProblems": ["02-002", "02-012", "02-009"],
+      "notes": "This is a fundamental theorem that shows the two-point definition of convexity is equivalent to the k-point definition. It's one of the first results typically proven in any convex analysis course. The inductive proof technique is important to master—grouping k-1 points and treating them as a single point is a recurring pattern in convex geometry. This result justifies why we can work with finite convex hulls using the simple formula conv({x₁,...,xₖ}) = {∑θᵢxᵢ | θᵢ ≥ 0, ∑θᵢ = 1}."
+    },
+    {
+      "id": "02-009",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "medium",
+      "title": "BV 2.2 — A set is convex/affine iff every line slice is",
+      "statement": "A set C ⊂ ℝⁿ is convex **if and only if** for every line L, the intersection C ∩ L is convex.\n\nA set C is affine **if and only if** for every line L, the intersection C ∩ L is affine.\n\nRecall: C is affine if for all x, y ∈ C and θ ∈ ℝ, θx + (1-θ)y ∈ C.",
+      "hints": [
+        "For both cases, prove two directions: (⇒) and (⇐)",
+        "Direction (⇒): If C is convex/affine, show any line slice C ∩ L is convex/affine",
+        "Use that lines themselves are convex (and affine)",
+        "Direction (⇐): Assume all line slices are convex/affine; take arbitrary x, y ∈ C",
+        "Consider the line L = {x + t(y - x) | t ∈ ℝ} passing through x and y",
+        "Show that x, y ∈ C ∩ L, and use the assumed convexity/affineness of C ∩ L"
+      ],
+      "solution": "## Proof (Convex Case)\n\n### Direction (⇒): C convex ⟹ C ∩ L convex for all lines L\n\nLet C be convex and L be any line. Take arbitrary u, v ∈ C ∩ L and θ ∈ [0,1].\n\n**Claim**: θu + (1-θ)v ∈ C ∩ L\n\n### Step 1 (Membership in C)\n\nSince u, v ∈ C ∩ L, we have u, v ∈ C. By convexity of C:\n\nθu + (1-θ)v ∈ C\n\n### Step 2 (Membership in L)\n\nSince u, v ∈ L and L is a line (which is affine, hence convex), and θ ∈ [0,1]:\n\nθu + (1-θ)v ∈ L\n\n### Step 3 (Membership in intersection)\n\nCombining Steps 1 and 2:\n\nθu + (1-θ)v ∈ C ∩ L\n\nHence C ∩ L is convex. ✓\n\n### Direction (⇐): C ∩ L convex for all L ⟹ C convex\n\nAssume C ∩ L is convex for every line L. Take arbitrary x, y ∈ C and θ ∈ [0,1].\n\n### Step 1 (Define the line through x and y)\n\nLet:\n\nL = {x + t(y - x) | t ∈ ℝ}\n\nThis is the line passing through x (at t=0) and y (at t=1).\n\n### Step 2 (x and y are in the slice)\n\nClearly x, y ∈ L (by construction). Since x, y ∈ C, we have:\n\nx, y ∈ C ∩ L\n\n### Step 3 (Apply convexity of the slice)\n\nBy assumption, C ∩ L is convex. Therefore, for any θ ∈ [0,1]:\n\nθx + (1-θ)y ∈ C ∩ L ⊆ C\n\nHence C is convex. ✓\n\n## Proof (Affine Case)\n\nThe proof is **identical** to the convex case, except we replace:\n- \"θ ∈ [0,1]\" with \"θ ∈ ℝ\"\n- \"convex\" with \"affine\" throughout\n\n### Direction (⇒): C affine ⟹ C ∩ L affine\n\nFor u, v ∈ C ∩ L and any θ ∈ ℝ:\n- θu + (1-θ)v ∈ C (since C is affine)\n- θu + (1-θ)v ∈ L (since L is a line, hence affine)\n- Therefore θu + (1-θ)v ∈ C ∩ L ✓\n\n### Direction (⇐): C ∩ L affine for all L ⟹ C affine\n\nFor x, y ∈ C and any θ ∈ ℝ, define L = {x + t(y-x) | t ∈ ℝ}. Then:\n- x, y ∈ C ∩ L\n- C ∩ L is affine (by assumption)\n- Therefore θx + (1-θ)y ∈ C ∩ L ⊆ C ✓\n\n## Geometric Interpretation\n\nThis theorem says:\n\n**Convex sets are exactly those sets whose line slices are all convex.**\n\nIntuitively:\n- To check convexity of C, you only need to verify that every line intersects C in a convex set (an interval, a point, or empty)\n- In ℝ², this means checking all 1D slices\n- In ℝ³, this means checking all 1D slices through 3D space\n\n**For affine sets**: The same holds, but line slices must be affine (entire lines, points, or empty).\n\n## Key Insights\n\n1. **Dimension reduction**: Convexity in ℝⁿ reduces to checking convexity in ℝ¹ (along all lines)\n2. **Lines are universal**: Lines are the \"probe\" sets that detect convexity\n3. **Necessary and sufficient**: This gives a complete characterization—both directions hold\n4. **Affine vs. convex**: The proof technique is identical; only the coefficient range differs (θ ∈ ℝ vs. θ ∈ [0,1])\n5. **Verification strategy**: To check if a set is convex, you can verify convexity along arbitrary lines through the set\n6. **Connection to line segments**: For convex sets, C ∩ L is either empty, a point, or a line segment (possibly infinite)\n7. **Extension to cones/subspaces**: Similar characterizations exist for cones (rays) and subspaces (lines through origin)",
+      "learningObjectives": [
+        "line-slices",
+        "convexity-characterization",
+        "affine-sets",
+        "iff-proofs",
+        "dimension-reduction",
+        "intersection-properties"
+      ],
+      "estimatedTime": 20,
+      "relatedProblems": ["02-008", "02-010", "02-015"],
+      "notes": "This is a powerful characterization theorem that reduces n-dimensional convexity to 1-dimensional convexity. It's particularly useful for verifying convexity of sets defined implicitly—just check that intersections with arbitrary lines are convex. The affine case is included to show the parallel structure. This result is often used in optimization to restrict problems to line searches, and it's fundamental to understanding why line search methods work for convex functions."
+    },
+    {
+      "id": "02-010",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "hard",
+      "title": "BV 2.3 — Closed + midpoint-convex implies convex",
+      "statement": "A set C ⊂ ℝⁿ is **midpoint-convex** if for all x, y ∈ C,\n\n(x + y)/2 ∈ C\n\nShow: if C is midpoint-convex **and closed**, then C is convex.",
+      "hints": [
+        "First, show that midpoint-convexity implies dyadic rationals θ = m/2ʳ work",
+        "Use repeated midpoint operations: (x+y)/2, then ((x+y)/2 + y)/2 = (x+3y)/4, etc.",
+        "For general θ ∈ [0,1], approximate θ by dyadic rationals θₖ = mₖ/2^rₖ → θ",
+        "Show that θₖx + (1-θₖ)y ∈ C for all k (by Step 1)",
+        "Use closedness: take the limit as k → ∞ to get θx + (1-θ)y ∈ C̄ = C",
+        "Key: Dyadic rationals are dense in [0,1], and affine maps are continuous"
+      ],
+      "solution": "## Proof\n\nFix x, y ∈ C. We will prove θx + (1-θ)y ∈ C for every θ ∈ [0,1].\n\n### Step 1 (Dyadic coefficients)\n\n**Claim**: For any dyadic rational θ = m/2ʳ with integers m, r ≥ 0 and 0 ≤ m ≤ 2ʳ,\n\nθx + (1-θ)y ∈ C\n\n**Proof by induction on r**:\n\n**Base case r = 0**: θ ∈ {0, 1}\n- If θ = 0: θx + (1-θ)y = y ∈ C ✓\n- If θ = 1: θx + (1-θ)y = x ∈ C ✓\n\n**Inductive step**: Assume the claim holds for r-1. Consider θ = m/2ʳ.\n\n**Case 1**: m is even, say m = 2k. Then θ = k/2^(r-1), which has the form from r-1. By induction, θx + (1-θ)y ∈ C. ✓\n\n**Case 2**: m is odd, say m = 2k+1. Then:\n\nθ = (2k+1)/2ʳ = k/2^(r-1) · (1/2) + (k+1)/2^(r-1) · (1/2)\n\nLet:\n- θ₁ = k/2^(r-1)\n- θ₂ = (k+1)/2^(r-1)\n\nNote that θ = (θ₁ + θ₂)/2.\n\nBy the induction hypothesis:\n\nu₁ := θ₁x + (1-θ₁)y ∈ C\nu₂ := θ₂x + (1-θ₂)y ∈ C\n\nBy midpoint-convexity:\n\n(u₁ + u₂)/2 ∈ C\n\nBut:\n\n(u₁ + u₂)/2 = (θ₁x + (1-θ₁)y + θ₂x + (1-θ₂)y)/2\n             = ((θ₁+θ₂)/2)x + ((2-(θ₁+θ₂))/2)y\n             = θx + (1-θ)y ∈ C ✓\n\nBy induction, dyadic rationals work.\n\n### Step 2 (Density of dyadic rationals)\n\nDyadic rationals in [0,1] are **dense**: for any θ ∈ [0,1] and any ε > 0, there exists a dyadic rational θ' with |θ - θ'| < ε.\n\nEquivalently, there exists a sequence of dyadic rationals (θₖ) with θₖ → θ.\n\n### Step 3 (Construct sequence in C)\n\nChoose a sequence of dyadic rationals θₖ → θ. By Step 1, for each k:\n\nwₖ := θₖx + (1-θₖ)y ∈ C\n\n### Step 4 (Pass to the limit)\n\nThe map θ ↦ θx + (1-θ)y is continuous (it's affine in θ). Therefore:\n\nwₖ = θₖx + (1-θₖ)y → θx + (1-θ)y\n\nas k → ∞.\n\n### Step 5 (Use closedness)\n\nSince each wₖ ∈ C and C is closed:\n\nlim_{k→∞} wₖ ∈ C̄ = C\n\nTherefore:\n\nθx + (1-θ)y ∈ C\n\nSince x, y, and θ were arbitrary, C is convex. ∎\n\n## Why \"Closed\" is Essential\n\n**Counterexample without closedness**:\n\nLet C = ℚ ∩ [0,1] (rationals in [0,1]).\n\n**Midpoint-convex**: If x, y ∈ ℚ, then (x+y)/2 ∈ ℚ. ✓\n\n**Not convex**: Take x = 0, y = 1, θ = √2/2 ≈ 0.707...\n\nThen θx + (1-θ)y = (2-√2)/2 ∉ ℚ, so θx + (1-θ)y ∉ C.\n\nHence C is midpoint-convex but **not convex**.\n\n**Why it fails**: C is not closed (C̄ = [0,1] ⊃ C). The limit argument in Step 5 breaks down because the limit might not be in C.\n\n## Key Insights\n\n1. **Midpoint-convexity is weaker**: Midpoint-convexity (only θ = 1/2) is strictly weaker than convexity (all θ ∈ [0,1])\n2. **Closure bridges the gap**: Adding closedness makes midpoint-convexity equivalent to convexity\n3. **Dyadic density**: The dyadic rationals {m/2ʳ} are dense in [0,1], which is key to the approximation\n4. **Inductive construction**: The proof builds up from 1/2 to all dyadic rationals by repeated subdivision\n5. **Limit arguments**: Passing to limits requires closedness—this is a common pattern in analysis\n6. **Topological + algebraic**: The result combines topology (closedness, limits) with algebra (dyadic arithmetic)\n7. **Applications**: This is used in functional analysis where midpoint-convexity is sometimes easier to verify directly",
+      "learningObjectives": [
+        "midpoint-convexity",
+        "closed-sets",
+        "dyadic-rationals",
+        "density-arguments",
+        "limit-points",
+        "induction-on-binary-expansions",
+        "counterexamples"
+      ],
+      "estimatedTime": 30,
+      "relatedProblems": ["02-006", "02-009", "03-015"],
+      "notes": "This is a deep result showing that midpoint-convexity plus closedness implies full convexity. The dyadic construction is clever—it builds all binary fractions by repeated bisection, then uses density to reach all real coefficients. The counterexample (rationals in [0,1]) is instructive: it shows closedness is truly necessary. This theorem appears in functional analysis when studying convex functions on Banach spaces, where sometimes only midpoint-convexity can be verified directly. The proof technique—building dyadic rationals inductively—appears in many contexts (e.g., proving uniqueness of Lebesgue measure)."
+    },
+    {
+      "id": "02-011",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "easy",
+      "title": "BV 2.4 — Convex hull equals intersection of all convex supersets",
+      "statement": "For S ⊂ ℝⁿ, let conv(S) be its convex hull (all finite convex combinations of points in S). Show:\n\nconv(S) = ⋂ {C ⊂ ℝⁿ | C is convex and S ⊆ C}\n\nIn words: the convex hull of S is the intersection of all convex sets containing S.",
+      "hints": [
+        "Let ℱ = {C | C is convex and S ⊆ C} and K = ⋂_{C∈ℱ} C",
+        "First show K is convex (intersection of convex sets)",
+        "Direction 1 (conv(S) ⊆ K): Show every convex set containing S must contain conv(S)",
+        "Use that convex sets are closed under convex combinations (BV 2.1)",
+        "Direction 2 (K ⊆ conv(S)): Show conv(S) itself is in ℱ, so K ⊆ conv(S)",
+        "Verify that conv(S) is convex and contains S"
+      ],
+      "solution": "## Proof\n\nLet:\n\nℱ = {C ⊂ ℝⁿ | C is convex and S ⊆ C}\n\nK = ⋂_{C∈ℱ} C\n\n### Preliminary: K is convex and contains S\n\n**K is convex**: Arbitrary intersections of convex sets are convex. Since each C ∈ ℱ is convex, K is convex. ✓\n\n**S ⊆ K**: Every C ∈ ℱ contains S, so their intersection K contains S. ✓\n\n### Direction 1: conv(S) ⊆ K\n\n**Goal**: Show every point in conv(S) lies in K.\n\nTake any C ∈ ℱ. We'll show conv(S) ⊆ C.\n\n### Step 1.1 (C contains S)\n\nBy definition of ℱ: S ⊆ C.\n\n### Step 1.2 (C contains all convex combinations)\n\nSince C is convex and contains S, by BV 2.1 (k-point convexity), C must contain **all finite convex combinations** of points from S.\n\nThat is: conv(S) ⊆ C.\n\n### Step 1.3 (Intersect over all C)\n\nSince conv(S) ⊆ C for every C ∈ ℱ:\n\nconv(S) ⊆ ⋂_{C∈ℱ} C = K ✓\n\n### Direction 2: K ⊆ conv(S)\n\n**Goal**: Show every point in K lies in conv(S).\n\n### Step 2.1 (Show conv(S) ∈ ℱ)\n\nWe need to verify that conv(S) is convex and contains S.\n\n**Contains S**: By definition, S ⊆ conv(S) (every point x ∈ S equals the trivial convex combination 1·x). ✓\n\n**Is convex**: This was proven in Problem P2 (BV 2.1 also gives this). The convex hull is convex. ✓\n\nTherefore: conv(S) ∈ ℱ.\n\n### Step 2.2 (K is a subset)\n\nSince K is the intersection of all sets in ℱ, and conv(S) ∈ ℱ:\n\nK = ⋂_{C∈ℱ} C ⊆ conv(S) ✓\n\n### Conclusion\n\nFrom Directions 1 and 2:\n\nK = conv(S) ∎\n\n## Alternative Characterization\n\nThis result shows:\n\n**conv(S) is the smallest convex set containing S**\n\nSmallest in the sense that:\n1. conv(S) is convex and contains S\n2. conv(S) is contained in every other convex set containing S\n\n## Geometric Interpretation\n\nThink of conv(S) as:\n\n- **Explicitly**: All convex combinations ∑θᵢsᵢ with sᵢ ∈ S, θᵢ ≥ 0, ∑θᵢ = 1\n- **Implicitly**: The intersection of all convex supersets (halfspaces, polytopes, balls, etc. that contain S)\n\nThis theorem says these two descriptions are **equivalent**.\n\n## Examples\n\n### Example 1: Finite set in ℝ²\n\nS = {(0,0), (1,0), (0,1)}\n\n**Explicit**: conv(S) = {θ₁(0,0) + θ₂(1,0) + θ₃(0,1) | θᵢ ≥ 0, θ₁+θ₂+θ₃=1}\n           = triangle with vertices at S\n\n**Implicit**: conv(S) = intersection of all halfspaces containing S\n           = {(x,y) | x ≥ 0, y ≥ 0, x+y ≤ 1}\n\n### Example 2: Unit circle in ℝ²\n\nS = {(cos θ, sin θ) | θ ∈ [0, 2π)}\n\n**Explicit**: conv(S) = all convex combinations of points on the circle\n           = unit disk {(x,y) | x²+y² ≤ 1}\n\n**Implicit**: conv(S) = ⋂ {halfspaces H | S ⊆ H}\n           = unit disk (intersection of all supporting halfspaces)\n\n## Key Insights\n\n1. **Two definitions, one object**: Convex hull has both a constructive definition (convex combinations) and a descriptive definition (smallest convex set)\n2. **Smallest convex set**: conv(S) is the unique smallest convex set containing S\n3. **Intersection characterization**: This gives a way to compute/describe conv(S) via supporting hyperplanes\n4. **Closure under convex combinations**: Any convex set containing S must contain all convex combinations of S\n5. **Duality**: The implicit characterization connects to the dual description via support functions\n6. **Carathéodory's theorem**: In ℝⁿ, every point in conv(S) is a convex combination of at most n+1 points from S\n7. **Computational geometry**: This characterization is fundamental for computing convex hulls",
+      "learningObjectives": [
+        "convex-hull",
+        "intersection-characterization",
+        "smallest-convex-set",
+        "implicit-vs-explicit",
+        "closure-properties",
+        "set-containment-proofs"
+      ],
+      "estimatedTime": 15,
+      "relatedProblems": ["02-002", "02-008", "02-015"],
+      "notes": "This elegant characterization theorem shows that the convex hull can be defined either constructively (take all convex combinations) or descriptively (take the smallest convex superset). The proof is straightforward but instructive: one direction uses that convex sets must be closed under convex combinations, the other uses that conv(S) is itself convex. This result is foundational in convex geometry and connects to duality theory—the implicit description via intersections of halfspaces leads to the dual representation via support functions. In computational geometry, this characterization justifies algorithms that compute convex hulls by finding supporting hyperplanes."
     }
   ]
 }
