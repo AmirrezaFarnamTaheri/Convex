@@ -94,7 +94,14 @@
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Tool: Convex Set Checker</h3>
-          <p>Draw any 2D shape by clicking points, and this tool will check if it's a convex set. It visualizes the convex hull to help you understand why a set is or isn't convex.</p>
+          <p><b>Test Convexity Interactively:</b> Draw any 2D shape by clicking points, and this tool will instantly determine if it's a convex set. Features include:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Click to add vertices:</b> Build your own polygon point by point</li>
+            <li><b>Automatic convexity test:</b> The tool checks if all line segments between points lie within the set</li>
+            <li><b>Convex hull visualization:</b> See the smallest convex set containing your points (the "rubber band" around them)</li>
+            <li><b>Interactive feedback:</b> Instantly see if your shape is convex, and if not, which parts violate convexity</li>
+          </ul>
+          <p><i>Learning tip:</i> Try creating both convex shapes (circles, triangles, ellipses) and non-convex ones (stars, crescents). Notice how any "dent" or "indentation" makes a set non-convex!</p>
           <div id="widget-convex-set-checker" style="width: 100%; height: 450px; position: relative;"></div>
         </div>
       </section>
@@ -113,7 +120,14 @@
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Explorer: Ellipsoid Geometry</h3>
-          <p>Interactively explore ellipsoids by adjusting the positive definite matrix P. Visualize how eigenvalues and eigenvectors determine the ellipsoid's shape and orientation in 2D.</p>
+          <p><b>See How PSD Matrices Define Ellipsoids:</b> An ellipsoid is defined by $\{x \mid (x-x_c)^\top P^{-1} (x-x_c) \le 1\}$ where $P \succ 0$ (positive definite). This interactive tool lets you:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Adjust matrix P:</b> Modify the entries of the PSD matrix $P$ and see the ellipsoid change in real-time</li>
+            <li><b>Visualize eigenvectors:</b> The principal axes of the ellipsoid align with the eigenvectors of $P$</li>
+            <li><b>Observe eigenvalue effects:</b> The lengths of the axes are determined by the square roots of the eigenvalues</li>
+            <li><b>Understand the constraint:</b> This is the geometric representation of quadratic constraints in SOCP and SDP</li>
+          </ul>
+          <p><i>Key connection:</i> Ellipsoids appear everywhere in optimization—as level sets of quadratic functions, confidence regions in statistics, and robust uncertainty sets. Understanding their geometry is crucial for QP and SOCP formulations!</p>
           <div id="widget-ellipsoid-explorer" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
 
@@ -124,7 +138,15 @@
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Visualizer: Polyhedron Builder</h3>
-          <p>Define a polyhedron by adding linear inequality constraints. Watch how each halfspace intersects to form the polyhedral feasible region in 2D.</p>
+          <p><b>Build Feasible Regions from Constraints:</b> A polyhedron is the intersection of finitely many halfspaces and hyperplanes. This tool brings LP feasible sets to life by letting you:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Add constraints one at a time:</b> Define linear inequalities like $a^\top x \le b$ by specifying coefficients</li>
+            <li><b>See halfspaces:</b> Each constraint defines a halfspace—the region where the inequality is satisfied</li>
+            <li><b>Watch the intersection:</b> As you add constraints, see how they intersect to form the feasible region</li>
+            <li><b>Identify vertices:</b> The corners of the polyhedron are where constraints become active (binding)</li>
+            <li><b>Test feasibility:</b> Click any point to check if it satisfies all constraints</li>
+          </ul>
+          <p><i>Why this matters:</i> This is exactly what happens in Linear Programming! The simplex algorithm moves along the edges of the polyhedron from vertex to vertex, always decreasing the objective. The optimal solution is at a vertex (extreme point).</p>
           <div id="widget-polyhedron-visualizer" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
 
@@ -135,7 +157,15 @@
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Explorer: Cone Geometry</h3>
-          <p>Explore different types of cones including the nonnegative orthant, second-order cone, and their dual cones. Understand the geometry of these fundamental convex structures.</p>
+          <p><b>Visualize Convex Cones and Their Duals:</b> A cone $K$ satisfies $x \in K \Rightarrow \theta x \in K$ for all $\theta \ge 0$ (scale any element, stay in the cone). This tool explores:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Nonnegative orthant ($\mathbb{R}^n_+$):</b> The simplest cone—all coordinates are non-negative. Self-dual!</li>
+            <li><b>Second-order cone (Lorentz cone):</b> $\{(x,t) \mid \|x\|_2 \le t\}$—looks like an ice cream cone. Critical for SOCP!</li>
+            <li><b>Dual cones:</b> $K^* = \{y \mid y^\top x \ge 0 \ \forall x \in K\}$—the set of all vectors making non-negative inner products with $K$</li>
+            <li><b>Self-duality:</b> Some cones like $\mathbb{R}^n_+$ and the second-order cone satisfy $K^* = K$</li>
+            <li><b>PSD cone:</b> The set of all positive semidefinite matrices—the foundation of semidefinite programming</li>
+          </ul>
+          <p><i>Deep connection:</i> Dual cones are the geometric foundation of Lagrangian duality. The KKT conditions require the Lagrange multipliers to lie in the dual cone of the constraint cone!</p>
           <div id="widget-cone-geometry" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
       </section>

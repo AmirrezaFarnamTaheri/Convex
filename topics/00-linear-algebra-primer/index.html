@@ -174,13 +174,15 @@
 
       <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive Visualizer: Rank & Nullspace</h3>
-        <p>Define a 2×3 or 3×2 matrix and visualize all four fundamental subspaces. Experiment with rank-deficient matrices to see the Rank-Nullity Theorem in action.</p>
+        <p><b>Explore the Four Fundamental Subspaces:</b> Define a 2×3 or 3×2 matrix and visualize how its column space, row space, nullspace, and left nullspace relate to each other. Try creating rank-deficient matrices (e.g., with linearly dependent columns) to see the Rank-Nullity Theorem in action—observe how the dimensions of the nullspace and column space always sum to the number of columns.</p>
+        <p><i>Key insight:</i> The orthogonality relationships between these subspaces are fundamental to understanding linear transformations and will appear throughout convex optimization.</p>
         <div id="widget-rank-nullspace" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
       <div class="widget-container" style="margin: 24px 0;">
-        <h3 style="margin-top: 0;">Additional Visualizer: Matrix Explorer</h3>
-        <p>An interactive tool to explore matrix properties including rank, determinant, and fundamental subspaces.</p>
+        <h3 style="margin-top: 0;">Interactive Tool: Matrix Explorer</h3>
+        <p><b>Deep Dive into Matrix Properties:</b> This tool lets you experiment with different matrices and instantly see their rank, determinant, condition number, and fundamental subspaces. Understanding these properties is crucial for numerical stability in optimization algorithms.</p>
+        <p><i>Try this:</i> Create matrices with different ranks and observe how the determinant behaves. Notice that only full-rank square matrices have non-zero determinants.</p>
         <div id="widget-matrix-explorer" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
     </section>
@@ -226,7 +228,13 @@
 
       <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive Visualizer: The Geometry of Norms</h3>
-        <p>Explore unit balls for $\ell_1$, $\ell_2$, and $\ell_\infty$ norms. Notice the "pointy" corners of the $\ell_1$ ball—this geometric feature promotes sparsity in optimization.</p>
+        <p><b>Visualize Norm Unit Balls:</b> Explore the unit balls (sets of vectors with norm ≤ 1) for the $\ell_1$, $\ell_2$, and $\ell_\infty$ norms in 2D. Each norm defines a different notion of "distance" and produces a distinctly shaped unit ball:</p>
+        <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+          <li><b>$\ell_2$ (Euclidean):</b> Forms a perfect circle—the most "natural" geometric distance</li>
+          <li><b>$\ell_1$ (Manhattan):</b> Forms a diamond with "pointy" corners at the axes—this geometry is why $\ell_1$ regularization promotes sparse solutions in machine learning</li>
+          <li><b>$\ell_\infty$ (Chebyshev):</b> Forms a square—measures the maximum component</li>
+        </ul>
+        <p><i>Connection to optimization:</i> The shape of these unit balls directly affects the solutions to optimization problems. The corners of the $\ell_1$ ball are what make LASSO regression find sparse solutions!</p>
         <div id="widget-norm-geometry" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
@@ -327,7 +335,13 @@
 
       <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive Explorer: Orthogonality & Projections</h3>
-        <p>Drag two vectors in the 2D plane and see their dot product, angle, and orthogonal projection update in real-time.</p>
+        <p><b>Visualize Vector Relationships:</b> Drag two vectors in the 2D plane and observe how their geometric relationships change in real-time. The tool displays:</p>
+        <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+          <li><b>Dot product ($x^\top y$):</b> Becomes zero when vectors are orthogonal (perpendicular)</li>
+          <li><b>Angle:</b> Computed using $\cos \theta = \frac{x^\top y}{\|x\|_2 \|y\|_2}$ via the Cauchy-Schwarz inequality</li>
+          <li><b>Orthogonal projection:</b> The shadow of one vector onto another—this is the foundation of least squares!</li>
+        </ul>
+        <p><i>Key concept:</i> Projection is everywhere in optimization—from computing least squares solutions to understanding constraint gradients. The projection of $b$ onto the column space of $A$ gives us the best least-squares fit.</p>
         <div id="widget-orthogonality" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
     </section>
@@ -367,13 +381,31 @@
 
       <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive Explorer: Eigenvalues and PSD Matrices</h3>
-        <p>For 2×2 matrices, see geometric interpretation of eigenvalues/eigenvectors and visualize the quadratic form $x^\top Q x$. Modify entries and observe how eigenvalues change. The 3D surface plot shows whether the matrix is PD (convex bowl), ND (concave), or indefinite (saddle).</p>
+        <p><b>See the Geometry of Quadratic Forms:</b> For 2×2 symmetric matrices, this tool reveals the deep connection between eigenvalues and the shape of the quadratic form $f(x) = x^\top Q x$. Modify the matrix entries and watch the visualization update to show:</p>
+        <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+          <li><b>Eigenvectors:</b> Principal axes along which the matrix stretches space</li>
+          <li><b>Eigenvalues:</b> The stretch factors—positive means stretching, negative means flipping</li>
+          <li><b>3D surface plot:</b> Visualizes the function landscape:
+            <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
+              <li><b>PD (both eigenvalues > 0):</b> Convex bowl—a unique minimum (essential for optimization!)</li>
+              <li><b>ND (both eigenvalues < 0):</b> Concave bowl—a maximum</li>
+              <li><b>Indefinite (mixed signs):</b> Saddle shape—optimization gets stuck here</li>
+            </ul>
+          </li>
+        </ul>
+        <p><i>Why this matters:</i> In optimization, the Hessian matrix of second derivatives determines whether we're at a minimum, maximum, or saddle point. PSD Hessians guarantee convexity!</p>
         <div id="widget-eigen-psd" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
       <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive: Hessian Landscape Visualizer</h3>
-        <p>Render the 3D surface of a quadratic function and its Hessian matrix, linking eigenvalues to curvature.</p>
+        <p><b>Connect Eigenvalues to Function Curvature:</b> This 3D visualizer renders the surface of a quadratic function $f(x) = \frac{1}{2}x^\top Q x$ and displays its Hessian matrix $Q$. The eigenvalues of the Hessian directly control the curvature:</p>
+        <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+          <li><b>Large positive eigenvalues:</b> Steep curvature (fast convergence in optimization)</li>
+          <li><b>Small positive eigenvalues:</b> Flat directions (slow convergence)</li>
+          <li><b>Condition number ($\kappa = \lambda_{\max}/\lambda_{\min}$):</b> When this ratio is large, gradient descent converges slowly</li>
+        </ul>
+        <p><i>Practical insight:</i> This visualization explains why preconditioning (transforming to balance eigenvalues) dramatically speeds up iterative solvers!</p>
         <div id="widget-hessian-landscape" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
@@ -461,13 +493,25 @@
 
       <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive Demo: SVD for Image Compression</h3>
-        <p>See low-rank approximation in action. Load an image and reconstruct it using varying numbers of singular values. A surprisingly accurate approximation can be achieved with only a small fraction of the singular values.</p>
+        <p><b>The Power of Low-Rank Approximation:</b> The Singular Value Decomposition (SVD) reveals that many real-world matrices (like images) can be accurately approximated using only their largest singular values. This demo lets you:</p>
+        <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+          <li><b>Load an image:</b> Any image is just a matrix of pixel values</li>
+          <li><b>Compute SVD:</b> $A = U\Sigma V^\top$ where $\Sigma$ contains singular values in decreasing order</li>
+          <li><b>Reconstruct with k values:</b> Use only the top $k$ singular values and see the quality vs. compression tradeoff</li>
+          <li><b>Observe compression ratio:</b> Often 90%+ of the "energy" is captured by just 10-20% of singular values!</li>
+        </ul>
+        <p><i>Applications:</i> This principle underpins data compression, dimensionality reduction (PCA), recommender systems, and denoising. In optimization, low-rank structure enables efficient large-scale algorithms.</p>
         <div id="widget-svd-approximator" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
       <div class="widget-container" style="margin: 24px 0;">
-        <h3 style="margin-top: 0;">Interactive: Condition Number Comparison</h3>
-        <p>Demonstrates how high condition numbers slow down iterative solvers by comparing two systems of linear equations.</p>
+        <h3 style="margin-top: 0;">Interactive: Condition Number & Numerical Stability</h3>
+        <p><b>Why Some Systems Are Harder to Solve:</b> This tool demonstrates how the condition number $\kappa(A) = \sigma_{\max}/\sigma_{\min}$ affects the convergence of iterative solvers. Compare two linear systems $Ax = b$ side by side:</p>
+        <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+          <li><b>Well-conditioned ($\kappa \approx 1$):</b> Balanced eigenvalues → fast, stable convergence</li>
+          <li><b>Ill-conditioned ($\kappa \gg 1$):</b> Widely varying eigenvalues → slow convergence, numerical instability</li>
+        </ul>
+        <p><i>Key takeaway:</i> This is why we avoid forming $A^\top A$ in least squares (it squares the condition number!) and prefer QR or SVD methods. In optimization, ill-conditioning makes gradient descent crawl—motivating preconditioning and second-order methods.</p>
         <div id="widget-condition-number" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
