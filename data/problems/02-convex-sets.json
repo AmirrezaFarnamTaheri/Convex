@@ -408,6 +408,241 @@
       "estimatedTime": 40,
       "relatedProblems": ["02-001", "02-004", "02-005"],
       "notes": "This problem is a comprehensive exercise in recognizing convex sets and proving/disproving convexity. It covers standard geometric objects (slabs, boxes, wedges) and more subtle distance-based sets. The key techniques are: (1) writing sets as intersections of simpler convex sets, (2) using algebraic manipulations (squaring, completing the square) to reveal structure, and (3) constructing explicit counterexamples for nonconvex cases. Part (g) on Apollonius circles is particularly elegant—the complete-the-square technique reveals that the set is a ball for θ < 1 and a halfspace for θ = 1."
+        },
+
+    {
+
+      "id": "02-015",
+
+      "lecture": "02-convex-sets",
+
+      "type": "verification",
+
+      "difficulty": "medium",
+
+      "title": "BV 2.16 — Summing dependent coordinates preserves convexity",
+
+      "statement": "Let S₁, S₂ ⊂ ℝᵐ⁺ⁿ be convex. Define\n\nS = {(x, y₁ + y₂) | (x, y₁) ∈ S₁, (x, y₂) ∈ S₂} ⊂ ℝᵐ⁺ⁿ\n\nShow that S is convex.",
+
+      "hints": [
+
+        "Take two arbitrary points (x⁽¹⁾, z⁽¹⁾), (x⁽²⁾, z⁽²⁾) ∈ S",
+
+        "By definition, there exist y₁⁽¹⁾, y₂⁽¹⁾, y₁⁽²⁾, y₂⁽²⁾ such that (x⁽ⁱ⁾, y₁⁽ⁱ⁾) ∈ S₁, (x⁽ⁱ⁾, y₂⁽ⁱ⁾) ∈ S₂, and z⁽ⁱ⁾ = y₁⁽ⁱ⁾ + y₂⁽ⁱ⁾",
+
+        "Form convex combination: (x̄, z̄) = θ(x⁽¹⁾, z⁽¹⁾) + (1-θ)(x⁽²⁾, z⁽²⁾)",
+
+        "Define ȳ₁ = θy₁⁽¹⁾ + (1-θ)y₁⁽²⁾ and ȳ₂ = θy₂⁽¹⁾ + (1-θ)y₂⁽²⁾",
+
+        "Show (x̄, ȳ₁) ∈ S₁ and (x̄, ȳ₂) ∈ S₂ using convexity of S₁ and S₂",
+
+        "Verify that z̄ = ȳ₁ + ȳ₂",
+
+        "Alternative: View S as a linear image of S₁ × S₂ restricted to x-coordinates matching"
+
+      ],
+
+      "solution": "## Solution (Explicit Witnesses)\n\nTake any two points (x⁽¹⁾, z⁽¹⁾), (x⁽²⁾, z⁽²⁾) ∈ S. By definition of S, for each i ∈ {1, 2} there exist y₁⁽ⁱ⁾, y₂⁽ⁱ⁾ such that:\n\n(x⁽ⁱ⁾, y₁⁽ⁱ⁾) ∈ S₁,    (x⁽ⁱ⁾, y₂⁽ⁱ⁾) ∈ S₂,    z⁽ⁱ⁾ = y₁⁽ⁱ⁾ + y₂⁽ⁱ⁾\n\n### Step 1 (Form convex combination)\n\nFix θ ∈ [0,1]. Consider:\n\n(x̄, z̄) := θ(x⁽¹⁾, z⁽¹⁾) + (1-θ)(x⁽²⁾, z⁽²⁾) = (θx⁽¹⁾ + (1-θ)x⁽²⁾, θz⁽¹⁾ + (1-θ)z⁽²⁾)\n\n### Step 2 (Define witness points)\n\nLet:\n\nȳ₁ := θy₁⁽¹⁾ + (1-θ)y₁⁽²⁾\nȳ₂ := θy₂⁽¹⁾ + (1-θ)y₂⁽²⁾\n\n### Step 3 (Apply convexity of S₁ and S₂)\n\nSince S₁ is convex and (x⁽¹⁾, y₁⁽¹⁾), (x⁽²⁾, y₁⁽²⁾) ∈ S₁:\n\n(x̄, ȳ₁) = θ(x⁽¹⁾, y₁⁽¹⁾) + (1-θ)(x⁽²⁾, y₁⁽²⁾) ∈ S₁\n\nSimilarly, since S₂ is convex and (x⁽¹⁾, y₂⁽¹⁾), (x⁽²⁾, y₂⁽²⁾) ∈ S₂:\n\n(x̄, ȳ₂) = θ(x⁽¹⁾, y₂⁽¹⁾) + (1-θ)(x⁽²⁾, y₂⁽²⁾) ∈ S₂\n\n### Step 4 (Verify the sum)\n\nCompute:\n\nȳ₁ + ȳ₂ = θy₁⁽¹⁾ + (1-θ)y₁⁽²⁾ + θy₂⁽¹⁾ + (1-θ)y₂⁽²⁾\n         = θ(y₁⁽¹⁾ + y₂⁽¹⁾) + (1-θ)(y₁⁽²⁾ + y₂⁽²⁾)\n         = θz⁽¹⁾ + (1-θ)z⁽²⁾\n         = z̄\n\n### Step 5 (Conclusion)\n\nWe have (x̄, ȳ₁) ∈ S₁, (x̄, ȳ₂) ∈ S₂, and z̄ = ȳ₁ + ȳ₂. Therefore:\n\n(x̄, z̄) ∈ S\n\nSince the choices were arbitrary, S is convex. ∎\n\n## Alternative Solution (Linear Image)\n\nLet:\n\nC := {(x, y₁, x', y₂) | (x, y₁) ∈ S₁, (x', y₂) ∈ S₂, x = x'}\n\n### Step 1 (C is convex)\n\nC is the intersection of the Cartesian product S₁ × S₂ with the affine subspace {x = x'}.\n\n- S₁ × S₂ is convex (product of convex sets, Problem P7)\n- {x = x'} is an affine subspace, hence convex\n- Intersections of convex sets are convex\n\nTherefore C is convex.\n\n### Step 2 (S is a linear image of C)\n\nDefine the linear map T: ℝᵐ⁺ⁿ⁺ᵐ⁺ⁿ → ℝᵐ⁺ⁿ by:\n\nT(x, y₁, x', y₂) = (x, y₁ + y₂)\n\nThen S = T(C).\n\n### Step 3 (Linear images preserve convexity)\n\nLinear maps preserve convexity: if C is convex and T is linear, then T(C) is convex.\n\n**Proof**: For (x̄, z̄), (x̄', z̄') ∈ T(C), there exist (x, y₁, x', y₂), (x̂, ŷ₁, x̂', ŷ₂) ∈ C with T(...) = (x̄, z̄) and T(...) = (x̄', z̄'). For θ ∈ [0,1]:\n\nθ(x̄, z̄) + (1-θ)(x̄', z̄') = T(θ(x, y₁, x', y₂) + (1-θ)(x̂, ŷ₁, x̂', ŷ₂))\n\nSince C is convex, the argument on the right lies in C, so the left side lies in T(C). ✓\n\nTherefore S = T(C) is convex. ∎\n\n## Geometric Interpretation\n\nThe set S consists of points (x, z) where:\n- x is a \"common coordinate\" that must appear in both S₁ and S₂\n- z is the **sum** of the \"dependent coordinates\" y₁ from S₁ and y₂ from S₂, both paired with the same x\n\nThis operation is called **partial addition** or **fiber-wise summation** in convex analysis.\n\n## Example\n\nLet m = 1, n = 1. Consider:\n\nS₁ = {(x, y₁) | y₁ ≤ x²}    (epigraph of x²)\nS₂ = {(x, y₂) | y₂ ≤ 2x²}   (epigraph of 2x²)\n\nThen:\n\nS = {(x, z) | ∃y₁ ≤ x², ∃y₂ ≤ 2x² : z = y₁ + y₂}\n  = {(x, z) | z ≤ x² + 2x²}\n  = {(x, z) | z ≤ 3x²}\n\nThis is the epigraph of 3x², which is convex (since x² is convex). ✓\n\n## Key Insights\n\n1. **Partial operations**: This is a \"partial\" Minkowski sum—we add only certain coordinates while keeping others fixed\n2. **Common coordinates**: The constraint that x must be the same in both S₁ and S₂ couples the two sets\n3. **Affine constraints preserve convexity**: The matching condition x = x' is affine, so intersecting with it preserves convexity\n4. **Linear maps preserve convexity**: The map (x, y₁, x', y₂) ↦ (x, y₁ + y₂) is linear\n5. **Fiber-wise operations**: Geometrically, we're summing the \"fibers\" S₁ ∩ {x} × ℝⁿ and S₂ ∩ {x} × ℝⁿ for each x\n6. **Epigraph sums**: If S₁ = epi(f₁) and S₂ = epi(f₂) (with matching x-coordinates), then S = epi(f₁ + f₂)\n7. **Applications**: This construction appears in multi-objective optimization and in constraint aggregation",
+
+      "learningObjectives": [
+
+        "partial-minkowski-sums",
+
+        "convexity-preservation",
+
+        "linear-images",
+
+        "affine-constraints",
+
+        "cartesian-products",
+
+        "fiber-wise-operations",
+
+        "epigraph-operations"
+
+      ],
+
+      "estimatedTime": 25,
+
+      "relatedProblems": ["02-004", "02-007", "04-008"],
+
+      "notes": "This problem introduces a more subtle convexity-preserving operation: summing coordinates that depend on a common parameter. The key insight is that this can be viewed either as explicit witness construction or as a linear map applied to a product set intersected with an affine constraint. The operation appears naturally when combining functions with the same domain, e.g., epi(f₁ + f₂) relates to epi(f₁) and epi(f₂) this way. In optimization, this models scenarios where different subsystems share some decision variables but have independent components that can be aggregated."
+
+    },
+
+    {
+
+      "id": "02-016",
+
+      "lecture": "02-convex-sets",
+
+      "type": "computation",
+
+      "difficulty": "medium",
+
+      "title": "BV 2.17 — Images under the perspective map",
+
+      "statement": "Let P: ℝⁿ × ℝ₊₊ → ℝⁿ be the perspective map P(v, t) = v/t. For each set C below, describe\n\nP(C) = {v/t | (v, t) ∈ C, t > 0}\n\n(a) C = conv{(v₁, t₁), ..., (vₖ, tₖ)} with tᵢ > 0\n\n(b) C = {(v, t) | fᵀv + gt = h} with (f, g) ≠ (0, 0)\n\n(c) C = {(v, t) | fᵀv + gt ≤ h} with (f, g) ≠ (0, 0)\n\n(d) C = {(v, t) | Fv + gt ⪯ h} (componentwise inequality)",
+
+      "hints": [
+
+        "Write y = P(v, t) = v/t, so (v, t) = (ty, t) with t > 0",
+
+        "Part (a): A convex combination ∑αᵢ(vᵢ, tᵢ) gives (∑αᵢvᵢ, ∑αᵢtᵢ); perspective gives ∑αᵢvᵢ / ∑αᵢtᵢ",
+
+        "This is a convex combination ∑βᵢ(vᵢ/tᵢ) with βᵢ = αᵢtᵢ / ∑αⱼtⱼ",
+
+        "Part (b): Solve fᵀ(ty) + gt = h for t > 0; three cases based on sign of h",
+
+        "Part (c): Similar to (b), but with inequality; check when t > 0 is achievable",
+
+        "Part (d): Apply part (c) to each row of the inequality system"
+
+      ],
+
+      "solution": "## General Setup\n\nWrite y = P(v, t) = v/t, so (v, t) = (ty, t) with t > 0.\n\n## Part (a) — Convex Hull with Positive Last Coordinates\n\nAny (v, t) ∈ C has a representation:\n\n(v, t) = ∑ᵢ₌₁ᵏ αᵢ(vᵢ, tᵢ)\n\nwith αᵢ ≥ 0, ∑αᵢ = 1.\n\n### Step 1 (Compute the perspective)\n\nP(v, t) = v/t = (∑ᵢ αᵢvᵢ) / (∑ᵢ αᵢtᵢ)\n\n### Step 2 (Rewrite as convex combination)\n\nDefine:\n\nβᵢ := αᵢtᵢ / (∑ⱼ αⱼtⱼ)\n\n**Verify βᵢ is a valid convex combination**:\n- βᵢ ≥ 0 (since αᵢ ≥ 0 and tᵢ > 0)\n- ∑ᵢ βᵢ = (∑ᵢ αᵢtᵢ) / (∑ⱼ αⱼtⱼ) = 1 ✓\n\n### Step 3 (Express P(v,t) as convex combination)\n\nP(v, t) = (∑ᵢ αᵢvᵢ) / (∑ⱼ αⱼtⱼ) = ∑ᵢ (αᵢtᵢ)/(∑ⱼ αⱼtⱼ) · (vᵢ/tᵢ) = ∑ᵢ βᵢ(vᵢ/tᵢ)\n\n### Answer\n\nP(C) = conv{v₁/t₁, ..., vₖ/tₖ}\n\nThe perspective of a convex hull is the convex hull of the perspectives. ∎\n\n## Part (b) — Hyperplane\n\nFeasibility condition for y: there exists t > 0 such that\n\nfᵀ(ty) + gt = h  ⟺  t(fᵀy + g) = h\n\n### Case 1: h > 0\n\nNeed t = h/(fᵀy + g) > 0, which requires fᵀy + g > 0.\n\n**Answer**: P(C) = {y | fᵀy + g > 0} (open halfspace)\n\n### Case 2: h = 0\n\nNeed t(fᵀy + g) = 0 for some t > 0.\n\nSince t > 0, this requires fᵀy + g = 0.\n\n**Answer**: P(C) = {y | fᵀy + g = 0} (hyperplane)\n\n### Case 3: h < 0\n\nNeed t = h/(fᵀy + g) > 0, which requires fᵀy + g < 0 (since h < 0).\n\n**Answer**: P(C) = {y | fᵀy + g < 0} (open halfspace)\n\n## Part (c) — Halfspace\n\nFeasibility for y: ∃t > 0 such that\n\nfᵀ(ty) + gt ≤ h  ⟺  t(fᵀy + g) ≤ h\n\n### Case 1: h > 0\n\nFor any y, choose t → 0⁺. Then t(fᵀy + g) → 0 < h. So the inequality holds for all y.\n\n**Answer**: P(C) = ℝⁿ\n\n### Case 2: h = 0\n\nNeed t(fᵀy + g) ≤ 0 for some t > 0.\n\nIf fᵀy + g ≤ 0, any t > 0 works.\nIf fᵀy + g > 0, then t(fᵀy + g) > 0 for all t > 0, so no t works.\n\n**Answer**: P(C) = {y | fᵀy + g ≤ 0} (closed halfspace)\n\n### Case 3: h < 0\n\nNeed t(fᵀy + g) ≤ h < 0 for some t > 0.\n\nThis requires fᵀy + g < 0 (otherwise the LHS is ≥ 0 > h).\n\nGiven fᵀy + g < 0, we can choose t large enough so t(fᵀy + g) ≤ h.\n\n**Answer**: P(C) = {y | fᵀy + g < 0} (open halfspace)\n\n## Part (d) — Componentwise Inequality\n\nRow i of the system reads: fᵢᵀ(ty) + gᵢt ≤ hᵢ.\n\nApply Part (c) to each row:\n\n### For each i:\n\n- If hᵢ > 0: no constraint on y from row i\n- If hᵢ = 0: require fᵢᵀy + gᵢ ≤ 0\n- If hᵢ < 0: require fᵢᵀy + gᵢ < 0\n\n### Answer\n\nP(C) = ⋂_{i: hᵢ=0} {y | fᵢᵀy + gᵢ ≤ 0} ∩ ⋂_{i: hᵢ<0} {y | fᵢᵀy + gᵢ < 0}\n\n(If all hᵢ > 0, then P(C) = ℝⁿ.)\n\n## Summary Table\n\n| Set C | P(C) |\n|-------|------|\n| conv{(vᵢ, tᵢ)} (tᵢ > 0) | conv{vᵢ/tᵢ} |\n| Hyperplane (h > 0) | Open halfspace {fᵀy + g > 0} |\n| Hyperplane (h = 0) | Hyperplane {fᵀy + g = 0} |\n| Hyperplane (h < 0) | Open halfspace {fᵀy + g < 0} |\n| Halfspace (h > 0) | ℝⁿ |\n| Halfspace (h = 0) | Closed halfspace {fᵀy + g ≤ 0} |\n| Halfspace (h < 0) | Open halfspace {fᵀy + g < 0} |\n\n## Key Insights\n\n1. **Perspective preserves convex hulls**: P(conv(S)) = conv(P(S)) for sets with t > 0\n2. **Homogeneous coordinates**: The perspective map is the fundamental link between homogeneous and Cartesian coordinates\n3. **Sign of h matters**: For linear constraints, the sign of the RHS determines whether the image is a hyperplane, open halfspace, or all of ℝⁿ\n4. **Closed vs. open**: Halfspaces with h ≤ 0 become closed; those with h < 0 become open\n5. **Scaling freedom**: When h > 0 for a halfspace, we can scale t → 0⁺ to satisfy any point, so P(C) = ℝⁿ\n6. **Conics and perspective**: The perspective map is crucial in conic optimization—it connects cones to their \"base\" sets\n7. **Projective geometry**: This map is central to projective transformations in computer vision and graphics",
+
+      "learningObjectives": [
+
+        "perspective-map",
+
+        "homogeneous-coordinates",
+
+        "convex-hull-preservation",
+
+        "halfspace-images",
+
+        "sign-analysis",
+
+        "conic-optimization",
+
+        "projective-geometry"
+
+      ],
+
+      "estimatedTime": 30,
+
+      "relatedProblems": ["02-002", "02-018", "02-019"],
+
+      "notes": "The perspective map P(v,t) = v/t is fundamental in convex analysis and conic optimization. It links homogeneous representations (v,t) to Cartesian representations y = v/t. The key insight is that convexity interacts nicely with perspective: convex sets (in the domain with t > 0) map to convex sets. The sign of h in linear constraints determines the character of the image—this reflects the scaling freedom when t > 0. This problem builds intuition for the perspective function, which appears in many contexts: camera models, conic optimization, and Legendre-Fenchel duality."
+
+    },
+
+    {
+
+      "id": "02-017",
+
+      "lecture": "02-convex-sets",
+
+      "type": "verification",
+
+      "difficulty": "medium",
+
+      "title": "BV 2.18 — Inverse of a linear-fractional map",
+
+      "statement": "Let f: ℝⁿ ⊃ D → ℝⁿ be\n\nf(x) = (Ax + b)/(cᵀx + d),    D = {x | cᵀx + d > 0}\n\nwith A ∈ ℝⁿˣⁿ, b ∈ ℝⁿ, c ∈ ℝⁿ, d ∈ ℝ. Suppose the (n+1) × (n+1) matrix\n\nQ = [A  b]\n    [cᵀ d]\n\nis nonsingular. Show that f is invertible and that f⁻¹ is linear-fractional. Give f⁻¹ and its domain.",
+
+      "hints": [
+
+        "Use homogeneous coordinates: embed f as [f(x); 1] = (1/(cᵀx+d)) · Q[x; 1]",
+
+        "Since Q is nonsingular, compute Q⁻¹ = [Ã  b̃; c̃ᵀ d̃]",
+
+        "For y = f(x), reverse the homogeneous coordinate equation using Q⁻¹",
+
+        "Show that [x; 1] = (1/(c̃ᵀy+d̃)) · Q⁻¹[y; 1]",
+
+        "Read off f⁻¹(y) = (Ãy + b̃)/(c̃ᵀy + d̃)",
+
+        "Determine dom(f⁻¹) = {y | c̃ᵀy + d̃ > 0}"
+
+      ],
+
+      "solution": "## Solution (Homogeneous Coordinates)\n\n### Step 1 (Affine-perspective form)\n\nWrite f in homogeneous coordinates. For x ∈ D:\n\n[f(x)]   1      [Ax + b]     1    [A  b] [x]\n[  1  ] = ―――――― [cᵀx + d] = ―――――― [cᵀ d] [1]\n         cᵀx+d              cᵀx+d\n\nLet t(x) = cᵀx + d > 0 (the denominator). Then:\n\n[f(x)]       [x]\n[  1  ] = Q  [1]  / t(x)\n\nOr equivalently:\n\nt(x) · [f(x)] = Q [x]\n        [ 1 ]     [1]\n\n### Step 2 (Invert Q)\n\nSince Q is nonsingular, let:\n\nQ⁻¹ = [Ã   b̃ ]\n       [c̃ᵀ  d̃ ]\n\nwhere Ã ∈ ℝⁿˣⁿ, b̃ ∈ ℝⁿ, c̃ ∈ ℝⁿ, d̃ ∈ ℝ.\n\n### Step 3 (Apply Q⁻¹)\n\nFrom t(x) · [f(x); 1] = Q[x; 1], multiply both sides by Q⁻¹:\n\nt(x) · Q⁻¹[f(x)] = [x]\n           [ 1 ]   [1]\n\nExpanding the LHS:\n\nt(x) · [Ã f(x) + b̃ ] = [x]\n       [c̃ᵀf(x) + d̃]   [1]\n\nFrom the bottom component:\n\nt(x) · (c̃ᵀf(x) + d̃) = 1  ⟹  t(x) = 1/(c̃ᵀf(x) + d̃)\n\nFrom the top component:\n\nt(x) · (Ãf(x) + b̃) = x  ⟹  x = (Ãf(x) + b̃)/(c̃ᵀf(x) + d̃)\n\n### Step 4 (Read off the inverse)\n\nFor y = f(x), we have:\n\nf⁻¹(y) = (Ãy + b̃)/(c̃ᵀy + d̃)\n\n### Step 5 (Determine the domain of f⁻¹)\n\nThe domain of f⁻¹ is:\n\ndom(f⁻¹) = {y ∈ ℝⁿ | c̃ᵀy + d̃ > 0}\n\n### Step 6 (Verify f: D → dom(f⁻¹) is a bijection)\n\nFor x ∈ D, we have t(x) = cᵀx + d > 0, so:\n\nc̃ᵀf(x) + d̃ = 1/t(x) > 0\n\nHence f(x) ∈ dom(f⁻¹). By construction, f⁻¹(f(x)) = x and f(f⁻¹(y)) = y, so f is a bijection. ∎\n\n## Summary\n\n**Given**:\n\nf(x) = (Ax + b)/(cᵀx + d),    dom(f) = {x | cᵀx + d > 0}\n\nQ = [A  b] nonsingular,    Q⁻¹ = [Ã   b̃ ]\n    [cᵀ d]                        [c̃ᵀ  d̃ ]\n\n**Inverse**:\n\nf⁻¹(y) = (Ãy + b̃)/(c̃ᵀy + d̃),    dom(f⁻¹) = {y | c̃ᵀy + d̃ > 0}\n\n## Example\n\nLet n = 1, A = 2, b = 1, c = 1, d = 0. Then:\n\nf(x) = (2x + 1)/x,    dom(f) = {x | x > 0}\n\nQ = [2  1],    det(Q) = -1 ≠ 0  ✓\n    [1  0]\n\nQ⁻¹ = [0   1]\n       [1  -2]\n\nSo Ã = 0, b̃ = 1, c̃ = 1, d̃ = -2.\n\nf⁻¹(y) = (0·y + 1)/(1·y - 2) = 1/(y - 2),    dom(f⁻¹) = {y | y > 2}\n\n**Verify**: For x > 0, f(x) = (2x+1)/x = 2 + 1/x > 2. So f maps (0, ∞) to (2, ∞). ✓\n\nFor y > 2, f⁻¹(y) = 1/(y-2). Check: f(f⁻¹(y)) = (2/(y-2) + 1) / (1/(y-2)) = (2 + y - 2)/(1) = y. ✓\n\n## Key Insights\n\n1. **Homogeneous coordinates**: The (n+1)×(n+1) matrix Q encodes the linear-fractional map in homogeneous form\n2. **Matrix inversion**: Inverting f reduces to inverting Q\n3. **Linear-fractional closed under inversion**: The inverse of a linear-fractional map is linear-fractional\n4. **Domain mapping**: dom(f⁻¹) is determined by the bottom row of Q⁻¹\n5. **Nonsingularity required**: Q must be nonsingular for f to be invertible\n6. **Projective transformations**: Linear-fractional maps are projective transformations in ℝℙⁿ (projective space)\n7. **Group structure**: Invertible linear-fractional maps form a group under composition",
+
+      "learningObjectives": [
+
+        "linear-fractional-maps",
+
+        "homogeneous-coordinates",
+
+        "matrix-inversion",
+
+        "domain-determination",
+
+        "projective-transformations",
+
+        "inverse-functions",
+
+        "affine-perspective-decomposition"
+
+      ],
+
+      "estimatedTime": 25,
+
+      "relatedProblems": ["02-016", "02-019", "04-010"],
+
+      "notes": "Linear-fractional (or Möbius) maps are fundamental in projective geometry, control theory, and optimization. This problem shows that they are closed under inversion—the inverse is also linear-fractional, determined by Q⁻¹. The homogeneous coordinate technique is key: it converts the nonlinear rational map into a linear map in (n+1)-dimensional homogeneous space, followed by perspective division. This is the same idea behind homogeneous coordinates in computer graphics. The result is important in convex optimization because linear-fractional maps preserve convexity (they map convex sets to convex sets)."
+
+    },
+
+    {
+
+      "id": "02-018",
+
+      "lecture": "02-convex-sets",
+
+      "type": "computation",
+
+      "difficulty": "hard",
+
+      "title": "BV 2.19 — Preimages under linear-fractional maps",
+
+      "statement": "Let f: ℝⁿ → ℝᵏ be\n\nf(x) = (Ax + b)/(cᵀx + d),    dom(f) = {x | t(x) := cᵀx + d > 0}\n\nwith A ∈ ℝᵏˣⁿ, b ∈ ℝᵏ, c ∈ ℝⁿ, d ∈ ℝ. For each convex set C ⊂ ℝᵏ below, give a simple description of f⁻¹(C).\n\n(a) Halfspace: C = {y | gᵀy ≤ h}\n\n(b) Polyhedron: C = {y | Gy ⪯ h} (componentwise)\n\n(c) Ellipsoid: C = {y | yᵀP⁻¹y ≤ 1} with P ≻ 0\n\n(d) LMI set: C = {y | y₁A₁ + ⋯ + yₖAₖ ⪯ B} with Aᵢ, B ∈ Sᵐ",
+
+      "hints": [
+
+        "Let y(x) = Ax + b and t(x) = cᵀx + d > 0, so f(x) = y(x)/t(x)",
+
+        "Part (a): gᵀ(y(x)/t(x)) ≤ h ⟺ gᵀy(x) ≤ h·t(x) (multiply by t > 0)",
+
+        "This gives (gᵀA - hcᵀ)x ≤ hd - gᵀb, plus t(x) > 0",
+
+        "Part (b): Apply part (a) to each row",
+
+        "Part (c): |P⁻¹/²y(x)|₂ ≤ t(x) is a second-order cone constraint",
+
+        "Part (d): ∑ᵢ(Ax+b)ᵢAᵢ ⪯ (cᵀx+d)B; multiply out and rearrange"
+
+      ],
+
+      "solution": "## Setup\n\nLet:\n\ny(x) = Ax + b,    t(x) = cᵀx + d > 0\n\nso f(x) = y(x)/t(x).\n\n## Part (a) — Halfspace\n\n### Goal\n\nCharacterize f⁻¹(C) = {x ∈ dom(f) | f(x) ∈ C}.\n\n### Step 1 (Rewrite the constraint)\n\ngᵀf(x) ≤ h  ⟺  gᵀ(y(x)/t(x)) ≤ h\n\n### Step 2 (Multiply by t(x) > 0)\n\ngᵀy(x) ≤ h·t(x)  ⟺  gᵀ(Ax + b) ≤ h(cᵀx + d)\n\n### Step 3 (Expand and collect)\n\ngᵀAx + gᵀb ≤ hcᵀx + hd\n(gᵀA - hcᵀ)x ≤ hd - gᵀb\n\n### Answer\n\nf⁻¹(C) = {x | (gᵀA - hcᵀ)x ≤ hd - gᵀb, cᵀx + d > 0}\n\nThis is the intersection of a (closed) halfspace with the open halfspace {t(x) > 0}.\n\n**Note**: If the closed halfspace (gᵀA - hcᵀ)x ≤ hd - gᵀb already implies cᵀx + d > 0, then f⁻¹(C) is just a closed halfspace. Otherwise, it's a (possibly unbounded) convex set.\n\n## Part (b) — Polyhedron\n\n### Apply part (a) to each row\n\nLet gᵢ denote the i-th row of G and hᵢ the i-th component of h. Then:\n\ny ∈ C  ⟺  gᵢᵀy ≤ hᵢ  for all i\n\nBy part (a), for each i:\n\nx ∈ f⁻¹({y | gᵢᵀy ≤ hᵢ})  ⟺  (gᵢᵀA - hᵢcᵀ)x ≤ hᵢd - gᵢᵀb\n\n### Answer\n\nf⁻¹(C) = {x | (gᵢᵀA - hᵢcᵀ)x ≤ hᵢd - gᵢᵀb for all i, cᵀx + d > 0}\n\nThis is a polyhedron (finite intersection of halfspaces), intersected with the open halfspace {t(x) > 0}.\n\n**Alternatively**, in matrix form:\n\nf⁻¹(C) = {x | (GA - hcᵀ)x ⪯ hd1 - Gb, cᵀx + d > 0}\n\nwhere hcᵀ means the outer product of h and c, and 1 is the all-ones vector.\n\n## Part (c) — Ellipsoid\n\n### Step 1 (Rewrite the ellipsoid constraint)\n\nf(x) ∈ C  ⟺  f(x)ᵀP⁻¹f(x) ≤ 1\n\n⟺  (y(x)/t(x))ᵀP⁻¹(y(x)/t(x)) ≤ 1\n\n⟺  y(x)ᵀP⁻¹y(x) ≤ t(x)²\n\n### Step 2 (Take square roots)\n\nSince t(x) > 0:\n\n√(y(x)ᵀP⁻¹y(x)) ≤ t(x)\n\n⟺  |P⁻¹/²y(x)|₂ ≤ t(x)\n\nwhere P⁻¹/² is the (symmetric) matrix square root of P⁻¹.\n\n### Step 3 (Substitute y(x) and t(x))\n\n|P⁻¹/²(Ax + b)|₂ ≤ cᵀx + d\n\nThis is a **second-order cone (SOC)** constraint, plus the constraint cᵀx + d > 0.\n\n### Answer\n\nf⁻¹(C) = {x | |P⁻¹/²(Ax + b)|₂ ≤ cᵀx + d, cᵀx + d > 0}\n\nThis is a second-order cone (also called a Lorentz cone or ice-cream cone).\n\n**LMI form** (alternative): The SOC constraint is equivalent to:\n\n[(cᵀx + d)Iₖ    P⁻¹/²(Ax + b)  ] ⪰ 0,    cᵀx + d > 0\n[(Ax + b)ᵀP⁻¹/²   cᵀx + d      ]\n\nwhere Iₖ is the k×k identity matrix.\n\n## Part (d) — LMI Set\n\n### Step 1 (Rewrite the LMI)\n\nf(x) ∈ C  ⟺  ∑ᵢ₌₁ᵏ f(x)ᵢAᵢ ⪯ B\n\n⟺  ∑ᵢ₌₁ᵏ (y(x)/t(x))ᵢAᵢ ⪯ B\n\n### Step 2 (Multiply by t(x) > 0)\n\nSince t(x) > 0, multiplying a matrix inequality by a positive scalar preserves the inequality:\n\n∑ᵢ₌₁ᵏ y(x)ᵢAᵢ ⪯ t(x)·B\n\n### Step 3 (Substitute y(x) and t(x))\n\nRecall y(x) = Ax + b, so y(x)ᵢ is the i-th component of Ax + b. Let aᵢᵀ be the i-th row of A, so:\n\ny(x)ᵢ = aᵢᵀx + bᵢ\n\nThen:\n\n∑ᵢ₌₁ᵏ (aᵢᵀx + bᵢ)Aᵢ ⪯ (cᵀx + d)B\n\n### Step 4 (Expand)\n\n∑ᵢ (aᵢᵀx)Aᵢ + ∑ᵢ bᵢAᵢ ⪯ (cᵀx)B + dB\n\n∑ᵢ (aᵢᵀx)Aᵢ - (cᵀx)B ⪯ dB - ∑ᵢ bᵢAᵢ\n\n### Answer\n\nf⁻¹(C) = {x | ∑ᵢ₌₁ᵏ (aᵢᵀx + bᵢ)Aᵢ ⪯ (cᵀx + d)B, cᵀx + d > 0}\n\nThis is an **LMI (linear matrix inequality)** that is affine in x on both sides, scaled by a positive denominator.\n\n**Equivalent form**:\n\nf⁻¹(C) = {x | ∑ᵢ₌₁ᵏ (aᵢᵀx)Aᵢ - (cᵀx)B + ∑ᵢ bᵢAᵢ - dB ⪯ 0, cᵀx + d > 0}\n\n## Summary Table\n\n| Set C | Preimage f⁻¹(C) |\n|-------|------------------|\n| Halfspace {gᵀy ≤ h} | {x \\| (gᵀA - hcᵀ)x ≤ hd - gᵀb, t(x) > 0} |\n| Polyhedron {Gy ⪯ h} | {x \\| (GA - hcᵀ)x ⪯ hd·1 - Gb, t(x) > 0} |\n| Ellipsoid {yᵀP⁻¹y ≤ 1} | {x \\| \\|P⁻¹/²(Ax+b)\\|₂ ≤ cᵀx+d, t(x) > 0} (SOC) |\n| LMI {∑yᵢAᵢ ⪯ B} | {x \\| ∑(aᵢᵀx+bᵢ)Aᵢ ⪯ (cᵀx+d)B, t(x) > 0} |\n\n## Key Insights\n\n1. **Perspective trick**: Multiplying by t(x) > 0 converts fractional constraints to affine/conic ones\n2. **Convexity preservation**: Preimages of convex sets under linear-fractional maps are convex\n3. **Halfspaces → halfspaces**: Halfspace preimages remain halfspaces (intersected with dom(f))\n4. **Ellipsoids → SOCs**: Ellipsoid preimages become second-order cones\n5. **LMIs → LMIs**: LMI preimages remain LMIs (affine in x)\n6. **Conic optimization**: This shows linear-fractional maps preserve conic representability\n7. **Homogeneous forms**: The transformation f(x) = y(x)/t(x) with t(x) > 0 is the key—it converts rational constraints to polynomial ones",
+
+      "learningObjectives": [
+
+        "linear-fractional-preimages",
+
+        "perspective-transformation",
+
+        "second-order-cones",
+
+        "lmi-constraints",
+
+        "convexity-preservation",
+
+        "conic-optimization",
+
+        "homogenization"
+
+      ],
+
+      "estimatedTime": 40,
+
+      "relatedProblems": ["02-016", "02-017", "04-015"],
+
+      "notes": "This is a deep and important problem in convex optimization. It shows that linear-fractional maps preserve not just convexity but also conic structure: halfspaces map to halfspaces, ellipsoids map to second-order cones, and LMI sets map to LMI sets. The key technique—multiplying by the positive denominator t(x)—converts rational inequalities into polynomial (affine/conic) ones. This is fundamental in conic optimization: it shows that if a constraint set is defined by a linear-fractional image of a simple convex set (halfspace, ellipsoid, LMI), it remains tractable. The perspective trick (homogenization) appears throughout optimization, control theory, and geometric programming."
+
+
     }
   ]
 }
