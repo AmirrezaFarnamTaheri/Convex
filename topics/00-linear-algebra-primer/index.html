@@ -70,6 +70,10 @@
         <li><a href="#section-11">Exercises with Detailed Solutions</a></li>
         <li><a href="#section-12">Sanity Checklist</a></li>
         <li><a href="#section-13">Quick Reference Formulas</a></li>
+        <li><a href="#section-14">Dual Norms and Hölder's Inequality (Deep Dive)</a></li>
+        <li><a href="#section-15">Matrix Inner Product, Frobenius Norm, and Loewner Order</a></li>
+        <li><a href="#section-16">Componentwise Order and Projection onto Affine Sets</a></li>
+        <li><a href="#section-17">Additional Practice Problems (with Solutions)</a></li>
       </ol>
     </section>
 
@@ -685,6 +689,284 @@
         <li><b>Pseudoinverse:</b> $A^+ = V\Sigma^+ U^\top$</li>
         <li><b>Condition Number:</b> $\kappa(A) = \sigma_{\max} / \sigma_{\min}$</li>
       </ul>
+    </section>
+
+    <!-- SECTION 14: DUAL NORMS AND HÖLDER'S INEQUALITY (EXPANDED) -->
+    <section class="card" id="section-14">
+      <h2>14. Dual Norms and Hölder's Inequality (Deep Dive)</h2>
+
+      <h3>Definition: Dual Norm</h3>
+      <p>For any norm $\|\cdot\|$ on $\mathbb{R}^n$, its <b>dual norm</b> is defined as:</p>
+      $$
+      \|y\|_* := \sup\{ x^\top y \mid \|x\| \le 1 \}
+      $$
+      <p>The dual norm measures the maximum linear functional $y$ can induce over the unit ball of the primal norm.</p>
+
+      <h3>Examples to Memorize</h3>
+      <ul>
+        <li><b>$\ell_2$ is self-dual:</b> $(\|\cdot\|_2)^* = \|\cdot\|_2$</li>
+        <li><b>$\ell_1$ and $\ell_\infty$ are duals:</b> $(\|\cdot\|_1)^* = \|\cdot\|_\infty$ and $(\|\cdot\|_\infty)^* = \|\cdot\|_1$</li>
+        <li><b>$\ell_p$ and $\ell_q$ are conjugate:</b> For $1/p + 1/q = 1$, we have $(\|\cdot\|_p)^* = \|\cdot\|_q$</li>
+      </ul>
+
+      <div class="proof">
+        <h4>Proof: $(\|\cdot\|_2)^* = \|\cdot\|_2$ (Self-Duality of Euclidean Norm)</h4>
+
+        <div class="proof-step">
+          <strong>Step 1: Upper bound.</strong> By Cauchy-Schwarz, for $\|x\|_2 \le 1$:
+          $$ x^\top y \le |x^\top y| \le \|x\|_2 \|y\|_2 \le \|y\|_2 $$
+          Thus $\|y\|_* \le \|y\|_2$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Achieve equality.</strong> Choose $x = y/\|y\|_2$ (assuming $y \neq 0$). Then $\|x\|_2 = 1$ and:
+          $$ x^\top y = \frac{y^\top y}{\|y\|_2} = \frac{\|y\|_2^2}{\|y\|_2} = \|y\|_2 $$
+          Hence $\|y\|_* \ge \|y\|_2$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Conclusion:</strong> Therefore $\|y\|_* = \|y\|_2$.
+        </div>
+      </div>
+
+      <div class="proof">
+        <h4>Proof: $(\|\cdot\|_1)^* = \|\cdot\|_\infty$</h4>
+
+        <div class="proof-step">
+          <strong>Step 1: Upper bound.</strong> For $\|x\|_1 \le 1$:
+          $$ x^\top y = \sum_i x_i y_i \le \sum_i |x_i| |y_i| \le \max_i |y_i| \sum_i |x_i| \le \|y\|_\infty $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Achieve equality.</strong> Let $j = \arg\max_i |y_i|$. Choose $x = e_j$ (the $j$-th standard basis vector). Then $\|x\|_1 = 1$ and:
+          $$ x^\top y = y_j = \pm |y_j| = \|y\|_\infty $$
+          (choosing the sign of $e_j$ to match the sign of $y_j$).
+        </div>
+
+        <div class="proof-step">
+          <strong>Conclusion:</strong> $\|y\|_* = \|y\|_\infty$.
+        </div>
+      </div>
+
+      <h3>Hölder's Inequality (Dual-Norm Cauchy–Schwarz)</h3>
+      <p>For all $x, y \in \mathbb{R}^n$ and any norm $\|\cdot\|$:</p>
+      $$
+      x^\top y \le \|x\| \cdot \|y\|_*
+      $$
+
+      <div class="proof">
+        <h4>Proof of Hölder's Inequality</h4>
+
+        <div class="proof-step">
+          <strong>Case 1: $x = 0$.</strong> The inequality is trivially true: $0 \le 0$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Case 2: $x \neq 0$.</strong> Write:
+          $$ x^\top y = \|x\| \cdot \frac{x^\top y}{\|x\|} = \|x\| \cdot \left(\frac{x}{\|x\|}\right)^\top y $$
+          Note that $\left\|\frac{x}{\|x\|}\right\| = 1$, so by the definition of dual norm:
+          $$ \left(\frac{x}{\|x\|}\right)^\top y \le \sup_{\|z\| \le 1} z^\top y = \|y\|_* $$
+          Combining: $x^\top y \le \|x\| \cdot \|y\|_*$.
+        </div>
+      </div>
+
+      <h3>Why We Need This Later</h3>
+      <p>In <a href="../02-convex-sets/index.html">Lecture 02</a>, when computing <b>dual cones</b>, you will repeatedly use "$y^\top x \le \|y\|_* \|x\|$" with appropriate norms. This inequality is the workhorse of duality theory.</p>
+    </section>
+
+    <!-- SECTION 15: MATRIX STRUCTURES FOR OPTIMIZATION -->
+    <section class="card" id="section-15">
+      <h2>15. Matrix Inner Product, Frobenius Norm, and Loewner Order</h2>
+
+      <h3>Trace and Frobenius Inner Product</h3>
+      <p>For matrices $X, Y \in \mathbb{R}^{m \times n}$, define:</p>
+      $$
+      \langle X, Y \rangle := \mathrm{tr}(X^\top Y) = \sum_{i,j} X_{ij} Y_{ij}
+      $$
+      <p>This is an <b>inner product</b> on the space of $m \times n$ matrices (bilinear, symmetric, positive definite).</p>
+
+      <h3>Frobenius Norm</h3>
+      <p>The induced norm is the <b>Frobenius norm</b>:</p>
+      $$
+      \|X\|_F := \sqrt{\langle X, X \rangle} = \sqrt{\sum_{i,j} X_{ij}^2} = \sqrt{\mathrm{tr}(X^\top X)}
+      $$
+
+      <h3>Symmetric Matrices</h3>
+      <p>Denote the space of $n \times n$ symmetric matrices by:</p>
+      $$
+      \mathbb{S}^n = \{ X \in \mathbb{R}^{n \times n} \mid X = X^\top \}
+      $$
+
+      <h3>Loewner Order (Semidefinite Order)</h3>
+      <p>For $X, Y \in \mathbb{S}^n$, we write <b>$X \succeq Y$</b> if and only if $X - Y$ is <b>positive semidefinite (PSD)</b>, meaning:</p>
+      $$
+      v^\top (X - Y) v \ge 0 \quad \text{for all } v \in \mathbb{R}^n
+      $$
+
+      <div class="proof">
+        <h4>Microfacts About the Loewner Order</h4>
+
+        <ul>
+          <li><b>Eigenvalue characterization:</b> $X \succeq 0$ if and only if all eigenvalues of $X$ are nonnegative.</li>
+          <li><b>Inner product property:</b> If $X \succeq 0$ and $Y \succeq 0$, then:
+            $$ \langle X, Y \rangle = \mathrm{tr}(XY) \ge 0 $$
+            (This follows because $XY$ has nonnegative trace when both are PSD.)
+          </li>
+          <li><b>Partial order:</b> The relation $\succeq$ is reflexive, transitive, and antisymmetric (hence a partial order).</li>
+        </ul>
+      </div>
+
+      <h3>Connection to Optimization</h3>
+      <p>The Loewner order is the language of:</p>
+      <ul>
+        <li><b>Ellipsoids</b> (defined by PSD matrices in quadratic forms)</li>
+        <li><b>PSD cone</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$ in <a href="../02-convex-sets/index.html">Lecture 02</a></li>
+        <li><b>Semidefinite programs (SDPs)</b> in <a href="../04-convex-opt-problems/index.html">Lecture 04</a></li>
+      </ul>
+    </section>
+
+    <!-- SECTION 16: COMPONENTWISE ORDER AND PROJECTION -->
+    <section class="card" id="section-16">
+      <h2>16. Componentwise Order and Projection onto Affine Sets</h2>
+
+      <h3>Componentwise Order</h3>
+      <p>For vectors $x, y \in \mathbb{R}^n$, we write:</p>
+      <ul>
+        <li><b>$x \ge 0$</b> means $x_i \ge 0$ for all $i = 1, \dots, n$</li>
+        <li><b>$x \le y$</b> means $x_i \le y_i$ for all $i = 1, \dots, n$</li>
+        <li><b>$x > 0$</b> means $x_i > 0$ for all $i$ (strictly positive)</li>
+      </ul>
+      <p>This is the <b>standard partial order</b> on $\mathbb{R}^n$ induced by the nonnegative orthant $\mathbb{R}^n_+ = \{x \mid x \ge 0\}$.</p>
+
+      <h3>Projection onto an Affine Set</h3>
+      <p>Consider an affine set defined by:</p>
+      $$
+      \mathcal{A} = \{ x \in \mathbb{R}^n \mid Fx = g \}
+      $$
+      <p>where $F \in \mathbb{R}^{p \times n}$ has full row rank and $g \in \mathbb{R}^p$.</p>
+
+      <h4>Parametric Representation</h4>
+      <p>Every point in $\mathcal{A}$ can be written as:</p>
+      $$
+      x = x_0 + Zt
+      $$
+      <p>where:</p>
+      <ul>
+        <li>$x_0$ is any particular solution satisfying $Fx_0 = g$</li>
+        <li>$Z$ is a matrix whose columns form a basis for $\mathcal{N}(F)$ (the nullspace of $F$)</li>
+        <li>$t \in \mathbb{R}^k$ where $k = n - p$ (dimension of nullspace)</li>
+      </ul>
+
+      <h4>Euclidean Projection Formula</h4>
+      <p>The <b>Euclidean projection</b> of any point $y \in \mathbb{R}^n$ onto $\mathcal{A}$ is:</p>
+      $$
+      \Pi_{\mathcal{A}}(y) = x_0 + Z(Z^\top Z)^{-1} Z^\top (y - x_0)
+      $$
+
+      <div class="proof">
+        <h4>Geometric Interpretation</h4>
+        <p>This formula says: "Project $(y - x_0)$ onto the nullspace $\mathcal{N}(F)$, then shift back by $x_0$."</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Translate to subspace problem.</strong> Shifting by $x_0$ converts the affine set to a subspace (the nullspace of $F$).
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Project onto nullspace.</strong> The projection of $w = y - x_0$ onto $\mathrm{span}(Z)$ is:
+          $$ \Pi_{\mathcal{N}(F)}(w) = Z(Z^\top Z)^{-1} Z^\top w $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Shift back.</strong> Add $x_0$ to obtain the projection onto the affine set.
+        </div>
+      </div>
+
+      <h3>Why This Matters</h3>
+      <p>Projection onto affine sets is crucial for:</p>
+      <ul>
+        <li><b>Equality-constrained optimization</b> (nullspace methods)</li>
+        <li><b>Feasible point computation</b> in constrained problems</li>
+        <li><b>Active-set methods</b> in quadratic programming</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 17: PRACTICE PROBLEMS (WITH COMPLETE SOLUTIONS) -->
+    <section class="card" id="section-17">
+      <h2>17. Additional Practice Problems (with Solutions)</h2>
+
+      <h3>Problem 1: Dual of $\ell_p$ Norm</h3>
+      <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
+
+      <div class="proof">
+        <h4>Solution Sketch</h4>
+
+        <div class="proof-step">
+          <strong>General case ($1 < p < \infty$):</strong>
+          <p>By Hölder's inequality for $\ell_p$ spaces:</p>
+          $$ \left| \sum_i x_i y_i \right| \le \left(\sum_i |x_i|^p\right)^{1/p} \left(\sum_i |y_i|^q\right)^{1/q} = \|x\|_p \|y\|_q $$
+          <p>Equality is achieved when $|y_i|^q \propto |x_i|^p$. Specifically, choose:</p>
+          $$ x_i = \frac{\mathrm{sign}(y_i) |y_i|^{q-1}}{\|y\|_q^{q-1}} $$
+          <p>Then $\|x\|_p = 1$ and $x^\top y = \|y\|_q$, proving $(\|\cdot\|_p)^* = \|\cdot\|_q$.</p>
+        </div>
+
+        <div class="proof-step">
+          <strong>Boundary cases:</strong> Already proven above: $(\|\cdot\|_1)^* = \|\cdot\|_\infty$ and $(\|\cdot\|_\infty)^* = \|\cdot\|_1$.
+        </div>
+      </div>
+
+      <h3>Problem 2: Frobenius Cauchy–Schwarz</h3>
+      <p><b>Problem:</b> Prove that for matrices $X, Y \in \mathbb{R}^{m \times n}$:</p>
+      $$
+      |\langle X, Y \rangle| \le \|X\|_F \|Y\|_F
+      $$
+
+      <div class="proof">
+        <h4>Solution</h4>
+        <p>View matrices as vectors in $\mathbb{R}^{mn}$ by stacking columns. The Frobenius inner product corresponds to the standard Euclidean inner product on $\mathbb{R}^{mn}$, and the Frobenius norm corresponds to the Euclidean norm. Therefore, the standard Cauchy-Schwarz inequality applies directly.</p>
+      </div>
+
+      <h3>Problem 3: Loewner Order Transitivity</h3>
+      <p><b>Problem:</b> If $X \succeq Y$ and $Y \succeq Z$ (all in $\mathbb{S}^n$), prove that $X \succeq Z$.</p>
+
+      <div class="proof">
+        <h4>Solution</h4>
+        <p>We have $X - Y \succeq 0$ and $Y - Z \succeq 0$. Therefore:</p>
+        $$ X - Z = (X - Y) + (Y - Z) $$
+        <p>Since the sum of two PSD matrices is PSD (each has nonnegative eigenvalues in their respective quadratic forms), we conclude $X - Z \succeq 0$, i.e., $X \succeq Z$.</p>
+      </div>
+
+      <h3>Problem 4: Projection onto Affine Set Example</h3>
+      <p><b>Problem:</b> Find the Euclidean projection of $y = (1, 2, 3)^\top$ onto the affine set:</p>
+      $$
+      \mathcal{A} = \{ x \in \mathbb{R}^3 \mid x_1 + x_2 + x_3 = 1 \}
+      $$
+
+      <div class="proof">
+        <h4>Solution</h4>
+
+        <div class="proof-step">
+          <strong>Step 1: Particular solution.</strong> Choose $x_0 = (1, 0, 0)^\top$ (satisfies $x_1 + x_2 + x_3 = 1$).
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Nullspace basis.</strong> $F = [1\ 1\ 1]$. The nullspace has basis:
+          $$ Z = \begin{bmatrix} 1 & 0 \\ -1 & 0 \\ 0 & 1 \end{bmatrix}, \quad Z = \begin{bmatrix} 0 & 1 \\ 1 & 0 \\ -1 & -1 \end{bmatrix} $$
+          (These are two linearly independent vectors orthogonal to $[1, 1, 1]^\top$.) For simplicity, use:
+          $$ Z = \begin{bmatrix} 1 & 0 \\ -1 & 0 \\ 0 & 1 \end{bmatrix} \quad \text{or orthonormalize.} $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Alternative approach (direct formula).</strong> The projection onto the hyperplane $\{x \mid a^\top x = b\}$ is:
+          $$ \Pi(y) = y - \frac{a^\top y - b}{\|a\|_2^2} a $$
+          Here $a = (1, 1, 1)^\top$, $b = 1$, $a^\top y = 6$, $\|a\|_2^2 = 3$:
+          $$ \Pi(y) = (1, 2, 3)^\top - \frac{6 - 1}{3}(1, 1, 1)^\top = (1, 2, 3)^\top - \frac{5}{3}(1, 1, 1)^\top $$
+          $$ = \left(-\frac{2}{3}, \frac{1}{3}, \frac{4}{3}\right)^\top $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Verification:</strong> $-\frac{2}{3} + \frac{1}{3} + \frac{4}{3} = 1$ ✓
+        </div>
+      </div>
     </section>
 
     <!-- READINGS -->

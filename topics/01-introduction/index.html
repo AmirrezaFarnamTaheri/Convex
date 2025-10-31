@@ -62,6 +62,8 @@
         <li><a href="#section-3">Canonical Problem Families</a></li>
         <li><a href="#section-4">The Loss + Regularizer Paradigm</a></li>
         <li><a href="#section-5">Problem Set & Solutions</a></li>
+        <li><a href="#section-6">Constraint Grammar (Explicit, Searchable)</a></li>
+        <li><a href="#section-7">Tiny Modeling Rewrites You Can Already Use</a></li>
       </ol>
     </nav>
 
@@ -255,6 +257,170 @@
             $$ \min_{x, t} \mathbf{1}^\top t \quad \text{s.t.} \quad -t \le Ax - b \le t, \quad -1 \le x_i \le 1 \text{ for all } i $$
             This is an LP because the objective and all constraints are linear.
           </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: CONSTRAINT GRAMMAR -->
+      <section class="card" id="section-6">
+        <h2>6. Constraint Grammar (Explicit, Searchable)</h2>
+
+        <p>Throughout this course, we will use a consistent vocabulary to describe convex constraints. Learning this "grammar" now makes later lectures easier to follow and helps you quickly recognize convex forms.</p>
+
+        <h3>Standard Constraint Types</h3>
+
+        <h4>1. Affine Equalities and Inequalities</h4>
+        <ul>
+          <li><b>Affine equality:</b> $Ax = b$ where $A \in \mathbb{R}^{m \times n}$, $b \in \mathbb{R}^m$</li>
+          <li><b>Affine inequality:</b> $a^\top x \le b$ or componentwise $Cx \le d$</li>
+          <li><b>Why convex:</b> The set $\{x \mid Ax = b\}$ is an affine subspace (convex). The set $\{x \mid a^\top x \le b\}$ is a halfspace (convex).</li>
+        </ul>
+
+        <h4>2. Componentwise Bounds</h4>
+        <ul>
+          <li><b>Nonnegativity:</b> $x \ge 0$ means $x_i \ge 0$ for all $i$</li>
+          <li><b>Box constraints:</b> $\ell \le x \le u$ means $\ell_i \le x_i \le u_i$ for all $i$</li>
+          <li><b>Why convex:</b> Each constraint defines a halfspace; their intersection (the nonnegative orthant $\mathbb{R}^n_+$ or a box) is convex.</li>
+        </ul>
+
+        <h4>3. Norm Constraints</h4>
+        <ul>
+          <li><b>Euclidean ball:</b> $\|Px + q\|_2 \le r$ (defines an ellipsoid when $P$ is invertible)</li>
+          <li><b>Infinity norm:</b> $\|x\|_\infty \le t$ equivalent to $-t \le x_i \le t$ for all $i$</li>
+          <li><b>$\ell_1$ norm:</b> $\|x\|_1 \le t$ (defines a cross-polytope)</li>
+          <li><b>Why convex:</b> Sublevel sets of norms are convex (unit balls of norms are convex).</li>
+        </ul>
+
+        <h4>4. Second-Order Cone (SOC)</h4>
+        <p>The constraint $\|Ax + b\|_2 \le c^\top x + d$ defines membership in a <b>second-order cone</b>. This is the natural extension of the Euclidean ball constraint and is fundamental to <b>SOCP</b> (Second-Order Cone Programming).</p>
+
+        <h4>5. Positive Semidefinite (PSD) Constraints</h4>
+        <ul>
+          <li><b>Matrix variable:</b> $X \in \mathbb{S}^n$ (symmetric $n \times n$ matrices)</li>
+          <li><b>PSD constraint:</b> $X \succeq 0$ means $v^\top X v \ge 0$ for all $v \in \mathbb{R}^n$</li>
+          <li><b>Why convex:</b> The PSD cone $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$ is a convex cone (see <a href="../02-convex-sets/index.html">Lecture 02</a>).</li>
+        </ul>
+
+        <div class="insight">
+          <h4>💡 Recognition Strategy</h4>
+          <p>When you see a new problem, scan for these patterns. If all constraints fit this grammar and the objective is a convex function, the problem is convex.</p>
+        </div>
+
+        <h3>Standard Sets Arising from Constraints</h3>
+        <table class="data-table" style="width: 100%; margin-top: 16px;">
+          <thead>
+            <tr>
+              <th>Constraint Form</th>
+              <th>Geometric Object</th>
+              <th>Used In</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>$Ax = b$</td>
+              <td>Affine subspace</td>
+              <td>Equality-constrained problems</td>
+            </tr>
+            <tr>
+              <td>$a^\top x \le b$</td>
+              <td>Halfspace</td>
+              <td>LP, general inequalities</td>
+            </tr>
+            <tr>
+              <td>$x \ge 0$</td>
+              <td>Nonnegative orthant $\mathbb{R}^n_+$</td>
+              <td>LP, QP (nonnegative variables)</td>
+            </tr>
+            <tr>
+              <td>$\|x\|_2 \le r$</td>
+              <td>Euclidean ball</td>
+              <td>Robust optimization, trust regions</td>
+            </tr>
+            <tr>
+              <td>$\|Ax + b\|_2 \le c^\top x + d$</td>
+              <td>Second-order cone</td>
+              <td>SOCP</td>
+            </tr>
+            <tr>
+              <td>$X \succeq 0$</td>
+              <td>PSD cone $\mathbb{S}^n_+$</td>
+              <td>SDP</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SECTION 7: TINY MODELING REWRITES -->
+      <section class="card" id="section-7">
+        <h2>7. Tiny Modeling Rewrites You Can Already Use</h2>
+
+        <p>These are <b>safe transformations</b> that convert common patterns into standard convex forms. Memorize them—they appear constantly in modeling.</p>
+
+        <h3>Absolute Value Elimination</h3>
+
+        <h4>Scalar Case</h4>
+        <p><b>Pattern:</b> $|x_i| \le u_i$</p>
+        <p><b>Rewrite:</b> $-u_i \le x_i \le u_i$ (two linear inequalities)</p>
+
+        <h4>Objective with Absolute Values</h4>
+        <p><b>Pattern:</b> $\min \sum_i |x_i|$</p>
+        <p><b>Rewrite:</b> Introduce slack variables $t_i \ge 0$ and add constraints:
+        $$
+        \min \sum_i t_i \quad \text{s.t.} \quad -t_i \le x_i \le t_i
+        $$
+        This is now an LP (all constraints linear).
+
+        <h3>Infinity Norm as Box Constraint</h3>
+        <p><b>Pattern:</b> $\|x\|_\infty \le t$</p>
+        <p><b>Rewrite:</b> $-t \mathbf{1} \le x \le t \mathbf{1}$ (componentwise: $-t \le x_i \le t$ for all $i$)</p>
+        <p><b>Why this works:</b> $\|x\|_\infty = \max_i |x_i|$, so the constraint is equivalent to $|x_i| \le t$ for all $i$.</p>
+
+        <h3>$\ell_1$ Norm as Sum of Absolute Values</h3>
+        <p><b>Pattern:</b> $\|x\|_1 \le t$</p>
+        <p><b>Rewrite:</b> Introduce slack variables $s_i$ with:
+        $$
+        -s_i \le x_i \le s_i, \quad \sum_i s_i \le t
+        $$
+        Or equivalently (epigraph form): minimize $t$ subject to $-t \le x_i \le t$ and $\sum_i s_i = t$ where $s_i = |x_i|$.</p>
+
+        <h3>Euclidean Norm (Second-Order Cone Form)</h3>
+        <p><b>Pattern:</b> $\|Ax - b\|_2 \le t$</p>
+        <p><b>Standard form:</b> This is already in <b>second-order cone (SOC)</b> form:
+        $$
+        (Ax - b, t) \in \mathcal{Q}^{m+1} := \{(y, s) \in \mathbb{R}^{m+1} \mid \|y\|_2 \le s\}
+        $$
+        This is the canonical constraint type for <b>SOCP</b> (Second-Order Cone Programming).</p>
+
+        <h3>Max Function as Slack Variable</h3>
+        <p><b>Pattern:</b> Minimize $\max\{f_1(x), f_2(x), \dots, f_m(x)\}$ where each $f_i$ is convex</p>
+        <p><b>Rewrite (epigraph form):</b>
+        $$
+        \min t \quad \text{s.t.} \quad f_i(x) \le t \text{ for all } i
+        $$
+        <b>Why this works:</b> The minimum value of $t$ that satisfies all constraints is exactly $\max_i f_i(x)$.</p>
+
+        <h3>PSD Constraint Notation</h3>
+        <p><b>Pattern:</b> Matrix $X$ must be positive semidefinite</p>
+        <p><b>Standard notation:</b> $X \succeq 0$ or $X \in \mathbb{S}^n_+$</p>
+        <p><b>Linear Matrix Inequality (LMI):</b> Constraints of the form
+        $$
+        F_0 + \sum_{i=1}^n x_i F_i \succeq 0
+        $$
+        where $F_i \in \mathbb{S}^m$ are given symmetric matrices. This is the standard form for <b>SDP</b> (Semidefinite Programming).</p>
+
+        <div class="example-box">
+          <h4>Example: Reformulating $\ell_1$ Regression</h4>
+          <p><b>Original:</b> $\min \|Ax - b\|_1$</p>
+          <p><b>Step 1:</b> Write $\|Ax - b\|_1 = \sum_i |a_i^\top x - b_i|$</p>
+          <p><b>Step 2:</b> Introduce slack $t_i$ for each residual:
+          $$
+          \min \sum_i t_i \quad \text{s.t.} \quad -t_i \le a_i^\top x - b_i \le t_i, \quad t_i \ge 0
+          $$
+          <p><b>Result:</b> A <b>linear program</b> with $n + m$ variables and $2m$ inequality constraints.</p>
+        </div>
+
+        <div class="insight">
+          <h4>💡 Pro Tip</h4>
+          <p>Always prefer standard forms (LP, QP, SOCP, SDP) over custom implementations. Standard forms have decades of algorithmic optimization and mature solvers.</p>
         </div>
       </section>
 

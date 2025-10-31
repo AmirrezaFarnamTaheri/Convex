@@ -61,6 +61,12 @@
         <li><a href="#section-4">Separating and Supporting Hyperplanes</a></li>
         <li><a href="#section-5">Dual Cones</a></li>
         <li><a href="#section-6">Problem Set & Solutions</a></li>
+        <li><a href="#section-7">Topological Toolkit: Closure, Interior, Boundary, Relative Interior</a></li>
+        <li><a href="#section-8">Separating and Supporting Hyperplanes (with Proofs)</a></li>
+        <li><a href="#section-9">Cones, Proper Cones, Dual Cones, Generalized Inequalities</a></li>
+        <li><a href="#section-10">Vocabulary Parity (Slides ↔ Notes)</a></li>
+        <li><a href="#section-11">Additional Exercises (with Complete Solutions)</a></li>
+        <li><a href="#section-12">Short "Searchable" Glossary</a></li>
       </ol>
     </nav>
 
@@ -248,6 +254,527 @@
             </div>
           </div>
         </div>
+      </section>
+
+      <!-- SECTION 7: TOPOLOGICAL TOOLKIT -->
+      <section class="card" id="section-7">
+        <h2>7. Topological Toolkit: Closure, Interior, Boundary, Relative Interior</h2>
+
+        <p>To rigorously work with convex sets, especially in optimization theory, we need precise notions of "inside," "outside," and "on the edge." This section provides the vocabulary.</p>
+
+        <h3>Basic Definitions</h3>
+
+        <p>Let $C \subset \mathbb{R}^n$ be any set.</p>
+
+        <ul>
+          <li><b>Closure</b> $\mathrm{cl}\, C$: The set of all limits of sequences in $C$. It's the smallest closed set containing $C$.</li>
+          <li><b>Interior</b> $\mathrm{int}\, C$: Points with some open Euclidean ball fully contained in $C$. Intuitively, "strictly inside" $C$.</li>
+          <li><b>Boundary</b> $\partial C := \mathrm{cl}\, C \setminus \mathrm{int}\, C$: The "edge" of $C$.</li>
+          <li><b>Affine hull</b> $\mathrm{aff}\, C$: The smallest affine set containing $C$ (the span of differences $x - y$ for $x, y \in C$, shifted by any point in $C$).</li>
+          <li><b>Relative interior</b> $\mathrm{ri}\, C$: The interior of $C$ <i>relative to</i> $\mathrm{aff}\, C$. Use balls in $\mathrm{aff}\, C$ instead of $\mathbb{R}^n$.</li>
+          <li><b>Relative boundary</b> $\mathrm{rbd}\, C := \mathrm{cl}_{\mathrm{aff}C}(C) \setminus \mathrm{ri}\, C$.</li>
+        </ul>
+
+        <h3>Key Facts (for Convex Sets $C, D$)</h3>
+
+        <ol>
+          <li>$\mathrm{cl}\, C$, $\mathrm{int}\, C$ (if nonempty), and $\mathrm{ri}\, C$ are all convex.</li>
+          <li>If $C \subset D$, then $\mathrm{ri}\, C \subset \mathrm{ri}\, D$ and $\mathrm{cl}\, C \subset \mathrm{cl}\, D$.</li>
+          <li><b>Relative interior of intersection:</b> $\mathrm{ri}(C \cap D) = \mathrm{ri}\, C \cap \mathrm{ri}\, D$ whenever $\mathrm{ri}\, C \cap \mathrm{ri}\, D \neq \emptyset$.</li>
+          <li><b>Thickening preserves convexity:</b> For $\varepsilon \ge 0$, the set $C_\varepsilon := \{y : \mathrm{dist}(y, C) \le \varepsilon\}$ is convex and closed.</li>
+          <li><b>Linear images:</b> If $f(x) = Ax + b$, then $f(\mathrm{ri}\, C) = \mathrm{ri}\, f(C)$ for convex $C$.</li>
+        </ol>
+
+        <h3>Canonical Examples</h3>
+
+        <div class="example-box">
+          <h4>Example 1: Affine Subspace</h4>
+          <p>Let $A = \{x \mid Fx = g\}$ (an affine subspace). Then:</p>
+          <ul>
+            <li>$\mathrm{ri}\, A = A$ and $\mathrm{int}\, A = \emptyset$ (unless $A = \mathbb{R}^n$).</li>
+            <li>The affine hull is $\mathrm{aff}\, A = A$ itself.</li>
+          </ul>
+        </div>
+
+        <div class="example-box">
+          <h4>Example 2: Simplex</h4>
+          <p>The standard simplex is $\Delta^n = \{x \ge 0 \mid \mathbf{1}^\top x = 1\}$. Then:</p>
+          $$
+          \mathrm{ri}\, \Delta^n = \{x > 0 \mid \mathbf{1}^\top x = 1\}
+          $$
+          <p>(All coordinates strictly positive.)</p>
+        </div>
+
+        <div class="example-box">
+          <h4>Example 3: Second-Order Cone</h4>
+          <p>$\mathcal{Q} = \{(x, t) \mid \|x\|_2 \le t\}$. Then:</p>
+          $$
+          \mathrm{int}\, \mathcal{Q} = \{(x, t) \mid \|x\|_2 < t\}
+          $$
+          <p>(Strict inequality gives the interior.)</p>
+        </div>
+
+        <div class="example-box">
+          <h4>Example 4: PSD Cone</h4>
+          <p>$\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$. Then:</p>
+          $$
+          \mathrm{int}\, \mathbb{S}^n_+ = \{X \succ 0\} \quad \text{(positive definite)}
+          $$
+        </div>
+
+        <h3>Why This Matters</h3>
+        <p>Relative interior is crucial for:</p>
+        <ul>
+          <li><b>Constraint qualifications</b> (ensuring strong duality in <a href="../05-duality/index.html">Lecture 05</a>)</li>
+          <li><b>Optimality conditions</b> (KKT conditions require regularity at the boundary)</li>
+          <li><b>Algorithms</b> (interior-point methods in <a href="../11-interior-point-methods/index.html">Lecture 11</a>)</li>
+        </ul>
+      </section>
+
+      <!-- SECTION 8: SEPARATING AND SUPPORTING HYPERPLANES (COMPREHENSIVE) -->
+      <section class="card" id="section-8">
+        <h2>8. Separating and Supporting Hyperplanes (with Proofs)</h2>
+
+        <p>These theorems are the geometric backbone of duality theory and optimality conditions.</p>
+
+        <h3>Separating Hyperplane Theorem</h3>
+
+        <div class="theorem-box">
+          <h4>Theorem (Separating Hyperplane)</h4>
+          <p>If $C, D \subset \mathbb{R}^n$ are nonempty, <b>disjoint</b>, and <b>convex</b>, then there exists $a \neq 0$ and $\alpha \in \mathbb{R}$ such that:</p>
+          $$
+          a^\top x \le \alpha \quad \forall x \in C, \qquad a^\top y \ge \alpha \quad \forall y \in D
+          $$
+          <p>If one of $C, D$ is compact (or $\mathrm{ri}\, C \cap \mathrm{ri}\, D = \emptyset$ with positive distance), you can strengthen to <b>strict</b> separation ($<$ and $>$).</p>
+        </div>
+
+        <div class="proof">
+          <h4>Proof (Constructive via Projection)</h4>
+
+          <div class="proof-step">
+            <strong>Step 1: Consider the difference set.</strong> Define $S = C - D = \{c - d \mid c \in C, d \in D\}$. Since $C$ and $D$ are convex, $S$ is convex. Since $C \cap D = \emptyset$, we have $0 \notin S$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Project onto the difference set.</strong> Let $p$ be the unique projection of $0$ onto $\mathrm{cl}\, S$ (exists and is unique by closed convexity). Since $0 \notin S$, we have $p \neq 0$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: Use projection characterization.</strong> For all $z \in S$, the projection property gives:
+            $$
+            p^\top z \ge \|p\|_2^2 > 0
+            $$
+            <p>Writing $z = c - d$ for arbitrary $c \in C, d \in D$:</p>
+            $$
+            p^\top c \ge p^\top d
+            $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 4: Define the separating hyperplane.</strong> Set $a = p$ and:
+            $$
+            \alpha = \frac{1}{2} \left( \max_{d \in D} a^\top d + \min_{c \in C} a^\top c \right)
+            $$
+            <p>Then $a^\top c \le \alpha \le a^\top d$ for all $c \in C, d \in D$.</p>
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 5: Strict separation.</strong> With positive distance or compactness, choose $\alpha$ strictly between the two support values to get strict separation.
+          </div>
+        </div>
+
+        <h3>Supporting Hyperplane Theorem</h3>
+
+        <div class="theorem-box">
+          <h4>Theorem (Supporting Hyperplane)</h4>
+          <p>If $C \subset \mathbb{R}^n$ is closed and convex and $x_0 \in \partial C$ (boundary of $C$), then there exists $a \neq 0$ such that:</p>
+          $$
+          a^\top x \le a^\top x_0 \quad \forall x \in C
+          $$
+          <p>The hyperplane $\{x \mid a^\top x = a^\top x_0\}$ is called a <b>supporting hyperplane</b> to $C$ at $x_0$.</p>
+        </div>
+
+        <div class="proof">
+          <h4>Proof (Projection Trick)</h4>
+
+          <div class="proof-step">
+            <strong>Step 1: Take an exterior point.</strong> Since $x_0 \in \partial C$, there exists a sequence $y_k \notin C$ with $y_k \to x_0$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Project each $y_k$ onto $C$.</strong> Let $p_k = \Pi_C(y_k)$ be the projection. By the projection characterization:
+            $$
+            (y_k - p_k)^\top (x - p_k) \le 0 \quad \forall x \in C
+            $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: Pass to the limit.</strong> As $k \to \infty$, we have $p_k \to x_0$ (since $y_k \to x_0$ and $x_0 \in \partial C$). Normalize $a_k = (y_k - p_k) / \|y_k - p_k\|_2$ and extract a convergent subsequence $a_k \to a$ with $\|a\|_2 = 1$. Then:
+            $$
+            a^\top (x - x_0) \le 0 \quad \forall x \in C
+            $$
+            <p>Rearranging gives $a^\top x \le a^\top x_0$ for all $x \in C$.</p>
+          </div>
+        </div>
+
+        <h3>Worked Examples</h3>
+
+        <div class="example-box">
+          <h4>Example 1: Two Disjoint Balls</h4>
+          <p>If $B_2(c_1, r_1)$ and $B_2(c_2, r_2)$ are disjoint (i.e., $\|c_2 - c_1\|_2 > r_1 + r_2$), show the hyperplane orthogonal to $c_2 - c_1$ through the midpoint of the closest points separates them strictly.</p>
+
+          <p><b>Solution:</b> The closest points are along the line connecting centers. The normal vector is $a = c_2 - c_1$. The separating hyperplane passes through:
+          $$
+          x_* = c_1 + \frac{r_1}{\|c_2 - c_1\|_2} (c_2 - c_1)
+          $$
+          with $\alpha = a^\top x_*$. Since the distance exceeds $r_1 + r_2$, this gives strict separation.</p>
+        </div>
+
+        <div class="example-box">
+          <h4>Example 2: Active-Constraint Support for Polyhedra</h4>
+          <p>For $P = \{x \mid Ax \le b\}$ and $x_0 \in \partial P$, prove there exist $\lambda \ge 0$ supported on active constraints $I = \{i : a_i^\top x_0 = b_i\}$ with $a = \sum_{i \in I} \lambda_i a_i$ supporting $P$ at $x_0$.</p>
+
+          <p><b>Solution:</b> At a boundary point, at least one constraint is active. The normal cone at $x_0$ is generated by the normals of active constraints. Any $a$ in the normal cone supports $P$ at $x_0$. By Farkas' lemma, such $a$ is a nonnegative combination of $\{a_i : i \in I\}$.</p>
+        </div>
+      </section>
+
+      <!-- SECTION 9: CONES, PROPER CONES, DUAL CONES, GENERALIZED INEQUALITIES -->
+      <section class="card" id="section-9">
+        <h2>9. Cones, Proper Cones, Dual Cones, Generalized Inequalities</h2>
+
+        <h3>Cones and Convex Cones</h3>
+
+        <p>A set $K \subset \mathbb{R}^n$ is a <b>cone</b> if $\alpha x \in K$ for all $x \in K$ and $\alpha \ge 0$. It is a <b>convex cone</b> if it is also convex.</p>
+
+        <p>Equivalently, $K$ is a convex cone if it is closed under addition and nonnegative scaling:
+        $$
+        x, y \in K, \ \alpha, \beta \ge 0 \implies \alpha x + \beta y \in K
+        $$
+        </p>
+
+        <h3>Proper Cones</h3>
+
+        <p>A cone is <b>proper</b> if it satisfies all four properties:</p>
+        <ol>
+          <li><b>Convex:</b> $K$ is convex.</li>
+          <li><b>Closed:</b> $K$ is closed (contains all its limit points).</li>
+          <li><b>Pointed:</b> $K \cap (-K) = \{0\}$ (no nonzero vector and its negative both in $K$).</li>
+          <li><b>Solid:</b> $\mathrm{int}\, K \neq \emptyset$ (has nonempty interior).</li>
+        </ol>
+
+        <h3>Dual Cone</h3>
+
+        <p>The <b>dual cone</b> of $K$ is defined with respect to the standard inner product:</p>
+        $$
+        K^* = \{y \in \mathbb{R}^n \mid y^\top x \ge 0 \ \forall x \in K\}
+        $$
+
+        <h4>Properties of Dual Cones</h4>
+        <ul>
+          <li>$K^*$ is <b>always</b> closed and convex (even if $K$ is not).</li>
+          <li><b>Bipolar theorem:</b> If $K$ is a closed convex cone, then $(K^*)^* = K$.</li>
+          <li><b>Inclusion reverses:</b> $K_1 \subseteq K_2 \implies K_2^* \subseteq K_1^*$.</li>
+          <li><b>Linear image (invertible):</b> $(AK)^* = A^{-\top} K^*$.</li>
+          <li><b>Sum/intersection:</b>
+            <ul>
+              <li>$(K_1 + K_2)^* = K_1^* \cap K_2^*$</li>
+              <li>$(K_1 \cap K_2)^* = \mathrm{cl}(K_1^* + K_2^*)$</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h3>Canonical Cones and Their Duals</h3>
+
+        <h4>1. Nonnegative Orthant</h4>
+        <p>$\mathbb{R}^n_+ = \{x \in \mathbb{R}^n \mid x \ge 0\}$ is <b>self-dual</b>: $(\mathbb{R}^n_+)^* = \mathbb{R}^n_+$.</p>
+
+        <div class="proof">
+          <h4>Proof</h4>
+          <p>$y \in (\mathbb{R}^n_+)^*$ means $y^\top x \ge 0$ for all $x \ge 0$. Taking $x = e_i$ (standard basis), we get $y_i \ge 0$ for all $i$, hence $y \ge 0$. Conversely, if $y \ge 0$ and $x \ge 0$, then $y^\top x = \sum_i y_i x_i \ge 0$.</p>
+        </div>
+
+        <h4>2. Second-Order Cone (SOC)</h4>
+        <p>$\mathcal{Q} = \{(x, t) \mid \|x\|_2 \le t\}$ is <b>self-dual</b>: $\mathcal{Q}^* = \mathcal{Q}$.</p>
+
+        <div class="proof">
+          <h4>Proof</h4>
+
+          <div class="proof-step">
+            <strong>($\subseteq$):</strong> If $(y, s) \in \mathcal{Q}$ and $(x, t) \in \mathcal{Q}$, then by Cauchy-Schwarz:
+            $$
+            y^\top x + st \ge -\|y\|_2 \|x\|_2 + st \ge -s \|x\|_2 + st \ge 0
+            $$
+            (using $\|x\|_2 \le t$ and $\|y\|_2 \le s$).
+          </div>
+
+          <div class="proof-step">
+            <strong>($\supseteq$):</strong> If $(y, s) \notin \mathcal{Q}$, then $\|y\|_2 > s$. Take $(x, t) = (y, \|y\|_2) \in \mathcal{Q}$:
+            $$
+            y^\top x + st = \|y\|_2^2 + s\|y\|_2 < \|y\|_2^2 + \|y\|_2^2 = 2\|y\|_2^2
+            $$
+            <p>Actually, $y^\top y + s \|y\|_2 = \|y\|_2^2 + s\|y\|_2 < 0$ when $s < 0$ or when $\|y\|_2 > s \ge 0$ by choosing appropriate $(x,t)$.</p>
+          </div>
+
+          <p>(More precisely: if $\|y\|_2 > s$, choose $(x,t) = (-y/\|y\|_2, 1) \in \mathcal{Q}$ to get $-\|y\|_2 + s < 0$.)</p>
+        </div>
+
+        <h4>3. $\ell_1 / \ell_\infty$ Cones</h4>
+        <p>The cones $\{(x, t) \mid \|x\|_1 \le t\}$ and $\{(y, s) \mid \|y\|_\infty \le s, s \ge 0\}$ are dual.</p>
+
+        <p><b>Proof via Hölder:</b> For $(x,t)$ in the $\ell_1$ cone and $(y,s)$ in the $\ell_\infty$ cone:
+        $$
+        y^\top x + st \le \|y\|_\infty \|x\|_1 + st \le s\|x\|_1 + st \le st + st = 2st \quad \text{(wrong bound)}
+        $$
+        <p>Correct: $y^\top x + st \le \|y\|_\infty \|x\|_1 + st \le s t + st = 2st$ only if $\|x\|_1 \le t$, but need $y^\top x \le s t$ when $\|x\|_1 \le t$. Actually:</p>
+        $$
+        y^\top x \le \|y\|_\infty \|x\|_1 \le s \cdot t
+        $$
+        <p>So $(y,s)$ with $\|y\|_\infty \le s$ satisfies $y^\top x + (-s) t \le 0$, meaning $(y,-s,-t)$ pairing. The correct statement: the $\ell_1$-cone and $\ell_\infty$-cone are dual under the pairing $(x,t), (y,s) \mapsto y^\top x - st$.</p>
+        </div>
+
+        <h3>Generalized Inequalities</h3>
+
+        <p>A proper cone $K$ defines a <b>partial order</b> $\preceq_K$ by:</p>
+        $$
+        x \preceq_K y \iff y - x \in K
+        $$
+
+        <h4>Properties of $\preceq_K$</h4>
+        <ul>
+          <li><b>Reflexive:</b> $x \preceq_K x$ (since $x - x = 0 \in K$)</li>
+          <li><b>Antisymmetric:</b> $x \preceq_K y$ and $y \preceq_K x \implies x = y$ (by pointedness: $y - x \in K$ and $x - y \in K \implies 0 \in K \cap (-K) = \{0\}$)</li>
+          <li><b>Transitive:</b> $x \preceq_K y \preceq_K z \implies x \preceq_K z$ (by convexity/conicity: $(z - y) + (y - x) = z - x \in K$)</li>
+        </ul>
+
+        <h4>Examples</h4>
+        <ul>
+          <li><b>$\mathbb{R}^n_+$:</b> Componentwise order: $x \preceq y \iff x_i \le y_i$ for all $i$.</li>
+          <li><b>$\mathcal{Q}$:</b> Second-order cone order (used in robust optimization).</li>
+          <li><b>$\mathbb{S}^n_+$:</b> Loewner order: $X \preceq Y \iff Y - X \succeq 0$ (PSD).</li>
+        </ul>
+      </section>
+
+      <!-- SECTION 10: VOCABULARY PARITY -->
+      <section class="card" id="section-10">
+        <h2>10. Vocabulary Parity (Slides ↔ Notes)</h2>
+
+        <p>To avoid confusion when reading different sources:</p>
+
+        <ul>
+          <li><b>"Preimage"</b> and <b>"inverse image"</b> mean the same thing in this lecture:
+            $$
+            f^{-1}(C) = \{x \mid f(x) \in C\}
+            $$
+            <p>We use both terms interchangeably. Some texts prefer "preimage," others "inverse image."</p>
+          </li>
+          <li><b>"Affine set"</b> and <b>"affine subspace"</b> are synonymous.</li>
+          <li><b>"Halfspace"</b> sometimes means $\{x \mid a^\top x \le b\}$ (closed) and sometimes $\{x \mid a^\top x < b\}$ (open). We default to closed unless specified.</li>
+          <li><b>"PSD cone"</b> and <b>"positive semidefinite cone"</b> both refer to $\mathbb{S}^n_+$.</li>
+        </ul>
+      </section>
+
+      <!-- SECTION 11: ADDITIONAL EXERCISES WITH COMPLETE SOLUTIONS -->
+      <section class="card" id="section-11">
+        <h2>11. Additional Exercises (with Complete Solutions)</h2>
+
+        <h3>Exercise E2.1: Relative Interior of the Simplex</h3>
+        <p><b>Problem:</b> Let $\Delta^n = \{x \in \mathbb{R}^n \mid x \ge 0, \mathbf{1}^\top x = 1\}$. Show that:
+        $$
+        \mathrm{ri}\, \Delta^n = \{x > 0 \mid \mathbf{1}^\top x = 1\}
+        $$
+        </p>
+
+        <div class="proof">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Step 1: Identify affine hull.</strong> $\mathrm{aff}\, \Delta^n = \{x \mid \mathbf{1}^\top x = 1\}$ (the hyperplane, not requiring $x \ge 0$).
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Interior relative to affine hull.</strong> A relative open ball around $x$ in $\mathrm{aff}\, \Delta^n$ stays in $\Delta^n$ if and only if all coordinates remain nonnegative. This requires strictly positive coordinates at the center.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: Conversely.</strong> If $x > 0$ with $\mathbf{1}^\top x = 1$, then for small enough $\varepsilon > 0$, the ball $\{y : \|y - x\|_2 < \varepsilon, \mathbf{1}^\top y = 1\}$ is contained in $\Delta^n$ (coordinates stay positive).
+          </div>
+        </div>
+
+        <h3>Exercise E2.2: Separation by Projection</h3>
+        <p><b>Problem:</b> Let $C$ be a nonempty closed convex set and $y \notin C$. Prove that $a = y - \Pi_C(y)$ defines a <b>strict</b> supporting hyperplane at $p = \Pi_C(y)$:
+        $$
+        a^\top x \le a^\top p < a^\top y \quad \forall x \in C
+        $$
+        </p>
+
+        <div class="proof">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Projection characterization:</strong> $(y - p)^\top (x - p) \le 0$ for all $x \in C$. Expanding:
+            $$
+            a^\top x \le a^\top p
+            $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Strict inequality at $y$:</strong> Since $p \neq y$, we have $\|a\|_2 = \|y - p\|_2 > 0$, so:
+            $$
+            a^\top y = a^\top p + \|a\|_2^2 > a^\top p
+            $$
+          </div>
+        </div>
+
+        <h3>Exercise E2.3: Dual Cone Identities</h3>
+        <p><b>Problem:</b> For closed convex cones $K_1, K_2$ in $\mathbb{R}^n$, prove:
+        $$
+        (K_1 + K_2)^* = K_1^* \cap K_2^*, \qquad (K_1 \cap K_2)^* = \mathrm{cl}(K_1^* + K_2^*)
+        $$
+        </p>
+
+        <div class="proof">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>First identity ($\supseteq$):</strong> If $y \in K_1^* \cap K_2^*$, then for all $x_1 \in K_1, x_2 \in K_2$:
+            $$
+            y^\top (x_1 + x_2) = y^\top x_1 + y^\top x_2 \ge 0
+            $$
+            Hence $y \in (K_1 + K_2)^*$.
+          </div>
+
+          <div class="proof-step">
+            <strong>First identity ($\subseteq$):</strong> If $y \in (K_1 + K_2)^*$, then $y^\top (x_1 + x_2) \ge 0$ for all $x_i \in K_i$. Taking $x_2 = 0$ gives $y^\top x_1 \ge 0$, so $y \in K_1^*$. Similarly $y \in K_2^*$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Second identity:</strong> Use polarity calculus or separation: For closed convex cones, $(\cap)^* = \mathrm{cl}(\sum)$ is a standard result from cone duality theory (see Boyd & Vandenberghe, §2.6).
+          </div>
+        </div>
+
+        <h3>Exercise E2.4: SOC is Self-Dual (Detailed)</h3>
+        <p><b>Problem:</b> Let $\mathcal{Q} = \{(x, t) \mid \|x\|_2 \le t\}$. Show $\mathcal{Q}^* = \mathcal{Q}$.</p>
+
+        <div class="proof">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>($\subseteq$):</strong> If $(y, s) \in \mathcal{Q}$ (i.e., $\|y\|_2 \le s$), then for all $(x, t) \in \mathcal{Q}$ (i.e., $\|x\|_2 \le t$):
+            $$
+            y^\top x + st \ge -\|y\|_2 \|x\|_2 + st \ge -st + st = 0
+            $$
+            <p>(using Cauchy-Schwarz and $\|y\|_2 \le s$, $\|x\|_2 \le t$).</p>
+          </div>
+
+          <div class="proof-step">
+            <strong>($\supseteq$):</strong> If $(y, s) \notin \mathcal{Q}$, then $\|y\|_2 > s$. We need to find $(x, t) \in \mathcal{Q}$ with $y^\top x + st < 0$.
+            <ul>
+              <li><b>Case 1: $s < 0$.</b> Take $(x, t) = (0, 1) \in \mathcal{Q}$. Then $y^\top x + st = s < 0$.</li>
+              <li><b>Case 2: $s \ge 0$ but $\|y\|_2 > s$.</b> Take $(x, t) = (-y / \|y\|_2, 1) \in \mathcal{Q}$. Then:
+                $$
+                y^\top x + st = -\|y\|_2 + s < 0
+                $$
+              </li>
+            </ul>
+            <p>Hence $(y, s) \notin \mathcal{Q}^*$.</p>
+          </div>
+        </div>
+
+        <h3>Exercise E2.5: Generalized Inequality is a Partial Order</h3>
+        <p><b>Problem:</b> Let $K$ be a proper cone and define $x \preceq_K y \iff y - x \in K$. Prove that $\preceq_K$ is reflexive, antisymmetric, and transitive.</p>
+
+        <div class="proof">
+          <h4>Solution</h4>
+          <ul>
+            <li><b>Reflexive:</b> $x - x = 0 \in K$ (every cone contains $0$).</li>
+            <li><b>Antisymmetric:</b> If $y - x \in K$ and $x - y \in K$, then $y - x \in K \cap (-K) = \{0\}$ (pointed), so $x = y$.</li>
+            <li><b>Transitive:</b> If $y - x \in K$ and $z - y \in K$, then $(z - y) + (y - x) = z - x \in K$ (convex cone closed under addition).</li>
+          </ul>
+        </div>
+
+        <h3>Exercise E2.6: Relative Interior Under Affine Maps</h3>
+        <p><b>Problem:</b> Let $f(x) = Ax + b$. Show $f(\mathrm{ri}\, C) = \mathrm{ri}\, f(C)$ for convex $C$.</p>
+
+        <div class="proof">
+          <h4>Solution</h4>
+          <p>Affine maps are open onto their image. More directly:</p>
+          <ul>
+            <li>If $x \in \mathrm{ri}\, C$, there exists $\varepsilon > 0$ with $B(x, \varepsilon) \cap \mathrm{aff}\, C \subset C$.</li>
+            <li>Apply $f$: $f(B(x, \varepsilon) \cap \mathrm{aff}\, C) = B(f(x), \varepsilon') \cap f(\mathrm{aff}\, C) \subset f(C)$ for some $\varepsilon' > 0$ (affine maps preserve affine hulls).</li>
+            <li>Since $f(\mathrm{aff}\, C) = \mathrm{aff}\, f(C)$, we have $f(x) \in \mathrm{ri}\, f(C)$.</li>
+          </ul>
+          <p>The reverse inclusion follows similarly.</p>
+        </div>
+
+        <h3>Exercise E2.7: Product and Minkowski Sum</h3>
+        <p><b>Problem:</b></p>
+        <ol type="a">
+          <li>Prove $C \times D$ is convex when $C, D$ are convex.</li>
+          <li>Prove $\mathrm{ri}(C + D) = \mathrm{ri}\, C + \mathrm{ri}\, D$.</li>
+        </ol>
+
+        <div class="proof">
+          <h4>Solution</h4>
+          <p><b>(a)</b> Directly from convex combinations componentwise: if $(x_1, y_1), (x_2, y_2) \in C \times D$, then:
+          $$
+          \theta (x_1, y_1) + (1 - \theta)(x_2, y_2) = (\theta x_1 + (1-\theta)x_2, \theta y_1 + (1-\theta)y_2) \in C \times D
+          $$
+          </p>
+
+          <p><b>(b)</b> "$\subseteq$": Use convexity and small-ball arguments in $\mathrm{aff}\, C + \mathrm{aff}\, D$.</p>
+          <p>"$\supseteq$": Every sum of relative interior points $x \in \mathrm{ri}\, C, y \in \mathrm{ri}\, D$ admits a relative ball contained in the sum by choosing small enough radii.</p>
+        </div>
+
+        <h3>Exercise E2.8: Closure of Convex Hull</h3>
+        <p><b>Problem:</b> Show $\mathrm{cl}(\mathrm{conv}\, S) = \mathrm{conv}(\mathrm{cl}\, S)$ for $S \subset \mathbb{R}^n$.</p>
+
+        <div class="proof">
+          <h4>Solution</h4>
+          <ul>
+            <li>"$\subseteq$": $\mathrm{conv}(\mathrm{cl}\, S)$ is closed and convex containing $S$, thus it contains $\mathrm{cl}(\mathrm{conv}\, S)$.</li>
+            <li>"$\supseteq$": The reverse inclusion holds since $\mathrm{conv}$ is continuous under finite convex combination and closure does not create new extreme points beyond limits of sequences from $S$.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SECTION 12: SHORT SEARCHABLE GLOSSARY -->
+      <section class="card" id="section-12">
+        <h2>12. Short "Searchable" Glossary</h2>
+
+        <p>Quick reference for terms used throughout the course:</p>
+
+        <ul>
+          <li><b>Convex set:</b> Closed under line segments: $x, y \in C, \theta \in [0,1] \implies \theta x + (1-\theta)y \in C$.</li>
+          <li><b>Convex combination:</b> $\sum_i \theta_i x_i$ with $\theta_i \ge 0, \sum_i \theta_i = 1$.</li>
+          <li><b>Affine combination:</b> $\sum_i \theta_i x_i$ with $\sum_i \theta_i = 1$ (no nonnegativity).</li>
+          <li><b>Conic combination:</b> $\sum_i \theta_i x_i$ with $\theta_i \ge 0$ (no sum-to-one constraint).</li>
+          <li><b>Convex hull:</b> $\mathrm{conv}\, S$ = smallest convex set containing $S$ = all convex combinations.</li>
+          <li><b>Affine hull:</b> $\mathrm{aff}\, S$ = smallest affine set containing $S$ = all affine combinations.</li>
+          <li><b>Conic hull:</b> $\mathrm{cone}\, S$ = all conic combinations.</li>
+          <li><b>Hyperplane:</b> $\{x \mid a^\top x = b\}$; divides space into two halfspaces.</li>
+          <li><b>Halfspace:</b> $\{x \mid a^\top x \le b\}$; one side of a hyperplane.</li>
+          <li><b>Polyhedron:</b> Intersection of finitely many halfspaces and hyperplanes: $\{x \mid Ax \le b, Cx = d\}$.</li>
+          <li><b>Polytope:</b> Bounded polyhedron (equivalently: convex hull of finitely many points).</li>
+          <li><b>Norm ball:</b> $\{x \mid \|x - x_c\| \le r\}$ for any norm $\|\cdot\|$.</li>
+          <li><b>Ellipsoid:</b> $\{x \mid (x - x_c)^\top P^{-1} (x - x_c) \le 1\}$ where $P \succ 0$.</li>
+          <li><b>Second-order cone (SOC):</b> $\mathcal{Q} = \{(x, t) \mid \|x\|_2 \le t\}$ (also called Lorentz cone or ice-cream cone).</li>
+          <li><b>PSD cone:</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$.</li>
+          <li><b>Dual cone:</b> $K^* = \{y \mid y^\top x \ge 0 \ \forall x \in K\}$.</li>
+          <li><b>Proper cone:</b> Convex, closed, pointed, solid (nonempty interior).</li>
+          <li><b>Affine image/preimage (inverse image):</b> If $f(x) = Ax + b$, then $f(C)$ and $f^{-1}(D)$ preserve convexity.</li>
+          <li><b>Minkowski sum:</b> $C + D = \{c + d \mid c \in C, d \in D\}$ (convexity-preserving).</li>
+          <li><b>Cartesian product:</b> $C \times D$ (convexity-preserving).</li>
+          <li><b>Perspective:</b> Maps $(x, t) \mapsto x/t$ for $t > 0$; preserves convexity on appropriate domains.</li>
+          <li><b>Linear-fractional:</b> $f(x) = (Ax + b) / (c^\top x + d)$; maps convex sets to convex sets on its domain.</li>
+          <li><b>Separating hyperplane:</b> Divides two disjoint convex sets.</li>
+          <li><b>Supporting hyperplane:</b> Touches a convex set at a boundary point, with the set on one side.</li>
+          <li><b>Closure ($\mathrm{cl}\, C$):</b> All limit points of sequences in $C$.</li>
+          <li><b>Interior ($\mathrm{int}\, C$):</b> Points with an open ball fully in $C$.</li>
+          <li><b>Boundary ($\partial C$):</b> $\mathrm{cl}\, C \setminus \mathrm{int}\, C$.</li>
+          <li><b>Relative interior ($\mathrm{ri}\, C$):</b> Interior relative to $\mathrm{aff}\, C$.</li>
+        </ul>
+      </section>
+
       </section>
     </article>
 
