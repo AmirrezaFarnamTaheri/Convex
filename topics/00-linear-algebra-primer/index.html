@@ -33,9 +33,9 @@
         Date: 2025-10-14 · Duration: 90 min · Tags: prerequisites, review, linear-algebra, foundational
       </div>
       <section style="margin-top: 16px;">
-        <p><strong>Overview:</strong> This lecture reviews the essential linear algebra concepts that form the bedrock of convex optimization. We build the theory step-by-step, starting from fundamental objects like vectors and matrices, moving through inner products, norms, orthogonality, projections, and the geometry of linear systems. This lecture focuses exclusively on the linear-algebraic machinery you need.</p>
+        <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical toolkit necessary for optimization theory.</p>
         <p><strong>Prerequisites:</strong> None. This lecture is the starting point.</p>
-        <p><strong>Forward Connections:</strong> The projection techniques developed here are central to <a href="../01-introduction/index.html">Lecture 01</a>'s least squares models. Positive Semidefinite (PSD) matrices are the foundation for convex quadratic programs in <a href="../01-introduction/index.html">Lecture 01</a>. The four fundamental subspaces provide geometric intuition for feasible sets in <a href="../02-convex-sets/index.html">Lecture 02</a>.</p>
+        <p><strong>Forward Connections:</strong> Projection techniques introduced here appear in least squares methods (<a href="../01-introduction/index.html">Lecture 01</a>). Positive Semidefinite (PSD) matrices form the basis for convex quadratic programs (<a href="../01-introduction/index.html">Lecture 01</a>). The four fundamental subspaces provide geometric understanding of feasible sets (<a href="../02-convex-sets/index.html">Lecture 02</a>).</p>
       </section>
     </article>
 
@@ -159,14 +159,32 @@
 
       <div class="proof">
         <h4>Proof of the Rank-Nullity Theorem</h4>
-        <p>Let $\dim(\mathcal{N}(A)) = k$ and let $\{v_1, \dots, v_k\}$ be a basis for $\mathcal{N}(A)$. We can extend this to a basis for $\mathbb{R}^n$: $\{v_1, \dots, v_k, w_1, \dots, w_{n-k}\}$.
-        Any $x \in \mathbb{R}^n$ can be written as $x = \sum_{i=1}^k c_i v_i + \sum_{j=1}^{n-k} d_j w_j$.
-        Then $Ax = \sum_{i=1}^k c_i A v_i + \sum_{j=1}^{n-k} d_j A w_j = \sum_{j=1}^{n-k} d_j A w_j$ since $v_i \in \mathcal{N}(A)$.
-        This shows that the vectors $\{Aw_1, \dots, Aw_{n-k}\}$ span $\mathcal{R}(A)$. We can also show they are linearly independent.
-        Suppose $\sum_{j=1}^{n-k} d_j A w_j = 0$. Then $A(\sum_{j=1}^{n-k} d_j w_j) = 0$, so $\sum_{j=1}^{n-k} d_j w_j \in \mathcal{N}(A)$.
-        This means it can be written as a linear combination of $\{v_i\}$, which contradicts the linear independence of the basis for $\mathbb{R}^n$ unless all $d_j=0$.
-        Thus, $\{Aw_1, \dots, Aw_{n-k}\}$ is a basis for $\mathcal{R}(A)$, so $\mathrm{rank}(A) = \dim(\mathcal{R}(A)) = n-k = n - \dim(\mathcal{N}(A))$.
-        </p>
+
+        <div class="proof-step">
+          <strong>Step 1: Construct a basis.</strong> Let $\dim(\mathcal{N}(A)) = k$ and let $\{v_1, \dots, v_k\}$ be a basis for $\mathcal{N}(A)$. Extend this to a basis for $\mathbb{R}^n$: $\{v_1, \dots, v_k, w_1, \dots, w_{n-k}\}$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Express arbitrary vectors.</strong> Any $x \in \mathbb{R}^n$ can be written as $x = \sum_{i=1}^k c_i v_i + \sum_{j=1}^{n-k} d_j w_j$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Apply the matrix.</strong> Then
+          $$ Ax = \sum_{i=1}^k c_i A v_i + \sum_{j=1}^{n-k} d_j A w_j = \sum_{j=1}^{n-k} d_j A w_j $$
+          since $v_i \in \mathcal{N}(A)$ implies $Av_i = 0$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Show spanning property.</strong> The calculation above shows that the vectors $\{Aw_1, \dots, Aw_{n-k}\}$ span $\mathcal{R}(A)$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 5: Verify linear independence.</strong> Suppose $\sum_{j=1}^{n-k} d_j A w_j = 0$. Then $A(\sum_{j=1}^{n-k} d_j w_j) = 0$, so $\sum_{j=1}^{n-k} d_j w_j \in \mathcal{N}(A)$. This means it can be written as a linear combination of $\{v_i\}$, which contradicts the linear independence of our basis for $\mathbb{R}^n$ unless all $d_j=0$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 6: Conclude.</strong> The set $\{Aw_1, \dots, Aw_{n-k}\}$ is a basis for $\mathcal{R}(A)$, so $\mathrm{rank}(A) = \dim(\mathcal{R}(A)) = n-k = n - \dim(\mathcal{N}(A))$.
+        </div>
       </div>
 
       <div class="widget-container" style="margin: 24px 0;">
@@ -231,21 +249,40 @@
 
       <div class="proof">
         <h4>Proof of Cauchy–Schwarz: $|x^\top y| \le \|x\|_2 \|y\|_2$</h4>
-        <p>Let's consider the expression $\|x - ty\|_2^2$ for any scalar $t$. Since the norm is always non-negative, we have:
-        $$ \|x - ty\|_2^2 = (x - ty)^\top(x - ty) = \|x\|_2^2 - 2t(x^\top y) + t^2 \|y\|_2^2 \ge 0 $$
-        This is a quadratic polynomial in $t$ that is always non-negative. For this to be true, the discriminant of the quadratic must be non-positive:
-        $$ ( -2(x^\top y) )^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$
-        $$ 4(x^\top y)^2 \le 4\|x\|_2^2 \|y\|_2^2 $$
-        Taking the square root of both sides gives the Cauchy-Schwarz inequality.</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Consider a norm.</strong> For any scalar $t$, the expression $\|x - ty\|_2^2$ is non-negative:
+          $$ \|x - ty\|_2^2 = (x - ty)^\top(x - ty) = \|x\|_2^2 - 2t(x^\top y) + t^2 \|y\|_2^2 \ge 0 $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Apply the discriminant condition.</strong> This quadratic in $t$ is non-negative for all $t$, so its discriminant must be non-positive:
+          $$ ( -2(x^\top y) )^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Simplify.</strong> Rearranging gives
+          $$ 4(x^\top y)^2 \le 4\|x\|_2^2 \|y\|_2^2 $$
+          Taking the square root of both sides yields the Cauchy-Schwarz inequality.
+        </div>
       </div>
 
       <div class="proof">
         <h4>Proof of the Triangle Inequality: $\|x+y\|_2 \le \|x\|_2 + \|y\|_2$</h4>
-        <p>We start by squaring the left side:
-        $$ \|x+y\|_2^2 = (x+y)^\top(x+y) = x^\top x + 2x^\top y + y^\top y = \|x\|_2^2 + 2x^\top y + \|y\|_2^2 $$
-        By the Cauchy-Schwarz inequality, $x^\top y \le |x^\top y| \le \|x\|_2 \|y\|_2$. Substituting this into the equation:
-        $$ \|x+y\|_2^2 \le \|x\|_2^2 + 2\|x\|_2 \|y\|_2 + \|y\|_2^2 = (\|x\|_2 + \|y\|_2)^2 $$
-        Taking the square root of both sides gives the triangle inequality.</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Expand the squared norm.</strong> Starting with the left side:
+          $$ \|x+y\|_2^2 = (x+y)^\top(x+y) = \|x\|_2^2 + 2x^\top y + \|y\|_2^2 $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Apply Cauchy-Schwarz.</strong> By the Cauchy-Schwarz inequality, $x^\top y \le |x^\top y| \le \|x\|_2 \|y\|_2$. Substituting:
+          $$ \|x+y\|_2^2 \le \|x\|_2^2 + 2\|x\|_2 \|y\|_2 + \|y\|_2^2 = (\|x\|_2 + \|y\|_2)^2 $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Take square roots.</strong> Taking the square root of both sides yields the triangle inequality.
+        </div>
       </div>
 
       <h3>Angles and Orthogonality</h3>
