@@ -87,6 +87,121 @@
       "estimatedTime": 35,
       "relatedProblems": ["02-001", "02-013", "02-010"],
       "notes": "This is a rich problem that connects linear algebra, inner product spaces, and convex geometry. Part 1 reinforces the abstract definition of inner products. Part 2 shows that Cauchy–Schwarz is a property of ALL inner products, not just the Euclidean one. Part 3 demonstrates that ellipsoids are convex by showing they are unit balls of induced norms. The two methods for proving Cauchy–Schwarz (discriminant vs. reduction to Euclidean case) illustrate different proof strategies—one purely algebraic, one geometric via transformation."
+    },
+    {
+      "id": "02-004",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "medium",
+      "title": "P4 — Minkowski sum of convex sets; nonconvex summands may still sum to convex",
+      "statement": "For X, Y ⊂ ℝⁿ, define the **Minkowski sum**\n\nX + Y = {x + y | x ∈ X, y ∈ Y}\n\n(a) If X and Y are convex, prove X + Y is convex.\n\n(b) If X and Y are not convex, can X + Y be convex?",
+      "hints": [
+        "Part (a): Take arbitrary z₁, z₂ ∈ X + Y; write them as z₁ = x₁ + y₁ and z₂ = x₂ + y₂",
+        "Form the convex combination θz₁ + (1-θ)z₂ and group the x and y terms separately",
+        "Use that θx₁ + (1-θ)x₂ ∈ X and θy₁ + (1-θ)y₂ ∈ Y by convexity",
+        "Part (b): Try constructing explicit nonconvex sets in ℝ whose Minkowski sum is convex",
+        "Consider disconnected unions of intervals: X = [0,1] ∪ [3,4], Y = [0,3] ∪ [4,7]",
+        "Compute all pairwise sums of intervals and check if the union is convex"
+      ],
+      "solution": "## Part (a) — Convexity of Minkowski Sum\n\nTake any z₁, z₂ ∈ X + Y. By definition, there exist x₁, x₂ ∈ X and y₁, y₂ ∈ Y such that:\n\nz₁ = x₁ + y₁,    z₂ = x₂ + y₂\n\nLet θ ∈ [0,1]. Consider the convex combination:\n\nθz₁ + (1-θ)z₂ = θ(x₁ + y₁) + (1-θ)(x₂ + y₂)\n              = [θx₁ + (1-θ)x₂] + [θy₁ + (1-θ)y₂]\n\n### Apply convexity of X and Y\n\nSince X is convex:\nθx₁ + (1-θ)x₂ ∈ X\n\nSince Y is convex:\nθy₁ + (1-θ)y₂ ∈ Y\n\n### Conclusion\n\nTherefore:\nθz₁ + (1-θ)z₂ = [θx₁ + (1-θ)x₂] + [θy₁ + (1-θ)y₂] ∈ X + Y\n\nSince z₁, z₂, and θ were arbitrary, X + Y is convex. ∎\n\n## Part (b) — Nonconvex Sets with Convex Sum\n\n**Answer**: Yes, two nonconvex sets can have a convex Minkowski sum.\n\n### Explicit example in ℝ\n\nLet:\nX = [0,1] ∪ [3,4]\nY = [0,3] ∪ [4,7]\n\nBoth X and Y are **not convex** (they are disconnected unions of intervals).\n\n### Computing X + Y\n\nWe compute the Minkowski sum by taking pairwise sums of intervals:\n\n**Interval 1**: [0,1] + [0,3] = [0,4]\n(All sums x + y where x ∈ [0,1], y ∈ [0,3] give [0+0, 1+3] = [0,4])\n\n**Interval 2**: [0,1] + [4,7] = [4,8]\n(All sums x + y where x ∈ [0,1], y ∈ [4,7] give [0+4, 1+7] = [4,8])\n\n**Interval 3**: [3,4] + [0,3] = [3,7]\n(All sums x + y where x ∈ [3,4], y ∈ [0,3] give [3+0, 4+3] = [3,7])\n\n**Interval 4**: [3,4] + [4,7] = [7,11]\n(All sums x + y where x ∈ [3,4], y ∈ [4,7] give [3+4, 4+7] = [7,11])\n\n### Union of all intervals\n\nX + Y = [0,4] ∪ [4,8] ∪ [3,7] ∪ [7,11]\n      = [0,11]\n\nThis is a **single connected interval**, which is convex!\n\nThus two nonconvex sets can have a convex Minkowski sum. ∎\n\n## Alternative Proof for (a) — Support Functions\n\nThe **support function** of a nonempty set S is:\n\nh_S(u) = sup_{x∈S} uᵀx\n\nA standard fact from convex analysis:\n\nh_{X+Y}(u) = h_X(u) + h_Y(u)\n\nfor all u ∈ ℝⁿ.\n\nIf X and Y are convex, then for each direction u, the supporting halfspace\n\n{z | uᵀz ≤ h_X(u) + h_Y(u)}\n\ncontains X + Y. Since a convex set is the intersection of all its supporting halfspaces:\n\nX + Y = ⋂_{u∈ℝⁿ} {z | uᵀz ≤ h_X(u) + h_Y(u)}\n\nThis is an intersection of halfspaces, hence convex. ∎\n\n## Key Insights\n\n1. **Minkowski sum preserves convexity**: The sum of two convex sets is always convex\n2. **Geometric interpretation**: X + Y is obtained by \"sliding\" X along every point in Y (or vice versa)\n3. **Counterintuitive result**: Nonconvex sets can sum to convex (the \"gaps\" can fill in)\n4. **Support function additivity**: h_{X+Y} = h_X + h_Y is a powerful dual characterization\n5. **Applications**: Minkowski sums appear in robot motion planning (configuration space obstacles), image processing (dilation), and optimization (constraint sets)\n6. **Connection to duality**: The support function viewpoint connects primal geometry (sets) to dual geometry (halfspaces)",
+      "learningObjectives": [
+        "minkowski-sum",
+        "convexity-preservation",
+        "support-functions",
+        "counterexamples",
+        "interval-arithmetic",
+        "geometric-operations",
+        "duality-concepts"
+      ],
+      "estimatedTime": 25,
+      "relatedProblems": ["02-005", "02-006", "02-007"],
+      "notes": "The Minkowski sum is a fundamental operation in convex geometry with applications across robotics, computer graphics, and optimization. Part (a) shows that convexity is preserved under this operation—a key closure property. Part (b) provides a surprising counterexample showing that nonconvex + nonconvex can yield convex, illustrating that convexity preservation is directional (sufficient but not necessary). The support function proof offers an elegant dual perspective that will be important in later duality theory."
+    },
+    {
+      "id": "02-005",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "medium",
+      "title": "P5 — Thickening a convex set is convex",
+      "statement": "Let X ⊂ ℝⁿ be **convex and closed**, and let ε > 0. Define\n\nB_ε(X) = {y ∈ ℝⁿ | inf_{x∈X} |y - x| ≤ ε}\n\nProve that B_ε(X) is convex.\n\n(Here |·| denotes the Euclidean norm.)",
+      "hints": [
+        "Recognize that B_ε(X) = {y | dist(y, X) ≤ ε}, the ε-neighborhood of X",
+        "Method 1: Use that closedness of X guarantees a nearest point exists for any y",
+        "For y₁, y₂ ∈ B_ε(X), find witnesses x₁, x₂ ∈ X with |y₁ - x₁| ≤ ε and |y₂ - x₂| ≤ ε",
+        "Form the convex combination x_θ = θx₁ + (1-θ)x₂ ∈ X and show it's close to θy₁ + (1-θ)y₂",
+        "Method 2: Recognize B_ε(X) = X + εB where B = {u : |u| ≤ 1} is the unit ball",
+        "Apply the result from P4 that Minkowski sums of convex sets are convex"
+      ],
+      "solution": "## Solution 1 (Direct, Using Nearest Points)\n\n### Why closedness matters\n\nBecause X is closed in finite dimensions, for every y the continuous function x ↦ |y - x| attains its minimum on X. Hence:\n\ninf_{x∈X} |y - x| ≤ ε  ⟺  ∃x ∈ X : |y - x| ≤ ε    (★)\n\n### Goal\n\nShow: if y₁, y₂ ∈ B_ε(X) and θ ∈ [0,1], then θy₁ + (1-θ)y₂ ∈ B_ε(X).\n\n### Step 1 (Pick witnesses in X)\n\nBy (★), choose x₁, x₂ ∈ X with:\n\n|y₁ - x₁| ≤ ε,    |y₂ - x₂| ≤ ε\n\n### Step 2 (Use convexity of X)\n\nSince X is convex, the convex combination:\n\nx_θ := θx₁ + (1-θ)x₂ ∈ X\n\n### Step 3 (Triangle inequality)\n\nCompute the distance from θy₁ + (1-θ)y₂ to x_θ:\n\n|θy₁ + (1-θ)y₂ - x_θ| = |θy₁ + (1-θ)y₂ - θx₁ - (1-θ)x₂|\n                       = |θ(y₁ - x₁) + (1-θ)(y₂ - x₂)|\n                       ≤ θ|y₁ - x₁| + (1-θ)|y₂ - x₂|  (triangle inequality)\n                       ≤ θ·ε + (1-θ)·ε\n                       = ε\n\nThus there exists x_θ ∈ X within distance ε of θy₁ + (1-θ)y₂, i.e.:\n\nθy₁ + (1-θ)y₂ ∈ B_ε(X)\n\nSince the choices were arbitrary, B_ε(X) is convex. ∎\n\n## Solution 2 (Minkowski Sum Viewpoint)\n\nLet B = {u : |u| ≤ 1} be the closed unit ball, which is convex. For closed X:\n\nB_ε(X) = {y : ∃x ∈ X, |y - x| ≤ ε}\n       = {y : ∃x ∈ X, ∃u ∈ B, y = x + εu}\n       = X + εB\n\nThis is the **Minkowski sum** of X and εB (scaled unit ball).\n\n### Apply P4\n\nBy Problem P4(a), the Minkowski sum of two convex sets is convex. Since both X and εB are convex, B_ε(X) = X + εB is convex. ∎\n\n## Remark on Closedness\n\n**Is closedness essential?** Not for convexity. Even if X were not closed, we have:\n\nB_ε(X) = X̄ + εB  (closure of X plus ball)\n\nSince the closure of a convex set is convex (see P6), and Minkowski sums preserve convexity, B_ε(X) is still convex.\n\nClosedness was only used to ensure that inf = min, i.e., nearest points exist. For convexity alone, it's not strictly necessary.\n\n## Key Insights\n\n1. **ε-neighborhood (thickening)**: B_ε(X) is the set of all points within distance ε of X\n2. **Closed convex = distance minimizer**: For closed convex X, every external point has a unique nearest point in X\n3. **Minkowski sum interpretation**: Thickening by ε is the same as Minkowski sum with εB\n4. **Convexity is stable under thickening**: This is crucial for approximation theory and robust optimization\n5. **Applications**: Appears in collision detection (safety margins), robust optimization (parameter uncertainty), and image processing (morphological dilation)\n6. **Triangle inequality is key**: The norm's triangle inequality and positive homogeneity are essential for the direct proof",
+      "learningObjectives": [
+        "epsilon-neighborhoods",
+        "distance-functions",
+        "minkowski-sum-applications",
+        "convexity-preservation",
+        "triangle-inequality",
+        "closed-sets",
+        "nearest-points"
+      ],
+      "estimatedTime": 20,
+      "relatedProblems": ["02-004", "02-006", "08-003"],
+      "notes": "This problem introduces the important operation of 'thickening' or 'fattening' a set, which has practical applications in safety-critical systems (e.g., collision avoidance with safety margins). The two proofs illustrate different approaches: direct computation using witnesses vs. recognizing the operation as a Minkowski sum and applying existing theory. The closedness assumption is interesting—it's needed for the 'nearest point exists' claim but not for convexity itself."
+    },
+    {
+      "id": "02-006",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "easy",
+      "title": "P6 — Closure of a convex set is convex",
+      "statement": "Let C ⊂ ℝⁿ be convex. Prove that its closure C̄ is convex.",
+      "hints": [
+        "Use sequences to approximate points in the closure",
+        "For u, v ∈ C̄, find sequences (u_k) ⊂ C and (v_k) ⊂ C with u_k → u and v_k → v",
+        "Form the convex combinations w_k = θu_k + (1-θ)v_k for fixed θ ∈ [0,1]",
+        "Show that w_k ∈ C by convexity of C",
+        "Pass to the limit: w_k → θu + (1-θ)v, and conclude the limit is in C̄",
+        "Alternative: Show C̄ is the intersection of all closed convex supersets of C"
+      ],
+      "solution": "## Solution 1 (Sequence/Limit Argument)\n\n### Goal\n\nFor any u, v ∈ C̄ and any θ ∈ [0,1], show θu + (1-θ)v ∈ C̄.\n\n### Step 1 (Approximate by points in C)\n\nBy definition of closure, there exist sequences (u_k) ⊂ C and (v_k) ⊂ C such that:\n\nu_k → u,    v_k → v\n\nas k → ∞.\n\n### Step 2 (Use convexity of C)\n\nFor each k, since C is convex:\n\nw_k := θu_k + (1-θ)v_k ∈ C\n\n### Step 3 (Pass to the limit)\n\nThe map (a, b) ↦ θa + (1-θ)b is continuous (it's affine). Therefore:\n\nw_k = θu_k + (1-θ)v_k → θu + (1-θ)v\n\nas k → ∞.\n\n### Step 4 (Closure contains limits)\n\nSince each w_k ∈ C and w_k → θu + (1-θ)v, the limit belongs to C̄.\n\nHence θu + (1-θ)v ∈ C̄. Since u, v, and θ were arbitrary, C̄ is convex. ∎\n\n## Solution 2 (Closed Convex Hull Perspective)\n\nLet:\n\nℱ = {K ⊂ ℝⁿ | K is closed and convex, and C ⊆ K}\n\nThen:\n\nC̄ = ⋂_{K∈ℱ} K\n\n### Why this equality holds\n\n**Right-to-left (⋂K ⊆ C̄)**: Any set K ∈ ℱ is closed and contains C, so it contains C̄. Therefore C̄ ⊇ ⋂K.\n\n**Left-to-right (C̄ ⊆ ⋂K)**: Note that C̄ itself is closed and contains C. If C̄ were convex (which we're proving), then C̄ ∈ ℱ, so C̄ ⊇ ⋂K.\n\nBut actually, we can argue directly: C̄ is the **smallest closed set** containing C. The intersection ⋂_{K∈ℱ} K is closed (arbitrary intersection of closed sets is closed), contains C, hence contains C̄. Conversely, C̄ is one such closed set if we ignore convexity momentarily.\n\n### Convexity from intersection\n\nSince each K ∈ ℱ is convex, and intersections of convex sets are convex:\n\n⋂_{K∈ℱ} K is convex\n\nTherefore C̄ is convex. ∎\n\n## Alternative Characterization\n\nThe closure C̄ can also be characterized as:\n\nC̄ = {x ∈ ℝⁿ | ∀ε > 0, B_ε(x) ∩ C ≠ ∅}\n\nwhere B_ε(x) = {y : |y - x| < ε} is the open ball.\n\nFor x₁, x₂ ∈ C̄ and θ ∈ [0,1], for any ε > 0, choose y₁ ∈ B_{ε/2}(x₁) ∩ C and y₂ ∈ B_{ε/2}(x₂) ∩ C. Then:\n\nθy₁ + (1-θ)y₂ ∈ C  (by convexity)\n\nand by triangle inequality:\n\n|(θy₁ + (1-θ)y₂) - (θx₁ + (1-θ)x₂)| ≤ θ|y₁ - x₁| + (1-θ)|y₂ - x₂| < ε\n\nSo B_ε(θx₁ + (1-θ)x₂) ∩ C ≠ ∅. Since ε was arbitrary, θx₁ + (1-θ)x₂ ∈ C̄. ∎\n\n## Key Insights\n\n1. **Closure preserves convexity**: Taking limits of convex combinations stays convex\n2. **Continuity of convex operations**: The map (x, y, θ) ↦ θx + (1-θ)y is continuous\n3. **Closed convex hull**: C̄ when C is convex is called the **closed convex hull** of C\n4. **Intersection characterization**: Closed convex sets can be characterized as intersections of closed halfspaces (supporting hyperplane theorem)\n5. **Finite dimensions vs. infinite**: This proof works in ℝⁿ; in infinite dimensions, closure may not preserve convexity without additional assumptions\n6. **Stability property**: Convexity is \"robust\" under closure—small perturbations don't destroy it",
+      "learningObjectives": [
+        "closure-operation",
+        "convexity-preservation",
+        "limit-arguments",
+        "continuity-of-affine-maps",
+        "intersection-of-convex-sets",
+        "closed-convex-hull"
+      ],
+      "estimatedTime": 15,
+      "relatedProblems": ["02-005", "02-007", "02-008"],
+      "notes": "This is a fundamental topological property of convex sets. The sequence-based proof is constructive and uses the basic definition of closure, making it suitable for students first learning topology. The intersection characterization provides a more abstract view that connects to duality theory (supporting hyperplanes). The result is essential for existence theorems in optimization—many important convex sets are naturally defined as closures."
+    },
+    {
+      "id": "02-007",
+      "lecture": "02-convex-sets",
+      "type": "verification",
+      "difficulty": "medium",
+      "title": "P7 — Cartesian products and convexity",
+      "statement": "Let X ⊂ ℝᵐ and Y ⊂ ℝⁿ.\n\n(a) If X and Y are convex, prove that X × Y ⊂ ℝᵐ⁺ⁿ is convex.\n\n(b) If X and Y are **not** convex, can X × Y be convex?",
+      "hints": [
+        "Part (a): Take two arbitrary points (x₁, y₁), (x₂, y₂) ∈ X × Y",
+        "Form the convex combination θ(x₁, y₁) + (1-θ)(x₂, y₂) and separate coordinates",
+        "Show the x-component is in X and the y-component is in Y using their convexity",
+        "Part (b): Assume X is not convex; find witnesses x₁, x₂ ∈ X with θx₁ + (1-θ)x₂ ∉ X",
+        "Pick any y ∈ Y and show the line segment in X × Y fails convexity",
+        "Conclude that if either factor is nonconvex (and nonempty), the product is nonconvex"
+      ],
+      "solution": "## Part (a) — Product of Convex Sets is Convex\n\nTake any two points (x₁, y₁), (x₂, y₂) ∈ X × Y and θ ∈ [0,1].\n\n### Separate coordinates\n\nSince (x₁, y₁) ∈ X × Y, we have x₁, x₂ ∈ X and y₁, y₂ ∈ Y.\n\n### Form convex combination\n\nθ(x₁, y₁) + (1-θ)(x₂, y₂) = (θx₁ + (1-θ)x₂, θy₁ + (1-θ)y₂)\n\n### Apply convexity of factors\n\nSince X is convex:\nx_θ := θx₁ + (1-θ)x₂ ∈ X\n\nSince Y is convex:\ny_θ := θy₁ + (1-θ)y₂ ∈ Y\n\n### Conclusion\n\nTherefore:\n(x_θ, y_θ) ∈ X × Y\n\nHence X × Y is convex. ∎\n\n## Part (b) — Nonconvex Factors Cannot Yield Convex Product\n\n**Answer**: No (assuming nonempty factors). If either X or Y is not convex, then X × Y is not convex.\n\n### Proof\n\nAssume **both sets are nonempty**. Suppose X is not convex. Then there exist x₁, x₂ ∈ X and θ ∈ (0,1) such that:\n\nx_θ := θx₁ + (1-θ)x₂ ∉ X\n\n### Construct failure in product\n\nPick any y ∈ Y (possible since Y ≠ ∅). Then:\n\n(x₁, y), (x₂, y) ∈ X × Y\n\nBut:\n\nθ(x₁, y) + (1-θ)(x₂, y) = (θx₁ + (1-θ)x₂, y) = (x_θ, y)\n\nSince x_θ ∉ X, we have (x_θ, y) ∉ X × Y.\n\nThus X × Y is **not convex**.\n\n### Symmetric argument\n\nThe same argument applies if Y is not convex: pick any x ∈ X and find a convex combination failure in the Y coordinates.\n\n### Conclusion\n\nWith nonempty factors, X × Y is convex **if and only if** both X and Y are convex.\n\n(The only trivial exception: if X = ∅ or Y = ∅, then X × Y = ∅ is vacuously convex.)\n\n∎\n\n## Alternative View (Projections from a Convex Product)\n\n### Reverse direction\n\nSuppose X × Y is convex and Y ≠ ∅. Fix some y₀ ∈ Y. The slice:\n\nX × {y₀} ⊂ X × Y\n\nis convex (as a subset of a convex set? Not automatic). But we can argue differently:\n\nFor any x₁, x₂ ∈ X and θ ∈ [0,1], we have:\n\n(x₁, y₀), (x₂, y₀) ∈ X × Y\n\nBy convexity of X × Y:\n\n(θx₁ + (1-θ)x₂, y₀) = θ(x₁, y₀) + (1-θ)(x₂, y₀) ∈ X × Y\n\nThis means θx₁ + (1-θ)x₂ ∈ X. Hence X is convex.\n\nSimilarly, Y is convex. This proves the \"only if\" direction cleanly.\n\n## Key Insights\n\n1. **Product preserves convexity**: Cartesian products of convex sets are convex\n2. **Componentwise convexity**: Convexity of X × Y is equivalent to convexity of each component\n3. **Strict necessity**: Both factors must be convex (unlike Minkowski sums, where nonconvex can sum to convex)\n4. **Geometric interpretation**: X × Y is the set of all \"stacked\" pairs (x, y) in the product space\n5. **Applications**: In optimization, product structure allows decomposition of problems into smaller subproblems (separability)\n6. **Higher products**: The result generalizes to n-fold products: X₁ × ⋯ × Xₙ is convex iff each Xᵢ is convex\n7. **Connection to direct sums**: In vector spaces, direct sums preserve convexity in the same way",
+      "learningObjectives": [
+        "cartesian-products",
+        "product-spaces",
+        "convexity-preservation",
+        "necessary-and-sufficient-conditions",
+        "counterexamples",
+        "projection-maps",
+        "separable-structure"
+      ],
+      "estimatedTime": 20,
+      "relatedProblems": ["02-004", "02-006", "04-005"],
+      "notes": "Cartesian products are fundamental in optimization when dealing with multiple independent variables or subsystems. Unlike Minkowski sums (where nonconvex + nonconvex can yield convex), products have a strict equivalence: the product is convex iff each factor is convex. This makes products simpler to analyze but also means there's no 'lucky accident' where nonconvexity disappears. The projection viewpoint in the alternative proof foreshadows important concepts in constraint elimination and variable projection in optimization."
     }
   ]
 }
