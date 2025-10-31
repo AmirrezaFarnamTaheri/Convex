@@ -537,38 +537,43 @@
 
         <div class="proof">
           <h4>Proof</h4>
-
           <div class="proof-step">
             <strong>($\subseteq$):</strong> If $(y, s) \in \mathcal{Q}$ and $(x, t) \in \mathcal{Q}$, then by Cauchy-Schwarz:
             $$
-            y^\top x + st \ge -\|y\|_2 \|x\|_2 + st \ge -s \|x\|_2 + st \ge 0
+            y^\top x + st \ge -\|y\|_2 \|x\|_2 + st \ge -st + st = 0
             $$
             (using $\|x\|_2 \le t$ and $\|y\|_2 \le s$).
           </div>
-
           <div class="proof-step">
-            <strong>($\supseteq$):</strong> If $(y, s) \notin \mathcal{Q}$, then $\|y\|_2 > s$. Take $(x, t) = (y, \|y\|_2) \in \mathcal{Q}$:
-            $$
-            y^\top x + st = \|y\|_2^2 + s\|y\|_2 < \|y\|_2^2 + \|y\|_2^2 = 2\|y\|_2^2
-            $$
-            <p>Actually, $y^\top y + s \|y\|_2 = \|y\|_2^2 + s\|y\|_2 < 0$ when $s < 0$ or when $\|y\|_2 > s \ge 0$ by choosing appropriate $(x,t)$.</p>
+            <strong>($\supseteq$):</strong> If $(y, s) \notin \mathcal{Q}$, then $\|y\|_2 > s$. We must find some $(x, t) \in \mathcal{Q}$ with $y^\top x + st < 0$.
+            If $s < 0$, we can choose $(x, t) = (0, 1) \in \mathcal{Q}$ to get $y^\top x + st = s < 0$.
+            If $s \ge 0$, we can choose $(x, t) = (-y/\|y\|_2, 1) \in \mathcal{Q}$. Then:
+            $$ y^\top x + st = -\|y\|_2 + s < 0 $$
           </div>
-
-          <p>(More precisely: if $\|y\|_2 > s$, choose $(x,t) = (-y/\|y\|_2, 1) \in \mathcal{Q}$ to get $-\|y\|_2 + s < 0$.)</p>
         </div>
 
         <h4>3. $\ell_1 / \ell_\infty$ Cones</h4>
-        <p>The cones $\{(x, t) \mid \|x\|_1 \le t\}$ and $\{(y, s) \mid \|y\|_\infty \le s, s \ge 0\}$ are dual.</p>
+        <p>The $\ell_1$-cone $K_1 = \{(x, t) \mid \|x\|_1 \le t\}$ and the $\ell_\infty$-cone $K_\infty = \{(y, s) \mid \|y\|_\infty \le s\}$ are dual to each other.</p>
+        <div class="proof">
+          <h4>Proof: $(K_1)^* = K_\infty$</h4>
+          <div class="proof-step">
+            <strong>Step 1: Show $K_\infty \subseteq (K_1)^*$.</strong> Let $(y, s) \in K_\infty$, so $\|y\|_\infty \le s$. For any $(x, t) \in K_1$ (so $\|x\|_1 \le t$), we have by Hölder's inequality:
+            $$
+            y^\top x + st \ge -|y^\top x| + st \ge -\|y\|_\infty \|x\|_1 + st \ge -s t + st = 0
+            $$
+            Thus, $(y, s) \in (K_1)^*$.
+          </div>
 
-        <p><b>Proof via Hölder:</b> For $(x,t)$ in the $\ell_1$ cone and $(y,s)$ in the $\ell_\infty$ cone:
-        $$
-        y^\top x + st \le \|y\|_\infty \|x\|_1 + st \le s\|x\|_1 + st \le st + st = 2st \quad \text{(wrong bound)}
-        $$
-        <p>Correct: $y^\top x + st \le \|y\|_\infty \|x\|_1 + st \le s t + st = 2st$ only if $\|x\|_1 \le t$, but need $y^\top x \le s t$ when $\|x\|_1 \le t$. Actually:</p>
-        $$
-        y^\top x \le \|y\|_\infty \|x\|_1 \le s \cdot t
-        $$
-        <p>So $(y,s)$ with $\|y\|_\infty \le s$ satisfies $y^\top x + (-s) t \le 0$, meaning $(y,-s,-t)$ pairing. The correct statement: the $\ell_1$-cone and $\ell_\infty$-cone are dual under the pairing $(x,t), (y,s) \mapsto y^\top x - st$.</p>
+          <div class="proof-step">
+            <strong>Step 2: Show $(K_1)^* \subseteq K_\infty$.</strong> Let $(y, s) \in (K_1)^*$. We must show $\|y\|_\infty \le s$. Assume for contradiction that $\|y\|_\infty > s$.
+            Let $j = \arg\max_i |y_i|$. Choose $x = -\mathrm{sign}(y_j) e_j$ and $t = 1$.
+            Then $\|x\|_1 = 1 = t$, so $(x, t) \in K_1$.
+            The inner product is:
+            $$
+            y^\top x + st = y_j(-\mathrm{sign}(y_j)) + s(1) = -|y_j| + s = -\|y\|_\infty + s < 0
+            $$
+            This contradicts $(y, s) \in (K_1)^*$. Therefore, the assumption is false and we must have $\|y\|_\infty \le s$.
+          </div>
         </div>
 
         <h3>Generalized Inequalities</h3>
