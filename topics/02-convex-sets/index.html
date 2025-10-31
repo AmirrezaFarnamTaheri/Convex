@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>02. Convex Sets — Convex Optimization</title>
   <link rel="stylesheet" href="../../static/css/styles.css" />
-  <link rel="stylesheet" href="/static/css/modern-widgets.css" />
+  <link rel="stylesheet" href="../../static/css/modern-widgets.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
@@ -20,14 +20,14 @@
         </a>
       </div>
       <nav class="nav">
-        <a href="../../index.html#sessions">All Lectures</a>
+        <a href="../../index.html">All Lectures</a>
         <a href="../01-introduction/index.html">← Previous</a>
         <a href="../03-convex-functions/index.html">Next →</a>
       </nav>
     </div>
   </header>
 
-  <main class="container" style="padding-top: 2rem;">
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2>Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <header class="lecture-header card">
       <h1>02. The Geometry of Feasibility: Convex Sets</h1>
       <div class="lecture-meta">
@@ -82,13 +82,13 @@
         <h3>Convex Sets</h3>
         <p>A set is <b>convex</b> if the line segment connecting any two points in the set is entirely contained within the set. This property means the set has no "dents" or "holes."</p>
         <figure>
-          <img src="./assets/convex-set-definition.svg" alt="Visual definition of convex and non-convex sets" />
+          <img src="../../static/assets/topics/02-convex-sets/convex-set-definition.svg" alt="Visual definition of convex and non-convex sets" />
           <figcaption>Figure 1.1: In a convex set, the line segment connecting any two points lies entirely within the set.</figcaption>
         </figure>
         <h3>Convex Hulls</h3>
         <p>The <b>convex hull</b> of a set of points, $\mathrm{conv}(S)$, is the set of all their convex combinations. It's the smallest convex set containing all the points, like the shape formed by a rubber band stretched around them.</p>
         <figure>
-          <img src="./assets/convex-hull.svg" alt="Illustration of a convex hull" />
+          <img src="../../static/assets/topics/02-convex-sets/convex-hull.svg" alt="Illustration of a convex hull" />
           <figcaption>Figure 1.2: The convex hull of a set of points.</figcaption>
         </figure>
 
@@ -188,13 +188,13 @@
         <h3>The Separating Hyperplane Theorem</h3>
         <p>Any two disjoint, non-empty convex sets can be separated by a hyperplane. If you have two convex shapes that do not overlap, you can always draw a straight line (or plane) between them.</p>
         <figure>
-          <img src="./assets/separating-hyperplane.svg" alt="Illustration of the Separating Hyperplane Theorem" />
+          <img src="../../static/assets/topics/02-convex-sets/separating-hyperplane.svg" alt="Illustration of the Separating Hyperplane Theorem" />
           <figcaption>Figure 4.1: A hyperplane separating two disjoint convex sets.</figcaption>
         </figure>
         <h3>The Supporting Hyperplane Theorem</h3>
         <p>For any convex set, at any point on its boundary, there exists a supporting hyperplane that touches the point and keeps the entire set to one side. This is fundamental for deriving optimality conditions.</p>
         <figure>
-          <img src="./assets/supporting-hyperplane.svg" alt="Illustration of the Supporting Hyperplane Theorem" />
+          <img src="../../static/assets/topics/02-convex-sets/supporting-hyperplane.svg" alt="Illustration of the Supporting Hyperplane Theorem" />
           <figcaption>Figure 4.2: A supporting hyperplane to a convex set at a boundary point.</figcaption>
         </figure>
 
@@ -822,9 +822,12 @@
         <p>© <span id="year"></span> Convex Optimization Course</p>
       </div>
     </footer>
-  </main>
+  </main></div>
 
   <script src="../../static/js/math-renderer.js"></script>
+<script src="../../static/js/theme-switcher.js"></script>
+<script src="../../static/js/toc.js"></script>
+<script src="../../static/js/theme-switcher.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>

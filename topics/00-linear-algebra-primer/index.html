@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>00. A Primer on Linear Algebra — Convex Optimization</title>
   <link rel="stylesheet" href="../../static/css/styles.css" />
-  <link rel="stylesheet" href="/static/css/modern-widgets.css" />
+  <link rel="stylesheet" href="../../static/css/modern-widgets.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
@@ -20,13 +20,13 @@
         </a>
       </div>
       <nav class="nav">
-        <a href="../../index.html#sessions">All Lectures</a>
+        <a href="../../index.html">All Lectures</a>
         <a href="../01-introduction/index.html">Next →</a>
       </nav>
     </div>
   </header>
 
-  <main class="container" style="padding-top: 2rem;">
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2>Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <header class="lecture-header card">
       <h1>00. A Primer on Linear Algebra</h1>
       <div class="lecture-meta">
@@ -54,30 +54,6 @@
       </ul>
     </section>
 
-    <!-- TABLE OF CONTENTS -->
-    <section class="card" id="table-of-contents">
-      <h2>Table of Contents</h2>
-      <ol>
-        <li><a href="#section-0">Notation and Basic Objects</a></li>
-        <li><a href="#section-1">Subspaces and the Four Fundamental Spaces</a></li>
-        <li><a href="#section-2">Inner Products, Norms, and Angles</a></li>
-        <li><a href="#section-3">Orthogonality, Orthonormal Bases, and QR</a></li>
-        <li><a href="#section-4">Positive Semidefiniteness and Quadratic Forms</a></li>
-        <li><a href="#section-5">Projections onto Subspaces and Affine Sets</a></li>
-        <li><a href="#section-6">Least Squares: Normal Equations and Geometry</a></li>
-        <li><a href="#section-7">Solving Least Squares Robustly: QR, SVD, Pseudoinverse</a></li>
-        <li><a href="#section-8">Variants You Will Need</a></li>
-        <li><a href="#section-9">Worked Examples (Fully Written Out)</a></li>
-        <li><a href="#section-10">Implementation Mini-Guide</a></li>
-        <li><a href="#section-11">Exercises with Solutions</a></li>
-        <li><a href="#section-12">Sanity Checklist</a></li>
-        <li><a href="#section-13">Quick Reference Formulas</a></li>
-        <li><a href="#section-14">Dual Norms and Hölder's Inequality</a></li>
-        <li><a href="#section-15">Matrix Inner Product, Frobenius Norm, and Loewner Order</a></li>
-        <li><a href="#section-16">Componentwise Order and Projection onto Affine Sets</a></li>
-        <li><a href="#section-17">Additional Practice Problems (with Solutions)</a></li>
-      </ol>
-    </section>
 
     <!-- SECTION 0: NOTATION -->
     <section class="card" id="section-0">
@@ -94,7 +70,7 @@
       </ul>
 
       <figure style="text-align: center;">
-        <img src="../../static/assets/topics/00-linear-algebra-primer/matrix-multiplication-diagram.svg"
+        <img src="../../static/assets/topics/00-linear-algebra-primer/matrix-multiplication.svg"
              alt="Matrix multiplication diagram showing how rows and columns combine"
              style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
         <figcaption><i>Figure 0.1:</i> Matrix multiplication visualized—how rows of the first matrix combine with columns of the second.</figcaption>
@@ -105,13 +81,6 @@
         <li>$Ax$ is the <b>linear combination of columns of $A$</b> with coefficients from $x$.</li>
         <li>$(AB)_{ij} = \sum_k a_{ik} b_{kj}$.</li>
       </ul>
-
-      <figure style="text-align: center;">
-        <img src="../../static/assets/topics/00-linear-algebra-primer/matrix-multiplication-geometric.svg"
-             alt="Geometric intuition of matrix multiplication"
-             style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;" />
-        <figcaption><i>Figure 0.2:</i> The geometric interpretation of a matrix-vector product as a linear combination of the matrix's column vectors.</figcaption>
-      </figure>
 
       <h3>Linear Maps</h3>
       <p>A function $T: \mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if and only if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$. Every linear map can be represented by a matrix $A$ with $T(x) = Ax$.</p>
@@ -750,9 +719,8 @@
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Achieve equality.</strong> Let $j = \arg\max_i |y_i|$. Choose $x = e_j$ (the $j$-th standard basis vector). Then $\|x\|_1 = 1$ and:
-          $$ x^\top y = y_j = \pm |y_j| = \|y\|_\infty $$
-          (choosing the sign of $e_j$ to match the sign of $y_j$).
+          <strong>Step 2: Achieve equality.</strong> Let $j = \arg\max_i |y_i|$. Choose $x = \mathrm{sign}(y_j) e_j$. Then $\|x\|_1 = 1$ and:
+          $$ x^\top y = \mathrm{sign}(y_j) y_j = |y_j| = \|y\|_\infty $$
         </div>
 
         <div class="proof-step">
@@ -996,10 +964,12 @@
         <p>© <span id="year"></span> Convex Optimization Course</p>
       </div>
     </footer>
-  </main>
+  </main></div>
 
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
   <script src="../../static/js/math-renderer.js"></script>
+<script src="../../static/js/theme-switcher.js"></script>
+<script src="../../static/js/toc.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
