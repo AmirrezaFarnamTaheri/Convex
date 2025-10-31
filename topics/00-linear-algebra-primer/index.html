@@ -69,7 +69,7 @@
         <li><a href="#section-8">Variants You Will Need</a></li>
         <li><a href="#section-9">Worked Examples (Fully Written Out)</a></li>
         <li><a href="#section-10">Implementation Mini-Guide</a></li>
-        <li><a href="#section-11">Exercises with Detailed Solutions</a></li>
+        <li><a href="#section-11">Exercises with Solutions</a></li>
         <li><a href="#section-12">Sanity Checklist</a></li>
         <li><a href="#section-13">Quick Reference Formulas</a></li>
         <li><a href="#section-14">Dual Norms and Hölder's Inequality</a></li>
@@ -130,7 +130,7 @@
     <section class="card" id="section-1">
       <h2>1. Subspaces and the Four Fundamental Spaces</h2>
 
-      <p>A <b>linear subspace</b> is a set of vectors that is closed under addition and scalar multiplication. Given a matrix $A \in \mathbb{R}^{m \times n}$, we can define four fundamental subspaces that provide deep insights into the behavior of the linear map $T(x) = Ax$.</p>
+      <p>A <b>linear subspace</b> is a set of vectors that is closed under addition and scalar multiplication. Given a matrix $A \in \mathbb{R}^{m \times n}$, we can define four fundamental subspaces that characterize the behavior of the linear map $T(x) = Ax$.</p>
       <ul>
         <li><b>Column Space (Range):</b> $\mathcal{R}(A) = \{Ax \mid x \in \mathbb{R}^n\} \subseteq \mathbb{R}^m$. This is the set of all possible outputs of the linear map, i.e., the span of the columns of $A$.</li>
         <li><b>Nullspace (Kernel):</b> $\mathcal{N}(A) = \{x \in \mathbb{R}^n \mid Ax = 0\}$. This is the set of all input vectors that are mapped to the zero vector.</li>
@@ -153,9 +153,19 @@
 
       <div class="proof">
         <h4>Proof: $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$</h4>
-        <p>If $y \in \mathcal{N}(A^\top)$, then $A^\top y = 0$. For any $x \in \mathbb{R}^n$, we have $Ax \in \mathcal{R}(A)$. The inner product is:
-        $$ y^\top (Ax) = (A^\top y)^\top x = 0^\top x = 0 $$
-        Thus every vector in $\mathcal{R}(A)$ is orthogonal to every vector in $\mathcal{N}(A^\top)$.</p>
+
+        <div class="proof-step">
+          <strong>Setup:</strong> Take any $y \in \mathcal{N}(A^\top)$ and any $x \in \mathbb{R}^n$. By definition, $A^\top y = 0$ and $Ax \in \mathcal{R}(A)$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Compute inner product:</strong> The inner product between $Ax$ and $y$ is:
+          $$ y^\top (Ax) = (A^\top y)^\top x = 0^\top x = 0 $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Conclusion:</strong> Since this holds for all $x \in \mathbb{R}^n$, every vector in $\mathcal{R}(A)$ is orthogonal to every vector in $\mathcal{N}(A^\top)$.
+        </div>
       </div>
 
       <h3>Rank and Rank–Nullity Theorem</h3>
@@ -393,7 +403,7 @@
       </div>
 
       <div class="widget-container" style="margin: 24px 0;">
-        <h3 style="margin-top: 0;">Advanced Tool: Hessian Landscape Visualizer</h3>
+        <h3 style="margin-top: 0;">Interactive: Hessian Landscape Visualizer</h3>
         <p>Render the 3D surface of a quadratic function and its Hessian matrix, linking eigenvalues to curvature.</p>
         <div id="widget-hessian-landscape" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
@@ -487,7 +497,7 @@
       </div>
 
       <div class="widget-container" style="margin: 24px 0;">
-        <h3 style="margin-top: 0;">Advanced Tool: Condition Number Race</h3>
+        <h3 style="margin-top: 0;">Interactive: Condition Number Comparison</h3>
         <p>Demonstrates how high condition numbers slow down iterative solvers by comparing two systems of linear equations.</p>
         <div id="widget-condition-number" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
@@ -562,7 +572,7 @@
 
     <!-- SECTION 11: EXERCISES -->
     <section class="card" id="section-11">
-      <h2>11. Exercises (with Detailed Solutions)</h2>
+      <h2>11. Exercises</h2>
 
       <h3>A. Fundamentals</h3>
 
@@ -892,9 +902,9 @@
       </ul>
     </section>
 
-    <!-- SECTION 17: PRACTICE PROBLEMS (WITH COMPLETE SOLUTIONS) -->
+    <!-- SECTION 17: PRACTICE PROBLEMS -->
     <section class="card" id="section-17">
-      <h2>17. Additional Practice Problems (with Solutions)</h2>
+      <h2>17. Additional Practice Problems</h2>
 
       <h3>Problem 1: Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>

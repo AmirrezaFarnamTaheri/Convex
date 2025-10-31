@@ -26,6 +26,7 @@
   --color-success: #5dd98d;
   --color-warning: #ffb84d;
   --color-info: #6bb8ff;
+  --color-math-bg: rgba(107, 184, 255, 0.04);
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -82,9 +83,37 @@ h1, h2, h3, h4, h5, h6 {
   margin: calc(var(--spacing-unit) * 5) 0 calc(var(--spacing-unit) * 2);
 }
 
-h1 { font-size: 2.8rem; letter-spacing: -0.02em; }
-h2 { font-size: 2rem; border-bottom: 1px solid var(--color-border); padding-bottom: calc(var(--spacing-unit) * 1.5); }
-h3 { font-size: 1.5rem; }
+h1 {
+  font-size: 2.8rem;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+h2 {
+  font-size: 2rem;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: calc(var(--spacing-unit) * 1.5);
+  position: relative;
+}
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+}
+h3 {
+  font-size: 1.5rem;
+  color: var(--color-primary-light);
+}
+h4 {
+  font-size: 1.2rem;
+  color: var(--color-accent);
+}
 p { margin: 0 0 calc(var(--spacing-unit) * 2.5); }
 
 a {
@@ -158,7 +187,7 @@ code {
   padding: calc(var(--spacing-unit) * 6);
   margin-bottom: calc(var(--spacing-unit) * 6);
   box-shadow: var(--shadow-md);
-  transition: all var(--transition-speed) ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
@@ -175,13 +204,30 @@ code {
   transition: opacity var(--transition-speed) ease;
 }
 
+.card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(107, 184, 255, 0.03) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
 .card:hover {
   border-color: var(--color-border-light);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-lg), var(--shadow-glow);
 }
 
 .card:hover::before {
+  opacity: 1;
+}
+
+.card:hover::after {
   opacity: 1;
 }
 
