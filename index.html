@@ -4,12 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Convex Optimization</title>
-  <link rel="stylesheet" href="static/css/improved-styles.css" />
+  <link rel="stylesheet" href="static/css/lecture-styles.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 </head>
-<body>
+<body class="dark-theme">
   <!-- Header with navigation -->
-  <header class="site-header">
+  <header class="site-header sticky">
     <div class="container header-inner">
       <div class="brand">
         <img src="static/assets/branding/logo.svg" class="logo" alt="logo" />
@@ -33,7 +33,7 @@
 
     <section class="card" id="sessions">
       <h2>Lectures</h2>
-      <div id="lecture-list"></div>
+      <div id="lecture-list" class="lecture-grid"></div>
     </section>
   </main>
 
@@ -46,6 +46,17 @@
       </p>
     </div>
   </footer>
+
+  <div class="theme-switcher">
+    <button class="theme-button" id="theme-button">
+      <svg class="palette-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.25c-5.376 0-9.75 4.374-9.75 9.75s4.374 9.75 9.75 9.75 9.75-4.374 9.75-9.75S17.376 2.25 12 2.25zm0 1.5c4.549 0 8.25 3.701 8.25 8.25s-3.701 8.25-8.25 8.25-8.25-3.701-8.25-8.25S7.451 3.75 12 3.75zm0 1.953c-.328 0-.651.031-.966.091 2.893.63 5.021 3.228 5.021 6.206 0 3.52-2.859 6.379-6.379 6.379-.236 0-.469-.013-.695-.038a8.217 8.217 0 007.039-7.04c.025-.226.038-.459.038-.695 0-2.978-2.128-5.576-5.02-6.206.315-.06.638-.091.966-.091z"/></svg>
+    </button>
+    <div class="theme-options" id="theme-options">
+      <button data-theme="dark-theme">Dark</button>
+      <button data-theme="light-theme">Light</button>
+      <button data-theme="solarized-theme">Solarized</button>
+    </div>
+  </div>
 
   <script src="static/js/app.js"></script>
   <script src="static/js/theme-switcher.js"></script>
