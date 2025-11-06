@@ -747,6 +747,311 @@
       </table>
 
       <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
+
+      <!-- 7.9 Comprehensive Worked Examples -->
+      <h3>7.9 Comprehensive Worked Examples</h3>
+
+      <h4>Example 7.1: Computing SVD by Hand (2×2 Matrix)</h4>
+      <div class="proof">
+        <p><strong>Problem:</strong> Compute the SVD of $A = \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix}$.</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Compute $A^\top A$.</strong>
+          $$
+          A^\top A = \begin{bmatrix} 3 & 4 \\ 0 & 5 \end{bmatrix} \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix} = \begin{bmatrix} 25 & 20 \\ 20 & 25 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Find eigenvalues of $A^\top A$.</strong> The characteristic polynomial is:
+          $$
+          \det(A^\top A - \lambda I) = \det\begin{bmatrix} 25-\lambda & 20 \\ 20 & 25-\lambda \end{bmatrix} = (25-\lambda)^2 - 400 = \lambda^2 - 50\lambda + 225
+          $$
+          Solving: $\lambda_1 = 45$, $\lambda_2 = 5$. Thus $\sigma_1 = \sqrt{45} = 3\sqrt{5} \approx 6.708$ and $\sigma_2 = \sqrt{5} \approx 2.236$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Find eigenvectors (right singular vectors $V$).</strong>
+          <ul>
+            <li>For $\lambda_1 = 45$: $(A^\top A - 45I)v = 0$ gives $v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$</li>
+            <li>For $\lambda_2 = 5$: $(A^\top A - 5I)v = 0$ gives $v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$</li>
+          </ul>
+          Thus $V = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Compute left singular vectors $U$.</strong> Use $u_i = Av_i / \sigma_i$:
+          $$
+          u_1 = \frac{1}{\sigma_1} A v_1 = \frac{1}{3\sqrt{5}} \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix} \frac{1}{\sqrt{2}} \begin{bmatrix} 1 \\ 1 \end{bmatrix} = \frac{1}{3\sqrt{10}} \begin{bmatrix} 3 \\ 9 \end{bmatrix} = \frac{1}{\sqrt{10}} \begin{bmatrix} 1 \\ 3 \end{bmatrix}
+          $$
+          $$
+          u_2 = \frac{1}{\sigma_2} A v_2 = \frac{1}{\sqrt{5}} \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix} \frac{1}{\sqrt{2}} \begin{bmatrix} 1 \\ -1 \end{bmatrix} = \frac{1}{\sqrt{10}} \begin{bmatrix} 3 \\ -1 \end{bmatrix}
+          $$
+          Thus $U = \frac{1}{\sqrt{10}} \begin{bmatrix} 1 & 3 \\ 3 & -1 \end{bmatrix}$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 5: Assemble the SVD.</strong>
+          $$
+          A = U \Sigma V^\top = \frac{1}{\sqrt{10}} \begin{bmatrix} 1 & 3 \\ 3 & -1 \end{bmatrix} \begin{bmatrix} 3\sqrt{5} & 0 \\ 0 & \sqrt{5} \end{bmatrix} \frac{1}{\sqrt{2}} \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Verification:</strong> Check that $U^\top U = I$, $V^\top V = I$, and $U \Sigma V^\top = A$.
+        </div>
+      </div>
+
+      <h4>Example 7.2: Low-Rank Approximation for Data Compression</h4>
+      <div class="proof">
+        <p><strong>Problem:</strong> Given data matrix $X \in \mathbb{R}^{100 \times 50}$ (100 samples, 50 features) with $\text{rank}(X) = 50$, compute a rank-10 approximation that retains 90% of the "energy" (Frobenius norm squared).</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Compute SVD.</strong> $X = U \Sigma V^\top$ where $\Sigma = \text{diag}(\sigma_1, \dots, \sigma_{50})$ with $\sigma_1 \ge \cdots \ge \sigma_{50} > 0$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Energy in each component.</strong> The total energy is:
+          $$
+          \|X\|_F^2 = \sum_{i=1}^{50} \sigma_i^2
+          $$
+          The energy retained by the rank-$k$ approximation is:
+          $$
+          \|X_k\|_F^2 = \sum_{i=1}^k \sigma_i^2
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Choose $k$ to retain 90% energy.</strong> Find the smallest $k$ such that:
+          $$
+          \frac{\sum_{i=1}^k \sigma_i^2}{\sum_{i=1}^{50} \sigma_i^2} \ge 0.90
+          $$
+          Suppose this gives $k = 10$ (typical for real data with decaying singular values).
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Form approximation.</strong>
+          $$
+          X_{10} = U_{:,1:10} \Sigma_{1:10,1:10} V_{:,1:10}^\top = \sum_{i=1}^{10} \sigma_i u_i v_i^\top
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Storage savings:</strong>
+          <ul>
+            <li><strong>Original:</strong> $100 \times 50 = 5000$ numbers</li>
+            <li><strong>Rank-10 approximation:</strong> $10(100 + 1 + 50) = 1510$ numbers (storing $U_{:,1:10}$, $\Sigma_{1:10,1:10}$, $V_{:,1:10}$)</li>
+            <li><strong>Compression ratio:</strong> $5000/1510 \approx 3.3\times$ with 90% energy retained</li>
+          </ul>
+        </div>
+      </div>
+
+      <h4>Example 7.3: Solving Rank-Deficient Least Squares</h4>
+      <div class="proof">
+        <p><strong>Problem:</strong> Solve $\min \|Ax - b\|_2$ where $A = \begin{bmatrix} 1 & 2 & 3 \\ 2 & 4 & 6 \end{bmatrix}$ (rank 1) and $b = \begin{bmatrix} 1 \\ 2 \end{bmatrix}$.</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Recognize rank deficiency.</strong> The second row is $2 \times$ the first row, so $\text{rank}(A) = 1$. Normal equations $A^\top A x = A^\top b$ will be singular.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Compute (compact) SVD.</strong> For this simple case:
+          $$
+          A = \sigma_1 u_1 v_1^\top \quad \text{where } \sigma_1 = \sqrt{1^2 + 2^2 + 3^2 + 2^2 + 4^2 + 6^2} = \sqrt{70}
+          $$
+          $$
+          u_1 = \frac{1}{\sqrt{5}} \begin{bmatrix} 1 \\ 2 \end{bmatrix}, \quad v_1 = \frac{1}{\sqrt{14}} \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Compute pseudoinverse.</strong>
+          $$
+          A^+ = V \Sigma^+ U^\top = \frac{1}{\sigma_1} v_1 u_1^\top = \frac{1}{70} \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix} \begin{bmatrix} 1 & 2 \end{bmatrix} = \frac{1}{70} \begin{bmatrix} 1 & 2 \\ 2 & 4 \\ 3 & 6 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Minimum-norm solution.</strong>
+          $$
+          x^+ = A^+ b = \frac{1}{70} \begin{bmatrix} 1 & 2 \\ 2 & 4 \\ 3 & 6 \end{bmatrix} \begin{bmatrix} 1 \\ 2 \end{bmatrix} = \frac{1}{70} \begin{bmatrix} 5 \\ 10 \\ 15 \end{bmatrix} = \frac{1}{14} \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Verification:</strong>
+          <ul>
+            <li>$Ax^+ = A \cdot \frac{1}{14}v_1 = \frac{\sigma_1}{14} u_1 v_1^\top v_1 = \frac{\sqrt{70}}{14} \cdot \sqrt{14} u_1 = \frac{1}{2}\sqrt{5} \cdot \frac{1}{\sqrt{5}}\begin{bmatrix} 1 \\ 2 \end{bmatrix} = \frac{1}{2}\begin{bmatrix} 1 \\ 2 \end{bmatrix}$</li>
+            <li>Residual: $\|Ax^+ - b\|_2 = \left\|\frac{1}{2}\begin{bmatrix} 1 \\ 2 \end{bmatrix} - \begin{bmatrix} 1 \\ 2 \end{bmatrix}\right\|_2 = \frac{1}{2}\sqrt{5}$</li>
+            <li>This is the minimum possible (since $b \notin \mathcal{R}(A)$)</li>
+            <li>Among all minimizers, $x^+$ has the smallest norm: $\|x^+\|_2 = \frac{1}{14}\sqrt{14} = \frac{1}{\sqrt{14}}$</li>
+          </ul>
+        </div>
+      </div>
+
+      <h4>Example 7.4: Condition Number Analysis</h4>
+      <div class="proof">
+        <p><strong>Problem:</strong> Compare the condition numbers of $A$ and $A^\top A$ for $A = \begin{bmatrix} 1 & 0 \\ 0 & 0.01 \\ 0 & 0 \end{bmatrix}$.</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Compute singular values of $A$.</strong> For this matrix, $\sigma_1 = 1$ and $\sigma_2 = 0.01$ (diagonal structure makes this immediate). Thus:
+          $$
+          \kappa(A) = \frac{\sigma_1}{\sigma_2} = \frac{1}{0.01} = 100
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Compute $A^\top A$.</strong>
+          $$
+          A^\top A = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0.01 & 0 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 0.01 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 0.0001 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Condition number of $A^\top A$.</strong> Eigenvalues are 1 and 0.0001, so:
+          $$
+          \kappa(A^\top A) = \frac{1}{0.0001} = 10000 = \kappa(A)^2
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Implication:</strong> If $A$ already has $\kappa(A) = 100$, forming $A^\top A$ makes it $\kappa = 10^4$—catastrophically worse. With machine precision $\epsilon_{\text{mach}} \approx 10^{-16}$, we lose $\log_{10}(10^4) = 4$ digits of precision!
+        </div>
+
+        <div class="proof-step">
+          <strong>Solution:</strong> Use QR or SVD to avoid forming $A^\top A$ explicitly.
+        </div>
+      </div>
+
+      <!-- 7.10 Applications to Optimization -->
+      <h3>7.10 SVD Applications in Convex Optimization</h3>
+
+      <h4>7.10.1 Preconditioning Gradient Descent</h4>
+      <p>Consider minimizing a quadratic $f(x) = \frac{1}{2}x^\top A x - b^\top x$ where $A = U \Sigma^2 U^\top \succ 0$. Standard gradient descent has convergence rate dependent on $\kappa(A)$:</p>
+      $$
+      \left\|x^{(k)} - x^*\right\|_A \le \left(\frac{\kappa(A) - 1}{\kappa(A) + 1}\right)^k \|x^{(0)} - x^*\|_A
+      $$
+      <p>For $\kappa(A) = 10^4$, convergence is painfully slow. <strong>Preconditioning</strong> via SVD:</p>
+      <ol>
+        <li>Change variables: $y = \Sigma U^\top x$ (whitening transformation)</li>
+        <li>In $y$-space, the problem becomes $\min \frac{1}{2}\|y\|_2^2 - \tilde{b}^\top y$ where $\tilde{b} = \Sigma^{-1} U^\top b$</li>
+        <li>Hessian in $y$-space is $I$ (perfectly conditioned!), so gradient descent converges in one step</li>
+        <li>Transform back: $x^* = U \Sigma^{-1} y^*$</li>
+      </ol>
+      <p>This is the essence of <strong>Newton's method</strong>: use second-order information (Hessian = $A$) to precondition.</p>
+
+      <h4>7.10.2 Total Least Squares (TLS)</h4>
+      <p>Standard least squares minimizes $\|Ax - b\|_2$ assuming $A$ is exact and $b$ is noisy. <strong>Total Least Squares</strong> accounts for errors in both:</p>
+      $$
+      \min_{\Delta A, \Delta b, x} \left\|\begin{bmatrix} \Delta A & \Delta b \end{bmatrix}\right\|_F \quad \text{s.t.} \quad (A + \Delta A)x = b + \Delta b
+      $$
+      <p><strong>Solution via SVD:</strong> Form augmented matrix $[A \mid b]$ and compute SVD. The TLS solution is given by the right singular vector corresponding to the smallest singular value. This is used in errors-in-variables regression.</p>
+
+      <h4>7.10.3 Matrix Completion and Recommender Systems</h4>
+      <p>The <strong>Netflix Prize</strong> problem: Given a sparse ratings matrix $R \in \mathbb{R}^{m \times n}$ (users × movies) with only $\sim$1% entries observed, recover the full matrix. Assumption: $R$ is low-rank (users have a few latent preferences).</p>
+      <p><strong>Formulation:</strong></p>
+      $$
+      \min_{X \in \mathbb{R}^{m \times n}} \text{rank}(X) \quad \text{s.t.} \quad X_{ij} = R_{ij} \text{ for observed } (i,j)
+      $$
+      <p>Since $\text{rank}(\cdot)$ is non-convex, relax to the <strong>nuclear norm</strong> (convex envelope of rank):</p>
+      $$
+      \min_{X \in \mathbb{R}^{m \times n}} \|X\|_* = \sum_i \sigma_i(X) \quad \text{s.t.} \quad X_{ij} = R_{ij} \text{ for observed } (i,j)
+      $$
+      <p>This is a <strong>semidefinite program</strong> (SDP), solvable via convex optimization. The nuclear norm promotes low-rank solutions.</p>
+
+      <h4>7.10.4 Robust PCA: Separating Low-Rank and Sparse Components</h4>
+      <p>Given data $M = L + S$ where $L$ is low-rank (signal) and $S$ is sparse (outliers/noise), recover both:</p>
+      $$
+      \min_{L, S} \|L\|_* + \lambda \|S\|_1 \quad \text{s.t.} \quad L + S = M
+      $$
+      <p>This convex formulation (Principal Component Pursuit) provably recovers $L$ and $S$ under mild conditions. Applications: video surveillance (background = low-rank, foreground = sparse), data cleaning, anomaly detection.</p>
+
+      <h4>7.10.5 Dimensionality Reduction for Large-Scale Optimization</h4>
+      <p>For problems with $n \gg 1$ variables but low effective dimension (e.g., $x$ lies near a $k$-dimensional subspace), use SVD to reduce dimension:</p>
+      <ol>
+        <li>Collect samples $x^{(1)}, \dots, x^{(m)}$ from the feasible set or initialization</li>
+        <li>Form data matrix $X = [x^{(1)} \cdots x^{(m)}]$ and compute SVD: $X = U \Sigma V^\top$</li>
+        <li>Identify dominant subspace: keep top $k$ left singular vectors $U_k$</li>
+        <li>Parametrize $x = U_k y$ where $y \in \mathbb{R}^k$ (dimension reduction from $n$ to $k$)</li>
+        <li>Solve optimization problem in reduced space (much faster)</li>
+      </ol>
+      <p>This is used in <strong>active subspace methods</strong> for high-dimensional inverse problems and PDE-constrained optimization.</p>
+
+      <!-- 7.11 Computational Considerations -->
+      <h3>7.11 Computational Considerations and Software</h3>
+
+      <h4>7.11.1 When NOT to Compute Full SVD</h4>
+      <p>For a matrix $A \in \mathbb{R}^{m \times n}$ with $m, n \approx 10^6$, full SVD costs $O(mn^2) \approx 10^{18}$ operations—infeasible! Alternatives:</p>
+      <ul>
+        <li><strong>Truncated SVD:</strong> Use iterative methods (Lanczos, Arnoldi) to compute only top $k$ singular values/vectors. Cost: $O(mnk)$ with $k \ll n$. Libraries: ARPACK, PROPACK.</li>
+        <li><strong>Randomized SVD:</strong> Cost $O(mn \log k)$. Libraries: scikit-learn (<code>TruncatedSVD</code>), Facebook's <code>fbpca</code>, <code>redsvd</code>.</li>
+        <li><strong>Streaming SVD:</strong> For data that doesn't fit in memory, update SVD incrementally as new rows arrive.</li>
+      </ul>
+
+      <h4>7.11.2 Numerical Stability: Avoiding $A^\top A$</h4>
+      <p><strong>Bad practice (loses precision):</strong></p>
+      <pre style="background: var(--panel); padding: 12px; border-radius: 4px; overflow-x: auto;">
+# Python / NumPy example (DON'T DO THIS for ill-conditioned A!)
+import numpy as np
+AtA = A.T @ A
+eigenvalues, V = np.linalg.eigh(AtA)
+sigma = np.sqrt(eigenvalues)  # numerical errors amplified!</pre>
+
+      <p><strong>Good practice (numerically stable):</strong></p>
+      <pre style="background: var(--panel); padding: 12px; border-radius: 4px; overflow-x: auto;">
+# Python / NumPy example
+import numpy as np
+U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</pre>
+
+      <h4>7.11.3 Software Recommendations</h4>
+      <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+        <thead>
+          <tr style="background: var(--panel); border-bottom: 2px solid var(--border);">
+            <th style="padding: 8px; text-align: left;">Language</th>
+            <th style="padding: 8px; text-align: left;">Library</th>
+            <th style="padding: 8px; text-align: left;">Function</th>
+            <th style="padding: 8px; text-align: left;">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;">Python</td>
+            <td style="padding: 8px;"><code>numpy.linalg</code></td>
+            <td style="padding: 8px;"><code>svd(A)</code></td>
+            <td style="padding: 8px;">Full SVD via LAPACK (dgesdd)</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;">Python</td>
+            <td style="padding: 8px;"><code>scipy.sparse.linalg</code></td>
+            <td style="padding: 8px;"><code>svds(A, k)</code></td>
+            <td style="padding: 8px;">Sparse truncated SVD (top k)</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;">MATLAB</td>
+            <td style="padding: 8px;">Built-in</td>
+            <td style="padding: 8px;"><code>[U,S,V] = svd(A)</code></td>
+            <td style="padding: 8px;">Full or economy SVD</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;">Julia</td>
+            <td style="padding: 8px;"><code>LinearAlgebra</code></td>
+            <td style="padding: 8px;"><code>svd(A)</code></td>
+            <td style="padding: 8px;">Fast, via OpenBLAS/MKL</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px;">C/C++</td>
+            <td style="padding: 8px;">LAPACK</td>
+            <td style="padding: 8px;"><code>dgesvd</code> / <code>dgesdd</code></td>
+            <td style="padding: 8px;">Production-grade, highly optimized</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>7.11.4 Sparse vs Dense SVD</h4>
+      <p><strong>Sparse matrices:</strong> If $A$ has mostly zeros (e.g., graph Laplacians, finite element matrices), use specialized sparse SVD algorithms that exploit sparsity. Never convert to dense!</p>
+      <p><strong>Structured matrices:</strong> For Toeplitz, circulant, or FFT-structured matrices, fast $O(n \log n)$ multiplication enables iterative SVD via Krylov methods.</p>
+
+      <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
     </section>
 
     <!-- SECTION 8: VARIANTS -->
