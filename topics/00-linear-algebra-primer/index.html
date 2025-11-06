@@ -4,8 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>00. A Primer on Linear Algebra — Convex Optimization</title>
-  <link rel="stylesheet" href="../../static/css/styles.css" />
-  <link rel="stylesheet" href="../../static/css/modern-widgets.css" />
+  <link rel="stylesheet" href="../../static/css/convex-unified.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
@@ -27,7 +26,7 @@
   </header>
 
   <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2>Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
-    <header class="lecture-header card">
+    <header class="lecture-header card-v2">
       <h1>00. A Primer on Linear Algebra</h1>
       <div class="lecture-meta">
         <span>Date: 2025-10-14</span>
@@ -41,7 +40,7 @@
       </div>
     </header>
 
-    <section class="card">
+    <section class="card-v2">
       <h2>Learning Objectives</h2>
       <p>After this lecture, you will be able to work with:</p>
       <ul>
@@ -56,7 +55,7 @@
 
 
     <!-- SECTION 0: NOTATION -->
-    <section class="card" id="section-0">
+    <section class="card-v2" id="section-0">
       <h2>0. Notation and Basic Objects</h2>
 
       <h3>Scalars, Vectors, Matrices</h3>
@@ -96,7 +95,7 @@
     </section>
 
     <!-- SECTION 1: FOUR FUNDAMENTAL SUBSPACES -->
-    <section class="card" id="section-1">
+    <section class="card-v2" id="section-1">
       <h2>1. Subspaces and the Four Fundamental Spaces</h2>
 
       <p>A <b>linear subspace</b> is a set of vectors that is closed under addition and scalar multiplication. Given a matrix $A \in \mathbb{R}^{m \times n}$, we can define four fundamental subspaces that characterize the behavior of the linear map $T(x) = Ax$.</p>
@@ -120,7 +119,7 @@
         <figcaption><i>Figure 1.1:</i> Three planes in 3D space—the intersection represents solution sets of linear equations.</figcaption>
       </figure>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Proof: $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$</h4>
 
         <div class="proof-step">
@@ -142,7 +141,7 @@
       $$ \dim \mathcal{N}(A) + \mathrm{rank}(A) = n $$
       This fundamental dimension-counting result is a cornerstone of linear algebra.</p>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Proof of the Rank-Nullity Theorem</h4>
 
         <div class="proof-step">
@@ -188,7 +187,7 @@
     </section>
 
     <!-- SECTION 2: INNER PRODUCTS AND NORMS -->
-    <section class="card" id="section-2">
+    <section class="card-v2" id="section-2">
       <h2>2. Inner Products, Norms, and Angles</h2>
 
       <h3>Inner Product</h3>
@@ -240,7 +239,7 @@
 
       <h3>Cauchy–Schwarz and Triangle Inequality</h3>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Proof of Cauchy–Schwarz: $|x^\top y| \le \|x\|_2 \|y\|_2$</h4>
 
         <div class="proof-step">
@@ -260,7 +259,7 @@
         </div>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Proof of the Triangle Inequality: $\|x+y\|_2 \le \|x\|_2 + \|y\|_2$</h4>
 
         <div class="proof-step">
@@ -293,7 +292,7 @@
         <li>The dual of the L-infinity norm is the L1 norm.</li>
       </ul>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Hölder's Inequality: A Generalization of Cauchy-Schwarz</h4>
         <p>Hölder's inequality follows directly from the definition of the dual norm and bounds the inner product of two vectors:
         $$ |x^\top y| \le \|x\| \cdot \|y\|_* $$
@@ -312,7 +311,7 @@
     </section>
 
     <!-- SECTION 3: ORTHOGONALITY AND QR -->
-    <section class="card" id="section-3">
+    <section class="card-v2" id="section-3">
       <h2>3. Orthogonality and Orthonormal Bases</h2>
 
       <h3>Orthonormal Sets</h3>
@@ -347,7 +346,7 @@
     </section>
 
     <!-- SECTION 4: PSD MATRICES -->
-    <section class="card" id="section-4">
+    <section class="card-v2" id="section-4">
       <h2>4. Positive Semidefinite Matrices</h2>
 
       <h3>Definitions</h3>
@@ -412,7 +411,7 @@
     </section>
 
     <!-- SECTION 5: PROJECTIONS -->
-    <section class="card" id="section-5">
+    <section class="card-v2" id="section-5">
       <h2>5. Projections onto Subspaces and Affine Sets</h2>
 
       <h3>Orthogonal Projection onto a Subspace</h3>
@@ -441,7 +440,7 @@
     </section>
 
     <!-- SECTION 6: LEAST SQUARES -->
-    <section class="card" id="section-6">
+    <section class="card-v2" id="section-6">
       <h2>6. The Method of Least Squares</h2>
 
       <h3>The Problem: Overdetermined Systems</h3>
@@ -466,31 +465,221 @@
 
     </section>
 
-    <!-- SECTION 7: QR, SVD, PSEUDOINVERSE -->
-    <section class="card" id="section-7">
-      <h2>7. Solving Least Squares Robustly: QR, SVD, Pseudoinverse</h2>
+    <!-- SECTION 7: QR, SVD, PSEUDOINVERSE (COMPREHENSIVE) -->
+    <section class="card-v2" id="section-7">
+      <h2>7. Advanced Factorizations: QR, SVD, Pseudoinverse, and Applications</h2>
 
-      <h3>QR Method (Recommended in Practice)</h3>
-      <p>If $A = QR$ with $Q \in \mathbb{R}^{m \times n}$ ($Q^\top Q = I$) and $R \in \mathbb{R}^{n \times n}$ upper triangular, the least-squares solution solves:
-      $$ Rx^\star = Q^\top b \quad \text{(back substitution)} $$
-      This avoids forming $A^\top A$, which squares the condition number and amplifies round-off errors.</p>
+      <p><strong>Motivation:</strong> While Gaussian elimination and normal equations work in theory, numerical stability and efficiency demand better methods. The QR decomposition and Singular Value Decomposition (SVD) are the workhorses of modern numerical linear algebra—providing robust, stable solutions to least squares, revealing matrix structure, and enabling dimensionality reduction and data compression.</p>
 
-      <h3>Singular Value Decomposition (SVD)</h3>
-      <p>Every $A \in \mathbb{R}^{m \times n}$ admits $A = U\Sigma V^\top$, where:</p>
+      <!-- 7.1 QR Decomposition -->
+      <h3>7.1 QR Decomposition (Orthogonal-Triangular Factorization)</h3>
+
+      <h4>Theorem: Existence of QR Decomposition</h4>
+      <div class="proof-enhanced">
+        <p><strong>Statement:</strong> Every matrix $A \in \mathbb{R}^{m \times n}$ with $m \ge n$ can be factored as:
+        $$ A = QR $$
+        where $Q \in \mathbb{R}^{m \times n}$ has orthonormal columns ($Q^\top Q = I_n$) and $R \in \mathbb{R}^{n \times n}$ is upper triangular.</p>
+
+        <p><strong>Proof Sketch (Gram-Schmidt):</strong> Apply Gram-Schmidt orthogonalization to the columns of $A$:
+        $$
+        \begin{aligned}
+        q_1 &= a_1 / \|a_1\|_2, \quad r_{11} = \|a_1\|_2 \\
+        \tilde{q}_2 &= a_2 - (q_1^\top a_2) q_1, \quad q_2 = \tilde{q}_2 / \|\tilde{q}_2\|_2 \\
+        &\vdots
+        \end{aligned}
+        $$
+        The matrix $R$ stores the coefficients: $r_{ij} = q_i^\top a_j$ for $i \le j$, and $r_{ij} = 0$ for $i > j$. The process is numerically stabilized using <strong>Householder reflections</strong> or <strong>Givens rotations</strong> in practice.</p>
+      </div>
+
+      <h4>Solving Least Squares via QR</h4>
+      <p>Given $A = QR$, the least-squares problem $\min \|Ax - b\|_2$ becomes:
+      $$
+      \|Ax - b\|_2 = \|QRx - b\|_2 = \|Rx - Q^\top b\|_2
+      $$
+      (using $\|Qy\|_2 = \|y\|_2$). Thus, we solve:
+      $$ Rx^\star = Q^\top b $$
+      by back substitution. This is <strong>numerically stable</strong> and avoids forming $A^\top A$, which squares the condition number.</p>
+
+      <p><strong>Complexity:</strong> $O(mn^2)$ for computing QR, $O(n^2)$ for back substitution. For $m \gg n$, this is far more efficient than forming $A^\top A$ ($O(mn^2)$) and solving $A^\top A x = A^\top b$ ($O(n^3)$).</p>
+
+      <!-- 7.2 Singular Value Decomposition (COMPREHENSIVE) -->
+      <h3>7.2 Singular Value Decomposition (SVD): The Crown Jewel</h3>
+
+      <h4>7.2.1 Definition and Existence</h4>
+      <div class="proof-enhanced">
+        <p><strong>Theorem (SVD):</strong> Every matrix $A \in \mathbb{R}^{m \times n}$ admits a factorization:
+        $$ A = U \Sigma V^\top $$
+        where:</p>
+        <ul>
+          <li>$U \in \mathbb{R}^{m \times m}$ is orthogonal ($U^\top U = UU^\top = I_m$), with columns $u_1, \dots, u_m$ called <strong>left singular vectors</strong></li>
+          <li>$V \in \mathbb{R}^{n \times n}$ is orthogonal ($V^\top V = VV^\top = I_n$), with columns $v_1, \dots, v_n$ called <strong>right singular vectors</strong></li>
+          <li>$\Sigma \in \mathbb{R}^{m \times n}$ is a "diagonal" matrix with nonnegative entries $\sigma_1 \ge \sigma_2 \ge \cdots \ge \sigma_r > 0$ (the <strong>singular values</strong>), where $r = \text{rank}(A)$, and $\sigma_{r+1} = \cdots = 0$</li>
+        </ul>
+
+        <p><strong>Proof Sketch:</strong> Consider $A^\top A \in \mathbb{S}_+^n$. By the spectral theorem, $A^\top A = V \Lambda V^\top$ where $\Lambda = \text{diag}(\lambda_1, \dots, \lambda_n)$ with $\lambda_i \ge 0$. Define $\sigma_i = \sqrt{\lambda_i}$ and $\Sigma = \text{diag}(\sigma_1, \dots, \sigma_r, 0, \dots, 0)$. For $i \le r$, set $u_i = Av_i / \sigma_i$. Extend $\{u_1, \dots, u_r\}$ to an orthonormal basis of $\mathbb{R}^m$ to form $U$. Then $A = U \Sigma V^\top$ follows from construction.</p>
+      </div>
+
+      <h4>7.2.2 Compact and Truncated SVD</h4>
+      <p>When $m \gg n$ or $A$ has low rank $r \ll \min(m,n)$, we can use more efficient representations:</p>
       <ul>
-        <li>$U \in \mathbb{R}^{m \times m}$ and $V \in \mathbb{R}^{n \times n}$ are orthogonal</li>
-        <li>$\Sigma \in \mathbb{R}^{m \times n}$ is diagonal with nonnegative entries $\sigma_1 \ge \cdots \ge \sigma_r > 0$, $r = \mathrm{rank}(A)$</li>
+        <li><strong>Full SVD:</strong> $A = U_{m \times m} \Sigma_{m \times n} V^\top_{n \times n}$ (standard form, $U$ and $V$ square)</li>
+        <li><strong>Compact (Reduced) SVD:</strong> $A = U_r \Sigma_r V_r^\top$, where $U_r \in \mathbb{R}^{m \times r}$, $\Sigma_r = \text{diag}(\sigma_1, \dots, \sigma_r) \in \mathbb{R}^{r \times r}$, $V_r \in \mathbb{R}^{n \times r}$. Eliminates zero singular values.</li>
+        <li><strong>Truncated SVD (rank-$k$ approximation):</strong> $A_k = U_k \Sigma_k V_k^\top = \sum_{i=1}^k \sigma_i u_i v_i^\top$, using only the top $k$ singular values ($k < r$). This is the <strong>best rank-$k$ approximation</strong> to $A$ in both Frobenius and spectral norms (Eckart-Young theorem).</li>
       </ul>
 
-      <p>The SVD provides the most robust method for computing the <b>pseudoinverse</b> of a matrix, denoted $A^+$:
-      $$ A^+ = V\Sigma^+ U^\top $$
-      where $\Sigma^+$ is formed by taking the reciprocal of the non-zero singular values and transposing the resulting matrix. The pseudoinverse provides the minimum-norm solution to the least squares problem:
-      $$ x^\star = A^+ b $$
-      This solution is numerically stable even when $A$ is rank-deficient or ill-conditioned.</p>
+      <h4>7.2.3 Geometric Interpretation</h4>
+      <p>The SVD reveals how $A$ acts as a linear transformation:</p>
+      <ol>
+        <li><strong>$V^\top$:</strong> Rotates (and possibly reflects) input space, aligning with principal axes</li>
+        <li><strong>$\Sigma$:</strong> Scales along these axes by $\sigma_1, \dots, \sigma_r$</li>
+        <li><strong>$U$:</strong> Rotates (and possibly reflects) the scaled space to output space</li>
+      </ol>
+      <p>Thus, $A$ transforms the unit sphere in $\mathbb{R}^n$ into an ellipsoid in $\mathbb{R}^m$ with semi-axes of lengths $\sigma_1, \dots, \sigma_r$.</p>
 
-      <h3>The Condition Number</h3>
-      <p>The <b>condition number</b> of a matrix, $\kappa(A) = \frac{\sigma_{\max}}{\sigma_{\min}}$, measures how sensitive the solution of a linear system is to perturbations in the input data. A large condition number indicates that even small numerical errors can be greatly amplified. The normal equations are particularly susceptible to this, as $\kappa(A^\top A) = \kappa(A)^2$. This is why direct methods like QR and SVD are preferred in practice.</p>
+      <p><strong>Visualizing SVD:</strong> For $A \in \mathbb{R}^{2 \times 2}$, consider $A = U \Sigma V^\top$ acting on the unit circle. $V^\top$ rotates to align with $v_1, v_2$; $\Sigma$ stretches by $\sigma_1, \sigma_2$; $U$ rotates to align with $u_1, u_2$. The result is an ellipse with semi-major axis $\sigma_1 u_1$ and semi-minor axis $\sigma_2 u_2$.</p>
 
+      <h4>7.2.4 SVD and Matrix Norms</h4>
+      <p>Singular values determine all major matrix norms:</p>
+      <ul>
+        <li><strong>Spectral norm (2-norm):</strong> $\|A\|_2 = \sigma_1 = \sigma_{\max}(A)$ (largest singular value)</li>
+        <li><strong>Frobenius norm:</strong> $\|A\|_F = \sqrt{\sum_{i,j} a_{ij}^2} = \sqrt{\sum_{i=1}^r \sigma_i^2}$ (square root of sum of squared singular values)</li>
+        <li><strong>Nuclear norm (trace norm):</strong> $\|A\|_* = \sum_{i=1}^r \sigma_i$ (sum of singular values, convex envelope of rank)</li>
+      </ul>
+
+      <h4>7.2.5 The Eckart-Young-Mirsky Theorem</h4>
+      <div class="proof-enhanced">
+        <p><strong>Theorem (Optimal Low-Rank Approximation):</strong> Let $A = U \Sigma V^\top$ be the SVD of $A \in \mathbb{R}^{m \times n}$ with rank $r$. For any $k < r$, the best rank-$k$ approximation to $A$ in the Frobenius norm is:
+        $$ A_k = \sum_{i=1}^k \sigma_i u_i v_i^\top = U_k \Sigma_k V_k^\top $$
+        and the approximation error is:
+        $$ \min_{\text{rank}(B) \le k} \|A - B\|_F = \|A - A_k\|_F = \sqrt{\sum_{i=k+1}^r \sigma_i^2} $$
+        The same result holds for the spectral norm:
+        $$ \min_{\text{rank}(B) \le k} \|A - B\|_2 = \|A - A_k\|_2 = \sigma_{k+1} $$</p>
+
+        <p><strong>Proof Sketch:</strong> By the SVD, $A = \sum_{i=1}^r \sigma_i u_i v_i^\top$. Any rank-$k$ matrix $B$ lies in a $k$-dimensional subspace. The projection theorem and properties of orthogonal bases yield that the optimal choice is to keep the top $k$ terms. The error is orthogonal to the retained subspace, giving the stated formulas.</p>
+      </div>
+
+      <p><strong>Applications:</strong> This theorem is the foundation for:</p>
+      <ul>
+        <li><strong>Data compression:</strong> Store only top-$k$ singular vectors and values (image/video compression)</li>
+        <li><strong>Denoising:</strong> Remove noise by truncating small singular values</li>
+        <li><strong>Dimensionality reduction:</strong> Project data onto top-$k$ principal components (PCA)</li>
+        <li><strong>Recommender systems:</strong> Matrix completion via low-rank factorization (Netflix Prize)</li>
+      </ul>
+
+      <h4>7.2.6 Connection to Eigendecomposition</h4>
+      <p>For <strong>symmetric</strong> $A = A^\top$, the SVD reduces to the spectral theorem:</p>
+      <ul>
+        <li>Eigenvalues $\lambda_i$ and singular values $\sigma_i$ are related: $\sigma_i = |\lambda_i|$</li>
+        <li>If $A \succeq 0$ (PSD), then $\lambda_i \ge 0$ and $\sigma_i = \lambda_i$, so $A = Q \Lambda Q^\top = U \Sigma V^\top$ with $U = V = Q$</li>
+      </ul>
+      <p>For <strong>general</strong> (non-symmetric) $A$:</p>
+      <ul>
+        <li>Eigenvalues of $A$ may be complex; singular values are always real and nonnegative</li>
+        <li>$A^\top A$ has eigenvalues $\lambda_i = \sigma_i^2$ and eigenvectors $v_i$ (right singular vectors of $A$)</li>
+        <li>$A A^\top$ has eigenvalues $\lambda_i = \sigma_i^2$ and eigenvectors $u_i$ (left singular vectors of $A$)</li>
+      </ul>
+
+      <!-- 7.3 Pseudoinverse (Moore-Penrose Inverse) -->
+      <h3>7.3 The Pseudoinverse (Moore-Penrose Inverse)</h3>
+
+      <h4>7.3.1 Definition via SVD</h4>
+      <p>For $A = U \Sigma V^\top$ with singular values $\sigma_1, \dots, \sigma_r > 0$, the <strong>pseudoinverse</strong> is:
+      $$ A^+ = V \Sigma^+ U^\top $$
+      where $\Sigma^+ \in \mathbb{R}^{n \times m}$ is formed by taking the reciprocal of nonzero singular values and transposing:
+      $$ \Sigma^+ = \begin{bmatrix} \text{diag}(1/\sigma_1, \dots, 1/\sigma_r) & 0 \\ 0 & 0 \end{bmatrix}^\top $$</p>
+
+      <h4>7.3.2 Moore-Penrose Axioms</h4>
+      <p>The pseudoinverse $A^+$ is the <strong>unique</strong> matrix satisfying:</p>
+      <ol>
+        <li>$A A^+ A = A$</li>
+        <li>$A^+ A A^+ = A^+$</li>
+        <li>$(A A^+)^\top = A A^+$ (symmetric)</li>
+        <li>$(A^+ A)^\top = A^+ A$ (symmetric)</li>
+      </ol>
+      <p>These axioms uniquely define $A^+$ without reference to SVD.</p>
+
+      <h4>7.3.3 Properties and Applications</h4>
+      <ul>
+        <li><strong>Least squares:</strong> $x^+ = A^+ b$ is the <strong>minimum-norm least-squares solution</strong>: it minimizes $\|Ax - b\|_2$ over all $x$, and among all minimizers, it has the smallest $\|x\|_2$.</li>
+        <li><strong>Inverse when invertible:</strong> If $A$ is square and invertible, $A^+ = A^{-1}$.</li>
+        <li><strong>Projectors:</strong> $P_{\mathcal{R}(A)} = A A^+$ projects onto $\mathcal{R}(A)$; $P_{\mathcal{R}(A^\top)} = A^+ A$ projects onto $\mathcal{R}(A^\top)$.</li>
+        <li><strong>Solution to $Ax = b$:</strong> The general solution is $x = A^+ b + (I - A^+ A) z$ for any $z \in \mathbb{R}^n$ (parametrizes the nullspace component).</li>
+      </ul>
+
+      <!-- 7.4 Principal Component Analysis (PCA) -->
+      <h3>7.4 Principal Component Analysis (PCA) via SVD</h3>
+
+      <p><strong>Problem:</strong> Given data $X \in \mathbb{R}^{n \times d}$ ($n$ samples, $d$ features), find a $k$-dimensional subspace that captures maximum variance.</p>
+
+      <h4>PCA Algorithm:</h4>
+      <ol>
+        <li><strong>Center the data:</strong> $\tilde{X} = X - \mathbf{1} \mu^\top$ where $\mu = \frac{1}{n} X^\top \mathbf{1}$ (column means)</li>
+        <li><strong>Compute SVD:</strong> $\tilde{X} = U \Sigma V^\top$</li>
+        <li><strong>Principal components:</strong> The columns of $V$ are the <strong>principal directions</strong> (eigenvectors of covariance matrix $C = \frac{1}{n} \tilde{X}^\top \tilde{X}$)</li>
+        <li><strong>Variance explained:</strong> The $i$-th principal component explains variance $\sigma_i^2 / n$</li>
+        <li><strong>Projection:</strong> Project onto top-$k$ components: $Z = \tilde{X} V_k \in \mathbb{R}^{n \times k}$</li>
+      </ol>
+
+      <p><strong>Why SVD?</strong> The covariance matrix $C = \frac{1}{n} \tilde{X}^\top \tilde{X} = \frac{1}{n} V \Sigma^2 V^\top$ (from SVD). Eigenvalues of $C$ are $\sigma_i^2 / n$, eigenvectors are columns of $V$. SVD directly provides the principal components without forming $C$ explicitly—more stable and efficient.</p>
+
+      <p><strong>Applications:</strong></p>
+      <ul>
+        <li>Dimensionality reduction for visualization (e.g., projecting $\mathbb{R}^{1000}$ to $\mathbb{R}^2$)</li>
+        <li>Feature extraction in machine learning (reducing input dimension)</li>
+        <li>Data compression (JPEG, video codecs)</li>
+        <li>Noise reduction (truncate components with low variance)</li>
+      </ul>
+
+      <!-- 7.5 Condition Numbers and Perturbation Theory -->
+      <h3>7.5 Condition Numbers and Numerical Stability</h3>
+
+      <h4>7.5.1 Definition</h4>
+      <p>The <strong>condition number</strong> of a matrix $A \in \mathbb{R}^{m \times n}$ with $\text{rank}(A) = n$ is:
+      $$ \kappa(A) = \frac{\sigma_{\max}(A)}{\sigma_{\min}(A)} = \frac{\sigma_1}{\sigma_n} $$
+      For square nonsingular $A$, this is equivalent to $\kappa(A) = \|A\|_2 \|A^{-1}\|_2$.</p>
+
+      <h4>7.5.2 Interpretation</h4>
+      <p>The condition number measures how <strong>sensitive</strong> the solution of $Ax = b$ is to perturbations in $A$ or $b$:</p>
+      <ul>
+        <li><strong>Well-conditioned ($\kappa \approx 1$):</strong> $\sigma_1 \approx \sigma_n$; matrix is "balanced"; small changes in input → small changes in output</li>
+        <li><strong>Ill-conditioned ($\kappa \gg 1$):</strong> $\sigma_1 \gg \sigma_n$; matrix is nearly singular; small changes in input → large changes in output</li>
+      </ul>
+
+      <h4>7.5.3 Perturbation Bound</h4>
+      <div class="proof-enhanced">
+        <p><strong>Theorem (Relative Error Bound):</strong> Let $Ax = b$ and $A(x + \Delta x) = b + \Delta b$. If $\|\Delta b\|_2 / \|b\|_2$ is small, then:
+        $$ \frac{\|\Delta x\|_2}{\|x\|_2} \le \kappa(A) \frac{\|\Delta b\|_2}{\|b\|_2} $$</p>
+
+        <p><strong>Implication:</strong> A perturbation of size $\epsilon$ in $b$ can cause a perturbation of size $\kappa(A) \cdot \epsilon$ in $x$. If $\kappa(A) = 10^{10}$ and we have machine precision $\epsilon_{\text{mach}} \approx 10^{-16}$, we lose $\log_{10}(\kappa) = 10$ digits of precision!</p>
+      </div>
+
+      <h4>7.5.4 Why Normal Equations Fail</h4>
+      <p>The normal equations $A^\top A x = A^\top b$ square the condition number:
+      $$ \kappa(A^\top A) = \frac{\sigma_1^2}{\sigma_n^2} = \kappa(A)^2 $$
+      If $A$ is already ill-conditioned, forming $A^\top A$ makes it catastrophically worse. <strong>This is why QR and SVD are preferred.</strong></p>
+
+      <!-- 7.6 Numerical Algorithms -->
+      <h3>7.6 Numerical Algorithms for SVD</h3>
+
+      <h4>7.6.1 Golub-Kahan-Reinsch Algorithm</h4>
+      <p>The standard algorithm for computing SVD:</p>
+      <ol>
+        <li><strong>Bidiagonalization:</strong> Reduce $A$ to bidiagonal form $B$ using Householder reflections: $A = U_1 B V_1^\top$ (cost: $O(mn^2)$)</li>
+        <li><strong>Iterative diagonalization:</strong> Apply QR iterations to $B$ to diagonalize it: $B = U_2 \Sigma V_2^\top$ (cost: $O(n^2)$ iterations)</li>
+        <li><strong>Combine:</strong> $A = (U_1 U_2) \Sigma (V_1 V_2)^\top$</li>
+      </ol>
+      <p><strong>Total complexity:</strong> $O(mn^2)$ for $m \ge n$. For large-scale problems, randomized SVD algorithms achieve $O(mn \log k)$ for rank-$k$ approximation.</p>
+
+      <h4>7.6.2 Randomized SVD (for Large Matrices)</h4>
+      <p>For massive matrices where exact SVD is prohibitive, <strong>randomized algorithms</strong> provide fast, accurate rank-$k$ approximations:</p>
+      <ol>
+        <li>Sample $k + p$ random vectors and form $Q$ via QR of $A \Omega$ ($\Omega$ random)</li>
+        <li>Compute SVD of small matrix $Q^\top A$</li>
+        <li>Reconstruct approximate SVD of $A$</li>
+      </ol>
+      <p>Complexity: $O(mn \log k)$ vs $O(mn^2)$ for full SVD. Used in big data applications (Netflix, Google).</p>
+
+      <!-- Interactive Widgets -->
       <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive Demo: SVD for Image Compression</h3>
         <p><b>The Power of Low-Rank Approximation:</b> The Singular Value Decomposition (SVD) reveals that many real-world matrices (like images) can be accurately approximated using only their largest singular values. This demo lets you:</p>
@@ -515,14 +704,357 @@
         <div id="widget-condition-number" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <h3>Projection Revisited (with SVD)</h3>
-      <p>The projector onto $\mathcal{R}(A)$ is:
-      $$ P = UU^\top \quad \text{(using only the first $r$ columns of $U$)} \quad \text{or} \quad P = AA^+ $$
-      Both are symmetric idempotent; both send any $b$ to its closest point in $\mathcal{R}(A)$.</p>
+      <!-- 7.7 Projection Revisited -->
+      <h3>7.7 Projection Revisited (with SVD)</h3>
+      <p>Using the SVD $A = U \Sigma V^\top$ with rank $r$, the projector onto $\mathcal{R}(A)$ is:
+      $$ P_{\mathcal{R}(A)} = U_r U_r^\top = A A^+ $$
+      where $U_r$ consists of the first $r$ columns of $U$ (corresponding to nonzero singular values). Similarly:
+      $$ P_{\mathcal{R}(A^\top)} = V_r V_r^\top = A^+ A $$
+      Both are symmetric ($P^\top = P$) and idempotent ($P^2 = P$), and they send any vector to its closest point in the respective subspace.</p>
+
+      <h3>7.8 Summary: When to Use What</h3>
+      <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+        <thead>
+          <tr style="background: var(--panel); border-bottom: 2px solid var(--border);">
+            <th style="padding: 8px; text-align: left;">Method</th>
+            <th style="padding: 8px; text-align: left;">When to Use</th>
+            <th style="padding: 8px; text-align: left;">Complexity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;"><strong>Normal Equations</strong></td>
+            <td style="padding: 8px;">Small, well-conditioned problems; theoretical derivations</td>
+            <td style="padding: 8px;">$O(mn^2 + n^3)$</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;"><strong>QR Decomposition</strong></td>
+            <td style="padding: 8px;">Standard least squares; numerically stable; full rank</td>
+            <td style="padding: 8px;">$O(mn^2)$</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;"><strong>SVD</strong></td>
+            <td style="padding: 8px;">Rank-deficient, ill-conditioned; minimum-norm solution; analysis</td>
+            <td style="padding: 8px;">$O(mn^2)$</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px;"><strong>Randomized SVD</strong></td>
+            <td style="padding: 8px;">Large-scale, low-rank approximation; big data</td>
+            <td style="padding: 8px;">$O(mn \log k)$</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
+
+      <!-- 7.9 Comprehensive Worked Examples -->
+      <h3>7.9 Comprehensive Worked Examples</h3>
+
+      <h4>Example 7.1: Computing SVD by Hand (2×2 Matrix)</h4>
+      <div class="proof-enhanced">
+        <p><strong>Problem:</strong> Compute the SVD of $A = \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix}$.</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Compute $A^\top A$.</strong>
+          $$
+          A^\top A = \begin{bmatrix} 3 & 4 \\ 0 & 5 \end{bmatrix} \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix} = \begin{bmatrix} 25 & 20 \\ 20 & 25 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Find eigenvalues of $A^\top A$.</strong> The characteristic polynomial is:
+          $$
+          \det(A^\top A - \lambda I) = \det\begin{bmatrix} 25-\lambda & 20 \\ 20 & 25-\lambda \end{bmatrix} = (25-\lambda)^2 - 400 = \lambda^2 - 50\lambda + 225
+          $$
+          Solving: $\lambda_1 = 45$, $\lambda_2 = 5$. Thus $\sigma_1 = \sqrt{45} = 3\sqrt{5} \approx 6.708$ and $\sigma_2 = \sqrt{5} \approx 2.236$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Find eigenvectors (right singular vectors $V$).</strong>
+          <ul>
+            <li>For $\lambda_1 = 45$: $(A^\top A - 45I)v = 0$ gives $v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$</li>
+            <li>For $\lambda_2 = 5$: $(A^\top A - 5I)v = 0$ gives $v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$</li>
+          </ul>
+          Thus $V = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Compute left singular vectors $U$.</strong> Use $u_i = Av_i / \sigma_i$:
+          $$
+          u_1 = \frac{1}{\sigma_1} A v_1 = \frac{1}{3\sqrt{5}} \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix} \frac{1}{\sqrt{2}} \begin{bmatrix} 1 \\ 1 \end{bmatrix} = \frac{1}{3\sqrt{10}} \begin{bmatrix} 3 \\ 9 \end{bmatrix} = \frac{1}{\sqrt{10}} \begin{bmatrix} 1 \\ 3 \end{bmatrix}
+          $$
+          $$
+          u_2 = \frac{1}{\sigma_2} A v_2 = \frac{1}{\sqrt{5}} \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix} \frac{1}{\sqrt{2}} \begin{bmatrix} 1 \\ -1 \end{bmatrix} = \frac{1}{\sqrt{10}} \begin{bmatrix} 3 \\ -1 \end{bmatrix}
+          $$
+          Thus $U = \frac{1}{\sqrt{10}} \begin{bmatrix} 1 & 3 \\ 3 & -1 \end{bmatrix}$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 5: Assemble the SVD.</strong>
+          $$
+          A = U \Sigma V^\top = \frac{1}{\sqrt{10}} \begin{bmatrix} 1 & 3 \\ 3 & -1 \end{bmatrix} \begin{bmatrix} 3\sqrt{5} & 0 \\ 0 & \sqrt{5} \end{bmatrix} \frac{1}{\sqrt{2}} \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Verification:</strong> Check that $U^\top U = I$, $V^\top V = I$, and $U \Sigma V^\top = A$.
+        </div>
+      </div>
+
+      <h4>Example 7.2: Low-Rank Approximation for Data Compression</h4>
+      <div class="proof-enhanced">
+        <p><strong>Problem:</strong> Given data matrix $X \in \mathbb{R}^{100 \times 50}$ (100 samples, 50 features) with $\text{rank}(X) = 50$, compute a rank-10 approximation that retains 90% of the "energy" (Frobenius norm squared).</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Compute SVD.</strong> $X = U \Sigma V^\top$ where $\Sigma = \text{diag}(\sigma_1, \dots, \sigma_{50})$ with $\sigma_1 \ge \cdots \ge \sigma_{50} > 0$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Energy in each component.</strong> The total energy is:
+          $$
+          \|X\|_F^2 = \sum_{i=1}^{50} \sigma_i^2
+          $$
+          The energy retained by the rank-$k$ approximation is:
+          $$
+          \|X_k\|_F^2 = \sum_{i=1}^k \sigma_i^2
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Choose $k$ to retain 90% energy.</strong> Find the smallest $k$ such that:
+          $$
+          \frac{\sum_{i=1}^k \sigma_i^2}{\sum_{i=1}^{50} \sigma_i^2} \ge 0.90
+          $$
+          Suppose this gives $k = 10$ (typical for real data with decaying singular values).
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Form approximation.</strong>
+          $$
+          X_{10} = U_{:,1:10} \Sigma_{1:10,1:10} V_{:,1:10}^\top = \sum_{i=1}^{10} \sigma_i u_i v_i^\top
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Storage savings:</strong>
+          <ul>
+            <li><strong>Original:</strong> $100 \times 50 = 5000$ numbers</li>
+            <li><strong>Rank-10 approximation:</strong> $10(100 + 1 + 50) = 1510$ numbers (storing $U_{:,1:10}$, $\Sigma_{1:10,1:10}$, $V_{:,1:10}$)</li>
+            <li><strong>Compression ratio:</strong> $5000/1510 \approx 3.3\times$ with 90% energy retained</li>
+          </ul>
+        </div>
+      </div>
+
+      <h4>Example 7.3: Solving Rank-Deficient Least Squares</h4>
+      <div class="proof-enhanced">
+        <p><strong>Problem:</strong> Solve $\min \|Ax - b\|_2$ where $A = \begin{bmatrix} 1 & 2 & 3 \\ 2 & 4 & 6 \end{bmatrix}$ (rank 1) and $b = \begin{bmatrix} 1 \\ 2 \end{bmatrix}$.</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Recognize rank deficiency.</strong> The second row is $2 \times$ the first row, so $\text{rank}(A) = 1$. Normal equations $A^\top A x = A^\top b$ will be singular.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Compute (compact) SVD.</strong> For this simple case:
+          $$
+          A = \sigma_1 u_1 v_1^\top \quad \text{where } \sigma_1 = \sqrt{1^2 + 2^2 + 3^2 + 2^2 + 4^2 + 6^2} = \sqrt{70}
+          $$
+          $$
+          u_1 = \frac{1}{\sqrt{5}} \begin{bmatrix} 1 \\ 2 \end{bmatrix}, \quad v_1 = \frac{1}{\sqrt{14}} \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Compute pseudoinverse.</strong>
+          $$
+          A^+ = V \Sigma^+ U^\top = \frac{1}{\sigma_1} v_1 u_1^\top = \frac{1}{70} \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix} \begin{bmatrix} 1 & 2 \end{bmatrix} = \frac{1}{70} \begin{bmatrix} 1 & 2 \\ 2 & 4 \\ 3 & 6 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Minimum-norm solution.</strong>
+          $$
+          x^+ = A^+ b = \frac{1}{70} \begin{bmatrix} 1 & 2 \\ 2 & 4 \\ 3 & 6 \end{bmatrix} \begin{bmatrix} 1 \\ 2 \end{bmatrix} = \frac{1}{70} \begin{bmatrix} 5 \\ 10 \\ 15 \end{bmatrix} = \frac{1}{14} \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Verification:</strong>
+          <ul>
+            <li>$Ax^+ = A \cdot \frac{1}{14}v_1 = \frac{\sigma_1}{14} u_1 v_1^\top v_1 = \frac{\sqrt{70}}{14} \cdot \sqrt{14} u_1 = \frac{1}{2}\sqrt{5} \cdot \frac{1}{\sqrt{5}}\begin{bmatrix} 1 \\ 2 \end{bmatrix} = \frac{1}{2}\begin{bmatrix} 1 \\ 2 \end{bmatrix}$</li>
+            <li>Residual: $\|Ax^+ - b\|_2 = \left\|\frac{1}{2}\begin{bmatrix} 1 \\ 2 \end{bmatrix} - \begin{bmatrix} 1 \\ 2 \end{bmatrix}\right\|_2 = \frac{1}{2}\sqrt{5}$</li>
+            <li>This is the minimum possible (since $b \notin \mathcal{R}(A)$)</li>
+            <li>Among all minimizers, $x^+$ has the smallest norm: $\|x^+\|_2 = \frac{1}{14}\sqrt{14} = \frac{1}{\sqrt{14}}$</li>
+          </ul>
+        </div>
+      </div>
+
+      <h4>Example 7.4: Condition Number Analysis</h4>
+      <div class="proof-enhanced">
+        <p><strong>Problem:</strong> Compare the condition numbers of $A$ and $A^\top A$ for $A = \begin{bmatrix} 1 & 0 \\ 0 & 0.01 \\ 0 & 0 \end{bmatrix}$.</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Compute singular values of $A$.</strong> For this matrix, $\sigma_1 = 1$ and $\sigma_2 = 0.01$ (diagonal structure makes this immediate). Thus:
+          $$
+          \kappa(A) = \frac{\sigma_1}{\sigma_2} = \frac{1}{0.01} = 100
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Compute $A^\top A$.</strong>
+          $$
+          A^\top A = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0.01 & 0 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 0.01 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 0.0001 \end{bmatrix}
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Condition number of $A^\top A$.</strong> Eigenvalues are 1 and 0.0001, so:
+          $$
+          \kappa(A^\top A) = \frac{1}{0.0001} = 10000 = \kappa(A)^2
+          $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Implication:</strong> If $A$ already has $\kappa(A) = 100$, forming $A^\top A$ makes it $\kappa = 10^4$—catastrophically worse. With machine precision $\epsilon_{\text{mach}} \approx 10^{-16}$, we lose $\log_{10}(10^4) = 4$ digits of precision!
+        </div>
+
+        <div class="proof-step">
+          <strong>Solution:</strong> Use QR or SVD to avoid forming $A^\top A$ explicitly.
+        </div>
+      </div>
+
+      <!-- 7.10 Applications to Optimization -->
+      <h3>7.10 SVD Applications in Convex Optimization</h3>
+
+      <h4>7.10.1 Preconditioning Gradient Descent</h4>
+      <p>Consider minimizing a quadratic $f(x) = \frac{1}{2}x^\top A x - b^\top x$ where $A = U \Sigma^2 U^\top \succ 0$. Standard gradient descent has convergence rate dependent on $\kappa(A)$:</p>
+      $$
+      \left\|x^{(k)} - x^*\right\|_A \le \left(\frac{\kappa(A) - 1}{\kappa(A) + 1}\right)^k \|x^{(0)} - x^*\|_A
+      $$
+      <p>For $\kappa(A) = 10^4$, convergence is painfully slow. <strong>Preconditioning</strong> via SVD:</p>
+      <ol>
+        <li>Change variables: $y = \Sigma U^\top x$ (whitening transformation)</li>
+        <li>In $y$-space, the problem becomes $\min \frac{1}{2}\|y\|_2^2 - \tilde{b}^\top y$ where $\tilde{b} = \Sigma^{-1} U^\top b$</li>
+        <li>Hessian in $y$-space is $I$ (perfectly conditioned!), so gradient descent converges in one step</li>
+        <li>Transform back: $x^* = U \Sigma^{-1} y^*$</li>
+      </ol>
+      <p>This is the essence of <strong>Newton's method</strong>: use second-order information (Hessian = $A$) to precondition.</p>
+
+      <h4>7.10.2 Total Least Squares (TLS)</h4>
+      <p>Standard least squares minimizes $\|Ax - b\|_2$ assuming $A$ is exact and $b$ is noisy. <strong>Total Least Squares</strong> accounts for errors in both:</p>
+      $$
+      \min_{\Delta A, \Delta b, x} \left\|\begin{bmatrix} \Delta A & \Delta b \end{bmatrix}\right\|_F \quad \text{s.t.} \quad (A + \Delta A)x = b + \Delta b
+      $$
+      <p><strong>Solution via SVD:</strong> Form augmented matrix $[A \mid b]$ and compute SVD. The TLS solution is given by the right singular vector corresponding to the smallest singular value. This is used in errors-in-variables regression.</p>
+
+      <h4>7.10.3 Matrix Completion and Recommender Systems</h4>
+      <p>The <strong>Netflix Prize</strong> problem: Given a sparse ratings matrix $R \in \mathbb{R}^{m \times n}$ (users × movies) with only $\sim$1% entries observed, recover the full matrix. Assumption: $R$ is low-rank (users have a few latent preferences).</p>
+      <p><strong>Formulation:</strong></p>
+      $$
+      \min_{X \in \mathbb{R}^{m \times n}} \text{rank}(X) \quad \text{s.t.} \quad X_{ij} = R_{ij} \text{ for observed } (i,j)
+      $$
+      <p>Since $\text{rank}(\cdot)$ is non-convex, relax to the <strong>nuclear norm</strong> (convex envelope of rank):</p>
+      $$
+      \min_{X \in \mathbb{R}^{m \times n}} \|X\|_* = \sum_i \sigma_i(X) \quad \text{s.t.} \quad X_{ij} = R_{ij} \text{ for observed } (i,j)
+      $$
+      <p>This is a <strong>semidefinite program</strong> (SDP), solvable via convex optimization. The nuclear norm promotes low-rank solutions.</p>
+
+      <h4>7.10.4 Robust PCA: Separating Low-Rank and Sparse Components</h4>
+      <p>Given data $M = L + S$ where $L$ is low-rank (signal) and $S$ is sparse (outliers/noise), recover both:</p>
+      $$
+      \min_{L, S} \|L\|_* + \lambda \|S\|_1 \quad \text{s.t.} \quad L + S = M
+      $$
+      <p>This convex formulation (Principal Component Pursuit) provably recovers $L$ and $S$ under mild conditions. Applications: video surveillance (background = low-rank, foreground = sparse), data cleaning, anomaly detection.</p>
+
+      <h4>7.10.5 Dimensionality Reduction for Large-Scale Optimization</h4>
+      <p>For problems with $n \gg 1$ variables but low effective dimension (e.g., $x$ lies near a $k$-dimensional subspace), use SVD to reduce dimension:</p>
+      <ol>
+        <li>Collect samples $x^{(1)}, \dots, x^{(m)}$ from the feasible set or initialization</li>
+        <li>Form data matrix $X = [x^{(1)} \cdots x^{(m)}]$ and compute SVD: $X = U \Sigma V^\top$</li>
+        <li>Identify dominant subspace: keep top $k$ left singular vectors $U_k$</li>
+        <li>Parametrize $x = U_k y$ where $y \in \mathbb{R}^k$ (dimension reduction from $n$ to $k$)</li>
+        <li>Solve optimization problem in reduced space (much faster)</li>
+      </ol>
+      <p>This is used in <strong>active subspace methods</strong> for high-dimensional inverse problems and PDE-constrained optimization.</p>
+
+      <!-- 7.11 Computational Considerations -->
+      <h3>7.11 Computational Considerations and Software</h3>
+
+      <h4>7.11.1 When NOT to Compute Full SVD</h4>
+      <p>For a matrix $A \in \mathbb{R}^{m \times n}$ with $m, n \approx 10^6$, full SVD costs $O(mn^2) \approx 10^{18}$ operations—infeasible! Alternatives:</p>
+      <ul>
+        <li><strong>Truncated SVD:</strong> Use iterative methods (Lanczos, Arnoldi) to compute only top $k$ singular values/vectors. Cost: $O(mnk)$ with $k \ll n$. Libraries: ARPACK, PROPACK.</li>
+        <li><strong>Randomized SVD:</strong> Cost $O(mn \log k)$. Libraries: scikit-learn (<code>TruncatedSVD</code>), Facebook's <code>fbpca</code>, <code>redsvd</code>.</li>
+        <li><strong>Streaming SVD:</strong> For data that doesn't fit in memory, update SVD incrementally as new rows arrive.</li>
+      </ul>
+
+      <h4>7.11.2 Numerical Stability: Avoiding $A^\top A$</h4>
+      <p><strong>Bad practice (loses precision):</strong></p>
+      <pre style="background: var(--panel); padding: 12px; border-radius: 4px; overflow-x: auto;">
+# Python / NumPy example (DON'T DO THIS for ill-conditioned A!)
+import numpy as np
+AtA = A.T @ A
+eigenvalues, V = np.linalg.eigh(AtA)
+sigma = np.sqrt(eigenvalues)  # numerical errors amplified!</pre>
+
+      <p><strong>Good practice (numerically stable):</strong></p>
+      <pre style="background: var(--panel); padding: 12px; border-radius: 4px; overflow-x: auto;">
+# Python / NumPy example
+import numpy as np
+U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</pre>
+
+      <h4>7.11.3 Software Recommendations</h4>
+      <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+        <thead>
+          <tr style="background: var(--panel); border-bottom: 2px solid var(--border);">
+            <th style="padding: 8px; text-align: left;">Language</th>
+            <th style="padding: 8px; text-align: left;">Library</th>
+            <th style="padding: 8px; text-align: left;">Function</th>
+            <th style="padding: 8px; text-align: left;">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;">Python</td>
+            <td style="padding: 8px;"><code>numpy.linalg</code></td>
+            <td style="padding: 8px;"><code>svd(A)</code></td>
+            <td style="padding: 8px;">Full SVD via LAPACK (dgesdd)</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;">Python</td>
+            <td style="padding: 8px;"><code>scipy.sparse.linalg</code></td>
+            <td style="padding: 8px;"><code>svds(A, k)</code></td>
+            <td style="padding: 8px;">Sparse truncated SVD (top k)</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;">MATLAB</td>
+            <td style="padding: 8px;">Built-in</td>
+            <td style="padding: 8px;"><code>[U,S,V] = svd(A)</code></td>
+            <td style="padding: 8px;">Full or economy SVD</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;">Julia</td>
+            <td style="padding: 8px;"><code>LinearAlgebra</code></td>
+            <td style="padding: 8px;"><code>svd(A)</code></td>
+            <td style="padding: 8px;">Fast, via OpenBLAS/MKL</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px;">C/C++</td>
+            <td style="padding: 8px;">LAPACK</td>
+            <td style="padding: 8px;"><code>dgesvd</code> / <code>dgesdd</code></td>
+            <td style="padding: 8px;">Production-grade, highly optimized</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>7.11.4 Sparse vs Dense SVD</h4>
+      <p><strong>Sparse matrices:</strong> If $A$ has mostly zeros (e.g., graph Laplacians, finite element matrices), use specialized sparse SVD algorithms that exploit sparsity. Never convert to dense!</p>
+      <p><strong>Structured matrices:</strong> For Toeplitz, circulant, or FFT-structured matrices, fast $O(n \log n)$ multiplication enables iterative SVD via Krylov methods.</p>
+
+      <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
     </section>
 
     <!-- SECTION 8: VARIANTS -->
-    <section class="card" id="section-8">
+    <section class="card-v2" id="section-8">
       <h2>8. Variants You Will Need</h2>
 
       <h3>(a) Weighted Least Squares (WLS)</h3>
@@ -538,10 +1070,10 @@
     </section>
 
     <!-- SECTION 9: WORKED EXAMPLES -->
-    <section class="card" id="section-9">
+    <section class="card-v2" id="section-9">
       <h2>9. Worked Examples (Fully Written Out)</h2>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h3>Example 1: Projection onto a Line</h3>
         <p>Let's find the projection of the vector $b = (2, 3)^\top$ onto the line spanned by the vector $u = (1, 1)^\top$. The projection $p$ is given by the formula:
         $$ p = \frac{u^\top b}{u^\top u} u = \frac{(1)(2) + (1)(3)}{(1)(1) + (1)(1)} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \frac{5}{2} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 2.5 \\ 2.5 \end{pmatrix} $$
@@ -549,7 +1081,7 @@
         </p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h3>Example 2: Solving Least Squares with Normal Equations</h3>
         <p>Let's solve the least squares problem for the system $Ax=b$ with:
         $$ A = \begin{pmatrix} 1 & 1 \\ 1 & -1 \\ 1 & 1 \end{pmatrix}, \quad b = \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix} $$
@@ -561,7 +1093,7 @@
         </p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h3>Example 3: Rank-Deficient Case</h3>
         <p>Consider the system with:
         $$ A = \begin{pmatrix} 1 & 1 \\ 2 & 2 \end{pmatrix}, \quad b = \begin{pmatrix} 3 \\ 6 \end{pmatrix} $$
@@ -571,7 +1103,7 @@
     </section>
 
     <!-- SECTION 10: IMPLEMENTATION GUIDE -->
-    <section class="card" id="section-10">
+    <section class="card-v2" id="section-10">
       <h2>10. Implementation Mini-Guide (What to Actually Do in Code)</h2>
 
       <ul>
@@ -584,12 +1116,12 @@
     </section>
 
     <!-- SECTION 11: EXERCISES -->
-    <section class="card" id="section-11">
+    <section class="card-v2" id="section-11">
       <h2>11. Exercises</h2>
 
       <h3>A. Fundamentals</h3>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>A1. Prove that the set of all linear combinations of a fixed set of vectors is a subspace.</h4>
         <p><b>Solution:</b> Let $S = \mathrm{span}\{v_1, \dots, v_k\}$.
         <br>1. <b>Closure under addition:</b> Let $u = \sum c_i v_i$ and $w = \sum d_i v_i$ be in $S$. Then $u+w = \sum (c_i+d_i)v_i$, which is also a linear combination, so $u+w \in S$.
@@ -598,14 +1130,14 @@
         <br>Since $S$ satisfies these three properties, it is a subspace.</p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>A2. Show that $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$.</h4>
         <p><b>Solution:</b> Let $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$. By definition, $v = Ax$ for some vector $x$, and $A^\top y = 0$. We want to show their inner product is zero:
         $$ v^\top y = (Ax)^\top y = x^\top A^\top y = x^\top (A^\top y) = x^\top 0 = 0 $$
         Since this holds for any $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$, the subspaces are orthogonal.</p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>A3. Show that $Q^\top Q = I$ implies $\|Qx\|_2 = \|x\|_2$.</h4>
         <p><b>Solution:</b> We start with the squared norm:
         $$ \|Qx\|_2^2 = (Qx)^\top(Qx) $$
@@ -616,7 +1148,7 @@
         Taking the square root of both sides (and since norms are non-negative), we get $\|Qx\|_2 = \|x\|_2$. This shows that orthogonal transformations preserve the Euclidean norm (length) of vectors.</p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>A4. (New) Prove that if a set of vectors $\{v_1, \dots, v_k\}$ is orthogonal, it must be linearly independent.</h4>
         <p><b>Solution:</b> Consider the equation $c_1 v_1 + \dots + c_k v_k = 0$. To show linear independence, we must show that all coefficients $c_i$ must be zero.
         Take the inner product of both sides with any vector $v_j$ from the set:
@@ -631,24 +1163,24 @@
 
       <h3>B. Projections</h3>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>B1. Let $S = \mathrm{span}\{u, v\}$ with $u, v$ independent. Derive the projector $P$ onto $S$.</h4>
         <p><b>Solution:</b> Form $A = [u \ v]$. If $A$ has full column rank, $P = A(A^\top A)^{-1}A^\top$.</p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>B2. Show that if $P$ is symmetric and idempotent, then it is an orthogonal projector.</h4>
         <p><b>Solution:</b> For any $b$, set $p = Pb$ and $r = b - Pb$. Then $Pr = 0$ (because $P^2 = P$); thus $r \in \mathcal{N}(P)$. For any $y = Pw \in \mathcal{R}(P)$, $y^\top r = w^\top P^\top(b - Pb) = w^\top P(b - Pb) = w^\top(Pb - P^2b) = 0$, so $r \perp \mathcal{R}(P)$. Hence $p$ is the orthogonal projection.</p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>B3. Project $b = (1, 2, 3)^\top$ onto the affine set $\{x \mid [1 \ 1 \ 1]x = 3\}$.</h4>
         <p><b>Solution:</b> One solution: find $x_0 = (1, 1, 1)^\top$ (satisfies the constraint). Compute $b - x_0 = (0, 1, 2)^\top$ and project onto $\mathcal{N}([1 \ 1 \ 1])$, i.e., vectors summing to zero. Using basis $z_1 = (1, -1, 0)$, $z_2 = (1, 0, -1)$, solve $\min_y \|Zy - (b - x_0)\|_2^2$, with $Z = [z_1 \ z_2]$. Recover $x^\star = x_0 + Zy^\star$.</p>
       </div>
 
       <h3>C. Least Squares</h3>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>C1. Derive normal equations and prove uniqueness iff $\mathrm{rank}(A) = n$.</h4>
         <p><b>Solution:</b> The objective function is $f(x) = \|Ax-b\|_2^2 = x^\top A^\top A x - 2b^\top A x + b^\top b$. This is a quadratic function of $x$. To find the minimum, we take the gradient with respect to $x$ and set it to zero:
         $$ \nabla_x f(x) = 2A^\top A x - 2A^\top b = 0 \implies A^\top A x = A^\top b $$
@@ -656,17 +1188,17 @@
         </p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>C2. Show that the residual at the LS solution is orthogonal to each column of $A$.</h4>
         <p><b>Solution:</b> Columns of $A$ span $\mathcal{R}(A)$. Orthogonality condition $A^\top(b - Ax^\star) = 0$ means $r^\star \perp \mathcal{R}(A)$.</p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>C3. Solve a small overdetermined system by (i) normal equations, (ii) QR, (iii) SVD, and compare answers.</h4>
         <p><b>Solution:</b> Pick any $3 \times 2$ with independent columns; show all three methods agree to numerical precision. Discuss time and conditioning.</p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>C4. (New) Show that the projection matrix $P = A(A^\top A)^{-1}A^\top$ is idempotent ($P^2=P$) and symmetric ($P^\top = P$).</h4>
         <p><b>Solution:</b>
         <br><b>Symmetry:</b>
@@ -678,19 +1210,19 @@
 
       <h3>D. Pseudoinverse & Rank Deficiency</h3>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>D1. Prove that every least-squares solution $x^\star$ satisfies $x^\star = A^+b + (I - A^+A)z$ for some $z$.</h4>
         <p><b>Solution:</b> From SVD, the set of minimizers is $A^+b + \mathcal{N}(A)$; note $(I - A^+A)$ projects onto $\mathcal{N}(A)$.</p>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>D2. Show $P = AA^+$ is the projector onto $\mathcal{R}(A)$ and $P^\perp = I - AA^+$ projects onto $\mathcal{N}(A^\top)$.</h4>
         <p><b>Solution:</b> Use SVD or basic projector algebra: $P^2 = P$, $P^\top = P$, range/nullspace relations.</p>
       </div>
     </section>
 
     <!-- SECTION 12: SANITY CHECKLIST -->
-    <section class="card" id="section-12">
+    <section class="card-v2" id="section-12">
       <h2>12. Sanity Checklist (What to Remember in Practice)</h2>
 
       <ul>
@@ -704,7 +1236,7 @@
     </section>
 
     <!-- SECTION 13: QUICK REFERENCE -->
-    <section class="card" id="section-13">
+    <section class="card-v2" id="section-13">
       <h2>13. Key Formulas</h2>
 
       <ul>
@@ -717,7 +1249,7 @@
     </section>
 
     <!-- SECTION 14: DUAL NORMS AND HÖLDER'S INEQUALITY (EXPANDED) -->
-    <section class="card" id="section-14">
+    <section class="card-v2" id="section-14">
       <h2>14. Dual Norms and Hölder's Inequality</h2>
 
       <h3>Definition: Dual Norm</h3>
@@ -734,7 +1266,7 @@
         <li><b>$\ell_p$ and $\ell_q$ are conjugate:</b> For $1/p + 1/q = 1$, we have $(\|\cdot\|_p)^* = \|\cdot\|_q$</li>
       </ul>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Proof: $(\|\cdot\|_2)^* = \|\cdot\|_2$ (Self-Duality of Euclidean Norm)</h4>
 
         <div class="proof-step">
@@ -754,7 +1286,7 @@
         </div>
       </div>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Proof: $(\|\cdot\|_1)^* = \|\cdot\|_\infty$</h4>
 
         <div class="proof-step">
@@ -778,7 +1310,7 @@
       x^\top y \le \|x\| \cdot \|y\|_*
       $$
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Proof of Hölder's Inequality</h4>
 
         <div class="proof-step">
@@ -799,7 +1331,7 @@
     </section>
 
     <!-- SECTION 15: MATRIX STRUCTURES FOR OPTIMIZATION -->
-    <section class="card" id="section-15">
+    <section class="card-v2" id="section-15">
       <h2>15. Matrix Inner Product, Frobenius Norm, and Loewner Order</h2>
 
       <h3>Trace and Frobenius Inner Product</h3>
@@ -827,7 +1359,7 @@
       v^\top (X - Y) v \ge 0 \quad \text{for all } v \in \mathbb{R}^n
       $$
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Microfacts About the Loewner Order</h4>
 
         <ul>
@@ -850,7 +1382,7 @@
     </section>
 
     <!-- SECTION 16: COMPONENTWISE ORDER AND PROJECTION -->
-    <section class="card" id="section-16">
+    <section class="card-v2" id="section-16">
       <h2>16. Componentwise Order and Projection onto Affine Sets</h2>
 
       <h3>Componentwise Order</h3>
@@ -887,7 +1419,7 @@
       \Pi_{\mathcal{A}}(y) = x_0 + Z(Z^\top Z)^{-1} Z^\top (y - x_0)
       $$
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Geometric Interpretation</h4>
         <p>This formula says: "Project $(y - x_0)$ onto the nullspace $\mathcal{N}(F)$, then shift back by $x_0$."</p>
 
@@ -915,13 +1447,13 @@
     </section>
 
     <!-- SECTION 17: PRACTICE PROBLEMS -->
-    <section class="card" id="section-17">
+    <section class="card-v2" id="section-17">
       <h2>17. Additional Practice Problems</h2>
 
       <h3>Problem 1: Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Solution Sketch</h4>
 
         <div class="proof-step">
@@ -944,7 +1476,7 @@
       |\langle X, Y \rangle| \le \|X\|_F \|Y\|_F
       $$
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Solution</h4>
         <p>View matrices as vectors in $\mathbb{R}^{mn}$ by stacking columns. The Frobenius inner product corresponds to the standard Euclidean inner product on $\mathbb{R}^{mn}$, and the Frobenius norm corresponds to the Euclidean norm. Therefore, the standard Cauchy-Schwarz inequality applies directly.</p>
       </div>
@@ -952,7 +1484,7 @@
       <h3>Problem 3: Loewner Order Transitivity</h3>
       <p><b>Problem:</b> If $X \succeq Y$ and $Y \succeq Z$ (all in $\mathbb{S}^n$), prove that $X \succeq Z$.</p>
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Solution</h4>
         <p>We have $X - Y \succeq 0$ and $Y - Z \succeq 0$. Therefore:</p>
         $$ X - Z = (X - Y) + (Y - Z) $$
@@ -965,7 +1497,7 @@
       \mathcal{A} = \{ x \in \mathbb{R}^3 \mid x_1 + x_2 + x_3 = 1 \}
       $$
 
-      <div class="proof">
+      <div class="proof-enhanced">
         <h4>Solution</h4>
 
         <div class="proof-step">
@@ -993,7 +1525,7 @@
     </section>
 
     <!-- READINGS -->
-    <section class="card" id="readings">
+    <section class="card-v2" id="readings">
       <h2>Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, <em>Convex Optimization</em>, Appendix A.</li>

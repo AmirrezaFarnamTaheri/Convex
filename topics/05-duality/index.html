@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>05. Duality: Lagrangian, KKT, Strong Duality — Convex Optimization</title>
-  <link rel="stylesheet" href="../../static/css/styles.css" />
+  <link rel="stylesheet" href="../../static/css/convex-unified.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
@@ -33,98 +33,537 @@
     <article class="card" style="margin-bottom: 32px;">
       <h1 style="margin-top: 0;">05. Duality: Lagrangian, KKT, Strong Duality</h1>
       <div class="meta">
-        Date: 2025-11-18 · Duration: 90 min · Tags: duality, theory
+        Date: 2025-11-18 · Duration: 90 min · Tags: duality, theory, KKT, Lagrangian
       </div>
 
       <!-- Brief introduction -->
       <section style="margin-top: 16px;">
-        <p><strong>Overview:</strong> Dual problems, optimality conditions, shadow prices, and why duality powers algorithms.</p>
-        <p><strong>Prerequisites:</strong> <a href="../04-convex-opt-problems/index.html">Lecture 04</a></p>
+        <p><strong>Overview:</strong> This lecture provides a comprehensive treatment of duality theory in convex optimization—the mathematical framework that connects every optimization problem to a "dual" problem, establishes optimality conditions, and provides the foundation for modern algorithms. We develop the Lagrangian function, prove weak and strong duality theorems, derive the KKT conditions, and explore applications across problem classes.</p>
+        <p><strong>Prerequisites:</strong> <a href="../04-convex-opt-problems/index.html">Lecture 04</a> (convex optimization problem formulations), <a href="../03-convex-functions/index.html">Lecture 03</a> (convex functions and subgradients)</p>
       </section>
     </article>
 
     <!-- Learning objectives -->
     <section class="card" style="margin-bottom: 32px;">
       <h2>Learning Objectives</h2>
-      <p>After this lecture, you should understand:</p>
+      <p>After this lecture, you will be able to:</p>
       <ul style="line-height: 1.8;">
-        <li>How to form the Lagrangian and the dual problem for a convex optimization problem.</li>
-        <li>The Karush-Kuhn-Tucker (KKT) conditions for optimality.</li>
-        <li>The concept of strong duality and its implications.</li>
+        <li>Construct the Lagrangian function and derive the dual function for any convex problem</li>
+        <li>Formulate the dual problem and understand the primal-dual relationship</li>
+        <li>Apply weak duality to obtain lower bounds on optimal values</li>
+        <li>State and prove strong duality under Slater's condition</li>
+        <li>Derive and verify the Karush-Kuhn-Tucker (KKT) optimality conditions</li>
+        <li>Use complementary slackness to analyze solution structure</li>
+        <li>Interpret dual variables as shadow prices and sensitivity coefficients</li>
+        <li>Formulate duals for LP, QP, and SDP problems</li>
       </ul>
     </section>
 
-    <!-- Main lecture content -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Key Concepts</h2>
+    <!-- Section 1: The Lagrangian and Dual Function -->
+    <section class="card" id="section-1">
+      <h2>1. The Lagrangian and Dual Function</h2>
 
-      <h3>Concept 1: The Lagrangian</h3>
-      <p>The Lagrangian of a standard form convex optimization problem is $L(x, \lambda, \nu) = f_0(x) + \sum_{i=1}^m \lambda_i f_i(x) + \sum_{j=1}^p \nu_j h_j(x)$.</p>
-      <p>Visual intuition: The Lagrangian incorporates the constraints into the objective function.</p>
+      <h3>1.1 The Primal Problem</h3>
+      <p>Consider the <strong>primal problem</strong> in standard form:</p>
 
-      <!-- Include images as needed -->
+      <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
+        <p style="margin: 0;">
+          $
+          \begin{aligned}
+          \text{minimize} \quad & f_0(x) \\
+          \text{subject to} \quad & f_i(x) \le 0, \quad i = 1, \dots, m \\
+          & h_j(x) = 0, \quad j = 1, \dots, p
+          \end{aligned}
+          $
+        </p>
+      </div>
+
+      <p>with variable $x \in \mathbb{R}^n$, optimal value $p^*$, and feasible set $\mathcal{F}$.</p>
+
+      <h3>1.2 The Lagrangian Function</h3>
+      <p>The <strong>Lagrangian</strong> $L: \mathbb{R}^n \times \mathbb{R}^m \times \mathbb{R}^p \to \mathbb{R}$ is defined as:</p>
+
+      <p style="text-align: center;">
+        $
+        L(x, \lambda, \nu) = f_0(x) + \sum_{i=1}^m \lambda_i f_i(x) + \sum_{j=1}^p \nu_j h_j(x)
+        $
+      </p>
+
+      <p>where:</p>
+      <ul>
+        <li>$\lambda \in \mathbb{R}^m$ are the <strong>dual variables</strong> (or <strong>Lagrange multipliers</strong>) for inequality constraints</li>
+        <li>$\nu \in \mathbb{R}^p$ are the dual variables for equality constraints</li>
+        <li>The domain is $\mathcal{D} = \text{dom}(f_0) \cap \bigcap_{i=1}^m \text{dom}(f_i) \cap \bigcap_{j=1}^p \text{dom}(h_j)$</li>
+      </ul>
+
+      <p><strong>Intuition:</strong> The Lagrangian augments the objective with weighted constraint violations. It transforms a constrained problem into an unconstrained one by penalizing constraint violations.</p>
+
+      <h3>1.3 The Lagrange Dual Function</h3>
+      <p>The <strong>Lagrange dual function</strong> $g: \mathbb{R}^m \times \mathbb{R}^p \to \mathbb{R}$ is:</p>
+
+      <p style="text-align: center;">
+        $
+        g(\lambda, \nu) = \inf_{x \in \mathcal{D}} L(x, \lambda, \nu) = \inf_{x \in \mathcal{D}} \left( f_0(x) + \sum_{i=1}^m \lambda_i f_i(x) + \sum_{j=1}^p \nu_j h_j(x) \right)
+        $
+      </p>
+
+      <div class="proof">
+        <h4>Theorem: Concavity of the Dual Function</h4>
+        <p><strong>Statement:</strong> The dual function $g(\lambda, \nu)$ is concave, even if the primal problem is not convex.</p>
+
+        <div class="proof-step">
+          <strong>Proof:</strong> For any $(\lambda_1, \nu_1)$ and $(\lambda_2, \nu_2)$, and $\theta \in [0, 1]$:
+          $
+          \begin{aligned}
+          g(\theta \lambda_1 + (1-\theta) \lambda_2, \theta \nu_1 + (1-\theta) \nu_2) &= \inf_x L(x, \theta \lambda_1 + (1-\theta) \lambda_2, \theta \nu_1 + (1-\theta) \nu_2) \\
+          &= \inf_x \left[ \theta L(x, \lambda_1, \nu_1) + (1-\theta) L(x, \lambda_2, \nu_2) \right] \\
+          &\ge \theta \inf_x L(x, \lambda_1, \nu_1) + (1-\theta) \inf_x L(x, \lambda_2, \nu_2) \\
+          &= \theta g(\lambda_1, \nu_1) + (1-\theta) g(\lambda_2, \nu_2)
+          \end{aligned}
+          $
+          Thus $g$ is concave (pointwise infimum of affine functions in $(\lambda, \nu)$).
+        </div>
+      </div>
+
+      <h3>1.4 Computing the Dual Function</h3>
+      <p>To compute $g(\lambda, \nu)$, we minimize the Lagrangian over $x$:</p>
+      <ol>
+        <li>Form $L(x, \lambda, \nu)$</li>
+        <li>Compute $\inf_x L(x, \lambda, \nu)$ (often by setting $\nabla_x L = 0$ if differentiable)</li>
+        <li>The result is $g(\lambda, \nu)$</li>
+      </ol>
+
+      <p><strong>Example:</strong> For an LP minimize $c^T x$ s.t. $Ax = b$, $x \ge 0$:</p>
+      <p style="text-align: center;">
+        $
+        L(x, \lambda, \nu) = c^T x - \lambda^T x + \nu^T (Ax - b)
+        $
+      </p>
+      <p>Taking $\inf_x$: if $c - \lambda + A^T \nu \ne 0$, the infimum is $-\infty$. Otherwise, $g(\lambda, \nu) = -b^T \nu$.</p>
+
       <figure style="margin: 16px 0; text-align: center;">
         <img src="../../static/assets/topics/05-duality/saddle-point-illustration.png" alt="Illustration of a saddle point" style="max-width: 500px; height: auto; border-radius: 8px;" />
         <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
-          An illustration of a saddle point. The Lagrangian is minimized with respect to the primal variables (blue curve) and maximized with respect to the dual variables (red curve). Source: Statistical Odds & Ends.
+          The Lagrangian exhibits a saddle point structure: minimized over $x$ (primal variables), maximized over $\lambda, \nu$ (dual variables). Source: Statistical Odds & Ends.
         </figcaption>
       </figure>
     </section>
 
+    <!-- Section 2: The Dual Problem and Weak Duality -->
+    <section class="card" id="section-2">
+      <h2>2. The Dual Problem and Weak Duality</h2>
+
+      <h3>2.1 Lower Bound Property</h3>
+      <div class="proof">
+        <h4>Lemma: Dual Function Provides Lower Bound</h4>
+        <p><strong>Statement:</strong> For any $\lambda \succeq 0$ (componentwise) and any $\nu$, we have $g(\lambda, \nu) \le p^*$.</p>
+
+        <div class="proof-step">
+          <strong>Proof:</strong> Let $\tilde{x}$ be any feasible point for the primal. Then $f_i(\tilde{x}) \le 0$ and $h_j(\tilde{x}) = 0$. Thus:
+          $
+          \begin{aligned}
+          L(\tilde{x}, \lambda, \nu) &= f_0(\tilde{x}) + \sum_{i=1}^m \lambda_i f_i(\tilde{x}) + \sum_{j=1}^p \nu_j h_j(\tilde{x}) \\
+          &\le f_0(\tilde{x}) \quad \text{(since $\lambda_i \ge 0$ and $f_i(\tilde{x}) \le 0$)}
+          \end{aligned}
+          $
+          Taking the infimum over all $x$ (including feasible $\tilde{x}$):
+          $
+          g(\lambda, \nu) = \inf_x L(x, \lambda, \nu) \le L(\tilde{x}, \lambda, \nu) \le f_0(\tilde{x})
+          $
+          This holds for all feasible $\tilde{x}$, so $g(\lambda, \nu) \le p^*$.
+        </div>
+      </div>
+
+      <h3>2.2 The Dual Problem</h3>
+      <p>The <strong>Lagrange dual problem</strong> is:</p>
+
+      <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
+        <p style="margin: 0;">
+          $
+          \begin{aligned}
+          \text{maximize} \quad & g(\lambda, \nu) \\
+          \text{subject to} \quad & \lambda \succeq 0
+          \end{aligned}
+          $
+        </p>
+      </div>
+
+      <p>with dual optimal value $d^*$. Key observations:</p>
+      <ul>
+        <li>The dual is always a <strong>concave maximization</strong> (equivalently, convex minimization of $-g$)</li>
+        <li>The dual is convex even if the primal is not convex</li>
+        <li>Variables: $\lambda \in \mathbb{R}^m$, $\nu \in \mathbb{R}^p$</li>
+      </ul>
+
+      <h3>2.3 Weak Duality Theorem</h3>
+      <div class="proof">
+        <h4>Theorem: Weak Duality</h4>
+        <p><strong>Statement:</strong> $d^* \le p^*$ always holds.</p>
+
+        <div class="proof-step">
+          <strong>Proof:</strong> This is immediate from the lower bound property: for any dual feasible $(\lambda, \nu)$ with $\lambda \succeq 0$, we have $g(\lambda, \nu) \le p^*$. Taking the supremum over all such $(\lambda, \nu)$ gives $d^* \le p^*$.
+        </div>
+      </div>
+
+      <h3>2.4 The Duality Gap</h3>
+      <p>The <strong>duality gap</strong> is $p^* - d^* \ge 0$. It measures how far the best dual bound is from the primal optimum.</p>
+      <ul>
+        <li>If $p^* - d^* = 0$, we have <strong>strong duality</strong></li>
+        <li>If $p^* - d^* > 0$, we have a <strong>duality gap</strong></li>
+      </ul>
+
+      <h3>2.5 Max-Min Interpretation</h3>
+      <p>Weak duality can be stated as:</p>
+      <p style="text-align: center;">
+        $
+        \sup_{\lambda \succeq 0, \nu} \inf_x L(x, \lambda, \nu) \le \inf_x \sup_{\lambda \succeq 0, \nu} L(x, \lambda, \nu)
+        $
+      </p>
+      <p>Strong duality means these are equal (saddle point property).</p>
+    </section>
+
+    <!-- Section 3: Strong Duality and Slater's Condition -->
+    <section class="card" id="section-3">
+      <h2>3. Strong Duality and Slater's Condition</h2>
+
+      <h3>3.1 When Does Strong Duality Hold?</h3>
+      <p>Strong duality ($p^* = d^*$) does not always hold. Example: Consider</p>
+      <p style="text-align: center;">
+        $
+        \text{minimize} \quad x^2 \quad \text{s.t.} \quad x = 1
+        $
+      </p>
+      <p>The primal has $p^* = 1$, but the dual (exercise) has $d^* = -\infty$ due to unboundedness.</p>
+
+      <p>For convex problems, we have a powerful condition:</p>
+
+      <div class="proof">
+        <h4>Theorem: Slater's Condition for Strong Duality</h4>
+        <p><strong>Statement:</strong> For a convex problem (convex $f_0, f_i$ and affine $h_j$), if there exists a point $\tilde{x} \in \text{relint}(\mathcal{D})$ such that:</p>
+        <ul>
+          <li>$f_i(\tilde{x}) < 0$ for $i = 1, \dots, m$ (strict inequality)</li>
+          <li>$h_j(\tilde{x}) = 0$ for $j = 1, \dots, p$</li>
+        </ul>
+        <p>then <strong>strong duality</strong> holds: $p^* = d^*$.</p>
+
+        <div class="proof-step">
+          <strong>Proof Sketch:</strong> The full proof uses the separating hyperplane theorem. The idea: if $p^* > d^*$, then the epigraph of the primal objective and the constraint set can be strictly separated, contradicting the existence of $\tilde{x}$. Slater's point ensures that the feasible set has nonempty interior relative to the affine hull of its domain.
+        </div>
+      </div>
+
+      <h3>3.2 Refinements</h3>
+      <ul>
+        <li><strong>For problems with affine inequalities:</strong> Slater's condition simplifies to existence of a strictly feasible point (no need for relint)</li>
+        <li><strong>For LP:</strong> Strong duality always holds if both primal and dual are feasible</li>
+        <li><strong>For SDP:</strong> Strong duality holds under Slater's condition (positive definite interior point)</li>
+      </ul>
+
+      <h3>3.3 Example: Strong Duality for LP</h3>
+      <p>Consider the LP:</p>
+      <p style="text-align: center;">
+        $
+        \text{minimize} \quad c^T x \quad \text{s.t.} \quad Ax = b, \; x \ge 0
+        $
+      </p>
+      <p>The dual is:</p>
+      <p style="text-align: center;">
+        $
+        \text{maximize} \quad b^T \nu \quad \text{s.t.} \quad A^T \nu \preceq c
+        $
+      </p>
+      <p>By LP duality theory (a special case of convex duality), strong duality holds if both are feasible.</p>
+    </section>
+
+    <!-- Section 4: KKT Optimality Conditions -->
+    <section class="card" id="section-4">
+      <h2>4. Karush-Kuhn-Tucker (KKT) Optimality Conditions</h2>
+
+      <h3>4.1 Motivation</h3>
+      <p>The <strong>KKT conditions</strong> provide necessary (and for convex problems, sufficient) conditions for a point to be optimal. They generalize the Lagrange multiplier conditions from calculus.</p>
+
+      <h3>4.2 The KKT Conditions</h3>
+      <p>Let $x^*$ be a candidate optimal point, and $(\lambda^*, \nu^*)$ be candidate dual variables. The <strong>KKT conditions</strong> are:</p>
+
+      <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
+        <ol>
+          <li><strong>Stationarity:</strong> $\nabla f_0(x^*) + \sum_{i=1}^m \lambda_i^* \nabla f_i(x^*) + \sum_{j=1}^p \nu_j^* \nabla h_j(x^*) = 0$</li>
+          <li><strong>Primal feasibility:</strong> $f_i(x^*) \le 0$, $h_j(x^*) = 0$</li>
+          <li><strong>Dual feasibility:</strong> $\lambda^* \succeq 0$</li>
+          <li><strong>Complementary slackness:</strong> $\lambda_i^* f_i(x^*) = 0$ for all $i$</li>
+        </ol>
+      </div>
+
+      <h3>4.3 Complementary Slackness</h3>
+      <p>The complementary slackness condition $\lambda_i^* f_i(x^*) = 0$ has a powerful interpretation:</p>
+      <ul>
+        <li>If $\lambda_i^* > 0$, then $f_i(x^*) = 0$ (constraint $i$ is <strong>active</strong>)</li>
+        <li>If $f_i(x^*) < 0$ (constraint $i$ is <strong>inactive</strong>), then $\lambda_i^* = 0$</li>
+      </ul>
+      <p><strong>Intuition:</strong> Non-zero dual variables correspond to binding constraints. Slack constraints have zero dual variables.</p>
+
+      <div class="proof">
+        <h4>Theorem: KKT Conditions for Convex Problems</h4>
+        <p><strong>Statement:</strong> For a convex problem with differentiable $f_0, f_i, h_j$, if strong duality holds and $x^*, (\lambda^*, \nu^*)$ are primal and dual optimal, then they satisfy the KKT conditions. Conversely, if the KKT conditions hold for some $(x^*, \lambda^*, \nu^*)$, then $x^*$ and $(\lambda^*, \nu^*)$ are primal and dual optimal.</p>
+
+        <div class="proof-step">
+          <strong>Necessity (⇒):</strong> Suppose $x^*$ is primal optimal and strong duality holds. Then $x^*$ minimizes $L(x, \lambda^*, \nu^*)$, so $\nabla_x L(x^*, \lambda^*, \nu^*) = 0$ (stationarity). Primal and dual feasibility follow by definition. Complementary slackness follows from $g(\lambda^*, \nu^*) = f_0(x^*)$ at optimality.
+        </div>
+
+        <div class="proof-step">
+          <strong>Sufficiency (⇐):</strong> Suppose $(x^*, \lambda^*, \nu^*)$ satisfy KKT. Then:
+          $
+          \begin{aligned}
+          g(\lambda^*, \nu^*) &= \inf_x L(x, \lambda^*, \nu^*) \\
+          &\le L(x^*, \lambda^*, \nu^*) \quad \text{(by definition of inf)} \\
+          &= f_0(x^*) + \sum_i \lambda_i^* f_i(x^*) + \sum_j \nu_j^* h_j(x^*) \\
+          &= f_0(x^*) \quad \text{(complementary slackness and $h_j(x^*) = 0$)}
+          \end{aligned}
+          $
+          By weak duality, $g(\lambda^*, \nu^*) \le p^*$. But $f_0(x^*) \ge p^*$ (since $x^*$ is feasible). Thus $g(\lambda^*, \nu^*) = f_0(x^*) = p^* = d^*$, so $x^*$ is optimal.
+        </div>
+      </div>
+
+      <h3>4.4 Using KKT to Solve Problems</h3>
+      <p>For small problems, we can solve the KKT system directly:</p>
+      <ol>
+        <li>Write out the stationarity condition: $\nabla_x L = 0$</li>
+        <li>Write primal and dual feasibility</li>
+        <li>Write complementary slackness</li>
+        <li>Solve the resulting system of equations and inequalities</li>
+      </ol>
+    </section>
+
+    <!-- Section 5: Perturbation and Sensitivity Analysis -->
+    <section class="card" id="section-5">
+      <h2>5. Perturbation and Sensitivity Analysis</h2>
+
+      <h3>5.1 Perturbed Problem</h3>
+      <p>Consider perturbing the RHS of constraints:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & f_0(x) \\
+        \text{subject to} \quad & f_i(x) \le u_i, \quad i = 1, \dots, m \\
+        & h_j(x) = v_j, \quad j = 1, \dots, p
+        \end{aligned}
+        $
+      </p>
+      <p>Let $p^*(u, v)$ be the optimal value as a function of $(u, v)$. The unperturbed problem has $(u, v) = (0, 0)$.</p>
+
+      <div class="proof">
+        <h4>Theorem: Sensitivity via Dual Variables</h4>
+        <p><strong>Statement:</strong> If strong duality holds and $(\lambda^*, \nu^*)$ is dual optimal, then:</p>
+        <p style="text-align: center;">
+          $
+          \lambda_i^* = -\frac{\partial p^*}{\partial u_i}\bigg|_{u=0}, \quad \nu_j^* = -\frac{\partial p^*}{\partial v_j}\bigg|_{v=0}
+          $
+        </p>
+        <p>(assuming differentiability)</p>
+
+        <div class="proof-step">
+          <strong>Interpretation:</strong> The dual variable $\lambda_i^*$ measures the rate of change of the optimal value with respect to constraint $i$. This is the <strong>shadow price</strong> of constraint $i$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Economic Interpretation:</strong> In resource allocation, $\lambda_i^*$ is the marginal value of relaxing constraint $i$ by one unit. A large $\lambda_i^*$ indicates that constraint $i$ is "expensive" (tightly binding).
+        </div>
+      </div>
+
+      <h3>5.2 Example: Water Filling</h3>
+      <p>In communication systems, "water filling" allocates power across channels. The dual variable represents the "water level" (Lagrange multiplier), and active constraints correspond to filled channels.</p>
+    </section>
+
+    <!-- Section 6: Duality for Specific Problem Classes -->
+    <section class="card" id="section-6">
+      <h2>6. Duality for Specific Problem Classes</h2>
+
+      <h3>6.1 Linear Programming Duality</h3>
+      <p><strong>Primal:</strong></p>
+      <p style="text-align: center;">
+        $
+        \text{minimize} \quad c^T x \quad \text{s.t.} \quad Ax = b, \; x \ge 0
+        $
+      </p>
+
+      <p><strong>Dual:</strong></p>
+      <p style="text-align: center;">
+        $
+        \text{maximize} \quad b^T \nu \quad \text{s.t.} \quad A^T \nu \preceq c
+        $
+      </p>
+
+      <p><strong>Key properties:</strong></p>
+      <ul>
+        <li>Strong duality holds if both are feasible</li>
+        <li>Dual of dual is primal (symmetric duality)</li>
+        <li>Complementary slackness: $(c - A^T \nu^*)^T x^* = 0$</li>
+      </ul>
+
+      <h3>6.2 Quadratic Programming Duality</h3>
+      <p><strong>Primal QP:</strong></p>
+      <p style="text-align: center;">
+        $
+        \text{minimize} \quad \frac{1}{2} x^T P x + q^T x \quad \text{s.t.} \quad Ax = b, \; x \ge 0
+        $
+      </p>
+      <p>where $P \succeq 0$.</p>
+
+      <p><strong>Dual QP:</strong></p>
+      <p style="text-align: center;">
+        $
+        \text{maximize} \quad -\frac{1}{2} \nu^T A P^{-1} A^T \nu - (q + P^{-1} A^T \nu)^T x^* + b^T \nu
+        $
+      </p>
+      <p>(more complex; derived via Lagrangian).</p>
+
+      <h3>6.3 Semidefinite Programming Duality</h3>
+      <p><strong>Primal SDP:</strong></p>
+      <p style="text-align: center;">
+        $
+        \text{minimize} \quad \text{tr}(C X) \quad \text{s.t.} \quad \text{tr}(A_i X) = b_i, \; X \succeq 0
+        $
+      </p>
+
+      <p><strong>Dual SDP:</strong></p>
+      <p style="text-align: center;">
+        $
+        \text{maximize} \quad b^T y \quad \text{s.t.} \quad \sum_{i=1}^p y_i A_i + S = C, \; S \succeq 0
+        $
+      </p>
+
+      <p><strong>Properties:</strong></p>
+      <ul>
+        <li>Weak duality always holds</li>
+        <li>Strong duality holds under Slater's condition</li>
+        <li>Complementary slackness: $X^* S^* = 0$ (matrix product)</li>
+      </ul>
+
+      <h3>6.4 Conic Duality</h3>
+      <p>General conic programs have dual cones (see Lecture 02). For a cone $K$ and its dual $K^*$:</p>
+      <p style="text-align: center;">
+        $
+        \text{Primal: } \min c^T x \text{ s.t. } Ax = b, \; x \in K
+        $
+      </p>
+      <p style="text-align: center;">
+        $
+        \text{Dual: } \max b^T \nu \text{ s.t. } c - A^T \nu \in K^*
+        $
+      </p>
+    </section>
+
+    <!-- Section 7: Examples and Applications -->
+    <section class="card" id="section-7">
+      <h2>7. Examples and Applications</h2>
+
+      <h3>7.1 Support Vector Machines (SVM)</h3>
+      <p>The primal SVM problem (soft margin) is:</p>
+      <p style="text-align: center;">
+        $
+        \min_{w, b, \xi} \frac{1}{2} \|w\|_2^2 + C \sum_i \xi_i \quad \text{s.t.} \quad y_i (w^T x_i + b) \ge 1 - \xi_i, \; \xi_i \ge 0
+        $
+      </p>
+
+      <p>The dual SVM is:</p>
+      <p style="text-align: center;">
+        $
+        \max_\alpha \sum_i \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j x_i^T x_j \quad \text{s.t.} \quad 0 \le \alpha_i \le C, \; \sum_i \alpha_i y_i = 0
+        $
+      </p>
+
+      <p>The dual formulation enables the "kernel trick" for nonlinear classification.</p>
+
+      <h3>7.2 Minimum-Volume Ellipsoid</h3>
+      <p>Finding the minimum-volume ellipsoid enclosing points has a dual interpretation related to optimal experimental design.</p>
+
+      <h3>7.3 Network Flow</h3>
+      <p>The max-flow min-cut theorem is a consequence of LP duality applied to network flow problems.</p>
+    </section>
+
     <!-- Interactive widgets -->
     <section class="card" id="widgets" style="margin-bottom: 32px;">
-      <h2>Interactive Widgets</h2>
-      <p>Below are tools to explore the concepts interactively. Try tweaking parameters to build intuition.</p>
+      <h2>8. Interactive Widgets</h2>
+      <p>Explore duality concepts through interactive visualizations.</p>
 
-      <!-- Widget 1 -->
+      <!-- Widget 1: Lagrangian Explainer -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Lagrangian Explainer</h3>
-        <p>Explore how the dual variables affect the Lagrangian.</p>
+        <h3 style="margin-top: 0;">8.1 Lagrangian Explainer</h3>
+        <p><strong>Purpose:</strong> Visualize how the Lagrangian function $L(x, \lambda, \nu)$ changes as dual variables $\lambda, \nu$ vary.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Adjust $\lambda$ (penalty on inequality constraints) and see Lagrangian surface update</li>
+          <li>Observe the infimum $g(\lambda, \nu)$ as a function of dual variables</li>
+          <li>Understand the saddle-point structure</li>
+        </ul>
         <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
           <!-- Widget will be rendered here -->
         </div>
       </div>
 
-      <!-- Widget 2 -->
+      <!-- Widget 2: Duality Visualizer -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Duality Visualizer</h3>
-        <p>Visualize the primal and dual problems for a simple 2D LP.</p>
+        <h3 style="margin-top: 0;">8.2 Primal-Dual Visualizer</h3>
+        <p><strong>Purpose:</strong> Visualize primal and dual problems for a 2D LP, showing feasible regions and optimal points.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>See primal feasible region (polyhedron) and dual feasible region</li>
+          <li>Observe primal optimal $x^*$ and dual optimal $(\lambda^*, \nu^*)$</li>
+          <li>Verify strong duality: $c^T x^* = b^T \nu^*$</li>
+        </ul>
         <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
           <!-- Widget will be rendered here -->
         </div>
       </div>
 
-      <!-- Widget 3 (if exists) -->
+      <!-- Widget 3: KKT Condition Checker -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">KKT Condition Checker</h3>
-        <p>Check which KKT conditions are satisfied for a given solution.</p>
+        <h3 style="margin-top: 0;">8.3 KKT Condition Checker</h3>
+        <p><strong>Purpose:</strong> Verify which KKT conditions are satisfied for a candidate solution.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Input candidate $x^*$, $\lambda^*$, $\nu^*$ for a simple problem</li>
+          <li>Check stationarity, feasibility, complementary slackness individually</li>
+          <li>Get feedback on which conditions fail (if any)</li>
+        </ul>
         <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
           <!-- Widget will be rendered here -->
         </div>
       </div>
 
-      <!-- Widget 4 (if exists) -->
+      <!-- Widget 4: Weak vs Strong Duality Race -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Weak vs Strong Duality Race</h3>
-        <p>Animates the convergence of the primal and dual objectives, showing the duality gap shrinking.</p>
+        <h3 style="margin-top: 0;">8.4 Duality Gap Animation</h3>
+        <p><strong>Purpose:</strong> Animate convergence of primal and dual objectives, showing duality gap shrinking.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Watch primal objective $f_0(x^{(k)})$ descend and dual $g(\lambda^{(k)}, \nu^{(k)})$ ascend</li>
+          <li>See the gap $p^* - d^*$ close to zero (strong duality)</li>
+          <li>Explore cases where gap remains (weak duality)</li>
+        </ul>
         <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
           <!-- Widget will be rendered here -->
         </div>
       </div>
 
-      <!-- Widget 5 (if exists) -->
+      <!-- Widget 5: Shadow Prices & Sensitivity -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Shadow Prices & Sensitivity Analysis</h3>
-        <p>Allows users to perturb a constraint in a simple problem and see how the optimal value changes, illustrating the concept of shadow prices.</p>
+        <h3 style="margin-top: 0;">8.5 Shadow Prices & Sensitivity Analysis</h3>
+        <p><strong>Purpose:</strong> Perturb constraints and observe how optimal value $p^*(u)$ changes; verify $\lambda^* = -\nabla p^*(0)$.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Adjust RHS $u_i$ of constraint $i$ and see $p^*(u)$ update</li>
+          <li>Compare numerical derivative to dual variable $\lambda_i^*$</li>
+          <li>Understand economic interpretation (shadow price)</li>
+        </ul>
         <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
           <!-- Widget will be rendered here -->
         </div>
       </div>
 
-      <!-- Widget 6 (if exists) -->
+      <!-- Widget 6: Complementary Slackness Explorer -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Complementary Slackness Explorer</h3>
-        <p>An interactive tool that demonstrates the complementary slackness conditions for a simple LP.</p>
+        <h3 style="margin-top: 0;">8.6 Complementary Slackness Explorer</h3>
+        <p><strong>Purpose:</strong> Interactive demonstration of complementary slackness for a 2D LP.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Visualize constraints: active (binding) vs inactive (slack)</li>
+          <li>Display $\lambda_i^*$ for each constraint</li>
+          <li>Verify $\lambda_i^* f_i(x^*) = 0$ for all $i$</li>
+        </ul>
         <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
           <!-- Widget will be rendered here -->
         </div>
@@ -133,34 +572,346 @@
 
     <!-- Readings -->
     <section class="card" id="readings" style="margin-bottom: 32px;">
-      <h2>Readings & Resources</h2>
+      <h2>9. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 5 — Duality</li>
-        <li><strong>Course slides:</strong> [Link if available]</li>
+        <li><strong>Bertsekas, Convex Optimization Theory:</strong> Chapter 4 — Lagrange Multiplier Theory</li>
+        <li><strong>Rockafellar, Convex Analysis:</strong> Section 28 — Saddle-Functions and Minimax Theory</li>
+        <li><strong>Nocedal & Wright, Numerical Optimization:</strong> Chapter 12 — Theory of Constrained Optimization</li>
       </ul>
     </section>
 
-    <!-- Example problems -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Example Problems</h2>
+    <!-- Problem Set & Solutions -->
+    <section class="card" id="section-10">
+      <h2>10. Problem Set & Solutions</h2>
+      <p>These problems consolidate the duality theory and provide practice in deriving duals, verifying KKT conditions, and applying sensitivity analysis.</p>
 
-      <h3>Example 1: The dual of a linear program</h3>
-      <p>[Problem statement and worked solution]</p>
+      <!-- Problem 5.1 -->
+      <div class="problem">
+        <h3>P5.1 — Derive the Dual of a Simple QP</h3>
+        <p>Consider the QP:</p>
+        <p style="text-align: center;">
+          $
+          \text{minimize} \quad \frac{1}{2} x^T x + c^T x \quad \text{s.t.} \quad Ax = b
+          $
+        </p>
+        <p><strong>(a)</strong> Form the Lagrangian.</p>
+        <p><strong>(b)</strong> Compute the dual function $g(\nu)$.</p>
+        <p><strong>(c)</strong> Write the dual problem.</p>
 
-      <h3>Example 2: The KKT conditions for a QP</h3>
-      <p>[Problem statement and worked solution]</p>
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Part (a): Lagrangian.</strong>
+            $
+            L(x, \nu) = \frac{1}{2} x^T x + c^T x + \nu^T (Ax - b)
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Dual function.</strong> To find $g(\nu) = \inf_x L(x, \nu)$, we minimize over $x$:
+            $
+            \nabla_x L = x + c + A^T \nu = 0 \implies x^* = -(c + A^T \nu)
+            $
+            Substituting back:
+            $
+            \begin{aligned}
+            g(\nu) &= \frac{1}{2} (c + A^T \nu)^T (c + A^T \nu) + c^T (-(c + A^T \nu)) - b^T \nu \\
+            &= -\frac{1}{2} (c + A^T \nu)^T (c + A^T \nu) - b^T \nu \\
+            &= -\frac{1}{2} \|c + A^T \nu\|_2^2 - b^T \nu
+            \end{aligned}
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (c): Dual problem.</strong>
+            $
+            \text{maximize} \quad -\frac{1}{2} \|c + A^T \nu\|_2^2 - b^T \nu
+            $
+            This is an unconstrained concave maximization (or convex minimization of the negative).
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem 5.2 -->
+      <div class="problem">
+        <h3>P5.2 — Verify KKT Conditions for a 2D Problem</h3>
+        <p>Consider:</p>
+        <p style="text-align: center;">
+          $
+          \text{minimize} \quad x_1^2 + x_2^2 \quad \text{s.t.} \quad x_1 + x_2 \ge 1, \; x_1, x_2 \ge 0
+          $
+        </p>
+        <p>Verify that $(x_1^*, x_2^*) = (1/2, 1/2)$ with $\lambda^* = (1, 0, 0)$ satisfies the KKT conditions.</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Step 1: Reformulate with standard form.</strong> Convert to minimization with $f_0(x) = x_1^2 + x_2^2$, constraints $-x_1 - x_2 \le -1$, $-x_1 \le 0$, $-x_2 \le 0$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Stationarity.</strong> The Lagrangian is:
+            $
+            L(x, \lambda) = x_1^2 + x_2^2 + \lambda_1 (-x_1 - x_2 + 1) + \lambda_2 (-x_1) + \lambda_3 (-x_2)
+            $
+            $
+            \nabla_x L = \begin{bmatrix} 2x_1 - \lambda_1 - \lambda_2 \\ 2x_2 - \lambda_1 - \lambda_3 \end{bmatrix}
+            $
+            At $(x^*, \lambda^*) = ((1/2, 1/2), (1, 0, 0))$:
+            $
+            \nabla_x L = \begin{bmatrix} 2(1/2) - 1 - 0 \\ 2(1/2) - 1 - 0 \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix} \quad \checkmark
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: Primal feasibility.</strong>
+            $
+            -x_1^* - x_2^* + 1 = -1/2 - 1/2 + 1 = 0 \le 0 \quad \checkmark
+            $
+            $
+            -x_1^* = -1/2 \le 0, \quad -x_2^* = -1/2 \le 0 \quad \checkmark
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 4: Dual feasibility.</strong> $\lambda^* = (1, 0, 0) \succeq 0$ $\checkmark$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 5: Complementary slackness.</strong>
+            $
+            \lambda_1^* (-x_1^* - x_2^* + 1) = 1 \cdot 0 = 0 \quad \checkmark
+            $
+            $
+            \lambda_2^* (-x_1^*) = 0 \cdot (-1/2) = 0, \quad \lambda_3^* (-x_2^*) = 0 \cdot (-1/2) = 0 \quad \checkmark
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Conclusion.</strong> All KKT conditions are satisfied, so $(1/2, 1/2)$ is optimal.
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem 5.3 -->
+      <div class="problem">
+        <h3>P5.3 — LP Duality: Derive and Verify</h3>
+        <p>Consider the LP:</p>
+        <p style="text-align: center;">
+          $
+          \text{minimize} \quad 3x_1 + 2x_2 \quad \text{s.t.} \quad x_1 + x_2 \ge 4, \; 2x_1 + x_2 \ge 5, \; x_1, x_2 \ge 0
+          $
+        </p>
+        <p><strong>(a)</strong> Derive the dual LP.</p>
+        <p><strong>(b)</strong> Solve both primal and dual graphically.</p>
+        <p><strong>(c)</strong> Verify strong duality.</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Part (a): Derive dual.</strong> Rewrite in standard form:
+            $
+            \text{min } c^T x \text{ s.t. } -A x \le -b, \; x \ge 0
+            $
+            where $c = \begin{bmatrix} 3 \\ 2 \end{bmatrix}$, $A = \begin{bmatrix} 1 & 1 \\ 2 & 1 \end{bmatrix}$, $b = \begin{bmatrix} 4 \\ 5 \end{bmatrix}$.
+
+            The dual is:
+            $
+            \text{maximize} \quad 4\lambda_1 + 5\lambda_2
+            $
+            $
+            \text{subject to} \quad \lambda_1 + 2\lambda_2 \le 3, \; \lambda_1 + \lambda_2 \le 2, \; \lambda_1, \lambda_2 \ge 0
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Graphical solution.</strong>
+            <ul>
+              <li><strong>Primal:</strong> Plot feasible region $x_1 + x_2 \ge 4$, $2x_1 + x_2 \ge 5$, $x_1, x_2 \ge 0$. Minimize $3x_1 + 2x_2$ at vertex $(1, 3)$ with $p^* = 9$.</li>
+              <li><strong>Dual:</strong> Plot feasible region $\lambda_1 + 2\lambda_2 \le 3$, $\lambda_1 + \lambda_2 \le 2$, $\lambda_1, \lambda_2 \ge 0$. Maximize $4\lambda_1 + 5\lambda_2$ at vertex $(1, 1)$ with $d^* = 9$.</li>
+            </ul>
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (c): Verify strong duality.</strong> Since $p^* = d^* = 9$, strong duality holds.
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem 5.4 -->
+      <div class="problem">
+        <h3>P5.4 — Slater's Condition</h3>
+        <p>Consider the problem:</p>
+        <p style="text-align: center;">
+          $
+          \text{minimize} \quad x^2 \quad \text{s.t.} \quad (x - 1)^2 \le 0
+          $
+        </p>
+        <p><strong>(a)</strong> Is Slater's condition satisfied?</p>
+        <p><strong>(b)</strong> Does strong duality hold?</p>
+        <p><strong>(c)</strong> Compute $p^*$ and $d^*$.</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Part (a): Slater's condition.</strong> The constraint $(x - 1)^2 \le 0$ is satisfied only when $x = 1$ (since squares are nonnegative). There is no point with $(x - 1)^2 < 0$ (strict inequality). Thus, Slater's condition is NOT satisfied.
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Strong duality.</strong> Without Slater's condition, strong duality may not hold. Let's check.
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (c): Compute $p^*$ and $d^*$.</strong>
+            <ul>
+              <li><strong>Primal:</strong> The only feasible point is $x = 1$, so $p^* = 1^2 = 1$.</li>
+              <li><strong>Dual:</strong> The Lagrangian is $L(x, \lambda) = x^2 + \lambda (x - 1)^2$. Taking $\inf_x$:
+                $
+                \nabla_x L = 2x + 2\lambda (x - 1) = 0 \implies x = \frac{\lambda}{\lambda + 1}
+                $
+                Substituting:
+                $
+                g(\lambda) = \left(\frac{\lambda}{\lambda + 1}\right)^2 + \lambda \left(\frac{\lambda}{\lambda + 1} - 1\right)^2 = -\frac{\lambda^2}{(\lambda + 1)^2}
+                $
+                As $\lambda \to \infty$, $g(\lambda) \to -1$. But $g(\lambda) \le 0$ for all $\lambda \ge 0$, so $d^* = 0$.
+              </li>
+            </ul>
+            Thus $p^* = 1 > 0 = d^*$, and there is a duality gap. Strong duality does NOT hold.
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem 5.5 -->
+      <div class="problem">
+        <h3>P5.5 — Sensitivity Analysis: Shadow Prices</h3>
+        <p>Consider the LP:</p>
+        <p style="text-align: center;">
+          $
+          \text{minimize} \quad x_1 + x_2 \quad \text{s.t.} \quad x_1 + 2x_2 \ge 3, \; x_1, x_2 \ge 0
+          $
+        </p>
+        <p>The optimal solution is $x^* = (3, 0)$ with $\lambda^* = 1$ for the first constraint.</p>
+        <p><strong>(a)</strong> Interpret $\lambda^* = 1$ as a shadow price.</p>
+        <p><strong>(b)</strong> Perturb the RHS to $3 + u$ and compute $p^*(u)$ for small $u$.</p>
+        <p><strong>(c)</strong> Verify $\frac{dp^*}{du}\big|_{u=0} = -\lambda^*$.</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Part (a): Shadow price interpretation.</strong> $\lambda^* = 1$ means that if we relax the constraint $x_1 + 2x_2 \ge 3$ to $x_1 + 2x_2 \ge 3 - u$ (i.e., perturb RHS by $+u$), the optimal value decreases at rate $\lambda^* = 1$. In other words, each unit decrease in the RHS requirement saves 1 unit of cost.
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Perturbed problem.</strong>
+            $
+            \text{minimize} \quad x_1 + x_2 \quad \text{s.t.} \quad x_1 + 2x_2 \ge 3 + u, \; x_1, x_2 \ge 0
+            $
+            The new optimal solution (for small $u$) is $x^*(u) = (3 + u, 0)$ (moving along the $x_1$ axis), so:
+            $
+            p^*(u) = (3 + u) + 0 = 3 + u
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (c): Verify sensitivity.</strong>
+            $
+            \frac{dp^*}{du}\bigg|_{u=0} = 1
+            $
+            And indeed, $-\lambda^* = -1 \cdot (-1) = 1$ (note: sign convention depends on how perturbation is defined). The magnitude matches the shadow price.
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem 5.6 -->
+      <div class="problem">
+        <h3>P5.6 — SVM Dual Formulation</h3>
+        <p>For the hard-margin SVM:</p>
+        <p style="text-align: center;">
+          $
+          \text{minimize} \quad \frac{1}{2} \|w\|_2^2 \quad \text{s.t.} \quad y_i (w^T x_i + b) \ge 1, \; i = 1, \dots, n
+          $
+        </p>
+        <p><strong>(a)</strong> Write the Lagrangian.</p>
+        <p><strong>(b)</strong> Derive the dual problem.</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Part (a): Lagrangian.</strong>
+            $
+            L(w, b, \alpha) = \frac{1}{2} \|w\|_2^2 + \sum_{i=1}^n \alpha_i (1 - y_i (w^T x_i + b))
+            $
+            where $\alpha_i \ge 0$ are dual variables.
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Dual function.</strong> Minimize over $w$ and $b$:
+            $
+            \nabla_w L = w - \sum_i \alpha_i y_i x_i = 0 \implies w = \sum_i \alpha_i y_i x_i
+            $
+            $
+            \frac{\partial L}{\partial b} = -\sum_i \alpha_i y_i = 0 \implies \sum_i \alpha_i y_i = 0
+            $
+            Substituting $w = \sum_i \alpha_i y_i x_i$ back:
+            $
+            \begin{aligned}
+            g(\alpha) &= \frac{1}{2} \left\|\sum_i \alpha_i y_i x_i\right\|_2^2 + \sum_i \alpha_i - \sum_{i,j} \alpha_i \alpha_j y_i y_j x_i^T x_j \\
+            &= \sum_i \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j x_i^T x_j
+            \end{aligned}
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Dual problem:</strong>
+            $
+            \text{maximize} \quad \sum_i \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j x_i^T x_j
+            $
+            $
+            \text{subject to} \quad \alpha_i \ge 0, \; \sum_i \alpha_i y_i = 0
+            $
+            This is a QP in $\alpha$, enabling the kernel trick: replace $x_i^T x_j$ with $K(x_i, x_j)$.
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem 5.7 -->
+      <div class="problem">
+        <h3>P5.7 — Complementary Slackness in Portfolio Optimization</h3>
+        <p>Consider the portfolio problem (Lecture 04):</p>
+        <p style="text-align: center;">
+          $
+          \text{minimize} \quad x^T \Sigma x \quad \text{s.t.} \quad \mu^T x \ge r_{\text{target}}, \; \mathbf{1}^T x = 1, \; x \ge 0
+          $
+        </p>
+        <p>Suppose at optimality, only asset 3 has $x_3^* = 0$ (all others positive), and the return constraint is active.</p>
+        <p><strong>(a)</strong> What can you conclude about the dual variable $\lambda_3$ for constraint $x_3 \ge 0$?</p>
+        <p><strong>(b)</strong> What does complementary slackness say about the return constraint?</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Part (a): Dual variable $\lambda_3$.</strong> By complementary slackness, if $x_3^* = 0$ (constraint $-x_3 \le 0$ is inactive, i.e., $-x_3^* = 0$), then... wait, $-x_3^* = 0$ means the constraint is ACTIVE. So complementary slackness says $\lambda_3 \cdot (-x_3^*) = 0$, which is satisfied for any $\lambda_3 \ge 0$.
+
+            Actually, let me reconsider: the constraint is $x_3 \ge 0$, or $-x_3 \le 0$ in standard form. At $x_3^* = 0$, we have $-x_3^* = 0$, so the constraint is active (binding). Complementary slackness does NOT restrict $\lambda_3$ in this case—it could be any nonnegative value. However, if $x_3^* > 0$, then the constraint is inactive, and we'd have $\lambda_3 = 0$.
+
+            So: if $x_3^* = 0$ (constraint is active), complementary slackness is automatically satisfied and $\lambda_3$ can be $> 0$ (reflecting a "pressure" to invest in asset 3 that is exactly balanced at zero).
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Return constraint.</strong> The return constraint $\mu^T x \ge r_{\text{target}}$ (or $-\mu^T x \le -r_{\text{target}}$) is active, meaning $\mu^T x^* = r_{\text{target}}$. By complementary slackness, the dual variable $\nu$ for this constraint satisfies $\nu > 0$ (typically), reflecting the "cost" of the return requirement.
+          </div>
+        </div>
+      </div>
     </section>
-
-    <!-- Exercises (optional) -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Exercises</h2>
-      <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
-      <ol style="line-height: 2;">
-        <li>Derive the dual of the support vector machine problem.</li>
-        <li>What is the economic interpretation of the dual variables?</li>
-      </ol>
-    </section>
-  </main></div>
+  </main>
 
   <!-- Footer -->
   <footer class="site-footer">
@@ -205,7 +956,6 @@
   <script src="../../static/js/math-renderer.js"></script>
 <script src="../../static/js/theme-switcher.js"></script>
 <script src="../../static/js/toc.js"></script>
-<script src="../../static/js/theme-switcher.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>

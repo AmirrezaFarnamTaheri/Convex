@@ -1,4 +1,0 @@
-- **File:** `separating-hyperplane-theorem.png`
-- **Source:** https://commons.wikimedia.org/wiki/File:Separating_axis_theorem2008.png
-- **License:** Public Domain
-- **Description:** An illustration of the separating hyperplane theorem (also known as the separating axis theorem) for two convex sets. This visualizes a key concept in convex geometry where a line (or hyperplane in higher dimensions) can be drawn to separate two disjoint convex shapes.
