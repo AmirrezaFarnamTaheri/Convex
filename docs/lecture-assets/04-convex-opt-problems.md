@@ -1,4 +1,0 @@
-- **File:** `linear-programming-feasible-region.svg`
-- **Source:** https://commons.wikimedia.org/wiki/File:Linear_Programming_Feasible_Region.svg
-- **License:** Public Domain
-- **Relevance:** This SVG provides a clear, standard illustration of a feasible region for a Linear Program (LP). It visually demonstrates how a set of linear inequality constraints defines a convex polygonal region, which is a fundamental concept in understanding the geometry of convex optimization problems.

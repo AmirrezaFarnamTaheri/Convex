@@ -1,4 +1,0 @@
-- **File:** `separating-hyperplane-theorem.png`
-- **Source:** https://en.wikipedia.org/wiki/File:Separating_axis_theorem2008.png
-- **License:** Public Domain
-- **Description:** A diagram illustrating the separating hyperplane theorem. It shows two disjoint convex sets in 2D and the hyperplane that separates them. This is a foundational concept for understanding convex sets.

@@ -1,4 +1,0 @@
-- **Filename:** `central-limit-theorem.gif`
-- **Source URL:** https://github.com/victoirv/CLTgif
-- **License:** Public GitHub Repository (No license specified)
-- **Description:** An animation demonstrating the Central Limit Theorem. It shows that the distribution of sample means from a non-normal distribution converges to a normal distribution as the sample size increases.
