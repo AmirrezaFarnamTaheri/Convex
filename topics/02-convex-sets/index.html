@@ -4,8 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>02. Convex Sets — Convex Optimization</title>
-  <link rel="stylesheet" href="../../static/css/styles.css" />
-  <link rel="stylesheet" href="../../static/css/modern-widgets.css" />
+  <link rel="stylesheet" href="../../static/css/convex-unified.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
@@ -28,7 +27,7 @@
   </header>
 
   <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2>Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
-    <header class="lecture-header card">
+    <header class="lecture-header card-v2">
       <h1>02. The Geometry of Feasibility: Convex Sets</h1>
       <div class="lecture-meta">
         <span>Date: 2025-10-28</span>
@@ -42,7 +41,7 @@
       </div>
     </header>
 
-    <section class="card">
+    <section class="card-v2">
       <h2>Learning Objectives</h2>
       <ul>
         <li><b>Define and Interpret Convexity:</b> Provide formal definitions of affine sets, convex sets, convex combinations, and convex hulls with geometric intuition.</li>
@@ -69,7 +68,7 @@
     </nav>
 
     <article>
-      <section class="card" id="section-1">
+      <section class="card-v2" id="section-1">
         <h2>1. Affine and Convex Sets: Definitions and Basic Properties</h2>
 
         <p>The geometry of optimization is built on understanding how points combine. Two fundamental operations define the landscape:</p>
@@ -164,7 +163,7 @@
         </div>
       </section>
 
-      <section class="card" id="section-2">
+      <section class="card-v2" id="section-2">
         <h2>2. Canonical Convex Sets: Building Blocks</h2>
 
         <p>These fundamental convex sets appear repeatedly in optimization formulations. Recognizing them is essential for problem classification.</p>
@@ -183,7 +182,7 @@
         $$
         <p>This is the region on one side of the hyperplane. The complement halfspace is $H^- = \{x \mid a^\top x \ge b\}$.</p>
 
-        <div class="proof">
+        <div class="proof-enhanced">
           <h4>Proof: Hyperplanes and Halfspaces are Convex</h4>
 
           <div class="proof-step">
@@ -315,7 +314,7 @@
         </div>
       </section>
 
-      <section class="card" id="section-3">
+      <section class="card-v2" id="section-3">
         <h2>3. Operations that Preserve Convexity</h2>
 
         <p>We can prove that a complex set is convex by building it from simpler convex sets using operations that preserve convexity. This is the "calculus" of convex sets.</p>
@@ -327,7 +326,7 @@
           <p>The intersection of any collection (finite or infinite) of convex sets is convex.</p>
         </div>
 
-        <div class="proof">
+        <div class="proof-enhanced">
           <h4>Proof</h4>
 
           <div class="proof-step">
@@ -372,7 +371,7 @@
           </ul>
         </div>
 
-        <div class="proof">
+        <div class="proof-enhanced">
           <h4>Proof</h4>
 
           <div class="proof-step">
@@ -433,7 +432,7 @@
         </div>
       </section>
 
-      <section class="card" id="section-4">
+      <section class="card-v2" id="section-4">
         <h2>4. Separating and Supporting Hyperplane Theorems</h2>
 
         <p>These theorems are the geometric backbone of duality theory, optimality conditions, and many algorithms in convex optimization.</p>
@@ -456,7 +455,7 @@
           <figcaption><i>Figure 4.1:</i> A hyperplane separating two disjoint convex sets $C$ and $D$.</figcaption>
         </figure>
 
-        <div class="proof">
+        <div class="proof-enhanced">
           <h4>Proof (Constructive via Projection)</h4>
 
           <div class="proof-step">
@@ -509,7 +508,7 @@
           <figcaption><i>Figure 4.2:</i> A supporting hyperplane to a convex set at a boundary point.</figcaption>
         </figure>
 
-        <div class="proof">
+        <div class="proof-enhanced">
           <h4>Proof (via Projection)</h4>
 
           <div class="proof-step">
@@ -556,7 +555,7 @@
         </div>
       </section>
 
-      <section class="card" id="section-5">
+      <section class="card-v2" id="section-5">
         <h2>5. Cones, Proper Cones, and Dual Cones</h2>
 
         <h3>5.1 Cones and Convex Cones</h3>
@@ -605,7 +604,7 @@
         <h4>Nonnegative Orthant</h4>
         <p>$\mathbb{R}^n_+ = \{x \in \mathbb{R}^n \mid x \ge 0\}$ is self-dual.</p>
 
-        <div class="proof">
+        <div class="proof-enhanced">
           <h4>Proof of Self-Duality</h4>
           <div class="proof-step">
             <strong>($\subseteq$):</strong> If $y \in \mathbb{R}^n_+$, then for any $x \in \mathbb{R}^n_+$:
@@ -622,7 +621,7 @@
         <h4>Second-Order Cone</h4>
         <p>$\mathcal{Q}^{n+1} = \{(x, t) \in \mathbb{R}^{n+1} \mid \|x\|_2 \le t\}$ is self-dual.</p>
 
-        <div class="proof">
+        <div class="proof-enhanced">
           <h4>Proof of Self-Duality</h4>
           <div class="proof-step">
             <strong>($\subseteq$):</strong> If $(y, s) \in \mathcal{Q}$ (so $\|y\|_2 \le s$) and $(x, t) \in \mathcal{Q}$ (so $\|x\|_2 \le t$), then by Cauchy-Schwarz:
@@ -668,7 +667,7 @@
         </div>
       </section>
 
-      <section class="card" id="section-6">
+      <section class="card-v2" id="section-6">
         <h2>6. Topological Toolkit: Closure, Interior, Relative Interior</h2>
 
         <p>To work precisely with convex sets and optimality conditions, we need clear notions of "inside," "edge," and "outside."</p>
@@ -731,7 +730,7 @@
         </ul>
       </section>
 
-      <section class="card" id="section-7">
+      <section class="card-v2" id="section-7">
         <h2>7. Problem Set & Solutions</h2>
 
         <p>These problems consolidate all exercises from throughout the lecture and add additional practice.</p>
@@ -1004,7 +1003,7 @@
         </div>
       </section>
 
-      <section class="card" id="section-8">
+      <section class="card-v2" id="section-8">
         <h2>8. Quick Reference Glossary</h2>
 
         <p>Essential terms from this lecture for quick lookup:</p>
