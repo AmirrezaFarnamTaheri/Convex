@@ -58,9 +58,8 @@
     <section class="card" style="margin-bottom: 32px;">
       <h2>Key Concepts</h2>
 
-      <h3>Concept 1: Maximum Likelihood Estimation</h3>
-      <p>The goal of MLE is to find the parameters of a statistical model that maximize the likelihood of the observed data.</p>
-      <p>Visual intuition: We are finding the peak of the likelihood function.</p>
+      <h3>1. Maximum Likelihood Estimation (MLE)</h3>
+      <p>MLE finds parameters $\theta$ that maximize the likelihood $p(y_1, \ldots, y_n \mid \theta)$ of observed data. Equivalently, we minimize the negative log-likelihood, which is often a convex function for exponential family distributions (Gaussian, Poisson, exponential, etc.).</p>
 
       <!-- Include images as needed -->
       <figure style="margin: 16px 0; text-align: center;">
@@ -69,6 +68,30 @@
           The MLE is the point in the parameter space that maximizes the likelihood function.
         </figcaption>
       </figure>
+
+      <h3>2. Logistic Regression</h3>
+      <p>Binary classification via logistic model: $p(y=1 \mid x) = \sigma(w^\top x + b)$ where $\sigma(z) = 1/(1+e^{-z})$. The negative log-likelihood $\sum_i \log(1 + e^{-y_i(w^\top x_i + b)})$ is convex in $(w,b)$, enabling efficient gradient-based optimization.</p>
+
+      <h3>3. Support Vector Machines (SVMs)</h3>
+      <p>SVMs maximize margin between classes by solving $\min_{w,b} \frac{1}{2}\|w\|_2^2$ subject to $y_i(w^\top x_i + b) \geq 1$ for all $i$. The soft-margin version adds slack variables and hinge loss, yielding the convex problem $\min \frac{1}{2}\|w\|_2^2 + C\sum_i \max(0, 1-y_i(w^\top x_i + b))$.</p>
+
+      <h3>4. Regularized Maximum Likelihood</h3>
+      <p>To prevent overfitting, regularization adds a penalty: $\min_\theta -\ell(\theta) + \lambda R(\theta)$ where $\ell$ is log-likelihood and $R$ is a regularizer (e.g., $\|w\|_2^2$ for Ridge, $\|w\|_1$ for LASSO). This yields sparse or smooth estimators depending on $R$.</p>
+
+      <h3>5. Exponential Family and GLMs</h3>
+      <p>Generalized Linear Models (GLMs) extend linear regression to exponential family distributions. The log-likelihood is concave, so MLE is a convex optimization problem. Examples include Poisson regression (count data) and Gamma regression (positive continuous data).</p>
+
+      <h3>6. Multi-Class Classification</h3>
+      <p>Softmax regression extends logistic regression to $K$ classes via $p(y=k \mid x) = e^{w_k^\top x}/\sum_j e^{w_j^\top x}$. The negative log-likelihood is convex, and the problem can be solved via gradient descent or Newton's method.</p>
+
+      <h3>7. Robust Estimation</h3>
+      <p>Robust statistics use loss functions less sensitive to outliers than squared error. Huber loss and $\ell_1$ penalty create convex problems that downweight extreme observations, improving estimator reliability in contaminated data.</p>
+
+      <h3>8. Empirical Risk Minimization (ERM)</h3>
+      <p>ERM minimizes average loss over training data: $\min_\theta \frac{1}{n}\sum_{i=1}^n \text{loss}(f_\theta(x_i), y_i)$. For convex losses (hinge, logistic, squared), this is a convex problem, forming the basis of supervised learning theory.</p>
+
+      <h3>9. Regularization Paths and Model Selection</h3>
+      <p>The regularization parameter $\lambda$ controls bias-variance tradeoff. Computing the full solution path (all $\lambda$ values) via LARS or proximal gradient methods enables cross-validation for optimal $\lambda$ selection.</p>
     </section>
 
     <!-- Interactive widgets -->
@@ -117,11 +140,37 @@
     <section class="card" style="margin-bottom: 32px;">
       <h2>Example Problems</h2>
 
-      <h3>Example 1: Logistic regression for spam detection</h3>
-      <p>[Problem statement and worked solution]</p>
+      <h3>Example 7.1: MLE for Gaussian Distribution</h3>
+      <p><strong>Problem:</strong> Given $n$ i.i.d. samples from $\mathcal{N}(\mu, \sigma^2)$, derive the MLE for $\mu$ and $\sigma^2$ by minimizing the negative log-likelihood.</p>
+      <p><em>[Detailed worked solution to be added: Shows $\hat{\mu} = \frac{1}{n}\sum_i x_i$, $\hat{\sigma}^2 = \frac{1}{n}\sum_i (x_i - \hat{\mu})^2$, proves convexity]</em></p>
 
-      <h3>Example 2: SVM for image classification</h3>
-      <p>[Problem statement and worked solution]</p>
+      <h3>Example 7.2: Logistic Regression for Binary Classification</h3>
+      <p><strong>Problem:</strong> For spam detection with features (word counts), formulate the logistic regression problem and derive the gradient for gradient descent.</p>
+      <p><em>[Detailed worked solution to be added: Constructs feature matrix, writes negative log-likelihood, derives gradient $\nabla_w \ell = \sum_i (\sigma(w^\top x_i) - y_i)x_i$]</em></p>
+
+      <h3>Example 7.3: Hard-Margin SVM</h3>
+      <p><strong>Problem:</strong> For linearly separable data, derive the dual of the hard-margin SVM and show that only support vectors have nonzero dual variables.</p>
+      <p><em>[Detailed worked solution to be added: Forms Lagrangian, derives dual $\max_\alpha \sum_i \alpha_i - \frac{1}{2}\sum_{ij} \alpha_i\alpha_j y_i y_j x_i^\top x_j$, shows KKT conditions]</em></p>
+
+      <h3>Example 7.4: Soft-Margin SVM with Hinge Loss</h3>
+      <p><strong>Problem:</strong> Formulate the soft-margin SVM as an unconstrained problem using hinge loss and explain the role of parameter $C$.</p>
+      <p><em>[Detailed worked solution to be added: Shows equivalence of constrained and unconstrained forms, explains $C$ as regularization weight]</em></p>
+
+      <h3>Example 7.5: Poisson Regression for Count Data</h3>
+      <p><strong>Problem:</strong> Model website traffic (counts) as Poisson with rate $\lambda(x) = e^{w^\top x}$, formulate MLE as convex problem.</p>
+      <p><em>[Detailed worked solution to be added: Writes log-likelihood for Poisson GLM, shows convexity via Hessian analysis]</em></p>
+
+      <h3>Example 7.6: Softmax Regression for Multi-Class Classification</h3>
+      <p><strong>Problem:</strong> Extend logistic regression to 3-class problem (iris dataset), derive the gradient of the cross-entropy loss.</p>
+      <p><em>[Detailed worked solution to be added: Defines softmax probabilities, writes cross-entropy, computes $\nabla_{w_k} \ell = \sum_i (p_{ik} - \mathbb{1}_{y_i=k})x_i$]</em></p>
+
+      <h3>Example 7.7: Regularized Logistic Regression</h3>
+      <p><strong>Problem:</strong> Add $\ell_1$ penalty to logistic regression for feature selection, solve using proximal gradient descent.</p>
+      <p><em>[Detailed worked solution to be added: Formulates $\min \ell(w) + \lambda\|w\|_1$, applies soft-thresholding in proximal step]</em></p>
+
+      <h3>Example 7.8: Robust MLE with Huber Loss</h3>
+      <p><strong>Problem:</strong> For regression with outliers, replace squared loss with Huber loss and formulate as QP or smooth optimization problem.</p>
+      <p><em>[Detailed worked solution to be added: Defines Huber function, shows SOCP reformulation or uses smooth approximation for gradient methods]</em></p>
     </section>
 
     <!-- Exercises (optional) -->
@@ -129,8 +178,16 @@
       <h2>Exercises</h2>
       <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
       <ol style="line-height: 2;">
-        <li>Derive the dual of the SVM problem.</li>
-        <li>What is the difference between logistic regression and a linear SVM?</li>
+        <li>Derive the dual of the soft-margin SVM problem $\min_{w,b,\xi} \frac{1}{2}\|w\|_2^2 + C\sum_i \xi_i$ subject to $y_i(w^\top x_i + b) \geq 1 - \xi_i$ and $\xi_i \geq 0$. Show that the dual is a QP with box constraints.</li>
+        <li>Compare logistic regression and linear SVM: both are linear classifiers, but logistic regression uses log loss $\log(1+e^{-yf})$ while SVM uses hinge loss $\max(0, 1-yf)$. What are the implications for outliers and probabilistic interpretation?</li>
+        <li>Prove that the negative log-likelihood for logistic regression $\ell(w) = \sum_i \log(1 + e^{-y_i w^\top x_i})$ is convex by computing the Hessian and showing it is positive semidefinite.</li>
+        <li>Show that MLE for the exponential distribution with rate $\lambda$ yields $\hat{\lambda} = n/\sum_i x_i$. Is this a convex optimization problem? Why or why not?</li>
+        <li>For Poisson regression with $\log \lambda_i = w^\top x_i$, derive the gradient and Hessian of the negative log-likelihood. Show that the Hessian is positive definite.</li>
+        <li>Implement Newton's method for logistic regression and compare convergence speed to gradient descent. Explain why Newton is faster (hint: second-order information).</li>
+        <li>For softmax regression with $K$ classes, show that the Hessian of the negative log-likelihood is block diagonal. How does this structure help computational efficiency?</li>
+        <li>Prove that adding $\ell_2$ regularization to logistic regression ensures strong convexity, guaranteeing a unique solution even when data is linearly separable.</li>
+        <li>Show that the kernel trick can be applied to SVMs: the solution depends only on inner products $x_i^\top x_j$, which can be replaced by $k(x_i, x_j)$ for a kernel function $k$.</li>
+        <li>For $\ell_1$-regularized logistic regression, prove that the proximal operator of $\lambda\|w\|_1$ is the soft-thresholding operator: $\text{prox}_{\lambda\|\cdot\|_1}(w) = \text{sign}(w) \odot \max(|w| - \lambda, 0)$.</li>
       </ol>
     </section>
   </main></div>

@@ -58,9 +58,8 @@
     <section class="card" style="margin-bottom: 32px;">
       <h2>Key Concepts</h2>
 
-      <h3>Concept 1: Distance Between Sets</h3>
-      <p>The distance between two sets $\mathcal{C}_1$ and $\mathcal{C}_2$ is defined as $\inf\{\|x_1 - x_2\| \mid x_1 \in \mathcal{C}_1, x_2 \in \mathcal{C}_2\}$.</p>
-      <p>Visual intuition: We are finding the shortest line segment connecting the two sets.</p>
+      <h3>1. Distance Between Convex Sets</h3>
+      <p>For convex sets $\mathcal{C}_1, \mathcal{C}_2$, the distance $d(\mathcal{C}_1, \mathcal{C}_2) = \min_{x_1 \in \mathcal{C}_1, x_2 \in \mathcal{C}_2} \|x_1 - x_2\|_2$ is a convex optimization problem. The dual formulation involves separating hyperplanes, and the solution provides the closest pair of points.</p>
 
       <!-- Include images as needed -->
       <figure style="margin: 16px 0; text-align: center;">
@@ -69,6 +68,30 @@
           If the sets are convex, the problem of finding the distance between them is a convex optimization problem.
         </figcaption>
       </figure>
+
+      <h3>2. Euclidean Projection onto Convex Sets</h3>
+      <p>Projection of point $x_0$ onto convex set $\mathcal{C}$ solves $\min_{x \in \mathcal{C}} \|x - x_0\|_2^2$, a strongly convex QP with unique solution. The projection operator is non-expansive and forms the basis for projection algorithms (POCS, Dykstra's algorithm).</p>
+
+      <h3>3. Minimum Volume Enclosing Ellipsoid (MVEE)</h3>
+      <p>The MVEE for points $x_1, \ldots, x_m$ minimizes $\log \det(A^{-1})$ subject to $\|A^{1/2}(x_i - x_c)\|_2 \leq 1$ for all $i$. This is a convex problem (determinant maximization) solved via barrier methods, providing optimal ellipsoidal approximation.</p>
+
+      <h3>4. Chebyshev Center and Maximum Inscribed Ball</h3>
+      <p>The Chebyshev center of polyhedron $\{x : a_i^\top x \leq b_i\}$ maximizes radius $r$ subject to $a_i^\top x_c + r\|a_i\|_2 \leq b_i$ for all $i$. This LP finds the largest ball fitting inside the set, useful for robustness analysis and center estimation.</p>
+
+      <h3>5. Separating and Supporting Hyperplanes</h3>
+      <p>For disjoint convex sets, a separating hyperplane exists: $a^\top x_1 < b < a^\top x_2$ for $x_1 \in \mathcal{C}_1, x_2 \in \mathcal{C}_2$. Computing optimal separation (maximum margin) is a linear or quadratic program depending on norm choice.</p>
+
+      <h3>6. Extremal Volume Ellipsoids</h3>
+      <p>The maximum volume inscribed ellipsoid (MVIE) and MVEE are dual problems. For a polyhedron, MVIE maximizes $\log \det(A)$ subject to $\|A x_i\|_2 + b^\top x_i \leq 1$, providing inner approximation complementary to MVEE.</p>
+
+      <h3>7. Placement and Location Problems</h3>
+      <p>Optimal facility location minimizes worst-case or average distance to demand points: $\min_x \max_i \|x - x_i\|$ (Chebyshev) or $\min_x \sum_i w_i\|x - x_i\|$ (Weber). For $\ell_2$ norm, these are convex SOCP or smooth optimization problems.</p>
+
+      <h3>8. Shape Fitting and Geometric Approximation</h3>
+      <p>Fitting geometric shapes (lines, planes, circles) to data via least squares: $\min \sum_i d(x_i, \mathcal{S})^2$ where $\mathcal{S}$ is the shape. For linear manifolds this is PCA/SVD; for nonlinear shapes, convex relaxations or alternating minimization apply.</p>
+
+      <h3>9. Floor Planning and Geometric Design</h3>
+      <p>Optimal layout of rectangles (e.g., VLSI design) under area/aspect constraints and non-overlap requirements. Convex formulations arise when variables are logarithmic widths/heights, yielding geometric programs.</p>
     </section>
 
     <!-- Interactive widgets -->
@@ -144,11 +167,37 @@
     <section class="card" style="margin-bottom: 32px;">
       <h2>Example Problems</h2>
 
-      <h3>Example 1: Finding the closest point in a convex set to a given point</h3>
-      <p>[Problem statement and worked solution]</p>
+      <h3>Example 8.1: Euclidean Projection onto a Simplex</h3>
+      <p><strong>Problem:</strong> Project point $y \in \mathbb{R}^n$ onto the probability simplex $\Delta_n = \{x : x \geq 0, \mathbf{1}^\top x = 1\}$.</p>
+      <p><em>[Detailed worked solution to be added: Formulates QP, derives closed-form via soft-thresholding with Lagrange multiplier, shows algorithm]</em></p>
 
-      <h3>Example 2: Separating two polyhedra</h3>
-      <p>[Problem statement and worked solution]</p>
+      <h3>Example 8.2: Distance Between Two Polyhedra</h3>
+      <p><strong>Problem:</strong> Compute distance between $\mathcal{P}_1 = \{x : A_1 x \leq b_1\}$ and $\mathcal{P}_2 = \{x : A_2 x \leq b_2\}$ and find the closest pair of points.</p>
+      <p><em>[Detailed worked solution to be added: Formulates as QP $\min \|x_1 - x_2\|_2^2$ subject to polyhedral constraints, shows dual interpretation]</em></p>
+
+      <h3>Example 8.3: Chebyshev Center of Triangle</h3>
+      <p><strong>Problem:</strong> Find the Chebyshev center (largest inscribed circle) of triangle with vertices at $(0,0), (4,0), (2,3)$.</p>
+      <p><em>[Detailed worked solution to be added: Writes half-space constraints, formulates LP, solves for center and radius]</em></p>
+
+      <h3>Example 8.4: MVEE for 2D Point Set</h3>
+      <p><strong>Problem:</strong> Compute the minimum volume enclosing ellipsoid for 10 points in $\mathbb{R}^2$.</p>
+      <p><em>[Detailed worked solution to be added: Sets up SDP via log-det formulation, shows barrier method solution, visualizes result]</em></p>
+
+      <h3>Example 8.5: Separating Hyperplane for Two Sets</h3>
+      <p><strong>Problem:</strong> Find the maximum-margin separating hyperplane between two point sets (binary classification geometric view).</p>
+      <p><em>[Detailed worked solution to be added: Formulates as QP, connects to hard-margin SVM, shows geometric interpretation]</em></p>
+
+      <h3>Example 8.6: Optimal Placement of Facility</h3>
+      <p><strong>Problem:</strong> Find location $x \in \mathbb{R}^2$ minimizing maximum distance to 5 demand points (minimax location).</p>
+      <p><em>[Detailed worked solution to be added: Reformulates $\min_x \max_i \|x - x_i\|_2$ as SOCP, solves and interprets as smallest enclosing circle]</em></p>
+
+      <h3>Example 8.7: Best-Fit Line to Points</h3>
+      <p><strong>Problem:</strong> Fit a line to points $(x_i, y_i)$ using total least squares (orthogonal regression).</p>
+      <p><em>[Detailed worked solution to be added: Formulates distance minimization, shows SVD solution, compares to ordinary least squares]</em></p>
+
+      <h3>Example 8.8: Maximum Volume Inscribed Ellipsoid</h3>
+      <p><strong>Problem:</strong> For unit cube $[0,1]^n$, find the MVIE (dual to MVEE).</p>
+      <p><em>[Detailed worked solution to be added: Formulates SDP for MVIE, shows duality with MVEE, computes volume ratio]</em></p>
     </section>
 
     <!-- Exercises (optional) -->
@@ -156,8 +205,16 @@
       <h2>Exercises</h2>
       <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
       <ol style="line-height: 2;">
-        <li>How can you use the MVEE to detect outliers?</li>
-        <li>Formulate the problem of finding the largest ball that can fit inside a polyhedron as a convex optimization problem.</li>
+        <li>Show that projection onto a convex set $\mathcal{C}$ is a non-expansive operator: $\|\text{proj}_\mathcal{C}(x) - \text{proj}_\mathcal{C}(y)\|_2 \leq \|x - y\|_2$.</li>
+        <li>Prove that for a polyhedron $\{x : Ax \leq b\}$, the Chebyshev center problem $\max_{x_c, r} r$ subject to $a_i^\top x_c + r\|a_i\|_2 \leq b_i$ is a linear program.</li>
+        <li>For the MVEE problem, show that the objective $\log \det(A^{-1})$ is convex by verifying that the Hessian is positive semidefinite.</li>
+        <li>Derive the dual of the MVEE problem and show its connection to the maximum volume inscribed ellipsoid (MVIE).</li>
+        <li>Show that the distance between two convex sets $\mathcal{C}_1, \mathcal{C}_2$ equals zero if and only if their intersection is nonempty.</li>
+        <li>For separating hyperplane problem, prove that if two convex sets are disjoint, there exists a hyperplane strictly separating them.</li>
+        <li>Formulate the Weber problem (minimize sum of weighted distances $\sum_i w_i \|x - x_i\|_2$) as an SOCP.</li>
+        <li>Show that projection onto the probability simplex $\Delta_n$ can be computed in $O(n \log n)$ time via sorting.</li>
+        <li>Prove that the smallest enclosing circle of a finite point set has at most 3 points on its boundary (in 2D), and derive an algorithm to find it.</li>
+        <li>For floor planning with $n$ rectangles, explain how changing variables to logarithms of widths/heights transforms the problem into a geometric program.</li>
       </ol>
     </section>
   </main></div>

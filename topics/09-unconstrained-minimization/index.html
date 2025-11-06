@@ -58,9 +58,8 @@
     <section class="card" style="margin-bottom: 32px;">
       <h2>Key Concepts</h2>
 
-      <h3>Concept 1: Gradient Descent</h3>
-      <p>The gradient descent algorithm is an iterative method for finding the minimum of a function. The update rule is $x_{k+1} = x_k - t_k \nabla f(x_k)$.</p>
-      <p>Visual intuition: We are taking steps in the direction of the negative gradient.</p>
+      <h3>1. Gradient Descent (GD)</h3>
+      <p>The gradient descent algorithm iterates $x_{k+1} = x_k - t_k \nabla f(x_k)$ with step size $t_k$. For strongly convex $f$ with condition number $\kappa$, GD converges linearly at rate $(1 - 1/\kappa)$, making it efficient for well-conditioned problems but slow for ill-conditioned ones.</p>
 
       <!-- Include images as needed -->
       <figure style="margin: 16px 0; text-align: center;">
@@ -69,6 +68,30 @@
           Gradient descent converges to a local minimum.
         </figcaption>
       </figure>
+
+      <h3>2. Step Size Selection</h3>
+      <p>Common step size strategies: (1) exact line search $t_k = \arg\min_t f(x_k - t\nabla f(x_k))$, (2) backtracking with Armijo condition $f(x + t\Delta x) \leq f(x) + \alpha t \nabla f(x)^\top \Delta x$, (3) constant step $t_k = 1/L$ where $L$ is Lipschitz constant of $\nabla f$.</p>
+
+      <h3>3. Newton's Method</h3>
+      <p>Newton's method uses second-order information: $x_{k+1} = x_k - [\nabla^2 f(x_k)]^{-1}\nabla f(x_k)$. Near the optimum, it exhibits quadratic convergence: $\|x_{k+1} - x^*\| \leq c\|x_k - x^*\|^2$, converging much faster than GD but requiring Hessian computation and inversion.</p>
+
+      <h3>4. Quasi-Newton Methods</h3>
+      <p>BFGS and limited-memory BFGS (L-BFGS) approximate the Hessian inverse using gradient information only, avoiding expensive Hessian computation. BFGS achieves superlinear convergence while maintaining $O(n^2)$ storage (vs. $O(n)$ for L-BFGS), balancing Newton's speed with GD's low memory footprint.</p>
+
+      <h3>5. Conjugate Gradient Method</h3>
+      <p>For quadratic $f(x) = \frac{1}{2}x^\top A x - b^\top x$, conjugate gradient finds the minimum in at most $n$ steps by choosing search directions $A$-orthogonal. For general convex $f$, nonlinear CG uses Polak-Ribière or Fletcher-Reeves formulas to update directions, often outperforming GD without Hessian computation.</p>
+
+      <h3>6. Accelerated Gradient Methods</h3>
+      <p>Nesterov's accelerated gradient (NAG) achieves optimal $O(1/k^2)$ convergence for smooth convex functions via momentum: $y_{k+1} = x_k - t\nabla f(x_k)$, $x_{k+1} = y_{k+1} + \frac{k-1}{k+2}(y_{k+1} - y_k)$. This improves on GD's $O(1/k)$ rate without using second-order information.</p>
+
+      <h3>7. Convergence Analysis and Rates</h3>
+      <p>Convergence rates classify algorithms: sublinear ($O(1/k)$ for GD on convex), linear ($O(\rho^k)$ for GD on strongly convex, $\rho < 1$), superlinear (BFGS), quadratic (Newton). The choice depends on problem structure, dimension, and computational budget per iteration.</p>
+
+      <h3>8. Self-Concordance and Damped Newton</h3>
+      <p>For self-concordant functions, the Newton decrement $\lambda(x) = (\nabla f(x)^\top [\nabla^2 f(x)]^{-1} \nabla f(x))^{1/2}$ provides a stopping criterion and affine-invariant measure of optimality. Damped Newton with backtracking ensures global convergence followed by locally quadratic convergence.</p>
+
+      <h3>9. Preconditioning and Scaling</h3>
+      <p>Preconditioning transforms $f(x)$ to $f(P^{-1}x)$ where $P$ approximates $\nabla^2 f$, improving condition number. Diagonal preconditioning (rescaling variables), incomplete Cholesky, and L-BFGS approximations reduce iteration count significantly for ill-conditioned problems.</p>
     </section>
 
     <!-- Interactive widgets -->
@@ -117,11 +140,37 @@
     <section class="card" style="margin-bottom: 32px;">
       <h2>Example Problems</h2>
 
-      <h3>Example 1: Solving a least squares problem with gradient descent</h3>
-      <p>[Problem statement and worked solution]</p>
+      <h3>Example 9.1: Gradient Descent on Quadratic Function</h3>
+      <p><strong>Problem:</strong> Apply GD with exact line search to $f(x) = \frac{1}{2}x^\top \begin{bmatrix} 4 & 0 \\ 0 & 1 \end{bmatrix} x$ starting from $x_0 = [1, 1]^\top$.</p>
+      <p><em>[Detailed worked solution to be added: Computes gradient, derives optimal step size, shows zigzagging behavior due to condition number $\kappa=4$]</em></p>
 
-      <h3>Example 2: Solving a logistic regression problem with Newton's method</h3>
-      <p>[Problem statement and worked solution]</p>
+      <h3>Example 9.2: Newton's Method for Logistic Regression</h3>
+      <p><strong>Problem:</strong> Implement Newton's method for logistic regression with 3 data points, show quadratic convergence.</p>
+      <p><em>[Detailed worked solution to be added: Derives Hessian $\nabla^2 \ell = X^\top D X$ where $D = \text{diag}(p_i(1-p_i))$, shows 3-4 iterations suffice]</em></p>
+
+      <h3>Example 9.3: Backtracking Line Search</h3>
+      <p><strong>Problem:</strong> For $f(x) = e^{x_1} + x_1^2 + x_2^2$, implement backtracking with $\alpha=0.3, \beta=0.8$ from $x_0=[2,2]^\top$.</p>
+      <p><em>[Detailed worked solution to be added: Shows step size sequence, verifies Armijo condition, compares to exact line search]</em></p>
+
+      <h3>Example 9.4: Conjugate Gradient for Linear System</h3>
+      <p><strong>Problem:</strong> Solve $Ax = b$ for $3 \times 3$ SPD matrix using CG, verify convergence in 3 iterations.</p>
+      <p><em>[Detailed worked solution to be added: Computes conjugate directions, shows $A$-orthogonality, verifies finite termination]</em></p>
+
+      <h3>Example 9.5: BFGS Update</h3>
+      <p><strong>Problem:</strong> Given $x_k, x_{k+1}, \nabla f(x_k), \nabla f(x_{k+1})$, compute the BFGS approximation $B_{k+1}$ to the Hessian.</p>
+      <p><em>[Detailed worked solution to be added: Applies BFGS formula with $s_k = x_{k+1}-x_k$, $y_k = \nabla f(x_{k+1}) - \nabla f(x_k)$]</em></p>
+
+      <h3>Example 9.6: Convergence Rate Comparison</h3>
+      <p><strong>Problem:</strong> For $f(x) = \frac{1}{2}\|Ax-b\|_2^2$ with $\kappa(A)=100$, compare iterations required for GD vs. Newton to achieve $\|x_k - x^*\| \leq 10^{-6}$.</p>
+      <p><em>[Detailed worked solution to be added: Estimates GD iterations $\approx 100\log(10^6)$, Newton $\approx 5-6$ iterations]</em></p>
+
+      <h3>Example 9.7: Nesterov Acceleration</h3>
+      <p><strong>Problem:</strong> Implement accelerated GD for $f(x) = \frac{1}{2}x^\top A x - b^\top x$, compare convergence to standard GD.</p>
+      <p><em>[Detailed worked solution to be added: Shows momentum term, verifies $O(1/k^2)$ vs. $O(1/k)$ convergence empirically]</em></p>
+
+      <h3>Example 9.8: Newton Decrement and Stopping Criterion</h3>
+      <p><strong>Problem:</strong> For self-concordant $f$, compute $\lambda(x) = (\nabla f^\top [\nabla^2 f]^{-1} \nabla f)^{1/2}$ and show $\lambda(x) \leq \epsilon$ implies near-optimality.</p>
+      <p><em>[Detailed worked solution to be added: Derives bound $f(x) - f(x^*) \leq \lambda^2/2$, uses as stopping criterion]</em></p>
     </section>
 
     <!-- Exercises (optional) -->
@@ -129,8 +178,16 @@
       <h2>Exercises</h2>
       <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
       <ol style="line-height: 2;">
-        <li>What is the convergence rate of gradient descent?</li>
-        <li>What are the advantages and disadvantages of Newton's method?</li>
+        <li>Prove that for strongly convex $f$ with strong convexity constant $m$ and Lipschitz constant $L$, gradient descent with step size $t = 2/(m+L)$ converges at rate $(1 - m/L)^k = (1 - 1/\kappa)^k$.</li>
+        <li>Show that Newton's method is affine-invariant: if $x_{k+1}$ is the Newton update for $f(x)$, then $Tx_{k+1}$ is the Newton update for $f(T^{-1}x)$ for nonsingular $T$.</li>
+        <li>Derive the backtracking line search algorithm and prove that it terminates in finite iterations under Lipschitz continuous gradient assumption.</li>
+        <li>For the quadratic $f(x) = \frac{1}{2}x^\top A x - b^\top x$, show that conjugate gradient finds the exact minimizer in at most $n$ iterations, where $n = \dim(x)$.</li>
+        <li>Prove the BFGS update formula maintains positive definiteness: if $B_k \succ 0$ and $s_k^\top y_k > 0$, then $B_{k+1} \succ 0$.</li>
+        <li>Show that Nesterov's accelerated gradient achieves $f(x_k) - f(x^*) \leq \frac{2L\|x_0-x^*\|^2}{(k+1)^2}$ for $L$-smooth convex $f$.</li>
+        <li>For self-concordant $f$, prove that the Newton decrement $\lambda(x)$ satisfies $f(x) - f(x^*) \leq \lambda(x)^2/2$ when $\lambda(x) < 1$.</li>
+        <li>Implement L-BFGS with memory size $m=10$ and compare memory usage to full BFGS for $n=1000$ dimensional problems.</li>
+        <li>Show that preconditioning with $P = \text{diag}(\nabla^2 f(x^*))$ can reduce the condition number from $\kappa$ to approximately $\sqrt{\kappa}$ for certain problem classes.</li>
+        <li>Prove that exact line search in gradient descent guarantees $\nabla f(x_k)^\top \nabla f(x_{k+1}) = 0$ (consecutive gradients are orthogonal).</li>
       </ol>
     </section>
   </main></div>
