@@ -445,12 +445,14 @@
       $$ \min_{x \in \mathbb{R}^n} \|Ax - b\|_2^2 $$</p>
 
       <h3>Geometric Interpretation: Projection</h3>
-      <p>The solution to the least squares problem has a clean geometric interpretation. The vector $Ax$ is always in the column space of $A$, $\mathcal{R}(A)$. The problem is therefore equivalent to finding the point in $\mathcal{R}(A)$ that is closest to $b$. This closest point is the <b>orthogonal projection</b> of $b$ onto $\mathcal{R}(A)$. Let this projection be $p = Ax^\star$. The residual vector $r^\star = b - Ax^\star$ must be orthogonal to the entire column space.</p>
+      <p>The solution to the least squares problem has a clean geometric interpretation. The vector $Ax$ lies in the column space of $A$, denoted $\mathcal{R}(A)$. The problem $\min_x \|Ax - b\|_2$ is therefore equivalent to finding the point $p \in \mathcal{R}(A)$ that is closest to $b$ in Euclidean distance.</p>
+
+      <p>By the Pythagorean theorem, the closest point $p$ must satisfy a specific geometric condition: the error vector $b - p$ must be orthogonal to the subspace $\mathcal{R}(A)$. If the error vector were not orthogonal, we could project it onto the subspace to find a "correction" that brings us closer to $b$, contradicting the optimality of $p$. Thus, the optimal $p = Ax^\star$ is the <b>orthogonal projection</b> of $b$ onto $\mathcal{R}(A)$.</p>
 
       <h3>The Normal Equations</h3>
-      <p>The orthogonality condition, $r^\star \perp \mathcal{R}(A)$, means that the residual must be orthogonal to every column of $A$. This can be expressed compactly as $A^\top r^\star = 0$. Substituting the definition of the residual, we get:
-      $$ A^\top(b - Ax^\star) = 0 $$
-      Rearranging this gives the <b>normal equations</b>:
+      <p>The orthogonality condition, $(b - Ax^\star) \perp \mathcal{R}(A)$, implies that the residual vector must be orthogonal to every basis vector of the subspace. Since the columns of $A$ span $\mathcal{R}(A)$, the residual must be orthogonal to each column of $A$. This can be expressed compactly as:
+      $$ A^\top (b - Ax^\star) = 0 $$
+      Expanding this yields the <b>normal equations</b>:
       $$ A^\top A x^\star = A^\top b $$
       If the matrix $A$ has linearly independent columns (full column rank), then $A^\top A$ is invertible, and we can write the unique solution as $x^\star = (A^\top A)^{-1} A^\top b$.</p>
 
