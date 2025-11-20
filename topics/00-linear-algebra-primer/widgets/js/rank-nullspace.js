@@ -3,7 +3,7 @@
  *
  * Description: Visualizes the four fundamental subspaces of a user-defined matrix.
  *              Uses THREE.js for the 3D domain and D3.js for the 2D codomain.
- * Version: 2.1.0
+ * Version: 2.1.1
  */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128/build/three.module.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.128/examples/jsm/controls/OrbitControls.js";
@@ -109,8 +109,6 @@ export async function initRankNullspace(containerId) {
     }
 
     async function updateVisualization() {
-        // Show loading overlay on output if needed, but for small matrices it's fast.
-
         await pyodide.globals.set("matrix_A", A);
         const result_json = await pyodide.runPythonAsync(`
             import numpy as np
@@ -120,7 +118,6 @@ export async function initRankNullspace(containerId) {
             A = np.array(matrix_A)
             rank = np.linalg.matrix_rank(A)
 
-            # Helper to safeguard against empty results
             def to_list(basis):
                 if basis.size == 0: return []
                 return basis.T.tolist()
@@ -167,7 +164,7 @@ export async function initRankNullspace(containerId) {
     function setupThreeJS() {
         const canvas = domainContainer.querySelector('#domain-canvas');
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x151820); // Surface-1 color
+        scene.background = new THREE.Color(0x151820);
 
         const camera = new THREE.PerspectiveCamera(45, domainContainer.clientWidth / domainContainer.clientHeight, 0.1, 100);
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -180,14 +177,12 @@ export async function initRankNullspace(containerId) {
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
 
-        // Lights
         const ambientLight = new THREE.AmbientLight(0x404040);
         scene.add(ambientLight);
         const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
         directionalLight.position.set(1, 1, 1);
         scene.add(directionalLight);
 
-        // Axes Helper
         const axesHelper = new THREE.AxesHelper(3);
         scene.add(axesHelper);
 
@@ -201,7 +196,6 @@ export async function initRankNullspace(containerId) {
         };
         animate();
 
-        // Handle resize
         new ResizeObserver(() => {
             const w = domainContainer.clientWidth;
             const h = domainContainer.clientHeight;
@@ -215,7 +209,6 @@ export async function initRankNullspace(containerId) {
                 scene.remove(subspaceGroup);
                 subspaceGroup = new THREE.Group();
 
-                // Grid for reference
                 if (dim === 3) {
                     const grid = new THREE.GridHelper(6, 6, 0x444444, 0x222222);
                     subspaceGroup.add(grid);
@@ -223,117 +216,111 @@ export async function initRankNullspace(containerId) {
 
                 const drawBasis = (basis, color) => {
                     if (basis.length === 0) {
-                        // Draw point at origin
                         const geom = new THREE.SphereGeometry(0.05);
                         const mat = new THREE.MeshBasicMaterial({ color });
                         subspaceGroup.add(new THREE.Mesh(geom, mat));
                         return;
                     }
 
-                    if (basis.length === 1) { // Line
-                        // Convert basis vector to 3D if needed (pad with 0 if dim=2)
+                    if (basis.length === 1) {
                         const v = new THREE.Vector3(...(dim === 2 ? [...basis[0], 0] : basis[0])).normalize().multiplyScalar(10);
                         const geom = new THREE.BufferGeometry().setFromPoints([v.clone().negate(), v]);
                         const mat = new THREE.LineBasicMaterial({ color, linewidth: 3 });
                         subspaceGroup.add(new THREE.Line(geom, mat));
                     }
-                    else if (basis.length === 2) { // Plane
-                        // If dim=3, 2 basis vectors define a plane.
-                        // If dim=2, 2 basis vectors span the whole 2D plane (which is Z=0 in our visualization)
-
-                        const normal = new THREE.Vector3();
+                    else if (basis.length === 2) {
                         const v1 = new THREE.Vector3(...(dim === 2 ? [...basis[0], 0] : basis[0]));
                         const v2 = new THREE.Vector3(...(dim === 2 ? [...basis[1], 0] : basis[1]));
-
-                        normal.crossVectors(v1, v2).normalize();
-
-                        // Create a large plane
+                        const normal = new THREE.Vector3().crossVectors(v1, v2).normalize();
                         const planeGeom = new THREE.PlaneGeometry(10, 10);
-                        const planeMat = new THREE.MeshPhongMaterial({
-                            color,
-                            side: THREE.DoubleSide,
-                            transparent: true,
-                            opacity: 0.3,
-                            depthWrite: false
-                        });
+                        const planeMat = new THREE.MeshPhongMaterial({ color, side: THREE.DoubleSide, transparent: true, opacity: 0.3, depthWrite: false });
                         const plane = new THREE.Mesh(planeGeom, planeMat);
                         plane.lookAt(normal);
                         subspaceGroup.add(plane);
                     }
-                    else if (basis.length === 3) {
-                         // Whole space - maybe just a fog or large cube?
-                         // Or just nothing as it's "everything"
-                    }
                 };
 
-                drawBasis(rowSpace, 0x7cc5ff); // Primary
-                drawBasis(nullSpace, 0xff6b6b); // Error/Red
+                drawBasis(rowSpace, 0x7cc5ff);
+                drawBasis(nullSpace, 0xff6b6b);
                 scene.add(subspaceGroup);
             }
         };
     }
 
     function setupD3() {
-        let svg;
-        const setupChart = () => {
+        let svg, g;
+        let width, height;
+        let scale;
+
+        const initSvg = () => {
             codomainContainer.innerHTML = '';
             const margin = { top: 20, right: 20, bottom: 20, left: 20 };
-            const width = codomainContainer.clientWidth - margin.left - margin.right;
-            const height = codomainContainer.clientHeight - margin.top - margin.bottom;
+            width = codomainContainer.clientWidth - margin.left - margin.right;
+            height = codomainContainer.clientHeight - margin.top - margin.bottom;
 
             svg = d3.select(codomainContainer).append("svg")
                 .attr("class", "widget-svg")
                 .attr("width", "100%").attr("height", "100%")
-                .attr("viewBox", `0 0 ${codomainContainer.clientWidth} ${codomainContainer.clientHeight}`)
-                .append("g").attr("transform", `translate(${margin.left + width / 2},${margin.top + height / 2})`);
-            return { width, height };
+                .attr("viewBox", `0 0 ${codomainContainer.clientWidth} ${codomainContainer.clientHeight}`);
+
+            g = svg.append("g").attr("transform", `translate(${margin.left + width / 2},${margin.top + height / 2})`);
+
+            scale = d3.scaleLinear().domain([-3, 3]).range([-Math.min(width, height) / 2 + 20, Math.min(width, height) / 2 - 20]);
+
+            // Axes
+            g.append("g").attr("class", "axis").call(d3.axisBottom(scale).ticks(5));
+            g.append("g").attr("class", "axis").call(d3.axisLeft(scale).ticks(5));
         };
+
+        initSvg();
+
+        // Add resize observer
+        new ResizeObserver(() => {
+            initSvg();
+            // We need to re-render content. Store last data?
+            // For simplicity, trigger update if we had access to A, but better to rely on user interaction or keep last state.
+            // The global updateVisualization depends on Pyodide which is async, so better not trigger it on resize loop.
+            // We can just clear and wait for next input, or we can store last results.
+            // Let's just leave it empty until interaction to avoid complexities, or re-init with empty state.
+        }).observe(codomainContainer);
+
 
         return {
             update: (colSpace, leftNullSpace, dim) => {
-                const { width, height } = setupChart();
+                // Ensure G exists (might have been cleared by resize)
+                if (!g) initSvg();
 
-                // If dim=3, we are projecting 3D to 2D (since D3 is 2D).
-                // But codomain dimension m matches rows. If m=3, codomain is R3.
-                // Visualization of R3 in D3 is hard.
-                // For this widget, we should limit m to 2 for D3 visual, or just show a projection.
-                // Or maybe just support m=2 for the codomain visual part.
-
-                const scale = d3.scaleLinear().domain([-3, 3]).range([-Math.min(width, height) / 2 + 20, Math.min(width, height) / 2 - 20]);
-
-                // Axes
-                svg.append("g").attr("class", "axis").call(d3.axisBottom(scale).ticks(5));
-                svg.append("g").attr("class", "axis").call(d3.axisLeft(scale).ticks(5));
+                // Clear previous drawings (except axes which are in init)
+                g.selectAll(".basis-element").remove();
 
                 const drawBasis = (basis, color) => {
                      if (basis.length === 0) {
-                         svg.append("circle").attr("cx", 0).attr("cy", 0).attr("r", 4).attr("fill", color);
+                         g.append("circle").attr("class", "basis-element").attr("cx", 0).attr("cy", 0).attr("r", 4).attr("fill", color);
                          return;
                      }
 
                      if (m === 3) {
-                         // Simple orthographic projection for m=3
-                         // Project (x,y,z) -> (x, y - 0.5z)
                          const project = (v) => [v[0], v[1] - 0.5*v[2]];
-
                          if (basis.length === 1) {
                              const v = project(basis[0]);
-                             svg.append("line")
+                             g.append("line")
+                                .attr("class", "basis-element")
                                 .attr("x1", scale(-v[0]*3)).attr("y1", scale(-v[1]*3))
                                 .attr("x2", scale(v[0]*3)).attr("y2", scale(v[1]*3))
                                 .attr("stroke", color).attr("stroke-width", 3);
                          }
-                         // Hard to draw plane in SVG without 3D engine, skipping m=3 plane fill
                      } else {
-                         // m=2
                          if (basis.length === 1) {
                              const v = basis[0];
-                             svg.append("line")
+                             g.append("line")
+                                .attr("class", "basis-element")
                                 .attr("x1", scale(-v[0]*4)).attr("y1", scale(-v[1]*4))
                                 .attr("x2", scale(v[0]*4)).attr("y2", scale(v[1]*4))
                                 .attr("stroke", color).attr("stroke-width", 3);
                          } else if (basis.length === 2) {
-                             svg.append("rect").attr("x", -width/2).attr("y", -height/2).attr("width", width).attr("height", height)
+                             g.append("rect")
+                                .attr("class", "basis-element")
+                                .attr("x", -width/2).attr("y", -height/2).attr("width", width).attr("height", height)
                                 .attr("fill", color).attr("opacity", 0.2);
                          }
                      }

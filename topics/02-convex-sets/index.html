@@ -156,8 +156,8 @@
           <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
             <li><b>Click to add vertices:</b> Build your own polygon point by point</li>
             <li><b>Automatic convexity test:</b> The tool checks if all line segments between points lie within the set</li>
+            <li><b>Counter-example Visualization:</b> If the shape is non-convex, it <i>shows you exactly why</i> by drawing a line segment between two internal points that passes outside the set.</li>
             <li><b>Convex hull visualization:</b> See the smallest convex set containing your points (the "rubber band" around them)</li>
-            <li><b>Interactive feedback:</b> Instantly see if your shape is convex, and if not, which line segments violate convexity</li>
           </ul>
           <p><i>Learning tip:</i> Try creating both convex shapes (circles, triangles, ellipses) and non-convex ones (stars, crescents, L-shapes). Notice how any "dent" or "indentation" makes a set non-convex!</p>
           <div id="widget-convex-set-checker" style="width: 100%; height: 450px; position: relative;"></div>
@@ -238,7 +238,7 @@
           <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
             <li><b>Adjust matrix P:</b> Modify the PSD matrix entries and watch the ellipsoid reshape in real-time</li>
             <li><b>Visualize eigenvectors:</b> The principal axes align with eigenvectors of $P$</li>
-            <li><b>Observe eigenvalue effects:</b> Axis lengths are $\sqrt{\lambda_i}$ where $\lambda_i$ are eigenvalues</li>
+            <li><b>Observe eigenvalue effects:</b> Axis lengths are proportional to $\sqrt{\lambda_i}$ where $\lambda_i$ are eigenvalues</li>
             <li><b>Understand constraints:</b> This is the geometric representation of quadratic constraints in QP and SOCP</li>
           </ul>
           <p><i>Key connection:</i> Understanding ellipsoid geometry is crucial for QP and SOCP formulations. The level sets of the objective $\frac{1}{2}x^\top Q x$ are ellipsoids!</p>
@@ -268,14 +268,13 @@
           <h3 style="margin-top: 0;">Interactive Visualizer: Polyhedron Builder</h3>
           <p><b>Build Feasible Regions from Constraints:</b> A polyhedron is the intersection of finitely many halfspaces. This tool brings LP feasible sets to life:</p>
           <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Add constraints one at a time:</b> Define linear inequalities $a^\top x \le b$ by specifying coefficients</li>
-            <li><b>See halfspaces:</b> Each constraint defines a halfspace—the region satisfying the inequality</li>
-            <li><b>Watch the intersection:</b> As you add constraints, see how the feasible region forms</li>
-            <li><b>Identify vertices:</b> The corners (extreme points) are where constraints become active</li>
-            <li><b>Test feasibility:</b> Click any point to check if it satisfies all constraints</li>
+            <li><b>Add constraints one at a time:</b> Drag to define linear inequalities $a^\top x \le b$</li>
+            <li><b>Visualize normals:</b> See the normal vector $a$ pointing <i>out</i> of the feasible region</li>
+            <li><b>Watch the intersection:</b> As you add constraints, see how the feasible region is carved out of the plane</li>
+            <li><b>Flip constraints:</b> Interactively reverse the inequality direction ($\le$ to $\ge$) to see the effect</li>
           </ul>
           <p><i>Why this matters:</i> The simplex algorithm for Linear Programming moves from vertex to vertex along edges of the polyhedron, always improving the objective. The optimal solution (if it exists and is finite) is at a vertex!</p>
-          <div id="widget-polyhedron-visualizer" style="width: 100%; height: 400px; position: relative;"></div>
+          <div id="widget-polyhedron-visualizer" style="width: 100%; height: 520px; position: relative;"></div>
         </div>
 
         <h3>2.4 Cones and Important Cone Examples</h3>
@@ -301,18 +300,7 @@
         $$
         <p>where $\mathbb{S}^n$ denotes symmetric $n \times n$ matrices. This is the foundation of Semidefinite Programming (SDP).</p>
 
-        <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Explorer: Cone Geometry</h3>
-          <p><b>Visualize Convex Cones and Their Duals:</b> A cone $K$ satisfies $x \in K \Rightarrow \theta x \in K$ for all $\theta \ge 0$. This tool explores:</p>
-          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Nonnegative orthant ($\mathbb{R}^n_+$):</b> All coordinates non-negative. Self-dual!</li>
-            <li><b>Second-order cone:</b> $\{(x,t) \mid \|x\|_2 \le t\}$—the ice cream cone. Also self-dual!</li>
-            <li><b>Dual cones:</b> $K^* = \{y \mid y^\top x \ge 0 \ \forall x \in K\}$</li>
-            <li><b>Geometric interpretation:</b> The dual cone consists of all vectors making non-negative inner products with every vector in the original cone</li>
-          </ul>
-          <p><i>Deep connection:</i> Dual cones are the geometric foundation of Lagrangian duality. KKT conditions require Lagrange multipliers to lie in the dual cone!</p>
-          <div id="widget-cone-geometry" style="width: 100%; height: 400px; position: relative;"></div>
-        </div>
+        <!-- Removed Cone Geometry widget as it was redundant/less impactful than others -->
       </section>
 
       <section class="card-v2" id="section-3">
@@ -544,12 +532,13 @@
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Explorer: Separating Hyperplanes</h3>
-          <p><b>Find Hyperplanes that Separate Convex Sets:</b> Draw two disjoint convex sets and discover the separating hyperplane:</p>
+          <p><b>Find Hyperplanes that Separate Convex Sets:</b> This widget makes the Separating Hyperplane Theorem tangible:</p>
           <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
             <li><b>Draw two sets:</b> Click to define vertices of two convex polygons</li>
-            <li><b>Auto-compute separation:</b> The tool finds the separating hyperplane using the algorithm from the proof</li>
-            <li><b>Adjust sets:</b> Move them closer or farther apart and observe how the separating hyperplane changes</li>
-            <li><b>See strict separation:</b> When sets are far apart, observe strict separation with a gap</li>
+            <li><b>Drag to move:</b> Move the sets around and watch the separating hyperplane update in real-time</li>
+            <li><b>Auto-compute separation:</b> The tool uses the closest-point algorithm (constructive proof logic) to find the optimal separator</li>
+            <li><b>Observe the boundary case:</b> See what happens when the sets touch (strict separation becomes non-strict)</li>
+            <li><b>Violate separation:</b> If you make the sets overlap, the tool detects the collision and shows no hyperplane exists</li>
           </ul>
           <p><i>Connection to optimization:</i> This is exactly what happens in SVM classification—finding the maximum-margin separating hyperplane between two classes of data points!</p>
           <div id="widget-separating-hyperplane" style="width: 100%; height: 450px; position: relative;"></div>

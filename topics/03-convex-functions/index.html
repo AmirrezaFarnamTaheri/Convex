@@ -22,7 +22,7 @@
       <nav class="nav">
         <a href="../../index.html">All Lectures</a>
         <a href="../02-convex-sets/index.html">← Previous</a>
-        <a href="../04-convex-problems/index.html">Next →</a>
+        <a href="../04-convex-opt-problems/index.html">Next →</a>
       </nav>
     </div>
   </header>
@@ -194,17 +194,15 @@
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive 3D Visualizer: Epigraph Explorer</h3>
-          <p><b>Visualize the Epigraph in 3D:</b> The epigraph is the set of all points lying on or above the graph of a function. This 3D visualization brings the concept to life:</p>
+          <h3 style="margin-top: 0;">Interactive Visualizer: Epigraph Explorer</h3>
+          <p><b>Visualize the Epigraph:</b> The epigraph is the set of all points lying on or above the graph. This widget lets you explore its connection to convexity and sublevel sets:</p>
           <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Choose a function:</b> Select from various convex and non-convex functions</li>
-            <li><b>See the 3D surface:</b> The function's graph rendered as a 3D surface</li>
-            <li><b>Toggle epigraph:</b> Show/hide the epigraph region (the "filled-in" volume above the graph)</li>
-            <li><b>Rotate and zoom:</b> Explore from different angles to build geometric intuition</li>
-            <li><b>Test convexity:</b> For convex functions, the epigraph is a convex set (no dents or indentations)</li>
+            <li><b>Choose a function:</b> Compare convex ($x^2$, $|x|$) and non-convex ($x^3$) functions.</li>
+            <li><b>Sublevel Set Slicing:</b> Drag the horizontal plane (alpha) to slice the epigraph. The projection of this slice is the sublevel set $\{x \mid f(x) \le \alpha\}$.</li>
+            <li><b>Observe Property:</b> For a convex function, both the epigraph AND all sublevel sets are convex. For non-convex, the epigraph is not convex, and sublevel sets might be disconnected intervals.</li>
           </ul>
-          <p><i>Connection to optimization:</i> The optimization problem $\min f(x)$ is equivalent to finding the lowest point in the epigraph—this geometric view is the foundation of modern optimization theory!</p>
-          <div id="widget-epigraph-visualizer" style="width: 100%; height: 500px; position: relative;"></div>
+          <p><i>Connection to optimization:</i> Constraints of the form $f_i(x) \le 0$ define the feasible set as the intersection of sublevel sets. If $f_i$ are convex, the feasible set is convex!</p>
+          <div id="widget-epigraph-visualizer" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
       </section>
 
@@ -391,17 +389,17 @@
           <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
             <li><b>Choose a 2D function:</b> Select from various functions (quadratic, Rosenbrock, etc.)</li>
             <li><b>Heatmap display:</b> The color at each point shows the minimum eigenvalue of the Hessian $\nabla^2 f(x)$</li>
+            <li><b>Interactive Probe:</b> Hover over the heatmap to see the local quadratic approximation. Observe how the local "bowl" or "saddle" shape relates to the Hessian eigenvalues.</li>
             <li><b>Interpret colors:</b>
               <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
-                <li><b>Blue/Green (positive):</b> PSD Hessian—locally convex</li>
+                <li><b>Blue/Green (positive):</b> PSD Hessian—locally convex (bowl)</li>
                 <li><b>Red (negative):</b> Not PSD—locally concave or saddle point</li>
               </ul>
             </li>
             <li><b>Global convexity:</b> A function is convex if the entire region is blue/green (no red)</li>
-            <li><b>Click to inspect:</b> See the exact Hessian matrix and eigenvalues at any point</li>
           </ul>
           <p><i>Practical insight:</i> This is exactly how numerical optimization libraries verify convexity in practice—by checking that all eigenvalues of the Hessian are non-negative!</p>
-          <div id="widget-hessian-heatmap" style="width: 100%; height: 500px; position: relative;"></div>
+          <div id="widget-hessian-heatmap" style="width: 100%; height: 450px; position: relative;"></div>
         </div>
       </section>
 
@@ -700,26 +698,6 @@
         <p>Minimizing a quasi-convex function over a convex set is a <b>quasi-convex optimization problem</b>. These are harder than convex problems (local minima can exist), but still more tractable than general nonconvex problems.</p>
         <p><b>Solution method:</b> Bisection on the objective value, solving feasibility problems $\{x \mid f(x) \le t, x \in C\}$ for various $t$.</p>
 
-        <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Tool: Function Library and Classification</h3>
-          <p><b>Explore a Gallery of Functions:</b> This comprehensive library showcases various functions with their convexity properties. Browse through:</p>
-          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Convex functions:</b> $x^2$, $e^x$, $|x|$, $-\log(x)$, $\|x\|_p$, $x \log x$</li>
-            <li><b>Concave functions:</b> $\sqrt{x}$, $\log(x)$, $-x^2$</li>
-            <li><b>Quasi-convex:</b> $\lceil x \rceil$, $\mathrm{rank}(X)$ (for matrices)</li>
-            <li><b>Neither:</b> $\sin(x)$, $x^3$, $x \sin(x)$</li>
-          </ul>
-          <p>For each function, see:</p>
-          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li>Graph and contour plot visualization</li>
-            <li>Domain and range</li>
-            <li>Gradient and Hessian (if applicable)</li>
-            <li>Conjugate function (if convex)</li>
-            <li>Common applications</li>
-          </ul>
-          <p><i>Use this as a reference:</i> When modeling, identify which of these standard functions appears in your problem!</p>
-          <div id="widget-function-library" style="width: 100%; height: 500px; position: relative;"></div>
-        </div>
       </section>
 
       <section class="card-v2" id="section-9">
@@ -1064,36 +1042,26 @@
             </div>
 
             <div class="proof-step">
-              <strong>Characterize sublevel sets:</strong> Since $\lceil x \rceil$ is the smallest integer $\ge x$, we have $\lceil x \rceil \le \alpha$ if and only if $x \le \alpha$. Thus:
+              <strong>Characterize sublevel sets:</strong> Since $\lceil x \rceil$ is the smallest integer $\ge x$, we have $\lceil x \rceil \le \alpha$ if and only if $x \le \lfloor\alpha\rfloor$. Thus:
               $$
-              S_\alpha = (-\infty, \alpha]
+              S_\alpha = (-\infty, \lfloor\alpha\rfloor]
               $$
-              which is an interval (convex).
+              which is an interval (convex). Since all sublevel sets are convex, $f$ is quasi-convex.
             </div>
 
             <div class="proof-step">
-              <strong>Show not convex:</strong> To show $f$ is not convex, we check Jensen's inequality. Take $x = 0.1$ and $y = 0.9$, both with $\lceil x \rceil = \lceil y \rceil = 1$. For $\theta = 0.5$:
-              $$
-              z = 0.5 \cdot 0.1 + 0.5 \cdot 0.9 = 0.5 \implies \lceil z \rceil = 1
-              $$
-              $$
-              \theta f(x) + (1-\theta)f(y) = 0.5 \cdot 1 + 0.5 \cdot 1 = 1
-              $$
-              So Jensen's inequality holds with equality here. But consider $x = 0.9$, $y = 1.1$:
-              $$
-              \lceil 0.9 \rceil = 1, \quad \lceil 1.1 \rceil = 2
-              $$
-              $$
-              z = 0.5 \cdot 0.9 + 0.5 \cdot 1.1 = 1 \implies \lceil z \rceil = 1
-              $$
-              $$
-              \theta f(x) + (1-\theta)f(y) = 0.5 \cdot 1 + 0.5 \cdot 2 = 1.5
-              $$
-              So $\lceil z \rceil = 1 < 1.5$, which means the function value at the midpoint is strictly less than the weighted average—this violates convexity! (Convexity requires $\le$, but we got strict inequality in the wrong direction—wait, this actually satisfies convexity. Let me reconsider.)
-            </div>
-
-            <div class="proof-step">
-              <strong>Correction:</strong> Actually, the ceiling function is quasi-convex but proving it's not convex requires more care. Consider the second derivative (when it exists between integers): $f''(x) = 0$ between integers, but the function has jump discontinuities. A simple argument: the graph is piecewise constant with jumps, not a smooth convex curve. Between any two points on different "steps," the chord connecting them can lie above some portions of the graph, violating the geometric convexity condition.
+              <strong>Show not convex:</strong> Convexity requires $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ for all $x, y, \theta \in [0,1]$.
+              Consider $x=0$ and $y=0.6$.
+              <ul>
+                <li>$f(0) = \lceil 0 \rceil = 0$</li>
+                <li>$f(0.6) = \lceil 0.6 \rceil = 1$</li>
+              </ul>
+              Let $\theta = 0.5$, so the midpoint is $z = 0.5(0) + 0.5(0.6) = 0.3$.
+              <ul>
+                <li>Actual value: $f(0.3) = \lceil 0.3 \rceil = 1$</li>
+                <li>Convex combination: $0.5 f(0) + 0.5 f(0.6) = 0.5(0) + 0.5(1) = 0.5$</li>
+              </ul>
+              Since $1 \not\le 0.5$, the inequality is violated. Therefore, the ceiling function is <b>not convex</b>.
             </div>
           </div>
         </div>
