@@ -564,22 +564,100 @@
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Gallery: Real-World Applications</h3>
-          <p><b>See Convex Optimization in Action:</b> Browse through applications organized by problem family:</p>
-          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Linear Programming (LP):</b> Transportation, diet planning, manufacturing, network flows</li>
-            <li><b>Quadratic Programming (QP):</b> Portfolio optimization, SVM training, MPC (model predictive control)</li>
-            <li><b>SOCP:</b> Robust optimization, signal processing, structural engineering</li>
-            <li><b>SDP:</b> Control Lyapunov design, graph theory (max-cut relaxation), quantum information</li>
-          </ul>
-          <p>Each application shows:</p>
-          <ul style="margin-left: 1rem;">
-            <li>Problem formulation</li>
-            <li>Variables and constraints explained</li>
-            <li>Real-world impact</li>
-            <li>Link to the underlying problem family</li>
-          </ul>
-          <div id="widget-problem-gallery" style="width: 100%; height: 450px; position: relative;"></div>
+          <h3 style="margin-top: 0;">Gallery: Real-World Applications</h3>
+          <p><b>Convex Optimization in Action:</b> Modern technology relies on convex optimization for critical tasks across industries.</p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px;">
+
+            <!-- LP: Resource Allocation -->
+            <div class="card-v2" style="padding: 20px; background: var(--color-surface-2); border: 1px solid var(--color-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 1.8rem;">🏭</span>
+                <span style="background: var(--color-success); color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px;">LP</span>
+              </div>
+              <h4 style="margin: 0 0 4px 0; color: var(--color-text-main);">Resource Allocation</h4>
+              <div style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Operations</div>
+              <p style="font-size: 0.9rem; margin: 0; color: var(--color-text-secondary);">Allocate scarce resources (raw materials, labor) to maximize profit. Constraints are linear inequalities ($Ax \le b$), objective is linear ($c^\top x$).</p>
+            </div>
+
+            <!-- QP: Portfolio Optimization -->
+            <div class="card-v2" style="padding: 20px; background: var(--color-surface-2); border: 1px solid var(--color-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 1.8rem;">📈</span>
+                <span style="background: var(--color-primary); color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px;">QP</span>
+              </div>
+              <h4 style="margin: 0 0 4px 0; color: var(--color-text-main);">Portfolio Optimization</h4>
+              <div style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Finance</div>
+              <p style="font-size: 0.9rem; margin: 0; color: var(--color-text-secondary);">Maximize expected return for a given level of risk. The risk constraint is quadratic ($x^\top \Sigma x \le \gamma$), making this a QP.</p>
+            </div>
+
+            <!-- QP: SVM -->
+            <div class="card-v2" style="padding: 20px; background: var(--color-surface-2); border: 1px solid var(--color-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 1.8rem;">🤖</span>
+                <span style="background: var(--color-primary); color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px;">QP</span>
+              </div>
+              <h4 style="margin: 0 0 4px 0; color: var(--color-text-main);">Support Vector Machine</h4>
+              <div style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Machine Learning</div>
+              <p style="font-size: 0.9rem; margin: 0; color: var(--color-text-secondary);">Find the hyperplane that separates classes with maximum margin. Maximizing the margin is equivalent to minimizing a quadratic norm $\|w\|_2^2$.</p>
+            </div>
+
+            <!-- SOCP: Antenna Design -->
+            <div class="card-v2" style="padding: 20px; background: var(--color-surface-2); border: 1px solid var(--color-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 1.8rem;">📡</span>
+                <span style="background: var(--color-accent); color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px;">SOCP</span>
+              </div>
+              <h4 style="margin: 0 0 4px 0; color: var(--color-text-main);">Robust Antenna Design</h4>
+              <div style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Engineering</div>
+              <p style="font-size: 0.9rem; margin: 0; color: var(--color-text-secondary);">Design antenna array weights to minimize side lobes. Robustness against manufacturing errors introduces second-order cone constraints.</p>
+            </div>
+
+            <!-- LP: Network Flow -->
+            <div class="card-v2" style="padding: 20px; background: var(--color-surface-2); border: 1px solid var(--color-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 1.8rem;">🚚</span>
+                <span style="background: var(--color-success); color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px;">LP</span>
+              </div>
+              <h4 style="margin: 0 0 4px 0; color: var(--color-text-main);">Network Flow</h4>
+              <div style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Logistics</div>
+              <p style="font-size: 0.9rem; margin: 0; color: var(--color-text-secondary);">Route traffic or goods through a network to minimize cost, subject to link capacity constraints ($0 \le f_{ij} \le u_{ij}$).</p>
+            </div>
+
+            <!-- SDP: Matrix Completion -->
+            <div class="card-v2" style="padding: 20px; background: var(--color-surface-2); border: 1px solid var(--color-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 1.8rem;">🧩</span>
+                <span style="background: #fbbf24; color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px;">SDP</span>
+              </div>
+              <h4 style="margin: 0 0 4px 0; color: var(--color-text-main);">Matrix Completion</h4>
+              <div style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Data Science</div>
+              <p style="font-size: 0.9rem; margin: 0; color: var(--color-text-secondary);">Recover a low-rank matrix (e.g., Netflix ratings) from sparse observations. The nuclear norm relaxation $\|X\|_*$ leads to an SDP.</p>
+            </div>
+
+            <!-- SDP: Control -->
+            <div class="card-v2" style="padding: 20px; background: var(--color-surface-2); border: 1px solid var(--color-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 1.8rem;">🎮</span>
+                <span style="background: #fbbf24; color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px;">SDP</span>
+              </div>
+              <h4 style="margin: 0 0 4px 0; color: var(--color-text-main);">Control System Design</h4>
+              <div style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Control Theory</div>
+              <p style="font-size: 0.9rem; margin: 0; color: var(--color-text-secondary);">Find a feedback controller to stabilize a system. Lyapunov stability conditions appear as Linear Matrix Inequalities (LMIs).</p>
+            </div>
+
+            <!-- LP: Truss -->
+            <div class="card-v2" style="padding: 20px; background: var(--color-surface-2); border: 1px solid var(--color-border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 1.8rem;">🏗️</span>
+                <span style="background: var(--color-success); color: #000; font-size: 0.75rem; font-weight: bold; padding: 2px 6px; border-radius: 4px;">LP</span>
+              </div>
+              <h4 style="margin: 0 0 4px 0; color: var(--color-text-main);">Truss Topology Design</h4>
+              <div style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Structural Eng</div>
+              <p style="font-size: 0.9rem; margin: 0; color: var(--color-text-secondary);">Determine the optimal layout of bars in a truss to support a load with minimum weight. Can be formulated as a large-scale LP.</p>
+            </div>
+
+          </div>
         </div>
       </section>
 
@@ -1340,10 +1418,6 @@
   <script type="module">
     import { initProblemFlowchart } from './widgets/js/problem-flowchart.js';
     initProblemFlowchart('widget-problem-flowchart');
-  </script>
-  <script type="module">
-    import { initProblemGallery } from './widgets/js/problem-gallery.js';
-    initProblemGallery('widget-problem-gallery');
   </script>
 </body>
 </html>
