@@ -1,8 +1,8 @@
 /**
  * Widget: Problem Flowchart
  *
- * Description: An interactive, custom-built flowchart to classify optimization problems.
- * Version: 2.1.0
+ * Description: An interactive decision tree to help users classify optimization problems.
+ * Version: 3.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -16,68 +16,74 @@ export function initProblemFlowchart(containerId) {
             type: 'decision',
             yes: 'check_constraints',
             no: 'non_convex',
-            hint: "Check curvature (Hessian PSD) or Jensen's inequality."
+            hint: "Check 2nd derivative (Hessian ⪰ 0) or Jensen's Inequality."
         },
         non_convex: {
             text: "Non-Convex Problem",
             type: 'terminal',
-            desc: "Generally hard. Heuristics or local search only.",
-            color: "var(--color-error)"
+            desc: "Local optima may trap you. No polynomial-time guarantees. Use global heuristics or relaxations.",
+            color: "var(--color-error)",
+            icon: "⚠️"
         },
         check_constraints: {
-            text: "Are inequality constraints convex & equality affine?",
+            text: "Are inequality constraints convex & equality constraints affine?",
             type: 'decision',
             yes: 'convex_family',
             no: 'non_convex',
-            hint: "Feasible set must be convex."
+            hint: "g(x) ≤ 0 where g is convex; Ax = b."
         },
         convex_family: {
-            text: "Problem is Convex. Determine family:",
+            text: "Problem is Convex! Now classify it:",
             type: 'decision',
             options: [
-                { text: "Linear Obj & Constraints", target: "lp" },
-                { text: "Quadratic Obj, Linear Constr", target: "qp" },
-                { text: "Norm / Cone Constraints", target: "check_cone" },
-                { text: "Matrix PSD Constraints", target: "sdp" }
+                { text: "Linear Objective & Constraints", target: "lp" },
+                { text: "Quadratic Objective, Linear Constraints", target: "qp" },
+                { text: "Constraints involve Norms (||x||)", target: "check_cone" },
+                { text: "Constraints involve Matrix Eigenvalues", target: "sdp" }
             ]
         },
         lp: {
             text: "Linear Program (LP)",
             type: 'terminal',
-            desc: "Fastest. Solved via Simplex or Interior Point.",
-            color: "var(--color-success)"
+            desc: "The workhorse of industry. Solvable in milliseconds for millions of variables.",
+            color: "var(--color-success)",
+            icon: "⚡"
         },
         qp: {
             text: "Quadratic Program (QP)",
             type: 'terminal',
-            desc: "Standard for SVMs, Portfolio Opt. Efficient.",
-            color: "var(--color-primary)"
+            desc: "Standard for portfolio optimization and SVMs. Very efficient.",
+            color: "var(--color-primary)",
+            icon: "📈"
         },
         check_cone: {
-            text: "Which type of cone constraint?",
+            text: "What kind of norm?",
             type: 'decision',
             options: [
-                { text: "Euclidean (L2) Norm", target: "socp" },
-                { text: "L1 / L-inf Norm", target: "lp_reform" }
+                { text: "Euclidean Norm (||x||₂)", target: "socp" },
+                { text: "L1 or L-Infinity Norm", target: "lp_reform" }
             ]
         },
         lp_reform: {
             text: "LP (via Reformulation)",
             type: 'terminal',
-            desc: "L1 and L-inf norms can be rewritten as linear constraints.",
-            color: "var(--color-success)"
+            desc: "L1/L∞ minimization can be rewritten as an LP using slack variables.",
+            color: "var(--color-success)",
+            icon: "⚡"
         },
         socp: {
             text: "Second-Order Cone Program (SOCP)",
             type: 'terminal',
-            desc: "Robust optimization, antenna design.",
-            color: "var(--color-accent)"
+            desc: "Handles robust optimization and geometric constraints.",
+            color: "var(--color-accent)",
+            icon: "📐"
         },
         sdp: {
             text: "Semidefinite Program (SDP)",
             type: 'terminal',
-            desc: "Most general. Relaxations, control theory.",
-            color: "#fbbf24"
+            desc: "The most general class. Used in control theory and relaxations of combinatorial problems.",
+            color: "#fbbf24",
+            icon: "🏗️"
         }
     };
 
@@ -91,7 +97,7 @@ export function initProblemFlowchart(containerId) {
                 <button id="reset-btn" class="widget-btn">Reset</button>
             </div>
 
-            <div id="flowchart-display" style="height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; background: var(--color-surface-1);">
+            <div id="flowchart-display" style="height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; background: var(--color-surface-1); transition: opacity 0.2s;">
                 <!-- Dynamic Content -->
             </div>
 
@@ -99,7 +105,7 @@ export function initProblemFlowchart(containerId) {
                 <!-- Dynamic Buttons -->
             </div>
 
-            <div id="flowchart-info" class="widget-output" style="min-height: 60px; display: flex; align-items: center; justify-content: center;"></div>
+            <div id="flowchart-info" class="widget-output" style="min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center;"></div>
         </div>
     `;
 
@@ -113,23 +119,23 @@ export function initProblemFlowchart(containerId) {
         const currentId = history[history.length - 1];
         const node = flowchartData[currentId];
 
-        // Animate transition (simple fade)
+        // Animate transition
         display.style.opacity = 0;
+
         setTimeout(() => {
             if (node.type === 'terminal') {
                 display.innerHTML = `
-                    <div style="font-size: 3rem; margin-bottom: 16px;">🎯</div>
-                    <h3 style="color: ${node.color || 'white'}; font-size: 1.5rem; margin: 0;">${node.text}</h3>
+                    <div style="font-size: 4rem; margin-bottom: 16px; filter: drop-shadow(0 0 10px ${node.color});">${node.icon}</div>
+                    <h3 style="color: ${node.color || 'white'}; font-size: 1.8rem; margin: 0;">${node.text}</h3>
                 `;
             } else {
                 display.innerHTML = `
-                    <h3 style="font-size: 1.2rem; margin-bottom: 10px;">${node.text}</h3>
-                    ${node.hint ? `<p style="color: var(--color-text-muted); font-size: 0.9rem;">${node.hint}</p>` : ''}
+                    <h3 style="font-size: 1.4rem; margin-bottom: 12px; line-height: 1.4;">${node.text}</h3>
+                    ${node.hint ? `<div style="color: var(--color-text-muted); font-size: 0.95rem; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 6px; display: inline-block;">💡 Hint: ${node.hint}</div>` : ''}
                 `;
             }
             display.style.opacity = 1;
-        }, 150);
-        display.style.transition = "opacity 0.3s ease";
+        }, 200);
 
         // Update controls
         actions.innerHTML = '';
@@ -139,7 +145,9 @@ export function initProblemFlowchart(containerId) {
             if (node.options) {
                 node.options.forEach(opt => {
                     const btn = document.createElement('button');
-                    btn.className = "widget-btn primary";
+                    btn.className = "widget-btn";
+                    // Make them look like option cards if possible, or just buttons
+                    btn.style.flex = "1 1 40%";
                     btn.textContent = opt.text;
                     btn.onclick = () => { history.push(opt.target); render(); };
                     actions.appendChild(btn);
@@ -147,12 +155,14 @@ export function initProblemFlowchart(containerId) {
             } else {
                 const yesBtn = document.createElement('button');
                 yesBtn.className = "widget-btn primary";
+                yesBtn.style.minWidth = "100px";
                 yesBtn.textContent = 'Yes';
                 yesBtn.onclick = () => { history.push(node.yes); render(); };
                 actions.appendChild(yesBtn);
 
                 const noBtn = document.createElement('button');
                 noBtn.className = "widget-btn";
+                noBtn.style.minWidth = "100px";
                 noBtn.textContent = 'No';
                 noBtn.onclick = () => { history.push(node.no); render(); };
                 actions.appendChild(noBtn);

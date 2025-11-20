@@ -4,7 +4,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ---
 
-## Lecture 00: Linear Algebra Primer (7 Widgets)
+## Lecture 00: Linear Algebra Primer (8 Widgets)
 
 - **[x] Norm Geometry Visualizer (HIGH)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/norm-geometry-visualizer.js`
@@ -14,14 +14,14 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 - **[x] Orthogonality & Projection Explorer (MEDIUM)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/orthogonality.js`
-  - **Description:** Allows users to drag two vectors and see their dot product, angle, and orthogonal projection update in real-time.
-  - **Dependencies:** D3.js or a simple canvas library.
+  - **Description:** Allows users to drag two vectors and see their dot product, angle, and orthogonal projection update in real-time. Includes LaTeX math display.
+  - **Dependencies:** D3.js, KaTeX.
   - **Status:** Completed
 
 - **[x] Rank & Nullspace Visualizer (MEDIUM)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/rank-nullspace.js`
-  - **Description:** Visualizes the four fundamental subspaces of a user-defined 2x3 or 3x2 matrix.
-  - **Dependencies:** D3.js, Pyodide (NumPy for computation).
+  - **Description:** Visualizes the four fundamental subspaces of a user-defined 2x3 or 3x2 matrix using 3D (THREE.js) and 2D views.
+  - **Dependencies:** D3.js, THREE.js, Pyodide (NumPy/SciPy).
   - **Status:** Completed
 
 - **[x] Matrix & Geometry Explorer (HIGH)**
@@ -32,20 +32,26 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 - **[x] Condition Number & Convergence Race (LOW)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/condition-number.js`
-  - **Description:** Demonstrates how a high condition number slows down iterative solvers by comparing two systems of linear equations.
-  - **Dependencies:** D3.js for plotting convergence.
+  - **Description:** Demonstrates how a high condition number slows down iterative solvers (GD vs Momentum vs Newton) by comparing two systems. Includes zig-zag visualization.
+  - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
 - **[x] Hessian Landscape Visualizer (HIGH)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/hessian-landscape-visualizer.js`
   - **Description:** Renders the 3D surface of a quadratic function and its Hessian matrix, linking eigenvalues to curvature.
-  - **Dependencies:** Three.js, Pyodide (NumPy).
+  - **Dependencies:** THREE.js, Pyodide (NumPy).
   - **Status:** Completed
 
 - **[x] SVD & Low-Rank Approximation (LOW)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/svd-approximator.js`
-  - **Description:** Lets users perform a low-rank approximation of an image by selecting the number of singular values to use.
+  - **Description:** Lets users perform a low-rank approximation of an image by selecting the number of singular values to use. Shows error image and energy stats.
   - **Dependencies:** Canvas, Pyodide (NumPy, Scikit-image).
+  - **Status:** Completed
+
+- **[x] Least Squares Visualizer (NEW)**
+  - **Location:** `topics/00-linear-algebra-primer/widgets/js/least-squares-visualizer.js`
+  - **Description:** 3D visualization of the geometric interpretation of Least Squares (projection onto column space).
+  - **Dependencies:** THREE.js.
   - **Status:** Completed
 
 ---
@@ -54,33 +60,33 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 - **[x] Convex vs Nonconvex Explorer (HIGH)**
   - **Location:** `topics/01-introduction/widgets/js/convex-vs-nonconvex.js`
-  - **Description:** Users can select different 1D functions and see a visual check of Jensen's inequality to classify them as convex or nonconvex.
-  - **Dependencies:** D3.js, Pyodide (NumPy for checking convexity).
+  - **Description:** Users can select different 1D functions and see a visual check of Jensen's inequality to classify them as convex or nonconvex. Shows chord vs curve.
+  - **Dependencies:** D3.js.
   - **Status:** Completed
 
 - **[x] Landscape Viewer (3D) (HIGH)**
   - **Location:** `topics/01-introduction/widgets/js/landscape-viewer.js`
-  - **Description:** A 3D surface plot where a marble "rolls" to the minimum, illustrating the concept of a global vs. local optimum.
-  - **Dependencies:** Three.js.
+  - **Description:** A 3D surface plot where a marble "rolls" to the minimum (gradient descent physics), illustrating global vs. local optima.
+  - **Dependencies:** THREE.js, Pyodide (NumPy).
   - **Status:** Completed
 
 - **[x] Problem Classification Flowchart (MEDIUM)**
   - **Location:** `topics/01-introduction/widgets/js/problem-flowchart.js`
   - **Description:** An interactive flowchart that guides users through classifying an optimization problem (e.g., LP, QP, convex, nonconvex).
-  - **Dependencies:** A library like Mermaid.js or custom SVG.
+  - **Dependencies:** D3.js.
   - **Status:** Completed
 
 - **[x] Convergence Comparison (LOW)**
   - **Location:** `topics/01-introduction/widgets/js/convergence-comparison.js`
-  - **Description:** An animated plot comparing the convergence rates of a convex solver vs. a generic non-convex solver.
+  - **Description:** An animated plot comparing the convergence rates of a convex solver vs. a generic non-convex solver (getting stuck).
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
 - **[x] Convex Combination Explorer (LOW)**
   - **Location:** `topics/01-introduction/widgets/js/convex-combination.js`
-  - **Description:** Animates the concept of a convex combination using a triangle hull.
+  - **Description:** Animates the concept of a convex combination using a triangle hull and barycentric coordinates.
   - **Dependencies:** D3.js.
-  - **Status:** Completed (Enhanced v2.2)
+  - **Status:** Completed
 
 ---
 
@@ -88,70 +94,67 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 - **[x] Convex Set Checker (HIGH)**
   - **Location:** `topics/02-convex-sets/widgets/js/convex-set-checker.js`
-  - **Description:** Users can draw a 2D shape, and the widget checks if it's convex by sampling pairs of points. Includes counter-example visualization.
-  - **Dependencies:** Canvas API, Pyodide (NumPy).
-  - **Status:** Completed (Enhanced v2.2)
+  - **Description:** Users can draw a 2D shape, and the widget checks if it's convex by sampling pairs of points. Shows counter-example segment for non-convex sets.
+  - **Dependencies:** D3.js.
+  - **Status:** Completed
 
 - **[x] Ellipsoid Explorer & Parameterization (MEDIUM)**
   - **Location:** `topics/02-convex-sets/widgets/js/ellipsoid-explorer.js`
-  - **Description:** Visualizes a 2D ellipsoid defined by a matrix A and center x_c, allowing users to manipulate them and see the shape change.
+  - **Description:** Visualizes a 2D ellipsoid defined by a matrix P and center x_c, allowing users to manipulate axes and see the matrix update.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
 - **[x] Polyhedron Visualizer & Constraint Explorer (HIGH)**
   - **Location:** `topics/02-convex-sets/widgets/js/polyhedron-visualizer.js`
-  - **Description:** Users can add or modify linear inequalities (Ax <= b) and see the resulting 2D polyhedron update in real-time. Shows normal vectors.
-  - **Dependencies:** D3.js, Pyodide (NumPy for constraint solving).
-  - **Status:** Completed (Enhanced v2.2)
+  - **Description:** Users can add or modify linear inequalities (half-spaces) and see the resulting 2D polyhedron intersection. Shows normals.
+  - **Dependencies:** D3.js.
+  - **Status:** Completed
 
 - **[x] Separating Hyperplane Theorem Visualizer (HIGH)**
   - **Location:** `topics/02-convex-sets/widgets/js/separating-hyperplane.js`
-  - **Description:** Allows users to place two convex sets and watch the algorithm find a separating hyperplane between them. Supports dragging.
+  - **Description:** Allows users to draw/drag two convex sets and watch the algorithm find a separating hyperplane (or detect collision).
   - **Dependencies:** D3.js.
-  - **Status:** Completed (Enhanced v2.2)
+  - **Status:** Completed
 
 - **[x] Operations Preserve Convexity Builder (MEDIUM)**
   - **Location:** `topics/02-convex-sets/widgets/js/operations-builder.js`
-  - **Description:** A tool where users can apply operations (intersection, affine transformation) to pre-defined convex sets to see the result.
+  - **Description:** A tool where users can apply operations (intersection, affine transformation, Minkowski sum) to sets to see the result.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
 ---
 
-## Lecture 03: Convex Functions (6 Widgets)
+## Lecture 03: Convex Functions (5 Widgets)
 
 - **[x] Jensen's Inequality Interactive Proof (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/jensen-visualizer.js`
-  - **Description:** Users can pick a point λ on the line between x and y and see that f(λx + (1-λ)y) is always below the chord.
+  - **Description:** Users can pick points on a curve to visualize Jensen's inequality (chord above function).
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
 - **[x] Epigraph Visualizer (MEDIUM)**
   - **Location:** `topics/03-convex-functions/widgets/js/epigraph-visualizer.js`
-  - **Description:** Shows the 2D graph of a function and allows the user to toggle the visualization of its epigraph. Includes sublevel slicing.
+  - **Description:** Shows the 2D graph of a function and allows slicing the epigraph to see sublevel sets. Highlights convexity relationship.
   - **Dependencies:** D3.js.
-  - **Status:** Completed (Enhanced v2.2)
+  - **Status:** Completed
 
 - **[x] First-Order Characterization: Tangent Line Explorer (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/tangent-line-explorer.js`
-  - **Description:** Users can slide a point along a convex function's graph and see that the tangent line is always a global underestimator.
+  - **Description:** Users check if the tangent line is a global underestimator. Now includes **Strong Convexity** quadratic bound visualization.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
 - **[x] Hessian Eigenvalue Heatmap (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/hessian-heatmap.js`
-  - **Description:** Displays a 2D function's value as a heatmap and overlays the eigenvalues of the Hessian at each point. Includes interactive probe.
-  - **Dependencies:** D3.js, Pyodide (NumPy).
-  - **Status:** Completed (Enhanced v2.2)
+  - **Description:** Displays a 2D function's curvature as a heatmap of the Hessian's min eigenvalue. Includes interactive 3D probe.
+  - **Dependencies:** D3.js.
+  - **Status:** Completed
 
 - **[x] Operations Preserving Convexity (MEDIUM)**
   - **Location:** `topics/03-convex-functions/widgets/js/operations-preserving.js`
-  - **Description:** Interactive tool to show how operations like composition with an affine map preserve convexity.
+  - **Description:** Interactive tool to show how operations like composition and weighted sums preserve function convexity.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[x] Strongly Convex vs Merely Convex Comparison (LOW)**
-  - **Location:** `topics/03-convex-functions/widgets/js/strong-convexity.js`
-  - **Description:** Compares the graphs of a convex function and a strongly convex function, highlighting the quadratic lower bound.
-  - **Dependencies:** D3.js.
-  - **Status:** Completed
+- **[ ] Strongly Convex vs Merely Convex Comparison (LOW)**
+  - **Status:** Merged into `tangent-line-explorer.js`. File removed.

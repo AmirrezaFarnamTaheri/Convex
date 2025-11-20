@@ -8,7 +8,6 @@
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
-  <link rel="stylesheet" href="../../static/css/modern-widgets.css" />
   <script type="importmap">
     {
       "imports": {
@@ -454,6 +453,12 @@
       Rearranging this gives the <b>normal equations</b>:
       $$ A^\top A x^\star = A^\top b $$
       If the matrix $A$ has linearly independent columns (full column rank), then $A^\top A$ is invertible, and we can write the unique solution as $x^\star = (A^\top A)^{-1} A^\top b$.</p>
+
+      <div class="widget-container" style="margin: 24px 0;">
+        <h3 style="margin-top: 0;">Interactive Visualizer: Least Squares Projection</h3>
+        <p><b>See the Geometry in 3D:</b> The solution $Ax^\star$ is the orthogonal projection of the target vector $b$ onto the subspace spanned by the columns of $A$ (the plane). The residual vector $r = b - Ax^\star$ connects the projection to the target and is perpendicular (orthogonal) to the plane.</p>
+        <div id="widget-least-squares" style="width: 100%; height: 500px; position: relative;"></div>
+      </div>
 
       <h3>Uniqueness of the Solution</h3>
       <ul>
@@ -1575,6 +1580,10 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
   <script type="module">
     import { initConditionNumber } from './widgets/js/condition-number.js';
     initConditionNumber('widget-condition-number');
+  </script>
+  <script type="module">
+    import { initLeastSquaresVisualizer } from './widgets/js/least-squares-visualizer.js';
+    initLeastSquaresVisualizer('widget-least-squares');
   </script>
 </body>
 </html>

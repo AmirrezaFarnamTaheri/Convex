@@ -2,8 +2,8 @@
  * Widget: Operations Preserving Convexity
  *
  * Description: Interactively demonstrates how convexity is preserved under operations
- *              like non-negative weighted sums and composition with affine maps.
- * Version: 2.1.0
+ *              like non-negative weighted sums, composition with affine maps, and pointwise maximum.
+ * Version: 3.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -19,9 +19,9 @@ export function initOperationsPreserving(containerId) {
                 <div class="widget-control-group">
                     <label class="widget-label">Operation</label>
                     <select id="op-preserving-select" class="widget-select">
-                         <option value="sum">Non-negative Weighted Sum (αf + βg)</option>
-                         <option value="affine">Composition with Affine Map f(ax+b)</option>
-                         <option value="max">Pointwise Maximum max(f,g)</option>
+                         <option value="sum">Non-negative Weighted Sum</option>
+                         <option value="affine">Composition with Affine Map</option>
+                         <option value="max">Pointwise Maximum</option>
                     </select>
                 </div>
                  <div class="widget-control-group" id="op-specific-controls" style="flex: 2; flex-direction: row; gap: 16px;"></div>
@@ -38,9 +38,9 @@ export function initOperationsPreserving(containerId) {
 
     let svg, x, y;
     const funcs = {
-        f1: x => x**2,
-        f2: x => Math.exp(0.5 * x),
-        f3: x => Math.abs(x) // For max example
+        f1: x => x**2 - 1,
+        f2: x => Math.exp(0.6 * x),
+        f3: x => Math.abs(x) - 1
     };
 
     function setupChart() {
@@ -56,20 +56,20 @@ export function initOperationsPreserving(containerId) {
             .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
         x = d3.scaleLinear().domain([-3, 3]).range([0, width]);
-        y = d3.scaleLinear().domain([0, 10]).range([height, 0]);
+        y = d3.scaleLinear().domain([-2, 8]).range([height, 0]);
 
         // Grid
         svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(height).tickFormat(""));
         svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat(""));
 
         // Axes
-        svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x));
-        svg.append("g").attr("class", "axis").call(d3.axisLeft(y));
+        svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(5));
+        svg.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5));
 
         // Paths
         svg.append("path").attr("class", "path1").attr("fill", "none").attr("stroke", "var(--color-primary)").attr("stroke-width", 2).attr("stroke-dasharray", "5,5");
         svg.append("path").attr("class", "path2").attr("fill", "none").attr("stroke", "var(--color-accent)").attr("stroke-width", 2).attr("stroke-dasharray", "5,5");
-        svg.append("path").attr("class", "result-path").attr("fill", "none").attr("stroke", "var(--color-success)").attr("stroke-width", 4).attr("opacity", 0.8);
+        svg.append("path").attr("class", "result-path").attr("fill", "none").attr("stroke", "var(--color-success)").attr("stroke-width", 4).attr("opacity", 0.9);
     }
 
     function update() {
@@ -110,12 +110,14 @@ export function initOperationsPreserving(containerId) {
                 svg.select(".result-path").datum(data.map(d => ({ x: d, y: w1 * funcs.f1(d) + w2 * funcs.f2(d) }))).attr("d", line);
 
                 legendOutput.innerHTML = `
-                    <div style="display: flex; gap: 16px; align-items: center;">
-                        <div style="color: var(--color-primary);">f₁(x) = x²</div>
-                        <div style="color: var(--color-accent);">f₂(x) = e⁰·⁵ˣ</div>
-                        <div style="color: var(--color-success); font-weight: bold;">Result: ${w1.toFixed(1)}f₁ + ${w2.toFixed(1)}f₂</div>
+                    <div style="display: flex; gap: 16px; align-items: center; justify-content: center;">
+                        <div style="color: var(--color-primary);">f₁(x) = x²-1</div>
+                        <div style="color: var(--color-accent);">f₂(x) = e⁰·⁶ˣ</div>
                     </div>
-                    <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 4px;">Weighted sum with w ≥ 0 preserves convexity.</div>
+                    <div style="text-align: center; margin-top: 6px;">
+                        <div style="color: var(--color-success); font-weight: bold;">h(x) = ${w1.toFixed(1)}f₁ + ${w2.toFixed(1)}f₂</div>
+                        <div style="font-size: 0.8rem; color: var(--color-text-muted);">Weighted sum is convex if w₁, w₂ ≥ 0.</div>
+                    </div>
                 `;
             };
 
@@ -147,42 +149,40 @@ export function initOperationsPreserving(containerId) {
                 bVal.textContent = b.toFixed(1);
 
                 svg.select(".path1").style("display", null).datum(data.map(d => ({ x: d, y: funcs.f1(d) }))).attr("d", line);
-                svg.select(".path2").style("display", "none"); // Only 1 func
+                svg.select(".path2").style("display", "none");
 
                 // Result: f(ax+b)
-                // f1 is x^2. So (ax+b)^2
                 svg.select(".result-path").datum(data.map(d => ({ x: d, y: funcs.f1(a * d + b) }))).attr("d", line);
 
                 legendOutput.innerHTML = `
-                    <div style="display: flex; gap: 16px; align-items: center;">
-                        <div style="color: var(--color-primary);">f(z) = z²</div>
-                        <div style="color: var(--color-success); font-weight: bold;">Result: g(x) = f(${a.toFixed(1)}x + ${b.toFixed(1)})</div>
+                    <div style="text-align: center;">
+                        <div style="color: var(--color-primary);">f(z) = z²-1</div>
+                        <div style="color: var(--color-success); font-weight: bold; margin-top: 4px;">g(x) = f(${a.toFixed(1)}x + ${b.toFixed(1)})</div>
+                        <div style="font-size: 0.8rem; color: var(--color-text-muted);">Composition with affine map preserves convexity.</div>
                     </div>
-                    <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 4px;">Composition with affine mapping preserves convexity.</div>
                 `;
             };
             aInput.oninput = drawAffine;
             bInput.oninput = drawAffine;
             drawAffine();
         } else if (operation === 'max') {
-             // No controls needed really, static demo or toggles?
-             controlsContainer.innerHTML = `<span class="widget-label" style="align-self: center;">max(f₁, f₃) is convex.</span>`;
+             controlsContainer.innerHTML = `<div class="widget-label" style="align-self: center; color: var(--color-text-muted);">Comparing f₁(x) and f₃(x)</div>`;
 
-             // f1 = x^2, f3 = |x| + offset maybe?
-             // Let's use x^2 and |x|.
              const drawMax = () => {
                 svg.select(".path1").style("display", null).datum(data.map(d => ({ x: d, y: funcs.f1(d) }))).attr("d", line);
-                svg.select(".path2").style("display", null).datum(data.map(d => ({ x: d, y: Math.abs(d) }))).attr("d", line); // |x|
+                svg.select(".path2").style("display", null).datum(data.map(d => ({ x: d, y: funcs.f3(d) }))).attr("d", line);
 
-                svg.select(".result-path").datum(data.map(d => ({ x: d, y: Math.max(funcs.f1(d), Math.abs(d)) }))).attr("d", line);
+                svg.select(".result-path").datum(data.map(d => ({ x: d, y: Math.max(funcs.f1(d), funcs.f3(d)) }))).attr("d", line);
 
                 legendOutput.innerHTML = `
-                    <div style="display: flex; gap: 16px; align-items: center;">
-                        <div style="color: var(--color-primary);">f₁(x) = x²</div>
-                        <div style="color: var(--color-accent);">f₃(x) = |x|</div>
-                        <div style="color: var(--color-success); font-weight: bold;">Result: max(f₁, f₃)</div>
+                    <div style="display: flex; gap: 16px; align-items: center; justify-content: center;">
+                        <div style="color: var(--color-primary);">f₁(x) = x²-1</div>
+                        <div style="color: var(--color-accent);">f₃(x) = |x|-1</div>
                     </div>
-                    <div style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 4px;">Pointwise maximum of convex functions is convex.</div>
+                    <div style="text-align: center; margin-top: 6px;">
+                        <div style="color: var(--color-success); font-weight: bold;">h(x) = max(f₁, f₃)</div>
+                        <div style="font-size: 0.8rem; color: var(--color-text-muted);">Pointwise maximum preserves convexity.</div>
+                    </div>
                 `;
              }
              drawMax();

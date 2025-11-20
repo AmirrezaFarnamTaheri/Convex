@@ -8,7 +8,7 @@
  *              - Symmetric constraint toggle
  *              - Visualizations: Linear Transformation (Unit Circle -> Ellipse), Quadratic Form (Contours), Eigenvectors
  *              - Analysis: Determinant, Trace, Eigenvalues, Definiteness
- * Version: 1.0.0
+ * Version: 3.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
@@ -34,7 +34,7 @@ export async function initMatrixGeometry(containerId) {
         <div class="widget-container">
             <div class="widget-controls">
                 <div class="widget-control-group" style="flex-basis: 100%; flex-direction: row; justify-content: space-between; align-items: center;">
-                     <h4 style="margin: 0; color: var(--color-text-main);">Matrix A = [[a, b], [c, d]]</h4>
+                     <h4 style="margin: 0; color: var(--color-text-main); font-size: 1rem;">Matrix A = [[a, b], [c, d]]</h4>
                      <div style="display: flex; align-items: center; gap: 8px;">
                         <input type="checkbox" id="symmetric-toggle">
                         <label for="symmetric-toggle" class="widget-label" style="margin: 0; cursor: pointer;">Force Symmetric (c = b)</label>
@@ -46,12 +46,22 @@ export async function initMatrixGeometry(containerId) {
             <div id="vis-area" style="display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--color-border);">
                  <div id="linear-plot" style="flex: 1; min-width: 300px; height: 350px; position: relative; border-right: 1px solid var(--color-border);">
                     <div style="position: absolute; top: 10px; left: 10px; z-index: 5; pointer-events: none;">
-                        <span style="background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main);">Linear Map: y = Ax</span>
+                        <span style="background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); border: 1px solid var(--color-border);">
+                            Linear Map: y = Ax
+                        </span>
+                        <div style="margin-top:4px; font-size: 0.75rem; color: var(--color-text-muted);">
+                            Shows <span style="color: var(--color-primary);">Unit Circle</span> transformed
+                        </div>
                     </div>
                  </div>
-                 <div id="quad-plot" style="flex: 1; min-width: 300px; height: 350px; position: relative; background: var(--color-background);">
+                 <div id="quad-plot" style="flex: 1; min-width: 300px; height: 350px; position: relative; background: var(--surface-1);">
                     <div style="position: absolute; top: 10px; left: 10px; z-index: 5; pointer-events: none;">
-                        <span style="background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main);">Quadratic Form: z = xᵀAx</span>
+                        <span style="background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); border: 1px solid var(--color-border);">
+                            Quadratic Form: z = xᵀAx
+                        </span>
+                        <div style="margin-top:4px; font-size: 0.75rem; color: var(--color-text-muted);">
+                            Contours of curvature
+                        </div>
                     </div>
                  </div>
             </div>
@@ -124,11 +134,15 @@ export async function initMatrixGeometry(containerId) {
             sliders.b.display.textContent = avg.toFixed(1);
             sliders.c.input.value = avg;
             sliders.c.display.textContent = avg.toFixed(1);
-            // Disable 'c' slider visually/functionally?
-            // Usually better to let them sync.
+            // Disable 'c' slider visually?
+            sliders.c.input.disabled = true;
+        } else {
+            sliders.c.input.disabled = false;
         }
         update();
     };
+    // Initial state for disabled c slider
+    if(isSymmetric) sliders.c.input.disabled = true;
 
 
     // --- PYODIDE LOGIC ---
@@ -201,6 +215,30 @@ export async function initMatrixGeometry(containerId) {
     function createBasePlot(selector) {
         const div = container.querySelector(selector);
         div.innerHTML = '';
+        // Re-add header overlay if needed or rely on static HTML above
+        // We nuked innerHTML, so let's restore the headers manually or just append SVG
+        // The headers are absolute positioned children of the div, so clearing innerHTML removes them.
+        // Fix: Don't clear innerHTML of the container div, but rather append SVG or clear ONLY SVG.
+        // Actually, let's re-add the header to be safe.
+        const headerHTML = div.id === 'linear-plot' ?
+            `<div style="position: absolute; top: 10px; left: 10px; z-index: 5; pointer-events: none;">
+                <span style="background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); border: 1px solid var(--color-border);">
+                    Linear Map: y = Ax
+                </span>
+                <div style="margin-top:4px; font-size: 0.75rem; color: var(--color-text-muted);">
+                    Shows <span style="color: var(--color-primary);">Unit Circle</span> transformed
+                </div>
+            </div>` :
+            `<div style="position: absolute; top: 10px; left: 10px; z-index: 5; pointer-events: none;">
+                <span style="background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); border: 1px solid var(--color-border);">
+                    Quadratic Form: z = xᵀAx
+                </span>
+                <div style="margin-top:4px; font-size: 0.75rem; color: var(--color-text-muted);">
+                    Contours of curvature
+                </div>
+            </div>`;
+        div.innerHTML = headerHTML;
+
         const w = div.clientWidth;
         const h = div.clientHeight;
         const margin = { top: 20, right: 20, bottom: 20, left: 20 };
@@ -219,8 +257,8 @@ export async function initMatrixGeometry(containerId) {
         g.append("g").attr("class", "grid").call(d3.axisBottom(scale).ticks(5).tickSize(-h+margin.top+margin.bottom).tickFormat(""));
         g.append("g").attr("class", "grid").call(d3.axisLeft(scale).ticks(5).tickSize(-w+margin.left+margin.right).tickFormat(""));
 
-        g.append("line").attr("x1", scale(-10)).attr("x2", scale(10)).attr("y1", 0).attr("y2", 0).attr("stroke", "var(--color-border)");
-        g.append("line").attr("y1", scale(-10)).attr("y2", scale(10)).attr("x1", 0).attr("x2", 0).attr("stroke", "var(--color-border)");
+        g.append("line").attr("x1", scale(-10)).attr("x2", scale(10)).attr("y1", 0).attr("y2", 0).attr("stroke", "var(--color-border)").attr("stroke-width", 2);
+        g.append("line").attr("y1", scale(-10)).attr("y2", scale(10)).attr("x1", 0).attr("x2", 0).attr("stroke", "var(--color-border)").attr("stroke-width", 2);
 
         return { svg: g, scale, w, h };
     }
@@ -229,7 +267,7 @@ export async function initMatrixGeometry(containerId) {
         linPlot = createBasePlot("#linear-plot");
         quadPlot = createBasePlot("#quad-plot");
 
-        // Add unit circle to linear plot
+        // Add unit circle to linear plot (faint reference)
         linPlot.svg.append("circle").attr("r", linPlot.scale(1) - linPlot.scale(0))
             .attr("fill", "none").attr("stroke", "var(--color-text-muted)").attr("stroke-dasharray", "4 4");
     }
@@ -255,7 +293,7 @@ export async function initMatrixGeometry(containerId) {
             .attr("d", lineGen)
             .attr("fill", "rgba(124, 197, 255, 0.15)")
             .attr("stroke", "var(--color-primary)")
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 2.5);
 
         // Draw Eigenvectors (Real A)
         linPlot.svg.selectAll(".eigenvector").remove();
@@ -282,7 +320,6 @@ export async function initMatrixGeometry(containerId) {
         const Z = res.Z;
         const n = Z.length;
         const m = Z[0].length;
-        // Flatten
         const values = new Float64Array(n * m);
         for (let j = 0; j < n; ++j) {
             for (let k = 0; k < m; ++k) {
@@ -300,7 +337,8 @@ export async function initMatrixGeometry(containerId) {
             }
         });
         const path = d3.geoPath().projection(transform);
-        const colorScale = d3.scaleSequential(d3.interpolateRdBu).domain([5, -5]); // Red positive, Blue negative
+        // Use color scale: Red for positive, Blue for negative
+        const colorScale = d3.scaleSequential(d3.interpolateRdBu).domain([5, -5]);
 
         quadPlot.svg.selectAll(".contour").remove();
         quadPlot.svg.selectAll("path.contour")
@@ -311,7 +349,7 @@ export async function initMatrixGeometry(containerId) {
             .attr("fill", "none")
             .attr("stroke", d => colorScale(d.value))
             .attr("stroke-width", 1.5)
-            .attr("opacity", 0.8);
+            .attr("opacity", 0.7);
 
         // Draw Principal Axes (Eigenvectors of Symmetric Part)
         quadPlot.svg.selectAll(".principal-axis").remove();
@@ -335,14 +373,16 @@ export async function initMatrixGeometry(containerId) {
         }).join(", ");
 
         analysisOutput.innerHTML = `
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;">
                 <div>
-                    <p><strong>Determinant:</strong> ${res.det.toFixed(2)}</p>
-                    <p><strong>Trace:</strong> ${res.trace.toFixed(2)}</p>
+                    <div style="font-size: 0.8rem; color: var(--color-text-muted);">PROPERTIES</div>
+                    <div><strong>Determinant:</strong> ${res.det.toFixed(2)}</div>
+                    <div><strong>Trace:</strong> ${res.trace.toFixed(2)}</div>
                 </div>
                 <div>
-                    <p><strong>Eigenvalues (A):</strong> ${eigStr}</p>
-                    <p><strong>Definiteness:</strong> <span style="color: var(--color-primary); font-weight: bold;">${res.def_type}</span></p>
+                    <div style="font-size: 0.8rem; color: var(--color-text-muted);">SPECTRAL</div>
+                    <div><strong>Eigenvalues:</strong> ${eigStr}</div>
+                    <div><strong>Definiteness:</strong> <span style="color: var(--color-primary); font-weight: bold;">${res.def_type}</span></div>
                 </div>
             </div>
         `;

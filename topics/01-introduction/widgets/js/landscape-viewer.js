@@ -2,8 +2,9 @@
  * Widget: 3D Landscape Viewer
  *
  * Description: Visualizes various 3D optimization landscapes and simulates
- *              a simple gradient descent by "dropping a marble".
- * Version: 2.1.0
+ *              a marble rolling down (Gradient Descent with Momentum).
+ *              Enhanced for visual quality and responsiveness.
+ * Version: 3.0.0
  */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.128/build/three.module.js";
 import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.128/examples/jsm/controls/OrbitControls.js";
@@ -36,11 +37,15 @@ export async function initLandscapeViewer(containerId) {
                 </div>
                 <div class="widget-control-group">
                     <button id="start-button" class="widget-btn primary">Drop Marble</button>
-                    <button id="reset-button" class="widget-btn">Reset</button>
+                    <button id="reset-button" class="widget-btn" disabled>Reset</button>
                 </div>
             </div>
 
             <div class="widget-canvas-container" id="scene-container" style="height: 400px;"></div>
+
+            <div class="widget-output" style="text-align: center;">
+                <span style="color: var(--color-text-muted);">Blue = Low Value (Minima) &nbsp;&nbsp; Red = High Value (Maxima)</span>
+            </div>
         </div>
     `;
 
@@ -59,20 +64,20 @@ import numpy as np
 
 # Define functions and gradients
 FUNCTIONS = {
-    "Convex Quadratic (Bowl)": {
-        "func": lambda x, y: x**2 + y**2,
-        "grad": lambda x, y: np.array([2*x, 2*y]),
+    "Convex Quadratic (Global Min)": {
+        "func": lambda x, y: 0.5*(x**2 + y**2),
+        "grad": lambda x, y: np.array([x, y]),
+        "domain": 3.0
+    },
+    "Non-Convex Rosenbrock (Narrow Valley)": {
+        "func": lambda x, y: 0.1*((1 - x)**2 + 10 * (y - x**2)**2),
+        "grad": lambda x, y: np.array([0.1*(-2*(1-x) - 40*x*(y-x**2)), 0.1*(20*(y-x**2))]),
         "domain": 2.0
     },
-    "Non-Convex Rosenbrock (Valley)": {
-        "func": lambda x, y: (1 - x)**2 + 10 * (y - x**2)**2,
-        "grad": lambda x, y: np.array([-2*(1-x) - 40*x*(y-x**2), 20*(y-x**2)]),
-        "domain": 1.5
-    },
-    "Multi-Modal (Rastrigin-like)": {
-        "func": lambda x, y: x**2 + y**2 - np.cos(3*x) - np.cos(3*y) + 2,
-        "grad": lambda x, y: np.array([2*x + 3*np.sin(3*x), 2*y + 3*np.sin(3*y)]),
-        "domain": 3.0
+    "Multi-Modal (Many Local Minima)": {
+        "func": lambda x, y: x**2 + y**2 - 2*np.cos(2*np.pi*x) - 2*np.cos(2*np.pi*y) + 4,
+        "grad": lambda x, y: np.array([2*x + 4*np.pi*np.sin(2*np.pi*x), 2*y + 4*np.pi*np.sin(2*np.pi*y)]),
+        "domain": 2.0
     },
     "Saddle Point": {
         "func": lambda x, y: x**2 - y**2,
@@ -81,7 +86,7 @@ FUNCTIONS = {
     }
 }
 
-def calculate_surface(func_name, n_points=60):
+def calculate_surface(func_name, n_points=80):
     spec = FUNCTIONS[func_name]
     domain = float(spec['domain'])
     x_ = np.linspace(-domain, domain, n_points)
@@ -118,10 +123,14 @@ list(FUNCTIONS.keys())
     function setupScene() {
         scene = new THREE.Scene();
         const bodyStyles = window.getComputedStyle(document.body);
-        const bgColor = bodyStyles.getPropertyValue('--color-background').trim() || '#0b0d12';
+        const bgColor = bodyStyles.getPropertyValue('--surface-1').trim() || '#14161f';
         scene.background = new THREE.Color(bgColor);
 
-        camera = new THREE.PerspectiveCamera(50, sceneContainer.clientWidth / sceneContainer.clientHeight, 0.1, 100);
+        camera = new THREE.PerspectiveCamera(45, sceneContainer.clientWidth / sceneContainer.clientHeight, 0.1, 100);
+        // Adjust camera for isometric-ish view
+        camera.position.set(8, 8, 6);
+        camera.up.set(0, 0, 1); // Z up
+
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -130,29 +139,26 @@ list(FUNCTIONS.keys())
         sceneContainer.appendChild(renderer.domElement);
 
         controls = new OrbitControls(camera, renderer.domElement);
-        camera.position.set(0, -5, 4);
         controls.target.set(0, 0, 0);
         controls.enableDamping = true;
 
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambientLight);
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
-        dirLight.position.set(5, -5, 10);
+        dirLight.position.set(5, 5, 10);
         scene.add(dirLight);
 
         // Base geometry
-        const geometry = new THREE.PlaneGeometry(4, 4, 59, 59);
+        const geometry = new THREE.PlaneGeometry(6, 6, 79, 79);
         const material = new THREE.MeshStandardMaterial({
             vertexColors: true,
             side: THREE.DoubleSide,
-            roughness: 0.8,
-            metalness: 0.1
+            roughness: 0.7,
+            metalness: 0.2,
+            flatShading: false
         });
         const surface = new THREE.Mesh(geometry, material);
         scene.add(surface);
-
-        // Grid helper? Maybe just axes
-        // scene.add(new THREE.AxesHelper(2));
 
         const renderLoop = () => {
             requestAnimationFrame(renderLoop);
@@ -169,10 +175,9 @@ list(FUNCTIONS.keys())
 
     async function updateSurface() {
         const result = await pyodideAPI.calculate_surface(selectedFunctionName);
-        const z_grid = result.toJs().z; // 2D array
+        const z_grid = result.toJs().z;
         currentDomain = result.toJs().domain;
-
-        const z_values = z_grid.flat(); // Flattened Z
+        const z_values = z_grid.flat();
 
         const vertices = surface.geometry.attributes.position.array;
         const count = vertices.length / 3;
@@ -184,19 +189,17 @@ list(FUNCTIONS.keys())
             if (z > maxZ) maxZ = z;
         });
 
-        // Update vertices
-        // PlaneGeometry is constructed row by row?
-        // It maps u,v 0->1.
-        // We need to verify vertex ordering matches numpy flattening order.
-        // Usually PlaneGeometry is row-major.
+        const rangeZ = maxZ - minZ || 1;
 
         for (let i = 0; i < count; i++) {
             const z = z_values[i];
-            vertices[i * 3 + 2] = z * 0.5; // Scale height for visual
+            vertices[i * 3 + 2] = z; // Z coordinate
 
-            // Color map: blue (low) to red (high)
-            const t = (z - minZ) / (maxZ - minZ || 1);
-            const color = new THREE.Color().setHSL(0.6 * (1 - t), 0.8, 0.5);
+            // Color map: Blue (low) -> Cyan -> White -> Yellow -> Red (High)
+            const t = (z - minZ) / rangeZ;
+            const hue = 0.66 * (1 - t); // 0.66 is Blue, 0 is Red
+            const color = new THREE.Color().setHSL(hue, 0.9, 0.5);
+
             colors[i * 3] = color.r;
             colors[i * 3 + 1] = color.g;
             colors[i * 3 + 2] = color.b;
@@ -221,30 +224,27 @@ list(FUNCTIONS.keys())
         resetButton.disabled = false;
 
         marble = new THREE.Mesh(
-            new THREE.SphereGeometry(0.08, 16, 16),
-            new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xaaaaaa })
+            new THREE.SphereGeometry(0.15, 16, 16),
+            new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x444444 })
         );
 
-        // Start at a corner in domain
-        const startX = -currentDomain * 0.8;
-        const startY = -currentDomain * 0.8;
+        // Start at a "high" corner (domain limit)
+        const startX = -currentDomain * 0.9;
+        const startY = -currentDomain * 0.9;
 
-        // Map domain coords to visual coords
-        // Visual plane is 4x4, so [-2, 2]
-        // Scale factor = 2 / domain
-        const scale = 2.0 / currentDomain;
+        // Visual scale: domain maps to [-3, 3] in geometry (Plane is size 6)
+        const scale = 3.0 / currentDomain;
 
-        // Marble position in physics space (x, y, z)
-        const pos = new THREE.Vector3(startX, startY, 10); // Start high
+        // Physics Position (in domain coords)
+        const pos = new THREE.Vector3(startX, startY, 10);
 
-        // Marble visual position
+        // Update visual position immediately
         marble.position.set(pos.x * scale, pos.y * scale, 5);
         scene.add(marble);
 
-        // Trace line
-        const traceMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+        // Trace
+        const traceMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 });
         const traceGeometry = new THREE.BufferGeometry();
-        // 1000 points max
         const positions = new Float32Array(3000);
         traceGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         traceGeometry.setDrawRange(0, 0);
@@ -255,43 +255,33 @@ list(FUNCTIONS.keys())
         let count = 0;
 
         async function animatePhysics() {
-            // Get height and gradient at current position
+            // Get height and gradient
             const res = await pyodideAPI.get_z_and_grad(selectedFunctionName, pos.x, pos.y);
             const { z, grad } = res.toJs();
-            const surfaceZ = z * 0.5; // Match visual scaling
 
-            // Simple physics
-            const visualZ = pos.z; // current marble height
+            const surfaceZ = z;
 
-            if (visualZ > surfaceZ + 0.1) {
-                // Free fall
-                velocity.z -= 9.8 * 0.016; // Gravity
-                pos.z += velocity.z * 0.016;
-                // Drag
-                velocity.x *= 0.99;
-                velocity.y *= 0.99;
-            } else {
-                // On surface (Gradient Descent-ish physics)
-                pos.z = surfaceZ + 0.08; // Sit on top
-                velocity.z = 0;
+            // "Gravity" logic: force along gradient
+            // F = -grad f(x)
+            const forceX = -grad[0];
+            const forceY = -grad[1];
 
-                // Force = -Gradient
-                // Add some momentum
-                velocity.x -= grad[0] * 0.1; // Learning rate / Force
-                velocity.y -= grad[1] * 0.1;
+            // Update velocity (Momentum)
+            velocity.x = velocity.x * 0.9 + forceX * 0.005; // 0.9 friction/momentum
+            velocity.y = velocity.y * 0.9 + forceY * 0.005;
 
-                // Friction
-                velocity.x *= 0.9;
-                velocity.y *= 0.9;
-            }
+            // Update position
+            pos.x += velocity.x;
+            pos.y += velocity.y;
 
-            pos.x += velocity.x * 0.016;
-            pos.y += velocity.y * 0.016;
+            // Clamp Z to surface (simplified rolling)
+            // Get new z at new pos for visualization
+            const nextRes = await pyodideAPI.get_z_and_grad(selectedFunctionName, pos.x, pos.y);
+            pos.z = nextRes.toJs().z;
 
-            // Update visual marble
-            marble.position.set(pos.x * scale, pos.y * scale, pos.z);
+            // Update visual objects
+            marble.position.set(pos.x * scale, pos.y * scale, pos.z + 0.15); // radius offset
 
-            // Update trace
             if (count < 999) {
                 positions[count * 3] = marble.position.x;
                 positions[count * 3 + 1] = marble.position.y;
@@ -301,9 +291,12 @@ list(FUNCTIONS.keys())
                 traceGeometry.attributes.position.needsUpdate = true;
             }
 
-            // Stop if out of bounds
-            if (Math.abs(pos.x) > currentDomain * 1.5 || Math.abs(pos.y) > currentDomain * 1.5) {
-                 return;
+            // Stop if out of bounds or very slow
+            if (Math.abs(pos.x) > currentDomain * 1.1 || Math.abs(pos.y) > currentDomain * 1.1) {
+                 return; // Fell off world
+            }
+            if (velocity.length() < 0.001 && count > 50) {
+                return; // Stopped
             }
 
             animationId = requestAnimationFrame(animatePhysics);

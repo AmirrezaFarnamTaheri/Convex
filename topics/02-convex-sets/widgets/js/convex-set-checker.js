@@ -4,7 +4,7 @@
  * Description: Allows users to draw a 2D shape and checks if it's a convex set.
  *              Visualizes the definition: if non-convex, finds a line segment between two points
  *              that lies outside the set.
- * Version: 2.2.0
+ * Version: 3.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -26,7 +26,7 @@ export function initConvexSetChecker(containerId) {
                     <button id="clear-drawing-btn" class="widget-btn">Clear</button>
                 </div>
             </div>
-            <div id="status-output" class="widget-output" style="min-height: 2.5em; display: flex; align-items: center;">
+            <div id="status-output" class="widget-output" style="min-height: 4em; display: flex; align-items: center; padding: 12px;">
                 Draw a shape in the box above.
             </div>
         </div>
@@ -70,14 +70,19 @@ export function initConvexSetChecker(containerId) {
             .attr("stroke-width", 2);
 
         // Visual elements for counter-example
-        g.append("line").attr("class", "counter-example-line")
+        const counterGroup = g.append("g").attr("class", "counter-example-group").style("opacity", 0);
+
+        counterGroup.append("line").attr("class", "counter-example-line")
             .attr("stroke", "var(--color-error)")
             .attr("stroke-width", 3)
-            .attr("stroke-dasharray", "5,5")
-            .style("opacity", 0);
+            .attr("stroke-dasharray", "5,5");
 
-        g.append("circle").attr("class", "pt-a").attr("r", 5).attr("fill", "var(--color-error)").style("opacity", 0);
-        g.append("circle").attr("class", "pt-b").attr("r", 5).attr("fill", "var(--color-error)").style("opacity", 0);
+        counterGroup.append("circle").attr("class", "pt-a").attr("r", 6).attr("fill", "var(--color-error)").attr("stroke", "var(--color-surface-1)").attr("stroke-width", 2);
+        counterGroup.append("circle").attr("class", "pt-b").attr("r", 6).attr("fill", "var(--color-error)").attr("stroke", "var(--color-surface-1)").attr("stroke-width", 2);
+
+        // "X" marker at bad midpoint
+        const xMark = counterGroup.append("g").attr("class", "bad-midpoint");
+        xMark.append("path").attr("d", "M-4,-4L4,4M-4,4L4,-4").attr("stroke", "var(--color-error)").attr("stroke-width", 2);
 
         const drag = d3.drag()
             .container(drawingArea)
@@ -93,7 +98,7 @@ export function initConvexSetChecker(containerId) {
                 const [x, y] = d3.pointer(event, svg.node());
                 // Basic sampling to avoid too many points
                 const last = points[points.length-1];
-                if (Math.hypot(x-last[0], y-last[1]) > 2) {
+                if (Math.hypot(x-last[0], y-last[1]) > 5) {
                     points.push([x, y]);
                     updateDrawing();
                 }
@@ -117,11 +122,9 @@ export function initConvexSetChecker(containerId) {
         points = [];
         if (svg) {
             svg.select(".drawn-path").attr("d", null);
-            svg.select(".counter-example-line").style("opacity", 0);
-            svg.select(".pt-a").style("opacity", 0);
-            svg.select(".pt-b").style("opacity", 0);
+            svg.select(".counter-example-group").style("opacity", 0);
         }
-        statusOutput.textContent = "Draw a shape in the box above.";
+        statusOutput.innerHTML = "Draw a shape in the box above.";
         placeholder.style.display = 'block';
     }
 
@@ -131,23 +134,19 @@ export function initConvexSetChecker(containerId) {
             return;
         }
 
-        // Create a closed polygon representation
-        // d3.polygonContains works on array of [x,y]
-        // We need to ensure it's closed and simple-ish.
-
         // 1. Find a Counter-Example: Pair of points inside whose midpoint is outside
         let counterExample = null;
+        let badPoint = null;
 
-        // Sample random pairs from the polygon interior
-        // How to sample from interior? Rejection sampling from bounding box.
         const xExtent = d3.extent(points, d => d[0]);
         const yExtent = d3.extent(points, d => d[1]);
 
         const samples = [];
-        const maxAttempts = 200;
+        const maxAttempts = 500;
         let attempts = 0;
 
-        while(samples.length < 50 && attempts < maxAttempts) {
+        // Generate random points strictly inside
+        while(samples.length < 100 && attempts < maxAttempts) {
             const rx = xExtent[0] + Math.random()*(xExtent[1]-xExtent[0]);
             const ry = yExtent[0] + Math.random()*(yExtent[1]-yExtent[0]);
             if (d3.polygonContains(points, [rx, ry])) {
@@ -156,24 +155,25 @@ export function initConvexSetChecker(containerId) {
             attempts++;
         }
 
-        // Check pairs
+        // Brute force check pairs
         for(let i=0; i<samples.length; i++) {
             for(let j=i+1; j<samples.length; j++) {
                 const p1 = samples[i];
                 const p2 = samples[j];
-                const mid = [(p1[0]+p2[0])/2, (p1[1]+p2[1])/2];
 
-                // Check if mid is OUTSIDE
-                // Note: d3.polygonContains returns true if inside or on boundary
+                // Check midpoint
+                const mid = [(p1[0]+p2[0])/2, (p1[1]+p2[1])/2];
                 if (!d3.polygonContains(points, mid)) {
                     counterExample = { p1, p2 };
+                    badPoint = mid;
                     break;
                 }
 
-                // Also check 1/4 and 3/4 to catch "C" shapes better where mid might be lucky
+                // Check quarters (for C-shapes)
                 const q1 = [p1[0]*0.75 + p2[0]*0.25, p1[1]*0.75 + p2[1]*0.25];
                 if (!d3.polygonContains(points, q1)) {
-                    counterExample = { p1, p2 }; // Draw full line anyway
+                    counterExample = { p1, p2 };
+                    badPoint = q1;
                     break;
                 }
             }
@@ -182,51 +182,50 @@ export function initConvexSetChecker(containerId) {
 
         if (counterExample) {
             // Visualize Counter Example
-            svg.select(".counter-example-line")
+            const grp = svg.select(".counter-example-group");
+            grp.transition().style("opacity", 1);
+
+            grp.select(".counter-example-line")
                 .attr("x1", counterExample.p1[0]).attr("y1", counterExample.p1[1])
-                .attr("x2", counterExample.p2[0]).attr("y2", counterExample.p2[1])
-                .transition().style("opacity", 1);
+                .attr("x2", counterExample.p2[0]).attr("y2", counterExample.p2[1]);
 
-            svg.select(".pt-a")
-                .attr("cx", counterExample.p1[0]).attr("cy", counterExample.p1[1])
-                .transition().style("opacity", 1);
+            grp.select(".pt-a")
+                .attr("cx", counterExample.p1[0]).attr("cy", counterExample.p1[1]);
 
-            svg.select(".pt-b")
-                .attr("cx", counterExample.p2[0]).attr("cy", counterExample.p2[1])
-                .transition().style("opacity", 1);
+            grp.select(".pt-b")
+                .attr("cx", counterExample.p2[0]).attr("cy", counterExample.p2[1]);
+
+            grp.select(".bad-midpoint")
+                .attr("transform", `translate(${badPoint[0]}, ${badPoint[1]})`);
 
             statusOutput.innerHTML = `
                 <div>
-                    <span style="color: var(--color-error); font-weight: bold;">✕ Non-Convex Set</span>
-                    <div style="font-size: 0.9em; color: var(--color-text-muted);">
-                        Found points x, y ∈ C such that the segment [x, y] is NOT contained in C.
+                    <div style="color: var(--color-error); font-weight: bold; font-size: 1.1rem;">✕ Non-Convex Set</div>
+                    <div style="font-size: 0.9em; margin-top: 4px;">
+                        Found points <strong style="color: var(--color-error);">a, b ∈ C</strong> such that the segment [a, b]
+                        leaves the set at <strong style="color: var(--color-error);">x ∉ C</strong>.
                     </div>
                 </div>
             `;
         } else {
-             // If we couldn't find one, it's likely convex (or we got unlucky)
-             // Check Hull Ratio as backup
+             // Backup Check: Hull Area Ratio
              const hull = d3.polygonHull(points);
              const hullArea = Math.abs(d3.polygonArea(hull));
              const polyArea = Math.abs(d3.polygonArea(points));
              const ratio = hullArea / (polyArea + 1e-9);
 
-             if (ratio < 1.1) {
-                svg.select(".counter-example-line").style("opacity", 0);
-                svg.select(".pt-a").style("opacity", 0);
-                svg.select(".pt-b").style("opacity", 0);
-
+             if (ratio < 1.05) {
+                svg.select(".counter-example-group").style("opacity", 0);
                 statusOutput.innerHTML = `
                     <div>
-                        <span style="color: var(--color-success); font-weight: bold;">✓ Likely Convex</span>
-                        <div style="font-size: 0.9em; color: var(--color-text-muted);">
-                            All sampled segments lie within the set.
+                        <div style="color: var(--color-success); font-weight: bold; font-size: 1.1rem;">✓ Convex Set</div>
+                        <div style="font-size: 0.9em; color: var(--color-text-muted); margin-top: 4px;">
+                            For all pairs x, y ∈ C, the line segment [x, y] appears to lie entirely within C.
                         </div>
                     </div>
                 `;
              } else {
-                 // Ambiguous case - likely self-intersecting or very weird shape
-                 statusOutput.innerHTML = `<span style="color: var(--color-text-muted);">Shape is complex. Try drawing a clearer shape.</span>`;
+                 statusOutput.innerHTML = `<span style="color: var(--color-text-muted);">Ambiguous shape. Try drawing cleanly.</span>`;
              }
         }
     }

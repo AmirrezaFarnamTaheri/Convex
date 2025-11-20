@@ -1,9 +1,9 @@
 /**
  * Widget: Convergence Comparison
  *
- * Description: An animated plot comparing the convergence rates of a convex
- *              solver vs. a generic non-convex solver.
- * Version: 2.1.0
+ * Description: An animated plot comparing the convergence rates of algorithms on
+ *              convex vs non-convex problems. Illustrates linear convergence vs getting stuck.
+ * Version: 3.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -16,20 +16,23 @@ export function initConvergenceComparison(containerId) {
         <div class="widget-container">
             <div class="widget-controls">
                  <div class="widget-control-group" style="flex: 1;">
-                    <button id="run-comparison-btn" class="widget-btn primary">Start Convergence Race</button>
+                    <label class="widget-label">Comparison Scenario</label>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button id="run-btn" class="widget-btn primary">Run Comparison</button>
+                    </div>
                 </div>
             </div>
 
             <div class="widget-canvas-container" id="plot-container" style="height: 350px;"></div>
 
-            <div class="widget-output" style="display: flex; gap: 20px; justify-content: space-between;">
+            <div class="widget-output" style="display: flex; justify-content: space-between; align-items: center;">
                  <div id="legend"></div>
-                 <div id="status-text" style="color: var(--color-text-muted);">Ready to race.</div>
+                 <div id="status-text" style="color: var(--color-text-muted); font-size: 0.9rem;">Ready to simulate.</div>
             </div>
         </div>
     `;
 
-    const runBtn = container.querySelector("#run-comparison-btn");
+    const runBtn = container.querySelector("#run-btn");
     const plotContainer = container.querySelector("#plot-container");
     const statusText = container.querySelector("#status-text");
     const legendContainer = container.querySelector("#legend");
@@ -48,8 +51,8 @@ export function initConvergenceComparison(containerId) {
             .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
             .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-        x = d3.scaleLinear().domain([0, 40]).range([0, width]);
-        y = d3.scaleLog().domain([0.001, 10]).range([height, 0]);
+        x = d3.scaleLinear().domain([0, 50]).range([0, width]);
+        y = d3.scaleLog().domain([1e-5, 10]).range([height, 0]);
 
         // Grid
         svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(""));
@@ -60,47 +63,51 @@ export function initConvergenceComparison(containerId) {
         svg.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5, ".0e"));
 
         // Labels
-        svg.append("text").attr("class", "axis-label").attr("x", width).attr("y", height + 35).attr("text-anchor", "end").text("Iterations")
+        svg.append("text").attr("class", "axis-label").attr("x", width).attr("y", height + 35).attr("text-anchor", "end").text("Iterations (k)")
            .attr("fill", "var(--color-text-muted)").style("font-size", "0.85rem");
 
-        svg.append("text").attr("class", "axis-label").attr("transform", "rotate(-90)").attr("y", -40).attr("dy", "1em").attr("text-anchor", "end").text("Error |f(x) - p*|")
+        svg.append("text").attr("class", "axis-label").attr("transform", "rotate(-90)").attr("y", -40).attr("dy", "1em").attr("text-anchor", "end").text("Log Error |f(x) - f*|")
            .attr("fill", "var(--color-text-muted)").style("font-size", "0.85rem");
 
         // Paths
         svg.append("path").attr("class", "convex-path").attr("fill", "none")
-            .attr("stroke", "var(--color-success)").attr("stroke-width", 3);
+            .attr("stroke", "var(--color-success)").attr("stroke-width", 3).attr("opacity", 0.9);
 
         svg.append("path").attr("class", "non-convex-path").attr("fill", "none")
-            .attr("stroke", "var(--color-error)").attr("stroke-width", 3);
+            .attr("stroke", "var(--color-error)").attr("stroke-width", 3).attr("opacity", 0.9);
 
         // Marker dots
-        svg.append("circle").attr("class", "convex-dot").attr("r", 0).attr("fill", "var(--color-success)");
-        svg.append("circle").attr("class", "non-convex-dot").attr("r", 0).attr("fill", "var(--color-error)");
+        svg.append("circle").attr("class", "convex-dot").attr("r", 0).attr("fill", "var(--color-success)").attr("stroke", "#fff").attr("stroke-width", 2);
+        svg.append("circle").attr("class", "non-convex-dot").attr("r", 0).attr("fill", "var(--color-error)").attr("stroke", "#fff").attr("stroke-width", 2);
     }
 
     function generateData() {
-        // Linear convergence for convex
-        const convexData = d3.range(0, 41).map(i => ({ iter: i, val: 8 * Math.pow(0.8, i) }));
+        const n = 50;
+        // Convex: Linear convergence (geometric decay)
+        const convexData = d3.range(0, n+1).map(i => ({ iter: i, val: 8 * Math.pow(0.75, i) + 1e-6 }));
 
-        // Stuck in local minima for non-convex
-        const nonConvexData = d3.range(0, 41).map(i => {
+        // Non-Convex: Fast initial drop, then stuck in local min (flatline)
+        const nonConvexData = d3.range(0, n+1).map(i => {
             let val;
-            if (i < 10) val = 8 * Math.pow(0.7, i); // Fast initial
-            else if (i < 20) val = 0.2 + 0.1 * Math.sin(i); // Stuck
-            else val = 0.2; // Flatline
-            return { iter: i, val: Math.max(0.001, val) };
+            if (i < 15) val = 8 * Math.pow(0.6, i); // Fast descent
+            else val = 0.1 + 0.02 * Math.cos(i * 0.5); // Stuck in local valley with noise
+            return { iter: i, val: Math.max(1e-5, val) };
         });
         return { convexData, nonConvexData };
     }
 
     function runAnimation() {
         runBtn.disabled = true;
-        statusText.textContent = "Optimizing...";
+        statusText.textContent = "Running Descent Algorithms...";
+
+        // Reset
+        svg.selectAll("path").attr("d", null);
+        svg.selectAll("circle").attr("r", 0);
 
         const { convexData, nonConvexData } = generateData();
         const line = d3.line().x(d => x(d.iter)).y(d => y(d.val));
 
-        const animateLine = (selector, data, dotSelector, delay=0) => {
+        const animateLine = (selector, data, dotSelector, onComplete) => {
             const path = svg.select(selector);
             const dot = svg.select(dotSelector);
 
@@ -109,26 +116,12 @@ export function initConvergenceComparison(containerId) {
 
             path.attr("stroke-dasharray", `${len} ${len}`)
                 .attr("stroke-dashoffset", len)
-                .transition().delay(delay).duration(3000).ease(d3.easeLinear)
+                .transition().duration(4000).ease(d3.easeLinear)
                 .attr("stroke-dashoffset", 0)
-                .on("end", () => {
-                    if(selector.includes("non-convex")) {
-                        runBtn.disabled = false;
-                        statusText.innerHTML = "<span style='color: var(--color-success); font-weight: bold;'>Complete.</span>";
-                    }
-                });
+                .on("end", onComplete);
 
-            dot.attr("r", 5).attr("cx", x(data[0].iter)).attr("cy", y(data[0].val))
-               .transition().delay(delay).duration(3000).ease(d3.easeLinear)
-               .attrTween("transform", function() {
-                  return function(t) {
-                    const p = path.node().getPointAtLength(t * len);
-                    return `translate(${p.x - x(data[0].iter)}, ${p.y - y(data[0].val)})`; // Relative move
-                    // Actually easier:
-                    // const p = path.node().getPointAtLength(t * len);
-                    // d3.select(this).attr("cx", p.x).attr("cy", p.y);
-                  };
-               })
+            dot.attr("r", 6).attr("cx", x(data[0].iter)).attr("cy", y(data[0].val))
+               .transition().duration(4000).ease(d3.easeLinear)
                .tween("move", function() {
                    return function(t) {
                        const p = path.node().getPointAtLength(t * len);
@@ -137,20 +130,26 @@ export function initConvergenceComparison(containerId) {
                });
         };
 
-        animateLine(".convex-path", convexData, ".convex-dot");
-        animateLine(".non-convex-path", nonConvexData, ".non-convex-dot");
+        animateLine(".convex-path", convexData, ".convex-dot", () => {});
+        animateLine(".non-convex-path", nonConvexData, ".non-convex-dot", () => {
+            runBtn.disabled = false;
+            statusText.innerHTML = `
+                Convex: <span style="color: var(--color-success);">Converged (Global Min)</span> &nbsp;|&nbsp;
+                Non-Convex: <span style="color: var(--color-error);">Stuck (Local Min)</span>
+            `;
+        });
     }
 
     function setupLegend() {
         legendContainer.innerHTML = `
-            <div style="display: flex; gap: 16px; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <div style="width: 12px; height: 12px; background: var(--color-success); border-radius: 2px;"></div>
-                    <span style="font-size: 0.9rem;">Convex (Global Opt)</span>
+            <div style="display: flex; gap: 24px; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 14px; height: 4px; background: var(--color-success); border-radius: 2px;"></div>
+                    <span style="font-size: 0.85rem;">Convex (Linear Rate)</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <div style="width: 12px; height: 12px; background: var(--color-error); border-radius: 2px;"></div>
-                    <span style="font-size: 0.9rem;">Non-Convex (Local Opt)</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 14px; height: 4px; background: var(--color-error); border-radius: 2px;"></div>
+                    <span style="font-size: 0.85rem;">Non-Convex (Stuck)</span>
                 </div>
             </div>
         `;
@@ -158,9 +157,10 @@ export function initConvergenceComparison(containerId) {
 
     runBtn.addEventListener("click", runAnimation);
 
-    new ResizeObserver(() => {
+    const resizeObserver = new ResizeObserver(() => {
         setupChart();
-    }).observe(plotContainer);
+    });
+    resizeObserver.observe(plotContainer);
 
     setupChart();
     setupLegend();
