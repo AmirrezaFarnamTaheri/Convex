@@ -3,7 +3,7 @@
  *
  * Description: Allows users to draw a 2D shape and checks if it's a convex set.
  *              Provides visual feedback via the convex hull.
- * Version: 2.0.0
+ * Version: 2.1.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -13,14 +13,20 @@ export function initConvexSetChecker(containerId) {
 
     // --- WIDGET LAYOUT ---
     container.innerHTML = `
-        <div class="convex-checker-widget">
-            <div id="drawing-area" style="width: 100%; height: 400px; touch-action: none;"></div>
-            <div class="widget-controls" style="padding: 15px;">
-                <button id="check-convexity-btn">Check Convexity</button>
-                <button id="clear-drawing-btn">Clear</button>
-                <div id="status-output" class="widget-output" style="margin-top: 10px; min-height: 2em;">
-                    Draw a shape in the box above.
+        <div class="widget-container">
+             <div class="widget-canvas-container" id="drawing-area" style="height: 400px; cursor: crosshair; background: var(--color-background);">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; color: var(--color-text-muted); opacity: 0.5; text-align: center;" id="placeholder-text">
+                    Draw a shape here
                 </div>
+            </div>
+            <div class="widget-controls">
+                <div class="widget-control-group" style="flex-direction: row; gap: 12px;">
+                    <button id="check-convexity-btn" class="widget-btn primary">Check Convexity</button>
+                    <button id="clear-drawing-btn" class="widget-btn">Clear</button>
+                </div>
+            </div>
+            <div id="status-output" class="widget-output" style="min-height: 2.5em; display: flex; align-items: center;">
+                Draw a shape in the box above.
             </div>
         </div>
     `;
@@ -29,104 +35,130 @@ export function initConvexSetChecker(containerId) {
     const clearBtn = container.querySelector("#clear-drawing-btn");
     const statusOutput = container.querySelector("#status-output");
     const drawingArea = container.querySelector("#drawing-area");
+    const placeholder = container.querySelector("#placeholder-text");
 
     let svg;
     let points = [];
     let isDrawing = false;
 
     function setupChart() {
-        drawingArea.innerHTML = '';
-        const margin = { top: 10, right: 10, bottom: 10, left: 10 };
-        const width = drawingArea.clientWidth - margin.left - margin.right;
-        const height = drawingArea.clientHeight - margin.top - margin.bottom;
+        drawingArea.querySelector('svg')?.remove(); // Clean re-init
+
+        const width = drawingArea.clientWidth;
+        const height = drawingArea.clientHeight;
 
         svg = d3.select(drawingArea).append("svg")
+            .attr("class", "widget-svg")
             .attr("width", "100%").attr("height", "100%")
-            .attr("viewBox", `0 0 ${drawingArea.clientWidth} ${drawingArea.clientHeight}`);
+            .attr("viewBox", `0 0 ${width} ${height}`);
 
-        const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+        // Grid
+        const defs = svg.append("defs");
+        const pattern = defs.append("pattern")
+            .attr("id", "grid-pattern")
+            .attr("width", 20).attr("height", 20)
+            .attr("patternUnits", "userSpaceOnUse");
+        pattern.append("circle").attr("cx", 1).attr("cy", 1).attr("r", 1).attr("fill", "var(--color-border)");
 
-        g.append("path").attr("class", "drawn-path").attr("fill", "var(--color-primary-light)")
-            .attr("stroke", "var(--color-primary)").attr("stroke-width", 2);
-        g.append("path").attr("class", "hull-path").attr("fill", "none")
-            .attr("stroke", "var(--color-accent)").attr("stroke-width", 2).attr("stroke-dasharray", "5,5");
+        svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "url(#grid-pattern)").style("pointer-events", "none");
+
+        const g = svg.append("g");
+
+        g.append("path").attr("class", "drawn-path")
+            .attr("fill", "rgba(124, 197, 255, 0.2)")
+            .attr("stroke", "var(--color-primary)")
+            .attr("stroke-width", 2);
+
+        g.append("path").attr("class", "hull-path")
+            .attr("fill", "none")
+            .attr("stroke", "var(--color-accent)")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "5,5")
+            .attr("opacity", 0);
 
         const drag = d3.drag()
+            .container(drawingArea) // Essential for correct pointer calc relative to div
             .on("start", (event) => {
                 reset();
                 isDrawing = true;
-                points.push(d3.pointer(event, g.node()));
+                placeholder.style.display = 'none';
+                const [x, y] = d3.pointer(event, svg.node());
+                points.push([x, y]);
             })
             .on("drag", (event) => {
                 if (!isDrawing) return;
-                points.push(d3.pointer(event, g.node()));
+                const [x, y] = d3.pointer(event, svg.node());
+                points.push([x, y]);
                 updateDrawing();
             })
-            .on("end", () => { isDrawing = false; });
+            .on("end", () => {
+                isDrawing = false;
+                updateDrawing(true); // Close loop
+            });
 
         svg.call(drag);
     }
 
-    function updateDrawing() {
-        if (!svg) return;
-        const line = d3.line().curve(d3.curveBasis);
-        svg.select(".drawn-path").attr("d", line(points) + (points.length > 2 ? "Z" : ""));
+    function updateDrawing(close = false) {
+        if (!svg || points.length < 2) return;
+
+        // Simplify points slightly to reduce noise
+        // Use a simple stride or distance filter if needed, but raw is ok for now
+
+        const line = d3.line().curve(d3.curveBasis); // Smoothing
+        // If closed, append first point
+        const renderPoints = close ? [...points, points[0]] : points;
+
+        svg.select(".drawn-path").attr("d", line(renderPoints));
     }
 
     function reset() {
         points = [];
         if (svg) {
             svg.select(".drawn-path").attr("d", null);
-            svg.select(".hull-path").attr("d", null);
+            svg.select(".hull-path").attr("d", null).attr("opacity", 0);
         }
         statusOutput.textContent = "Draw a shape in the box above.";
-    }
-
-    // --- CONVEXITY CHECK (JS IMPLEMENTATION) ---
-    function isConvex(polygon) {
-        if (polygon.length < 4) return true;
-        let sign = false;
-        const n = polygon.length;
-        for (let i = 0; i < n; i++) {
-            const p1 = polygon[i];
-            const p2 = polygon[(i + 1) % n];
-            const p3 = polygon[(i + 2) % n];
-            const crossProduct = (p2[0] - p1[0]) * (p3[1] - p2[1]) - (p2[1] - p1[1]) * (p3[0] - p2[0]);
-
-            if (i === 0) {
-                sign = crossProduct > 0;
-            } else if ((crossProduct > 0) !== sign) {
-                return false;
-            }
-        }
-        return true;
+        placeholder.style.display = 'block';
     }
 
     function checkConvexity() {
         if (points.length < 10) {
-            statusOutput.textContent = "Please draw a more substantial shape.";
+            statusOutput.innerHTML = `<span style="color: var(--color-text-muted);">Please draw a more substantial shape.</span>`;
             return;
         }
 
+        // 1. Compute Convex Hull
         const hull = d3.polygonHull(points);
-        svg.select(".hull-path").datum(hull).attr("d", d3.line().x(d=>d[0]).y(d=>d[1]) + "Z");
 
-        // A simple heuristic: if the area of the hull is significantly larger than the polygon's area,
-        // it's likely not convex. A proper check would compare the paths.
-        const polygonArea = Math.abs(d3.polygonArea(points));
-        const hullArea = d3.polygonArea(hull);
-        const isShapeConvex = (hullArea / polygonArea) < 1.15;
+        // 2. Visualize Hull
+        const hullLine = d3.line().curve(d3.curveLinearClosed);
+        svg.select(".hull-path").datum(hull).attr("d", hullLine).transition().attr("opacity", 1);
+
+        // 3. Calculate Areas
+        // d3.polygonArea expects a closed polygon array. points is open trace.
+        // Close it for calculation
+        const polyPoints = [...points];
+        // Basic downsampling to speed up area calc and reduce self-intersection noise?
+
+        const polygonArea = Math.abs(d3.polygonArea(polyPoints));
+        const hullArea = Math.abs(d3.polygonArea(hull));
+
+        // Ratio check. If shape is convex, PolyArea ~= HullArea.
+        // Allow slight error due to drawing jitter / smoothing.
+        const ratio = hullArea / (polygonArea + 1e-9); // Avoid div/0
+        const isShapeConvex = ratio < 1.15; // 15% tolerance for hand drawing
 
         if (isShapeConvex) {
-            statusOutput.innerHTML = `<span style="color: var(--color-success);">This shape appears to be convex.</span>`;
+            statusOutput.innerHTML = `<span style="color: var(--color-success); font-weight: bold;">✓ Convex!</span> The shape roughly matches its convex hull (Ratio: ${ratio.toFixed(2)}).`;
         } else {
-            statusOutput.innerHTML = `<span style="color: var(--color-danger);">Not convex. The green line shows its convex hull.</span>`;
+            statusOutput.innerHTML = `<span style="color: var(--color-error); font-weight: bold;">✕ Not Convex.</span> The dashed line shows the convex hull (Ratio: ${ratio.toFixed(2)}).`;
         }
     }
 
     checkBtn.addEventListener("click", checkConvexity);
     clearBtn.addEventListener("click", reset);
 
-    new ResizeObserver(setupChart).observe(drawingArea);
+    new ResizeObserver(() => setupChart()).observe(drawingArea);
     setupChart();
 }
