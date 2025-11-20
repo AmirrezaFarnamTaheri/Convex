@@ -131,7 +131,7 @@ export function initOperationsBuilder(containerId) {
             .attr("fill", "rgba(128, 255, 176, 0.3)").attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
 
         svg.append("path").attr("class", "result-set")
-            .attr("fill", "rgba(255, 107, 107, 0.4)").attr("stroke", "#ff6b6b").attr("stroke-width", 3).attr("stroke-dasharray", "4 2");
+            .attr("fill", "rgba(255, 107, 107, 0.4)").attr("stroke", "var(--color-error)").attr("stroke-width", 3).attr("stroke-dasharray", "4 2");
 
         // Labels
         svg.append("text").attr("class", "label-a").attr("fill", "var(--color-primary)").style("font-weight", "bold").text("A");
@@ -191,7 +191,7 @@ export function initOperationsBuilder(containerId) {
                  if(!result || result.length < 3) result = clipPolygon(setB, setA); // Try other order if clipping failed
 
                  message = `
-                    <div style="color: #ff6b6b; font-weight: bold;">Intersection A ∩ B</div>
+                    <div style="color: var(--color-error); font-weight: bold;">Intersection A ∩ B</div>
                     <div style="font-size: 0.9rem; margin-top: 4px;">
                         The intersection of any number of convex sets is convex.
                     </div>
@@ -200,7 +200,7 @@ export function initOperationsBuilder(containerId) {
                  const combined = [...setA, ...setB];
                  result = d3.polygonHull(combined);
                  message = `
-                    <div style="color: #ff6b6b; font-weight: bold;">Convex Hull of Union</div>
+                    <div style="color: var(--color-error); font-weight: bold;">Convex Hull of Union</div>
                     <div style="font-size: 0.9rem; margin-top: 4px;">
                         A ∪ B is NOT convex. The smallest convex set containing A ∪ B is its hull (shown in red).
                     </div>
@@ -208,7 +208,7 @@ export function initOperationsBuilder(containerId) {
              } else if (op === "minkowski") {
                  result = minkowskiSum(setA, setB);
                  message = `
-                    <div style="color: #ff6b6b; font-weight: bold;">Minkowski Sum A + B</div>
+                    <div style="color: var(--color-error); font-weight: bold;">Minkowski Sum A + B</div>
                     <div style="font-size: 0.9rem; margin-top: 4px;">
                         The sum {a + b | a∈A, b∈B} is always convex.
                     </div>

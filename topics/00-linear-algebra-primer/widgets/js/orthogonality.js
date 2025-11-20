@@ -100,7 +100,7 @@ export function initOrthogonality(containerId) {
             .attr("orient", "auto")
             .append("path")
                 .attr("d", "M0,-5L10,0L0,5")
-                .attr("fill", "#fbbf24"); // Amber
+                .attr("fill", "var(--warning)"); // Amber / Warning color
     }
 
     const drag = d3.drag()
@@ -207,7 +207,7 @@ export function initOrthogonality(containerId) {
             g.append("line")
                 .attr("x1", x(0)).attr("y1", y(0))
                 .attr("x2", x(proj.x)).attr("y2", y(proj.y))
-                .attr("stroke", "#fbbf24")
+                .attr("stroke", "var(--warning)")
                 .attr("stroke-width", 2.5)
                 .attr("opacity", 0.8)
                 .attr("marker-end", "url(#arrow-proj)");
@@ -215,7 +215,7 @@ export function initOrthogonality(containerId) {
             g.append("text")
                 .attr("x", x(proj.x / 2))
                 .attr("y", y(proj.y / 2) + 15)
-                .attr("fill", "#fbbf24")
+                .attr("fill", "var(--warning)")
                 .text("proj_b a")
                 .style("font-size", "12px")
                 .style("font-family", "var(--font-mono)");
