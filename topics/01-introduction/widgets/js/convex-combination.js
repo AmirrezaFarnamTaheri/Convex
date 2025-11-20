@@ -4,7 +4,7 @@
  * Description: Demonstrates the concept of a convex hull and convex combinations.
  *              Users can drag 3 points to form a triangle and move a 4th point
  *              to see if it can be expressed as a convex combination of the vertices.
- * Version: 2.2.0
+ * Version: 2.3.0 (Enhanced with KaTeX)
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -24,7 +24,7 @@ export function initConvexCombination(containerId) {
                     </label>
                 </div>
             </div>
-            <div id="combo-output" class="widget-output" style="font-family: var(--widget-font-mono); font-size: 0.9rem;"></div>
+            <div id="combo-output" class="widget-output" style="font-family: var(--widget-font-mono); font-size: 0.9rem; min-height: 80px;"></div>
         </div>
     `;
 
@@ -73,6 +73,7 @@ export function initConvexCombination(containerId) {
             .attr("class", "vertex handle")
             .attr("r", 8)
             .attr("fill", "var(--color-primary)")
+            .style("cursor", "move")
             .call(d3.drag().on("drag", (event, d) => {
                 const [mx, my] = d3.pointer(event, svg.node());
                 d.x = x.invert(mx); d.y = y.invert(my);
@@ -84,6 +85,7 @@ export function initConvexCombination(containerId) {
             .attr("r", 6)
             .attr("fill", "var(--color-accent)")
             .attr("stroke", "white").attr("stroke-width", 2)
+            .style("cursor", "move")
             .call(d3.drag().on("drag", (event) => {
                 const [mx, my] = d3.pointer(event, svg.node());
                 target.x = x.invert(mx); target.y = y.invert(my);
@@ -96,9 +98,10 @@ export function initConvexCombination(containerId) {
             .attr("dy", -12)
             .attr("text-anchor", "middle")
             .attr("fill", "var(--color-text-main)")
+            .style("pointer-events", "none")
             .text((d, i) => `v${i+1}`);
 
-        svg.append("text").attr("class", "target-label").text("x").attr("dy", -10).attr("fill", "var(--color-accent)");
+        svg.append("text").attr("class", "target-label").text("x").attr("dy", -10).attr("fill", "var(--color-accent)").style("pointer-events", "none");
 
         update();
     }
@@ -115,7 +118,6 @@ export function initConvexCombination(containerId) {
     function update() {
         // Draw Triangle
         const hullData = vertices.map(v => [v.x, v.y]);
-        // Ensure closed loop for display
         const line = d3.line().x(d => x(d[0])).y(d => y(d[1])).curve(d3.curveLinearClosed);
         svg.select(".hull-path").attr("d", line(hullData));
 
@@ -131,27 +133,41 @@ export function initConvexCombination(containerId) {
         // Compute Barycentric Coords
         const lambdas = getBarycentric(target, vertices[0], vertices[1], vertices[2]);
 
-        // Check if inside (all lambdas >= 0 within tolerance)
-        const isInside = lambdas.every(l => l >= -1e-3);
+        // Check if inside (all lambdas >= -tolerance)
+        // Using a slightly loose tolerance for easier UI interaction
+        const isInside = lambdas.every(l => l >= -1e-2);
 
-        // Display
-        if (isInside) {
-            comboOutput.innerHTML = `
-                <div style="color: var(--color-success);"><strong>Inside Convex Hull</strong></div>
-                x = ${lambdas[0].toFixed(2)}v₁ + ${lambdas[1].toFixed(2)}v₂ + ${lambdas[2].toFixed(2)}v₃
-                <br>
-                <span style="color: var(--color-text-muted);">Σθ = ${(lambdas[0]+lambdas[1]+lambdas[2]).toFixed(2)} = 1, θ ≥ 0</span>
-            `;
-            svg.select(".hull-path").attr("fill", "rgba(124, 197, 255, 0.2)").attr("stroke", "var(--color-primary)");
-        } else {
-             comboOutput.innerHTML = `
-                <div style="color: var(--color-error);"><strong>Outside Convex Hull</strong></div>
-                Cannot represent x as convex combination (requires negative coefficients).
-                <br>
-                x = ${lambdas[0].toFixed(2)}v₁ + ${lambdas[1].toFixed(2)}v₂ + ${lambdas[2].toFixed(2)}v₃
-            `;
-            svg.select(".hull-path").attr("fill", "rgba(255, 107, 107, 0.1)").attr("stroke", "var(--color-error)");
+        // Format numbers
+        const l1 = lambdas[0].toFixed(2);
+        const l2 = lambdas[1].toFixed(2);
+        const l3 = lambdas[2].toFixed(2);
+
+        const color = isInside ? "var(--color-success)" : "var(--color-error)";
+        const status = isInside ? "Inside Convex Hull" : "Outside Convex Hull";
+
+        // KaTeX rendering if available, else fallback
+        const equation = `x = ${l1}v_1 + ${l2}v_2 + ${l3}v_3`;
+        const sumCheck = `\\sum \\theta_i = ${(lambdas[0]+lambdas[1]+lambdas[2]).toFixed(2)}`;
+
+        let equationHtml = equation;
+        let sumCheckHtml = sumCheck;
+
+        if (window.katex) {
+            equationHtml = window.katex.renderToString(equation, { throwOnError: false });
+            sumCheckHtml = window.katex.renderToString(sumCheck, { throwOnError: false });
         }
+
+        comboOutput.innerHTML = `
+            <div style="color: ${color}; margin-bottom: 8px;"><strong>${status}</strong></div>
+            <div style="margin-bottom: 8px;">${equationHtml}</div>
+            <div style="color: var(--color-text-muted); font-size: 0.85rem;">
+                ${sumCheckHtml}, ${isInside ? "all \\theta_i \\ge 0" : "some \\theta_i < 0"}
+            </div>
+        `;
+
+        svg.select(".hull-path")
+            .attr("fill", isInside ? "rgba(124, 197, 255, 0.2)" : "rgba(255, 107, 107, 0.1)")
+            .attr("stroke", isInside ? "var(--color-primary)" : "var(--color-error)");
     }
 
     new ResizeObserver(() => {

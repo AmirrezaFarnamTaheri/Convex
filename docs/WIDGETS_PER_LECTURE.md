@@ -84,8 +84,8 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 - **[x] Convex Combination Explorer (LOW)**
   - **Location:** `topics/01-introduction/widgets/js/convex-combination.js`
-  - **Description:** Animates the concept of a convex combination using a triangle hull and barycentric coordinates.
-  - **Dependencies:** D3.js.
+  - **Description:** Animates the concept of a convex combination using a triangle hull and barycentric coordinates. Uses KaTeX for math.
+  - **Dependencies:** D3.js, KaTeX.
   - **Status:** Completed
 
 ---
@@ -106,7 +106,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 - **[x] Polyhedron Visualizer & Constraint Explorer (HIGH)**
   - **Location:** `topics/02-convex-sets/widgets/js/polyhedron-visualizer.js`
-  - **Description:** Users can add or modify linear inequalities (half-spaces) and see the resulting 2D polyhedron intersection. Shows normals.
+  - **Description:** Users can add or modify linear inequalities (half-spaces) by dragging on the canvas and see the resulting 2D polyhedron intersection.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
@@ -155,6 +155,3 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Description:** Interactive tool to show how operations like composition and weighted sums preserve function convexity.
   - **Dependencies:** D3.js.
   - **Status:** Completed
-
-- **[ ] Strongly Convex vs Merely Convex Comparison (LOW)**
-  - **Status:** Merged into `tangent-line-explorer.js`. File removed.

@@ -11,13 +11,13 @@
 - **Medium Priority:** 36/36 Completed ✅
 - **Low Priority:** 23/23 Completed ✅
 
-## Recent Updates (2025-11-20)
+## Recent Updates (2025-11-21)
+- ✅ **Enhanced:** `convex-combination.js` (Lecture 01) updated with KaTeX rendering for clearer math.
+- ✅ **Enhanced:** `polyhedron-visualizer.js` (Lecture 02) improved dragging UX and visual hints.
+- ✅ **Refined:** Lectures 00, 01, 02, 03 content polished, exercises moved to end, proofs expanded.
 - ✅ **Added:** `least-squares-visualizer.js` (Lecture 00) - 3D geometric interpretation of least squares.
 - ✅ **Merged/Removed:** `strong-convexity.js` (Lecture 03) merged into `tangent-line-explorer.js`.
 - ✅ **Enhanced:** All widgets in Lectures 00-03 updated to v3.0.0 (modern UI theme, improved pedagogy).
-- ✅ **Enhanced:** `condition-number.js` now includes "zig-zag" path animation and explanation.
-- ✅ **Enhanced:** `svd-approximator.js` now shows error image and energy retention stats.
-- ✅ **Enhanced:** `hessian-heatmap.js` now includes interactive 3D probe of local curvature.
 
 ## By Lecture
 | Lecture | Planned | Completed | Status |

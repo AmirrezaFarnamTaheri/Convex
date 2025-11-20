@@ -1118,115 +1118,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 11: EXERCISES -->
+    <!-- SECTION 11: SANITY CHECKLIST -->
     <section class="card-v2" id="section-11">
-      <h2>11. Exercises</h2>
-
-      <h3>A. Fundamentals</h3>
-
-      <div class="proof-enhanced">
-        <h4>A1. Prove that the set of all linear combinations of a fixed set of vectors is a subspace.</h4>
-        <p><b>Solution:</b> Let $S = \mathrm{span}\{v_1, \dots, v_k\}$.
-        <br>1. <b>Closure under addition:</b> Let $u = \sum c_i v_i$ and $w = \sum d_i v_i$ be in $S$. Then $u+w = \sum (c_i+d_i)v_i$, which is also a linear combination, so $u+w \in S$.
-        <br>2. <b>Closure under scalar multiplication:</b> Let $u = \sum c_i v_i \in S$ and $\alpha \in \mathbb{R}$. Then $\alpha u = \sum (\alpha c_i)v_i$, which is also a linear combination, so $\alpha u \in S$.
-        <br>3. <b>Contains zero vector:</b> The zero vector is in $S$ because $0 = \sum 0 \cdot v_i$.
-        <br>Since $S$ satisfies these three properties, it is a subspace.</p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h4>A2. Show that $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$.</h4>
-        <p><b>Solution:</b> Let $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$. By definition, $v = Ax$ for some vector $x$, and $A^\top y = 0$. We want to show their inner product is zero:
-        $$ v^\top y = (Ax)^\top y = x^\top A^\top y = x^\top (A^\top y) = x^\top 0 = 0 $$
-        Since this holds for any $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$, the subspaces are orthogonal.</p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h4>A3. Show that $Q^\top Q = I$ implies $\|Qx\|_2 = \|x\|_2$.</h4>
-        <p><b>Solution:</b> We start with the squared norm:
-        $$ \|Qx\|_2^2 = (Qx)^\top(Qx) $$
-        Using the property $(AB)^\top = B^\top A^\top$, this becomes:
-        $$ \|Qx\|_2^2 = x^\top Q^\top Q x $$
-        Since we are given that $Q^\top Q = I$, we substitute this in:
-        $$ \|Qx\|_2^2 = x^\top I x = x^\top x = \|x\|_2^2 $$
-        Taking the square root of both sides (and since norms are non-negative), we get $\|Qx\|_2 = \|x\|_2$. This shows that orthogonal transformations preserve the Euclidean norm (length) of vectors.</p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h4>A4. (New) Prove that if a set of vectors $\{v_1, \dots, v_k\}$ is orthogonal, it must be linearly independent.</h4>
-        <p><b>Solution:</b> Consider the equation $c_1 v_1 + \dots + c_k v_k = 0$. To show linear independence, we must show that all coefficients $c_i$ must be zero.
-        Take the inner product of both sides with any vector $v_j$ from the set:
-        $$ \langle v_j, c_1 v_1 + \dots + c_k v_k \rangle = \langle v_j, 0 \rangle = 0 $$
-        By linearity of the inner product:
-        $$ c_1 \langle v_j, v_1 \rangle + \dots + c_j \langle v_j, v_j \rangle + \dots + c_k \langle v_j, v_k \rangle = 0 $$
-        Since the set is orthogonal, $\langle v_j, v_i \rangle = 0$ for $i \neq j$. The equation simplifies to:
-        $$ c_j \langle v_j, v_j \rangle = c_j \|v_j\|_2^2 = 0 $$
-        Since the vectors are non-zero, $\|v_j\|_2^2 > 0$, which implies $c_j = 0$. Since this holds for any $j=1, \dots, k$, all coefficients are zero, and the set is linearly independent.
-        </p>
-      </div>
-
-      <h3>B. Projections</h3>
-
-      <div class="proof-enhanced">
-        <h4>B1. Let $S = \mathrm{span}\{u, v\}$ with $u, v$ independent. Derive the projector $P$ onto $S$.</h4>
-        <p><b>Solution:</b> Form $A = [u \ v]$. If $A$ has full column rank, $P = A(A^\top A)^{-1}A^\top$.</p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h4>B2. Show that if $P$ is symmetric and idempotent, then it is an orthogonal projector.</h4>
-        <p><b>Solution:</b> For any $b$, set $p = Pb$ and $r = b - Pb$. Then $Pr = 0$ (because $P^2 = P$); thus $r \in \mathcal{N}(P)$. For any $y = Pw \in \mathcal{R}(P)$, $y^\top r = w^\top P^\top(b - Pb) = w^\top P(b - Pb) = w^\top(Pb - P^2b) = 0$, so $r \perp \mathcal{R}(P)$. Hence $p$ is the orthogonal projection.</p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h4>B3. Project $b = (1, 2, 3)^\top$ onto the affine set $\{x \mid [1 \ 1 \ 1]x = 3\}$.</h4>
-        <p><b>Solution:</b> One solution: find $x_0 = (1, 1, 1)^\top$ (satisfies the constraint). Compute $b - x_0 = (0, 1, 2)^\top$ and project onto $\mathcal{N}([1 \ 1 \ 1])$, i.e., vectors summing to zero. Using basis $z_1 = (1, -1, 0)$, $z_2 = (1, 0, -1)$, solve $\min_y \|Zy - (b - x_0)\|_2^2$, with $Z = [z_1 \ z_2]$. Recover $x^\star = x_0 + Zy^\star$.</p>
-      </div>
-
-      <h3>C. Least Squares</h3>
-
-      <div class="proof-enhanced">
-        <h4>C1. Derive normal equations and prove uniqueness iff $\mathrm{rank}(A) = n$.</h4>
-        <p><b>Solution:</b> The objective function is $f(x) = \|Ax-b\|_2^2 = x^\top A^\top A x - 2b^\top A x + b^\top b$. This is a quadratic function of $x$. To find the minimum, we take the gradient with respect to $x$ and set it to zero:
-        $$ \nabla_x f(x) = 2A^\top A x - 2A^\top b = 0 \implies A^\top A x = A^\top b $$
-        The solution is unique if and only if the matrix $A^\top A$ is invertible. This is true if and only if $A$ has full column rank, i.e., $\mathrm{rank}(A) = n$.
-        </p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h4>C2. Show that the residual at the LS solution is orthogonal to each column of $A$.</h4>
-        <p><b>Solution:</b> Columns of $A$ span $\mathcal{R}(A)$. Orthogonality condition $A^\top(b - Ax^\star) = 0$ means $r^\star \perp \mathcal{R}(A)$.</p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h4>C3. Solve a small overdetermined system by (i) normal equations, (ii) QR, (iii) SVD, and compare answers.</h4>
-        <p><b>Solution:</b> Pick any $3 \times 2$ with independent columns; show all three methods agree to numerical precision. Discuss time and conditioning.</p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h4>C4. (New) Show that the projection matrix $P = A(A^\top A)^{-1}A^\top$ is idempotent ($P^2=P$) and symmetric ($P^\top = P$).</h4>
-        <p><b>Solution:</b>
-        <br><b>Symmetry:</b>
-        $$ P^\top = (A(A^\top A)^{-1}A^\top)^\top = (A^\top)^\top ((A^\top A)^{-1})^\top A^\top = A ((A^\top A)^\top)^{-1} A^\top = A (A^\top (A^\top)^\top)^{-1} A^\top = A(A^\top A)^{-1}A^\top = P $$
-        <br><b>Idempotency:</b>
-        $$ P^2 = (A(A^\top A)^{-1}A^\top)(A(A^\top A)^{-1}A^\top) = A(A^\top A)^{-1}(A^\top A)(A^\top A)^{-1}A^\top = A(A^\top A)^{-1} I A^\top = A(A^\top A)^{-1}A^\top = P $$
-        </p>
-      </div>
-
-      <h3>D. Pseudoinverse & Rank Deficiency</h3>
-
-      <div class="proof-enhanced">
-        <h4>D1. Prove that every least-squares solution $x^\star$ satisfies $x^\star = A^+b + (I - A^+A)z$ for some $z$.</h4>
-        <p><b>Solution:</b> From SVD, the set of minimizers is $A^+b + \mathcal{N}(A)$; note $(I - A^+A)$ projects onto $\mathcal{N}(A)$.</p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h4>D2. Show $P = AA^+$ is the projector onto $\mathcal{R}(A)$ and $P^\perp = I - AA^+$ projects onto $\mathcal{N}(A^\top)$.</h4>
-        <p><b>Solution:</b> Use SVD or basic projector algebra: $P^2 = P$, $P^\top = P$, range/nullspace relations.</p>
-      </div>
-    </section>
-
-    <!-- SECTION 12: SANITY CHECKLIST -->
-    <section class="card-v2" id="section-12">
-      <h2>12. Sanity Checklist (What to Remember in Practice)</h2>
+      <h2>11. Sanity Checklist (What to Remember in Practice)</h2>
 
       <ul>
         <li>Always check the <b>dimensions</b> of your matrices and vectors.</li>
@@ -1238,9 +1132,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
     </section>
 
-    <!-- SECTION 13: QUICK REFERENCE -->
-    <section class="card-v2" id="section-13">
-      <h2>13. Key Formulas</h2>
+    <!-- SECTION 12: QUICK REFERENCE -->
+    <section class="card-v2" id="section-12">
+      <h2>12. Key Formulas</h2>
 
       <ul>
         <li><b>Normal Equations:</b> $A^\top A x^\star = A^\top b$</li>
@@ -1251,9 +1145,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 14: DUAL NORMS AND HÖLDER'S INEQUALITY (EXPANDED) -->
-    <section class="card-v2" id="section-14">
-      <h2>14. Dual Norms and Hölder's Inequality</h2>
+    <!-- SECTION 13: DUAL NORMS AND HÖLDER'S INEQUALITY (EXPANDED) -->
+    <section class="card-v2" id="section-13">
+      <h2>13. Dual Norms and Hölder's Inequality</h2>
 
       <h3>Definition: Dual Norm</h3>
       <p>For any norm $\|\cdot\|$ on $\mathbb{R}^n$, its <b>dual norm</b> is defined as:</p>
@@ -1333,9 +1227,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <p>In <a href="../02-convex-sets/index.html">Lecture 02</a>, when computing <b>dual cones</b>, you will repeatedly use "$y^\top x \le \|y\|_* \|x\|$" with appropriate norms. This inequality is the workhorse of duality theory.</p>
     </section>
 
-    <!-- SECTION 15: MATRIX STRUCTURES FOR OPTIMIZATION -->
-    <section class="card-v2" id="section-15">
-      <h2>15. Matrix Inner Product, Frobenius Norm, and Loewner Order</h2>
+    <!-- SECTION 14: MATRIX STRUCTURES FOR OPTIMIZATION -->
+    <section class="card-v2" id="section-14">
+      <h2>14. Matrix Inner Product, Frobenius Norm, and Loewner Order</h2>
 
       <h3>Trace and Frobenius Inner Product</h3>
       <p>For matrices $X, Y \in \mathbb{R}^{m \times n}$, define:</p>
@@ -1384,9 +1278,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 16: COMPONENTWISE ORDER AND PROJECTION -->
-    <section class="card-v2" id="section-16">
-      <h2>16. Componentwise Order and Projection onto Affine Sets</h2>
+    <!-- SECTION 15: COMPONENTWISE ORDER AND PROJECTION -->
+    <section class="card-v2" id="section-15">
+      <h2>15. Componentwise Order and Projection onto Affine Sets</h2>
 
       <h3>Componentwise Order</h3>
       <p>For vectors $x, y \in \mathbb{R}^n$, we write:</p>
@@ -1449,9 +1343,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 17: PRACTICE PROBLEMS -->
-    <section class="card-v2" id="section-17">
-      <h2>17. Additional Practice Problems</h2>
+    <!-- SECTION 16: EXERCISES -->
+    <section class="card-v2" id="section-16">
+      <h2>16. Exercises</h2>
 
       <h3>Problem 1: Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
@@ -1524,6 +1418,90 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <div class="proof-step">
           <strong>Verification:</strong> $-\frac{2}{3} + \frac{1}{3} + \frac{4}{3} = 1$ ✓
         </div>
+      </div>
+
+      <h3>Problem 5: Subspace Fundamentals</h3>
+      <div class="proof-enhanced">
+        <h4>A1. Prove that the set of all linear combinations of a fixed set of vectors is a subspace.</h4>
+        <p><b>Solution:</b> Let $S = \mathrm{span}\{v_1, \dots, v_k\}$.
+        <br>1. <b>Closure under addition:</b> Let $u = \sum c_i v_i$ and $w = \sum d_i v_i$ be in $S$. Then $u+w = \sum (c_i+d_i)v_i$, which is also a linear combination, so $u+w \in S$.
+        <br>2. <b>Closure under scalar multiplication:</b> Let $u = \sum c_i v_i \in S$ and $\alpha \in \mathbb{R}$. Then $\alpha u = \sum (\alpha c_i)v_i$, which is also a linear combination, so $\alpha u \in S$.
+        <br>3. <b>Contains zero vector:</b> The zero vector is in $S$ because $0 = \sum 0 \cdot v_i$.
+        <br>Since $S$ satisfies these three properties, it is a subspace.</p>
+      </div>
+
+      <div class="proof-enhanced">
+        <h4>A2. Show that $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$.</h4>
+        <p><b>Solution:</b> Let $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$. By definition, $v = Ax$ for some vector $x$, and $A^\top y = 0$. We want to show their inner product is zero:
+        $$ v^\top y = (Ax)^\top y = x^\top A^\top y = x^\top (A^\top y) = x^\top 0 = 0 $$
+        Since this holds for any $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$, the subspaces are orthogonal.</p>
+      </div>
+
+      <h3>Problem 6: Projections and Least Squares</h3>
+      <div class="proof-enhanced">
+        <h4>C1. Derive normal equations and prove uniqueness iff $\mathrm{rank}(A) = n$.</h4>
+        <p><b>Solution:</b> The objective function is $f(x) = \|Ax-b\|_2^2 = x^\top A^\top A x - 2b^\top A x + b^\top b$. This is a quadratic function of $x$. To find the minimum, we take the gradient with respect to $x$ and set it to zero:
+        $$ \nabla_x f(x) = 2A^\top A x - 2A^\top b = 0 \implies A^\top A x = A^\top b $$
+        The solution is unique if and only if the matrix $A^\top A$ is invertible. This is true if and only if $A$ has full column rank, i.e., $\mathrm{rank}(A) = n$.
+        </p>
+      </div>
+
+      <div class="proof-enhanced">
+        <h4>C2. Show that the residual at the LS solution is orthogonal to each column of $A$.</h4>
+        <p><b>Solution:</b> Columns of $A$ span $\mathcal{R}(A)$. Orthogonality condition $A^\top(b - Ax^\star) = 0$ means $r^\star \perp \mathcal{R}(A)$.</p>
+      </div>
+
+      <div class="proof-enhanced">
+        <h4>C3. Solve a small overdetermined system by (i) normal equations, (ii) QR, (iii) SVD, and compare answers.</h4>
+        <p><b>Solution:</b> Pick any $3 \times 2$ with independent columns; show all three methods agree to numerical precision. Discuss time and conditioning.</p>
+      </div>
+
+      <div class="proof-enhanced">
+        <h4>C4. (New) Show that the projection matrix $P = A(A^\top A)^{-1}A^\top$ is idempotent ($P^2=P$) and symmetric ($P^\top = P$).</h4>
+        <p><b>Solution:</b>
+        <br><b>Symmetry:</b>
+        $$ P^\top = (A(A^\top A)^{-1}A^\top)^\top = (A^\top)^\top ((A^\top A)^{-1})^\top A^\top = A ((A^\top A)^\top)^{-1} A^\top = A (A^\top (A^\top)^\top)^{-1} A^\top = A(A^\top A)^{-1}A^\top = P $$
+        <br><b>Idempotency:</b>
+        $$ P^2 = (A(A^\top A)^{-1}A^\top)(A(A^\top A)^{-1}A^\top) = A(A^\top A)^{-1}(A^\top A)(A^\top A)^{-1}A^\top = A(A^\top A)^{-1} I A^\top = A(A^\top A)^{-1}A^\top = P $$
+        </p>
+      </div>
+
+      <h3>Problem 7: Pseudoinverse & Rank Deficiency</h3>
+      <div class="proof-enhanced">
+        <h4>D1. Prove that every least-squares solution $x^\star$ satisfies $x^\star = A^+b + (I - A^+A)z$ for some $z$.</h4>
+        <p><b>Solution:</b> From SVD, the set of minimizers is $A^+b + \mathcal{N}(A)$; note $(I - A^+A)$ projects onto $\mathcal{N}(A)$.</p>
+      </div>
+
+      <div class="proof-enhanced">
+        <h4>D2. Show $P = AA^+$ is the projector onto $\mathcal{R}(A)$ and $P^\perp = I - AA^+$ projects onto $\mathcal{N}(A^\top)$.</h4>
+        <p><b>Solution:</b> Use SVD or basic projector algebra: $P^2 = P$, $P^\top = P$, range/nullspace relations.</p>
+      </div>
+
+      <h3>Problem 8: Additional Practice</h3>
+      <div class="proof-enhanced">
+        <h4>A3. Show that $Q^\top Q = I$ implies $\|Qx\|_2 = \|x\|_2$.</h4>
+        <p><b>Solution:</b> We start with the squared norm:
+        $$ \|Qx\|_2^2 = (Qx)^\top(Qx) $$
+        Using the property $(AB)^\top = B^\top A^\top$, this becomes:
+        $$ \|Qx\|_2^2 = x^\top Q^\top Q x $$
+        Since we are given that $Q^\top Q = I$, we substitute this in:
+        $$ \|Qx\|_2^2 = x^\top I x = x^\top x = \|x\|_2^2 $$
+        Taking the square root of both sides (and since norms are non-negative), we get $\|Qx\|_2 = \|x\|_2$. This shows that orthogonal transformations preserve the Euclidean norm (length) of vectors.</p>
+      </div>
+
+      <div class="proof-enhanced">
+        <h4>B1. Let $S = \mathrm{span}\{u, v\}$ with $u, v$ independent. Derive the projector $P$ onto $S$.</h4>
+        <p><b>Solution:</b> Form $A = [u \ v]$. If $A$ has full column rank, $P = A(A^\top A)^{-1}A^\top$.</p>
+      </div>
+
+      <div class="proof-enhanced">
+        <h4>B2. Show that if $P$ is symmetric and idempotent, then it is an orthogonal projector.</h4>
+        <p><b>Solution:</b> For any $b$, set $p = Pb$ and $r = b - Pb$. Then $Pr = 0$ (because $P^2 = P$); thus $r \in \mathcal{N}(P)$. For any $y = Pw \in \mathcal{R}(P)$, $y^\top r = w^\top P^\top(b - Pb) = w^\top P(b - Pb) = w^\top(Pb - P^2b) = 0$, so $r \perp \mathcal{R}(P)$. Hence $p$ is the orthogonal projection.</p>
+      </div>
+
+      <div class="proof-enhanced">
+        <h4>B3. Project $b = (1, 2, 3)^\top$ onto the affine set $\{x \mid [1 \ 1 \ 1]x = 3\}$.</h4>
+        <p><b>Solution:</b> One solution: find $x_0 = (1, 1, 1)^\top$ (satisfies the constraint). Compute $b - x_0 = (0, 1, 2)^\top$ and project onto $\mathcal{N}([1 \ 1 \ 1])$, i.e., vectors summing to zero. Using basis $z_1 = (1, -1, 0)$, $z_2 = (1, 0, -1)$, solve $\min_y \|Zy - (b - x_0)\|_2^2$, with $Z = [z_1 \ z_2]$. Recover $x^\star = x_0 + Zy^\star$.</p>
       </div>
     </section>
 
