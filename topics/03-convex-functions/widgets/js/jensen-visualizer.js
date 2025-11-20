@@ -2,7 +2,8 @@
  * Widget: Jensen's Inequality Visualizer
  *
  * Description: Interactively demonstrates Jensen's inequality, f(θx + (1-θ)y) ≤ θf(x) + (1-θ)f(y).
- * Version: 2.1.0
+ *              Visualizes the chord and the function value at the interpolated point.
+ * Version: 3.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -13,23 +14,23 @@ export function initJensenVisualizer(containerId) {
     // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="widget-container">
-             <div class="widget-canvas-container" id="plot-container" style="height: 400px;"></div>
+             <div class="widget-canvas-container" id="plot-container" style="height: 400px; cursor: crosshair;"></div>
             <div class="widget-controls">
                  <div class="widget-control-group" style="flex: 1;">
                     <label class="widget-label">Function</label>
                     <select id="jensen-func-select" class="widget-select"></select>
                 </div>
                 <div class="widget-control-group" style="flex: 1;">
-                    <label class="widget-label">Mixing Parameter θ = <span id="t-value-display" class="widget-value-display">0.50</span></label>
+                    <label class="widget-label">Interpolation θ = <span id="t-value-display" class="widget-value-display">0.50</span></label>
                     <input type="range" id="jensen-t-slider" min="0" max="1" step="0.01" value="0.5" class="widget-slider">
                 </div>
                 <div class="widget-control-group">
-                    <button id="jensen-clear-btn" class="widget-btn">Clear Points</button>
+                    <button id="jensen-clear-btn" class="widget-btn">Clear</button>
                 </div>
             </div>
 
-            <div id="jensen-output" class="widget-output" style="min-height: 2.5em; display: flex; flex-direction: column; justify-content: center;">
-                 <span style="color: var(--color-text-muted);">Click two points on the curve to test Jensen's inequality.</span>
+            <div id="jensen-output" class="widget-output" style="min-height: 3.5em; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                 <span style="color: var(--color-text-muted);">Click two points on the curve to visualize the inequality.</span>
             </div>
         </div>
     `;
@@ -42,10 +43,11 @@ export function initJensenVisualizer(containerId) {
     const output = container.querySelector("#jensen-output");
 
     const functions = {
-        "x² (Convex)": { func: x => x**2, domain: [-2, 2] },
-        "eˣ (Convex)": { func: x => Math.exp(x), domain: [-2, 2] },
+        "x² (Convex)": { func: x => x**2, domain: [-2.2, 2.2] },
+        "eˣ (Convex)": { func: x => Math.exp(x), domain: [-2, 1.5] },
         "sin(x) (Non-Convex)": { func: x => Math.sin(x), domain: [-Math.PI, Math.PI] },
-        "-log(x) (Convex)": { func: x => -Math.log(x), domain: [0.1, 4] },
+        "-log(x) (Convex)": { func: x => -Math.log(x), domain: [0.2, 4] },
+        "|x| (Convex)": { func: x => Math.abs(x), domain: [-2, 2] }
     };
     let selectedFunc = functions[Object.keys(functions)[0]];
     let points = [];
@@ -85,8 +87,9 @@ export function initJensenVisualizer(containerId) {
         svg.append("path").attr("class", "function-path").attr("fill", "none")
             .attr("stroke", "var(--color-primary)").attr("stroke-width", 3);
 
-        svg.append("g").attr("class", "interaction-layer");
+        const interactGroup = svg.append("g").attr("class", "interaction-layer");
 
+        // Rect for clicks
         svg.append("rect").attr("width", width).attr("height", height)
             .style("fill", "transparent").style("cursor", "crosshair")
             .on("click", handleClick);
@@ -95,8 +98,13 @@ export function initJensenVisualizer(containerId) {
     function draw() {
         const { func, domain } = selectedFunc;
         x.domain(domain);
-        const plotData = d3.range(domain[0], domain[1], (domain[1] - domain[0]) / 100).map(d => ({ x: d, y: func(d) }));
-        y.domain(d3.extent(plotData, d => d.y)).nice();
+
+        const step = (domain[1] - domain[0]) / 200;
+        const plotData = d3.range(domain[0], domain[1] + step, step).map(d => ({ x: d, y: func(d) }));
+
+        const yExtent = d3.extent(plotData, d => d.y);
+        const yPadding = (yExtent[1] - yExtent[0]) * 0.1;
+        y.domain([yExtent[0] - yPadding, yExtent[1] + yPadding]); // nice
 
         const height = plotContainer.clientHeight - 50;
         const width = plotContainer.clientWidth - 60;
@@ -117,7 +125,8 @@ export function initJensenVisualizer(containerId) {
     }
 
     function handleClick(event) {
-        if (points.length >= 2) return;
+        if (points.length >= 2) clear(); // Auto clear on 3rd click
+
         const [mx] = d3.pointer(event, svg.node());
         const xVal = x.invert(mx);
 
@@ -128,16 +137,17 @@ export function initJensenVisualizer(containerId) {
         const yVal = selectedFunc.func(xVal);
         points.push({ x: xVal, y: yVal });
 
-        svg.select(".interaction-layer").append("circle")
+        const layer = svg.select(".interaction-layer");
+        layer.append("circle")
             .attr("cx", x(xVal)).attr("cy", y(yVal))
             .attr("r", 6).attr("fill", "var(--color-accent)").attr("stroke", "#fff").attr("stroke-width", 2);
 
         if (points.length === 2) {
             points.sort((a, b) => a.x - b.x);
-            svg.select(".interaction-layer").append("line").attr("class", "chord-line")
+            layer.append("line").attr("class", "chord-line")
                 .attr("x1", x(points[0].x)).attr("y1", y(points[0].y))
                 .attr("x2", x(points[1].x)).attr("y2", y(points[1].y))
-                .attr("stroke", "var(--color-text-main)").attr("stroke-width", 2).attr("stroke-dasharray", "5 5");
+                .attr("stroke", "var(--color-text-muted)").attr("stroke-width", 2).attr("stroke-dasharray", "5 5");
             updateInterpolation();
         }
     }
@@ -152,30 +162,44 @@ export function initJensenVisualizer(containerId) {
         const y_func = selectedFunc.func(x_theta);
         const y_chord = (1 - theta) * p1.y + theta * p2.y;
 
-        // Screen coords Y is flipped relative to value, but math logic holds:
-        // func <= chord means func is "below" chord (if convex).
-        // But in y-values (math), "below" means numerically smaller.
+        // Math comparison: convex if y_func <= y_chord
         const isConvex = y_func <= y_chord + 1e-5;
 
-        svg.select(".interaction-layer").selectAll(".interp-viz").remove();
-        const vizGroup = svg.select(".interaction-layer").append("g").attr("class", "interp-viz");
+        const vizGroup = svg.select(".interaction-layer");
+        vizGroup.selectAll(".interp-viz").remove();
+        const g = vizGroup.append("g").attr("class", "interp-viz");
 
-        // Vertical line connecting them
-        vizGroup.append("line").attr("x1", x(x_theta)).attr("y1", y(y_func)).attr("x2", x(x_theta)).attr("y2", y(y_chord))
-            .attr("stroke", isConvex ? "var(--color-success)" : "var(--color-error)").attr("stroke-width", 2);
+        // Vertical line connecting function and chord
+        g.append("line")
+            .attr("x1", x(x_theta)).attr("y1", y(y_func))
+            .attr("x2", x(x_theta)).attr("y2", y(y_chord))
+            .attr("stroke", isConvex ? "var(--color-success)" : "var(--color-error)")
+            .attr("stroke-width", 3);
 
-        // Points
-        vizGroup.append("circle").attr("cx", x(x_theta)).attr("cy", y(y_func)).attr("r", 5).attr("fill", "#fbbf24").attr("stroke", "#fff"); // Function value
-        vizGroup.append("circle").attr("cx", x(x_theta)).attr("cy", y(y_chord)).attr("r", 5).attr("fill", "var(--color-text-main)").attr("stroke", "#fff"); // Chord value
+        // Function Point
+        g.append("circle")
+            .attr("cx", x(x_theta)).attr("cy", y(y_func))
+            .attr("r", 6).attr("fill", "#fbbf24").attr("stroke", "var(--surface-1)").attr("stroke-width", 2);
+
+        // Chord Point
+        g.append("circle")
+            .attr("cx", x(x_theta)).attr("cy", y(y_chord))
+            .attr("r", 6).attr("fill", "var(--color-text-main)").attr("stroke", "var(--surface-1)").attr("stroke-width", 2);
+
+        // Labels
+        g.append("text")
+            .attr("x", x(x_theta) + 10).attr("y", y(y_func))
+            .text("f(z)")
+            .attr("fill", "#fbbf24").style("font-weight", "bold").style("font-size", "12px");
 
         output.innerHTML = `
-            <div style="font-family: var(--widget-font-mono);">
+            <div style="font-family: var(--widget-font-mono); font-size: 1.1rem; margin-bottom: 4px;">
                 <span style="color: #fbbf24">f(z)</span> = ${y_func.toFixed(2)}
-                <span style="margin: 0 8px;">${isConvex ? '≤' : '>'}</span>
+                &nbsp; <span style="color: ${isConvex ? 'var(--color-success)' : 'var(--color-error)'}">${isConvex ? '≤' : '>'}</span> &nbsp;
                 <span style="color: var(--color-text-main)">L(z)</span> = ${y_chord.toFixed(2)}
             </div>
-            <div style="font-size: 0.9rem; color: ${isConvex ? 'var(--color-success)' : 'var(--color-error)'};">
-                ${isConvex ? "Jensen's Inequality Holds (Convex locally)" : "Jensen's Inequality Fails (Non-Convex locally)"}
+            <div style="font-size: 0.9rem; color: var(--color-text-muted);">
+                (Chord Height)
             </div>
         `;
     }

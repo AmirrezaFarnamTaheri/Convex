@@ -3,8 +3,8 @@
  *
  * Description: Allows users to upload an image, performs SVD, and shows the
  *              low-rank approximation by adjusting the number of singular values (k).
- *              Includes a visualization of the singular value spectrum.
- * Version: 2.1.0
+ *              Includes visualizations of the error image and energy retention.
+ * Version: 3.0.0
  */
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
@@ -18,7 +18,7 @@ export async function initSvdApproximator(containerId) {
 
     // Initial load state
     container.innerHTML = `
-        <div class="widget-container" style="height: 500px;">
+        <div class="widget-container" style="height: 600px;">
              <div class="widget-loading">
                 <div class="widget-loading-spinner"></div>
                 <div>Initializing Python (scikit-image)...</div>
@@ -79,30 +79,43 @@ def approximate(U, s, V, k):
                     <label class="widget-label">Source Image</label>
                     <div style="display: flex; gap: 8px;">
                         <label class="widget-btn primary" style="cursor: pointer;">
-                            Upload Image <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                            Upload <input type="file" id="image-upload" accept="image/*" style="display: none;">
                         </label>
-                        <button class="widget-btn" id="reset-btn">Reset Default</button>
+                        <button class="widget-btn" id="reset-btn">Default</button>
                     </div>
                 </div>
                 <div class="widget-control-group" style="flex: 2;">
-                    <label class="widget-label">Singular Values (k): <span id="k-value" class="widget-value-display">1</span></label>
+                    <label class="widget-label">Rank (k): <span id="k-value" class="widget-value-display">1</span></label>
                     <input type="range" id="k-slider" min="1" max="256" value="1" class="widget-slider">
                 </div>
             </div>
 
-            <div id="output-stats" class="widget-output" style="display: flex; justify-content: space-between; font-size: 0.85rem;"></div>
+            <div id="output-stats" class="widget-output" style="display: flex; justify-content: space-around; font-size: 0.85rem; padding: 8px 16px; background: var(--surface-2);">
+                 <!-- Stats injected here -->
+            </div>
 
-            <div style="padding: 16px; background: var(--color-background);">
-                <div id="singular-values-chart" style="width: 100%; height: 100px; margin-bottom: 16px;"></div>
-                <div class="canvases" style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: center;">
+            <div style="padding: 16px; background: var(--color-background); display: flex; flex-direction: column; gap: 16px;">
+
+                <!-- Visualization Row -->
+                <div class="canvases" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
                     <div style="text-align: center;">
-                        <h4 style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 8px;">Original</h4>
-                        <canvas id="original-canvas" width="256" height="256" style="border: 1px solid var(--color-border); border-radius: 4px;"></canvas>
+                        <h4 style="color: var(--color-text-muted); font-size: 0.8rem; margin-bottom: 4px; text-transform: uppercase;">Original</h4>
+                        <canvas id="original-canvas" width="200" height="200" style="border: 1px solid var(--color-border); border-radius: 4px; image-rendering: pixelated;"></canvas>
                     </div>
                     <div style="text-align: center;">
-                        <h4 style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 8px;">Approximation (Rank-k)</h4>
-                        <canvas id="approximated-canvas" width="256" height="256" style="border: 1px solid var(--color-border); border-radius: 4px;"></canvas>
+                        <h4 style="color: var(--color-text-muted); font-size: 0.8rem; margin-bottom: 4px; text-transform: uppercase;">Rank-k Approx</h4>
+                        <canvas id="approximated-canvas" width="200" height="200" style="border: 1px solid var(--color-border); border-radius: 4px; image-rendering: pixelated;"></canvas>
                     </div>
+                    <div style="text-align: center;">
+                        <h4 style="color: var(--color-error); font-size: 0.8rem; margin-bottom: 4px; text-transform: uppercase;">Residual (Error)</h4>
+                        <canvas id="error-canvas" width="200" height="200" style="border: 1px solid var(--color-border); border-radius: 4px; image-rendering: pixelated;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div style="position: relative; width: 100%; height: 120px;">
+                    <div id="singular-values-chart" style="width: 100%; height: 100%;"></div>
+                    <div style="position: absolute; top: 5px; right: 10px; font-size: 0.75rem; color: var(--color-text-muted);">Singular Value Spectrum (log scale)</div>
                 </div>
             </div>
 
@@ -120,25 +133,58 @@ def approximate(U, s, V, k):
     const infoOutput = container.querySelector("#output-stats");
     const originalCanvas = container.querySelector("#original-canvas");
     const approximatedCanvas = container.querySelector("#approximated-canvas");
+    const errorCanvas = container.querySelector("#error-canvas");
     const chartContainer = container.querySelector("#singular-values-chart");
     const loadingOverlay = container.querySelector("#loading-overlay");
     const loadingText = container.querySelector("#loading-text");
 
     const originalCtx = originalCanvas.getContext('2d');
     const approximatedCtx = approximatedCanvas.getContext('2d');
+    const errorCtx = errorCanvas.getContext('2d');
 
-    let U_py, s_py, V_py;
-    const IMG_SIZE = 256;
+    let U_py, s_py, V_py, originalDataJs;
+    const IMG_SIZE = 256; // Internal size
+    // Canvas display size is 200x200 via CSS attributes in HTML above
 
-    function displayGrayscale(grayDataPy, context) {
-        const grayData = grayDataPy.toJs({ depth: 2 });
+    function drawToCanvas(dataArr, context, isError = false) {
+        // dataArr is 1D array of length 256*256, values 0..1 (or -1..1 for error)
+        // We map to ImageData 256x256 then scale down via CSS/Canvas attributes
         const imageData = context.createImageData(IMG_SIZE, IMG_SIZE);
+        const pixels = imageData.data;
         for (let i = 0; i < IMG_SIZE * IMG_SIZE; i++) {
-            const val = grayData.flat()[i] * 255;
-            imageData.data[i * 4] = val;
-            imageData.data[i * 4 + 1] = val;
-            imageData.data[i * 4 + 2] = val;
-            imageData.data[i * 4 + 3] = 255;
+            let val = dataArr[i];
+            let r, g, b;
+
+            if (isError) {
+                // Heatmap for error: 0 -> black, + -> red/yellow, - -> blue/cyan?
+                // Simple: Absolute error brightness + red tint?
+                // Or: 0=Grey(128), -1=Black, +1=White?
+                // Let's do: |Error| * boosted brightness, Red tint.
+                // Actually, let's map error [-0.5, 0.5] to [0, 255] heatmap?
+                // Simpler: Just show absolute difference as brightness (what is lost)
+                const absErr = Math.abs(val);
+                // Boost visibility of error
+                const intensity = Math.min(255, Math.floor(absErr * 5 * 255));
+                r = intensity;
+                g = Math.floor(intensity * 0.2); // Reddish
+                b = Math.floor(intensity * 0.2);
+            } else {
+                const v = Math.min(255, Math.max(0, Math.floor(val * 255)));
+                r = v; g = v; b = v;
+            }
+
+            pixels[i * 4] = r;
+            pixels[i * 4 + 1] = g;
+            pixels[i * 4 + 2] = b;
+            pixels[i * 4 + 3] = 255;
+        }
+        // Put image data into a temporary canvas to scale it?
+        // No, putImageData puts it 1:1. The canvas element has width=200 height=200 attribute,
+        // but we are putting 256x256 data? That will crop or distort if context dims match attribute.
+        // Actually, we should set canvas.width = IMG_SIZE in JS to match data.
+        if (context.canvas.width !== IMG_SIZE) {
+            context.canvas.width = IMG_SIZE;
+            context.canvas.height = IMG_SIZE;
         }
         context.putImageData(imageData, 0, 0);
     }
@@ -146,11 +192,11 @@ def approximate(U, s, V, k):
     async function handleSVD(imageDataPy) {
         loadingText.textContent = "Computing SVD...";
         loadingOverlay.style.display = 'flex';
-
-        // Short delay to allow UI to update
         await new Promise(r => setTimeout(r, 10));
 
-        displayGrayscale(imageDataPy, originalCtx);
+        // Store original for error calc
+        originalDataJs = imageDataPy.toJs({depth: 2}).flat();
+        drawToCanvas(originalDataJs, originalCtx);
 
         const svd_result = await pyodideAPI.perform_svd(imageDataPy);
 
@@ -164,8 +210,6 @@ def approximate(U, s, V, k):
         svd_result.destroy();
 
         kSlider.max = s_py.toJs().length;
-
-        // Reset slider somewhat intelligently - e.g. 10% of rank or 10, whichever larger
         const defaultK = Math.min(20, Math.floor(kSlider.max / 5));
         kSlider.value = defaultK;
 
@@ -180,27 +224,47 @@ def approximate(U, s, V, k):
         kValueSpan.textContent = k;
 
         const resultPy = await pyodideAPI.approximate(U_py, s_py, V_py, k);
-        displayGrayscale(resultPy, approximatedCtx);
+        const approxDataJs = resultPy.toJs({depth: 2}).flat();
         resultPy.destroy();
 
-        const original_size = IMG_SIZE * IMG_SIZE; // Just pixel count proxy
-        // SVD storage: U[:, :k] (256*k) + s[:k] (k) + V[:k, :] (k*256)
-        const compressed_size = k * (IMG_SIZE + 1 + IMG_SIZE);
-        const ratio = (compressed_size / original_size) * 100;
+        drawToCanvas(approxDataJs, approximatedCtx);
+
+        // Calculate and draw error
+        const errorData = new Float64Array(originalDataJs.length);
+        for(let i=0; i<originalDataJs.length; i++) {
+            errorData[i] = originalDataJs[i] - approxDataJs[i];
+        }
+        drawToCanvas(errorData, errorCtx, true);
+
+        // Stats
+        const s = s_py.toJs();
+        const totalEnergy = s.reduce((acc, val) => acc + val*val, 0);
+        const currentEnergy = s.slice(0, k).reduce((acc, val) => acc + val*val, 0);
+        const energyPercent = (currentEnergy / totalEnergy) * 100;
+
+        const originalSize = IMG_SIZE * IMG_SIZE;
+        const compressedSize = k * (IMG_SIZE + 1 + IMG_SIZE);
+        const ratio = (compressedSize / originalSize) * 100;
 
         infoOutput.innerHTML = `
-            <div><strong>Compression Ratio:</strong> <span style="color: var(--color-primary);">${ratio.toFixed(1)}%</span></div>
-            <div><strong>Pixels:</strong> 65,536</div>
-            <div><strong>Params (k=${k}):</strong> ${compressed_size.toLocaleString()}</div>
+            <div style="text-align: center;">
+                <div style="color: var(--color-text-muted); font-size: 0.7rem;">ENERGY RETAINED</div>
+                <div style="color: var(--color-success); font-weight: bold; font-size: 1.1rem;">${energyPercent.toFixed(1)}%</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="color: var(--color-text-muted); font-size: 0.7rem;">COMPRESSION</div>
+                <div style="color: var(--color-primary); font-weight: bold; font-size: 1.1rem;">${ratio.toFixed(1)}%</div>
+                <div style="font-size: 0.7rem; color: var(--color-text-muted);">of original size</div>
+            </div>
         `;
+
         updateChartHighlight(k);
     }
 
     let chartSvg;
     function drawSingularValuesChart(s) {
         chartContainer.innerHTML = '';
-        // Use full width of container
-        const margin = { top: 5, right: 10, bottom: 20, left: 40 };
+        const margin = { top: 10, right: 10, bottom: 20, left: 40 };
         const width = chartContainer.clientWidth - margin.left - margin.right;
         const height = chartContainer.clientHeight - margin.top - margin.bottom;
 
@@ -210,29 +274,50 @@ def approximate(U, s, V, k):
             .attr("viewBox", `0 0 ${chartContainer.clientWidth} ${chartContainer.clientHeight}`)
             .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-        const x = d3.scaleLinear().domain([1, s.length]).range([0, width]);
-        // Log scale for y is better for singular values
-        const y = d3.scaleLog().domain([Math.max(1e-10, s[s.length-1]), d3.max(s)]).range([height, 0]);
+        const x = d3.scaleLinear().domain([0, s.length]).range([0, width]);
+        const y = d3.scaleLog().domain([Math.max(1e-5, s[s.length-1]), d3.max(s)]).range([height, 0]);
 
-        chartSvg.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(10));
+        chartSvg.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(5));
         chartSvg.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(3, ".0e"));
 
-        // Bars
-        chartSvg.selectAll("rect")
-            .data(s)
-            .enter().append("rect")
-            .attr("class", "sv-bar")
-            .attr("x", (d, i) => x(i + 1))
-            .attr("y", d => y(d))
-            .attr("width", Math.max(1, width / s.length))
-            .attr("height", d => height - y(d))
-            .attr("fill", "var(--color-surface-2)");
+        // Area generator for "energy" under curve visual
+        const area = d3.area()
+            .x((d, i) => x(i))
+            .y0(height)
+            .y1(d => y(d));
+
+        chartSvg.append("path")
+            .datum(s)
+            .attr("class", "spectrum-area")
+            .attr("fill", "var(--color-surface-2)")
+            .attr("d", area);
+
+        // Interactive vertical line for k
+        chartSvg.append("line")
+            .attr("class", "k-line")
+            .attr("y1", 0).attr("y2", height)
+            .attr("stroke", "var(--color-accent)")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "4 4");
     }
 
     function updateChartHighlight(k) {
         if (!chartSvg) return;
-        chartSvg.selectAll("rect.sv-bar")
-            .attr("fill", (d, i) => i < k ? "var(--color-accent)" : "var(--color-surface-2)");
+
+        // Update K line position
+        // We need to reconstruct X scale or store it. Reconstructing for simplicity.
+        const margin = { top: 10, right: 10, bottom: 20, left: 40 };
+        const width = chartContainer.clientWidth - margin.left - margin.right;
+        const sLen = kSlider.max; // approximation
+        const x = d3.scaleLinear().domain([0, sLen]).range([0, width]);
+
+        chartSvg.select(".k-line")
+            .transition().duration(100)
+            .attr("x1", x(k)).attr("x2", x(k));
+
+        // Highlight area to the left
+        // Hard to do with single path. Simple rect overlay?
+        // Or just rely on line. The stats speak for themselves.
     }
 
     async function handleImageFile(file) {
@@ -249,7 +334,6 @@ def approximate(U, s, V, k):
         }
     }
 
-    // --- EVENT LISTENERS ---
     imageUpload.addEventListener("change", (e) => {
         if (e.target.files && e.target.files[0]) handleImageFile(e.target.files[0]);
     });
@@ -264,7 +348,6 @@ def approximate(U, s, V, k):
 
     kSlider.addEventListener("input", updateApproximation);
 
-    // --- INITIALIZATION ---
     (async () => {
         loadingText.textContent = "Loading default image...";
         loadingOverlay.style.display = 'flex';

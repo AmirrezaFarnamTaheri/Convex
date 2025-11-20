@@ -1,18 +1,18 @@
 /**
  * Widget: Operations Preserving Convexity Builder
  *
- * Description: A tool where users can apply operations (intersection, affine transformation)
+ * Description: A tool where users can apply operations (intersection, affine transformation, etc.)
  *              to pre-defined convex sets to see the result.
- * Version: 2.1.0
+ * Version: 3.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
-// Helper: Sutherland-Hodgman Clipping (Convex-Convex intersection)
+// Helper: Sutherland-Hodgman Clipping
 function clipPolygon(subjectPolygon, clipPolygon) {
     let output = subjectPolygon;
     if(!clipPolygon || clipPolygon.length < 3) return [];
 
-    const cp = [...clipPolygon]; // Ensure closed loop logic?
+    const cp = [...clipPolygon];
 
     for(let j=0; j<cp.length; j++) {
         const edgeStart = cp[j];
@@ -23,7 +23,7 @@ function clipPolygon(subjectPolygon, clipPolygon) {
         if(input.length === 0) break;
 
         const isInside = (p) => {
-            return (edgeEnd[0]-edgeStart[0])*(p[1]-edgeStart[1]) - (edgeEnd[1]-edgeStart[1])*(p[0]-edgeStart[0]) >= 0; // Assuming CCW order
+            return (edgeEnd[0]-edgeStart[0])*(p[1]-edgeStart[1]) - (edgeEnd[1]-edgeStart[1])*(p[0]-edgeStart[0]) >= 0; // CCW
         };
 
         const intersect = (p1, p2) => {
@@ -51,7 +51,6 @@ function clipPolygon(subjectPolygon, clipPolygon) {
 
 // Helper: Minkowski Sum
 function minkowskiSum(poly1, poly2) {
-    // Sum of every point pair. The convex hull of sums is the Minkowski sum.
     const points = [];
     for(let p1 of poly1) {
         for(let p2 of poly2) {
@@ -74,17 +73,17 @@ export function initOperationsBuilder(containerId) {
                     <label class="widget-label">Operation</label>
                     <select id="op-select" class="widget-select">
                         <option value="intersection">Intersection (A ∩ B)</option>
-                        <option value="union">Union (A ∪ B) - Hull</option>
+                        <option value="union">Union (Hull(A ∪ B))</option>
                         <option value="minkowski">Minkowski Sum (A + B)</option>
-                        <option value="affine">Affine Transform (M*A + v)</option>
+                        <option value="affine">Affine Map f(A)</option>
                     </select>
                 </div>
-                <div class="widget-control-group" style="flex: 1;" id="transform-controls" style="display:none;">
-                    <label class="widget-label">Transform Scale</label>
-                    <input type="range" id="scale-slider" min="0.1" max="2" step="0.1" value="1" class="widget-slider">
+                <div class="widget-control-group" id="transform-controls" style="flex: 1; display:none;">
+                    <label class="widget-label">Scaling Factor</label>
+                    <input type="range" id="scale-slider" min="0.5" max="2" step="0.1" value="1" class="widget-slider">
                 </div>
             </div>
-            <div id="status-output" class="widget-output"></div>
+            <div id="status-output" class="widget-output" style="min-height: 60px; display: flex; align-items: center; justify-content: center; text-align: center;"></div>
         </div>
     `;
 
@@ -96,13 +95,10 @@ export function initOperationsBuilder(containerId) {
 
     let svg, x, y;
 
-    // Define base sets (CCW order for clipping)
-    const setA = [[-2, -2], [2, -2], [2, 2], [-2, 2]]; // Square
-    const setB = d3.range(0, 2*Math.PI, 0.2).map(t => [3 + 2*Math.cos(t), 2*Math.sin(t)]).reverse(); // Circle centered at (3,0)
-
-    // Current transform
-    let affineM = [[1, 0], [0, 1]]; // Identity
-    let affineV = [0, 0];
+    // Sets
+    const setA = [[-2, -2], [2, -2], [2, 2], [-2, 2]]; // Square centered at 0
+    // Set B: Triangle offset
+    const setB = [[1, 1], [5, 1], [3, 5]];
 
     function setupChart() {
         plotContainer.innerHTML = '';
@@ -116,11 +112,11 @@ export function initOperationsBuilder(containerId) {
             .attr("viewBox", `0 0 ${plotContainer.clientWidth} ${plotContainer.clientHeight}`)
             .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-        x = d3.scaleLinear().domain([-10, 10]).range([0, width]);
-        y = d3.scaleLinear().domain([-10, 10]).range([height, 0]);
+        x = d3.scaleLinear().domain([-8, 8]).range([0, width]);
+        y = d3.scaleLinear().domain([-8, 8]).range([height, 0]);
 
         // Grid
-        svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(height).tickFormat(""));
+        svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(height).tickFormat("")).attr("transform", `translate(0,0)`);
         svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat(""));
 
         // Axes
@@ -135,61 +131,97 @@ export function initOperationsBuilder(containerId) {
             .attr("fill", "rgba(128, 255, 176, 0.3)").attr("stroke", "var(--color-accent)").attr("stroke-width", 2);
 
         svg.append("path").attr("class", "result-set")
-            .attr("fill", "rgba(255, 107, 107, 0.5)").attr("stroke", "#ff6b6b").attr("stroke-width", 3).attr("stroke-dasharray", "4 2");
+            .attr("fill", "rgba(255, 107, 107, 0.4)").attr("stroke", "#ff6b6b").attr("stroke-width", 3).attr("stroke-dasharray", "4 2");
+
+        // Labels
+        svg.append("text").attr("class", "label-a").attr("fill", "var(--color-primary)").style("font-weight", "bold").text("A");
+        svg.append("text").attr("class", "label-b").attr("fill", "var(--color-accent)").style("font-weight", "bold").text("B");
     }
 
     function update() {
         const op = opSelect.value;
         const scale = parseFloat(scaleSlider.value);
 
-        // Affine mode
         const isAffine = op === "affine";
-        transformControls.style.visibility = isAffine ? "visible" : "hidden";
+        transformControls.style.display = isAffine ? "block" : "none";
 
-        const line = d3.line().x(d => x(d[0])).y(d => y(d[1]));
+        const line = d3.line().x(d => x(d[0])).y(d => y(d[1])).curve(d3.curveLinearClosed);
 
-        // Draw Set A
         let currentA = setA;
-        if (isAffine) {
-             // Apply scale
-             currentA = setA.map(p => [p[0]*scale, p[1]*scale]);
-             svg.select(".set-a").datum(currentA).attr("d", line(currentA) + "Z");
-             svg.select(".set-b").attr("display", "none"); // Hide B for affine on A
+        let currentB = setB;
 
-             const result = currentA; // Just showing transformed A
-             svg.select(".result-set").datum(result).attr("d", line(result) + "Z");
-             statusOutput.textContent = `Affine transform f(x) = ${scale}x preserves convexity.`;
+        if (isAffine) {
+             // Apply scale to A
+             currentA = setA.map(p => [p[0]*scale, p[1]*scale]);
+             svg.select(".set-a").datum(currentA).attr("d", line(currentA));
+             svg.select(".set-b").attr("display", "none");
+             svg.select(".label-b").attr("display", "none");
+
+             const result = currentA; // Result is just transformed A
+             svg.select(".result-set").attr("display", "none"); // Same as A
+
+             // Show label
+             const cA = d3.polygonCentroid(currentA);
+             svg.select(".label-a").attr("x", x(cA[0])).attr("y", y(cA[1])).text("f(A)");
+
+             statusOutput.innerHTML = `
+                <div>
+                    <div style="color: var(--color-primary); font-weight: bold;">Affine Transformation</div>
+                    <div style="font-size: 0.9rem; margin-top: 4px;">
+                        f(x) = ${scale}x maps convex set A to convex set f(A).
+                    </div>
+                </div>
+             `;
         } else {
-             svg.select(".set-a").datum(setA).attr("d", line(setA) + "Z");
-             svg.select(".set-b").attr("display", null).datum(setB).attr("d", line(setB) + "Z");
+             svg.select(".set-a").datum(setA).attr("d", line(setA));
+             svg.select(".set-b").attr("display", null).datum(setB).attr("d", line(setB));
+             svg.select(".label-b").attr("display", null);
+             svg.select(".result-set").attr("display", null);
+
+             const cA = d3.polygonCentroid(setA);
+             svg.select(".label-a").attr("x", x(cA[0])).attr("y", y(cA[1])).text("A");
+             const cB = d3.polygonCentroid(setB);
+             svg.select(".label-b").attr("x", x(cB[0])).attr("y", y(cB[1])).text("B");
 
              let result = [];
              let message = "";
 
              if (op === "intersection") {
-                 result = clipPolygon(setA, setB); // Order matters for clipper but intersection is symmetric
-                 // If result empty try B clip A
-                 if(!result || result.length < 3) result = clipPolygon(setB, setA);
+                 result = clipPolygon(setA, setB);
+                 if(!result || result.length < 3) result = clipPolygon(setB, setA); // Try other order if clipping failed
 
-                 message = "Intersection of convex sets is convex.";
+                 message = `
+                    <div style="color: #ff6b6b; font-weight: bold;">Intersection A ∩ B</div>
+                    <div style="font-size: 0.9rem; margin-top: 4px;">
+                        The intersection of any number of convex sets is convex.
+                    </div>
+                 `;
              } else if (op === "union") {
-                 // Union is not convex, but Hull(Union) is.
-                 // We show Hull.
                  const combined = [...setA, ...setB];
                  result = d3.polygonHull(combined);
-                 message = "Union is NOT convex. Convex Hull(A ∪ B) is shown (dashed).";
+                 message = `
+                    <div style="color: #ff6b6b; font-weight: bold;">Convex Hull of Union</div>
+                    <div style="font-size: 0.9rem; margin-top: 4px;">
+                        A ∪ B is NOT convex. The smallest convex set containing A ∪ B is its hull (shown in red).
+                    </div>
+                 `;
              } else if (op === "minkowski") {
                  result = minkowskiSum(setA, setB);
-                 message = "Minkowski Sum A + B is convex.";
+                 message = `
+                    <div style="color: #ff6b6b; font-weight: bold;">Minkowski Sum A + B</div>
+                    <div style="font-size: 0.9rem; margin-top: 4px;">
+                        The sum {a + b | a∈A, b∈B} is always convex.
+                    </div>
+                 `;
              }
 
              if (result && result.length > 2) {
-                 svg.select(".result-set").datum(result).attr("d", line(result) + "Z");
+                 svg.select(".result-set").datum(result).attr("d", line(result));
              } else {
                  svg.select(".result-set").attr("d", null);
-                 if(op === "intersection") message += " (Empty Set)";
+                 if(op === "intersection") message += " (Empty)";
              }
-             statusOutput.innerHTML = `<span style="color: var(--color-text-main); font-weight: bold;">${message}</span>`;
+             statusOutput.innerHTML = message;
         }
     }
 

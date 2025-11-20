@@ -2,9 +2,11 @@
  * Widget: Orthogonality Explorer
  *
  * Description: Allows users to drag two vectors and see their dot product, angle, and orthogonal projection update in real-time.
- * Version: 2.1.0
+ *              Visualizes the geometric interpretation of the inner product.
+ * Version: 3.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import katex from "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.mjs";
 
 export function initOrthogonality(containerId) {
     const container = document.getElementById(containerId);
@@ -15,13 +17,13 @@ export function initOrthogonality(containerId) {
 
     container.innerHTML = `
         <div class="widget-container">
-            <div class="widget-canvas-container" id="plot-container"></div>
+            <div class="widget-canvas-container" id="plot-container" style="cursor: crosshair;"></div>
             <div class="widget-controls">
-                <div class="widget-control-group">
-                   <span class="widget-label">Drag the circular handles to move vectors.</span>
+                <div class="widget-control-group" style="font-size: 0.9rem; color: var(--color-text-muted);">
+                   Drag the <span style="color: var(--color-primary); font-weight: bold;">Blue (a)</span> and <span style="color: var(--color-accent); font-weight: bold;">Green (b)</span> handles.
                 </div>
             </div>
-            <div id="output-container" class="widget-output"></div>
+            <div id="output-container" class="widget-output" style="display: flex; justify-content: space-between; align-items: center;"></div>
         </div>
     `;
 
@@ -33,11 +35,11 @@ export function initOrthogonality(containerId) {
     let svg;
 
     let vecA = {x: 5, y: 5, id: 'a'};
-    let vecB = {x: -5, y: 5, id: 'b'};
+    let vecB = {x: 5, y: 0, id: 'b'};
 
     function setupChart() {
         plotContainer.innerHTML = '';
-        const margin = {top: 20, right: 20, bottom: 40, left: 40};
+        const margin = {top: 20, right: 20, bottom: 20, left: 20};
 
         width = plotContainer.clientWidth - margin.left - margin.right;
         height = plotContainer.clientHeight - margin.top - margin.bottom;
@@ -58,8 +60,8 @@ export function initOrthogonality(containerId) {
         svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat(""));
 
         // Axes
-        svg.append("g").attr("class", "axis x-axis").call(d3.axisBottom(x).ticks(5));
-        svg.append("g").attr("class", "axis y-axis").call(d3.axisLeft(y).ticks(5));
+        svg.append("g").attr("class", "axis x-axis").call(d3.axisBottom(x).ticks(0).tickFormat(""));
+        svg.append("g").attr("class", "axis y-axis").call(d3.axisLeft(y).ticks(0).tickFormat(""));
 
         // Define arrowheads
         const defs = svg.append("defs");
@@ -87,6 +89,18 @@ export function initOrthogonality(containerId) {
             .append("path")
                 .attr("d", "M0,-5L10,0L0,5")
                 .attr("fill", "var(--color-accent)");
+
+        defs.append("marker")
+            .attr("id", "arrow-proj")
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 8)
+            .attr("refY", 0)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+                .attr("d", "M0,-5L10,0L0,5")
+                .attr("fill", "#fbbf24"); // Amber
     }
 
     const drag = d3.drag()
@@ -111,6 +125,7 @@ export function initOrthogonality(containerId) {
         }
 
         // Projection of A onto B
+        // p = (a . b / |b|^2) * b
         let projVec = { x: 0, y: 0 };
         if (magB > 1e-9) {
             const projScalar = dotProduct / (magB**2);
@@ -119,59 +134,62 @@ export function initOrthogonality(containerId) {
 
         const isOrthogonal = !isNaN(angle) && Math.abs(angle - 90) < 1.5;
 
+        // Render math
+        const texString = `\\cos \\theta = \\frac{a^\\top b}{\\|a\\| \\|b\\|} = \\frac{${dotProduct.toFixed(1)}}{${(magA*magB).toFixed(1)}} = ${isNaN(angle) ? "?" : Math.cos(angle * Math.PI/180).toFixed(3)}`;
+
         outputContainer.innerHTML = `
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <div>
-                    <p><strong>Vector A:</strong> [${vecA.x.toFixed(2)}, ${vecA.y.toFixed(2)}]</p>
-                    <p><strong>Vector B:</strong> [${vecB.x.toFixed(2)}, ${vecB.y.toFixed(2)}]</p>
-                </div>
-                <div>
-                     <p><strong>Dot Product:</strong> ${dotProduct.toFixed(2)}</p>
-                     <p><strong>Angle (θ):</strong> ${isNaN(angle) ? "Undefined" : angle.toFixed(1) + "°"}
-                     ${isOrthogonal ? '<span style="color: var(--color-success); font-weight: bold; margin-left: 8px;">ORTHOGONAL!</span>' : ''}</p>
-                </div>
+            <div style="flex: 1;">
+                <div id="math-output"></div>
+            </div>
+            <div style="text-align: right;">
+                 <div style="font-size: 0.8rem; color: var(--color-text-muted);">ANGLE</div>
+                 <div style="font-size: 1.5rem; font-weight: bold; ${isOrthogonal ? 'color: var(--color-success);' : 'color: var(--color-text-main);'}">
+                    ${isNaN(angle) ? "--" : angle.toFixed(1) + "°"}
+                 </div>
+                 ${isOrthogonal ? '<div style="color: var(--color-success); font-size: 0.7rem; font-weight: bold; letter-spacing: 1px;">ORTHOGONAL</div>' : ''}
             </div>
         `;
 
-        drawVector(vecA, "var(--color-primary)", "A");
-        drawVector(vecB, "var(--color-accent)", "B");
-        drawProjection(projVec, vecA);
-        drawOrthogonalIndicator(isOrthogonal);
+        katex.render(texString, document.getElementById('math-output'), { throwOnError: false });
+
+        drawVector(vecA, "var(--color-primary)", "a", "arrow-primary");
+        drawVector(vecB, "var(--color-accent)", "b", "arrow-accent");
+        drawProjection(projVec, vecA, vecB);
+        drawAngleArc(angle, magA, magB);
     }
 
-    function drawVector(vec, color, label) {
+    function drawVector(vec, color, label, arrowId) {
         svg.selectAll(`.vector-group-${vec.id}`).remove();
-
         const g = svg.append("g").attr("class", `vector-group-${vec.id}`);
 
-        // Line
         g.append("line")
             .attr("x1", x(0)).attr("y1", y(0))
             .attr("x2", x(vec.x)).attr("y2", y(vec.y))
             .attr("stroke", color)
             .attr("stroke-width", 3)
-            .attr("marker-end", color.includes("primary") ? "url(#arrow-primary)" : "url(#arrow-accent)");
+            .attr("marker-end", `url(#${arrowId})`);
 
-        // Handle
         g.append("circle")
             .data([vec])
             .attr("class", "handle")
             .attr("cx", x(vec.x)).attr("cy", y(vec.y))
-            .attr("r", 8)
+            .attr("r", 10)
             .attr("fill", color)
+            .attr("stroke", "var(--color-background)") // Contrast stroke
+            .attr("stroke-width", 2)
             .call(drag);
 
-        // Label
         g.append("text")
-            .attr("x", x(vec.x) + 15)
-            .attr("y", y(vec.y))
-            .attr("fill", "var(--color-text-main)")
+            .attr("x", x(vec.x) + (vec.x > 0 ? 15 : -15))
+            .attr("y", y(vec.y) + (vec.y > 0 ? -15 : 15))
+            .attr("fill", color)
             .text(label)
             .style("font-weight", "bold")
-            .style("font-size", "14px");
+            .style("font-size", "16px")
+            .style("font-family", "var(--font-mono)");
     }
 
-    function drawProjection(proj, fromVec) {
+    function drawProjection(proj, fromVec, ontoVec) {
         svg.selectAll(".projection-group").remove();
         const g = svg.append("g").attr("class", "projection-group");
 
@@ -183,51 +201,59 @@ export function initOrthogonality(containerId) {
             .attr("stroke-width", 1.5)
             .attr("stroke-dasharray", "4 4");
 
-        // Projection vector
-        g.append("line")
-            .attr("x1", x(0)).attr("y1", y(0))
-            .attr("x2", x(proj.x)).attr("y2", y(proj.y))
-            .attr("stroke", "#fbbf24") // Amber color for projection
-            .attr("stroke-width", 2.5);
+        // Projection vector (shadow)
+        // Only draw if magnitude is significant
+        if (Math.abs(proj.x) > 0.1 || Math.abs(proj.y) > 0.1) {
+            g.append("line")
+                .attr("x1", x(0)).attr("y1", y(0))
+                .attr("x2", x(proj.x)).attr("y2", y(proj.y))
+                .attr("stroke", "#fbbf24")
+                .attr("stroke-width", 2.5)
+                .attr("opacity", 0.8)
+                .attr("marker-end", "url(#arrow-proj)");
 
-        // Label
-        g.append("text")
-            .attr("x", x(proj.x / 2))
-            .attr("y", y(proj.y / 2) + 15)
-            .attr("fill", "#fbbf24")
-            .text("proj")
-            .style("font-size", "12px");
-    }
-
-    function drawOrthogonalIndicator(isOrthogonal) {
-        svg.selectAll('.orthogonal-indicator').remove();
-        if (isOrthogonal) {
-            const size = 20;
-            // Simple square corner at origin rotated to align with B?
-            // For simplicity, we just draw a fixed square at origin since we check dot product
-            // Ideally this should align with vectors, but A and B move.
-            // Let's just put a visual marker at the origin aligned with axes for now,
-            // or better, just rely on the text output "ORTHOGONAL" which is clearer.
-
-            // Drawing a small square at the origin is confusing if vectors are rotated.
-            // Let's highlight the origin instead.
-            svg.append("circle")
-                .attr("class", "orthogonal-indicator")
-                .attr("cx", x(0)).attr("cy", y(0))
-                .attr("r", 5)
-                .attr("fill", "var(--color-success)");
+            g.append("text")
+                .attr("x", x(proj.x / 2))
+                .attr("y", y(proj.y / 2) + 15)
+                .attr("fill", "#fbbf24")
+                .text("proj_b a")
+                .style("font-size", "12px")
+                .style("font-family", "var(--font-mono)");
         }
     }
 
-    const resizeObserver = new ResizeObserver(entries => {
-        if (entries[0].target === plotContainer) {
-            setupChart();
-            update();
-        }
+    function drawAngleArc(angleDeg, magA, magB) {
+        svg.selectAll(".angle-arc").remove();
+        if (isNaN(angleDeg) || magA < 1 || magB < 1) return;
+
+        const radius = Math.min(x(2) - x(0), x(magA/2) - x(0), x(magB/2) - x(0));
+
+        // Calculate start and end angles in radians
+        let startAngle = Math.atan2(vecB.y, vecB.x); // y is flipped in d3 scale? No, we use x() y() mapping.
+        // d3.arc uses clockwise from 12 o'clock? No, standard math is counter-clockwise from 3 o'clock.
+        // We need to be careful with SVG vs Cartesian coordinates.
+        // y scale is inverted: y(10) is top (small pixel val), y(-10) is bottom (large pixel val).
+        // So standard atan2(y, x) works if we invert y diff?
+        // Let's compute angles in screen space.
+        const angleA = Math.atan2(y(vecA.y) - y(0), x(vecA.x) - x(0));
+        const angleB = Math.atan2(y(vecB.y) - y(0), x(vecB.x) - x(0));
+
+        const arc = d3.arc()
+            .innerRadius(radius - 2)
+            .outerRadius(radius + 2)
+            .startAngle(angleB + Math.PI/2) // d3.arc 0 is at 12 o'clock?
+            .endAngle(angleA + Math.PI/2);  // adjustments often needed
+
+        // Drawing a simple path is often easier than d3.arc for general vector angles
+        // Or just use a path command A
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+        setupChart();
+        update();
     });
     resizeObserver.observe(plotContainer);
 
-    // Initial setup
     setupChart();
     update();
 }

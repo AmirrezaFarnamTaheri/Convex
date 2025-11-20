@@ -1,33 +1,31 @@
 # Widget Inventory
 
 ## Summary
-- **Total Planned:** 89 widgets
-- **Completed:** 89
+- **Total Widgets:** 88
+- **Completed:** 88
 - **In Progress:** 0
 - **Not Started:** 0
 
 ## By Priority
 - **High Priority:** 29/29 Completed ✅
 - **Medium Priority:** 36/36 Completed ✅
-- **Low Priority:** 24/24 Completed ✅
+- **Low Priority:** 23/23 Completed ✅
 
-## Recent Updates (2025-11-06)
-- ✅ Removed redundant widgets: `eigen-psd`, `cone-geometry` (merged into lectures), `operations-composer`, `function-library`
-- ✅ Enhanced `rank-nullspace.js` (v2.1.1) with clearer visualization
-- ✅ Enhanced `convex-combination.js` (v2.2.0) to Convex Hull Explorer
-- ✅ Enhanced `convex-set-checker.js` (v2.2.0) with counter-example visualization
-- ✅ Enhanced `separating-hyperplane.js` (v2.2.0) with interactive dragging
-- ✅ Enhanced `hessian-heatmap.js` (v2.2.0) with interactive probe
-- ✅ Enhanced `epigraph-visualizer.js` (v2.2.0) with sublevel set slicing
-- ✅ Enhanced `polyhedron-visualizer.js` (v2.2.0) with normal vector visualization
+## Recent Updates (2025-11-20)
+- ✅ **Added:** `least-squares-visualizer.js` (Lecture 00) - 3D geometric interpretation of least squares.
+- ✅ **Merged/Removed:** `strong-convexity.js` (Lecture 03) merged into `tangent-line-explorer.js`.
+- ✅ **Enhanced:** All widgets in Lectures 00-03 updated to v3.0.0 (modern UI theme, improved pedagogy).
+- ✅ **Enhanced:** `condition-number.js` now includes "zig-zag" path animation and explanation.
+- ✅ **Enhanced:** `svd-approximator.js` now shows error image and energy retention stats.
+- ✅ **Enhanced:** `hessian-heatmap.js` now includes interactive 3D probe of local curvature.
 
 ## By Lecture
 | Lecture | Planned | Completed | Status |
 |---|---|---|---|
-| 00 LA Primer | 7 | 7 | ✅ Complete |
+| 00 LA Primer | 8 | 8 | ✅ Complete |
 | 01 Intro | 5 | 5 | ✅ Complete |
 | 02 Convex Sets | 5 | 5 | ✅ Complete |
-| 03 Convex Functions | 6 | 6 | ✅ Complete |
+| 03 Convex Functions | 5 | 5 | ✅ Complete |
 | 04 Convex Opt Problems | 7 | 7 | ✅ Complete |
 | 05 Duality | 8 | 8 | ✅ Complete |
 | 06 Approx & Fitting | 8 | 8 | ✅ Complete |

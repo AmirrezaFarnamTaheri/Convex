@@ -754,6 +754,103 @@ pre code {
   text-align: center;
 }
 
+/* --- Widget Container & Canvas --- */
+.widget-container {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: var(--space-6) 0;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow var(--transition-base);
+}
+
+.widget-container:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-default);
+}
+
+.widget-canvas-container {
+  position: relative;
+  width: 100%;
+  height: 450px; /* Default height */
+  background-color: var(--surface-base);
+  overflow: hidden;
+}
+
+/* --- Widget SVG Elements --- */
+.widget-svg text {
+  fill: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.widget-svg .axis path,
+.widget-svg .axis line {
+  stroke: var(--border-default);
+}
+
+.widget-svg .grid-line {
+  stroke: var(--border-subtle);
+  stroke-opacity: 0.5;
+  stroke-dasharray: 4 4;
+}
+
+.widget-svg .handle {
+  cursor: grab;
+  transition: r var(--transition-fast), stroke-width var(--transition-fast), fill var(--transition-fast);
+  fill: var(--primary-500);
+  stroke: var(--surface-1);
+  stroke-width: 2px;
+}
+
+.widget-svg .handle:hover {
+  r: 8px;
+  stroke: var(--text-heading);
+  stroke-width: 3px;
+  fill: var(--primary-400);
+}
+
+.widget-svg .handle.active {
+  cursor: grabbing;
+  stroke: var(--text-heading);
+  stroke-width: 3px;
+  r: 8px;
+  fill: var(--primary-600);
+}
+
+/* --- Widget Loading Overlay --- */
+.widget-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 12, 18, 0.85);
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+}
+
+.widget-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--surface-2);
+  border-top: 4px solid var(--primary-500);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--space-4);
+}
+
 /* ====================
    UTILITY CLASSES
    ==================== */

@@ -2,8 +2,9 @@
  * Widget: Separating Hyperplane Visualizer
  *
  * Description: Draw two convex sets and interactively find a separating hyperplane.
- *              Allows dragging the sets to see the hyperplane update.
- * Version: 2.2.0
+ *              Allows dragging the sets to see the hyperplane update in real-time.
+ *              Visualizes the geometric separation theorem.
+ * Version: 3.0.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -16,17 +17,17 @@ export function initSeparatingHyperplane(containerId) {
         <div class="widget-container">
              <div class="widget-canvas-container" id="drawing-area" style="height: 400px; cursor: crosshair; background: var(--color-background);">
                 <div style="position: absolute; top: 10px; left: 10px; pointer-events: none;">
-                    <span style="background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main);" id="state-display">Step 1: Draw Set A</span>
+                    <span style="background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); border: 1px solid var(--color-border);" id="state-display">Step 1: Draw Set A</span>
                 </div>
             </div>
             <div class="widget-controls">
                 <div class="widget-control-group" style="flex-direction: row; gap: 12px;">
                     <button id="next-set-btn" class="widget-btn primary">Next: Draw Set B</button>
-                    <button id="find-hyperplane-btn" class="widget-btn primary" disabled>Start Separation</button>
+                    <button id="find-hyperplane-btn" class="widget-btn primary" disabled>Find Separator</button>
                     <button id="reset-btn" class="widget-btn">Reset</button>
                 </div>
             </div>
-            <div id="status-output" class="widget-output" style="min-height: 2.5em; display: flex; align-items: center;"></div>
+            <div id="status-output" class="widget-output" style="min-height: 3em; display: flex; align-items: center; padding: 12px;"></div>
         </div>
     `;
 
@@ -69,24 +70,33 @@ export function initSeparatingHyperplane(containerId) {
         const groupB = g.append("g").attr("class", "group-b");
 
         groupA.append("path").attr("class", "path1")
-            .attr("fill", "rgba(124, 197, 255, 0.3)")
+            .attr("fill", "rgba(124, 197, 255, 0.4)")
             .attr("stroke", "var(--color-primary)")
             .attr("stroke-width", 2);
 
         groupB.append("path").attr("class", "path2")
-            .attr("fill", "rgba(128, 255, 176, 0.3)")
+            .attr("fill", "rgba(128, 255, 176, 0.4)")
             .attr("stroke", "var(--color-accent)")
             .attr("stroke-width", 2);
 
-        g.append("line").attr("class", "hyperplane")
-            .attr("stroke", "var(--color-error)")
-            .attr("stroke-width", 3)
-            .attr("stroke-dasharray", "8 4")
-            .style("opacity", 0);
+        // Hyperplane group
+        const sepGroup = g.append("g").attr("class", "separator").style("opacity", 0);
 
-        g.append("line").attr("class", "dist-line")
+        sepGroup.append("line").attr("class", "hyperplane")
+            .attr("stroke", "#fbbf24") // Amber
+            .attr("stroke-width", 3)
+            .attr("stroke-dasharray", "8 4");
+
+        // Normal vectors on hyperplane
+        sepGroup.append("line").attr("class", "normal-vec")
             .attr("stroke", "var(--color-text-muted)")
-            .attr("stroke-width", 1)
+            .attr("stroke-width", 1.5)
+            .attr("marker-end", "url(#arrow-normal)");
+
+        // Min distance line
+        g.append("line").attr("class", "dist-line")
+            .attr("stroke", "var(--color-text-main)")
+            .attr("stroke-width", 1.5)
             .attr("stroke-dasharray", "2 2")
             .style("opacity", 0);
 
@@ -131,6 +141,7 @@ export function initSeparatingHyperplane(containerId) {
                 .on("start", function() {
                     if(!isInteractive) return;
                     d3.select(this).raise();
+                    d3.select(this).style("cursor", "grabbing");
                 })
                 .on("drag", function(event) {
                     if(!isInteractive) return;
@@ -139,33 +150,36 @@ export function initSeparatingHyperplane(containerId) {
 
                     // Shift all points
                     setObj.points.forEach(p => { p[0]+=dx; p[1]+=dy; });
-                    setObj.hull.forEach(p => { p[0]+=dx; p[1]+=dy; });
-                    setObj.centroid[0] += dx;
-                    setObj.centroid[1] += dy;
+                    if (setObj.hull) setObj.hull.forEach(p => { p[0]+=dx; p[1]+=dy; });
+                    if (setObj.centroid) { setObj.centroid[0] += dx; setObj.centroid[1] += dy; }
 
                     updateDrawing();
                     updateHyperplane();
+                })
+                .on("end", function() {
+                    if(!isInteractive) return;
+                    d3.select(this).style("cursor", "grab");
                 })
             );
         };
 
         makeDraggable(groupA, setA);
         makeDraggable(groupB, setB);
+
+        // Arrow def
+        defs.append("marker").attr("id", "arrow-normal").attr("viewBox", "0 -5 10 10").attr("refX", 8).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--color-text-muted)");
     }
 
     function updateDrawing(close=false) {
-        const line = d3.line().curve(d3.curveLinearClosed); // Use hull, so linear closed
+        const line = d3.line().curve(d3.curveLinearClosed);
 
         if (setA.points.length > 2) {
-            // If drawing, points are raw trace. If done, use hull.
-            // Actually better to always show hull while drawing if fast enough?
-            // Just stick to logic:
-            if (!setA.hull.length && setA.points.length > 2) setA.hull = d3.polygonHull(setA.points);
+            if (!setA.hull && setA.points.length > 2) setA.hull = d3.polygonHull(setA.points);
             if (setA.hull) svg.select(".path1").attr("d", line(setA.hull));
         } else svg.select(".path1").attr("d", null);
 
         if (setB.points.length > 2) {
-             if (!setB.hull.length && setB.points.length > 2) setB.hull = d3.polygonHull(setB.points);
+             if (!setB.hull && setB.points.length > 2) setB.hull = d3.polygonHull(setB.points);
              if (setB.hull) svg.select(".path2").attr("d", line(setB.hull));
         } else svg.select(".path2").attr("d", null);
     }
@@ -178,25 +192,25 @@ export function initSeparatingHyperplane(containerId) {
 
         svg.select(".group-a").style("cursor", "default");
         svg.select(".group-b").style("cursor", "default");
-        svg.select(".hyperplane").style("opacity", 0);
+        svg.select(".separator").style("opacity", 0);
         svg.select(".dist-line").style("opacity", 0);
 
         updateDrawing();
-        statusOutput.textContent = "";
+        statusOutput.textContent = "Draw the first convex set.";
 
         nextSetBtn.disabled = false;
         nextSetBtn.textContent = "Next: Draw Set B";
         findBtn.disabled = true;
-        findBtn.textContent = "Start Separation";
+        findBtn.textContent = "Find Separator";
         stateDisplay.textContent = "Step 1: Draw Set A";
     }
 
     function enableInteraction() {
         isInteractive = true;
-        svg.select(".group-a").style("cursor", "move");
-        svg.select(".group-b").style("cursor", "move");
-        stateDisplay.textContent = "Drag sets to move them";
-        findBtn.textContent = "Separating...";
+        svg.select(".group-a").style("cursor", "grab");
+        svg.select(".group-b").style("cursor", "grab");
+        stateDisplay.textContent = "Drag sets to verify separation";
+        findBtn.textContent = "Interactive Mode Active";
         findBtn.disabled = true;
         updateHyperplane();
     }
@@ -207,85 +221,102 @@ export function initSeparatingHyperplane(containerId) {
         const hull1 = setA.hull;
         const hull2 = setB.hull;
 
-        // Algorithm: Find closest points between two convex polygons.
+        // GJK is standard, but for small 2D polygons, brute force vertex-edge is fast enough.
         let minDist = Infinity;
         let pA = null, pB = null;
 
         const pointSegmentDist = (p, a, b) => {
-            const l2 = (a[0]-b[0])**2 + (a[1]-b[1])**2;
+            const dx = b[0]-a[0];
+            const dy = b[1]-a[1];
+            const l2 = dx*dx + dy*dy;
             if (l2 === 0) return { dist: (p[0]-a[0])**2 + (p[1]-a[1])**2, pt: a };
-            let t = ((p[0]-a[0])*(b[0]-a[0]) + (p[1]-a[1])*(b[1]-a[1])) / l2;
+            let t = ((p[0]-a[0])*dx + (p[1]-a[1])*dy) / l2;
             t = Math.max(0, Math.min(1, t));
-            const proj = [a[0] + t*(b[0]-a[0]), a[1] + t*(b[1]-a[1])];
+            const proj = [a[0] + t*dx, a[1] + t*dy];
             return { dist: (p[0]-proj[0])**2 + (p[1]-proj[1])**2, pt: proj };
         };
 
-        // Check A edges vs B verts
-        for(let i=0; i<hull1.length; i++) {
-            const a1 = hull1[i];
-            const a2 = hull1[(i+1)%hull1.length];
-            for(let b of hull2) {
-                const res = pointSegmentDist(b, a1, a2);
-                if (res.dist < minDist) {
-                    minDist = res.dist;
-                    pA = res.pt;
-                    pB = b;
-                }
+        // A vertices vs B edges
+        for(let p of hull1) {
+            for(let i=0; i<hull2.length; i++) {
+                const res = pointSegmentDist(p, hull2[i], hull2[(i+1)%hull2.length]);
+                if (res.dist < minDist) { minDist = res.dist; pA = p; pB = res.pt; }
+            }
+        }
+        // B vertices vs A edges
+        for(let p of hull2) {
+            for(let i=0; i<hull1.length; i++) {
+                const res = pointSegmentDist(p, hull1[i], hull1[(i+1)%hull1.length]);
+                if (res.dist < minDist) { minDist = res.dist; pA = res.pt; pB = p; }
             }
         }
 
-        // Check B edges vs A verts
-        for(let i=0; i<hull2.length; i++) {
-            const b1 = hull2[i];
-            const b2 = hull2[(i+1)%hull2.length];
-            for(let a of hull1) {
-                const res = pointSegmentDist(a, b1, b2);
-                if (res.dist < minDist) {
-                    minDist = res.dist;
-                    pA = a;
-                    pB = res.pt;
-                }
-            }
-        }
+        // Overlap check (heuristic: distance ~ 0)
+        // Better: d3.polygonContains check if any vertex of A in B or vice versa
+        // But we want separating hyperplane logic.
+        // If overlapping, minDist is technically 0.
+
+        // For true robustness we'd use Separating Axis Theorem (SAT).
+        // Let's assume separation if min dist > 0.1.
 
         if (minDist < 1) {
-             statusOutput.innerHTML = `<span style="color: var(--color-error);">Sets intersect! No strict separating hyperplane.</span>`;
-             svg.select(".hyperplane").style("opacity", 0);
+             statusOutput.innerHTML = `
+                <div>
+                    <div style="color: var(--color-error); font-weight: bold;">Sets Intersect</div>
+                    <div style="font-size: 0.9em; color: var(--color-text-muted);">No separating hyperplane exists.</div>
+                </div>
+             `;
+             svg.select(".separator").style("opacity", 0);
              svg.select(".dist-line").style("opacity", 0);
              return;
         }
 
-        // Normal vector is pB - pA
-        const normal = [pB[0] - pA[0], pB[1] - pA[1]];
+        // Hyperplane passes through midpoint of shortest link, perpendicular to it.
         const mid = [(pA[0] + pB[0])/2, (pA[1] + pB[1])/2];
+        const normal = [pB[0] - pA[0], pB[1] - pA[1]]; // from A to B
         const nx = normal[0];
         const ny = normal[1];
+        // a^T x = b => nx*x + ny*y = nx*midx + ny*midy
         const c = nx * mid[0] + ny * mid[1];
 
-        // Draw extending line
-        let x1, y1, x2, y2;
+        // Draw huge line
         const w = drawingArea.clientWidth;
         const h = drawingArea.clientHeight;
+        let x1, y1, x2, y2;
 
-        if (Math.abs(ny) < 1e-3) {
+        if (Math.abs(ny) < 1e-3) { // Vertical
             x1 = c / nx; x2 = x1;
-            y1 = -100; y2 = h + 100;
+            y1 = -500; y2 = h + 500;
         } else {
-            x1 = -100; y1 = (c - nx*x1)/ny;
-            x2 = w + 100; y2 = (c - nx*x2)/ny;
+            x1 = -500; y1 = (c - nx*x1)/ny;
+            x2 = w + 500; y2 = (c - nx*x2)/ny;
         }
 
-        svg.select(".hyperplane")
+        const sepGroup = svg.select(".separator");
+        sepGroup.style("opacity", 1);
+
+        sepGroup.select(".hyperplane")
             .attr("x1", x1).attr("y1", y1)
-            .attr("x2", x2).attr("y2", y2)
-            .style("opacity", 1);
+            .attr("x2", x2).attr("y2", y2);
+
+        // Draw normal vector visual
+        sepGroup.select(".normal-vec")
+            .attr("x1", mid[0]).attr("y1", mid[1])
+            .attr("x2", mid[0] + nx/Math.sqrt(minDist)*30).attr("y2", mid[1] + ny/Math.sqrt(minDist)*30);
 
         svg.select(".dist-line")
             .attr("x1", pA[0]).attr("y1", pA[1])
             .attr("x2", pB[0]).attr("y2", pB[1])
             .style("opacity", 1);
 
-        statusOutput.innerHTML = `<span style="color: var(--color-success); font-weight: bold;">Separated!</span> Distance: ${Math.sqrt(minDist).toFixed(1)}px`;
+        statusOutput.innerHTML = `
+            <div>
+                <div style="color: var(--color-success); font-weight: bold;">Sets Separated</div>
+                <div style="font-size: 0.9em; color: var(--color-text-muted);">
+                    Minimum Distance: ${Math.sqrt(minDist).toFixed(1)}px. Hyperplane normal <strong>a</strong> points from Set A to Set B.
+                </div>
+            </div>
+        `;
     }
 
     nextSetBtn.addEventListener("click", () => {
