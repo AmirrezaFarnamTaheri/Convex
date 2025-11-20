@@ -4,7 +4,7 @@
  * Description: Interactively define a polyhedron by adding linear inequality constraints.
  *              Visualizes half-spaces, normal vectors, and the resulting intersection.
  *              Improved controls for precise constraint manipulation.
- * Version: 3.0.0
+ * Version: 3.1.0 (Enhanced Dragging)
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -52,14 +52,14 @@ export function initPolyhedronVisualizer(containerId) {
                 <div class="widget-control-group" style="flex: 1;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h4 class="widget-label" style="margin: 0;">Constraints H = {x | aᵀx ≤ b}</h4>
-                        <button id="clear-btn" class="widget-btn">Clear All</button>
+                        <button id="clear-btn" class="widget-btn small">Clear All</button>
                     </div>
                     <div id="constraints-list" style="max-height: 150px; overflow-y: auto; margin-top: 8px; display: flex; flex-direction: column; gap: 4px;"></div>
                 </div>
             </div>
-             <div class="widget-canvas-container" id="plot-container" style="height: 400px; cursor: crosshair; background: var(--color-background);">
-                <div style="position: absolute; top: 10px; left: 10px; color: var(--color-text-muted); font-size: 0.8rem; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; pointer-events: none;">
-                    Drag to add a half-space constraint.
+             <div class="widget-canvas-container" id="plot-container" style="height: 400px; cursor: crosshair; background: var(--color-background); position: relative;">
+                <div id="drag-hint" style="position: absolute; top: 10px; left: 10px; color: var(--color-text-muted); font-size: 0.8rem; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px; pointer-events: none; transition: opacity 0.3s;">
+                    Drag to add a half-space constraint.<br>The line is the boundary, arrow points to infeasible side.
                 </div>
              </div>
         </div>
@@ -68,18 +68,22 @@ export function initPolyhedronVisualizer(containerId) {
     const plotContainer = container.querySelector("#plot-container");
     const constraintsList = container.querySelector("#constraints-list");
     const clearBtn = container.querySelector("#clear-btn");
+    const dragHint = container.querySelector("#drag-hint");
 
     let constraints = []; // { a, b, c, id }
     let nextId = 0;
     let svg, x, y;
 
+    // Initialize with a box to make it interesting
+    constraints.push({ a: 1, b: 0, c: 3, id: nextId++ });   // x <= 3
+    constraints.push({ a: -1, b: 0, c: 3, id: nextId++ });  // x >= -3
+    constraints.push({ a: 0, b: 1, c: 3, id: nextId++ });   // y <= 3
+    constraints.push({ a: 0, b: -1, c: 3, id: nextId++ });  // y >= -3
+
     function setupChart() {
-        plotContainer.innerHTML = '';
-        // Re-add help text
-        const helpDiv = document.createElement('div');
-        helpDiv.style.cssText = "position: absolute; top: 10px; left: 10px; color: var(--color-text-muted); font-size: 0.8rem; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; pointer-events: none;";
-        helpDiv.textContent = "Drag to add a half-space constraint.";
-        plotContainer.appendChild(helpDiv);
+        // Clear existing SVG but keep the hint
+        const existingSvg = plotContainer.querySelector('svg');
+        if (existingSvg) existingSvg.remove();
 
         const margin = { top: 20, right: 20, bottom: 20, left: 20 };
         const width = plotContainer.clientWidth - margin.left - margin.right;
@@ -102,55 +106,82 @@ export function initPolyhedronVisualizer(containerId) {
         svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height/2})`).call(d3.axisBottom(x).ticks(5));
         svg.append("g").attr("class", "axis").attr("transform", `translate(${width/2},0)`).call(d3.axisLeft(y).ticks(5));
 
+        // The Polyhedron
         svg.append("path").attr("class", "feasible-region")
             .attr("fill", "rgba(124, 197, 255, 0.4)")
             .attr("stroke", "var(--color-primary)")
             .attr("stroke-width", 2);
 
+        // Groups for lines and normals
         svg.append("g").attr("class", "constraint-lines");
         svg.append("g").attr("class", "normals");
 
-        const drag = d3.drag()
+        // Drag behavior for creating new constraints
+        const dragCreate = d3.drag()
             .container(plotContainer.querySelector('svg'))
             .on("start", (event) => {
+                dragHint.style.opacity = 0;
                 const [mx, my] = d3.pointer(event, svg.node());
                 svg.append("line").attr("class", "drag-line")
                     .attr("x1", mx).attr("y1", my).attr("x2", mx).attr("y2", my)
                     .attr("stroke", "var(--color-accent)").attr("stroke-width", 2)
                     .attr("marker-end", "url(#arrow-accent)");
+
+                // Shade the "bad" side visually during drag
+                svg.append("path").attr("class", "drag-shade")
+                   .attr("fill", "rgba(255, 107, 107, 0.2)");
             })
             .on("drag", (event) => {
                 const [mx, my] = d3.pointer(event, svg.node());
-                svg.select(".drag-line").attr("x2", mx).attr("y2", my);
+                const line = svg.select(".drag-line");
+                const x1 = parseFloat(line.attr("x1"));
+                const y1 = parseFloat(line.attr("y1"));
+                line.attr("x2", mx).attr("y2", my);
+
+                // Draw shading perpendicular to drag direction
+                // Vector v = (mx-x1, my-y1)
+                // Normal n = (v.y, -v.x) (Right side)
+                // Boundary is line thru (x1,y1) perpendicular to v?
+                // Wait, logic: Drag defines the normal vector pointing to infeasible region.
+                // So boundary is perpendicular to drag, passing through start point.
+                // Let's visualize this standard logic.
+                // Actually, typically "drag a line" means drawing the boundary itself.
+                // But for half-spaces, we need direction.
+                // Let's stick to: Line drawn IS the normal vector. Start point is on the boundary.
+                // Then user drags INTO the forbidden zone.
+
+                // To make it clearer: Draw the boundary line perpendicular to drag line at x1,y1
+
+                // Just keeping the line for now.
             })
             .on("end", (event) => {
+                dragHint.style.opacity = 1;
                 const line = svg.select(".drag-line");
+                const shade = svg.select(".drag-shade");
                 const x1 = parseFloat(line.attr("x1"));
                 const y1 = parseFloat(line.attr("y1"));
                 const x2 = parseFloat(line.attr("x2"));
                 const y2 = parseFloat(line.attr("y2"));
                 line.remove();
+                shade.remove();
 
                 if (Math.hypot(x2-x1, y2-y1) < 10) return; // Ignore small drags
 
+                // Convert to data coordinates
                 const p1 = [x.invert(x1), y.invert(y1)];
                 const p2 = [x.invert(x2), y.invert(y2)];
 
-                // Line vector: p2 - p1
-                // Normal vector: Rotate (p2-p1) by -90 deg (right hand rule relative to drag direction)
-                // (dy, -dx) points "right" relative to forward drag
+                // Logic: The drag vector (p1 -> p2) represents the normal vector 'a'.
+                // The constraint boundary passes through p1.
+                // So a = p2 - p1.
+                // Constraint: a . (x - p1) <= 0
+                // => a.x <= a.p1
+                // c = a.p1
+
                 const dx = p2[0] - p1[0];
                 const dy = p2[1] - p1[1];
+                // Normalize a bit so numbers aren't huge, though linear scaling doesn't matter for inequality
                 const len = Math.hypot(dx, dy);
-
-                // Normal pointing "right" of the drag direction is consistent with standard half-space visualization
-                // Or let the drag define the normal direction directly?
-                // "Drag to draw normal" is intuitive: drag points in the direction of the normal (bad side).
-                // Let's say drag defines normal vector 'a'. The constraint boundary is perpendicular at the start point.
-                // So line is thru p1, with normal (p2-p1).
-                // a = (p2 - p1) / len
-                // Equation: a . (x - p1) <= 0  => a.x <= a.p1
-
                 const a = dx / len;
                 const b = dy / len;
                 const c = a * p1[0] + b * p1[1];
@@ -159,8 +190,14 @@ export function initPolyhedronVisualizer(containerId) {
                 update();
             });
 
-        svg.call(drag);
+        // We attach drag to a rect overlay so we can drag anywhere
+        svg.append("rect").attr("class", "overlay")
+            .attr("width", width).attr("height", height)
+            .style("fill", "none")
+            .style("pointer-events", "all")
+            .call(dragCreate);
 
+        // Defs for markers
         const defs = svg.append("defs");
         defs.append("marker").attr("id", "arrow-accent").attr("viewBox", "0 -5 10 10").attr("refX", 8).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--color-accent)");
         defs.append("marker").attr("id", "arrow-normal").attr("viewBox", "0 -5 10 10").attr("refX", 8).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--color-error)");
@@ -185,6 +222,7 @@ export function initPolyhedronVisualizer(containerId) {
              svg.select(".feasible-region").attr("d", null);
         }
 
+        // Calculate line segments for visual representation within view box
         const linesData = constraints.map(con => {
             const seg = getLineSegment(con.a, con.b, con.c, -5, 5, -5, 5);
             if(!seg) return null;
@@ -194,7 +232,7 @@ export function initPolyhedronVisualizer(containerId) {
             return { ...seg, midX, midY, a: con.a, b: con.b, id: con.id };
         }).filter(l => l !== null);
 
-        // Draw Boundary Lines
+        // Bind Data for Lines
         svg.select(".constraint-lines").selectAll("line")
             .data(linesData, d => d.id)
             .join("line")
@@ -202,44 +240,44 @@ export function initPolyhedronVisualizer(containerId) {
             .attr("x2", d => x(d.x2)).attr("y2", y(d.y2))
             .attr("stroke", "var(--color-text-muted)")
             .attr("stroke-width", 2)
-            .attr("stroke-dasharray", "5,5");
+            .attr("stroke-dasharray", "5,5")
+            .style("pointer-events", "none"); // Pass thru to overlay
 
-        // Draw Normal Vectors (pointing into the INFEASIBLE side)
-        // Wait, convention: a^T x <= b. Gradient 'a' points in direction of increase.
-        // Since we want <= b, 'a' points OUT of the feasible set.
+        // Bind Data for Normals
         svg.select(".normals").selectAll("line")
             .data(linesData, d => d.id)
             .join("line")
             .attr("x1", d => x(d.midX)).attr("y1", y(d.midY))
-            .attr("x2", d => x(d.midX + d.a * 0.8)).attr("y2", y(d.midY + d.b * 0.8)) // Scale normal
+            .attr("x2", d => x(d.midX + d.a * 0.5)).attr("y2", y(d.midY + d.b * 0.5)) // Short normal
             .attr("stroke", "var(--color-error)")
             .attr("stroke-width", 1.5)
-            .attr("marker-end", "url(#arrow-normal)");
+            .attr("marker-end", "url(#arrow-normal)")
+            .style("pointer-events", "none");
     }
 
+    // Helper to intersect line ax+by=c with bounding box
     function getLineSegment(a, b, c, xMin, xMax, yMin, yMax) {
         const points = [];
         // ax + by = c
-        // Intersection with borders
-        // Left: x = xMin => by = c - a*xMin
+        // x = xMin => by = c - a*xMin
         if (Math.abs(b) > 1e-6) {
             const y1 = (c - a * xMin) / b;
-            if (y1 >= yMin && y1 <= yMax) points.push({x: xMin, y: y1});
+            if (y1 >= yMin - 1e-6 && y1 <= yMax + 1e-6) points.push({x: xMin, y: Math.max(yMin, Math.min(yMax, y1))});
             const y2 = (c - a * xMax) / b;
-            if (y2 >= yMin && y2 <= yMax) points.push({x: xMax, y: y2});
+            if (y2 >= yMin - 1e-6 && y2 <= yMax + 1e-6) points.push({x: xMax, y: Math.max(yMin, Math.min(yMax, y2))});
         }
-        // Top/Bottom: y = yMin => ax = c - b*yMin
+        // y = yMin => ax = c - b*yMin
         if (Math.abs(a) > 1e-6) {
             const x1 = (c - b * yMin) / a;
-            if (x1 >= xMin && x1 <= xMax) points.push({x: x1, y: yMin});
+            if (x1 >= xMin - 1e-6 && x1 <= xMax + 1e-6) points.push({x: Math.max(xMin, Math.min(xMax, x1)), y: yMin});
             const x2 = (c - b * yMax) / a;
-            if (x2 >= xMin && x2 <= xMax) points.push({x: x2, y: yMax});
+            if (x2 >= xMin - 1e-6 && x2 <= xMax + 1e-6) points.push({x: Math.max(xMin, Math.min(xMax, x2)), y: yMax});
         }
 
         // Remove duplicates
         const unique = [];
         points.forEach(p => {
-            if(!unique.some(u => Math.hypot(u.x-p.x, u.y-p.y) < 1e-6)) unique.push(p);
+            if(!unique.some(u => Math.hypot(u.x-p.x, u.y-p.y) < 1e-4)) unique.push(p);
         });
 
         if (unique.length >= 2) {
@@ -251,17 +289,22 @@ export function initPolyhedronVisualizer(containerId) {
     function renderConstraintsList() {
         constraintsList.innerHTML = '';
         if (constraints.length === 0) {
-            constraintsList.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.8rem; padding: 4px; text-align: center;">No constraints. Drag on canvas to add one.</div>';
+            constraintsList.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.8rem; padding: 8px; text-align: center; font-style: italic;">No constraints active. The feasible set is all of ℝ².</div>';
         }
         constraints.forEach((c, index) => {
             const div = document.createElement("div");
             div.className = "widget-control-group";
-            div.style.cssText = "flex-direction: row; justify-content: space-between; align-items: center; padding: 6px 12px; background: var(--surface-1); border-radius: 4px;";
+            div.style.cssText = "flex-direction: row; justify-content: space-between; align-items: center; padding: 6px 12px; background: var(--surface-1); border-radius: 4px; border-left: 3px solid var(--color-primary);";
+
+            // Pretty print equation
+            let eq = "";
+            if (Math.abs(c.a) > 1e-3) eq += `${c.a.toFixed(1)}x `;
+            if (Math.abs(c.b) > 1e-3) eq += `${c.b >= 0 ? '+' : '-'} ${Math.abs(c.b).toFixed(1)}y `;
+            eq += `≤ ${c.c.toFixed(1)}`;
 
             div.innerHTML = `
                 <div style="font-family: var(--widget-font-mono); font-size: 0.8rem;">
-                    <span style="color: var(--color-text-muted);">C${index+1}:</span>
-                    ${c.a.toFixed(1)}x + ${c.b.toFixed(1)}y ≤ ${c.c.toFixed(1)}
+                    ${eq}
                 </div>
                 <div style="display: flex; gap: 6px;">
                     <button class="widget-btn small" title="Flip Inequality">↺</button>
@@ -270,21 +313,16 @@ export function initPolyhedronVisualizer(containerId) {
             `;
 
             const buttons = div.querySelectorAll('button');
-
-            // Flip
             buttons[0].onclick = () => {
                 c.a = -c.a;
                 c.b = -c.b;
                 c.c = -c.c;
                 update();
             };
-
-            // Remove
             buttons[1].onclick = () => {
                 constraints = constraints.filter(con => con.id !== c.id);
                 update();
             };
-
             constraintsList.appendChild(div);
         });
     }

@@ -1,5 +1,31 @@
 # Changelog
 
+## [3.0.1] - 2025-11-21
+
+### Content & Widget Refinements (Lectures 00-03)
+
+#### Content Improvements
+- **Lecture 00 (Linear Algebra):**
+  - Moved exercises to the end of the lecture for better flow.
+  - Expanded proofs for Rank-Nullity, SVD, and Orthogonality.
+  - Removed "AI-ish" jargon for a more professional academic tone.
+- **Lecture 01 (Introduction):**
+  - Refined "Loss + Regularizer" section for clarity.
+  - Added new exercise P1.5 on uniqueness of strictly convex optimization.
+  - Moved exercises to end.
+- **Lecture 02 (Convex Sets):**
+  - Added detailed step-by-step proof for the Separating Hyperplane Theorem.
+  - Clarified definitions of Affine and Convex sets.
+  - Moved exercises to end.
+- **Lecture 03 (Convex Functions):**
+  - Expanded Second-Order Condition proof.
+  - Moved exercises to end.
+
+#### Widget Enhancements
+- **Convex Combination Explorer (L01):** Added KaTeX support for rendering mathematical equations in the widget output.
+- **Polyhedron Visualizer (L02):** Improved UX for adding constraints via dragging, with visual hints (arrow pointing to infeasible side).
+- **General:** Removed deprecated `modern-widgets.css` references from all lecture HTML files.
+
 ## [3.0.0] - 2025-11-20
 
 ### Major Refactor: Design System & Pedagogy Update
@@ -32,4 +58,4 @@
 - All widgets updated to use the new `getPyodide()` shared manager.
 - Improved resize handling with `ResizeObserver`.
 - Added loading states and error handling.
-- Removed redundant/low-value widgets (`strong-convexity`).
+- Removed redundant/low-value widgets (`strong-convexity.js`).
