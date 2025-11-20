@@ -33,23 +33,23 @@ export async function initConditionNumber(containerId) {
     container.innerHTML = `
         <div class="widget-container">
             <div class="widget-controls">
-                 <div class="widget-control-group" style="flex: 1; min-width: 200px;">
-                    <label class="widget-label">Condition Number (κ): <span id="kappa-value" class="widget-value-display">10</span></label>
+                 <div class="control-group" style="flex: 1; min-width: 200px;">
+                    <label>Condition Number (κ): <span id="kappa-value" class="widget-value-display">10</span></label>
                     <input type="range" id="kappa-slider" min="1" max="50" step="1" value="10" class="widget-slider">
-                    <div style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 4px;">
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">
                         Controls the "stretch" of the elliptical contours. High κ = Narrow Valley.
                     </div>
                 </div>
-                <div class="widget-control-group">
-                    <label class="widget-label">Simulation Speed</label>
+                <div class="control-group">
+                    <label>Simulation Speed</label>
                     <select id="speed-select" class="widget-select">
                         <option value="200">Normal</option>
                         <option value="500" selected>Slow (See Zig-Zag)</option>
                         <option value="1000">Very Slow</option>
                     </select>
                 </div>
-                <div class="widget-control-group">
-                    <button id="run-button" class="widget-btn primary">Run Simulation</button>
+                <div class="control-group">
+                    <button id="run-button" class="btn btn-primary">Run Simulation</button>
                 </div>
             </div>
 
@@ -58,19 +58,19 @@ export async function initConditionNumber(containerId) {
             <div id="output-container" class="widget-output">
                 <div style="display: flex; gap: 24px; justify-content: center; text-align: center;">
                     <div>
-                        <div style="color: var(--color-primary); font-weight: bold; font-size: 1.2rem;" id="gd-steps">-</div>
-                        <div style="color: var(--color-text-muted); font-size: 0.8rem;">Gradient Descent</div>
+                        <div style="color: var(--primary-500); font-weight: bold; font-size: 1.2rem;" id="gd-steps">-</div>
+                        <div style="color: var(--text-secondary); font-size: 0.8rem;">Gradient Descent</div>
                     </div>
                     <div>
-                        <div style="color: var(--color-accent); font-weight: bold; font-size: 1.2rem;" id="mom-steps">-</div>
-                        <div style="color: var(--color-text-muted); font-size: 0.8rem;">Momentum</div>
+                        <div style="color: var(--accent-500); font-weight: bold; font-size: 1.2rem;" id="mom-steps">-</div>
+                        <div style="color: var(--text-secondary); font-size: 0.8rem;">Momentum</div>
                     </div>
                     <div>
                         <div style="color: #ff6b6b; font-weight: bold; font-size: 1.2rem;" id="newton-steps">-</div>
-                        <div style="color: var(--color-text-muted); font-size: 0.8rem;">Newton's Method</div>
+                        <div style="color: var(--text-secondary); font-size: 0.8rem;">Newton's Method</div>
                     </div>
                 </div>
-                <div id="explanation-text" style="margin-top: 12px; font-size: 0.85rem; color: var(--color-text-main); border-top: 1px solid var(--color-border); padding-top: 8px;">
+                <div id="explanation-text" style="margin-top: 12px; font-size: 0.85rem; color: var(--text-main); border-top: 1px solid var(--border-default); padding-top: 8px;">
                     Adjust <strong>Condition Number</strong> and click <strong>Run</strong>. Observe how Gradient Descent struggles with high curvature.
                 </div>
             </div>
@@ -186,10 +186,10 @@ def get_contours(kappa):
         const legend = svg.append("g").attr("transform", `translate(${width - 140}, 20)`);
         const addItem = (color, label, y) => {
             legend.append("rect").attr("x", 0).attr("y", y).attr("width", 12).attr("height", 12).attr("fill", color).attr("rx", 2);
-            legend.append("text").attr("x", 20).attr("y", y + 10).text(label).style("font-size", "12px").style("fill", "var(--color-text-main)");
+            legend.append("text").attr("x", 20).attr("y", y + 10).text(label).style("font-size", "12px").style("fill", "var(--text-main)");
         }
-        addItem("var(--color-primary)", "Gradient Descent", 0);
-        addItem("var(--color-accent)", "Momentum", 20);
+        addItem("var(--primary-500)", "Gradient Descent", 0);
+        addItem("var(--accent-500)", "Momentum", 20);
         addItem("#ff6b6b", "Newton", 40);
     }
 
@@ -215,7 +215,7 @@ def get_contours(kappa):
             .enter().append("path")
             .attr("d", path)
             .attr("fill", "none")
-            .attr("stroke", "var(--color-border)")
+            .attr("stroke", "var(--border-default)")
             .attr("stroke-width", 1)
             .attr("opacity", 0.4);
     }
@@ -264,7 +264,7 @@ def get_contours(kappa):
                 .attr("cy", yScale(pathData[currentStep][1]))
                 .attr("r", 4)
                 .attr("fill", color)
-                .attr("stroke", "var(--color-surface-1)")
+                .attr("stroke", "var(--surface-1)")
                 .attr("stroke-width", 1);
 
             currentStep++;
@@ -294,8 +294,8 @@ def get_contours(kappa):
         const results = pyodideSolve(kappa).toJs({ create_proxies: false });
 
         // Animate concurrently
-        animatePath(results.gd, "var(--color-primary)", "gd", delay);
-        animatePath(results.momentum, "var(--color-accent)", "mom", delay);
+        animatePath(results.gd, "var(--primary-500)", "gd", delay);
+        animatePath(results.momentum, "var(--accent-500)", "mom", delay);
         animatePath(results.newton, "#ff6b6b", "newton", delay);
 
         // Update texts after animation roughly finishes? Or immediately?

@@ -64,21 +64,21 @@ export function initConvergenceComparison(containerId) {
 
         // Labels
         svg.append("text").attr("class", "axis-label").attr("x", width).attr("y", height + 35).attr("text-anchor", "end").text("Iterations (k)")
-           .attr("fill", "var(--color-text-muted)").style("font-size", "0.85rem");
+           .attr("fill", "var(--text-secondary)").style("font-size", "0.85rem");
 
         svg.append("text").attr("class", "axis-label").attr("transform", "rotate(-90)").attr("y", -40).attr("dy", "1em").attr("text-anchor", "end").text("Log Error |f(x) - f*|")
-           .attr("fill", "var(--color-text-muted)").style("font-size", "0.85rem");
+           .attr("fill", "var(--text-secondary)").style("font-size", "0.85rem");
 
         // Paths
         svg.append("path").attr("class", "convex-path").attr("fill", "none")
-            .attr("stroke", "var(--color-success)").attr("stroke-width", 3).attr("opacity", 0.9);
+            .attr("stroke", "var(--success)").attr("stroke-width", 3).attr("opacity", 0.9);
 
         svg.append("path").attr("class", "non-convex-path").attr("fill", "none")
-            .attr("stroke", "var(--color-error)").attr("stroke-width", 3).attr("opacity", 0.9);
+            .attr("stroke", "var(--error)").attr("stroke-width", 3).attr("opacity", 0.9);
 
         // Marker dots
-        svg.append("circle").attr("class", "convex-dot").attr("r", 0).attr("fill", "var(--color-success)").attr("stroke", "#fff").attr("stroke-width", 2);
-        svg.append("circle").attr("class", "non-convex-dot").attr("r", 0).attr("fill", "var(--color-error)").attr("stroke", "#fff").attr("stroke-width", 2);
+        svg.append("circle").attr("class", "convex-dot").attr("r", 0).attr("fill", "var(--success)").attr("stroke", "#fff").attr("stroke-width", 2);
+        svg.append("circle").attr("class", "non-convex-dot").attr("r", 0).attr("fill", "var(--error)").attr("stroke", "#fff").attr("stroke-width", 2);
     }
 
     function generateData() {
@@ -134,8 +134,8 @@ export function initConvergenceComparison(containerId) {
         animateLine(".non-convex-path", nonConvexData, ".non-convex-dot", () => {
             runBtn.disabled = false;
             statusText.innerHTML = `
-                Convex: <span style="color: var(--color-success);">Converged (Global Min)</span> &nbsp;|&nbsp;
-                Non-Convex: <span style="color: var(--color-error);">Stuck (Local Min)</span>
+                Convex: <span style="color: var(--success);">Converged (Global Min)</span> &nbsp;|&nbsp;
+                Non-Convex: <span style="color: var(--error);">Stuck (Local Min)</span>
             `;
         });
     }
@@ -144,11 +144,11 @@ export function initConvergenceComparison(containerId) {
         legendContainer.innerHTML = `
             <div style="display: flex; gap: 24px; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 14px; height: 4px; background: var(--color-success); border-radius: 2px;"></div>
+                    <div style="width: 14px; height: 4px; background: var(--success); border-radius: 2px;"></div>
                     <span style="font-size: 0.85rem;">Convex (Linear Rate)</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 14px; height: 4px; background: var(--color-error); border-radius: 2px;"></div>
+                    <div style="width: 14px; height: 4px; background: var(--error); border-radius: 2px;"></div>
                     <span style="font-size: 0.85rem;">Non-Convex (Stuck)</span>
                 </div>
             </div>

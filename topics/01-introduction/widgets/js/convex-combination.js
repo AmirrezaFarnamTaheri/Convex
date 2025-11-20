@@ -17,14 +17,14 @@ export function initConvexCombination(containerId) {
         <div class="widget-container">
              <div class="widget-canvas-container" id="plot-container" style="height: 400px; cursor: crosshair;"></div>
             <div class="widget-controls">
-                <div class="widget-control-group">
-                    <label class="widget-label">
-                        Target Point <span style="color: var(--color-accent);">x</span>
-                        as Convex Combination of <span style="color: var(--color-primary);">v₁, v₂, v₃</span>
+                <div class="control-group">
+                    <label>
+                        Target Point <span style="color: var(--accent-500);">x</span>
+                        as Convex Combination of <span style="color: var(--primary-500);">v₁, v₂, v₃</span>
                     </label>
                 </div>
             </div>
-            <div id="combo-output" class="widget-output" style="font-family: var(--widget-font-mono); font-size: 0.9rem; min-height: 80px;"></div>
+            <div id="combo-output" class="widget-output" style="font-family: var(--font-mono); font-size: 0.9rem; min-height: 80px;"></div>
         </div>
     `;
 
@@ -65,14 +65,14 @@ export function initConvexCombination(containerId) {
         // Hull
         svg.append("path").attr("class", "hull-path")
             .attr("fill", "rgba(124, 197, 255, 0.2)")
-            .attr("stroke", "var(--color-primary)")
+            .attr("stroke", "var(--primary-500)")
             .attr("stroke-width", 2);
 
         // Handles (Vertices)
         svg.selectAll(".vertex").data(vertices).enter().append("circle")
             .attr("class", "vertex handle")
             .attr("r", 8)
-            .attr("fill", "var(--color-primary)")
+            .attr("fill", "var(--primary-500)")
             .style("cursor", "move")
             .call(d3.drag().on("drag", (event, d) => {
                 const [mx, my] = d3.pointer(event, svg.node());
@@ -83,7 +83,7 @@ export function initConvexCombination(containerId) {
         // Target Handle
         svg.append("circle").attr("class", "target handle")
             .attr("r", 6)
-            .attr("fill", "var(--color-accent)")
+            .attr("fill", "var(--accent-500)")
             .attr("stroke", "white").attr("stroke-width", 2)
             .style("cursor", "move")
             .call(d3.drag().on("drag", (event) => {
@@ -97,11 +97,11 @@ export function initConvexCombination(containerId) {
             .attr("class", "vertex-label")
             .attr("dy", -12)
             .attr("text-anchor", "middle")
-            .attr("fill", "var(--color-text-main)")
+            .attr("fill", "var(--text-main)")
             .style("pointer-events", "none")
             .text((d, i) => `v${i+1}`);
 
-        svg.append("text").attr("class", "target-label").text("x").attr("dy", -10).attr("fill", "var(--color-accent)").style("pointer-events", "none");
+        svg.append("text").attr("class", "target-label").text("x").attr("dy", -10).attr("fill", "var(--accent-500)").style("pointer-events", "none");
 
         update();
     }
@@ -142,7 +142,7 @@ export function initConvexCombination(containerId) {
         const l2 = lambdas[1].toFixed(2);
         const l3 = lambdas[2].toFixed(2);
 
-        const color = isInside ? "var(--color-success)" : "var(--color-error)";
+        const color = isInside ? "var(--success)" : "var(--error)";
         const status = isInside ? "Inside Convex Hull" : "Outside Convex Hull";
 
         // KaTeX rendering if available, else fallback
@@ -160,14 +160,14 @@ export function initConvexCombination(containerId) {
         comboOutput.innerHTML = `
             <div style="color: ${color}; margin-bottom: 8px;"><strong>${status}</strong></div>
             <div style="margin-bottom: 8px;">${equationHtml}</div>
-            <div style="color: var(--color-text-muted); font-size: 0.85rem;">
+            <div style="color: var(--text-secondary); font-size: 0.85rem;">
                 ${sumCheckHtml}, ${isInside ? "all \\theta_i \\ge 0" : "some \\theta_i < 0"}
             </div>
         `;
 
         svg.select(".hull-path")
             .attr("fill", isInside ? "rgba(124, 197, 255, 0.2)" : "rgba(255, 107, 107, 0.1)")
-            .attr("stroke", isInside ? "var(--color-primary)" : "var(--color-error)");
+            .attr("stroke", isInside ? "var(--primary-500)" : "var(--error)");
     }
 
     new ResizeObserver(() => {

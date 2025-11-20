@@ -75,17 +75,17 @@ def approximate(U, s, V, k):
     container.innerHTML = `
         <div class="widget-container">
             <div class="widget-controls">
-                 <div class="widget-control-group" style="flex: 1;">
-                    <label class="widget-label">Source Image</label>
+                 <div class="control-group" style="flex: 1;">
+                    <label>Source Image</label>
                     <div style="display: flex; gap: 8px;">
-                        <label class="widget-btn primary" style="cursor: pointer;">
+                        <label class="btn btn-primary" style="cursor: pointer;">
                             Upload <input type="file" id="image-upload" accept="image/*" style="display: none;">
                         </label>
-                        <button class="widget-btn" id="reset-btn">Default</button>
+                        <button class="btn btn-ghost" id="reset-btn">Default</button>
                     </div>
                 </div>
-                <div class="widget-control-group" style="flex: 2;">
-                    <label class="widget-label">Rank (k): <span id="k-value" class="widget-value-display">1</span></label>
+                <div class="control-group" style="flex: 2;">
+                    <label>Rank (k): <span id="k-value" class="widget-value-display">1</span></label>
                     <input type="range" id="k-slider" min="1" max="256" value="1" class="widget-slider">
                 </div>
             </div>
@@ -94,28 +94,28 @@ def approximate(U, s, V, k):
                  <!-- Stats injected here -->
             </div>
 
-            <div style="padding: 16px; background: var(--color-background); display: flex; flex-direction: column; gap: 16px;">
+            <div style="padding: 16px; background: var(--surface-1); display: flex; flex-direction: column; gap: 16px;">
 
                 <!-- Visualization Row -->
                 <div class="canvases" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
                     <div style="text-align: center;">
-                        <h4 style="color: var(--color-text-muted); font-size: 0.8rem; margin-bottom: 4px; text-transform: uppercase;">Original</h4>
-                        <canvas id="original-canvas" width="200" height="200" style="border: 1px solid var(--color-border); border-radius: 4px; image-rendering: pixelated;"></canvas>
+                        <h4 style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 4px; text-transform: uppercase;">Original</h4>
+                        <canvas id="original-canvas" width="200" height="200" style="border: 1px solid var(--border-subtle); border-radius: 4px; image-rendering: pixelated;"></canvas>
                     </div>
                     <div style="text-align: center;">
-                        <h4 style="color: var(--color-text-muted); font-size: 0.8rem; margin-bottom: 4px; text-transform: uppercase;">Rank-k Approx</h4>
-                        <canvas id="approximated-canvas" width="200" height="200" style="border: 1px solid var(--color-border); border-radius: 4px; image-rendering: pixelated;"></canvas>
+                        <h4 style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 4px; text-transform: uppercase;">Rank-k Approx</h4>
+                        <canvas id="approximated-canvas" width="200" height="200" style="border: 1px solid var(--border-subtle); border-radius: 4px; image-rendering: pixelated;"></canvas>
                     </div>
                     <div style="text-align: center;">
-                        <h4 style="color: var(--color-error); font-size: 0.8rem; margin-bottom: 4px; text-transform: uppercase;">Residual (Error)</h4>
-                        <canvas id="error-canvas" width="200" height="200" style="border: 1px solid var(--color-border); border-radius: 4px; image-rendering: pixelated;"></canvas>
+                        <h4 style="color: var(--error); font-size: 0.8rem; margin-bottom: 4px; text-transform: uppercase;">Residual (Error)</h4>
+                        <canvas id="error-canvas" width="200" height="200" style="border: 1px solid var(--border-subtle); border-radius: 4px; image-rendering: pixelated;"></canvas>
                     </div>
                 </div>
 
                 <!-- Chart -->
                 <div style="position: relative; width: 100%; height: 120px;">
                     <div id="singular-values-chart" style="width: 100%; height: 100%;"></div>
-                    <div style="position: absolute; top: 5px; right: 10px; font-size: 0.75rem; color: var(--color-text-muted);">Singular Value Spectrum (log scale)</div>
+                    <div style="position: absolute; top: 5px; right: 10px; font-size: 0.75rem; color: var(--text-secondary);">Singular Value Spectrum (log scale)</div>
                 </div>
             </div>
 
@@ -248,13 +248,13 @@ def approximate(U, s, V, k):
 
         infoOutput.innerHTML = `
             <div style="text-align: center;">
-                <div style="color: var(--color-text-muted); font-size: 0.7rem;">ENERGY RETAINED</div>
-                <div style="color: var(--color-success); font-weight: bold; font-size: 1.1rem;">${energyPercent.toFixed(1)}%</div>
+                <div style="color: var(--text-secondary); font-size: 0.7rem;">ENERGY RETAINED</div>
+                <div style="color: var(--success); font-weight: bold; font-size: 1.1rem;">${energyPercent.toFixed(1)}%</div>
             </div>
             <div style="text-align: center;">
-                <div style="color: var(--color-text-muted); font-size: 0.7rem;">COMPRESSION</div>
-                <div style="color: var(--color-primary); font-weight: bold; font-size: 1.1rem;">${ratio.toFixed(1)}%</div>
-                <div style="font-size: 0.7rem; color: var(--color-text-muted);">of original size</div>
+                <div style="color: var(--text-secondary); font-size: 0.7rem;">COMPRESSION</div>
+                <div style="color: var(--primary-500); font-weight: bold; font-size: 1.1rem;">${ratio.toFixed(1)}%</div>
+                <div style="font-size: 0.7rem; color: var(--text-secondary);">of original size</div>
             </div>
         `;
 
@@ -289,14 +289,14 @@ def approximate(U, s, V, k):
         chartSvg.append("path")
             .datum(s)
             .attr("class", "spectrum-area")
-            .attr("fill", "var(--color-surface-2)")
+            .attr("fill", "var(--surface-2)")
             .attr("d", area);
 
         // Interactive vertical line for k
         chartSvg.append("line")
             .attr("class", "k-line")
             .attr("y1", 0).attr("y2", height)
-            .attr("stroke", "var(--color-accent)")
+            .attr("stroke", "var(--accent-500)")
             .attr("stroke-width", 2)
             .attr("stroke-dasharray", "4 4");
     }
