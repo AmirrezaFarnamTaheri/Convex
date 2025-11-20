@@ -1,28 +1,24 @@
 /**
  * Widget: Polyhedron Visualizer
  *
- * Description: Interactively define a polyhedron by adding and manipulating
- *              linear inequality constraints.
- * Version: 2.1.0
+ * Description: Interactively define a polyhedron by adding linear inequality constraints.
+ *              Includes visualization of normal vectors and ability to flip constraints.
+ * Version: 2.2.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-// Need a clipping function. d3-polygon is minimal.
-// We'll implement Sutherland-Hodgman for convex polygons.
 
 function clipPolygon(subjectPolygon, clipEdge) {
     const newPolygon = [];
     if (subjectPolygon.length === 0) return newPolygon;
 
     const { a, b } = clipEdge; // ax + by <= c
-    // Inside test: a*x + b*y <= c
+    const c = clipEdge.c;
     const isInside = (p) => (a * p[0] + b * p[1]) <= c;
-    const c = clipEdge.c; // Renaming b to c for clarity (Ax <= b -> ax+by <= c)
 
-    // Compute intersection of line (p1, p2) with line ax+by=c
     const intersect = (p1, p2) => {
         const num = c - (a * p1[0] + b * p1[1]);
         const den = (a * (p2[0] - p1[0]) + b * (p2[1] - p1[1]));
-        if (Math.abs(den) < 1e-9) return p1; // Parallel
+        if (Math.abs(den) < 1e-9) return p1;
         const t = num / den;
         return [p1[0] + t * (p2[0] - p1[0]), p1[1] + t * (p2[1] - p1[1])];
     };
@@ -55,14 +51,14 @@ export function initPolyhedronVisualizer(containerId) {
             <div class="widget-controls">
                 <div class="widget-control-group" style="flex: 1;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h4 class="widget-label" style="margin: 0;">Constraints (Ax ≤ b)</h4>
+                        <h4 class="widget-label" style="margin: 0;">Half-Spaces H = {x | aᵀx ≤ b}</h4>
                         <button id="clear-btn" class="widget-btn">Clear All</button>
                     </div>
-                    <div id="constraints-list" style="max-height: 100px; overflow-y: auto; margin-top: 8px; display: flex; flex-direction: column; gap: 4px;"></div>
+                    <div id="constraints-list" style="max-height: 120px; overflow-y: auto; margin-top: 8px; display: flex; flex-direction: column; gap: 4px;"></div>
                 </div>
             </div>
             <div class="widget-output">
-                Click and drag on the plot to add a half-space constraint (normal points away from drag direction).
+                Drag to add constraint. The arrow represents the normal vector <strong>a</strong> (pointing out of feasible set).
             </div>
         </div>
     `;
@@ -71,7 +67,7 @@ export function initPolyhedronVisualizer(containerId) {
     const constraintsList = container.querySelector("#constraints-list");
     const clearBtn = container.querySelector("#clear-btn");
 
-    let constraints = []; // { a, b, c } where ax + by <= c
+    let constraints = []; // { a, b, c }
     let svg, x, y;
 
     function setupChart() {
@@ -90,7 +86,7 @@ export function initPolyhedronVisualizer(containerId) {
         y = d3.scaleLinear().domain([-5, 5]).range([height, 0]);
 
         // Grid
-        svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(height).tickFormat(""));
+        svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(height).tickFormat("")).attr("transform", `translate(0,0)`);
         svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat(""));
 
         // Axes
@@ -103,9 +99,10 @@ export function initPolyhedronVisualizer(containerId) {
             .attr("stroke-width", 2);
 
         svg.append("g").attr("class", "constraint-lines");
+        svg.append("g").attr("class", "normals");
 
         const drag = d3.drag()
-            .container(plotContainer.querySelector('svg')) // Fix coordinates
+            .container(plotContainer.querySelector('svg'))
             .on("start", (event) => {
                 const [mx, my] = d3.pointer(event, svg.node());
                 svg.append("line").attr("class", "drag-line")
@@ -125,15 +122,7 @@ export function initPolyhedronVisualizer(containerId) {
                 const y2 = parseFloat(line.attr("y2"));
                 line.remove();
 
-                if (Math.hypot(x2-x1, y2-y1) < 5) return; // Click vs Drag
-
-                // User dragged from p1 to p2.
-                // Interpretation: p1 is on the boundary. p2 indicates the VALID side?
-                // Or p2 indicates the NORMAL (invalid side)?
-                // Standard UI: Drag vector represents the Normal direction pointing OUT of the set.
-                // So ax + by <= c.
-                // Normal vector n = p2 - p1.
-                // Point p1 is on the line.
+                if (Math.hypot(x2-x1, y2-y1) < 5) return;
 
                 const p1 = [x.invert(x1), y.invert(y1)];
                 const p2 = [x.invert(x2), y.invert(y2)];
@@ -144,12 +133,7 @@ export function initPolyhedronVisualizer(containerId) {
 
                 const a = dx / len;
                 const b = dy / len;
-
-                // Boundary passes through p1. n dot x <= n dot p1
-                const c = a * p1[0] + b * p1[1]; // Wait, if n points OUT (drag direction), we want n dot x <= c?
-                // If drag is "pulling the wall", usually drag direction is normal.
-                // Let's assume drag direction is Normal vector n. The set is "behind" the line.
-                // So n dot (x - p1) <= 0  => n dot x <= n dot p1.
+                const c = a * p1[0] + b * p1[1];
 
                 constraints.push({ a, b, c });
                 update();
@@ -157,25 +141,22 @@ export function initPolyhedronVisualizer(containerId) {
 
         svg.call(drag);
 
-        // Marker
         const defs = svg.append("defs");
         defs.append("marker").attr("id", "arrow-accent").attr("viewBox", "0 -5 10 10").attr("refX", 8).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--color-accent)");
+        defs.append("marker").attr("id", "arrow-normal").attr("viewBox", "0 -5 10 10").attr("refX", 8).attr("refY", 0).attr("markerWidth", 4).attr("markerHeight", 4).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--color-text-muted)");
 
-        update(); // Initial draw
+        update();
     }
 
     function update() {
         renderConstraintsList();
 
-        // Initial Bounding Box (The "Universe")
-        // Use a box slightly larger than the view
         let poly = [[-10, -10], [10, -10], [10, 10], [-10, 10]];
 
         constraints.forEach(con => {
             poly = clipPolygon(poly, con);
         });
 
-        // Draw region
         if (poly.length > 0) {
              const line = d3.line().x(d => x(d[0])).y(d => y(d[1]));
              svg.select(".feasible-region").attr("d", line(poly) + "Z");
@@ -183,11 +164,13 @@ export function initPolyhedronVisualizer(containerId) {
              svg.select(".feasible-region").attr("d", null);
         }
 
-        // Draw constraint lines (clipped to view)
-        // For each constraint ax + by = c, finding intersection with bounding box lines
-        // x = -5, x = 5, y = -5, y = 5
         const linesData = constraints.map(con => {
-            return getLineSegment(con.a, con.b, con.c, -5, 5, -5, 5);
+            const seg = getLineSegment(con.a, con.b, con.c, -5, 5, -5, 5);
+            if(!seg) return null;
+            // Midpoint for normal vector
+            const midX = (seg.x1 + seg.x2)/2;
+            const midY = (seg.y1 + seg.y2)/2;
+            return { ...seg, midX, midY, a: con.a, b: con.b };
         }).filter(l => l !== null);
 
         svg.select(".constraint-lines").selectAll("line")
@@ -199,33 +182,32 @@ export function initPolyhedronVisualizer(containerId) {
             .attr("stroke-width", 1)
             .attr("stroke-dasharray", "5,5");
 
-        // Normal indicators? Maybe too cluttered.
+        // Draw Normals
+        svg.select(".normals").selectAll("line")
+            .data(linesData)
+            .join("line")
+            .attr("x1", d => x(d.midX)).attr("y1", y(d.midY))
+            .attr("x2", d => x(d.midX + d.a * 0.5)).attr("y2", y(d.midY + d.b * 0.5))
+            .attr("stroke", "var(--color-text-muted)")
+            .attr("stroke-width", 1)
+            .attr("marker-end", "url(#arrow-normal)");
     }
 
     function getLineSegment(a, b, c, xMin, xMax, yMin, yMax) {
-        // ax + by = c. Find intersections with box.
         const points = [];
-
-        // if b != 0, y = (c - ax)/b
         if (Math.abs(b) > 1e-6) {
             const yAtXMin = (c - a * xMin) / b;
             if (yAtXMin >= yMin && yAtXMin <= yMax) points.push({x: xMin, y: yAtXMin});
-
             const yAtXMax = (c - a * xMax) / b;
             if (yAtXMax >= yMin && yAtXMax <= yMax) points.push({x: xMax, y: yAtXMax});
         }
-
-        // if a != 0, x = (c - by)/a
         if (Math.abs(a) > 1e-6) {
             const xAtYMin = (c - b * yMin) / a;
             if (xAtYMin >= xMin && xAtYMin <= xMax) points.push({x: xAtYMin, y: yMin});
-
             const xAtYMax = (c - b * yMax) / a;
             if (xAtYMax >= xMin && xAtYMax <= xMax) points.push({x: xAtYMax, y: yMax});
         }
 
-        // Need exactly 2 distinct points for a segment across the box
-        // Deduplicate
         const unique = [];
         points.forEach(p => {
             if(!unique.some(u => Math.hypot(u.x-p.x, u.y-p.y) < 1e-6)) unique.push(p);
@@ -246,10 +228,26 @@ export function initPolyhedronVisualizer(containerId) {
             const div = document.createElement("div");
             div.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: var(--color-background); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;";
             div.innerHTML = `
-                <span style="font-family: var(--widget-font-mono);">${c.a.toFixed(1)}x + ${c.b.toFixed(1)}y ≤ ${c.c.toFixed(1)}</span>
-                <button class="widget-btn" style="padding: 2px 6px; font-size: 0.7rem;">✖</button>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <span style="font-family: var(--widget-font-mono); width: 15px;">${i+1}.</span>
+                    <span style="font-family: var(--widget-font-mono);">${c.a.toFixed(1)}x + ${c.b.toFixed(1)}y ≤ ${c.c.toFixed(1)}</span>
+                </div>
+                <div style="display: flex; gap: 4px;">
+                    <button class="widget-btn small" title="Flip Direction">↺</button>
+                    <button class="widget-btn small remove" title="Remove">✖</button>
+                </div>
             `;
-            div.querySelector('button').onclick = () => {
+
+            // Flip
+            div.querySelectorAll('button')[0].onclick = () => {
+                c.a = -c.a;
+                c.b = -c.b;
+                c.c = -c.c;
+                update();
+            };
+
+            // Remove
+            div.querySelectorAll('button')[1].onclick = () => {
                 constraints.splice(i, 1);
                 update();
             };

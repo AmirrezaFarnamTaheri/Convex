@@ -1,9 +1,10 @@
 /**
- * Widget: Convex Combination Explorer
+ * Widget: Convex Hull Explorer
  *
- * Description: Animates the concept of a convex combination, showing the line segment
- *              between two points and allowing exploration of the parameter θ.
- * Version: 2.1.0
+ * Description: Demonstrates the concept of a convex hull and convex combinations.
+ *              Users can drag 3 points to form a triangle and move a 4th point
+ *              to see if it can be expressed as a convex combination of the vertices.
+ * Version: 2.2.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -14,38 +15,33 @@ export function initConvexCombination(containerId) {
     // --- WIDGET LAYOUT ---
     container.innerHTML = `
         <div class="widget-container">
+             <div class="widget-canvas-container" id="plot-container" style="height: 400px; cursor: crosshair;"></div>
             <div class="widget-controls">
-                 <div class="widget-control-group">
-                    <button id="toggle-set-btn" class="widget-btn primary">Switch to Non-Convex Set</button>
-                </div>
-                <div class="widget-control-group" style="flex: 2;">
-                    <label class="widget-label">Interpolation θ = <span id="theta-value" class="widget-value-display">0.50</span></label>
-                    <input type="range" id="theta-slider" min="0" max="1" step="0.01" value="0.5" class="widget-slider">
+                <div class="widget-control-group">
+                    <label class="widget-label">
+                        Target Point <span style="color: var(--color-accent);">x</span>
+                        as Convex Combination of <span style="color: var(--color-primary);">v₁, v₂, v₃</span>
+                    </label>
                 </div>
             </div>
-
-            <div class="widget-canvas-container" id="plot-container" style="height: 400px;"></div>
-
-            <div id="status-text" class="widget-output"></div>
+            <div id="combo-output" class="widget-output" style="font-family: var(--widget-font-mono); font-size: 0.9rem;"></div>
         </div>
     `;
 
     const plotContainer = container.querySelector("#plot-container");
-    const toggleBtn = container.querySelector("#toggle-set-btn");
-    const thetaSlider = container.querySelector("#theta-slider");
-    const thetaValueSpan = container.querySelector("#theta-value");
-    const statusText = container.querySelector("#status-text");
+    const comboOutput = container.querySelector("#combo-output");
 
     let svg, x, y;
-    let p1 = { x: -5, y: -2 };
-    let p2 = { x: 5, y: 3 };
 
-    const convexSetData = [[-8,8], [-8,-8], [8,-8], [8,8]]; // Square
-    // U-shape or C-shape polygon for non-convex
-    const nonConvexSetData = [[-8,-8], [8,-8], [8,8], [2,8], [2,-2], [-2,-2], [-2,8], [-8,8]];
+    // Initial Triangle Vertices
+    let vertices = [
+        { x: -5, y: -5, id: 1 },
+        { x: 5, y: -5, id: 2 },
+        { x: 0, y: 5, id: 3 }
+    ];
 
-    let isConvex = true;
-    let currentSetData = convexSetData;
+    // Probe point
+    let target = { x: 0, y: 0 };
 
     function setupChart() {
         plotContainer.innerHTML = '';
@@ -62,108 +58,105 @@ export function initConvexCombination(containerId) {
         x = d3.scaleLinear().domain([-10, 10]).range([-width / 2, width / 2]);
         y = d3.scaleLinear().domain([-10, 10]).range([height / 2, -height / 2]);
 
-        // Draw set
-        svg.append("path").attr("class", "set-path")
+        // Grid
+        svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(height).tickFormat("")).attr("transform", `translate(0, ${-height/2})`);
+        svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat("")).attr("transform", `translate(${-width/2}, 0)`);
+
+        // Hull
+        svg.append("path").attr("class", "hull-path")
             .attr("fill", "rgba(124, 197, 255, 0.2)")
             .attr("stroke", "var(--color-primary)")
             .attr("stroke-width", 2);
 
-        // Draw line segment
-        svg.append("line").attr("class", "line-segment")
-            .attr("stroke", "var(--color-text-muted)")
-            .attr("stroke-width", 2)
-            .attr("stroke-dasharray", "5 5");
+        // Handles (Vertices)
+        svg.selectAll(".vertex").data(vertices).enter().append("circle")
+            .attr("class", "vertex handle")
+            .attr("r", 8)
+            .attr("fill", "var(--color-primary)")
+            .call(d3.drag().on("drag", (event, d) => {
+                const [mx, my] = d3.pointer(event, svg.node());
+                d.x = x.invert(mx); d.y = y.invert(my);
+                update();
+            }));
 
-        // Handles
-        svg.append("circle").attr("class", "p1-handle handle").attr("r", 8).attr("fill", "var(--color-accent)").call(createDrag(p1));
-        svg.append("circle").attr("class", "p2-handle handle").attr("r", 8).attr("fill", "var(--color-accent)").call(createDrag(p2));
-
-        // Interpolated point
-        svg.append("circle").attr("class", "interpolated-point").attr("r", 6).attr("stroke", "#fff").attr("stroke-width", 1.5);
+        // Target Handle
+        svg.append("circle").attr("class", "target handle")
+            .attr("r", 6)
+            .attr("fill", "var(--color-accent)")
+            .attr("stroke", "white").attr("stroke-width", 2)
+            .call(d3.drag().on("drag", (event) => {
+                const [mx, my] = d3.pointer(event, svg.node());
+                target.x = x.invert(mx); target.y = y.invert(my);
+                update();
+            }));
 
         // Labels
-        svg.append("text").attr("class", "p1-label").attr("fill", "var(--color-text-main)").attr("font-weight", "bold").text("x").attr("dy", -12);
-        svg.append("text").attr("class", "p2-label").attr("fill", "var(--color-text-main)").attr("font-weight", "bold").text("y").attr("dy", -12);
+        svg.selectAll(".vertex-label").data(vertices).enter().append("text")
+            .attr("class", "vertex-label")
+            .attr("dy", -12)
+            .attr("text-anchor", "middle")
+            .attr("fill", "var(--color-text-main)")
+            .text((d, i) => `v${i+1}`);
+
+        svg.append("text").attr("class", "target-label").text("x").attr("dy", -10).attr("fill", "var(--color-accent)");
+
+        update();
+    }
+
+    // Barycentric coordinates for point P inside Triangle ABC
+    function getBarycentric(p, a, b, c) {
+        const det = (b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y);
+        const lambda1 = ((b.y - c.y) * (p.x - c.x) + (c.x - b.x) * (p.y - c.y)) / det;
+        const lambda2 = ((c.y - a.y) * (p.x - c.x) + (a.x - c.x) * (p.y - c.y)) / det;
+        const lambda3 = 1 - lambda1 - lambda2;
+        return [lambda1, lambda2, lambda3];
     }
 
     function update() {
-        // Update set
-        const pathGen = d3.line().x(d => x(d[0])).y(d => y(d[1]));
-        svg.select(".set-path").attr("d", pathGen(currentSetData) + "Z");
+        // Draw Triangle
+        const hullData = vertices.map(v => [v.x, v.y]);
+        // Ensure closed loop for display
+        const line = d3.line().x(d => x(d[0])).y(d => y(d[1])).curve(d3.curveLinearClosed);
+        svg.select(".hull-path").attr("d", line(hullData));
 
-        // Update handles
-        svg.select(".p1-handle").attr("cx", x(p1.x)).attr("cy", y(p1.y));
-        svg.select(".p2-handle").attr("cx", x(p2.x)).attr("cy", y(p2.y));
+        // Update positions
+        svg.selectAll(".vertex")
+            .attr("cx", d => x(d.x)).attr("cy", d => y(d.y));
+        svg.selectAll(".vertex-label")
+            .attr("x", d => x(d.x)).attr("y", d => y(d.y));
 
-        svg.select(".p1-label").attr("x", x(p1.x)).attr("y", y(p1.y));
-        svg.select(".p2-label").attr("x", x(p2.x)).attr("y", y(p2.y));
+        svg.select(".target").attr("cx", x(target.x)).attr("cy", y(target.y));
+        svg.select(".target-label").attr("x", x(target.x)).attr("y", y(target.y));
 
-        // Update line
-        svg.select(".line-segment")
-            .attr("x1", x(p1.x)).attr("y1", y(p1.y))
-            .attr("x2", x(p2.x)).attr("y2", y(p2.y));
+        // Compute Barycentric Coords
+        const lambdas = getBarycentric(target, vertices[0], vertices[1], vertices[2]);
 
-        updateInterpolation();
+        // Check if inside (all lambdas >= 0 within tolerance)
+        const isInside = lambdas.every(l => l >= -1e-3);
+
+        // Display
+        if (isInside) {
+            comboOutput.innerHTML = `
+                <div style="color: var(--color-success);"><strong>Inside Convex Hull</strong></div>
+                x = ${lambdas[0].toFixed(2)}v₁ + ${lambdas[1].toFixed(2)}v₂ + ${lambdas[2].toFixed(2)}v₃
+                <br>
+                <span style="color: var(--color-text-muted);">Σθ = ${(lambdas[0]+lambdas[1]+lambdas[2]).toFixed(2)} = 1, θ ≥ 0</span>
+            `;
+            svg.select(".hull-path").attr("fill", "rgba(124, 197, 255, 0.2)").attr("stroke", "var(--color-primary)");
+        } else {
+             comboOutput.innerHTML = `
+                <div style="color: var(--color-error);"><strong>Outside Convex Hull</strong></div>
+                Cannot represent x as convex combination (requires negative coefficients).
+                <br>
+                x = ${lambdas[0].toFixed(2)}v₁ + ${lambdas[1].toFixed(2)}v₂ + ${lambdas[2].toFixed(2)}v₃
+            `;
+            svg.select(".hull-path").attr("fill", "rgba(255, 107, 107, 0.1)").attr("stroke", "var(--color-error)");
+        }
     }
-
-    function updateInterpolation() {
-        const theta = parseFloat(thetaSlider.value);
-        thetaValueSpan.textContent = theta.toFixed(2);
-
-        const ix = (1 - theta) * p1.x + theta * p2.x;
-        const iy = (1 - theta) * p1.y + theta * p2.y;
-
-        svg.select(".interpolated-point")
-            .attr("cx", x(ix))
-            .attr("cy", y(iy));
-
-        const isInside = d3.polygonContains(currentSetData, [ix, iy]);
-
-        const color = isInside ? "var(--color-success)" : "var(--color-error)";
-        svg.select(".interpolated-point").attr("fill", color);
-
-        statusText.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div>
-                    Point z = (1-θ)x + θy is
-                    <strong style="color: ${color}; font-size: 1.1em;">
-                        ${isInside ? 'INSIDE' : 'OUTSIDE'}
-                    </strong> the set.
-                </div>
-                <div style="margin-left: auto; font-size: 0.9em; color: var(--color-text-muted);">
-                    ${isConvex ? "Convex Set: Line segment is always inside." : "Non-Convex Set: Line segment may exit set."}
-                </div>
-            </div>
-        `;
-    }
-
-    function createDrag(point) {
-        return d3.drag()
-            .on("start", (event) => d3.select(event.sourceEvent.target).raise().classed("active", true))
-            .on("drag", (event) => {
-                const [mx, my] = d3.pointer(event, svg.node());
-                // Clamp to plot
-                point.x = Math.max(-10, Math.min(10, x.invert(mx)));
-                point.y = Math.max(-10, Math.min(10, y.invert(my)));
-                update();
-            })
-            .on("end", (event) => d3.select(event.sourceEvent.target).classed("active", false));
-    }
-
-    toggleBtn.addEventListener("click", () => {
-        isConvex = !isConvex;
-        currentSetData = isConvex ? convexSetData : nonConvexSetData;
-        toggleBtn.textContent = isConvex ? "Switch to Non-Convex Set" : "Switch to Convex Set";
-        update();
-    });
-
-    thetaSlider.addEventListener("input", updateInterpolation);
 
     new ResizeObserver(() => {
         setupChart();
-        update();
     }).observe(plotContainer);
 
     setupChart();
-    update();
 }

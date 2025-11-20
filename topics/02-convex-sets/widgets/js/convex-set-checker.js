@@ -2,8 +2,9 @@
  * Widget: Convex Set Checker
  *
  * Description: Allows users to draw a 2D shape and checks if it's a convex set.
- *              Provides visual feedback via the convex hull.
- * Version: 2.1.0
+ *              Visualizes the definition: if non-convex, finds a line segment between two points
+ *              that lies outside the set.
+ * Version: 2.2.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -16,7 +17,7 @@ export function initConvexSetChecker(containerId) {
         <div class="widget-container">
              <div class="widget-canvas-container" id="drawing-area" style="height: 400px; cursor: crosshair; background: var(--color-background);">
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; color: var(--color-text-muted); opacity: 0.5; text-align: center;" id="placeholder-text">
-                    Draw a shape here
+                    Draw a closed shape here
                 </div>
             </div>
             <div class="widget-controls">
@@ -42,7 +43,7 @@ export function initConvexSetChecker(containerId) {
     let isDrawing = false;
 
     function setupChart() {
-        drawingArea.querySelector('svg')?.remove(); // Clean re-init
+        drawingArea.querySelector('svg')?.remove();
 
         const width = drawingArea.clientWidth;
         const height = drawingArea.clientHeight;
@@ -52,7 +53,6 @@ export function initConvexSetChecker(containerId) {
             .attr("width", "100%").attr("height", "100%")
             .attr("viewBox", `0 0 ${width} ${height}`);
 
-        // Grid
         const defs = svg.append("defs");
         const pattern = defs.append("pattern")
             .attr("id", "grid-pattern")
@@ -69,15 +69,18 @@ export function initConvexSetChecker(containerId) {
             .attr("stroke", "var(--color-primary)")
             .attr("stroke-width", 2);
 
-        g.append("path").attr("class", "hull-path")
-            .attr("fill", "none")
-            .attr("stroke", "var(--color-accent)")
-            .attr("stroke-width", 2)
+        // Visual elements for counter-example
+        g.append("line").attr("class", "counter-example-line")
+            .attr("stroke", "var(--color-error)")
+            .attr("stroke-width", 3)
             .attr("stroke-dasharray", "5,5")
-            .attr("opacity", 0);
+            .style("opacity", 0);
+
+        g.append("circle").attr("class", "pt-a").attr("r", 5).attr("fill", "var(--color-error)").style("opacity", 0);
+        g.append("circle").attr("class", "pt-b").attr("r", 5).attr("fill", "var(--color-error)").style("opacity", 0);
 
         const drag = d3.drag()
-            .container(drawingArea) // Essential for correct pointer calc relative to div
+            .container(drawingArea)
             .on("start", (event) => {
                 reset();
                 isDrawing = true;
@@ -88,12 +91,16 @@ export function initConvexSetChecker(containerId) {
             .on("drag", (event) => {
                 if (!isDrawing) return;
                 const [x, y] = d3.pointer(event, svg.node());
-                points.push([x, y]);
-                updateDrawing();
+                // Basic sampling to avoid too many points
+                const last = points[points.length-1];
+                if (Math.hypot(x-last[0], y-last[1]) > 2) {
+                    points.push([x, y]);
+                    updateDrawing();
+                }
             })
             .on("end", () => {
                 isDrawing = false;
-                updateDrawing(true); // Close loop
+                updateDrawing(true);
             });
 
         svg.call(drag);
@@ -101,22 +108,18 @@ export function initConvexSetChecker(containerId) {
 
     function updateDrawing(close = false) {
         if (!svg || points.length < 2) return;
-
-        // Simplify points slightly to reduce noise
-        // Use a simple stride or distance filter if needed, but raw is ok for now
-
-        const line = d3.line().curve(d3.curveBasis); // Smoothing
-        // If closed, append first point
-        const renderPoints = close ? [...points, points[0]] : points;
-
-        svg.select(".drawn-path").attr("d", line(renderPoints));
+        // Use linear closed for checking polygon containment
+        const line = d3.line().curve(close ? d3.curveLinearClosed : d3.curveLinear);
+        svg.select(".drawn-path").attr("d", line(points));
     }
 
     function reset() {
         points = [];
         if (svg) {
             svg.select(".drawn-path").attr("d", null);
-            svg.select(".hull-path").attr("d", null).attr("opacity", 0);
+            svg.select(".counter-example-line").style("opacity", 0);
+            svg.select(".pt-a").style("opacity", 0);
+            svg.select(".pt-b").style("opacity", 0);
         }
         statusOutput.textContent = "Draw a shape in the box above.";
         placeholder.style.display = 'block';
@@ -128,31 +131,103 @@ export function initConvexSetChecker(containerId) {
             return;
         }
 
-        // 1. Compute Convex Hull
-        const hull = d3.polygonHull(points);
+        // Create a closed polygon representation
+        // d3.polygonContains works on array of [x,y]
+        // We need to ensure it's closed and simple-ish.
 
-        // 2. Visualize Hull
-        const hullLine = d3.line().curve(d3.curveLinearClosed);
-        svg.select(".hull-path").datum(hull).attr("d", hullLine).transition().attr("opacity", 1);
+        // 1. Find a Counter-Example: Pair of points inside whose midpoint is outside
+        let counterExample = null;
 
-        // 3. Calculate Areas
-        // d3.polygonArea expects a closed polygon array. points is open trace.
-        // Close it for calculation
-        const polyPoints = [...points];
-        // Basic downsampling to speed up area calc and reduce self-intersection noise?
+        // Sample random pairs from the polygon interior
+        // How to sample from interior? Rejection sampling from bounding box.
+        const xExtent = d3.extent(points, d => d[0]);
+        const yExtent = d3.extent(points, d => d[1]);
 
-        const polygonArea = Math.abs(d3.polygonArea(polyPoints));
-        const hullArea = Math.abs(d3.polygonArea(hull));
+        const samples = [];
+        const maxAttempts = 200;
+        let attempts = 0;
 
-        // Ratio check. If shape is convex, PolyArea ~= HullArea.
-        // Allow slight error due to drawing jitter / smoothing.
-        const ratio = hullArea / (polygonArea + 1e-9); // Avoid div/0
-        const isShapeConvex = ratio < 1.15; // 15% tolerance for hand drawing
+        while(samples.length < 50 && attempts < maxAttempts) {
+            const rx = xExtent[0] + Math.random()*(xExtent[1]-xExtent[0]);
+            const ry = yExtent[0] + Math.random()*(yExtent[1]-yExtent[0]);
+            if (d3.polygonContains(points, [rx, ry])) {
+                samples.push([rx, ry]);
+            }
+            attempts++;
+        }
 
-        if (isShapeConvex) {
-            statusOutput.innerHTML = `<span style="color: var(--color-success); font-weight: bold;">✓ Convex!</span> The shape roughly matches its convex hull (Ratio: ${ratio.toFixed(2)}).`;
+        // Check pairs
+        for(let i=0; i<samples.length; i++) {
+            for(let j=i+1; j<samples.length; j++) {
+                const p1 = samples[i];
+                const p2 = samples[j];
+                const mid = [(p1[0]+p2[0])/2, (p1[1]+p2[1])/2];
+
+                // Check if mid is OUTSIDE
+                // Note: d3.polygonContains returns true if inside or on boundary
+                if (!d3.polygonContains(points, mid)) {
+                    counterExample = { p1, p2 };
+                    break;
+                }
+
+                // Also check 1/4 and 3/4 to catch "C" shapes better where mid might be lucky
+                const q1 = [p1[0]*0.75 + p2[0]*0.25, p1[1]*0.75 + p2[1]*0.25];
+                if (!d3.polygonContains(points, q1)) {
+                    counterExample = { p1, p2 }; // Draw full line anyway
+                    break;
+                }
+            }
+            if(counterExample) break;
+        }
+
+        if (counterExample) {
+            // Visualize Counter Example
+            svg.select(".counter-example-line")
+                .attr("x1", counterExample.p1[0]).attr("y1", counterExample.p1[1])
+                .attr("x2", counterExample.p2[0]).attr("y2", counterExample.p2[1])
+                .transition().style("opacity", 1);
+
+            svg.select(".pt-a")
+                .attr("cx", counterExample.p1[0]).attr("cy", counterExample.p1[1])
+                .transition().style("opacity", 1);
+
+            svg.select(".pt-b")
+                .attr("cx", counterExample.p2[0]).attr("cy", counterExample.p2[1])
+                .transition().style("opacity", 1);
+
+            statusOutput.innerHTML = `
+                <div>
+                    <span style="color: var(--color-error); font-weight: bold;">✕ Non-Convex Set</span>
+                    <div style="font-size: 0.9em; color: var(--color-text-muted);">
+                        Found points x, y ∈ C such that the segment [x, y] is NOT contained in C.
+                    </div>
+                </div>
+            `;
         } else {
-            statusOutput.innerHTML = `<span style="color: var(--color-error); font-weight: bold;">✕ Not Convex.</span> The dashed line shows the convex hull (Ratio: ${ratio.toFixed(2)}).`;
+             // If we couldn't find one, it's likely convex (or we got unlucky)
+             // Check Hull Ratio as backup
+             const hull = d3.polygonHull(points);
+             const hullArea = Math.abs(d3.polygonArea(hull));
+             const polyArea = Math.abs(d3.polygonArea(points));
+             const ratio = hullArea / (polyArea + 1e-9);
+
+             if (ratio < 1.1) {
+                svg.select(".counter-example-line").style("opacity", 0);
+                svg.select(".pt-a").style("opacity", 0);
+                svg.select(".pt-b").style("opacity", 0);
+
+                statusOutput.innerHTML = `
+                    <div>
+                        <span style="color: var(--color-success); font-weight: bold;">✓ Likely Convex</span>
+                        <div style="font-size: 0.9em; color: var(--color-text-muted);">
+                            All sampled segments lie within the set.
+                        </div>
+                    </div>
+                `;
+             } else {
+                 // Ambiguous case - likely self-intersecting or very weird shape
+                 statusOutput.innerHTML = `<span style="color: var(--color-text-muted);">Shape is complex. Try drawing a clearer shape.</span>`;
+             }
         }
     }
 
