@@ -937,6 +937,91 @@ pre code {
 }
 
 /* ====================
+   LECTURE GRID & CARDS (Added for Index Page)
+   ==================== */
+.lecture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.lecture-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-base);
+  height: 100%;
+}
+
+.lecture-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-500);
+  text-decoration: none;
+}
+
+.lecture-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.lecture-date {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.lecture-optional-badge {
+  font-size: var(--font-size-xs);
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--warning);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.lecture-card-body {
+  flex-grow: 1;
+}
+
+.lecture-card-body h3 {
+  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-2);
+  color: var(--text-heading);
+}
+
+.lecture-card-body p {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: var(--line-height-snug);
+}
+
+.lecture-card-footer {
+  margin-top: var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tag {
+  display: inline-block;
+  background: rgba(94, 179, 255, 0.1);
+  color: var(--primary-300);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+
+/* ====================
    RESPONSIVE DESIGN
    ==================== */
 @media (max-width: 1024px) {

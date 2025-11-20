@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.1.0] - 2025-11-22
+
+### Content Consolidation & Cleanup
+
+#### General
+- **Site Structure:** Consolidate lecture list logic into `index.html` and removed redundant `content/lectures.json` and `static/js/app.js`.
+- **Cleanup:** Removed `content/` directory and temporary verification scripts.
+- **Writing Style:** Removed "AI-ish" jargon and "marketing" language from all lectures for a rigorous, academic tone.
+
+#### Lecture Refinements
+- **Lecture 00 (Linear Algebra):**
+  - Removed dramatic language ("Crown Jewel").
+  - Verified proof rigor.
+  - Ensured exercises are complete and at the end.
+- **Lecture 01 (Introduction):**
+  - Refined "Fundamental Theorem" proof.
+  - Standardized exercise solutions.
+  - Clarified "Why This Matters" section.
+- **Lecture 02 (Convex Sets):**
+  - Verified affine/convex set definitions.
+  - Ensured exercises are complete and at the end.
+- **Lecture 03 (Convex Functions):**
+  - Corrected strong convexity discussion ("Important" vs "Powerful").
+  - Verified all exercise solutions.
+
 ## [3.0.1] - 2025-11-21
 
 ### Content & Widget Refinements (Lectures 00-03)
