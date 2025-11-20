@@ -852,6 +852,42 @@ pre code {
 }
 
 /* ====================
+   TABLE STYLES
+   ==================== */
+.table-container {
+  overflow-x: auto;
+  margin: var(--space-4) 0;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.data-table th {
+  font-weight: 600;
+  color: var(--text-heading);
+  border-bottom: 2px solid var(--border-default);
+  white-space: nowrap;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover td {
+  background-color: var(--surface-2);
+}
+
+/* ====================
    UTILITY CLASSES
    ==================== */
 .glass {
