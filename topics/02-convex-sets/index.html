@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
   <header class="site-header sticky">
@@ -19,14 +20,14 @@
         </a>
       </div>
       <nav class="nav">
-        <a href="../../index.html">All Lectures</a>
-        <a href="../01-introduction/index.html">← Previous</a>
-        <a href="../03-convex-functions/index.html">Next →</a>
+        <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
+        <a href="../01-introduction/index.html"><i data-feather="arrow-left"></i> Previous</a>
+        <a href="../03-convex-functions/index.html">Next <i data-feather="arrow-right"></i></a>
       </nav>
     </div>
   </header>
 
-  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2>Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <header class="lecture-header card-v2">
       <h1>02. The Geometry of Feasibility: Convex Sets</h1>
       <div class="lecture-meta">
@@ -42,7 +43,7 @@
     </header>
 
     <section class="card-v2">
-      <h2>Learning Objectives</h2>
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
       <ul>
         <li><b>Define and Interpret Convexity:</b> Provide formal definitions of affine sets, convex sets, convex combinations, and convex hulls with geometric intuition.</li>
         <li><b>Identify Key Convex Sets:</b> Recognize and work with hyperplanes, halfspaces, norm balls, ellipsoids, polyhedra, second-order cones, and the PSD cone.</li>
@@ -151,15 +152,8 @@
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Tool: Convex Set Checker</h3>
-          <p><b>Test Convexity Interactively:</b> Draw any 2D shape by clicking points, and this tool instantly determines if it's a convex set. Features include:</p>
-          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Click to add vertices:</b> Build your own polygon point by point</li>
-            <li><b>Automatic convexity test:</b> The tool checks if all line segments between points lie within the set</li>
-            <li><b>Counter-example Visualization:</b> If the shape is non-convex, it <i>shows you exactly why</i> by drawing a line segment between two internal points that passes outside the set.</li>
-            <li><b>Convex hull visualization:</b> See the smallest convex set containing your points (the "rubber band" around them)</li>
-          </ul>
-          <p><i>Learning tip:</i> Try creating both convex shapes (circles, triangles, ellipses) and non-convex ones (stars, crescents, L-shapes). Notice how any "dent" or "indentation" makes a set non-convex!</p>
-          <div id="widget-convex-set-checker" style="width: 100%; height: 450px; position: relative;"></div>
+          <p><b>Test Convexity Interactively:</b> Use the drawing tools below to create shapes and verify their convexity. Any "dent" will be flagged as a violation of the line segment property.</p>
+          <!-- Note: The standalone drawing widget has been merged into the lab below for a unified experience. -->
         </div>
       </section>
 
@@ -407,16 +401,16 @@
         <p>Linear-fractional functions also preserve convexity.</p>
 
         <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Builder: Operations Preserving Convexity</h3>
-          <p><b>Build Complex Convex Sets from Simple Ones:</b> Experiment with operations that preserve convexity:</p>
+          <h3 style="margin-top: 0;">Interactive Laboratory: Convex Geometry</h3>
+          <p><b>Draw, Combine, and Verify:</b> This unified workspace lets you experiment with convex sets and operations. It combines drawing capabilities with set algebra:</p>
           <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Start with basic sets:</b> Halfspaces, balls, ellipsoids</li>
-            <li><b>Apply operations:</b> Intersection, affine transformation, Cartesian product, Minkowski sum</li>
-            <li><b>Verify convexity:</b> See that the result is always convex</li>
-            <li><b>Visualize the process:</b> Watch how complex sets emerge from simple building blocks</li>
+            <li><b>Draw Custom Sets:</b> Use the pen tool to draw polygons. Double-click to close.</li>
+            <li><b>Add Primitives:</b> Quickly add standard convex sets like circles and squares.</li>
+            <li><b>Apply Operations:</b> Select multiple sets (Shift+Click) and apply operations like <b>Intersection</b>, <b>Convex Hull</b>, or <b>Minkowski Sum</b>.</li>
+            <li><b>Verify Convexity:</b> The lab automatically labels sets as Convex (C) or Non-Convex (NC).</li>
           </ul>
-          <p><i>Modeling power:</i> Almost every convex constraint you'll encounter can be built using these operations. This is the foundation of disciplined convex programming!</p>
-          <div id="widget-operations-builder" style="width: 100%; height: 450px; position: relative;"></div>
+          <p><i>Key Concept:</i> Notice how the intersection of any two sets (even non-convex ones) doesn't guarantee convexity, but the intersection of <i>convex</i> sets is always convex!</p>
+          <div id="widget-convex-geometry-lab" style="width: 100%; position: relative;"></div>
         </div>
       </section>
 
@@ -720,7 +714,7 @@
       </section>
 
       <section class="card-v2" id="section-7">
-        <h2>7. Exercises</h2>
+        <h2><i data-feather="edit-3"></i> 7. Exercises</h2>
 
         <p>These problems consolidate all exercises from throughout the lecture and add additional practice.</p>
 
@@ -1040,14 +1034,11 @@
   <script src="../../static/js/theme-switcher.js"></script>
   <script src="../../static/js/toc.js"></script>
   <script>
+    feather.replace();
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 
   <!-- Widget Loaders -->
-  <script type="module">
-    import { initConvexSetChecker } from './widgets/js/convex-set-checker.js';
-    initConvexSetChecker('widget-convex-set-checker');
-  </script>
   <script type="module">
     import { initEllipsoidExplorer } from './widgets/js/ellipsoid-explorer.js';
     initEllipsoidExplorer('widget-ellipsoid-explorer');
@@ -1057,8 +1048,8 @@
     initPolyhedronVisualizer('widget-polyhedron-visualizer');
   </script>
   <script type="module">
-    import { initOperationsBuilder } from './widgets/js/operations-builder.js';
-    initOperationsBuilder('widget-operations-builder');
+    import { initConvexGeometryLab } from './widgets/js/convex-geometry-lab.js';
+    initConvexGeometryLab('widget-convex-geometry-lab');
   </script>
   <script type="module">
     import { initSeparatingHyperplane } from './widgets/js/separating-hyperplane.js';

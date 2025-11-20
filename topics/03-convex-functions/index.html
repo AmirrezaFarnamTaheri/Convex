@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
   <header class="site-header sticky">
@@ -19,14 +20,14 @@
         </a>
       </div>
       <nav class="nav">
-        <a href="../../index.html">All Lectures</a>
-        <a href="../02-convex-sets/index.html">← Previous</a>
-        <a href="../04-convex-opt-problems/index.html">Next →</a>
+        <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
+        <a href="../02-convex-sets/index.html"><i data-feather="arrow-left"></i> Previous</a>
+        <a href="../04-convex-opt-problems/index.html">Next <i data-feather="arrow-right"></i></a>
       </nav>
     </div>
   </header>
 
-  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2>Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <header class="lecture-header card-v2">
       <h1>03. Convex Functions: Definitions, Characterizations, and Operations</h1>
       <div class="lecture-meta">
@@ -42,7 +43,7 @@
     </header>
 
     <section class="card-v2">
-      <h2>Learning Objectives</h2>
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
       <ul>
         <li><b>Master Multiple Characterizations:</b> State and prove equivalences between Jensen's inequality, epigraph convexity, first-order conditions, and second-order conditions.</li>
         <li><b>Apply First-Order Conditions:</b> Use the tangent line property to verify convexity and derive inequalities.</li>
@@ -114,17 +115,16 @@
         <p>We often extend $f$ to all of $\mathbb{R}^n$ by setting $f(x) = +\infty$ for $x \notin \mathrm{dom}\, f$. This allows us to write constraints implicitly: minimizing $f$ over $\mathbb{R}^n$ is equivalent to minimizing over $\mathrm{dom}\, f$.</p>
 
         <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Visualizer: Jensen's Inequality Explorer</h3>
-          <p><b>See Convexity in Action:</b> This tool lets you interactively verify Jensen's inequality for various functions. Features include:</p>
+          <h3 style="margin-top: 0;">Interactive Inspector: Understanding Convexity</h3>
+          <p><b>Explore the Equivalences:</b> Convexity can be defined in multiple ways. This unified tool lets you toggle between different perspectives to see how they relate:</p>
           <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Select any function:</b> Choose from convex ($x^2$, $e^x$, $|x|$), concave ($\sqrt{x}$, $\log x$), or neither ($\sin x$, $x^3$)</li>
-            <li><b>Pick two points:</b> Click to select $x$ and $y$ on the graph</li>
-            <li><b>Adjust $\theta$:</b> Use a slider to move along the convex combination $\theta x + (1-\theta)y$</li>
-            <li><b>Compare values:</b> See if $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ (chord above curve)</li>
-            <li><b>Visual feedback:</b> The tool highlights whether Jensen's inequality holds at the current point</li>
+            <li><b>Jensen (Definition):</b> The chord between any two points lies above the graph.</li>
+            <li><b>Epigraph (Set Theory):</b> The region above the graph is a convex set.</li>
+            <li><b>Tangent (First-Order):</b> The tangent line is always a global underestimator (for differentiable functions).</li>
+            <li><b>Quadratic Bound (Strong Convexity):</b> A quadratic bowl sits below the function, pushing it up.</li>
           </ul>
-          <p><i>Key insight:</i> For convex functions, the chord ALWAYS lies above the curve, regardless of which two points you choose!</p>
-          <div id="widget-jensen-visualizer" style="width: 100%; height: 450px; position: relative;"></div>
+          <p><i>Note:</i> Select different functions to see how non-convex functions violate these conditions!</p>
+          <div id="widget-convex-function-inspector" style="width: 100%; position: relative;"></div>
         </div>
       </section>
 
@@ -192,17 +192,6 @@
           <p>The epigraph characterization lets us translate between function convexity and set convexity. Many operations on functions (e.g., infimal convolution) can be understood as operations on their epigraphs (e.g., Minkowski sum).</p>
         </div>
 
-        <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Visualizer: Epigraph Explorer</h3>
-          <p><b>Visualize the Epigraph:</b> The epigraph is the set of all points lying on or above the graph. This widget lets you explore its connection to convexity and sublevel sets:</p>
-          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Choose a function:</b> Compare convex ($x^2$, $|x|$) and non-convex ($x^3$) functions.</li>
-            <li><b>Sublevel Set Slicing:</b> Drag the horizontal plane (alpha) to slice the epigraph. The projection of this slice is the sublevel set $\{x \mid f(x) \le \alpha\}$.</li>
-            <li><b>Observe Property:</b> For a convex function, both the epigraph AND all sublevel sets are convex. For non-convex, the epigraph is not convex, and sublevel sets might be disconnected intervals.</li>
-          </ul>
-          <p><i>Connection to optimization:</i> Constraints of the form $f_i(x) \le 0$ define the feasible set as the intersection of sublevel sets. If $f_i$ are convex, the feasible set is convex!</p>
-          <div id="widget-epigraph-visualizer" style="width: 100%; height: 400px; position: relative;"></div>
-        </div>
       </section>
 
       <section class="card-v2" id="section-3">
@@ -311,19 +300,6 @@
           <p>This is the <b>first-order optimality condition</b>. For unconstrained problems ($C = \mathbb{R}^n$), this reduces to $\nabla f(x^*) = 0$ (the gradient vanishes).</p>
         </div>
 
-        <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Explorer: Tangent Line Global Underestimator</h3>
-          <p><b>Visualize the Power of First-Order Conditions:</b> For convex functions, the tangent line at any point is a global underestimator. This interactive tool demonstrates this crucial property:</p>
-          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Select a function:</b> Choose convex ($x^2$, $e^x$) or non-convex ($\sin x$, $x^3$) functions</li>
-            <li><b>Click any point:</b> The tangent line at that point is drawn</li>
-            <li><b>Observe the underestimation:</b> For convex functions, the tangent line lies entirely below the curve</li>
-            <li><b>See violations for non-convex:</b> For non-convex functions, the tangent line crosses above the curve in some regions</li>
-            <li><b>Move the point:</b> Drag to see that the property holds at every point for convex functions</li>
-          </ul>
-          <p><i>Why this is revolutionary:</i> This property means that linear approximations of convex functions are always pessimistic (never over-promise). This is the foundation of cutting-plane methods and subgradient optimization!</p>
-          <div id="widget-tangent-line-explorer" style="width: 100%; height: 450px; position: relative;"></div>
-        </div>
       </section>
 
       <section class="card-v2" id="section-4">
@@ -655,6 +631,36 @@
           $$
         </div>
 
+        <div class="example">
+          <h4>Example 4: Conjugate of Log-Sum-Exp</h4>
+          <p>Consider the <b>Log-Sum-Exp</b> function $f(x) = \log(\sum_{i=1}^n e^{x_i})$. Its conjugate is the negative entropy restricted to the simplex.</p>
+
+          <div class="proof-enhanced">
+            <h4>Derivation Step-by-Step</h4>
+            <div class="proof-step">
+              <strong>Step 1: Set up the supremum.</strong> We want to maximize $g(x) = y^\top x - \log(\sum_i e^{x_i})$. Since $f(x)$ is convex, we set the gradient to zero.
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Compute gradient.</strong>
+              $$ \frac{\partial g}{\partial x_k} = y_k - \frac{e^{x_k}}{\sum_j e^{x_j}} = 0 \implies y_k = \frac{e^{x_k}}{\sum_j e^{x_j}} $$
+              This implies $y_k > 0$ and $\sum_k y_k = \sum_k \frac{e^{x_k}}{\sum_j e^{x_j}} = 1$. If $\mathbf{1}^\top y \neq 1$ or $y \not\ge 0$, the supremum is unbounded ($+\infty$).
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Solve for x.</strong> From $y_k = e^{x_k} / (\sum e^{x_j})$, we have $e^{x_k} = y_k (\sum e^{x_j})$. Taking log: $x_k = \log y_k + \log(\sum e^{x_j})$. Let $K = \log(\sum e^{x_j})$. Then $x_k = \log y_k + K$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 4: Substitute back.</strong>
+              $$ y^\top x = \sum_k y_k (\log y_k + K) = \sum_k y_k \log y_k + K \sum_k y_k = \sum_k y_k \log y_k + K $$
+              $$ f(x) = \log(\sum e^{x_j}) = K $$
+              $$ f^*(y) = (y^\top x) - f(x) = (\sum y_k \log y_k + K) - K = \sum_{i=1}^n y_i \log y_i $$
+            </div>
+            <div class="proof-step">
+              <strong>Conclusion:</strong>
+              $$ f^*(y) = \begin{cases} \sum_{i=1}^n y_i \log y_i & \text{if } y \ge 0, \mathbf{1}^\top y = 1 \\ +\infty & \text{otherwise} \end{cases} $$
+            </div>
+          </div>
+        </div>
+
         <h3>7.5 Role in Duality</h3>
         <p>The convex conjugate is the mathematical foundation of <b>Lagrangian duality</b> (Lecture 05). The dual problem can be expressed in terms of the conjugates of the primal objective and constraint functions.</p>
       </section>
@@ -826,7 +832,7 @@
       </section>
 
       <section class="card-v2" id="section-10">
-        <h2>10. Exercises</h2>
+        <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
 
         <div class="problem">
           <h3>P3.1 — Verify Convexity Using First-Order Conditions</h3>
@@ -1078,23 +1084,15 @@
   <script src="../../static/js/math-renderer.js"></script>
 <script src="../../static/js/theme-switcher.js"></script>
 <script src="../../static/js/toc.js"></script>
-<script src="../../static/js/theme-switcher.js"></script>
   <script>
+    feather.replace();
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 
   <!-- Widget Loaders -->
   <script type="module">
-    import { initJensenVisualizer } from './widgets/js/jensen-visualizer.js';
-    initJensenVisualizer('widget-jensen-visualizer');
-  </script>
-  <script type="module">
-    import { initEpigraphVisualizer } from './widgets/js/epigraph-visualizer.js';
-    initEpigraphVisualizer('widget-epigraph-visualizer');
-  </script>
-  <script type="module">
-    import { initTangentLineExplorer } from './widgets/js/tangent-line-explorer.js';
-    initTangentLineExplorer('widget-tangent-line-explorer');
+    import { initConvexFunctionInspector } from './widgets/js/convex-function-inspector.js';
+    initConvexFunctionInspector('widget-convex-function-inspector');
   </script>
   <script type="module">
     import { initHessianHeatmap } from './widgets/js/hessian-heatmap.js';
