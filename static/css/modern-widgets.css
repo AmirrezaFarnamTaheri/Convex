@@ -8,6 +8,7 @@
   --color-surface-2: #1e222b;
   --color-text-main: #e0e0e0;
   --color-text-muted: #a0a0a0;
+  --color-text-secondary: #b0b0b0;
   --color-primary: #7cc5ff;
   --color-primary-hover: #5aaaff;
   --color-accent: #80ffb0;
@@ -28,9 +29,14 @@
   border-radius: var(--widget-border-radius);
   overflow: hidden;
   margin: 24px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
+  transition: box-shadow 0.3s ease;
+}
+
+.widget-container:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
 .widget-canvas-container {
@@ -68,12 +74,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .widget-value-display {
   font-family: var(--widget-font-mono);
   color: var(--color-primary);
   font-weight: bold;
+  margin-left: 4px;
 }
 
 /* Sliders */
@@ -81,7 +89,7 @@ input[type="range"].widget-slider {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  min-width: 150px;
+  min-width: 140px;
   height: 6px;
   background: var(--color-border);
   border-radius: 3px;
@@ -91,6 +99,11 @@ input[type="range"].widget-slider {
 
 input[type="range"].widget-slider:hover {
   background: #3a3f4b;
+}
+
+input[type="range"].widget-slider:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 input[type="range"].widget-slider::-webkit-slider-thumb {
@@ -106,7 +119,7 @@ input[type="range"].widget-slider::-webkit-slider-thumb {
 }
 
 input[type="range"].widget-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
+  transform: scale(1.2);
   background: var(--color-primary-hover);
 }
 
@@ -131,17 +144,26 @@ input[type="range"].widget-slider::-moz-range-thumb {
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .widget-btn:hover {
   background-color: #2a2e36;
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: var(--color-text-muted);
+  color: #fff;
+}
+
+.widget-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .widget-btn.primary {
   background-color: var(--color-primary);
-  color: #000; /* Contrast for light primary */
+  color: #000; /* High contrast for light primary */
   border-color: var(--color-primary);
   font-weight: 600;
 }
@@ -149,6 +171,8 @@ input[type="range"].widget-slider::-moz-range-thumb {
 .widget-btn.primary:hover {
   background-color: var(--color-primary-hover);
   border-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .widget-btn:disabled {
@@ -157,7 +181,8 @@ input[type="range"].widget-slider::-moz-range-thumb {
   pointer-events: none;
 }
 
-/* Selects */
+/* Inputs & Selects */
+.widget-input,
 .widget-select {
   background-color: var(--color-surface-1);
   color: var(--color-text-main);
@@ -167,11 +192,19 @@ input[type="range"].widget-slider::-moz-range-thumb {
   font-family: var(--widget-font-family);
   font-size: 0.9rem;
   cursor: pointer;
+  transition: border-color 0.2s;
 }
 
+.widget-input:hover,
+.widget-select:hover {
+  border-color: var(--color-text-muted);
+}
+
+.widget-input:focus,
 .widget-select:focus {
   outline: none;
   border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(124, 197, 255, 0.2);
 }
 
 /* --- Output / Legend Section --- */
@@ -182,7 +215,7 @@ input[type="range"].widget-slider::-moz-range-thumb {
   font-family: var(--widget-font-mono);
   font-size: 0.85rem;
   color: var(--color-text-main);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .widget-output p {
@@ -195,6 +228,7 @@ input[type="range"].widget-slider::-moz-range-thumb {
   font-family: var(--widget-font-family);
   font-size: 12px;
   pointer-events: none; /* Prevent text selection issues during drag */
+  user-select: none;
 }
 
 .widget-svg .axis path,
@@ -210,17 +244,20 @@ input[type="range"].widget-slider::-moz-range-thumb {
 
 .widget-svg .handle {
   cursor: grab;
-  transition: r 0.2s;
+  transition: r 0.2s, stroke-width 0.2s;
 }
 
 .widget-svg .handle:hover {
   r: 8px; /* Enlarge on hover */
+  stroke: #fff;
+  stroke-width: 2px;
 }
 
 .widget-svg .handle.active {
   cursor: grabbing;
   stroke: #fff;
   stroke-width: 2px;
+  r: 8px;
 }
 
 /* --- Loading State --- */
@@ -230,13 +267,14 @@ input[type="range"].widget-slider::-moz-range-thumb {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(11, 13, 18, 0.8);
+  background: rgba(11, 13, 18, 0.85);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 10;
   color: var(--color-text-muted);
+  font-family: var(--widget-font-family);
 }
 
 .widget-loading-spinner {

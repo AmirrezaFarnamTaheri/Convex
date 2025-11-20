@@ -4,7 +4,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ---
 
-## Lecture 00: Linear Algebra Primer (8 Widgets)
+## Lecture 00: Linear Algebra Primer (7 Widgets)
 
 - **[x] Norm Geometry Visualizer (HIGH)**
   - **Location:** `topics/00-linear-algebra-primer/widgets/js/norm-geometry-visualizer.js`
@@ -24,9 +24,9 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js, Pyodide (NumPy for computation).
   - **Status:** Completed
 
-- **[x] Eigenvalue Decomposition & PSD Explorer (HIGH)**
-  - **Location:** `topics/00-linear-algebra-primer/widgets/js/eigen-psd.js`
-  - **Description:** Shows the geometric interpretation of eigenvalues/eigenvectors for a 2x2 matrix and visualizes its quadratic form to check for positive semidefiniteness.
+- **[x] Matrix & Geometry Explorer (HIGH)**
+  - **Location:** `topics/00-linear-algebra-primer/widgets/js/matrix-geometry.js`
+  - **Description:** Comprehensive explorer for 2x2 matrices, merging properties, eigenvalues, and quadratic forms.
   - **Dependencies:** D3.js, Pyodide (NumPy).
   - **Status:** Completed
 
@@ -48,15 +48,9 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** Canvas, Pyodide (NumPy, Scikit-image).
   - **Status:** Completed
 
-- **[x] Matrix Explorer (MEDIUM)**
-  - **Location:** `topics/00-linear-algebra-primer/widgets/js/matrix-explorer.js`
-  - **Description:** An interactive tool to explore matrix properties.
-  - **Dependencies:** D3.js.
-  - **Status:** Completed
-
 ---
 
-## Lecture 01: Introduction (4 Widgets)
+## Lecture 01: Introduction (5 Widgets)
 
 - **[x] Convex vs Nonconvex Explorer (HIGH)**
   - **Location:** `topics/01-introduction/widgets/js/convex-vs-nonconvex.js`
@@ -76,10 +70,16 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** A library like Mermaid.js or custom SVG.
   - **Status:** Completed
 
-- **[x] Real-World Problem Gallery (LOW)**
-  - **Location:** `topics/01-introduction/widgets/js/problem-gallery.js`
-  - **Description:** A simple, filterable gallery of cards, each describing a real-world application of convex optimization.
-  - **Dependencies:** None (static HTML/CSS/JS).
+- **[x] Convergence Comparison (LOW)**
+  - **Location:** `topics/01-introduction/widgets/js/convergence-comparison.js`
+  - **Description:** An animated plot comparing the convergence rates of a convex solver vs. a generic non-convex solver.
+  - **Dependencies:** D3.js.
+  - **Status:** Completed
+
+- **[x] Convex Combination Explorer (LOW)**
+  - **Location:** `topics/01-introduction/widgets/js/convex-combination.js`
+  - **Description:** Animates the concept of a convex combination between two points.
+  - **Dependencies:** D3.js.
   - **Status:** Completed
 
 ---
@@ -118,7 +118,7 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ---
 
-## Lecture 03: Convex Functions (7 Widgets)
+## Lecture 03: Convex Functions (6 Widgets)
 
 - **[x] Jensen's Inequality Interactive Proof (HIGH)**
   - **Location:** `topics/03-convex-functions/widgets/js/jensen-visualizer.js`
@@ -154,12 +154,6 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Location:** `topics/03-convex-functions/widgets/js/strong-convexity.js`
   - **Description:** Compares the graphs of a convex function and a strongly convex function, highlighting the quadratic lower bound.
   - **Dependencies:** D3.js.
-  - **Status:** Completed
-
-- **[x] Convex Function Library & Properties Checker (LOW)**
-  - **Location:** `topics/03-convex-functions/widgets/js/function-library.js`
-  - **Description:** A gallery of common convex functions with an interface to check their properties (e.g., is it differentiable?).
-  - **Dependencies:** None (Static).
   - **Status:** Completed
 
 ---
