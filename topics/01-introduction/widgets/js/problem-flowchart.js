@@ -82,7 +82,7 @@ export function initProblemFlowchart(containerId) {
             text: "Semidefinite Program (SDP)",
             type: 'terminal',
             desc: "The most general class. Used in control theory and relaxations of combinatorial problems.",
-            color: "#fbbf24",
+            color: "var(--warning)",
             icon: "🏗️"
         }
     };

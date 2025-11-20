@@ -41,7 +41,7 @@
         <span>Tags: prerequisites, review, linear-algebra, foundational</span>
       </div>
       <div class="lecture-summary">
-        <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical toolkit necessary for optimization theory.</p>
+        <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical background necessary for optimization theory.</p>
         <p><strong>Prerequisites:</strong> None. This lecture is the starting point.</p>
         <p><strong>Forward Connections:</strong> Projection techniques introduced here appear in least squares methods (<a href="../01-introduction/index.html">Lecture 01</a>). Positive Semidefinite (PSD) matrices form the basis for convex quadratic programs (<a href="../01-introduction/index.html">Lecture 01</a>). The four fundamental subspaces provide geometric understanding of feasible sets (<a href="../02-convex-sets/index.html">Lecture 02</a>).</p>
       </div>
@@ -51,12 +51,12 @@
       <h2>Learning Objectives</h2>
       <p>After this lecture, you will be able to work with:</p>
       <ul>
-        <li><b>Fundamental Objects and Subspaces:</b> Vectors, matrices, the four fundamental subspaces, and the Rank-Nullity Theorem with proofs.</li>
-        <li><b>Inner Products and Norms:</b> Standard and generalized inner products, the three canonical vector norms, dual norms, Hölder's inequality, and the Cauchy-Schwarz inequality with proofs.</li>
-        <li><b>Orthogonality and Projections:</b> Orthonormal bases, Gram-Schmidt process, QR decomposition, projection onto subspaces and affine sets.</li>
+        <li><b>Fundamental Objects and Subspaces:</b> Vectors, matrices, the four fundamental subspaces, and the Rank-Nullity Theorem.</li>
+        <li><b>Inner Products and Norms:</b> Standard and generalized inner products, canonical vector norms, dual norms, Hölder's inequality, and the Cauchy-Schwarz inequality.</li>
+        <li><b>Orthogonality and Projections:</b> Orthonormal bases, Gram-Schmidt process, QR decomposition, and projection onto subspaces and affine sets.</li>
         <li><b>Positive Semidefinite Matrices:</b> Definitions, eigenvalue characterization, quadratic forms, ellipsoids, and the Loewner order.</li>
-        <li><b>Robust Numerical Methods:</b> Least squares via normal equations, QR, SVD, pseudoinverse, condition numbers, and when to use each method.</li>
-        <li><b>Matrix Structures:</b> Trace inner product, Frobenius norm, componentwise order—all prerequisites for later convex set theory.</li>
+        <li><b>Robust Numerical Methods:</b> Least squares via normal equations, QR, SVD, pseudoinverse, and condition numbers.</li>
+        <li><b>Matrix Structures:</b> Trace inner product, Frobenius norm, and componentwise order.</li>
       </ul>
     </section>
 
@@ -146,7 +146,7 @@
       <h3>Rank and Rank–Nullity Theorem</h3>
       <p>$\mathrm{rank}(A) = \dim \mathcal{R}(A)$. For $A \in \mathbb{R}^{m \times n}$:
       $$ \dim \mathcal{N}(A) + \mathrm{rank}(A) = n $$
-      This fundamental dimension-counting result is a cornerstone of linear algebra.</p>
+      This fundamental dimension-counting result is essential in linear algebra.</p>
 
       <div class="proof-enhanced">
         <h4>Proof of the Rank-Nullity Theorem</h4>
@@ -325,7 +325,7 @@
       </p>
 
       <h3>The QR Decomposition</h3>
-      <p>The QR decomposition expresses a matrix $A$ as the product of an orthonormal matrix $Q$ and an upper triangular matrix $R$. This decomposition is a direct outcome of the Gram-Schmidt process and is a cornerstone of numerical linear algebra. For a matrix $A \in \mathbb{R}^{m \times n}$ with full column rank, we can write $A = QR$, where $Q \in \mathbb{R}^{m \times n}$ has orthonormal columns and $R \in \mathbb{R}^{n \times n}$ is upper-triangular.
+      <p>The QR decomposition expresses a matrix $A$ as the product of an orthonormal matrix $Q$ and an upper triangular matrix $R$. This decomposition is a direct outcome of the Gram-Schmidt process and is fundamental to numerical linear algebra. For a matrix $A \in \mathbb{R}^{m \times n}$ with full column rank, we can write $A = QR$, where $Q \in \mathbb{R}^{m \times n}$ has orthonormal columns and $R \in \mathbb{R}^{n \times n}$ is upper-triangular.
       <br><b>Applications:</b></p>
       <ul>
         <li><b>Solving Linear Systems:</b> The system $Ax=b$ becomes $QRx=b$, which simplifies to $Rx = Q^\top b$. This is easily solved using back substitution and is far more numerically stable than forming the normal equations.</li>
@@ -472,7 +472,7 @@
     <section class="card-v2" id="section-7">
       <h2>7. Advanced Factorizations: QR, SVD, Pseudoinverse, and Applications</h2>
 
-      <p><strong>Motivation:</strong> While Gaussian elimination and normal equations work in theory, numerical stability and efficiency demand better methods. The QR decomposition and Singular Value Decomposition (SVD) are the workhorses of modern numerical linear algebra—providing robust, stable solutions to least squares, revealing matrix structure, and enabling dimensionality reduction and data compression.</p>
+      <p><strong>Motivation:</strong> While Gaussian elimination and normal equations work in theory, numerical stability and efficiency demand better methods. The QR decomposition and Singular Value Decomposition (SVD) are standard tools in modern numerical linear algebra—providing robust, stable solutions to least squares, revealing matrix structure, and enabling dimensionality reduction and data compression.</p>
 
       <!-- 7.1 QR Decomposition -->
       <h3>7.1 QR Decomposition (Orthogonal-Triangular Factorization)</h3>

@@ -64,7 +64,7 @@ export async function initRankNullspace(containerId) {
                             Codomain (Output Space) ℝ<sup>m</sup>
                         </span>
                         <div style="margin-top: 4px; font-size: 0.75rem; color: var(--color-text-muted);">
-                            <span style="color: var(--color-accent);">■ Col Space</span> ⊥ <span style="color: #fbbf24;">■ Left Null Space</span>
+                            <span style="color: var(--color-accent);">■ Col Space</span> ⊥ <span style="color: var(--warning);">■ Left Null Space</span>
                         </div>
                     </div>
                 </div>
@@ -166,7 +166,7 @@ export async function initRankNullspace(containerId) {
             <div>
                 <p style="color: var(--color-text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Codomain Subspaces</p>
                 <div style="color: var(--color-accent); font-weight: 600;">Col Space: Dim ${formatDim(results.col_space.length)}</div>
-                <div style="color: #fbbf24; font-weight: 600;">Left Null Space: Dim ${formatDim(results.left_null_space.length)}</div>
+                <div style="color: var(--warning); font-weight: 600;">Left Null Space: Dim ${formatDim(results.left_null_space.length)}</div>
             </div>
         `;
 
@@ -298,7 +298,7 @@ export async function initRankNullspace(containerId) {
                         Codomain (Output Space) ℝ<sup>m</sup>
                     </span>
                     <div style="margin-top: 4px; font-size: 0.75rem; color: var(--color-text-muted);">
-                        <span style="color: var(--color-accent);">■ Col Space</span> ⊥ <span style="color: #fbbf24;">■ Left Null Space</span>
+                        <span style="color: var(--color-accent);">■ Col Space</span> ⊥ <span style="color: var(--warning);">■ Left Null Space</span>
                     </div>
                 </div>
             `;
@@ -380,7 +380,7 @@ export async function initRankNullspace(containerId) {
                 };
 
                 drawBasis(colSpace, "var(--color-accent)");
-                drawBasis(leftNullSpace, "#fbbf24");
+                drawBasis(leftNullSpace, "var(--warning)");
             }
         };
     }
