@@ -8,6 +8,14 @@
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <link rel="stylesheet" href="../../static/css/modern-widgets.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.128/build/three.module.js"
+      }
+    }
+  </script>
 </head>
 <body>
   <header class="site-header sticky">
@@ -379,21 +387,18 @@
       </figure>
 
       <div class="widget-container" style="margin: 24px 0;">
-        <h3 style="margin-top: 0;">Interactive Explorer: Eigenvalues and PSD Matrices</h3>
-        <p><b>See the Geometry of Quadratic Forms:</b> For 2×2 symmetric matrices, this tool reveals the deep connection between eigenvalues and the shape of the quadratic form $f(x) = x^\top Q x$. Modify the matrix entries and watch the visualization update to show:</p>
+        <h3 style="margin-top: 0;">Interactive Explorer: Matrix Geometry & Definiteness</h3>
+        <p><b>Explore Linear Maps and Quadratic Forms:</b> This comprehensive tool connects the linear transformation $Ax$ with the quadratic form $x^\top Ax$. Toggle "Force Symmetric" to explore the specific properties relevant to optimization (Hessians).</p>
         <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-          <li><b>Eigenvectors:</b> Principal axes along which the matrix stretches space</li>
-          <li><b>Eigenvalues:</b> The stretch factors—positive means stretching, negative means flipping</li>
-          <li><b>3D surface plot:</b> Visualizes the function landscape:
+          <li><b>Linear Map:</b> See how the unit circle transforms into an ellipse. The axes of the ellipse correspond to eigenvectors (for symmetric matrices).</li>
+          <li><b>Quadratic Form:</b> Visualize the level sets of $z = x^\top Ax$.
             <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
-              <li><b>PD (both eigenvalues > 0):</b> Convex bowl—a unique minimum (essential for optimization!)</li>
-              <li><b>ND (both eigenvalues < 0):</b> Concave bowl—a maximum</li>
-              <li><b>Indefinite (mixed signs):</b> Saddle shape—optimization gets stuck here</li>
+              <li><b>Positive Definite:</b> Ellipses (Convex Bowl)</li>
+              <li><b>Indefinite:</b> Hyperbolas (Saddle Point)</li>
             </ul>
           </li>
         </ul>
-        <p><i>Why this matters:</i> In optimization, the Hessian matrix of second derivatives determines whether we're at a minimum, maximum, or saddle point. PSD Hessians guarantee convexity!</p>
-        <div id="widget-eigen-psd" style="width: 100%; height: 400px; position: relative;"></div>
+        <div id="widget-matrix-geometry" style="width: 100%; position: relative;"></div>
       </div>
 
       <div class="widget-container" style="margin: 24px 0;">
@@ -1563,16 +1568,12 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     initRankNullspace('widget-rank-nullspace');
   </script>
   <script type="module">
-    import { initEigenPsd } from './widgets/js/eigen-psd.js';
-    initEigenPsd('widget-eigen-psd');
+    import { initMatrixGeometry } from './widgets/js/matrix-geometry.js';
+    initMatrixGeometry('widget-matrix-geometry');
   </script>
   <script type="module">
     import { initSvdApproximator } from './widgets/js/svd-approximator.js';
     initSvdApproximator('widget-svd-approximator');
-  </script>
-  <script type="module">
-    import { initMatrixExplorer } from './widgets/js/matrix-explorer.js';
-    initMatrixExplorer('widget-matrix-explorer');
   </script>
   <script type="module">
     import { initHessianLandscapeVisualizer } from './widgets/js/hessian-landscape-visualizer.js';
