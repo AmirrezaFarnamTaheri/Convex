@@ -56,18 +56,12 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ---
 
-## Lecture 01: Introduction (5 Widgets)
+## Lecture 01: Introduction (4 Widgets)
 
-- **[x] Convex vs Nonconvex Explorer (HIGH)**
-  - **Location:** `topics/01-introduction/widgets/js/convex-vs-nonconvex.js`
-  - **Description:** Users can select different 1D functions and see a visual check of Jensen's inequality to classify them as convex or nonconvex. Shows chord vs curve.
-  - **Dependencies:** D3.js.
-  - **Status:** Completed
-
-- **[x] Landscape Viewer (3D) (HIGH)**
-  - **Location:** `topics/01-introduction/widgets/js/landscape-viewer.js`
-  - **Description:** A 3D surface plot where a marble "rolls" to the minimum (gradient descent physics), illustrating global vs. local optima.
-  - **Dependencies:** THREE.js, Pyodide (NumPy).
+- **[x] Optimization Landscape Explorer (HIGH) [MERGED]**
+  - **Location:** `topics/01-introduction/widgets/js/optimization-landscape.js`
+  - **Description:** Unified tool combining 1D convexity definition (Jensen's inequality) with 3D optimization landscape simulation (Global vs Local minima, marble physics). Replaces separate 'Convex vs Nonconvex' and 'Landscape Viewer'.
+  - **Dependencies:** D3.js, THREE.js, Pyodide (NumPy).
   - **Status:** Completed
 
 - **[x] Problem Classification Flowchart (MEDIUM)**
@@ -90,11 +84,11 @@ This document provides a comprehensive list of all planned interactive widgets, 
 
 ---
 
-## Lecture 02: Convex Sets (5 Widgets)
+## Lecture 02: Convex Sets (4 Widgets)
 
-- **[x] Convex Set Checker (HIGH)**
-  - **Location:** `topics/02-convex-sets/widgets/js/convex-set-checker.js`
-  - **Description:** Users can draw a 2D shape, and the widget checks if it's convex by sampling pairs of points. Shows counter-example segment for non-convex sets.
+- **[x] Convex Geometry Lab (HIGH) [MERGED]**
+  - **Location:** `topics/02-convex-sets/widgets/js/convex-geometry-lab.js`
+  - **Description:** Unified workspace for drawing custom sets, adding standard shapes, and applying operations (Intersection, Hull, Minkowski Sum). Replaces 'Convex Set Checker' and 'Operations Builder'.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
@@ -116,31 +110,13 @@ This document provides a comprehensive list of all planned interactive widgets, 
   - **Dependencies:** D3.js.
   - **Status:** Completed
 
-- **[x] Operations Preserve Convexity Builder (MEDIUM)**
-  - **Location:** `topics/02-convex-sets/widgets/js/operations-builder.js`
-  - **Description:** A tool where users can apply operations (intersection, affine transformation, Minkowski sum) to sets to see the result.
-  - **Dependencies:** D3.js.
-  - **Status:** Completed
-
 ---
 
-## Lecture 03: Convex Functions (5 Widgets)
+## Lecture 03: Convex Functions (3 Widgets)
 
-- **[x] Jensen's Inequality Interactive Proof (HIGH)**
-  - **Location:** `topics/03-convex-functions/widgets/js/jensen-visualizer.js`
-  - **Description:** Users can pick points on a curve to visualize Jensen's inequality (chord above function).
-  - **Dependencies:** D3.js.
-  - **Status:** Completed
-
-- **[x] Epigraph Visualizer (MEDIUM)**
-  - **Location:** `topics/03-convex-functions/widgets/js/epigraph-visualizer.js`
-  - **Description:** Shows the 2D graph of a function and allows slicing the epigraph to see sublevel sets. Highlights convexity relationship.
-  - **Dependencies:** D3.js.
-  - **Status:** Completed
-
-- **[x] First-Order Characterization: Tangent Line Explorer (HIGH)**
-  - **Location:** `topics/03-convex-functions/widgets/js/tangent-line-explorer.js`
-  - **Description:** Users check if the tangent line is a global underestimator. Now includes **Strong Convexity** quadratic bound visualization.
+- **[x] Convex Function Inspector (HIGH) [MERGED]**
+  - **Location:** `topics/03-convex-functions/widgets/js/convex-function-inspector.js`
+  - **Description:** Unified analysis tool allowing users to select functions and toggle layers for Jensen's inequality, Epigraph/Sublevel sets, First-order Tangent condition, and Second-order Quadratic bounds. Replaces 'Jensen Visualizer', 'Epigraph Visualizer', and 'Tangent Line Explorer'.
   - **Dependencies:** D3.js.
   - **Status:** Completed
 

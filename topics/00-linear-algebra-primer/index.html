@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script src="https://unpkg.com/feather-icons"></script>
   <script type="importmap">
     {
       "imports": {
@@ -26,13 +27,13 @@
         </a>
       </div>
       <nav class="nav">
-        <a href="../../index.html">All Lectures</a>
-        <a href="../01-introduction/index.html">Next →</a>
+        <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
+        <a href="../01-introduction/index.html">Next <i data-feather="arrow-right"></i></a>
       </nav>
     </div>
   </header>
 
-  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2>Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <header class="lecture-header card-v2">
       <h1>00. A Primer on Linear Algebra</h1>
       <div class="lecture-meta">
@@ -48,7 +49,7 @@
     </header>
 
     <section class="card-v2">
-      <h2>Learning Objectives</h2>
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
       <p>After this lecture, you will be able to work with:</p>
       <ul>
         <li><b>Fundamental Objects and Subspaces:</b> Vectors, matrices, the four fundamental subspaces, and the Rank-Nullity Theorem.</li>
@@ -1229,9 +1230,77 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <p>In <a href="../02-convex-sets/index.html">Lecture 02</a>, when computing <b>dual cones</b>, you will repeatedly use "$y^\top x \le \|y\|_* \|x\|$" with appropriate norms. This inequality is the workhorse of duality theory.</p>
     </section>
 
-    <!-- SECTION 14: MATRIX STRUCTURES FOR OPTIMIZATION -->
+    <!-- SECTION 14: MATRIX CALCULUS BASICS -->
     <section class="card-v2" id="section-14">
-      <h2>14. Matrix Inner Product, Frobenius Norm, and Loewner Order</h2>
+      <h2>14. Matrix Calculus Basics</h2>
+
+      <p>Optimization algorithms rely heavily on gradients and Hessians. Computing derivatives with respect to vectors and matrices is a core skill. Here are the standard rules you will use repeatedly.</p>
+
+      <h3>Gradients of Linear and Quadratic Forms</h3>
+      <p>For $x \in \mathbb{R}^n$, $A \in \mathbb{R}^{n \times n}$, and $b \in \mathbb{R}^n$:</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Function $f(x)$</th>
+            <th>Gradient $\nabla f(x)$</th>
+            <th>Hessian $\nabla^2 f(x)$</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>$b^\top x$</td>
+            <td>$b$</td>
+            <td>$0$</td>
+            <td>Linear function</td>
+          </tr>
+          <tr>
+            <td>$x^\top A x$</td>
+            <td>$(A + A^\top)x$</td>
+            <td>$A + A^\top$</td>
+            <td>General quadratic</td>
+          </tr>
+          <tr>
+            <td>$x^\top A x$</td>
+            <td>$2Ax$</td>
+            <td>$2A$</td>
+            <td>If $A$ is symmetric ($A=A^\top$)</td>
+          </tr>
+          <tr>
+            <td>$\|Ax - b\|_2^2$</td>
+            <td>$2A^\top(Ax - b)$</td>
+            <td>$2A^\top A$</td>
+            <td>Least Squares objective</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Gradients with Respect to Matrices</h3>
+      <p>For a matrix variable $X \in \mathbb{R}^{m \times n}$, the gradient is an $m \times n$ matrix.</p>
+
+      <ul>
+        <li><b>Trace:</b> $\nabla_X \mathrm{tr}(A^\top X) = A$.</li>
+        <li><b>Frobenius Norm Squared:</b> $\nabla_X \|X\|_F^2 = \nabla_X \mathrm{tr}(X^\top X) = 2X$.</li>
+        <li><b>Log Determinant:</b> $\nabla_X \log \det X = X^{-\top}$ (for $X$ square, invertible). If $X \in \mathbb{S}^n_{++}$, then $\nabla_X \log \det X = X^{-1}$.</li>
+      </ul>
+
+      <div class="insight">
+        <h4>💡 Chain Rule for Matrix Functions</h4>
+        <p>If $f(X) = g(h(X))$, then the differential is $df = g'(h(X)) \circ dh$. For example, to differentiate $\|Ax - b\|_2^2$:</p>
+        <ol>
+          <li>Let $r = Ax - b$. Then $f = r^\top r$.</li>
+          <li>$df = 2r^\top dr$.</li>
+          <li>$dr = A dx$.</li>
+          <li>Substitute: $df = 2r^\top A dx = (2A^\top r)^\top dx$.</li>
+          <li>The gradient is the transpose of the coefficient of $dx^\top$ (or the vector multiplying $dx$), so $\nabla f = 2A^\top r = 2A^\top(Ax-b)$.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SECTION 15: MATRIX STRUCTURES FOR OPTIMIZATION (Renumbered) -->
+    <section class="card-v2" id="section-15">
+      <h2>15. Matrix Inner Product, Frobenius Norm, and Loewner Order</h2>
 
       <h3>Trace and Frobenius Inner Product</h3>
       <p>For matrices $X, Y \in \mathbb{R}^{m \times n}$, define:</p>
@@ -1280,9 +1349,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 15: COMPONENTWISE ORDER AND PROJECTION -->
-    <section class="card-v2" id="section-15">
-      <h2>15. Componentwise Order and Projection onto Affine Sets</h2>
+    <!-- SECTION 16: COMPONENTWISE ORDER AND PROJECTION -->
+    <section class="card-v2" id="section-16">
+      <h2>16. Componentwise Order and Projection onto Affine Sets</h2>
 
       <h3>Componentwise Order</h3>
       <p>For vectors $x, y \in \mathbb{R}^n$, we write:</p>
@@ -1345,9 +1414,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 16: EXERCISES -->
-    <section class="card-v2" id="section-16">
-      <h2>16. Exercises</h2>
+    <!-- SECTION 17: EXERCISES -->
+    <section class="card-v2" id="section-17">
+      <h2><i data-feather="edit-3"></i> 17. Exercises</h2>
 
       <h3>Problem 1: Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
@@ -1509,7 +1578,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
     <!-- READINGS -->
     <section class="card-v2" id="readings">
-      <h2>Readings & Resources</h2>
+      <h2><i data-feather="book-open"></i> Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, <em>Convex Optimization</em>, Appendix A.</li>
         <li><strong>Video Resource:</strong> Gilbert Strang's "The Fundamental Theorem of Linear Algebra" (MIT OpenCourseWare)</li>
@@ -1529,6 +1598,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
   <script src="../../static/js/theme-switcher.js"></script>
   <script src="../../static/js/toc.js"></script>
   <script>
+    feather.replace();
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 

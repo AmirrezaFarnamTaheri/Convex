@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script src="https://unpkg.com/feather-icons"></script>
   <script type="importmap">
     {
       "imports": {
@@ -26,14 +27,14 @@
         </a>
       </div>
       <nav class="nav">
-        <a href="../../index.html">All Lectures</a>
-        <a href="../00-linear-algebra-primer/index.html">← Previous</a>
-        <a href="../02-convex-sets/index.html">Next →</a>
+        <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
+        <a href="../00-linear-algebra-primer/index.html"><i data-feather="arrow-left"></i> Previous</a>
+        <a href="../02-convex-sets/index.html">Next <i data-feather="arrow-right"></i></a>
       </nav>
     </div>
   </header>
 
-  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2>Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <header class="lecture-header card-v2">
       <h1>01. Introduction: What Makes a Problem Convex?</h1>
       <div class="lecture-meta">
@@ -49,7 +50,7 @@
     </header>
 
     <section class="card-v2">
-      <h2>Learning Objectives</h2>
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
       <ul>
         <li><b>Define Convex Optimization Problems:</b> State the precise three-part definition and distinguish convex from nonconvex problems at a glance.</li>
         <li><b>Prove the Fundamental Theorem:</b> Show that every local minimum of a convex problem is a global minimum, and understand why this property is essential.</li>
@@ -224,40 +225,14 @@
         </figure>
 
         <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Explorer: Convex vs Non-Convex Functions</h3>
-          <p><b>Test Jensen's Inequality Visually:</b> This tool lets you verify the defining property of convex functions by selecting two points and observing whether the chord lies above or below the curve:</p>
+          <h3 style="margin-top: 0;">Interactive Laboratory: Convexity & Landscapes</h3>
+          <p><b>From Definition to Global Optimality:</b> This unified tool connects the mathematical definition of convexity with its powerful consequences for optimization. Toggle between the two tabs below:</p>
           <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Choose a function:</b>
-              <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
-                <li><b>Convex examples:</b> $x^2$, $e^x$, $|x|$, $\max\{0, x\}$</li>
-                <li><b>Concave examples:</b> $\sqrt{x}$, $\log(x)$, $-x^2$</li>
-                <li><b>Neither:</b> $\sin(x)$, $x^3$, $x^4 - x^2$</li>
-              </ul>
-            </li>
-            <li><b>Select two points:</b> Click anywhere on the graph to place $x$ and $y$.</li>
-            <li><b>Observe the test:</b> The tool draws the chord (line segment from $(x, f(x))$ to $(y, f(y))$) and checks whether it lies above the curve.</li>
-            <li><b>Adjust $\theta$:</b> Slide to see how the point $z = \theta x + (1-\theta)y$ moves along the chord.</li>
+            <li><b>The Definition (1D):</b> Interactively verify <b>Jensen's Inequality</b>. Click two points to draw a chord. If the chord stays <i>above</i> the curve everywhere, the function is convex. This geometric "bowl shape" prevents hidden valleys.</li>
+            <li><b>The Consequence (3D):</b> See what this means for optimization. Drop a marble on a <b>Convex Bowl</b> and it always finds the bottom (Global Minimum). Drop it on a <b>Non-Convex Landscape</b> and it gets stuck in local dips.</li>
           </ul>
-          <p><i>Mathematical property:</i> A function is convex if and only if $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ for all $x, y$ and $\theta \in [0,1]$. This is called <b>Jensen's inequality</b>.</p>
-          <div id="widget-convex-vs-nonconvex" style="width: 100%; height: 450px; position: relative;"></div>
-        </div>
-
-        <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive 3D: Optimization Landscape Viewer</h3>
-          <p><b>Experience Why Local = Global Matters:</b> This immersive 3D visualization lets you "drop a marble" on different optimization landscapes and watch it roll to a minimum:</p>
-          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Convex landscapes:</b> Smooth bowls (paraboloid, quadratic)—the marble always finds the unique global minimum regardless of where you drop it.</li>
-            <li><b>Non-convex landscapes:</b> Rugged terrain (Rosenbrock, Rastrigin, Ackley)—the marble gets trapped in local minima, and which one depends on the starting point!</li>
-            <li><b>Interactive controls:</b>
-              <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
-                <li>Click to drop the marble (gradient descent simulation).</li>
-                <li>Rotate to view from different angles.</li>
-                <li>Compare different algorithms (steepest descent, momentum, Newton).</li>
-              </ul>
-            </li>
-          </ul>
-          <p><i>Why this is powerful:</i> For convex problems, you don't need clever restarts, multiple initializations, or sophisticated global search heuristics—any reasonable descent algorithm will find the global optimum. This is why convex optimization is considered "solved" in practice.</p>
-          <div id="widget-landscape-viewer" style="width: 100%; height: 500px; position: relative;"></div>
+          <p><i>Key Insight:</i> The simple 1D geometric property (chord above curve) guarantees that in ANY dimension, there are no local traps. Local optimality implies global optimality.</p>
+          <div id="widget-optimization-landscape" style="width: 100%; position: relative;"></div>
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">
@@ -973,7 +948,7 @@
       </section>
 
       <section class="card-v2" id="section-10">
-        <h2>10. Exercises</h2>
+        <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
 
         <div class="problem">
           <h3>P1.1 — Classify as Convex / Not Convex</h3>
@@ -1157,6 +1132,7 @@
   <script src="../../static/js/theme-switcher.js"></script>
   <script src="../../static/js/toc.js"></script>
   <script>
+    feather.replace();
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 
@@ -1166,12 +1142,8 @@
     initConvexCombination('widget-convex-combination');
   </script>
   <script type="module">
-    import { initConvexVsNonconvex } from './widgets/js/convex-vs-nonconvex.js';
-    initConvexVsNonconvex('widget-convex-vs-nonconvex');
-  </script>
-  <script type="module">
-    import { initLandscapeViewer } from './widgets/js/landscape-viewer.js';
-    initLandscapeViewer('widget-landscape-viewer');
+    import { initOptimizationLandscape } from './widgets/js/optimization-landscape.js';
+    initOptimizationLandscape('widget-optimization-landscape');
   </script>
   <script type="module">
     import { initConvergenceComparison } from './widgets/js/convergence-comparison.js';
