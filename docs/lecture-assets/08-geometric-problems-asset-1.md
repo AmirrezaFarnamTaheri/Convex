@@ -1,4 +1,0 @@
-- **Filename:** `graham-scan-convex-hull.gif`
-- **Source URL:** https://en.wikipedia.org/wiki/File:GrahamScanDemo.gif
-- **License:** Creative Commons Attribution-Share Alike 4.0 International
-- **Description:** An animation of the Graham scan algorithm for finding the convex hull of a set of points. This animation provides a clear, step-by-step visualization of a fundamental algorithm in computational geometry.

@@ -6,24 +6,26 @@
   <title>03. Convex Functions: Characterization & Operations — Convex Optimization</title>
   <link rel="stylesheet" href="../../static/css/lecture-styles.css" />
   <link rel="stylesheet" href="../../static/css/modern-widgets.css" />
+  <title>03. Convex Functions: Theory, Tests, and Operations — Convex Optimization</title>
+  <link rel="stylesheet" href="../../static/css/convex-unified.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
-  <!-- Header with navigation -->
-  <header class="site-header">
-    <div class="container header-inner">
+  <header class="site-header sticky">
+    <div class="container">
       <div class="brand">
-        <img src="../../static/assets/branding/logo.svg" class="logo" alt="logo" />
-        <a href="../../index.html" style="text-decoration:none;color:inherit">
-          <strong>Convex Optimization</strong>
+        <a href="../../index.html">
+          <img src="../../static/assets/branding/logo.svg" alt="Logo" />
+          <span>Convex Optimization</span>
         </a>
       </div>
       <nav class="nav">
-        <a href="../../index.html">All Lectures</a>
-        <a href="#widgets">Interactive</a>
-        <a href="#readings">Readings</a>
+        <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
+        <a href="../02-convex-sets/index.html"><i data-feather="arrow-left"></i> Previous</a>
+        <a href="../04-convex-opt-problems/index.html">Next <i data-feather="arrow-right"></i></a>
       </nav>
     </div>
   </header>
@@ -42,113 +44,140 @@
       <h1 style="margin-top: 0;">03. Convex Functions: Characterization & Operations</h1>
       <div class="meta">
         Date: 2025-11-04 · Duration: 90 min · Tags: functions, theory
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+    <header class="lecture-header card-v2">
+      <h1>03. Convex Functions: Definitions, Characterizations, and Operations</h1>
+      <div class="lecture-meta">
+        <span>Date: 2025-11-04</span>
+        <span>Duration: 90 min</span>
+        <span>Tags: functions, theory, optimization, characterization</span>
       </div>
+      <div class="lecture-summary">
+        <p><strong>Overview:</strong> This lecture develops the theory of convex functions, which form the foundation for convex optimization. We present multiple equivalent characterizations (Jensen's inequality, epigraph, first-order conditions, second-order conditions), prove key properties, and establish operations that preserve convexity. The lecture culminates with a comprehensive toolkit for recognizing and constructing convex functions in practice.</p>
+        <p><strong>Prerequisites:</strong> <a href="../00-linear-algebra-primer/index.html">Lecture 00: Linear Algebra</a> (gradients, Hessians, eigenvalues) and <a href="../02-convex-sets/index.html">Lecture 02: Convex Sets</a> (convex sets, epigraphs, operations).</p>
+        <p><strong>Forward Connections:</strong> Convex functions are the building blocks of convex optimization problems. First-order and second-order conditions lead directly to optimality conditions (Lecture 04-05). Operations preserving convexity enable sophisticated modeling (Lecture 06-07).</p>
+      </div>
+    </header>
 
-      <!-- Brief introduction -->
-      <section style="margin-top: 16px;">
-        <p><strong>Overview:</strong> Jensen, epigraphs, first/second-order tests, operations preserving convexity.</p>
-        <p><strong>Prerequisites:</strong> <a href="../02-convex-sets/index.html">Lecture 02</a></p>
+    <section class="card-v2">
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
+      <ul>
+        <li><b>Master Multiple Characterizations:</b> State and prove equivalences between Jensen's inequality, epigraph convexity, first-order conditions, and second-order conditions.</li>
+        <li><b>Apply First-Order Conditions:</b> Use the tangent line property to verify convexity and derive inequalities.</li>
+        <li><b>Use Second-Order Conditions:</b> Verify convexity via Hessian positive semidefiniteness.</li>
+        <li><b>Understand Strong Convexity:</b> Define strong convexity and explain its importance for convergence rates and uniqueness.</li>
+        <li><b>Recognize Convexity-Preserving Operations:</b> Apply nonnegative combinations, compositions, pointwise maxima, and perspective operations to construct complex convex functions.</li>
+        <li><b>Master the Conjugate Function:</b> Define the convex conjugate (Fenchel conjugate) and understand its role in duality theory.</li>
+        <li><b>Apply Quasi-convexity:</b> Distinguish convex from quasi-convex functions and understand when quasi-convexity suffices for optimization.</li>
+      </ul>
+    </section>
+
+    <nav class="card table-of-contents">
+      <h2>Table of Contents</h2>
+      <ol>
+        <li><a href="#section-1">Definition and Basic Properties</a></li>
+        <li><a href="#section-2">Epigraph Characterization</a></li>
+        <li><a href="#section-3">First-Order Conditions (Tangent Line Property)</a></li>
+        <li><a href="#section-4">Second-Order Conditions (Hessian Test)</a></li>
+        <li><a href="#section-5">Operations Preserving Convexity</a></li>
+        <li><a href="#section-6">Strong Convexity and Smoothness</a></li>
+        <li><a href="#section-7">The Convex Conjugate (Fenchel Conjugate)</a></li>
+        <li><a href="#section-8">Quasi-Convex Functions</a></li>
+        <li><a href="#section-9">Common Convex Functions Reference</a></li>
+        <li><a href="#section-10">Problem Set & Solutions</a></li>
+      </ol>
+    </nav>
+
+    <article>
+      <section class="card-v2" id="section-1">
+        <h2>1. Definition and Basic Properties</h2>
+
+        <h3>1.1 Convex Functions: The Core Definition</h3>
+        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <b>convex</b> if its domain $\mathrm{dom}\, f$ is a convex set, and for all $x, y \in \mathrm{dom}\, f$ and all $\theta \in [0, 1]$:</p>
+        $$
+        f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)
+        $$
+        <p>This is <b>Jensen's inequality</b> for two points. It states that the function value at a convex combination of points is at most the corresponding convex combination of function values.</p>
+
+        <div class="insight">
+          <h4>💡 Geometric Intuition</h4>
+          <p>The chord connecting any two points on the graph of $f$ lies above (or on) the graph. Equivalently, $f$ "curves upward"—there are no "dents" or concave regions.</p>
+        </div>
+
+        <h3>1.2 Strict and Strong Convexity</h3>
+
+        <div class="subsection">
+          <h4>Strictly Convex</h4>
+          <p>A function $f$ is <b>strictly convex</b> if the inequality in Jensen's inequality is strict whenever $x \neq y$ and $\theta \in (0, 1)$:</p>
+          $$
+          f(\theta x + (1-\theta)y) < \theta f(x) + (1-\theta)f(y)
+          $$
+          <p><b>Implication:</b> Strictly convex functions have at most one minimizer (uniqueness of optimal solution).</p>
+        </div>
+
+        <div class="subsection">
+          <h4>Strongly Convex</h4>
+          <p>A function $f$ is <b>$m$-strongly convex</b> (with parameter $m > 0$) if for all $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$:</p>
+          $$
+          f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) - \frac{m}{2} \theta(1-\theta) \|x - y\|_2^2
+          $$
+          <p>Equivalently, $f(x) - \frac{m}{2}\|x\|_2^2$ is convex.</p>
+          <p><b>Implication:</b> Strong convexity provides a quadratic lower bound on the growth of the function, leading to fast convergence rates in optimization algorithms.</p>
+        </div>
+
+        <h3>1.3 Concave Functions</h3>
+        <p>A function $f$ is <b>concave</b> if $-f$ is convex. Equivalently, the chord lies below the graph. All results for convex functions can be "flipped" for concave functions by negating.</p>
+
+        <h3>1.4 Extended-Value Extension</h3>
+        <p>We often extend $f$ to all of $\mathbb{R}^n$ by setting $f(x) = +\infty$ for $x \notin \mathrm{dom}\, f$. This allows us to write constraints implicitly: minimizing $f$ over $\mathbb{R}^n$ is equivalent to minimizing over $\mathrm{dom}\, f$.</p>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Inspector: Understanding Convexity</h3>
+          <p><b>Explore the Equivalences:</b> Convexity can be defined in multiple ways. This unified tool lets you toggle between different perspectives to see how they relate:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Jensen (Definition):</b> The chord between any two points lies above the graph.</li>
+            <li><b>Epigraph (Set Theory):</b> The region above the graph is a convex set.</li>
+            <li><b>Tangent (First-Order):</b> The tangent line is always a global underestimator (for differentiable functions).</li>
+            <li><b>Quadratic Bound (Strong Convexity):</b> A quadratic bowl sits below the function, pushing it up.</li>
+          </ul>
+          <p><i>Note:</i> Select different functions to see how non-convex functions violate these conditions!</p>
+          <div id="widget-convex-function-inspector" style="width: 100%; position: relative;"></div>
+        </div>
       </section>
-    </article>
 
-    <!-- Learning objectives -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Learning Objectives</h2>
-      <p>After this lecture, you should understand:</p>
-      <ul style="line-height: 1.8;">
-        <li>The definition of a convex function and its connection to convex sets.</li>
-        <li>First and second-order conditions for convexity.</li>
-        <li>How operations like addition, scaling, and composition preserve convexity.</li>
-      </ul>
-    </section>
+      <section class="card-v2" id="section-2">
+        <h2>2. Epigraph Characterization</h2>
 
-    <!-- Main lecture content -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Key Concepts</h2>
+        <h3>2.1 The Epigraph</h3>
+        <p>The <b>epigraph</b> of a function $f: \mathbb{R}^n \to \mathbb{R}$ is the set of points lying on or above the graph:</p>
+        $$
+        \mathrm{epi}\, f = \{(x, t) \in \mathbb{R}^{n+1} \mid x \in \mathrm{dom}\, f, \ f(x) \le t\}
+        $$
+        <p>The epigraph "fills in" everything above the function's graph.</p>
 
-      <h3>Concept 1: Convex Functions</h3>
-      <p>A function $f$ is convex if its domain is a convex set and for all $x, y$ in its domain, and for any $\theta$ with $0 \le \theta \le 1$, we have $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta) f(y)$.</p>
-      <p>Visual intuition: The line segment between any two points on the graph of a convex function lies above or on the graph.</p>
-
-      <!-- Include images as needed -->
-      <figure style="margin: 16px 0; text-align: center;">
-        <img src="../../static/assets/topics/03-convex-functions/convex-function-illustration.svg" alt="Illustration of a convex function" style="max-width: 100%; height: auto; border-radius: 8px;" />
-        <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
-          An illustration of a convex function, where the chord connecting two points (black line) lies above the function graph (blue curve). Source: Wikipedia.
-        </figcaption>
-      </figure>
-    </section>
-
-    <!-- Interactive widgets -->
-    <section class="card" id="widgets" style="margin-bottom: 32px;">
-      <h2>Interactive Widgets</h2>
-      <p>Below are tools to explore the concepts interactively. Try tweaking parameters to build intuition.</p>
-
-      <!-- Widget 1 -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Jensen Visualizer</h3>
-        <p>Explore Jensen's inequality for different functions and points.</p>
-        <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
+        <h3>2.2 Convexity via Epigraph</h3>
+        <div class="theorem-box">
+          <h4>Theorem (Epigraph Characterization)</h4>
+          <p>A function $f$ is convex <b>if and only if</b> its epigraph $\mathrm{epi}\, f$ is a convex set.</p>
         </div>
-      </div>
 
-      <!-- Widget 2 -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Hessian Eigenvalue Heatmap</h3>
-        <p>Visualize the minimum eigenvalue of the Hessian to check for convexity.</p>
-        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
+        <div class="proof-enhanced">
+          <h4>Proof</h4>
 
-      <!-- Widget 3 (if exists) -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Tangent Line Explorer</h3>
-        <p>The tangent line is always a global underestimator.</p>
-        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
+          <div class="proof-step">
+            <strong>($\Rightarrow$) Convex function implies convex epigraph:</strong> Suppose $f$ is convex. Take any $(x, t), (y, s) \in \mathrm{epi}\, f$ and $\theta \in [0, 1]$. We must show $(\theta x + (1-\theta)y, \theta t + (1-\theta)s) \in \mathrm{epi}\, f$.
+          </div>
 
-      <!-- Widget 4 (if exists) -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Epigraph Visualizer</h3>
-        <p>Shows the 2D graph of a function and allows the user to toggle the visualization of its epigraph.</p>
-        <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
+          <div class="proof-step">
+            <strong>Step 1:</strong> Since $(x, t) \in \mathrm{epi}\, f$ and $(y, s) \in \mathrm{epi}\, f$, we have $f(x) \le t$ and $f(y) \le s$.
+          </div>
 
-      <!-- Widget 5 (if exists) -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Strong Convexity Explorer</h3>
-        <p>Explore strong convexity and see how the lower bound strengthens the tangent line condition.</p>
-        <div id="widget-5" style="width: 100%; height: 600px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Readings -->
-    <section class="card" id="readings" style="margin-bottom: 32px;">
-      <h2>Readings & Resources</h2>
-      <ul class="link-list">
-        <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 3 — Convex Functions</li>
-        <li><strong>Course slides:</strong> [Link if available]</li>
-      </ul>
-    </section>
-
-    <!-- Example problems -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Example Problems</h2>
-
-      <h3>Example 1: Prove that the negative logarithm is a convex function.</h3>
-      <p>[Problem statement and worked solution]</p>
-
-      <h3>Example 2: Composition of convex functions</h3>
-      <p>Show that if f is a convex function and g is a convex, non-decreasing function, then h(x) = g(f(x)) is convex.</p>
-    </section>
+          <div class="proof-step">
+            <strong>Step 2:</strong> By convexity of $f$:
+            $$
+            f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \le \theta t + (1-\theta)s
+            $$
+          </div>
 
     <!-- Exercises (optional) -->
     <section class="card" style="margin-bottom: 32px;">
@@ -161,49 +190,945 @@
     </section>
   </main>
   </div>
+          <div class="proof-step">
+            <strong>Step 3:</strong> Therefore, $(\theta x + (1-\theta)y, \theta t + (1-\theta)s) \in \mathrm{epi}\, f$, proving $\mathrm{epi}\, f$ is convex.
+          </div>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      <p style="margin: 0;">
-        © <span id="year"></span> Convex Optimization Course ·
-        <a href="../../README.md" style="color: var(--brand);">About</a>
-      </p>
-    </div>
-  </footer>
+          <div class="proof-step">
+            <strong>($\Leftarrow$) Convex epigraph implies convex function:</strong> Suppose $\mathrm{epi}\, f$ is convex. Take any $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$.
+          </div>
 
-  <!-- Load Pyodide for Python widgets (optional) -->
-  <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+          <div class="proof-step">
+            <strong>Step 1:</strong> The points $(x, f(x))$ and $(y, f(y))$ lie in $\mathrm{epi}\, f$ (on the boundary, in fact).
+          </div>
 
-  <!-- Widget loaders -->
-  <script type="module">
-    import { initJensenVisualizer } from './widgets/js/jensen-visualizer.js';
-    initJensenVisualizer('widget-1');
-  </script>
-  <script type="module">
-    import { initHessianHeatmap } from './widgets/js/hessian-heatmap.js';
-    initHessianHeatmap('widget-2');
-  </script>
-  <script type="module">
-    import { initTangentLineExplorer } from './widgets/js/tangent-line-explorer.js';
-    initTangentLineExplorer('widget-3');
-  </script>
-  <script type="module">
-    import { initEpigraphVisualizer } from './widgets/js/epigraph-visualizer.js';
-    initEpigraphVisualizer('widget-4');
-  </script>
-  <script type="module">
-    import { initStrongConvexity } from './widgets/js/strong-convexity.js';
-    initStrongConvexity('widget-5');
-  </script>
+          <div class="proof-step">
+            <strong>Step 2:</strong> By convexity of $\mathrm{epi}\, f$, the point $(\theta x + (1-\theta)y, \theta f(x) + (1-\theta)f(y))$ also lies in $\mathrm{epi}\, f$.
+          </div>
 
-  <!-- Global utilities -->
+          <div class="proof-step">
+            <strong>Step 3:</strong> By definition of epigraph, this means:
+            $$
+            f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)
+            $$
+            proving $f$ is convex.
+          </div>
+        </div>
+
+        <div class="insight">
+          <h4>⚡ Why This Matters</h4>
+          <p>The epigraph characterization lets us translate between function convexity and set convexity. Many operations on functions (e.g., infimal convolution) can be understood as operations on their epigraphs (e.g., Minkowski sum).</p>
+        </div>
+
+      </section>
+
+      <section class="card-v2" id="section-3">
+        <h2>3. First-Order Conditions (Tangent Line Property)</h2>
+
+        <h3>3.1 The First-Order Characterization</h3>
+        <div class="theorem-box">
+          <h4>Theorem (First-Order Condition for Convexity)</h4>
+          <p>Suppose $f: \mathbb{R}^n \to \mathbb{R}$ is differentiable. Then $f$ is convex <b>if and only if</b> $\mathrm{dom}\, f$ is convex and for all $x, y \in \mathrm{dom}\, f$:</p>
+          $$
+          f(y) \ge f(x) + \nabla f(x)^\top (y - x)
+          $$
+          <p>This states that the <b>tangent line (or tangent hyperplane) at any point is a global underestimator</b> of the function.</p>
+        </div>
+
+        <div class="proof-enhanced">
+          <h4>Proof</h4>
+
+          <div class="proof-step">
+            <strong>($\Rightarrow$) Convex implies first-order condition:</strong> Suppose $f$ is convex. Fix $x, y \in \mathrm{dom}\, f$ and consider the function $g(t) = f(x + t(y - x))$ for $t \in [0, 1]$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 1:</strong> By convexity:
+            $$
+            g(t) = f(x + t(y - x)) \le (1-t)f(x) + t f(y)
+            $$
+            Rearranging:
+            $$
+            f(x + t(y - x)) - f(x) \le t(f(y) - f(x))
+            $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2:</strong> Divide by $t > 0$ and take $t \to 0^+$:
+            $$
+            \lim_{t \to 0^+} \frac{f(x + t(y - x)) - f(x)}{t} \le f(y) - f(x)
+            $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3:</strong> The left side is the directional derivative, which equals $\nabla f(x)^\top (y - x)$ since $f$ is differentiable:
+            $$
+            \nabla f(x)^\top (y - x) \le f(y) - f(x)
+            $$
+            Rearranging gives the desired inequality.
+          </div>
+
+          <div class="proof-step">
+            <strong>($\Leftarrow$) First-order condition implies convex:</strong> Suppose the first-order condition holds. Take $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$. Let $z = \theta x + (1-\theta)y$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 1:</strong> Apply the first-order condition at $z$ with $x$ and $y$:
+            $$
+            f(x) \ge f(z) + \nabla f(z)^\top (x - z)
+            $$
+            $$
+            f(y) \ge f(z) + \nabla f(z)^\top (y - z)
+            $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2:</strong> Multiply the first inequality by $\theta$ and the second by $(1-\theta)$, then add:
+            $$
+            \theta f(x) + (1-\theta)f(y) \ge f(z) + \nabla f(z)^\top (\theta(x - z) + (1-\theta)(y - z))
+            $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3:</strong> Since $z = \theta x + (1-\theta)y$, we have $\theta(x - z) + (1-\theta)(y - z) = 0$:
+            $$
+            \theta f(x) + (1-\theta)f(y) \ge f(z) = f(\theta x + (1-\theta)y)
+            $$
+            proving convexity.
+          </div>
+        </div>
+
+        <div class="insight">
+          <h4>🔑 Key Takeaway</h4>
+          <p>For differentiable functions, convexity is equivalent to: <b>the first-order Taylor approximation always underestimates the function</b>. This is an extremely useful characterization for analysis and algorithm design.</p>
+        </div>
+
+        <h3>3.2 Consequences and Applications</h3>
+
+        <div class="example">
+          <h4>Application 1: Proving a Function is Convex</h4>
+          <p>Show that $f(x) = e^x$ is convex on $\mathbb{R}$.</p>
+          <p><b>Solution:</b> We verify the first-order condition. For any $x, y \in \mathbb{R}$:</p>
+          $$
+          f(y) = e^y, \quad f(x) + f'(x)(y - x) = e^x + e^x(y - x) = e^x(1 + y - x)
+          $$
+          <p>We need to show $e^y \ge e^x(1 + y - x)$ for all $x, y$. Dividing by $e^x > 0$ and letting $t = y - x$:</p>
+          $$
+          e^t \ge 1 + t
+          $$
+          <p>This is a well-known inequality (follows from the Taylor series of $e^t$ with all positive terms). Therefore, $f(x) = e^x$ is convex.</p>
+        </div>
+
+        <div class="example">
+          <h4>Application 2: Optimality Condition</h4>
+          <p>If $f$ is convex and differentiable, then $x^*$ minimizes $f$ over a convex set $C$ if and only if:</p>
+          $$
+          \nabla f(x^*)^\top (y - x^*) \ge 0 \quad \forall y \in C
+          $$
+          <p>This is the <b>first-order optimality condition</b>. For unconstrained problems ($C = \mathbb{R}^n$), this reduces to $\nabla f(x^*) = 0$ (the gradient vanishes).</p>
+        </div>
+
+      </section>
+
+      <section class="card-v2" id="section-4">
+        <h2>4. Second-Order Conditions (Hessian Test)</h2>
+
+        <h3>4.1 The Second-Order Characterization</h3>
+        <div class="theorem-box">
+          <h4>Theorem (Second-Order Condition for Convexity)</h4>
+          <p>Suppose $f: \mathbb{R}^n \to \mathbb{R}$ is twice differentiable. Then $f$ is convex <b>if and only if</b> $\mathrm{dom}\, f$ is convex and for all $x \in \mathrm{dom}\, f$:</p>
+          $$
+          \nabla^2 f(x) \succeq 0
+          $$
+          <p>That is, the <b>Hessian matrix is positive semidefinite</b> at every point.</p>
+        </div>
+
+        <div class="proof-enhanced">
+          <h4>Proof Sketch</h4>
+          <p>The full proof uses Taylor's theorem with remainder. The key insight is:</p>
+          <ul>
+            <li><b>PSD Hessian:</b> The second-order Taylor expansion $f(y) \approx f(x) + \nabla f(x)^\top (y-x) + \frac{1}{2}(y-x)^\top \nabla^2 f(x) (y-x)$ shows that if $\nabla^2 f(x) \succeq 0$, the function curves upward (convex).</li>
+            <li><b>Direction test:</b> For any direction $v$, the one-dimensional function $g(t) = f(x + tv)$ satisfies $g''(t) = v^\top \nabla^2 f(x + tv) v \ge 0$, so $g$ is convex along every line (implies global convexity).</li>
+          </ul>
+        </div>
+
+        <h3>4.2 Strict and Strong Convexity via Hessian</h3>
+
+        <div class="subsection">
+          <h4>Strictly Convex</h4>
+          <p>If $\nabla^2 f(x) \succ 0$ (positive definite) for all $x \in \mathrm{dom}\, f$, then $f$ is <b>strictly convex</b>.</p>
+          <p><b>Note:</b> The converse is false! $f(x) = x^4$ is strictly convex but $f''(0) = 0$.</p>
+        </div>
+
+        <div class="subsection">
+          <h4>Strongly Convex</h4>
+          <p>If $\nabla^2 f(x) \succeq mI$ for some $m > 0$ and all $x \in \mathrm{dom}\, f$, then $f$ is <b>$m$-strongly convex</b>.</p>
+          <p>Equivalently, the minimum eigenvalue of the Hessian is at least $m$ everywhere.</p>
+        </div>
+
+        <h3>4.3 Practical Verification</h3>
+
+        <div class="example">
+          <h4>Example 1: Quadratic Form</h4>
+          <p>Let $f(x) = \frac{1}{2} x^\top Q x + b^\top x + c$ where $Q \in \mathbb{S}^n$. Then:</p>
+          $$
+          \nabla^2 f(x) = Q
+          $$
+          <p>Therefore, $f$ is convex if and only if $Q \succeq 0$.</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 2: Log-Sum-Exp</h4>
+          <p>The function $f(x) = \log(\sum_{i=1}^n e^{x_i})$ is convex. To verify, compute the Hessian:</p>
+          $$
+          \nabla^2 f(x) = \frac{1}{(\sum_j e^{x_j})^2} \left( (\sum_j e^{x_j})(\mathrm{diag}(e^{x_1}, \ldots, e^{x_n})) - e^x e^{x^\top} \right)
+          $$
+          <p>This can be simplified to show $\nabla^2 f(x) = \mathrm{diag}(z) - zz^\top$ where $z_i = e^{x_i} / \sum_j e^{x_j}$ (a probability vector). This is the covariance matrix of a discrete distribution, hence PSD.</p>
+        </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Heatmap: Hessian Eigenvalue Analyzer</h3>
+          <p><b>Visualize Convexity Through the Hessian:</b> For twice-differentiable functions, convexity is determined by the Hessian being positive semidefinite (PSD). This tool provides a visual test:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Choose a 2D function:</b> Select from various functions (quadratic, Rosenbrock, etc.)</li>
+            <li><b>Heatmap display:</b> The color at each point shows the minimum eigenvalue of the Hessian $\nabla^2 f(x)$</li>
+            <li><b>Interactive Probe:</b> Hover over the heatmap to see the local quadratic approximation. Observe how the local "bowl" or "saddle" shape relates to the Hessian eigenvalues.</li>
+            <li><b>Interpret colors:</b>
+              <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
+                <li><b>Blue/Green (positive):</b> PSD Hessian—locally convex (bowl)</li>
+                <li><b>Red (negative):</b> Not PSD—locally concave or saddle point</li>
+              </ul>
+            </li>
+            <li><b>Global convexity:</b> A function is convex if the entire region is blue/green (no red)</li>
+          </ul>
+          <p><i>Practical insight:</i> This is exactly how numerical optimization libraries verify convexity in practice—by checking that all eigenvalues of the Hessian are non-negative!</p>
+          <div id="widget-hessian-heatmap" style="width: 100%; height: 450px; position: relative;"></div>
+        </div>
+      </section>
+
+      <section class="card-v2" id="section-5">
+        <h2>5. Operations Preserving Convexity</h2>
+
+        <p>One of the most powerful aspects of convex analysis is that complex convex functions can be built from simpler ones using operations that preserve convexity. This enables sophisticated modeling without sacrificing tractability.</p>
+
+        <h3>5.1 Nonnegative Weighted Sum</h3>
+        <div class="theorem-box">
+          <h4>Theorem</h4>
+          <p>If $f_1, \ldots, f_m$ are convex functions and $w_1, \ldots, w_m \ge 0$, then:</p>
+          $$
+          f(x) = \sum_{i=1}^m w_i f_i(x)
+          $$
+          <p>is convex.</p>
+        </div>
+        <p><b>Proof:</b> Direct from the definition:
+        $$
+        f(\theta x + (1-\theta)y) = \sum_i w_i f_i(\theta x + (1-\theta)y) \le \sum_i w_i (\theta f_i(x) + (1-\theta)f_i(y)) = \theta f(x) + (1-\theta)f(y)
+        $$
+        </p>
+
+        <h3>5.2 Pointwise Maximum and Supremum</h3>
+        <div class="theorem-box">
+          <h4>Theorem</h4>
+          <p>If $f_1, \ldots, f_m$ are convex, then $f(x) = \max\{f_1(x), \ldots, f_m(x)\}$ is convex.</p>
+          <p>More generally, if $f(x, y)$ is convex in $x$ for each $y \in \mathcal{A}$, then:</p>
+          $$
+          g(x) = \sup_{y \in \mathcal{A}} f(x, y)
+          $$
+          <p>is convex in $x$ (provided the supremum is finite).</p>
+        </div>
+
+        <div class="example">
+          <h4>Application: Support Function</h4>
+          <p>For any set $C$, the <b>support function</b> $S_C(x) = \sup_{y \in C} x^\top y$ is convex (being the supremum of linear—hence convex—functions $x^\top y$ over $y \in C$).</p>
+        </div>
+
+        <h3>5.3 Composition Rules</h3>
+
+        <div class="theorem-box">
+          <h4>Scalar Composition</h4>
+          <p>Let $h: \mathbb{R} \to \mathbb{R}$ and $g: \mathbb{R}^n \to \mathbb{R}$. Then $f(x) = h(g(x))$ is convex if:</p>
+          <ul>
+            <li>$g$ is convex, and $h$ is convex and <b>non-decreasing</b> (on the range of $g$), OR</li>
+            <li>$g$ is concave, and $h$ is convex and <b>non-increasing</b> (on the range of $g$).</li>
+          </ul>
+        </div>
+
+        <div class="proof-enhanced">
+          <h4>Proof Sketch (First Case)</h4>
+          <p>If $g$ is convex and $h$ is convex and non-decreasing, then for $\theta \in [0, 1]$:
+          $$
+          f(\theta x + (1-\theta)y) = h(g(\theta x + (1-\theta)y)) \le h(\theta g(x) + (1-\theta)g(y))
+          $$
+          (using convexity of $g$ and monotonicity of $h$). Then:
+          $$
+          \le \theta h(g(x)) + (1-\theta)h(g(y)) = \theta f(x) + (1-\theta)f(y)
+          $$
+          (using convexity of $h$).
+          </p>
+        </div>
+
+        <div class="example">
+          <h4>Example: Norms of Affine Functions</h4>
+          <p>If $g(x) = Ax + b$ is affine and $h(t) = |t|^p$ for $p \ge 1$ is convex and non-decreasing on $\mathbb{R}_+$, then:
+          $$
+          f(x) = \|Ax + b\|_p^p
+          $$
+          is convex (composition of convex with convex non-decreasing).
+          </p>
+        </div>
+
+        <div class="theorem-box">
+          <h4>Vector Composition</h4>
+          <p>Let $h: \mathbb{R}^k \to \mathbb{R}$ and $g: \mathbb{R}^n \to \mathbb{R}^k$ with $g(x) = (g_1(x), \ldots, g_k(x))$. Then $f(x) = h(g(x))$ is convex if:</p>
+          <ul>
+            <li>$h$ is convex and <b>non-decreasing in each argument</b>, and each $g_i$ is convex, OR</li>
+            <li>$h$ is convex and <b>non-increasing in each argument</b>, and each $g_i$ is concave.</li>
+          </ul>
+        </div>
+
+        <h3>5.4 Minimization</h3>
+        <div class="theorem-box">
+          <h4>Theorem</h4>
+          <p>If $f(x, y)$ is convex in $(x, y)$ and $C$ is a convex set, then:</p>
+          $$
+          g(x) = \inf_{y \in C} f(x, y)
+          $$
+          <p>is convex in $x$ (if the infimum is finite).</p>
+        </div>
+        <p><b>Intuition:</b> The epigraph of $g$ is the projection of the epigraph of $f$ onto the $x$-space, and projections of convex sets are convex.</p>
+
+        <div class="example">
+          <h4>Application: Distance to a Convex Set</h4>
+          <p>For a convex set $C$, the squared distance function $f(x) = \inf_{y \in C} \|x - y\|_2^2$ is convex. (The function $\|x - y\|_2^2$ is jointly convex in $(x, y)$, so minimizing over $y \in C$ preserves convexity in $x$.)</p>
+        </div>
+
+        <h3>5.5 Perspective</h3>
+        <div class="theorem-box">
+          <h4>Definition and Property</h4>
+          <p>If $f: \mathbb{R}^n \to \mathbb{R}$ is convex, then its <b>perspective</b> $g: \mathbb{R}^{n+1} \to \mathbb{R}$ defined by:</p>
+          $$
+          g(x, t) = t f(x/t), \quad t > 0
+          $$
+          <p>is convex on $\mathrm{dom}\, g = \{(x, t) \mid x/t \in \mathrm{dom}\, f, \ t > 0\}$.</p>
+        </div>
+        <p><b>Application:</b> The perspective operation appears in modeling problems with scaling, e.g., in portfolio optimization and geometric programming.</p>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Builder: Operations Preserving Convexity</h3>
+          <p><b>Build Complex Convex Functions from Simple Ones:</b> This interactive tool lets you combine convex building blocks using convexity-preserving operations:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Start with basic functions:</b> $x^2$, $|x|$, $e^x$, $-\log(x)$, etc.</li>
+            <li><b>Apply operations:</b>
+              <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
+                <li>Nonnegative weighted sum: $w_1 f_1 + w_2 f_2$ (sliders for weights)</li>
+                <li>Pointwise maximum: $\max\{f_1, f_2, \ldots\}$</li>
+                <li>Composition: $h(g(x))$ with appropriate monotonicity</li>
+                <li>Affine transformations: $f(Ax + b)$</li>
+              </ul>
+            </li>
+            <li><b>Visualize the result:</b> See the graph of the combined function</li>
+            <li><b>Verify convexity:</b> Test via Jensen's inequality and Hessian eigenvalues</li>
+            <li><b>Export formula:</b> Get the mathematical expression for the constructed function</li>
+          </ul>
+          <p><i>Modeling power:</i> Almost every convex function you'll encounter in practice can be built using these operations! This is the foundation of disciplined convex programming (DCP) in tools like CVXPY.</p>
+          <div id="widget-operations-preserving" style="width: 100%; height: 500px; position: relative;"></div>
+        </div>
+      </section>
+
+      <section class="card-v2" id="section-6">
+        <h2>6. Strong Convexity and Smoothness</h2>
+
+        <h3>6.1 Strong Convexity: Definition and Properties</h3>
+        <p>A function $f$ is <b>$m$-strongly convex</b> (with parameter $m > 0$) if for all $x, y$ and $\theta \in [0, 1]$:</p>
+        $$
+        f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) - \frac{m}{2} \theta(1-\theta) \|x - y\|_2^2
+        $$
+        <p>Equivalently, $f(x) - \frac{m}{2}\|x\|_2^2$ is convex.</p>
+
+        <h3>6.2 Characterizations of Strong Convexity</h3>
+
+        <div class="theorem-box">
+          <h4>Equivalent Conditions (for differentiable $f$)</h4>
+          <p>The following are equivalent:</p>
+          <ol>
+            <li>$f$ is $m$-strongly convex.</li>
+            <li><b>First-order with quadratic term:</b> $f(y) \ge f(x) + \nabla f(x)^\top (y - x) + \frac{m}{2}\|y - x\|_2^2$</li>
+            <li><b>Hessian bound:</b> (If $f$ is twice differentiable) $\nabla^2 f(x) \succeq mI$ for all $x$.</li>
+            <li><b>Gradient monotonicity:</b> $(\nabla f(y) - \nabla f(x))^\top (y - x) \ge m\|y - x\|_2^2$</li>
+          </ol>
+        </div>
+
+        <h3>6.3 Implications for Optimization</h3>
+
+        <div class="insight">
+          <h4>Why Strong Convexity is Important</h4>
+          <ul>
+            <li><b>Unique minimizer:</b> An $m$-strongly convex function has at most one minimizer.</li>
+            <li><b>Linear convergence:</b> Gradient descent on $m$-strongly convex functions converges at a geometric rate: $f(x_k) - f(x^*) \le (1 - m/L)^k (f(x_0) - f(x^*))$ where $L$ is the Lipschitz constant of the gradient.</li>
+            <li><b>Condition number:</b> The ratio $\kappa = L/m$ (condition number) determines convergence speed.</li>
+          </ul>
+        </div>
+
+        <h3>6.4 Smoothness (Lipschitz Gradient)</h3>
+        <p>A differentiable function $f$ has <b>$L$-Lipschitz continuous gradient</b> (is <b>$L$-smooth</b>) if:</p>
+        $$
+        \|\nabla f(y) - \nabla f(x)\|_2 \le L \|y - x\|_2 \quad \forall x, y
+        $$
+        <p>Equivalently (for twice differentiable $f$): $\nabla^2 f(x) \preceq LI$ for all $x$.</p>
+
+        <div class="example">
+          <h4>Example: Quadratic Functions</h4>
+          <p>For $f(x) = \frac{1}{2} x^\top Q x + b^\top x$ where $mI \preceq Q \preceq LI$:</p>
+          <ul>
+            <li>$f$ is $m$-strongly convex.</li>
+            <li>$f$ has $L$-Lipschitz gradient.</li>
+            <li>The condition number is $\kappa = L/m = \lambda_{\max}(Q) / \lambda_{\min}(Q)$.</li>
+          </ul>
+        </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Explorer: Strong Convexity and Convergence</h3>
+          <p><b>See How Strong Convexity Accelerates Optimization:</b> Strong convexity provides a quadratic lower bound on the function, leading to provably fast convergence. This visualization demonstrates:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Adjust $m$ (strong convexity parameter):</b> Use a slider to change the strength of convexity</li>
+            <li><b>Compare bounds:</b>
+              <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
+                <li>Convex: $f(y) \ge f(x) + \nabla f(x)^\top (y-x)$ (tangent line)</li>
+                <li>Strongly convex: $f(y) \ge f(x) + \nabla f(x)^\top (y-x) + \frac{m}{2}\|y-x\|_2^2$ (quadratic lower bound)</li>
+              </ul>
+            </li>
+            <li><b>Watch gradient descent:</b> Run the algorithm and observe how larger $m$ leads to faster convergence</li>
+            <li><b>Visualize condition number:</b> See how $\kappa = L/m$ determines the convergence rate</li>
+            <li><b>Compare with non-strongly convex:</b> See the dramatic difference in convergence speed</li>
+          </ul>
+          <p><i>Practical impact:</i> This is why adding $\ell_2$ regularization ($\lambda \|x\|_2^2$) not only prevents overfitting but also speeds up optimization—it makes the problem strongly convex!</p>
+          <div id="widget-strong-convexity" style="width: 100%; height: 550px; position: relative;"></div>
+        </div>
+      </section>
+
+      <section class="card-v2" id="section-7">
+        <h2>7. The Convex Conjugate (Fenchel Conjugate)</h2>
+
+        <h3>7.1 Definition</h3>
+        <p>The <b>convex conjugate</b> (or <b>Fenchel conjugate</b>) of a function $f: \mathbb{R}^n \to \mathbb{R}$ is:</p>
+        $$
+        f^*(y) = \sup_{x \in \mathrm{dom}\, f} \left( y^\top x - f(x) \right)
+        $$
+        <p>The conjugate $f^*$ is always convex, even if $f$ is not (it's the supremum of affine functions in $y$).</p>
+
+        <h3>7.2 Geometric Interpretation</h3>
+        <p>For a given $y$, the value $f^*(y)$ is the maximum "gap" between the linear function $y^\top x$ and $f(x)$. Geometrically, $y$ parameterizes the slope of a line, and $f^*(y)$ is the maximum intercept such that the line $y^\top x - f^*(y)$ supports the epigraph of $f$ from below.</p>
+
+        <h3>7.3 Fenchel-Moreau Theorem (Biconjugate)</h3>
+        <div class="theorem-box">
+          <h4>Theorem</h4>
+          <p>If $f$ is convex, proper (not identically $+\infty$), and lower semicontinuous, then:</p>
+          $$
+          f^{**}(x) = f(x)
+          $$
+          <p>That is, taking the conjugate twice recovers the original function.</p>
+        </div>
+
+        <h3>7.4 Examples</h3>
+
+        <div class="example">
+          <h4>Example 1: Conjugate of a Norm</h4>
+          <p>For $f(x) = \|x\|$ where $\|\cdot\|$ is any norm, the conjugate is the <b>indicator function</b> of the dual norm ball:</p>
+          $$
+          f^*(y) = \begin{cases}
+          0 & \text{if } \|y\|_* \le 1 \\
+          +\infty & \text{otherwise}
+          \end{cases}
+          $$
+          <p>where $\|\cdot\|_*$ is the dual norm.</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 2: Conjugate of Quadratic</h4>
+          <p>For $f(x) = \frac{1}{2}x^\top Q x$ where $Q \succ 0$:</p>
+          $$
+          f^*(y) = \frac{1}{2}y^\top Q^{-1} y
+          $$
+        </div>
+
+        <div class="example">
+          <h4>Example 3: Conjugate of Negative Entropy</h4>
+          <p>For $f(x) = \sum_{i=1}^n x_i \log x_i$ (negative entropy, defined on $x > 0$):</p>
+          $$
+          f^*(y) = \sum_{i=1}^n e^{y_i - 1}
+          $$
+        </div>
+
+        <div class="example">
+          <h4>Example 4: Conjugate of Log-Sum-Exp</h4>
+          <p>Consider the <b>Log-Sum-Exp</b> function $f(x) = \log(\sum_{i=1}^n e^{x_i})$. Its conjugate is the negative entropy restricted to the simplex.</p>
+
+          <div class="proof-enhanced">
+            <h4>Derivation Step-by-Step</h4>
+            <div class="proof-step">
+              <strong>Step 1: Set up the supremum.</strong> We want to maximize $g(x) = y^\top x - \log(\sum_i e^{x_i})$. Since $f(x)$ is convex, we set the gradient to zero.
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Compute gradient.</strong>
+              $$ \frac{\partial g}{\partial x_k} = y_k - \frac{e^{x_k}}{\sum_j e^{x_j}} = 0 \implies y_k = \frac{e^{x_k}}{\sum_j e^{x_j}} $$
+              This implies $y_k > 0$ and $\sum_k y_k = \sum_k \frac{e^{x_k}}{\sum_j e^{x_j}} = 1$. If $\mathbf{1}^\top y \neq 1$ or $y \not\ge 0$, the supremum is unbounded ($+\infty$).
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Solve for x.</strong> From $y_k = e^{x_k} / (\sum e^{x_j})$, we have $e^{x_k} = y_k (\sum e^{x_j})$. Taking log: $x_k = \log y_k + \log(\sum e^{x_j})$. Let $K = \log(\sum e^{x_j})$. Then $x_k = \log y_k + K$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 4: Substitute back.</strong>
+              $$ y^\top x = \sum_k y_k (\log y_k + K) = \sum_k y_k \log y_k + K \sum_k y_k = \sum_k y_k \log y_k + K $$
+              $$ f(x) = \log(\sum e^{x_j}) = K $$
+              $$ f^*(y) = (y^\top x) - f(x) = (\sum y_k \log y_k + K) - K = \sum_{i=1}^n y_i \log y_i $$
+            </div>
+            <div class="proof-step">
+              <strong>Conclusion:</strong>
+              $$ f^*(y) = \begin{cases} \sum_{i=1}^n y_i \log y_i & \text{if } y \ge 0, \mathbf{1}^\top y = 1 \\ +\infty & \text{otherwise} \end{cases} $$
+            </div>
+          </div>
+        </div>
+
+        <h3>7.5 Role in Duality</h3>
+        <p>The convex conjugate is the mathematical foundation of <b>Lagrangian duality</b> (Lecture 05). The dual problem can be expressed in terms of the conjugates of the primal objective and constraint functions.</p>
+      </section>
+
+      <section class="card-v2" id="section-8">
+        <h2>8. Quasi-Convex Functions</h2>
+
+        <h3>8.1 Definition</h3>
+        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <b>quasi-convex</b> if its domain is convex and all its <b>sublevel sets</b> are convex:</p>
+        $$
+        S_\alpha = \{x \in \mathrm{dom}\, f \mid f(x) \le \alpha\}
+        $$
+        <p>is convex for all $\alpha \in \mathbb{R}$.</p>
+
+        <div class="insight">
+          <h4>💡 Intuition</h4>
+          <p>Quasi-convexity is a weaker property than convexity. It means the function has "convex contour lines" but doesn't require the graph to curve upward everywhere.</p>
+        </div>
+
+        <h3>8.2 Jensen's Inequality for Quasi-Convex Functions</h3>
+        <p>$f$ is quasi-convex if and only if for all $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$:</p>
+        $$
+        f(\theta x + (1-\theta)y) \le \max\{f(x), f(y)\}
+        $$
+        <p>(Compare to convexity: $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$.)</p>
+
+        <h3>8.3 Examples</h3>
+
+        <div class="example">
+          <h4>Example 1: Ceiling Function</h4>
+          <p>$f(x) = \lceil x \rceil$ is quasi-convex but not convex (the graph has jumps, not smooth curvature).</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 2: Ratio of Convex Functions</h4>
+          <p>If $f$ and $g$ are convex with $g > 0$, then $f(x)/g(x)$ is quasi-convex (but generally not convex). This appears in fractional programming.</p>
+        </div>
+
+        <h3>8.4 Quasi-Convex Optimization</h3>
+        <p>Minimizing a quasi-convex function over a convex set is a <b>quasi-convex optimization problem</b>. These are harder than convex problems (local minima can exist), but still more tractable than general nonconvex problems.</p>
+        <p><b>Solution method:</b> Bisection on the objective value, solving feasibility problems $\{x \mid f(x) \le t, x \in C\}$ for various $t$.</p>
+
+      </section>
+
+      <section class="card-v2" id="section-9">
+        <h2>9. Common Convex Functions Reference</h2>
+
+        <p>This table provides a quick reference for recognizing convex functions. Memorize these patterns—they appear constantly in optimization.</p>
+
+        <table class="data-table" style="width: 100%; margin-top: 16px;">
+          <thead>
+            <tr>
+              <th>Function</th>
+              <th>Domain</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>$x^p$</td>
+              <td>$\mathbb{R}_+$ if $p \ge 1$ or $p \le 0$</td>
+              <td>Convex on $\mathbb{R}_+$ for $p \ge 1$ or $p \le 0$; concave for $0 \le p \le 1$</td>
+            </tr>
+            <tr>
+              <td>$e^{ax}$</td>
+              <td>$\mathbb{R}$</td>
+              <td>Convex for any $a \in \mathbb{R}$</td>
+            </tr>
+            <tr>
+              <td>$-\log(x)$</td>
+              <td>$\mathbb{R}_{++}$</td>
+              <td>Convex; $\log(x)$ is concave</td>
+            </tr>
+            <tr>
+              <td>$x \log(x)$</td>
+              <td>$\mathbb{R}_{++}$</td>
+              <td>Convex (negative entropy term)</td>
+            </tr>
+            <tr>
+              <td>$\|x\|_p$</td>
+              <td>$\mathbb{R}^n$</td>
+              <td>Convex for $p \ge 1$; not a norm for $p < 1$</td>
+            </tr>
+            <tr>
+              <td>$\|x\|_2^2 = x^\top x$</td>
+              <td>$\mathbb{R}^n$</td>
+              <td>Convex (quadratic with PSD Hessian $2I$)</td>
+            </tr>
+            <tr>
+              <td>$x^\top A x$</td>
+              <td>$\mathbb{R}^n$</td>
+              <td>Convex if $A \succeq 0$</td>
+            </tr>
+            <tr>
+              <td>$\log(\sum_{i=1}^n e^{x_i})$</td>
+              <td>$\mathbb{R}^n$</td>
+              <td>Log-sum-exp: smooth approximation to $\max\{x_1, \ldots, x_n\}$</td>
+            </tr>
+            <tr>
+              <td>$-\log(\det(X))$</td>
+              <td>$\mathbb{S}^n_{++}$</td>
+              <td>Negative log-determinant: convex on PD matrices</td>
+            </tr>
+            <tr>
+              <td>$\lambda_{\max}(X)$</td>
+              <td>$\mathbb{S}^n$</td>
+              <td>Maximum eigenvalue: convex (supremum of linear functions)</td>
+            </tr>
+            <tr>
+              <td>$\mathrm{tr}(X^p)$</td>
+              <td>$\mathbb{S}^n_+$</td>
+              <td>Convex for $p \ge 1$ or $p \le 0$ on PSD matrices</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>9.1 Operations and Their Effects</h3>
+        <table class="data-table" style="width: 100%; margin-top: 16px;">
+          <thead>
+            <tr>
+              <th>Operation</th>
+              <th>Preserves Convexity?</th>
+              <th>Conditions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Nonnegative weighted sum</td>
+              <td>✅ Yes</td>
+              <td>Always</td>
+            </tr>
+            <tr>
+              <td>Pointwise maximum/supremum</td>
+              <td>✅ Yes</td>
+              <td>Always</td>
+            </tr>
+            <tr>
+              <td>Composition $h(g(x))$</td>
+              <td>✅ Yes</td>
+              <td>If $g$ convex, $h$ convex non-decreasing</td>
+            </tr>
+            <tr>
+              <td>Affine transformation $f(Ax+b)$</td>
+              <td>✅ Yes</td>
+              <td>Always</td>
+            </tr>
+            <tr>
+              <td>Minimization $\inf_y f(x,y)$</td>
+              <td>✅ Yes</td>
+              <td>If $f$ convex in $(x,y)$</td>
+            </tr>
+            <tr>
+              <td>Perspective</td>
+              <td>✅ Yes</td>
+              <td>Always</td>
+            </tr>
+            <tr>
+              <td>Product $f(x) \cdot g(x)$</td>
+              <td>❌ No</td>
+              <td>Generally not convex</td>
+            </tr>
+            <tr>
+              <td>Pointwise minimum</td>
+              <td>❌ No</td>
+              <td>Not preserved (but concave functions preserved)</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card-v2" id="section-10">
+        <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
+
+        <div class="problem">
+          <h3>P3.1 — Verify Convexity Using First-Order Conditions</h3>
+          <p>Prove that $f(x) = e^x$ is convex on $\mathbb{R}$ using the first-order condition.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Step 1: Compute gradient.</strong> For $f(x) = e^x$, we have $f'(x) = e^x$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Apply first-order condition.</strong> We need to show $f(y) \ge f(x) + f'(x)(y - x)$ for all $x, y \in \mathbb{R}$.
+              Substituting:
+              $$
+              e^y \ge e^x + e^x(y - x) = e^x(1 + y - x)
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Simplify.</strong> Divide both sides by $e^x > 0$ and let $t = y - x$:
+              $$
+              e^t \ge 1 + t
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 4: Verify inequality.</strong> The inequality $e^t \ge 1 + t$ for all $t \in \mathbb{R}$ follows from the Taylor series:
+              $$
+              e^t = 1 + t + \frac{t^2}{2!} + \frac{t^3}{3!} + \cdots \ge 1 + t
+              $$
+              (all terms after $1 + t$ are non-negative for $t \ge 0$, and the inequality reverses then reverses back for $t < 0$ by inspecting the series).
+            </div>
+
+            <div class="proof-step">
+              <strong>Conclusion:</strong> Therefore, $f(x) = e^x$ is convex.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.2 — Verify Convexity Using Second-Order Conditions</h3>
+          <p>Show that $f(x) = \|x\|_2^2$ is convex on $\mathbb{R}^n$ using the Hessian test.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Step 1: Compute gradient.</strong>
+              $$
+              f(x) = x^\top x \implies \nabla f(x) = 2x
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Compute Hessian.</strong>
+              $$
+              \nabla^2 f(x) = 2I
+              $$
+              where $I$ is the $n \times n$ identity matrix.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Check PSD.</strong> The identity matrix $I$ is positive definite (all eigenvalues equal 1 > 0), so $2I$ is also positive definite, hence positive semidefinite.
+            </div>
+
+            <div class="proof-step">
+              <strong>Conclusion:</strong> Since $\nabla^2 f(x) = 2I \succeq 0$ for all $x \in \mathbb{R}^n$, the function $f(x) = \|x\|_2^2$ is convex. In fact, it's strongly convex with parameter $m = 2$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.3 — Composition of Convex Functions</h3>
+          <p>Let $f(x) = -\log(x)$ on $\mathbb{R}_{++}$ and $g(x) = e^x$ on $\mathbb{R}$. Is $h(x) = f(g(x)) = -\log(e^x) = -x$ convex?</p>
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Analyze composition rule:</strong> We have $h(x) = f(g(x))$ where:
+              <ul>
+                <li>$g(x) = e^x$ is convex and increasing on $\mathbb{R}$.</li>
+                <li>$f(x) = -\log(x)$ is convex on $\mathbb{R}_{++}$.</li>
+              </ul>
+            </div>
+
+            <div class="proof-step">
+              <strong>Check monotonicity:</strong> For the composition $h = f \circ g$ to be convex when both $f$ and $g$ are convex, we need $f$ to be <b>non-decreasing</b>. However, $f(x) = -\log(x)$ is <b>decreasing</b> (since $f'(x) = -1/x < 0$).
+            </div>
+
+            <div class="proof-step">
+              <strong>Alternative: Direct verification.</strong> We can directly compute: $h(x) = -x$ is linear (hence both convex and concave). So yes, it's convex, but not strictly.
+            </div>
+
+            <div class="proof-step">
+              <strong>Lesson:</strong> The composition rules are <i>sufficient</i> conditions, not necessary. The composition $f \circ g$ can still be convex even when the standard rules don't apply—you need to verify directly.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.4 — Maximum of Convex Functions</h3>
+          <p>Prove that if $f_1, f_2: \mathbb{R}^n \to \mathbb{R}$ are convex, then $f(x) = \max\{f_1(x), f_2(x)\}$ is convex.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Setup:</strong> Take any $x, y \in \mathbb{R}^n$ and $\theta \in [0, 1]$. Let $z = \theta x + (1-\theta)y$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 1: Bound $f(z)$.</strong> By definition:
+              $$
+              f(z) = \max\{f_1(z), f_2(z)\}
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Apply convexity of $f_1$ and $f_2$.</strong>
+              $$
+              f_1(z) \le \theta f_1(x) + (1-\theta)f_1(y) \le \theta \max\{f_1(x), f_2(x)\} + (1-\theta)\max\{f_1(y), f_2(y)\}
+              $$
+              $$
+              = \theta f(x) + (1-\theta)f(y)
+              $$
+              Similarly, $f_2(z) \le \theta f(x) + (1-\theta)f(y)$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Conclude.</strong> Since both $f_1(z)$ and $f_2(z)$ are at most $\theta f(x) + (1-\theta)f(y)$, their maximum is also:
+              $$
+              f(z) = \max\{f_1(z), f_2(z)\} \le \theta f(x) + (1-\theta)f(y)
+              $$
+              proving $f$ is convex.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.5 — Strong Convexity</h3>
+          <p>Show that $f(x) = \frac{1}{2}x^\top Q x$ is $\lambda_{\min}(Q)$-strongly convex if $Q \succ 0$.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Use Hessian characterization:</strong> We have:
+              $$
+              \nabla^2 f(x) = Q
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Check strong convexity condition:</strong> A function is $m$-strongly convex if $\nabla^2 f(x) \succeq mI$ for all $x$. Here, we need:
+              $$
+              Q \succeq mI
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Eigenvalue interpretation:</strong> The condition $Q \succeq mI$ is equivalent to saying all eigenvalues of $Q$ are at least $m$. Since $Q$ is symmetric, its eigenvalues are real. The smallest eigenvalue is $\lambda_{\min}(Q)$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Conclusion:</strong> Since all eigenvalues of $Q$ are at least $\lambda_{\min}(Q)$, we have $Q \succeq \lambda_{\min}(Q) I$. Therefore, $f$ is $\lambda_{\min}(Q)$-strongly convex.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.6 — Conjugate Function</h3>
+          <p>Compute the conjugate of $f(x) = \frac{1}{2}\|x\|_2^2$.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Definition:</strong> The conjugate is:
+              $$
+              f^*(y) = \sup_{x \in \mathbb{R}^n} \left( y^\top x - \frac{1}{2}\|x\|_2^2 \right)
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Find supremum:</strong> The function $g(x) = y^\top x - \frac{1}{2}\|x\|_2^2$ is concave in $x$ (Hessian is $-I \preceq 0$). The maximum is attained where:
+              $$
+              \nabla_x g(x) = y - x = 0 \implies x = y
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Compute supremum value:</strong> Substituting $x = y$:
+              $$
+              f^*(y) = y^\top y - \frac{1}{2}\|y\|_2^2 = \|y\|_2^2 - \frac{1}{2}\|y\|_2^2 = \frac{1}{2}\|y\|_2^2
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Conclusion:</strong> The conjugate of $f(x) = \frac{1}{2}\|x\|_2^2$ is $f^*(y) = \frac{1}{2}\|y\|_2^2$. The quadratic is <b>self-conjugate</b>!
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.7 — Quasi-Convexity</h3>
+          <p>Show that $f(x) = \lceil x \rceil$ (ceiling function) is quasi-convex but not convex.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Verify quasi-convexity:</strong> The sublevel sets are:
+              $$
+              S_\alpha = \{x \in \mathbb{R} \mid \lceil x \rceil \le \alpha\}
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Characterize sublevel sets:</strong> Since $\lceil x \rceil$ is the smallest integer $\ge x$, we have $\lceil x \rceil \le \alpha$ if and only if $x \le \lfloor\alpha\rfloor$. Thus:
+              $$
+              S_\alpha = (-\infty, \lfloor\alpha\rfloor]
+              $$
+              which is an interval (convex). Since all sublevel sets are convex, $f$ is quasi-convex.
+            </div>
+
+            <div class="proof-step">
+              <strong>Show not convex:</strong> Convexity requires $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ for all $x, y, \theta \in [0,1]$.
+              Consider $x=0$ and $y=0.6$.
+              <ul>
+                <li>$f(0) = \lceil 0 \rceil = 0$</li>
+                <li>$f(0.6) = \lceil 0.6 \rceil = 1$</li>
+              </ul>
+              Let $\theta = 0.5$, so the midpoint is $z = 0.5(0) + 0.5(0.6) = 0.3$.
+              <ul>
+                <li>Actual value: $f(0.3) = \lceil 0.3 \rceil = 1$</li>
+                <li>Convex combination: $0.5 f(0) + 0.5 f(0.6) = 0.5(0) + 0.5(1) = 0.5$</li>
+              </ul>
+              Since $1 \not\le 0.5$, the inequality is violated. Therefore, the ceiling function is <b>not convex</b>.
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </article>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© <span id="year"></span> Convex Optimization Course</p>
+      </div>
+    </footer>
+  </main></div>
+
   <script src="../../static/js/math-renderer.js"></script>
 <script src="../../static/js/theme-switcher.js"></script>
 <script src="../../static/js/toc.js"></script>
-<script src="../../static/js/theme-switcher.js"></script>
   <script>
+    feather.replace();
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Widget Loaders -->
+  <script type="module">
+    import { initConvexFunctionInspector } from './widgets/js/convex-function-inspector.js';
+    initConvexFunctionInspector('widget-convex-function-inspector');
+  </script>
+  <script type="module">
+    import { initHessianHeatmap } from './widgets/js/hessian-heatmap.js';
+    initHessianHeatmap('widget-hessian-heatmap');
+  </script>
+  <script type="module">
+    import { initOperationsPreserving } from './widgets/js/operations-preserving.js';
+    initOperationsPreserving('widget-operations-preserving');
   </script>
 </body>
 </html>
