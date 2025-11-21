@@ -3,7 +3,7 @@
  *
  * Description: Allows users to drag two vectors and see their dot product, angle, and orthogonal projection update in real-time.
  *              Visualizes the geometric interpretation of the inner product.
- * Version: 3.0.0
+ * Version: 3.0.1
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import katex from "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.mjs";
@@ -226,26 +226,37 @@ export function initOrthogonality(containerId) {
         svg.selectAll(".angle-arc").remove();
         if (isNaN(angleDeg) || magA < 1 || magB < 1) return;
 
-        const radius = Math.min(x(2) - x(0), x(magA/2) - x(0), x(magB/2) - x(0));
+        const radius = Math.min(Math.abs(x(3) - x(0)), Math.abs(x(magA/3) - x(0)), Math.abs(x(magB/3) - x(0)));
 
-        // Calculate start and end angles in radians
-        let startAngle = Math.atan2(vecB.y, vecB.x); // y is flipped in d3 scale? No, we use x() y() mapping.
-        // d3.arc uses clockwise from 12 o'clock? No, standard math is counter-clockwise from 3 o'clock.
-        // We need to be careful with SVG vs Cartesian coordinates.
-        // y scale is inverted: y(10) is top (small pixel val), y(-10) is bottom (large pixel val).
-        // So standard atan2(y, x) works if we invert y diff?
-        // Let's compute angles in screen space.
-        const angleA = Math.atan2(y(vecA.y) - y(0), x(vecA.x) - x(0));
-        const angleB = Math.atan2(y(vecB.y) - y(0), x(vecB.x) - x(0));
+        // Screen coordinates for vectors
+        const ax = x(vecA.x) - x(0);
+        const ay = y(vecA.y) - y(0);
+        const bx = x(vecB.x) - x(0);
+        const by = y(vecB.y) - y(0);
 
-        const arc = d3.arc()
-            .innerRadius(radius - 2)
-            .outerRadius(radius + 2)
-            .startAngle(angleB + Math.PI/2) // d3.arc 0 is at 12 o'clock?
-            .endAngle(angleA + Math.PI/2);  // adjustments often needed
+        // Angles in screen space (clockwise from +x, since +y is down on screen? No, standard atan2)
+        const startAngle = Math.atan2(by, bx);
+        const endAngle = Math.atan2(ay, ax);
 
-        // Drawing a simple path is often easier than d3.arc for general vector angles
-        // Or just use a path command A
+        const path = d3.path();
+        path.moveTo(x(0), y(0));
+
+        // Handle correct arc direction (shortest path)
+        let diff = endAngle - startAngle;
+        // Normalize to [-PI, PI]
+        while (diff > Math.PI) diff -= 2 * Math.PI;
+        while (diff < -Math.PI) diff += 2 * Math.PI;
+
+        path.arc(x(0), y(0), radius, startAngle, startAngle + diff, diff < 0);
+
+        svg.append("path")
+            .attr("class", "angle-arc")
+            .attr("d", path.toString())
+            .attr("fill", "var(--color-primary)")
+            .attr("fill-opacity", 0.1)
+            .attr("stroke", "var(--color-primary)")
+            .attr("stroke-width", 1.5)
+            .attr("stroke-dasharray", "2 2");
     }
 
     const resizeObserver = new ResizeObserver(() => {
