@@ -1,0 +1,175 @@
+:root {
+  --color-background: #0b0d12;
+  --color-surface-1: #151820;
+  --color-surface-2: #20242f;
+  --color-border: #333845;
+  --color-text-main: #E0E0E0;
+  --color-text-muted: #9e9e9e;
+  --color-primary: #7cc5ff;
+  --color-accent: #80ffb0;
+  --font-family-sans: 'Inter', sans-serif;
+  --font-family-mono: 'Source Code Pro', monospace;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-main);
+  font-family: var(--font-family-sans);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.site-header {
+  background-color: var(--color-surface-1);
+  border-bottom: 1px solid var(--color-border);
+  padding: 1rem 0;
+}
+
+.site-header.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.site-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.site-header .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--color-text-main);
+}
+
+.site-header .logo {
+  height: 40px;
+}
+
+.site-header .nav a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  margin-left: 20px;
+  transition: color 0.2s;
+}
+
+.site-header .nav a:hover {
+  color: var(--color-primary);
+}
+
+.lecture-container {
+  display: flex;
+  gap: 2rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+#toc-container {
+  position: sticky;
+  top: 100px;
+  background-color: var(--color-surface-1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+}
+
+#toc-container h2 {
+  margin-top: 0;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+#toc {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+#toc ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+#toc li a {
+  display: block;
+  padding: 0.5rem 0;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  padding-left: 1rem;
+  transition: all 0.2s;
+}
+
+#toc li a:hover {
+  color: var(--color-primary);
+  border-left-color: var(--color-primary);
+}
+
+#toc li a.active {
+  color: var(--color-accent);
+  border-left-color: var(--color-accent);
+  font-weight: bold;
+}
+
+.lecture-content {
+  flex-grow: 1;
+  min-width: 0; /* Prevents overflow */
+}
+
+.card {
+  background-color: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+}
+
+.lecture-header h1 {
+  margin-top: 0;
+  font-size: 2.5rem;
+  color: var(--color-primary);
+}
+
+.problem {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.solution {
+  background-color: var(--color-surface-2);
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.widget-container {
+  padding: 1.5rem;
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  margin: 2rem 0;
+}
