@@ -28,20 +28,6 @@
     </div>
   </header>
 
-  <!-- Main content -->
-  <div class="lecture-container">
-    <aside class="sidebar">
-      <div id="toc-container">
-        <h2>Table of Contents</h2>
-        <nav id="toc"></nav>
-      </div>
-    </aside>
-    <main class="lecture-content">
-    <!-- Lecture header -->
-    <article class="card" style="margin-bottom: 32px;">
-      <h1 style="margin-top: 0;">03. Convex Functions: Characterization & Operations</h1>
-      <div class="meta">
-        Date: 2025-11-04 · Duration: 90 min · Tags: functions, theory
   <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <header class="lecture-header card-v2">
       <h1>03. Convex Functions: Definitions, Characterizations, and Operations</h1>
@@ -177,17 +163,6 @@
             $$
           </div>
 
-    <!-- Exercises (optional) -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Exercises</h2>
-      <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
-      <ol style="line-height: 2;">
-        <li>Is the geometric mean a concave function?</li>
-        <li>Prove that the maximum of two convex functions is a convex function.</li>
-      </ol>
-    </section>
-  </main>
-  </div>
           <div class="proof-step">
             <strong>Step 3:</strong> Therefore, $(\theta x + (1-\theta)y, \theta t + (1-\theta)s) \in \mathrm{epi}\, f$, proving $\mathrm{epi}\, f$ is convex.
           </div>
@@ -1137,6 +1112,76 @@
                 <li>Convex combination: $0.5 f(0) + 0.5 f(0.6) = 0.5(0) + 0.5(1) = 0.5$</li>
               </ul>
               Since $1 \not\le 0.5$, the inequality is violated. Therefore, the ceiling function is <b>not convex</b>.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.8 — Inverse of Increasing Convex Function</h3>
+          <p>Let $f: \mathbb{R} \to \mathbb{R}$ be increasing and convex. Prove that its inverse $g = f^{-1}$ is concave.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Setup:</strong> Let $u = f(x)$ and $v = f(y)$. Then $x = g(u)$ and $y = g(v)$.
+            </div>
+            <div class="proof-step">
+              <strong>Convexity of $f$:</strong> For $\theta \in [0, 1]$:
+              $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) = \theta u + (1-\theta)v $$
+            </div>
+            <div class="proof-step">
+              <strong>Apply Inverse:</strong> Since $f$ is increasing, its inverse $g$ is increasing. Applying $g$ to the inequality:
+              $$ g(f(\theta x + (1-\theta)y)) \le g(\theta u + (1-\theta)v) $$
+              $$ \theta x + (1-\theta)y \le g(\theta u + (1-\theta)v) $$
+            </div>
+            <div class="proof-step">
+              <strong>Substitute back:</strong>
+              $$ \theta g(u) + (1-\theta)g(v) \le g(\theta u + (1-\theta)v) $$
+              This is the definition of concavity for $g$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.9 — Classification Drill</h3>
+          <p>Classify the following functions as Convex, Concave, Quasiconvex, Quasiconcave, or None.</p>
+          <ol type="a">
+            <li>$f(z) = e^z - 1$ on $\mathbb{R}$.</li>
+            <li>$f(x_1, x_2) = x_1 x_2$ on $\mathbb{R}^2_{++}$.</li>
+            <li>$f(x_1, x_2) = 1/(x_1 x_2)$ on $\mathbb{R}^2_{++}$.</li>
+            <li>$f(x_1, x_2) = x_1 / x_2$ on $\mathbb{R}_{++}^2$.</li>
+            <li>$f(x_1, x_2) = x_1^\alpha x_2^{1-\alpha}$ for $\alpha \in [0, 1]$ on $\mathbb{R}^2_{++}$.</li>
+          </ol>
+          <div class="solution">
+            <h4>Solution</h4>
+            <ul>
+              <li><b>(a) Convex:</b> $f'(z) = e^z$, $f''(z) = e^z > 0$. Also quasiconvex and quasiconcave (monotonic).</li>
+              <li><b>(b) Quasiconcave:</b> Hessian is indefinite (det < 0), so not convex/concave. Superlevel sets $x_1 x_2 \ge \alpha \iff x_2 \ge \alpha/x_1$ are convex sets.</li>
+              <li><b>(c) Convex:</b> Hessian is PSD (or use perspective of $1/x$). Also quasiconvex.</li>
+              <li><b>(d) Quasilinear:</b> Level sets $x_1/x_2 = \alpha$ are lines through origin (convex). Sublevel $x_1 \le \alpha x_2$ and superlevel $x_1 \ge \alpha x_2$ are convex cones.</li>
+              <li><b>(e) Concave:</b> This is the weighted geometric mean (Cobb-Douglas function). Log-concave $\implies$ concave.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.10 — Concavity of p-norm for $p < 1$</h3>
+          <p>Show that $f(x) = (\sum x_i^p)^{1/p}$ is concave on $\mathbb{R}^n_{++}$ for $0 < p < 1$.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Superlevel Sets:</strong> Consider $S_\alpha = \{x \mid f(x) \ge \alpha\} = \{x \mid \sum x_i^p \ge \alpha^p\}$.
+            </div>
+            <div class="proof-step">
+              <strong>Convexity of $x^p$:</strong> For $0 < p < 1$, $h(t) = t^p$ is concave ($h'' < 0$).
+            </div>
+            <div class="proof-step">
+              <strong>Sum of Concave:</strong> $g(x) = \sum x_i^p$ is concave.
+            </div>
+            <div class="proof-step">
+              <strong>Superlevel of Concave:</strong> The superlevel set of a concave function is convex. Thus $S_\alpha$ is convex.
+            </div>
+            <div class="proof-step">
+              <strong>Homogeneity:</strong> $f$ is homogeneous of degree 1. A homogeneous function with convex upper level sets is concave.
             </div>
           </div>
         </div>

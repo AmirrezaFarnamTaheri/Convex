@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.1.1] - 2025-11-29
+
+### Rigorous Linear Algebra & Advanced Convexity
+
+#### Content Updates
+- **Lecture 00 (Linear Algebra Primer):**
+  - Complete "zero-to-hero" rewrite focusing on matrix analysis for optimization.
+  - Added detailed sections on Algebraic Invariants (trace cyclicity, spectral identities).
+  - Added geometric derivation of the Operator Norm via the Rayleigh quotient.
+  - Added rigorous construction of SVD and Polar Decomposition.
+  - Added Matrix Calculus section (gradients of trace, determinant, log-det).
+  - Added comprehensive advanced problem set (Probelms 8-14).
+- **Lecture 03 (Convex Functions):**
+  - Added advanced exercises on Inverse Functions (P3.8), Classification (P3.9), and p-norm concavity (P3.10).
+
 ## [3.1.0] - 2025-11-22
 
 ### Content Consolidation & Cleanup
