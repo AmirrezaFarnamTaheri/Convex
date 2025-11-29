@@ -304,6 +304,15 @@
       <h3>Generalized (Weighted) Inner Product</h3>
       <p>If $Q \in \mathbb{R}^{n \times n}$ is symmetric positive definite (SPD), then $\langle x, y \rangle_Q := x^\top Q y$ is an inner product with induced norm $\|x\|_Q = \sqrt{x^\top Q x}$. This yields <b>quadratic forms</b> and ellipsoidal distance.</p>
 
+      <h3>Spectral Norm and Convexity</h3>
+      <p>The <b>spectral norm</b> of a matrix $X \in \mathbb{R}^{m \times n}$ (not necessarily symmetric) is its maximum singular value:
+      $$ \|X\|_2 = \sigma_{\max}(X) = \sqrt{\lambda_{\max}(X^\top X)} $$
+      Since $X^\top X$ is always Positive Semidefinite ($v^\top X^\top X v = \|Xv\|_2^2 \ge 0$), its eigenvalues are non-negative.</p>
+
+      <p><b>Dual Representation (Crucial for Convexity Proofs):</b> Just like the max eigenvalue, the spectral norm can be written as a supremum:
+      $$ \|X\|_2 = \sup_{\|u\|_2=1, \|v\|_2=1} u^\top X v $$
+      Since $f(X) = u^\top X v$ is a <b>linear function</b> of $X$, and $\|X\|_2$ is the supremum of these linear functions, $\|X\|_2$ is a <b>convex function</b>.</p>
+
       <h3>Matrix Inner Product and Frobenius Norm</h3>
       <p>For matrices $X, Y \in \mathbb{R}^{m \times n}$, the <b>trace inner product</b> is:
       $$ \langle X, Y \rangle = \mathrm{tr}(X^\top Y) = \sum_{ij} X_{ij} Y_{ij} $$
@@ -351,18 +360,55 @@
     <section class="card-v2" id="section-4">
       <h2>4. Positive Semidefinite Matrices</h2>
 
-      <h3>Definitions</h3>
-      <p>A symmetric matrix $Q \in \mathbb{S}^n$ is:</p>
-      <ul>
-        <li><b>Positive Semidefinite (PSD)</b>, written $Q \succeq 0$, if the quadratic form $x^\top Q x \ge 0$ for all vectors $x$.</li>
-        <li><b>Positive Definite (PD)</b>, written $Q \succ 0$, if $x^\top Q x > 0$ for all non-zero vectors $x$.</li>
-      </ul>
+      <h3>4.1 The Space of Symmetric Matrices ($\mathbb{S}^n$)</h3>
+      <p>In convex optimization, we care deeply about the Hessian matrix $\nabla^2 f(x)$. By Schwarz's Theorem, if a function is twice continuously differentiable, its Hessian is symmetric. A matrix $A \in \mathbb{R}^{n \times n}$ is symmetric if $A = A^\top$. The set of such matrices is denoted $\mathbb{S}^n$.</p>
 
-      <p>These matrices are fundamental to convex optimization because they define convex quadratic functions. An equivalent and often more practical characterization is based on their eigenvalues:</p>
-      <ul>
-        <li>A matrix is PSD if and only if all of its eigenvalues are non-negative.</li>
-        <li>A matrix is PD if and only if all of its eigenvalues are strictly positive.</li>
-      </ul>
+      <h4>The Spectral Theorem</h4>
+      <p>If $A \in \mathbb{S}^n$, then:</p>
+      <ol>
+        <li>All <b>eigenvalues</b> ($\lambda_1, \dots, \lambda_n$) are <b>real numbers</b>.</li>
+        <li>There exists a set of <b>orthonormal eigenvectors</b> $q_1, \dots, q_n$.</li>
+        <li>$A$ can be diagonalized as $A = Q \Lambda Q^\top$, where $Q$ is an orthogonal matrix ($Q^\top Q = I$) containing the eigenvectors, and $\Lambda$ is a diagonal matrix containing the eigenvalues.</li>
+      </ol>
+      <p><b>Why this matters for convexity:</b> The "shape" of a multivariable function (bowl vs. saddle) is entirely determined by the signs of the eigenvalues of its Hessian.</p>
+
+      <h3>4.2 Positive Semidefinite (PSD) Matrices</h3>
+      <p>This is the single most important definition in the course. It is the matrix equivalent of a "non-negative number."</p>
+
+      <h4>Definition A: The Variational Definition</h4>
+      <p>A symmetric matrix $A \in \mathbb{S}^n$ is <b>Positive Semidefinite (PSD)</b>, denoted as $A \succeq 0$, if:</p>
+      $$ x^\top A x \ge 0 \quad \text{for all } x \in \mathbb{R}^n $$
+      <p><b>Geometric Intuition (Curvature):</b> If $A$ represents the curvature of a function (the Hessian), the term $x^\top A x$ represents the <b>curvature in the direction of vector $x$</b>. If $x^\top A x \ge 0$ for all directions $x$, the function curves upward in every direction (it is a "bowl").</p>
+
+      <h4>Definition B: The Eigenvalue Definition</h4>
+      <p>A symmetric matrix $A \in \mathbb{S}^n$ is PSD if and only if all its eigenvalues are non-negative:</p>
+      $$ \lambda_i(A) \ge 0 \quad \text{for all } i = 1, \dots, n $$
+
+      <div class="proof-enhanced">
+        <h4>Proof: Equivalence of Definitions</h4>
+        <p>We prove that $(x^\top A x \ge 0) \iff (\lambda_i \ge 0)$.</p>
+
+        <div class="proof-step">
+          <strong>Step 1: $(\Rightarrow)$</strong> Assume $x^\top A x \ge 0$ for all vectors $x$. Let $v$ be an eigenvector of $A$ with eigenvalue $\lambda$.
+          $$ A v = \lambda v $$
+          Substitute $x = v$ into the variational definition:
+          $$ v^\top A v = v^\top (\lambda v) = \lambda (v^\top v) = \lambda \|v\|_2^2 $$
+          Since $x^\top A x \ge 0$, we have $\lambda \|v\|_2^2 \ge 0$. Since eigenvectors are non-zero, $\|v\|_2^2 > 0$. Therefore, <b>$\lambda \ge 0$</b>.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: $(\Leftarrow)$</strong> Assume all $\lambda_i \ge 0$. Use the Spectral Decomposition $A = Q \Lambda Q^\top$. For any arbitrary vector $x$:
+          $$ x^\top A x = x^\top (Q \Lambda Q^\top) x = (Q^\top x)^\top \Lambda (Q^\top x) $$
+          Let $y = Q^\top x$. Then:
+          $$ x^\top A x = y^\top \Lambda y = \sum_{i=1}^n \lambda_i y_i^2 $$
+          Since $\lambda_i \ge 0$ and $y_i^2 \ge 0$, the sum is non-negative. Thus <b>$x^\top A x \ge 0$</b>.
+        </div>
+      </div>
+
+      <h3>4.3 The Rayleigh Quotient and Eigenvalues</h3>
+      <p>The <b>maximum eigenvalue</b> $\lambda_{\max}(A)$ can be defined as an optimization problem:</p>
+      $$ \lambda_{\max}(A) = \sup_{x \neq 0} \frac{x^\top A x}{x^\top x} = \sup_{\|x\|_2 = 1} x^\top A x $$
+      <p>This is the <b>Rayleigh Quotient</b>. This definition proves that $\lambda_{\max}(A)$ is a convex function of $A$. Notice that for a fixed $x$, the function $g(A) = x^\top A x$ is <b>linear</b> in $A$. Since $\lambda_{\max}(A)$ is the <b>pointwise supremum</b> of a family of linear functions (indexed by $x$), it is a convex function.</p>
 
       <p>A positive definite matrix $Q$ can be used to define a generalized norm, $\|x\|_Q = \sqrt{x^\top Q x}$. The unit ball for this norm, $\{x \mid x^\top Q x \le 1\}$, is an ellipsoid, whose geometry is determined by the eigenvalues and eigenvectors of $Q$.</p>
 
@@ -1281,9 +1327,12 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <p>For a matrix variable $X \in \mathbb{R}^{m \times n}$, the gradient is an $m \times n$ matrix.</p>
 
       <ul>
-        <li><b>Trace:</b> $\nabla_X \mathrm{tr}(A^\top X) = A$.</li>
-        <li><b>Frobenius Norm Squared:</b> $\nabla_X \|X\|_F^2 = \nabla_X \mathrm{tr}(X^\top X) = 2X$.</li>
-        <li><b>Log Determinant:</b> $\nabla_X \log \det X = X^{-\top}$ (for $X$ square, invertible). If $X \in \mathbb{S}^n_{++}$, then $\nabla_X \log \det X = X^{-1}$.</li>
+        <li><b>Rule 1: Linear Trace:</b> $\nabla_X \mathrm{tr}(A^\top X) = A$.
+        <br><i>Proof:</i> $\mathrm{tr}(A^\top X) = \sum_{i,j} A_{ij} X_{ij}$. The partial derivative with respect to $X_{ij}$ is $A_{ij}$.</li>
+        <li><b>Rule 2: Quadratic Trace:</b> $\nabla_X \mathrm{tr}(X^\top A X) = (A + A^\top)X$. If $A$ is symmetric, this is $2AX$.
+        <br><i>Note:</i> This is exactly like $\frac{d}{dx}(ax^2) = 2ax$.</li>
+        <li><b>Rule 3: Log Determinant:</b> $\nabla_X \log \det X = X^{-\top}$. If $X \in \mathbb{S}^n_{++}$ (symmetric positive definite), then $\nabla_X \log \det X = X^{-1}$.
+        <br><i>Key for Phase 2:</i> This derivative is crucial for deriving the Hessian of log-determinant functions.</li>
       </ul>
 
       <div class="insight">
