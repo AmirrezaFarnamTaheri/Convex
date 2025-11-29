@@ -1142,6 +1142,154 @@
         </div>
       </section>
 
+      <section class="card-v2" id="section-11">
+        <h2>11. Detailed Examples & Advanced Exercises</h2>
+
+        <div class="problem">
+          <h3>Example: Concavity of the Geometric Mean (Page 74)</h3>
+          <p>We prove that the geometric mean $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}_{++}^n$.</p>
+
+          <div class="proof-enhanced">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Method 1: Log-Concavity + Homogeneity</strong>
+              <p>Consider $f(x) = \log G(x) = \frac{1}{n} \sum_{i=1}^n \log x_i$. Since $\log x_i$ is concave, $f(x)$ is concave (sum of concave functions). Thus $G(x) = e^{f(x)}$ is log-concave.</p>
+              <p>Also, $G(x)$ is homogeneous of degree 1: $G(\lambda x) = \lambda G(x)$ for $\lambda > 0$.</p>
+              <p><b>Lemma:</b> A positive, log-concave, degree-1 homogeneous function is concave.</p>
+              <p><i>Proof of Lemma:</i> By log-concavity, $f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta}$. Normalize so $f(x)=f(y)=1$ (using homogeneity). Then $f(\text{convex combo}) \ge 1 = \theta(1) + (1-\theta)(1)$. Scaling back gives full concavity.</p>
+            </div>
+
+            <div class="proof-step">
+              <strong>Method 2: Hessian Test</strong>
+              <p>Let $f(x) = \log G(x)$. Then $\nabla f(x) = \frac{1}{n}(1/x_1, \dots, 1/x_n)$.</p>
+              <p>$\nabla^2 f(x) = -\frac{1}{n} \text{diag}(1/x_1^2, \dots, 1/x_n^2)$.</p>
+              <p>Since $G(x) = e^{f(x)}$, $\nabla^2 G(x) = G(x)(\nabla f \nabla f^\top + \nabla^2 f)$.</p>
+              <p>For any $v$, $v^\top \nabla^2 G(x) v = \frac{G(x)}{n^2} [(\sum v_i/x_i)^2 - n \sum (v_i/x_i)^2]$.</p>
+              <p>By Cauchy-Schwarz, $(\sum a_i \cdot 1)^2 \le n \sum a_i^2$. Letting $a_i = v_i/x_i$, we get $(\sum v_i/x_i)^2 \le n \sum (v_i/x_i)^2$. Thus the quadratic form is $\le 0$, so $\nabla^2 G \preceq 0$.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>Example 3.3: Geometric vs Arithmetic Mean Cone</h3>
+          <p>Let $S_\alpha = \{x \in \mathbb{R}^n_+ \mid G(x) \ge \alpha A(x)\}$ for $\alpha \in [0, 1]$, where $A(x) = \frac{1}{n}\sum x_i$.</p>
+
+          <div class="proof-enhanced">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Convexity:</strong>
+              <p>We know $G(x)$ is concave and $A(x)$ is linear (hence concave). Thus $h(x) = G(x) - \alpha A(x)$ is concave (since $\alpha \ge 0$).</p>
+              <p>$S_\alpha = \{x \mid h(x) \ge 0\}$ is the 0-superlevel set of a concave function, which is a convex set.</p>
+            </div>
+            <div class="proof-step">
+              <strong>Cone Property:</strong>
+              <p>Both $G(x)$ and $A(x)$ are homogeneous of degree 1. $G(\lambda x) = \lambda G(x)$ and $A(\lambda x) = \lambda A(x)$.</p>
+              <p>If $G(x) \ge \alpha A(x)$, then $G(\lambda x) = \lambda G(x) \ge \lambda \alpha A(x) = \alpha A(\lambda x)$ for $\lambda \ge 0$. Thus $S_\alpha$ is a cone.</p>
+            </div>
+            <div class="proof-step">
+              <strong>Interpretation:</strong> This is the set of vectors "not too far" from having equal components. $\alpha=1$ implies $x_1 = \dots = x_n$ (the ray $\mathbf{1}$). $\alpha=0$ is the whole orthant.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>Example 3.4: Matrix Fractional Function</h3>
+          <p>Show that $f(x, Y) = x^\top Y^{-1} x$ is convex on $\mathbb{R}^n \times \mathbb{S}^n_{++}$.</p>
+
+          <div class="proof-enhanced">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Method 1: Epigraph via Schur Complement</strong>
+              <p>The epigraph condition is $x^\top Y^{-1} x \le t$ with $Y \succ 0$.</p>
+              <p>Using the Schur complement lemma, this is equivalent to:</p>
+              $$ \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0, \quad Y \succ 0 $$
+              <p>This is a Linear Matrix Inequality (LMI) in variables $(x, Y, t)$, which defines a convex set. Thus the epigraph is convex.</p>
+            </div>
+            <div class="proof-step">
+              <strong>Method 2: Supremum of Affine Functions</strong>
+              <p>For fixed $Y \succ 0$, maximize $g_z(x) = 2z^\top x - z^\top Y z$ over $z$. The max is at $z = Y^{-1}x$, value $x^\top Y^{-1} x$.</p>
+              <p>So $f(x, Y) = \sup_z (2z^\top x - \mathrm{tr}(zz^\top Y))$.</p>
+              <p>Inside the sup is a function linear in $x$ and linear in $Y$. The supremum of affine functions is convex.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>Problem 3.1: Definition of Convexity on $\mathbb{R}$</h3>
+          <p>Let $f: \mathbb{R} \to \mathbb{R}$ be convex. Prove the following properties:</p>
+          <ol type="a">
+            <li><b>Chord Property:</b> $f(x) \le \frac{b-x}{b-a}f(a) + \frac{x-a}{b-a}f(b)$ for $a < x < b$.</li>
+            <li><b>Slope Monotonicity:</b> $\frac{f(x)-f(a)}{x-a} \le \frac{f(b)-f(a)}{b-a} \le \frac{f(b)-f(x)}{b-x}$.</li>
+            <li><b>Derivative Monotonicity:</b> If differentiable, $f'(a) \le \frac{f(b)-f(a)}{b-a} \le f'(b)$.</li>
+            <li><b>Second Derivative:</b> If twice differentiable, $f''(x) \ge 0$.</li>
+          </ol>
+
+          <div class="proof-enhanced">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>(a) Chord Property:</strong>
+              <p>Write $x$ as a convex combination: $x = \lambda a + (1-\lambda)b$ where $\lambda = \frac{b-x}{b-a}$.</p>
+              <p>By convexity: $f(x) \le \lambda f(a) + (1-\lambda) f(b)$, which matches the formula.</p>
+            </div>
+            <div class="proof-step">
+              <strong>(b) Slope Monotonicity:</strong>
+              <p>Rearrange (a): multiply by $b-a$, subtract $(b-a)f(a)$:</p>
+              $$ (b-a)(f(x)-f(a)) \le (x-a)(f(b)-f(a)) \implies \frac{f(x)-f(a)}{x-a} \le \frac{f(b)-f(a)}{b-a} $$
+              <p>The second inequality follows by symmetry or applying the first to the interval $[x, b]$ with point $x$.</p>
+            </div>
+            <div class="proof-step">
+              <strong>(c) & (d) Derivatives:</strong>
+              <p>Taking limit $x \to a$ in (b) gives $f'(a) \le \frac{f(b)-f(a)}{b-a}$. Taking limit $x \to b$ gives the other side.</p>
+              <p>This implies $f'$ is non-decreasing ($f'(a) \le f'(b)$). A differentiable function with non-decreasing derivative has $f'' \ge 0$.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>Problem 3.4: Integral Characterization</h3>
+          <p>Show $f$ is convex iff $\int_0^1 f(x + \lambda(y-x)) d\lambda \le \frac{f(x)+f(y)}{2}$.</p>
+
+          <div class="proof-enhanced">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>($\Rightarrow$) Convex implies Inequality:</strong>
+              <p>Let $\phi(\lambda) = f(x + \lambda(y-x))$. If $f$ is convex, $\phi$ is convex on $[0,1]$.</p>
+              <p>Thus $\phi(\lambda) \le (1-\lambda)\phi(0) + \lambda\phi(1)$.</p>
+              <p>Integrate: $\int_0^1 \phi(\lambda) d\lambda \le \phi(0)\int(1-\lambda) + \phi(1)\int \lambda = \frac{1}{2}\phi(0) + \frac{1}{2}\phi(1)$.</p>
+            </div>
+            <div class="proof-step">
+              <strong>($\Leftarrow$) Inequality implies Convex:</strong>
+              <p>Applying the inequality to any sub-segment implies the <b>midpoint convexity</b> property: $\int_a^b \phi \le \frac{b-a}{2}(\phi(a)+\phi(b))$ implies $\phi(\frac{a+b}{2}) \le \frac{\phi(a)+\phi(b)}{2}$ (by considering limits of integrals near midpoint).</p>
+              <p>Midpoint convexity + continuity implies convexity.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>Problem 3.5: Running Average</h3>
+          <p>If $f: \mathbb{R} \to \mathbb{R}$ is convex with $f(0) \le 0$, show $F(x) = \frac{1}{x} \int_0^x f(t) dt$ is convex for $x > 0$.</p>
+
+          <div class="proof-enhanced">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Change of Variables:</strong>
+              <p>Let $t = sx$, so $dt = x ds$. Range $0 \to x$ becomes $0 \to 1$.</p>
+              $$ F(x) = \frac{1}{x} \int_0^1 f(sx) x ds = \int_0^1 f(sx) ds $$
+            </div>
+            <div class="proof-step">
+              <strong>Convexity Check:</strong>
+              <p>For fixed $s \in [0, 1]$, the function $g_s(x) = f(sx)$ is convex in $x$ (composition of convex $f$ with linear map).</p>
+              <p>$F(x)$ is a non-negative weighted sum (integral) of convex functions $g_s(x)$, so $F(x)$ is convex.</p>
+            </div>
+            <div class="proof-step">
+              <strong>Interpretation:</strong> This is an expectation: $F(x) = \mathbb{E}[f(Sx)]$ where $S \sim U[0,1]$. Expectation preserves convexity.
+            </div>
+          </div>
+        </div>
+
+      </section>
+
     </article>
 
     <footer class="site-footer">
