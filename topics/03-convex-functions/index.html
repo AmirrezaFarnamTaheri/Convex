@@ -218,6 +218,11 @@
           <p>The epigraph characterization lets us translate between function convexity and set convexity. Many operations on functions (e.g., infimal convolution) can be understood as operations on their epigraphs (e.g., Minkowski sum).</p>
         </div>
 
+        <h3>2.3 Convex Hull of a Function (Problem 3.30)</h3>
+        <p>Just as we can define the convex hull of a set, we can define the convex hull (or convex envelope) of a function $f: \mathbb{R}^n \to \mathbb{R}$ via its epigraph.</p>
+        $$ g(x) = \inf \{ t \mid (x, t) \in \text{conv epi } f \} $$
+        <p><b>Geometric Intuition:</b> Imagine "shrink-wrapping" the graph of $f$ from below. The function $g$ is the <b>greatest convex underestimator</b> of $f$. This concept is crucial in relaxation techniques for non-convex optimization (e.g., replacing a non-convex constraint with its convex hull).</p>
+
       </section>
 
       <section class="card-v2" id="section-3">
@@ -402,6 +407,23 @@
           <p><i>Practical insight:</i> This is exactly how numerical optimization libraries verify convexity in practice—by checking that all eigenvalues of the Hessian are non-negative!</p>
           <div id="widget-hessian-heatmap" style="width: 100%; height: 450px; position: relative;"></div>
         </div>
+
+        <h3>4.4 Advanced Calculus: Log-Convexity Derivations</h3>
+
+        <h4>Problem 15: The Hessian of $\ln f(x)$</h4>
+        <p>A scalar function $f(x)$ is <b>log-convex</b> if $\ln f(x)$ is convex, and <b>log-concave</b> if $\ln f(x)$ is concave. To check this condition using the second-order test, we must compute the Hessian of $h(x) = \ln f(x)$.</p>
+        <p>Using the chain rule and product rule derived in Phase 2:</p>
+        $$ \nabla^2 \ln f(x) = \frac{1}{f(x)}\nabla^2 f(x) - \frac{1}{f(x)^2}\nabla f(x)\nabla f(x)^\top $$
+        <p>For $f$ to be log-concave ($\nabla^2 \ln f \preceq 0$), we require:</p>
+        $$ f(x) \nabla^2 f(x) \preceq \nabla f(x) \nabla f(x)^\top $$
+
+        <h4>Problem 3.47: First-Order Condition for Log-Concavity</h4>
+        <p>While Problem 15 gives the Hessian condition, Problem 3.47 establishes a geometric inequality. $f$ is log-concave if and only if for all $x, y \in \mathrm{dom}\, f$:</p>
+        $$ \frac{f(y)}{f(x)} \le \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right) $$
+        <p>This provides a global upper bound on the function based on its local gradient, essential for error analysis in statistical estimation.</p>
+
+        <h4>Problem 3.48: Sublevel Sets of Log-Concave Functions</h4>
+        <p>If $f$ is log-concave and $a \ge 0$, then the function $g = f - a$ is also log-concave (on the domain where $f(x) > a$). This result relies on comparing the curvature intensities: subtracting a positive constant makes the function decay "faster" relative to its value, increasing the concavity of its logarithm.</p>
       </section>
 
       <section class="card-v2" id="section-5">
@@ -436,52 +458,56 @@
         </div>
 
         <div class="example">
-          <h4>Application: Support Function</h4>
+          <h4>Application: Support Function (Problem 3.28)</h4>
           <p>For any set $C$, the <b>support function</b> $S_C(x) = \sup_{y \in C} x^\top y$ is convex (being the supremum of linear—hence convex—functions $x^\top y$ over $y \in C$).</p>
+          <p>This is related to the <b>Fundamental Theorem of Convex Geometry</b> (Problem 3.28): A closed convex function is essentially the "upper envelope" of all the affine functions that lie beneath it.</p>
         </div>
 
         <h3>5.3 Composition Rules</h3>
 
         <div class="theorem-box">
-          <h4>Scalar Composition</h4>
-          <p>Let $h: \mathbb{R} \to \mathbb{R}$ and $g: \mathbb{R}^n \to \mathbb{R}$. Then $f(x) = h(g(x))$ is convex if:</p>
+          <h4>1. Affine Composition (Problem 3.20)</h4>
+          <p>If $f: \mathbb{R}^k \to \mathbb{R}$ is convex, and $x \mapsto Ax + b$ is an affine map, then the composition $g(x) = f(Ax + b)$ is convex.</p>
+          <p><b>Intuition:</b> Linear transformations stretch the domain but never warp a "bowl" into a "saddle."</p>
+          <p><b>Examples from Problem 3.20:</b></p>
           <ul>
-            <li>$g$ is convex, and $h$ is convex and <b>non-decreasing</b> (on the range of $g$), OR</li>
-            <li>$g$ is concave, and $h$ is convex and <b>non-increasing</b> (on the range of $g$).</li>
+            <li><b>Norm of Affine:</b> $\|Ax - b\|$ is convex (Primitive: Norm).</li>
+            <li><b>Trace of Inverse:</b> $\mathrm{tr}((A_0 + \sum x_i A_i)^{-1})$ is convex (Primitive: Trace of Inverse).</li>
           </ul>
-        </div>
-
-        <div class="proof-enhanced">
-          <h4>Proof Sketch (First Case)</h4>
-          <p>If $g$ is convex and $h$ is convex and non-decreasing, then for $\theta \in [0, 1]$:
-          $$
-          f(\theta x + (1-\theta)y) = h(g(\theta x + (1-\theta)y)) \le h(\theta g(x) + (1-\theta)g(y))
-          $$
-          (using convexity of $g$ and monotonicity of $h$). Then:
-          $$
-          \le \theta h(g(x)) + (1-\theta)h(g(y)) = \theta f(x) + (1-\theta)f(y)
-          $$
-          (using convexity of $h$).
-          </p>
-        </div>
-
-        <div class="example">
-          <h4>Example: Norms of Affine Functions</h4>
-          <p>If $g(x) = Ax + b$ is affine and $h(t) = |t|^p$ for $p \ge 1$ is convex and non-decreasing on $\mathbb{R}_+$, then:
-          $$
-          f(x) = \|Ax + b\|_p^p
-          $$
-          is convex (composition of convex with convex non-decreasing).
-          </p>
         </div>
 
         <div class="theorem-box">
-          <h4>Vector Composition</h4>
-          <p>Let $h: \mathbb{R}^k \to \mathbb{R}$ and $g: \mathbb{R}^n \to \mathbb{R}^k$ with $g(x) = (g_1(x), \ldots, g_k(x))$. Then $f(x) = h(g(x))$ is convex if:</p>
+          <h4>2. Scalar Composition (Problem 3.22)</h4>
+          <p>Let $h: \mathbb{R} \to \mathbb{R}$ and $g: \mathbb{R}^n \to \mathbb{R}$. Then $f(x) = h(g(x))$ is convex if:</p>
           <ul>
-            <li>$h$ is convex and <b>non-decreasing in each argument</b>, and each $g_i$ is convex, OR</li>
-            <li>$h$ is convex and <b>non-increasing in each argument</b>, and each $g_i$ is concave.</li>
+            <li>$g$ is <b>convex</b> ($\cup$), and $h$ is <b>convex</b> ($\cup$) and <b>non-decreasing</b> ($\nearrow$).</li>
+            <li>$g$ is <b>concave</b> ($\cap$), and $h$ is <b>convex</b> ($\cup$) and <b>non-increasing</b> ($\searrow$).</li>
           </ul>
+          <p><i>Mnemonic:</i> To keep the result Convex ($\cup$), if the inner function is Concave ($\cap$, "flipped"), the outer function must "reverse" the ordering (Decreasing, $\searrow$).</p>
+        </div>
+
+        <div class="example">
+          <h4>Example: Log-Log-Sum-Exp (Problem 3.22a)</h4>
+          <p>Consider $f(x) = -\log(-\log(\sum e^{a_i^\top x + b_i}))$.</p>
+          <ul>
+            <li>Inner: $g(x) = \log(\sum e^{y_i})$ is Convex (Log-Sum-Exp).</li>
+            <li>Outer: $h(u) = -\log(-u)$ is Convex and Non-decreasing (for $u < 0$).</li>
+            <li>Result: Convex.</li>
+          </ul>
+        </div>
+
+        <div class="theorem-box">
+          <h4>3. Vector Composition (Example 3.14)</h4>
+          <p>Let $h: \mathbb{R}^k \to \mathbb{R}$ and $g: \mathbb{R}^n \to \mathbb{R}^k$. Then $f(x) = h(g(x))$ is convex if:</p>
+          <ul>
+            <li>$h$ is convex and <b>non-decreasing in each argument</b>, and each $g_i$ is <b>convex</b>.</li>
+            <li>$h$ is convex and <b>non-increasing in each argument</b>, and each $g_i$ is <b>concave</b>.</li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h4>Example: Geometric Mean (Example 3.14c)</h4>
+          <p>The function $f(x) = (\prod_{i=1}^k g_i(x))^{1/k}$ is concave if all $g_i(x)$ are non-negative and concave. (Primitive: Geometric mean is concave and non-decreasing).</p>
         </div>
 
         <h3>5.4 Minimization</h3>
@@ -500,7 +526,7 @@
           <p>For a convex set $C$, the squared distance function $f(x) = \inf_{y \in C} \|x - y\|_2^2$ is convex. (The function $\|x - y\|_2^2$ is jointly convex in $(x, y)$, so minimizing over $y \in C$ preserves convexity in $x$.)</p>
         </div>
 
-        <h3>5.5 Perspective</h3>
+        <h3>5.5 Perspective (Problem 3.23)</h3>
         <div class="theorem-box">
           <h4>Definition and Property</h4>
           <p>If $f: \mathbb{R}^n \to \mathbb{R}$ is convex, then its <b>perspective</b> $g: \mathbb{R}^{n+1} \to \mathbb{R}$ defined by:</p>
@@ -508,8 +534,20 @@
           g(x, t) = t f(x/t), \quad t > 0
           $$
           <p>is convex on $\mathrm{dom}\, g = \{(x, t) \mid x/t \in \mathrm{dom}\, f, \ t > 0\}$.</p>
+          <p><b>Geometric Intuition:</b> The epigraph of the perspective function is a cone generated by the epigraph of $f$ (scaled linearly with $t$).</p>
         </div>
-        <p><b>Application:</b> The perspective operation appears in modeling problems with scaling, e.g., in portfolio optimization and geometric programming.</p>
+
+        <div class="example">
+          <h4>Example: Power-over-Linear (Problem 3.23a)</h4>
+          <p>The function $f(x, t) = \frac{\|x\|_p^p}{t^{p-1}}$ for $p > 1, t > 0$ is convex.
+          <br><i>Derivation:</i> Factor out $t$: $f(x,t) = t \frac{\|x\|_p^p}{t^p} = t \|x/t\|_p^p$. This is the perspective of the convex function $h(u) = \|u\|_p^p$.</p>
+        </div>
+
+        <div class="example">
+          <h4>Example: Quadratic-over-Linear (Problem 3.23b)</h4>
+          <p>The function $f(x, y) = \frac{x^2}{y}$ for $y > 0$ is convex (Perspective of $x^2$).
+          <br>More generally, $f(x) = \frac{\|Ax+b\|_2^2}{c^\top x + d}$ is convex (Affine composition of perspective).</p>
+        </div>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Builder: Operations Preserving Convexity</h3>
@@ -716,13 +754,19 @@
         <h3>8.3 Examples</h3>
 
         <div class="example">
-          <h4>Example 1: Ceiling Function</h4>
-          <p>$f(x) = \lceil x \rceil$ is quasi-convex but not convex (the graph has jumps, not smooth curvature).</p>
+          <h4>Example 1: Rank of a Matrix (Example 3.36)</h4>
+          <p>The function $f(X) = \text{rank}(X)$ on Positive Semidefinite matrices is <b>Quasiconcave</b>. This means the set of matrices with rank at least $k$ is a convex set.</p>
+          <p><i>Proof:</i> Using the intersection of nullspaces, one can show $\text{rank}(X+Y) \ge \min(\text{rank}(X), \text{rank}(Y))$, satisfying the superlevel set condition.</p>
         </div>
 
         <div class="example">
-          <h4>Example 2: Ratio of Convex Functions</h4>
-          <p>If $f$ and $g$ are convex with $g > 0$, then $f(x)/g(x)$ is quasi-convex (but generally not convex). This appears in fractional programming.</p>
+          <h4>Example 2: Quasilinear Functions (Problem 3.36)</h4>
+          <p>A function is <b>quasilinear</b> if it is both quasiconvex and quasiconcave. Continuous quasilinear functions can be shown to be "monotone functions of linear functions", i.e., $f(x) = g(a^\top x)$ where $g$ is monotone.</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 3: Ceiling Function</h4>
+          <p>$f(x) = \lceil x \rceil$ is quasi-convex but not convex (the graph has jumps, not smooth curvature).</p>
         </div>
 
         <h3>8.4 Quasi-Convex Optimization</h3>
