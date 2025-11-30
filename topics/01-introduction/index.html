@@ -1085,6 +1085,40 @@
         </div>
 
         <div class="problem">
+          <h3>P1.5 — Proving Uniqueness</h3>
+          <p>Prove that if $f_0$ is strictly convex, then the optimization problem has at most one global minimizer.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Setup (proof by contradiction):</strong> Assume there are two distinct global minimizers, $x$ and $y$, with $x \neq y$. Let the optimal value be $p^* = f_0(x) = f_0(y)$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 1: Form a convex combination.</strong> Consider the point $z = \frac{1}{2}x + \frac{1}{2}y$. Since the feasible set is convex, $z$ is feasible.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Apply strict convexity.</strong> Since $f_0$ is strictly convex and $x \neq y$:
+              $$
+              f_0(z) = f_0\left(\frac{1}{2}x + \frac{1}{2}y\right) < \frac{1}{2}f_0(x) + \frac{1}{2}f_0(y)
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Substitute optimal values.</strong>
+              $$
+              f_0(z) < \frac{1}{2}p^* + \frac{1}{2}p^* = p^*
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Conclusion:</strong> We found a feasible point $z$ with $f_0(z) < p^*$, which contradicts that $p^*$ is the global minimum. Thus, the assumption that there are two distinct minimizers must be false.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
           <h3>P1.6 — Modeling: Maximum Likelihood Estimation</h3>
           <p>Consider a logistic regression model for binary classification. We have data points $(x_i, y_i)$ where $x_i \in \mathbb{R}^n$ are feature vectors and $y_i \in \{-1, 1\}$ are labels. The probability that $y_i = 1$ is modeled as:
           $$ P(y_i=1 \mid x_i; w) = \frac{1}{1 + e^{-w^\top x_i}} $$
@@ -1116,41 +1150,6 @@
               <strong>Conclusion:</strong> The optimization problem is:
               $$ \min_{w \in \mathbb{R}^n} \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$
               This is an unconstrained convex optimization problem.
-            </div>
-          </div>
-        </div>
-      </section>
-
-        <div class="problem">
-          <h3>P1.5 — Proving Uniqueness</h3>
-          <p>Prove that if $f_0$ is strictly convex, then the optimization problem has at most one global minimizer.</p>
-          <div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Setup (proof by contradiction):</strong> Assume there are two distinct global minimizers, $x$ and $y$, with $x \neq y$. Let the optimal value be $p^* = f_0(x) = f_0(y)$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 1: Form a convex combination.</strong> Consider the point $z = \frac{1}{2}x + \frac{1}{2}y$. Since the feasible set is convex, $z$ is feasible.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Apply strict convexity.</strong> Since $f_0$ is strictly convex and $x \neq y$:
-              $$
-              f_0(z) = f_0\left(\frac{1}{2}x + \frac{1}{2}y\right) < \frac{1}{2}f_0(x) + \frac{1}{2}f_0(y)
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Substitute optimal values.</strong>
-              $$
-              f_0(z) < \frac{1}{2}p^* + \frac{1}{2}p^* = p^*
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> We found a feasible point $z$ with $f_0(z) < p^*$, which contradicts that $p^*$ is the global minimum. Thus, the assumption that there are two distinct minimizers must be false.
             </div>
           </div>
         </div>

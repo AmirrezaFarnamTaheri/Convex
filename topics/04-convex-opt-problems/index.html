@@ -1026,6 +1026,53 @@
           </div>
         </div>
       </div>
+
+      <!-- Problem 4.10 -->
+      <div class="problem">
+        <h3>P4.10 — Standard Form Transformation: Linear-Fractional Programming</h3>
+        <p>Consider the linear-fractional optimization problem:</p>
+        $$
+        \begin{aligned}
+        \text{minimize} \quad & \frac{c^T x + d}{e^T x + f} \\
+        \text{subject to} \quad & Ax \le b \\
+        & e^T x + f > 0
+        \end{aligned}
+        $$
+        <p>This problem is quasiconvex but not convex. However, it can be transformed into a standard LP.</p>
+        <p><strong>(a)</strong> Perform the Charnes-Cooper transformation by introducing variables $y = \frac{x}{e^T x + f}$ and $z = \frac{1}{e^T x + f}$.</p>
+        <p><strong>(b)</strong> Write the resulting equivalent problem and verify it is an LP.</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Part (a): Variable Transformation.</strong>
+            Let $z = \frac{1}{e^T x + f}$. Since $e^T x + f > 0$, we have $z > 0$.
+            Let $y = zx$. Then $x = y/z$.
+            Substitute into the objective:
+            $$ \frac{c^T x + d}{e^T x + f} = \frac{c^T (y/z) + d}{1/z} = c^T y + d z $$
+            Substitute into the definition of $z$:
+            $$ e^T x + f = \frac{1}{z} \implies e^T (y/z) + f = \frac{1}{z} \implies e^T y + f z = 1 $$
+            Substitute into the constraints $Ax \le b$:
+            $$ A(y/z) \le b \implies Ay \le bz \implies Ay - bz \le 0 $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Equivalent LP.</strong>
+            The transformed problem is:
+            $$
+            \begin{aligned}
+            \text{minimize} \quad & c^T y + d z \\
+            \text{subject to} \quad & Ay - bz \le 0 \\
+            & e^T y + f z = 1 \\
+            & z \ge 0
+            \end{aligned}
+            $$
+            The constraint $z > 0$ is relaxed to $z \ge 0$ for standard LP form (usually handled by the fact that $z=0$ would imply unboundedness or infeasibility in the original problem context, or by $e^T y = 1$ if $z=0$ which corresponds to "points at infinity").
+            This is a Linear Program in variables $(y, z) \in \mathbb{R}^{n+1}$.
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
