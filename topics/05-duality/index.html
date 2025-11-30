@@ -247,7 +247,36 @@
         <p>then <strong>strong duality</strong> holds: $p^* = d^*$.</p>
 
         <div class="proof-step">
-          <strong>Proof Sketch:</strong> The full proof uses the separating hyperplane theorem. The idea: if $p^* > d^*$, then the epigraph of the primal objective and the constraint set can be strictly separated, contradicting the existence of $\tilde{x}$. Slater's point ensures that the feasible set has nonempty interior relative to the affine hull of its domain.
+          <strong>Step 1: Define the set of achievable values.</strong>
+          Consider the set of values $(\text{constraint}, \text{objective})$ in $\mathbb{R}^{m+1}$:
+          $$ \mathcal{A} = \{(u, t) \mid \exists x, f_i(x) \le u_i, f_0(x) \le t\} $$
+          Since $f_i$ are convex, this set $\mathcal{A}$ is convex.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Apply Separating Hyperplane Theorem.</strong>
+          Assume $d^* < p^*$ (duality gap). We want to find a contradiction.
+          The point $(0, p^*)$ is on the boundary of $\mathcal{A}$. But strictly speaking, $(0, d^*)$ is not in $\mathcal{A}$ if we assume the gap.
+          Let's separate $\mathcal{A}$ from the ray $(-\infty, d^*)$ in the objective dimension?
+          Standard proof: Consider the set $\mathcal{B} = \{(0, t) \mid t < p^*\}$. This is disjoint from $\mathcal{A}$.
+          By the Separating Hyperplane Theorem, there exists a hyperplane $(\lambda, \mu)$ separating $\mathcal{A}$ and $\mathcal{B}$.
+          $$ \lambda^T u + \mu t \ge \alpha \quad \forall (u, t) \in \mathcal{A} $$
+          $$ \lambda^T \cdot 0 + \mu t < \alpha \quad \forall t < p^* $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Analyze Dual Variables.</strong>
+          From the second inequality, $\mu \ge 0$. Also $\lambda \ge 0$ (otherwise we could send $u_i \to \infty$ in $\mathcal{A}$).
+          If $\mu > 0$, we can divide by $\mu$ to recover the standard Lagrangian multiplier $\tilde{\lambda} = \lambda/\mu$. Then $\inf L(x, \tilde{\lambda}) \ge \alpha/\mu \approx p^*$, implying $d^* \ge p^*$, so $d^* = p^*$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Use Slater's Point to ensure $\mu > 0$.</strong>
+          Suppose $\mu = 0$. Then $\lambda^T u \ge 0$ for all $u \in \mathcal{A}$.
+          Using Slater's point $\tilde{x}$, we have $f_i(\tilde{x}) < 0$. Let $\tilde{u}_i = f_i(\tilde{x}) < 0$.
+          Then $\lambda^T \tilde{u} = \sum \lambda_i f_i(\tilde{x}) \ge 0$.
+          Since $\lambda \ge 0, \lambda \neq 0$ and $f_i(\tilde{x}) < 0$, the sum must be negative. Contradiction.
+          Therefore $\mu > 0$, so strong duality holds.
         </div>
       </div>
 
