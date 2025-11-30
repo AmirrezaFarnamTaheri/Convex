@@ -413,20 +413,24 @@
 
         <h3>4.4 Advanced Calculus: Log-Convexity Derivations</h3>
 
-        <h4>Problem 15: The Hessian of $\ln f(x)$</h4>
+        <h4>4.4.1 Second-Order Condition for Log-Convexity</h4>
         <p>A scalar function $f(x)$ is <b>log-convex</b> if $\ln f(x)$ is convex, and <b>log-concave</b> if $\ln f(x)$ is concave. To check this condition using the second-order test, we must compute the Hessian of $h(x) = \ln f(x)$.</p>
-        <p>Using the chain rule and product rule derived in Phase 2:</p>
+        <p>Using the chain rule and product rule:</p>
+        $$ \nabla \ln f(x) = \frac{\nabla f(x)}{f(x)} $$
+        $$ \nabla^2 \ln f(x) = \frac{f(x)\nabla^2 f(x) - \nabla f(x)\nabla f(x)^\top}{f(x)^2} $$
         $$ \nabla^2 \ln f(x) = \frac{1}{f(x)}\nabla^2 f(x) - \frac{1}{f(x)^2}\nabla f(x)\nabla f(x)^\top $$
-        <p>For $f$ to be log-concave ($\nabla^2 \ln f \preceq 0$), we require:</p>
+        <p>For $f$ to be log-concave ($\nabla^2 \ln f \preceq 0$), we require the Hessian of the log to be negative semidefinite, which simplifies to:</p>
         $$ f(x) \nabla^2 f(x) \preceq \nabla f(x) \nabla f(x)^\top $$
 
-        <h4>Problem 3.47: First-Order Condition for Log-Concavity</h4>
-        <p>While Problem 15 gives the Hessian condition, Problem 3.47 establishes a geometric inequality. $f$ is log-concave if and only if for all $x, y \in \mathrm{dom}\, f$:</p>
-        $$ \frac{f(y)}{f(x)} \le \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right) $$
-        <p>This provides a global upper bound on the function based on its local gradient, essential for error analysis in statistical estimation.</p>
+        <h4>4.4.2 First-Order Condition for Log-Concavity</h4>
+        <p>An alternative characterization uses the first-order condition for concavity applied to $\ln f$. A function $f$ is log-concave if and only if $\ln f$ is concave, which means:</p>
+        $$ \ln f(y) \le \ln f(x) + \nabla (\ln f(x))^\top (y-x) $$
+        $$ \ln f(y) \le \ln f(x) + \frac{\nabla f(x)^\top (y-x)}{f(x)} $$
+        <p>Exponentiating both sides gives a geometric inequality useful for error analysis:</p>
+        $$ f(y) \le f(x) \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right) $$
 
-        <h4>Problem 3.48: Sublevel Sets of Log-Concave Functions</h4>
-        <p>If $f$ is log-concave and $a \ge 0$, then the function $g = f - a$ is also log-concave (on the domain where $f(x) > a$). This result relies on comparing the curvature intensities: subtracting a positive constant makes the function decay "faster" relative to its value, increasing the concavity of its logarithm.</p>
+        <h4>4.4.3 Sublevel Sets of Log-Concave Functions</h4>
+        <p>If $f$ is log-concave and $a \ge 0$, then the function $g = f - a$ is also log-concave (on the domain where $f(x) > a$). This result implies that if a probability density is log-concave, its "shifted" versions retain this property, which is crucial in reliability theory and survival analysis.</p>
       </section>
 
       <section class="card-v2" id="section-5">
@@ -705,24 +709,47 @@
           <div class="proof-enhanced">
             <h4>Derivation Step-by-Step</h4>
             <div class="proof-step">
-              <strong>Step 1: Set up the supremum.</strong> We want to maximize $g(x) = y^\top x - \log(\sum_i e^{x_i})$. Since $f(x)$ is convex, we set the gradient to zero.
+              <strong>Step 1: Set up the optimization problem.</strong>
+              The conjugate is defined as $f^*(y) = \sup_{x} \{ y^\top x - \log(\sum_{i=1}^n e^{x_i}) \}$.
+              Let $L(x) = y^\top x - \log(\sum_{i=1}^n e^{x_i})$. This function is concave (linear minus convex), so we can find the maximum by setting the gradient to zero.
             </div>
+
             <div class="proof-step">
-              <strong>Step 2: Compute gradient.</strong>
-              $$ \frac{\partial g}{\partial x_k} = y_k - \frac{e^{x_k}}{\sum_j e^{x_j}} = 0 \implies y_k = \frac{e^{x_k}}{\sum_j e^{x_j}} $$
-              This implies $y_k > 0$ and $\sum_k y_k = \sum_k \frac{e^{x_k}}{\sum_j e^{x_j}} = 1$. If $\mathbf{1}^\top y \neq 1$ or $y \not\ge 0$, the supremum is unbounded ($+\infty$).
+              <strong>Step 2: Optimality conditions.</strong>
+              Differentiating with respect to $x_k$:
+              $$ \frac{\partial L}{\partial x_k} = y_k - \frac{e^{x_k}}{\sum_{j=1}^n e^{x_j}} = 0 \quad \implies \quad y_k = \frac{e^{x_k}}{\sum_{j=1}^n e^{x_j}} $$
+              Summing this over all $k$:
+              $$ \sum_{k=1}^n y_k = \sum_{k=1}^n \frac{e^{x_k}}{\sum_{j=1}^n e^{x_j}} = \frac{\sum_{k=1}^n e^{x_k}}{\sum_{j=1}^n e^{x_j}} = 1 $$
+              Also, since exponentials are positive, we must have $y_k > 0$.
+              <br><b>Crucial Observation:</b> If $\sum y_k \neq 1$ or if any $y_k < 0$, the system has no solution.
+              <ul>
+                <li>If any $y_k < 0$, letting $x_k \to -\infty$ makes the term $y_k x_k \to +\infty$ while the log-sum-exp term stays bounded or decreases slower, driving the supremum to $+\infty$.</li>
+                <li>If $\sum y_k \neq 1$, consider $x + c\mathbf{1}$. Then $L(x+c\mathbf{1}) = y^\top x + c(\sum y_k) - \log(e^c \sum e^{x_i}) = L(x) + c(\sum y_k - 1)$. If $\sum y_k \neq 1$, we can choose $c \to \pm \infty$ to drive $L$ to $+\infty$.</li>
+              </ul>
+              Thus, $\mathrm{dom}(f^*) = \{y \mid y \ge 0, \mathbf{1}^\top y = 1\}$.
             </div>
+
             <div class="proof-step">
-              <strong>Step 3: Solve for x.</strong> From $y_k = e^{x_k} / (\sum e^{x_j})$, we have $e^{x_k} = y_k (\sum e^{x_j})$. Taking log: $x_k = \log y_k + \log(\sum e^{x_j})$. Let $K = \log(\sum e^{x_j})$. Then $x_k = \log y_k + K$.
+              <strong>Step 3: Solve for $x$ in terms of $y$.</strong>
+              From $y_k = \frac{e^{x_k}}{\sum e^{x_j}}$, we have $e^{x_k} = y_k (\sum e^{x_j})$.
+              Taking logs: $x_k = \log y_k + \log(\sum e^{x_j})$.
+              Let $C = \log(\sum e^{x_j})$. Then $x_k = \log y_k + C$.
+              (Note: The value of $C$ cancels out in the final expression, reflecting that $x$ is only determined up to a constant shift).
             </div>
+
             <div class="proof-step">
-              <strong>Step 4: Substitute back.</strong>
-              $$ y^\top x = \sum_k y_k (\log y_k + K) = \sum_k y_k \log y_k + K \sum_k y_k = \sum_k y_k \log y_k + K $$
-              $$ f(x) = \log(\sum e^{x_j}) = K $$
-              $$ f^*(y) = (y^\top x) - f(x) = (\sum y_k \log y_k + K) - K = \sum_{i=1}^n y_i \log y_i $$
+              <strong>Step 4: Substitute back into the objective.</strong>
+              Compute $y^\top x$:
+              $$ y^\top x = \sum_{k=1}^n y_k (\log y_k + C) = \sum_{k=1}^n y_k \log y_k + C \sum_{k=1}^n y_k = \sum_{k=1}^n y_k \log y_k + C $$
+              Compute the log-sum-exp term:
+              $$ \log\left(\sum_{k=1}^n e^{x_k}\right) = \log\left(\sum_{k=1}^n e^{\log y_k + C}\right) = \log\left(e^C \sum_{k=1}^n y_k\right) = \log(e^C \cdot 1) = C $$
+              Finally, subtract:
+              $$ f^*(y) = (y^\top x) - f(x) = \left(\sum_{k=1}^n y_k \log y_k + C\right) - C = \sum_{k=1}^n y_k \log y_k $$
             </div>
+
             <div class="proof-step">
               <strong>Conclusion:</strong>
+              The conjugate of the Log-Sum-Exp function is the <b>negative entropy</b> function restricted to the probability simplex:
               $$ f^*(y) = \begin{cases} \sum_{i=1}^n y_i \log y_i & \text{if } y \ge 0, \mathbf{1}^\top y = 1 \\ +\infty & \text{otherwise} \end{cases} $$
             </div>
           </div>
@@ -904,6 +931,7 @@
         </table>
       </section>
 
+      <!-- SECTION 10: EXERCISES -->
       <section class="card-v2" id="section-10">
         <h2><i data-feather="edit-3"></i> 10. Exercises and Detailed Examples</h2>
 
@@ -1323,6 +1351,12 @@
       </section>
 
     </article>
+
+    <!-- SECTION 11: SUMMARY -->
+    <section class="card-v2" id="summary">
+      <h2>11. Summary</h2>
+      <p><strong>Overview:</strong> This lecture develops the theory of convex functions, which form the foundation for convex optimization. We present multiple equivalent characterizations (Jensen's inequality, epigraph, first-order conditions, second-order conditions), prove key properties, and establish operations that preserve convexity. The lecture culminates with a toolkit for recognizing and constructing convex functions in practice.</p>
+    </section>
 
     <footer class="site-footer">
       <div class="container">

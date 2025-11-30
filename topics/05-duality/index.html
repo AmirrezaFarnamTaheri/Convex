@@ -147,6 +147,20 @@
           The Lagrangian exhibits a saddle point structure: minimized over $x$ (primal variables), maximized over $\lambda, \nu$ (dual variables). Source: Statistical Odds & Ends.
         </figcaption>
       </figure>
+
+      <!-- Widget 1: Lagrangian Explainer -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: Lagrangian Explainer</h3>
+        <p><strong>Purpose:</strong> Visualize how the Lagrangian function $L(x, \lambda, \nu)$ changes as dual variables $\lambda, \nu$ vary.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Adjust $\lambda$ (penalty on inequality constraints) and see Lagrangian surface update</li>
+          <li>Observe the infimum $g(\lambda, \nu)$ as a function of dual variables</li>
+          <li>Understand the saddle-point structure</li>
+        </ul>
+        <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Section 2: The Dual Problem and Weak Duality -->
@@ -220,6 +234,34 @@
         $
       </p>
       <p>Strong duality means these are equal (saddle point property).</p>
+
+      <!-- Widget 2: Duality Visualizer -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: Primal-Dual Visualizer</h3>
+        <p><strong>Purpose:</strong> Visualize primal and dual problems for a 2D LP, showing feasible regions and optimal points.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>See primal feasible region (polyhedron) and dual feasible region</li>
+          <li>Observe primal optimal $x^*$ and dual optimal $(\lambda^*, \nu^*)$</li>
+          <li>Verify strong duality: $c^\top x^* = b^\top \nu^*$</li>
+        </ul>
+        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 4: Weak vs Strong Duality Race -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: Duality Gap Animation</h3>
+        <p><strong>Purpose:</strong> Animate convergence of primal and dual objectives, showing duality gap shrinking.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Watch primal objective $f_0(x^{(k)})$ descend and dual $g(\lambda^{(k)}, \nu^{(k)})$ ascend</li>
+          <li>See the gap $p^* - d^*$ close to zero (strong duality)</li>
+          <li>Explore cases where gap remains (weak duality)</li>
+        </ul>
+        <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Section 3: Strong Duality and Slater's Condition -->
@@ -285,11 +327,18 @@
 
         <div class="proof-step">
           <strong>Step 4: Use Slater's Point to ensure $\mu > 0$.</strong>
-          Suppose $\mu = 0$. Then $\lambda^\top u \ge 0$ for all $u \in \mathcal{A}$.
-          Using Slater's point $\tilde{x}$, we have $f_i(\tilde{x}) < 0$. Let $\tilde{u}_i = f_i(\tilde{x}) < 0$.
-          Then $\lambda^\top \tilde{u} = \sum \lambda_i f_i(\tilde{x}) \ge 0$.
-          Since $\lambda \ge 0, \lambda \neq 0$ and $f_i(\tilde{x}) < 0$, the sum must be negative. Contradiction.
-          Therefore $\mu > 0$, so strong duality holds.
+          Suppose for contradiction that $\mu = 0$. Then the separation inequality becomes $\lambda^\top u \ge 0$ for all $u \in \mathcal{A}$.
+          Applying this to the Slater point $\tilde{x}$: let $\tilde{u}_i = f_i(\tilde{x})$ and $\tilde{t} = f_0(\tilde{x})$. Then $(\tilde{u}, \tilde{t}) \in \mathcal{A}$.
+          The inequality implies $\sum_{i=1}^m \lambda_i f_i(\tilde{x}) \ge 0$.
+          <br>However, we know:
+          <ul>
+            <li>$\lambda \succeq 0$ and $\lambda \neq 0$ (since $(\lambda, \mu) \neq 0$ and $\mu=0$).</li>
+            <li>$f_i(\tilde{x}) < 0$ for all $i$ (strictly feasible).</li>
+          </ul>
+          Since $\lambda$ has at least one positive component $\lambda_k > 0$, and $f_k(\tilde{x}) < 0$, the term $\lambda_k f_k(\tilde{x})$ is strictly negative. All other terms are non-positive.
+          Thus, $\sum \lambda_i f_i(\tilde{x}) < 0$.
+          <br>This contradicts $\sum \lambda_i f_i(\tilde{x}) \ge 0$. Therefore, the assumption $\mu=0$ must be false.
+          <br>Conclusion: $\mu > 0$, which allows us to normalize the dual variables and prove $p^* = d^*$.
         </div>
 
         <div class="insight">
@@ -298,14 +347,7 @@
         </div>
       </div>
 
-      <h3>3.2 Refinements</h3>
-      <ul>
-        <li><strong>For problems with affine inequalities:</strong> Slater's condition simplifies to existence of a strictly feasible point (no need for relint)</li>
-        <li><strong>For LP:</strong> Strong duality always holds if both primal and dual are feasible</li>
-        <li><strong>For SDP:</strong> Strong duality holds under Slater's condition (positive definite interior point)</li>
-      </ul>
-
-      <h3>3.3 Example: Strong Duality for LP</h3>
+      <h3>3.2 Example: Strong Duality for LP</h3>
       <p>Consider the LP:</p>
       <p style="text-align: center;">
         $
@@ -378,6 +420,34 @@
         <li>Write complementary slackness</li>
         <li>Solve the resulting system of equations and inequalities</li>
       </ol>
+
+      <!-- Widget 3: KKT Condition Checker -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: KKT Condition Checker</h3>
+        <p><strong>Purpose:</strong> Verify which KKT conditions are satisfied for a candidate solution.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Input candidate $x^*$, $\lambda^*$, $\nu^*$ for a simple problem</li>
+          <li>Check stationarity, feasibility, complementary slackness individually</li>
+          <li>Get feedback on which conditions fail (if any)</li>
+        </ul>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 6: Complementary Slackness Explorer -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: Complementary Slackness Explorer</h3>
+        <p><strong>Purpose:</strong> Interactive demonstration of complementary slackness for a 2D LP.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Visualize constraints: active (binding) vs inactive (slack)</li>
+          <li>Display $\lambda_i^*$ for each constraint</li>
+          <li>Verify $\lambda_i^* f_i(x^*) = 0$ for all $i$</li>
+        </ul>
+        <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Section 5: Perturbation and Sensitivity Analysis -->
@@ -418,6 +488,20 @@
 
       <h3>5.2 Example: Water Filling</h3>
       <p>In communication systems, "water filling" allocates power across channels. The dual variable represents the "water level" (Lagrange multiplier), and active constraints correspond to filled channels.</p>
+
+      <!-- Widget 5: Shadow Prices & Sensitivity -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: Shadow Prices & Sensitivity Analysis</h3>
+        <p><strong>Purpose:</strong> Perturb constraints and observe how optimal value $p^*(u)$ changes; verify $\lambda^* = -\nabla p^*(0)$.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Adjust RHS $u_i$ of constraint $i$ and see $p^*(u)$ update</li>
+          <li>Compare numerical derivative to dual variable $\lambda_i^*$</li>
+          <li>Understand economic interpretation (shadow price)</li>
+        </ul>
+        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Section 6: Duality for Specific Problem Classes -->
@@ -527,96 +611,6 @@
       <p>The max-flow min-cut theorem is a consequence of LP duality applied to network flow problems.</p>
     </section>
 
-    <!-- Interactive widgets -->
-    <section class="card" id="widgets" style="margin-bottom: 32px;">
-      <h2>8. Interactive Widgets</h2>
-      <p>Explore duality concepts through interactive visualizations.</p>
-
-      <!-- Widget 1: Lagrangian Explainer -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">8.1 Lagrangian Explainer</h3>
-        <p><strong>Purpose:</strong> Visualize how the Lagrangian function $L(x, \lambda, \nu)$ changes as dual variables $\lambda, \nu$ vary.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Adjust $\lambda$ (penalty on inequality constraints) and see Lagrangian surface update</li>
-          <li>Observe the infimum $g(\lambda, \nu)$ as a function of dual variables</li>
-          <li>Understand the saddle-point structure</li>
-        </ul>
-        <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 2: Duality Visualizer -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">8.2 Primal-Dual Visualizer</h3>
-        <p><strong>Purpose:</strong> Visualize primal and dual problems for a 2D LP, showing feasible regions and optimal points.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>See primal feasible region (polyhedron) and dual feasible region</li>
-          <li>Observe primal optimal $x^*$ and dual optimal $(\lambda^*, \nu^*)$</li>
-          <li>Verify strong duality: $c^\top x^* = b^\top \nu^*$</li>
-        </ul>
-        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 3: KKT Condition Checker -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">8.3 KKT Condition Checker</h3>
-        <p><strong>Purpose:</strong> Verify which KKT conditions are satisfied for a candidate solution.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Input candidate $x^*$, $\lambda^*$, $\nu^*$ for a simple problem</li>
-          <li>Check stationarity, feasibility, complementary slackness individually</li>
-          <li>Get feedback on which conditions fail (if any)</li>
-        </ul>
-        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 4: Weak vs Strong Duality Race -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">8.4 Duality Gap Animation</h3>
-        <p><strong>Purpose:</strong> Animate convergence of primal and dual objectives, showing duality gap shrinking.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Watch primal objective $f_0(x^{(k)})$ descend and dual $g(\lambda^{(k)}, \nu^{(k)})$ ascend</li>
-          <li>See the gap $p^* - d^*$ close to zero (strong duality)</li>
-          <li>Explore cases where gap remains (weak duality)</li>
-        </ul>
-        <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 5: Shadow Prices & Sensitivity -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">8.5 Shadow Prices & Sensitivity Analysis</h3>
-        <p><strong>Purpose:</strong> Perturb constraints and observe how optimal value $p^*(u)$ changes; verify $\lambda^* = -\nabla p^*(0)$.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Adjust RHS $u_i$ of constraint $i$ and see $p^*(u)$ update</li>
-          <li>Compare numerical derivative to dual variable $\lambda_i^*$</li>
-          <li>Understand economic interpretation (shadow price)</li>
-        </ul>
-        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 6: Complementary Slackness Explorer -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">8.6 Complementary Slackness Explorer</h3>
-        <p><strong>Purpose:</strong> Interactive demonstration of complementary slackness for a 2D LP.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Visualize constraints: active (binding) vs inactive (slack)</li>
-          <li>Display $\lambda_i^*$ for each constraint</li>
-          <li>Verify $\lambda_i^* f_i(x^*) = 0$ for all $i$</li>
-        </ul>
-        <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-    </section>
-
     <!-- Readings -->
     <section class="card" id="readings" style="margin-bottom: 32px;">
       <h2>9. Readings & Resources</h2>
@@ -628,7 +622,7 @@
       </ul>
     </section>
 
-    <!-- Problem Set & Solutions -->
+    <!-- SECTION 10: PROBLEM SET -->
     <section class="card" id="section-10">
       <h2>10. Problem Set & Solutions</h2>
       <p>These problems consolidate the duality theory and provide practice in deriving duals, verifying KKT conditions, and applying sensitivity analysis.</p>
