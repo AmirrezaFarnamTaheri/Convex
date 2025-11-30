@@ -898,15 +898,75 @@
           <h4>Solution</h4>
 
           <div class="proof-step">
-            <strong>Part (a): Dual variable $\lambda_3$.</strong> By complementary slackness, if $x_3^* = 0$ (constraint $-x_3 \le 0$ is inactive, i.e., $-x_3^* = 0$), then... wait, $-x_3^* = 0$ means the constraint is ACTIVE. So complementary slackness says $\lambda_3 \cdot (-x_3^*) = 0$, which is satisfied for any $\lambda_3 \ge 0$.
-
-            Actually, let me reconsider: the constraint is $x_3 \ge 0$, or $-x_3 \le 0$ in standard form. At $x_3^* = 0$, we have $-x_3^* = 0$, so the constraint is active (binding). Complementary slackness does NOT restrict $\lambda_3$ in this case—it could be any nonnegative value. However, if $x_3^* > 0$, then the constraint is inactive, and we'd have $\lambda_3 = 0$.
-
-            So: if $x_3^* = 0$ (constraint is active), complementary slackness is automatically satisfied and $\lambda_3$ can be $> 0$ (reflecting a "pressure" to invest in asset 3 that is exactly balanced at zero).
+            <strong>Part (a): Dual variable $\lambda_3$.</strong> The constraint is $x_3 \ge 0$, or equivalently $-x_3 \le 0$ in standard form. The complementary slackness condition is $\lambda_3 x_3^* = 0$.
+            Since $x_3^* = 0$, this condition is trivially satisfied for any $\lambda_3 \ge 0$.
+            <br>However, we can infer more from the stationarity condition. The KKT stationarity condition is:
+            $$ \nabla f_0(x^*) + \sum \lambda_i \nabla f_i(x^*) + \sum \nu_j \nabla h_j(x^*) = 0 $$
+            For this problem:
+            $$ 2(\Sigma x^*)_3 - \nu_{\text{ret}} \mu_3 - \nu_{\text{budget}} \cdot 1 - \lambda_3 = 0 $$
+            Solving for $\lambda_3$:
+            $$ \lambda_3 = 2(\Sigma x^*)_3 - \nu_{\text{ret}} \mu_3 - \nu_{\text{budget}} $$
+            Since $\lambda_3 \ge 0$, this tells us that the marginal benefit of investing in asset 3 (based on return and covariance) is less than or equal to the "shadow price" cost. If $\lambda_3 > 0$, it strictly indicates that the non-negativity constraint is binding and preventing the objective from improving further (i.e., we would want to short-sell asset 3 if allowed).
           </div>
 
           <div class="proof-step">
-            <strong>Part (b): Return constraint.</strong> The return constraint $\mu^T x \ge r_{\text{target}}$ (or $-\mu^T x \le -r_{\text{target}}$) is active, meaning $\mu^T x^* = r_{\text{target}}$. By complementary slackness, the dual variable $\nu$ for this constraint satisfies $\nu > 0$ (typically), reflecting the "cost" of the return requirement.
+            <strong>Part (b): Return constraint.</strong> The return constraint $\mu^T x \ge r_{\text{target}}$ (or $-\mu^T x \le -r_{\text{target}}$) is active, meaning $\mu^T x^* = r_{\text{target}}$. The complementary slackness condition is $\nu_{\text{ret}} (\mu^T x^* - r_{\text{target}}) = 0$, which is satisfied.
+            Typically, if a constraint is active, its associated dual variable $\nu_{\text{ret}}$ is positive ($\nu_{\text{ret}} > 0$), reflecting the "cost" or sensitivity of the optimal value to the return requirement.
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem 5.8 -->
+      <div class="problem">
+        <h3>P5.8 — Entropy Maximization Dual</h3>
+        <p>Consider the entropy maximization problem:</p>
+        <p style="text-align: center;">
+          $
+          \text{minimize} \quad \sum_{i=1}^n x_i \log x_i \quad \text{s.t.} \quad Ax = b, \; \mathbf{1}^T x = 1, \; x > 0
+          $
+        </p>
+        <p>Derive the dual problem.</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Step 1: Conjugate of negative entropy.</strong>
+            The objective function is $f_0(x) = \sum x_i \log x_i$. This is separable, so we can find the conjugate of the scalar function $\phi(u) = u \log u$.
+            $\phi^*(y) = \sup_{u > 0} (uy - u \log u)$.
+            Setting derivative to zero: $y - (\log u + 1) = 0 \implies \log u = y - 1 \implies u = e^{y-1}$.
+            Substituting back: $\phi^*(y) = e^{y-1} y - e^{y-1}(y-1) = e^{y-1}(y - y + 1) = e^{y-1}$.
+            Thus, $f_0^*(y) = \sum_{i=1}^n e^{y_i - 1}$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Dual Function.</strong>
+            The problem has equality constraints $Ax = b$ and $\mathbf{1}^T x = 1$. Let $\nu \in \mathbb{R}^m$ be dual variables for $Ax=b$ and $\mu \in \mathbb{R}$ for $\mathbf{1}^T x = 1$.
+            The dual function is:
+            $$ g(\nu, \mu) = \inf_x \left( f_0(x) + \nu^T(Ax - b) + \mu(\mathbf{1}^T x - 1) \right) $$
+            $$ g(\nu, \mu) = -b^T \nu - \mu + \inf_x \left( f_0(x) + (A^T \nu + \mu \mathbf{1})^T x \right) $$
+            $$ g(\nu, \mu) = -b^T \nu - \mu - \sup_x \left( -(A^T \nu + \mu \mathbf{1})^T x - f_0(x) \right) $$
+            $$ g(\nu, \mu) = -b^T \nu - \mu - f_0^*(-(A^T \nu + \mu \mathbf{1})) $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: Substitute Conjugate.</strong>
+            $$ g(\nu, \mu) = -b^T \nu - \mu - \sum_{i=1}^n e^{-(A^T \nu)_i - \mu - 1} $$
+            $$ g(\nu, \mu) = -b^T \nu - \mu - e^{-\mu-1} \sum_{i=1}^n e^{-(A^T \nu)_i} $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 4: Dual Problem.</strong>
+            maximize $g(\nu, \mu)$.
+            We can analytically maximize over $\mu$. Let $S(\nu) = \sum_{i=1}^n e^{-(A^T \nu)_i}$.
+            $$ \frac{\partial g}{\partial \mu} = -1 - e^{-\mu-1} S(\nu) \cdot (-1) = -1 + e^{-\mu-1} S(\nu) = 0 $$
+            $$ e^{-\mu-1} = \frac{1}{S(\nu)} \implies -\mu-1 = -\log S(\nu) \implies \mu = \log S(\nu) - 1 $$
+            Substitute $\mu$ back into $g$:
+            $$ g(\nu) = -b^T \nu - (\log S(\nu) - 1) - \frac{1}{S(\nu)} S(\nu) $$
+            $$ g(\nu) = -b^T \nu - \log S(\nu) + 1 - 1 = -b^T \nu - \log\left(\sum_{i=1}^n e^{-(A^T \nu)_i}\right) $$
+            The dual problem is:
+            $$ \text{maximize} \quad -b^T \nu - \log\left(\sum_{i=1}^n e^{-a_i^T \nu}\right) $$
+            This is an unconstrained geometric programming dual (Log-Sum-Exp).
           </div>
         </div>
       </div>
