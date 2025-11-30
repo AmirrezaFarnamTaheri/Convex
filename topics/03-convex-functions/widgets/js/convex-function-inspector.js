@@ -1,7 +1,7 @@
 /**
  * Widget: Convex Function Inspector
  *
- * Description: A comprehensive tool for analyzing convex functions.
+ * Description: An interactive tool for analyzing convex functions.
  *              Unifies Jensen's visualizer (definition), Epigraph (set view),
  *              and Tangent Line (first-order condition) into a single interface.
  *

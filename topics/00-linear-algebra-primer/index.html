@@ -473,7 +473,7 @@
 
       <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive Explorer: Matrix Geometry & Definiteness</h3>
-        <p><b>Explore Linear Maps and Quadratic Forms:</b> This comprehensive tool connects the linear transformation $Ax$ with the quadratic form $x^\top Ax$. Toggle "Force Symmetric" to explore the specific properties relevant to optimization (Hessians).</p>
+        <p><b>Explore Linear Maps and Quadratic Forms:</b> This interactive tool connects the linear transformation $Ax$ with the quadratic form $x^\top Ax$. Toggle "Force Symmetric" to explore the specific properties relevant to optimization (Hessians).</p>
         <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
           <li><b>Linear Map:</b> See how the unit circle transforms into an ellipse. The axes of the ellipse correspond to eigenvectors (for symmetric matrices).</li>
           <li><b>Quadratic Form:</b> Visualize the level sets of $z = x^\top Ax$.
@@ -527,6 +527,14 @@
         <li>Translate back</li>
       </ol>
 
+      <div class="proof-enhanced">
+        <h3>Example 1: Projection onto a Line</h3>
+        <p>Let's find the projection of the vector $b = (2, 3)^\top$ onto the line spanned by the vector $u = (1, 1)^\top$. The projection $p$ is given by the formula:
+        $$ p = \frac{u^\top b}{u^\top u} u = \frac{(1)(2) + (1)(3)}{(1)(1) + (1)(1)} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \frac{5}{2} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 2.5 \\ 2.5 \end{pmatrix} $$
+        The residual vector is $r = b - p = (2 - 2.5, 3 - 2.5)^\top = (-0.5, 0.5)^\top$. We can verify that the residual is orthogonal to the line: $u^\top r = (1)(-0.5) + (1)(0.5) = 0$.
+        </p>
+      </div>
+
     </section>
 
     <!-- SECTION 6: LEAST SQUARES -->
@@ -560,6 +568,26 @@
         <li>If $A$ has full column rank ($\mathrm{rank}(A) = n$), the solution $x^\star$ is unique.</li>
         <li>If $A$ is rank-deficient ($\mathrm{rank}(A) < n$), there are infinitely many solutions. In this case, the pseudoinverse is used to find the solution with the minimum norm.</li>
       </ul>
+
+      <div class="proof-enhanced">
+        <h3>Example 2: Solving Least Squares with Normal Equations</h3>
+        <p>Let's solve the least squares problem for the system $Ax=b$ with:
+        $$ A = \begin{pmatrix} 1 & 1 \\ 1 & -1 \\ 1 & 1 \end{pmatrix}, \quad b = \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix} $$
+        First, we form the normal equations $A^\top A x = A^\top b$:
+        $$ A^\top A = \begin{pmatrix} 1 & 1 & 1 \\ 1 & -1 & 1 \end{pmatrix} \begin{pmatrix} 1 & 1 \\ 1 & -1 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix} $$
+        $$ A^\top b = \begin{pmatrix} 1 & 1 & 1 \\ 1 & -1 & 1 \end{pmatrix} \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix} = \begin{pmatrix} 3 \\ 3 \end{pmatrix} $$
+        We solve the system $\begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix} x = \begin{pmatrix} 3 \\ 3 \end{pmatrix}$, which yields the solution $x^\star = (3/4, 3/4)^\top$.
+        The projection is $p = Ax^\star = (3/2, 0, 3/2)^\top$, and the residual is $r = b - p = (1/2, 0, -1/2)^\top$. We can verify the orthogonality condition: $A^\top r = (0, 0)^\top$.
+        </p>
+      </div>
+
+      <div class="proof-enhanced">
+        <h3>Example 3: Rank-Deficient Case</h3>
+        <p>Consider the system with:
+        $$ A = \begin{pmatrix} 1 & 1 \\ 2 & 2 \end{pmatrix}, \quad b = \begin{pmatrix} 3 \\ 6 \end{pmatrix} $$
+        The columns of $A$ are linearly dependent, so the system is rank-deficient. The vector $b$ is in the column space of $A$, so there are infinitely many solutions. The normal equations are $A^\top A x = \begin{pmatrix} 5 & 5 \\ 5 & 5 \end{pmatrix} x = \begin{pmatrix} 15 \\ 15 \end{pmatrix}$. This system has infinitely many solutions of the form $x_1 + x_2 = 3$. The pseudoinverse would provide the minimum-norm solution, $x_1 = x_2 = 1.5$.
+        </p>
+      </div>
 
     </section>
 
@@ -612,7 +640,7 @@
 
       <p><strong>Complexity:</strong> $O(mn^2)$ for computing QR, $O(n^2)$ for back substitution. For $m \gg n$, this is far more efficient than forming $A^\top A$ ($O(mn^2)$) and solving $A^\top A x = A^\top b$ ($O(n^3)$).</p>
 
-      <!-- 7.2 Singular Value Decomposition (COMPREHENSIVE) -->
+      <!-- 7.2 Singular Value Decomposition -->
       <h3>7.2 Singular Value Decomposition (SVD)</h3>
 
       <h4>7.2.1 Definition and Existence</h4>
@@ -897,8 +925,8 @@
 
       <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
 
-      <!-- 7.9 Comprehensive Worked Examples -->
-      <h3>7.9 Comprehensive Worked Examples</h3>
+      <!-- 7.9 Worked Examples -->
+      <h3>7.9 Worked Examples</h3>
 
       <h4>Example 7.1: Computing SVD by Hand (2×2 Matrix)</h4>
       <div class="proof-enhanced">
@@ -1219,42 +1247,10 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
     </section>
 
-    <!-- SECTION 9: WORKED EXAMPLES -->
+
+    <!-- SECTION 9: IMPLEMENTATION GUIDE -->
     <section class="card-v2" id="section-9">
-      <h2>9. Worked Examples (Fully Written Out)</h2>
-
-      <div class="proof-enhanced">
-        <h3>Example 1: Projection onto a Line</h3>
-        <p>Let's find the projection of the vector $b = (2, 3)^\top$ onto the line spanned by the vector $u = (1, 1)^\top$. The projection $p$ is given by the formula:
-        $$ p = \frac{u^\top b}{u^\top u} u = \frac{(1)(2) + (1)(3)}{(1)(1) + (1)(1)} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \frac{5}{2} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 2.5 \\ 2.5 \end{pmatrix} $$
-        The residual vector is $r = b - p = (2 - 2.5, 3 - 2.5)^\top = (-0.5, 0.5)^\top$. We can verify that the residual is orthogonal to the line: $u^\top r = (1)(-0.5) + (1)(0.5) = 0$.
-        </p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h3>Example 2: Solving Least Squares with Normal Equations</h3>
-        <p>Let's solve the least squares problem for the system $Ax=b$ with:
-        $$ A = \begin{pmatrix} 1 & 1 \\ 1 & -1 \\ 1 & 1 \end{pmatrix}, \quad b = \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix} $$
-        First, we form the normal equations $A^\top A x = A^\top b$:
-        $$ A^\top A = \begin{pmatrix} 1 & 1 & 1 \\ 1 & -1 & 1 \end{pmatrix} \begin{pmatrix} 1 & 1 \\ 1 & -1 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix} $$
-        $$ A^\top b = \begin{pmatrix} 1 & 1 & 1 \\ 1 & -1 & 1 \end{pmatrix} \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix} = \begin{pmatrix} 3 \\ 3 \end{pmatrix} $$
-        We solve the system $\begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix} x = \begin{pmatrix} 3 \\ 3 \end{pmatrix}$, which yields the solution $x^\star = (3/4, 3/4)^\top$.
-        The projection is $p = Ax^\star = (3/2, 0, 3/2)^\top$, and the residual is $r = b - p = (1/2, 0, -1/2)^\top$. We can verify the orthogonality condition: $A^\top r = (0, 0)^\top$.
-        </p>
-      </div>
-
-      <div class="proof-enhanced">
-        <h3>Example 3: Rank-Deficient Case</h3>
-        <p>Consider the system with:
-        $$ A = \begin{pmatrix} 1 & 1 \\ 2 & 2 \end{pmatrix}, \quad b = \begin{pmatrix} 3 \\ 6 \end{pmatrix} $$
-        The columns of $A$ are linearly dependent, so the system is rank-deficient. The vector $b$ is in the column space of $A$, so there are infinitely many solutions. The normal equations are $A^\top A x = \begin{pmatrix} 5 & 5 \\ 5 & 5 \end{pmatrix} x = \begin{pmatrix} 15 \\ 15 \end{pmatrix}$. This system has infinitely many solutions of the form $x_1 + x_2 = 3$. The pseudoinverse would provide the minimum-norm solution, $x_1 = x_2 = 1.5$.
-        </p>
-      </div>
-    </section>
-
-    <!-- SECTION 10: IMPLEMENTATION GUIDE -->
-    <section class="card-v2" id="section-10">
-      <h2>10. Implementation Mini-Guide (What to Actually Do in Code)</h2>
+      <h2>9. Implementation Mini-Guide (What to Actually Do in Code)</h2>
 
       <ul>
         <li>For standard, well-conditioned problems, <b>QR decomposition</b> is the recommended method. It is numerically stable and computationally efficient.</li>
@@ -1265,9 +1261,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 11: SANITY CHECKLIST -->
-    <section class="card-v2" id="section-11">
-      <h2>11. Sanity Checklist (What to Remember in Practice)</h2>
+    <!-- SECTION 10: SANITY CHECKLIST -->
+    <section class="card-v2" id="section-10">
+      <h2>10. Sanity Checklist (What to Remember in Practice)</h2>
 
       <ul>
         <li>Always check the <b>dimensions</b> of your matrices and vectors.</li>
@@ -1279,9 +1275,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
     </section>
 
-    <!-- SECTION 12: QUICK REFERENCE -->
-    <section class="card-v2" id="section-12">
-      <h2>12. Key Formulas</h2>
+    <!-- SECTION 11: QUICK REFERENCE -->
+    <section class="card-v2" id="section-11">
+      <h2>11. Key Formulas</h2>
 
       <ul>
         <li><b>Normal Equations:</b> $A^\top A x^\star = A^\top b$</li>
@@ -1292,9 +1288,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 13: DUAL NORMS AND HÖLDER'S INEQUALITY (EXPANDED) -->
-    <section class="card-v2" id="section-13">
-      <h2>13. Dual Norms and Hölder's Inequality</h2>
+    <!-- SECTION 12: DUAL NORMS AND HÖLDER'S INEQUALITY -->
+    <section class="card-v2" id="section-12">
+      <h2>12. Dual Norms and Hölder's Inequality</h2>
 
       <h3>Definition: Dual Norm</h3>
       <p>For any norm $\|\cdot\|$ on $\mathbb{R}^n$, its <b>dual norm</b> is defined as:</p>
@@ -1374,9 +1370,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <p>In <a href="../02-convex-sets/index.html">Lecture 02</a>, when computing <b>dual cones</b>, you will repeatedly use "$y^\top x \le \|y\|_* \|x\|$" with appropriate norms. This inequality is the workhorse of duality theory.</p>
     </section>
 
-    <!-- SECTION 14: MATRIX CALCULUS BASICS -->
-    <section class="card-v2" id="section-14">
-      <h2>14. Matrix Calculus Basics</h2>
+    <!-- SECTION 13: MATRIX CALCULUS BASICS -->
+    <section class="card-v2" id="section-13">
+      <h2>13. Matrix Calculus Basics</h2>
 
       <p>Optimization algorithms rely heavily on gradients and Hessians. Computing derivatives with respect to vectors and matrices is a core skill. Here are the standard rules you will use repeatedly.</p>
 
@@ -1445,9 +1441,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </div>
     </section>
 
-    <!-- SECTION 15: MATRIX STRUCTURES FOR OPTIMIZATION (Renumbered) -->
-    <section class="card-v2" id="section-15">
-      <h2>15. Matrix Inner Product, Frobenius Norm, and Loewner Order</h2>
+    <!-- SECTION 14: MATRIX STRUCTURES FOR OPTIMIZATION -->
+    <section class="card-v2" id="section-14">
+      <h2>14. Matrix Inner Product, Frobenius Norm, and Loewner Order</h2>
 
       <h3>Trace and Frobenius Inner Product</h3>
       <p>For matrices $X, Y \in \mathbb{R}^{m \times n}$, define:</p>
@@ -1496,9 +1492,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 16: COMPONENTWISE ORDER AND PROJECTION -->
-    <section class="card-v2" id="section-16">
-      <h2>16. Componentwise Order and Projection onto Affine Sets</h2>
+    <!-- SECTION 15: COMPONENTWISE ORDER AND PROJECTION -->
+    <section class="card-v2" id="section-15">
+      <h2>15. Componentwise Order and Projection onto Affine Sets</h2>
 
       <h3>Componentwise Order</h3>
       <p>For vectors $x, y \in \mathbb{R}^n$, we write:</p>
@@ -1561,11 +1557,11 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 17: EXERCISES -->
-    <section class="card-v2" id="section-17">
-      <h2><i data-feather="edit-3"></i> 17. Exercises and Advanced Problems</h2>
+    <!-- SECTION 16: EXERCISES -->
+    <section class="card-v2" id="section-16">
+      <h2><i data-feather="edit-3"></i> 16. Exercises</h2>
 
-      <h3>Problem 1: Dual of $\ell_p$ Norm</h3>
+      <h3>P0.1 — Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
 
       <div class="proof-enhanced">
@@ -1597,7 +1593,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </div>
       </div>
 
-      <h3>Problem 2: Frobenius Cauchy–Schwarz</h3>
+      <h3>P0.2 — Frobenius Cauchy–Schwarz</h3>
       <p><b>Problem:</b> Prove that for matrices $X, Y \in \mathbb{R}^{m \times n}$:</p>
       $$
       |\langle X, Y \rangle| \le \|X\|_F \|Y\|_F
@@ -1608,7 +1604,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <p>View matrices as vectors in $\mathbb{R}^{mn}$ by stacking columns. The Frobenius inner product corresponds to the standard Euclidean inner product on $\mathbb{R}^{mn}$, and the Frobenius norm corresponds to the Euclidean norm. Therefore, the standard Cauchy-Schwarz inequality applies directly.</p>
       </div>
 
-      <h3>Problem 3: Loewner Order Transitivity</h3>
+      <h3>P0.3 — Loewner Order Transitivity</h3>
       <p><b>Problem:</b> If $X \succeq Y$ and $Y \succeq Z$ (all in $\mathbb{S}^n$), prove that $X \succeq Z$.</p>
 
       <div class="proof-enhanced">
@@ -1618,7 +1614,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <p>Since the sum of two PSD matrices is PSD (each has nonnegative eigenvalues in their respective quadratic forms), we conclude $X - Z \succeq 0$, i.e., $X \succeq Z$.</p>
       </div>
 
-      <h3>Problem 4: Projection onto Affine Set Example</h3>
+      <h3>P0.4 — Projection onto Affine Set Example</h3>
       <p><b>Problem:</b> Find the Euclidean projection of $y = (1, 2, 3)^\top$ onto the affine set:</p>
       $$
       \mathcal{A} = \{ x \in \mathbb{R}^3 \mid x_1 + x_2 + x_3 = 1 \}
@@ -1650,7 +1646,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </div>
       </div>
 
-      <h3>Problem 5: Subspace Fundamentals</h3>
+      <h3>P0.5 — Subspace Fundamentals</h3>
       <div class="proof-enhanced">
         <h4>A1. Prove that the set of all linear combinations of a fixed set of vectors is a subspace.</h4>
         <p><b>Solution:</b> Let $S = \mathrm{span}\{v_1, \dots, v_k\}$.
@@ -1667,7 +1663,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         Since this holds for any $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$, the subspaces are orthogonal.</p>
       </div>
 
-      <h3>Problem 6: Projections and Least Squares</h3>
+      <h3>P0.6 — Projections and Least Squares</h3>
       <div class="proof-enhanced">
         <h4>C1. Derive normal equations and prove uniqueness iff $\mathrm{rank}(A) = n$.</h4>
         <p><b>Solution:</b> The objective function is $f(x) = \|Ax-b\|_2^2 = x^\top A^\top A x - 2b^\top A x + b^\top b$. This is a quadratic function of $x$. To find the minimum, we take the gradient with respect to $x$ and set it to zero:
@@ -1720,7 +1716,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </p>
       </div>
 
-      <h3>Problem 7: Pseudoinverse & Rank Deficiency</h3>
+      <h3>P0.7 — Pseudoinverse & Rank Deficiency</h3>
       <div class="proof-enhanced">
         <h4>D1. Prove that every least-squares solution $x^\star$ satisfies $x^\star = A^+b + (I - A^+A)z$ for some $z$.</h4>
         <p><b>Solution:</b> From SVD, the set of minimizers is $A^+b + \mathcal{N}(A)$; note $(I - A^+A)$ projects onto $\mathcal{N}(A)$.</p>
@@ -1731,7 +1727,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <p><b>Solution:</b> Use SVD or basic projector algebra: $P^2 = P$, $P^\top = P$, range/nullspace relations.</p>
       </div>
 
-      <h3>Problem 8: Additional Practice</h3>
+      <h3>P0.8 — Additional Practice</h3>
       <div class="proof-enhanced">
         <h4>A3. Show that $Q^\top Q = I$ implies $\|Qx\|_2 = \|x\|_2$.</h4>
         <p><b>Solution:</b> We start with the squared norm:
@@ -1786,7 +1782,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </div>
 
       <div class="problem">
-        <h3>Problem 9: Trace Properties and Commutators</h3>
+        <h3>P0.9 — Trace Properties and Commutators</h3>
         <p>Let $A \in M_{m \times n}(\mathbb{R})$ and $B \in M_{n \times m}(\mathbb{R})$.</p>
         <ol type="a">
           <li>Prove that $\mathrm{tr}(AB) = \mathrm{tr}(BA)$.</li>
@@ -1823,7 +1819,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </div>
 
       <div class="problem">
-        <h3>Problem 10: Frobenius Inner Product and Norm</h3>
+        <h3>P0.10 — Frobenius Inner Product and Norm</h3>
         <p>For $A, B \in M_{m \times n}(\mathbb{R})$, define $\langle A, B \rangle := \mathrm{tr}(A^\top B)$.</p>
         <ol type="a">
           <li>Show that $\langle \cdot, \cdot \rangle$ is an inner product and $\|A\|_{HS} := \sqrt{\langle A, A \rangle}$ is a norm.</li>
@@ -1865,7 +1861,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </div>
 
       <div class="problem">
-        <h3>Problem 11: Operator Norm and Spectral Properties</h3>
+        <h3>P0.11 — Operator Norm and Spectral Properties</h3>
         <p>For $A \in M_{m \times n}(\mathbb{R})$, define the operator norm $\|A\| := \sup_{x \ne 0} \frac{\|Ax\|_2}{\|x\|_2}$.</p>
         <ol type="a">
           <li>Show that $\|A\| = \sqrt{\lambda_{\max}(A^\top A)}$.</li>
@@ -1900,7 +1896,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </div>
 
       <div class="problem">
-        <h3>Problem 12: Norm Equivalence and Orthogonal Invariance</h3>
+        <h3>P0.12 — Norm Equivalence and Orthogonal Invariance</h3>
         <p>Let $\mathcal{O}_n = \{ U \in M_n(\mathbb{R}) \mid U^\top U = I \}$.</p>
         <ol type="a">
           <li>Show that for $U \in \mathcal{O}_m, V \in \mathcal{O}_n$, $\|UAV\|_{HS} = \|A\|_{HS}$ and $\|UAV\| = \|A\|$.</li>
@@ -1933,7 +1929,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </div>
 
       <div class="problem">
-        <h3>Problem 13: Properties of Orthogonal Matrices</h3>
+        <h3>P0.13 — Properties of Orthogonal Matrices</h3>
         <p>Let $\mathcal{O}_n$ be the set of $n \times n$ orthogonal matrices.</p>
         <ol type="a">
           <li>Show that $\mathcal{O}_n$ is a group under multiplication.</li>

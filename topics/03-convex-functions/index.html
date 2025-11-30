@@ -46,7 +46,7 @@
         <span>Tags: functions, theory, optimization, characterization</span>
       </div>
       <div class="lecture-summary">
-        <p><strong>Overview:</strong> This lecture develops the theory of convex functions, which form the foundation for convex optimization. We present multiple equivalent characterizations (Jensen's inequality, epigraph, first-order conditions, second-order conditions), prove key properties, and establish operations that preserve convexity. The lecture culminates with a comprehensive toolkit for recognizing and constructing convex functions in practice.</p>
+        <p><strong>Overview:</strong> This lecture develops the theory of convex functions, which form the foundation for convex optimization. We present multiple equivalent characterizations (Jensen's inequality, epigraph, first-order conditions, second-order conditions), prove key properties, and establish operations that preserve convexity. The lecture culminates with a toolkit for recognizing and constructing convex functions in practice.</p>
         <p><strong>Prerequisites:</strong> <a href="../00-linear-algebra-primer/index.html">Lecture 00: Linear Algebra</a> (gradients, Hessians, eigenvalues) and <a href="../02-convex-sets/index.html">Lecture 02: Convex Sets</a> (convex sets, epigraphs, operations).</p>
         <p><strong>Forward Connections:</strong> Convex functions are the building blocks of convex optimization problems. First-order and second-order conditions lead directly to optimality conditions (Lecture 04-05). Operations preserving convexity enable sophisticated modeling (Lecture 06-07).</p>
       </div>
@@ -55,12 +55,12 @@
     <section class="card-v2">
       <h2><i data-feather="target"></i> Learning Objectives</h2>
       <ul>
-        <li><b>Master Multiple Characterizations:</b> State and prove equivalences between Jensen's inequality, epigraph convexity, first-order conditions, and second-order conditions.</li>
+        <li><b>Understand Multiple Characterizations:</b> State and prove equivalences between Jensen's inequality, epigraph convexity, first-order conditions, and second-order conditions.</li>
         <li><b>Apply First-Order Conditions:</b> Use the tangent line property to verify convexity and derive inequalities.</li>
         <li><b>Use Second-Order Conditions:</b> Verify convexity via Hessian positive semidefiniteness.</li>
         <li><b>Understand Strong Convexity:</b> Define strong convexity and explain its importance for convergence rates and uniqueness.</li>
         <li><b>Recognize Convexity-Preserving Operations:</b> Apply nonnegative combinations, compositions, pointwise maxima, and perspective operations to construct complex convex functions.</li>
-        <li><b>Master the Conjugate Function:</b> Define the convex conjugate (Fenchel conjugate) and understand its role in duality theory.</li>
+        <li><b>Understand the Conjugate Function:</b> Define the convex conjugate (Fenchel conjugate) and understand its role in duality theory.</li>
         <li><b>Apply Quasi-convexity:</b> Distinguish convex from quasi-convex functions and understand when quasi-convexity suffices for optimization.</li>
       </ul>
     </section>
@@ -202,7 +202,7 @@
           <p>The epigraph characterization lets us translate between function convexity and set convexity. Many operations on functions (e.g., infimal convolution) can be understood as operations on their epigraphs (e.g., Minkowski sum).</p>
         </div>
 
-        <h3>2.3 Convex Hull of a Function (Problem 3.30)</h3>
+        <h3>2.3 Convex Hull of a Function</h3>
         <p>Just as we can define the convex hull of a set, we can define the convex hull (or convex envelope) of a function $f: \mathbb{R}^n \to \mathbb{R}$ via its epigraph.</p>
         $$ g(x) = \inf \{ t \mid (x, t) \in \text{conv epi } f \} $$
         <p><b>Geometric Intuition:</b> Imagine "shrink-wrapping" the graph of $f$ from below. The function $g$ is the <b>greatest convex underestimator</b> of $f$. This concept is crucial in relaxation techniques for non-convex optimization (e.g., replacing a non-convex constraint with its convex hull).</p>
@@ -469,10 +469,10 @@
         <h3>5.3 Composition Rules</h3>
 
         <div class="theorem-box">
-          <h4>1. Affine Composition (Problem 3.20)</h4>
+          <h4>1. Affine Composition</h4>
           <p>If $f: \mathbb{R}^k \to \mathbb{R}$ is convex, and $x \mapsto Ax + b$ is an affine map, then the composition $g(x) = f(Ax + b)$ is convex.</p>
           <p><b>Intuition:</b> Linear transformations stretch the domain but never warp a "bowl" into a "saddle."</p>
-          <p><b>Examples from Problem 3.20:</b></p>
+          <p><b>Examples:</b></p>
           <ul>
             <li><b>Norm of Affine:</b> $\|Ax - b\|$ is convex (Primitive: Norm).</li>
             <li><b>Trace of Inverse:</b> $\mathrm{tr}((A_0 + \sum x_i A_i)^{-1})$ is convex (Primitive: Trace of Inverse).</li>
@@ -480,7 +480,7 @@
         </div>
 
         <div class="theorem-box">
-          <h4>2. Scalar Composition (Problem 3.22)</h4>
+          <h4>2. Scalar Composition</h4>
           <p>Let $h: \mathbb{R} \to \mathbb{R}$ and $g: \mathbb{R}^n \to \mathbb{R}$. Then $f(x) = h(g(x))$ is convex if:</p>
           <ul>
             <li>$g$ is <b>convex</b> ($\cup$), and $h$ is <b>convex</b> ($\cup$) and <b>non-decreasing</b> ($\nearrow$).</li>
@@ -490,7 +490,7 @@
         </div>
 
         <div class="example">
-          <h4>Example: Log-Log-Sum-Exp (Problem 3.22a)</h4>
+          <h4>Example: Log-Log-Sum-Exp</h4>
           <p>Consider $f(x) = -\log(-\log(\sum e^{a_i^\top x + b_i}))$.</p>
           <ul>
             <li>Inner: $g(x) = \log(\sum e^{y_i})$ is Convex (Log-Sum-Exp).</li>
@@ -500,7 +500,7 @@
         </div>
 
         <div class="theorem-box">
-          <h4>3. Vector Composition (Example 3.14)</h4>
+          <h4>3. Vector Composition</h4>
           <p>Let $h: \mathbb{R}^k \to \mathbb{R}$ and $g: \mathbb{R}^n \to \mathbb{R}^k$. Then $f(x) = h(g(x))$ is convex if:</p>
           <ul>
             <li>$h$ is convex and <b>non-decreasing in each argument</b>, and each $g_i$ is <b>convex</b>.</li>
@@ -509,7 +509,7 @@
         </div>
 
         <div class="example">
-          <h4>Example: Geometric Mean (Example 3.14c)</h4>
+          <h4>Example: Geometric Mean</h4>
           <p>The function $f(x) = (\prod_{i=1}^k g_i(x))^{1/k}$ is concave if all $g_i(x)$ are non-negative and concave. (Primitive: Geometric mean is concave and non-decreasing).</p>
         </div>
 
@@ -529,7 +529,7 @@
           <p>For a convex set $C$, the squared distance function $f(x) = \inf_{y \in C} \|x - y\|_2^2$ is convex. (The function $\|x - y\|_2^2$ is jointly convex in $(x, y)$, so minimizing over $y \in C$ preserves convexity in $x$.)</p>
         </div>
 
-        <h3>5.5 Perspective (Problem 3.23)</h3>
+        <h3>5.5 Perspective</h3>
         <div class="theorem-box">
           <h4>Definition and Property</h4>
           <p>If $f: \mathbb{R}^n \to \mathbb{R}$ is convex, then its <b>perspective</b> $g: \mathbb{R}^{n+1} \to \mathbb{R}$ defined by:</p>
@@ -541,13 +541,13 @@
         </div>
 
         <div class="example">
-          <h4>Example: Power-over-Linear (Problem 3.23a)</h4>
+          <h4>Example: Power-over-Linear</h4>
           <p>The function $f(x, t) = \frac{\|x\|_p^p}{t^{p-1}}$ for $p > 1, t > 0$ is convex.
           <br><i>Derivation:</i> Factor out $t$: $f(x,t) = t \frac{\|x\|_p^p}{t^p} = t \|x/t\|_p^p$. This is the perspective of the convex function $h(u) = \|u\|_p^p$.</p>
         </div>
 
         <div class="example">
-          <h4>Example: Quadratic-over-Linear (Problem 3.23b)</h4>
+          <h4>Example: Quadratic-over-Linear</h4>
           <p>The function $f(x, y) = \frac{x^2}{y}$ for $y > 0$ is convex (Perspective of $x^2$).
           <br>More generally, $f(x) = \frac{\|Ax+b\|_2^2}{c^\top x + d}$ is convex (Affine composition of perspective).</p>
         </div>
@@ -757,13 +757,13 @@
         <h3>8.3 Examples</h3>
 
         <div class="example">
-          <h4>Example 1: Rank of a Matrix (Example 3.36)</h4>
+          <h4>Example 1: Rank of a Matrix</h4>
           <p>The function $f(X) = \text{rank}(X)$ on Positive Semidefinite matrices is <b>Quasiconcave</b>. This means the set of matrices with rank at least $k$ is a convex set.</p>
           <p><i>Proof:</i> Using the intersection of nullspaces, one can show $\text{rank}(X+Y) \ge \min(\text{rank}(X), \text{rank}(Y))$, satisfying the superlevel set condition.</p>
         </div>
 
         <div class="example">
-          <h4>Example 2: Quasilinear Functions (Problem 3.36)</h4>
+          <h4>Example 2: Quasilinear Functions</h4>
           <p>A function is <b>quasilinear</b> if it is both quasiconvex and quasiconcave. Continuous quasilinear functions can be shown to be "monotone functions of linear functions", i.e., $f(x) = g(a^\top x)$ where $g$ is monotone.</p>
         </div>
 

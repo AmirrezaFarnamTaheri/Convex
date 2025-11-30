@@ -1,7 +1,7 @@
 /**
  * Widget: Matrix & Geometry Explorer
  *
- * Description: A comprehensive explorer for 2x2 matrices.
+ * Description: An interactive explorer for 2x2 matrices.
  *              Merges functionality of Matrix Explorer and Eigen-PSD.
  *              Features:
  *              - General 2x2 matrix input
