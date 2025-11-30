@@ -17,7 +17,7 @@
       <div class="brand">
         <a href="../../index.html">
           <img src="../../static/assets/branding/logo.svg" alt="Logo" />
-          <span>Convex Optimization</span>
+          <span>Convex Optimization</a>
         </a>
       </div>
       <nav class="nav">
@@ -41,9 +41,9 @@
     <header class="lecture-header card-v2">
       <h1>03. Convex Functions: Definitions, Characterizations, and Operations</h1>
       <div class="lecture-meta">
-        <span>Date: 2025-11-04</span>
-        <span>Duration: 90 min</span>
-        <span>Tags: functions, theory, optimization, characterization</span>
+        <span>Date: 2025-11-04</a>
+        <span>Duration: 90 min</a>
+        <span>Tags: functions, theory, optimization, characterization</a>
       </div>
       <div class="lecture-summary">
         <p><strong>Overview:</strong> This lecture develops the theory of convex functions, which form the foundation for convex optimization. We present multiple equivalent characterizations (Jensen's inequality, epigraph, first-order conditions, second-order conditions), prove key properties, and establish operations that preserve convexity. The lecture culminates with a toolkit for recognizing and constructing convex functions in practice.</p>
@@ -86,11 +86,11 @@
         <h2>1. Definition and Basic Properties</h2>
 
         <h3>1.1 Convex Functions: The Core Definition</h3>
-        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <b>convex</b> if its domain $\mathrm{dom}\, f$ is a convex set, and for all $x, y \in \mathrm{dom}\, f$ and all $\theta \in [0, 1]$:</p>
+        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link" data-term="convex function">convex</a> if its domain $\mathrm{dom}\, f$ is a convex set, and for all $x, y \in \mathrm{dom}\, f$ and all $\theta \in [0, 1]$:</p>
         $$
         f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)
         $$
-        <p>This is <b>Jensen's inequality</b> for two points. It states that the function value at a convex combination of points is at most the corresponding convex combination of function values.</p>
+        <p>This is <a href="#" class="definition-link">Jensen's inequality</a> for two points. It states that the function value at a convex combination of points is at most the corresponding convex combination of function values.</p>
 
         <div class="insight">
           <h4>💡 Geometric Intuition</h4>
@@ -101,7 +101,7 @@
 
         <div class="subsection">
           <h4>Strictly Convex</h4>
-          <p>A function $f$ is <b>strictly convex</b> if the inequality in Jensen's inequality is strict whenever $x \neq y$ and $\theta \in (0, 1)$:</p>
+          <p>A function $f$ is <a href="#" class="definition-link">strictly convex</a> if the inequality in Jensen's inequality is strict whenever $x \neq y$ and $\theta \in (0, 1)$:</p>
           $$
           f(\theta x + (1-\theta)y) < \theta f(x) + (1-\theta)f(y)
           $$
@@ -110,7 +110,7 @@
 
         <div class="subsection">
           <h4>Strongly Convex</h4>
-          <p>A function $f$ is <b>$m$-strongly convex</b> (with parameter $m > 0$) if for all $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$:</p>
+          <p>A function $f$ is <a href="#" class="definition-link">strongly convex</a> (with parameter $m > 0$) if for all $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$:</p>
           $$
           f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) - \frac{m}{2} \theta(1-\theta) \|x - y\|_2^2
           $$
@@ -119,7 +119,7 @@
         </div>
 
         <h3>1.3 Concave Functions</h3>
-        <p>A function $f$ is <b>concave</b> if $-f$ is convex. Equivalently, the chord lies below the graph. All results for convex functions can be "flipped" for concave functions by negating.</p>
+        <p>A function $f$ is <a href="#" class="definition-link">concave</a> if $-f$ is convex. Equivalently, the chord lies below the graph. All results for convex functions can be "flipped" for concave functions by negating.</p>
 
         <h3>1.4 Extended-Value Extension</h3>
         <p>We often extend $f$ to all of $\mathbb{R}^n$ by setting $f(x) = +\infty$ for $x \notin \mathrm{dom}\, f$. This allows us to write constraints implicitly: minimizing $f$ over $\mathbb{R}^n$ is equivalent to minimizing over $\mathrm{dom}\, f$.</p>
@@ -142,7 +142,7 @@
         <h2>2. Epigraph Characterization</h2>
 
         <h3>2.1 The Epigraph</h3>
-        <p>The <b>epigraph</b> of a function $f: \mathbb{R}^n \to \mathbb{R}$ is the set of points lying on or above the graph:</p>
+        <p>The <a href="#" class="definition-link">epigraph</a> of a function $f: \mathbb{R}^n \to \mathbb{R}$ is the set of points lying on or above the graph:</p>
         $$
         \mathrm{epi}\, f = \{(x, t) \in \mathbb{R}^{n+1} \mid x \in \mathrm{dom}\, f, \ f(x) \le t\}
         $$
@@ -649,7 +649,7 @@
         <h2>7. The Convex Conjugate (Fenchel Conjugate)</h2>
 
         <h3>7.1 Definition</h3>
-        <p>The <b>convex conjugate</b> (or <b>Fenchel conjugate</b>) of a function $f: \mathbb{R}^n \to \mathbb{R}$ is:</p>
+        <p>The <a href="#" class="definition-link">convex conjugate</a> (or <b>Fenchel conjugate</b>) of a function $f: \mathbb{R}^n \to \mathbb{R}$ is:</p>
         $$
         f^*(y) = \sup_{x \in \mathrm{dom}\, f} \left( y^\top x - f(x) \right)
         $$
@@ -736,7 +736,7 @@
         <h2>8. Quasi-Convex Functions</h2>
 
         <h3>8.1 Definition</h3>
-        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <b>quasi-convex</b> if its domain is convex and all its <b>sublevel sets</b> are convex:</p>
+        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link">quasi-convex</a> if its domain is convex and all its <b>sublevel sets</b> are convex:</p>
         $$
         S_\alpha = \{x \in \mathrm{dom}\, f \mid f(x) \le \alpha\}
         $$
@@ -1326,7 +1326,7 @@
 
     <footer class="site-footer">
       <div class="container">
-        <p>© <span id="year"></span> Convex Optimization Course</p>
+        <p>© <span id="year"></a> Convex Optimization Course</p>
       </div>
     </footer>
   </main></div>
@@ -1352,5 +1352,6 @@
     import { initOperationsPreserving } from './widgets/js/operations-preserving.js';
     initOperationsPreserving('widget-operations-preserving');
   </script>
+  <script src="../../static/js/glossary-loader.js"></script>
 </body>
 </html>
