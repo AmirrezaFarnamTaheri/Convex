@@ -1083,6 +1083,42 @@
             </div>
           </div>
         </div>
+
+        <div class="problem">
+          <h3>P1.6 — Modeling: Maximum Likelihood Estimation</h3>
+          <p>Consider a logistic regression model for binary classification. We have data points $(x_i, y_i)$ where $x_i \in \mathbb{R}^n$ are feature vectors and $y_i \in \{-1, 1\}$ are labels. The probability that $y_i = 1$ is modeled as:
+          $$ P(y_i=1 \mid x_i; w) = \frac{1}{1 + e^{-w^\top x_i}} $$
+          Formulate the problem of finding the weight vector $w$ that maximizes the log-likelihood of the data as a convex optimization problem. (Note: $P(y_i=-1 \mid x_i; w) = 1 - P(y_i=1) = \frac{1}{1 + e^{w^\top x_i}}$).
+          </p>
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Step 1: Write the likelihood function.</strong> Assuming independent samples, the likelihood is:
+              $$ L(w) = \prod_{i=1}^m P(y_i \mid x_i; w) $$
+              We can unify the probability expression. Notice that $P(y_i \mid x_i; w) = \frac{1}{1 + e^{-y_i w^\top x_i}}$.
+              <br>Check: If $y_i=1$, $\frac{1}{1+e^{-w^\top x_i}}$. If $y_i=-1$, $\frac{1}{1+e^{w^\top x_i}}$. Correct.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Formulate the negative log-likelihood.</strong> Maximizing likelihood is equivalent to minimizing negative log-likelihood:
+              $$ \ell(w) = -\log L(w) = -\sum_{i=1}^m \log\left( \frac{1}{1 + e^{-y_i w^\top x_i}} \right) $$
+              $$ \ell(w) = \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Verify convexity.</strong> The function $f(z) = \log(1+e^z)$ (softplus) is convex. Its second derivative is $f''(z) = \frac{e^z}{(1+e^z)^2} > 0$.
+              Our objective is a sum of terms $f(-y_i w^\top x_i)$. Since $f$ is convex and the argument $-y_i w^\top x_i$ is affine in $w$, the composition is convex.
+              The sum of convex functions is convex.
+            </div>
+
+            <div class="proof-step">
+              <strong>Conclusion:</strong> The optimization problem is:
+              $$ \min_{w \in \mathbb{R}^n} \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$
+              This is an unconstrained convex optimization problem.
+            </div>
+          </div>
+        </div>
       </section>
 
         <div class="problem">

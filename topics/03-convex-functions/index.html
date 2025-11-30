@@ -37,11 +37,6 @@
       </div>
     </aside>
     <main class="lecture-content">
-    <!-- Lecture header -->
-    <article class="card" style="margin-bottom: 32px;">
-      <h1 style="margin-top: 0;">03. Convex Functions: Characterization & Operations</h1>
-      <div class="meta">
-        Date: 2025-11-04 · Duration: 90 min · Tags: functions, theory
   <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <header class="lecture-header card-v2">
       <h1>03. Convex Functions: Definitions, Characterizations, and Operations</h1>
@@ -177,17 +172,6 @@
             $$
           </div>
 
-    <!-- Exercises (optional) -->
-    <section class="card" style="margin-bottom: 32px;">
-      <h2>Exercises</h2>
-      <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
-      <ol style="line-height: 2;">
-        <li>Is the geometric mean a concave function?</li>
-        <li>Prove that the maximum of two convex functions is a convex function.</li>
-      </ol>
-    </section>
-  </main>
-  </div>
           <div class="proof-step">
             <strong>Step 3:</strong> Therefore, $(\theta x + (1-\theta)y, \theta t + (1-\theta)s) \in \mathrm{epi}\, f$, proving $\mathrm{epi}\, f$ is convex.
           </div>
@@ -902,7 +886,7 @@
       </section>
 
       <section class="card-v2" id="section-10">
-        <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
+        <h2><i data-feather="edit-3"></i> 10. Exercises and Detailed Examples</h2>
 
         <div class="problem">
           <h3>P3.1 — Verify Convexity Using First-Order Conditions</h3>
@@ -1140,10 +1124,40 @@
             </div>
           </div>
         </div>
-      </section>
 
-      <section class="card-v2" id="section-11">
-        <h2>11. Detailed Examples & Advanced Exercises</h2>
+        <div class="problem">
+          <h3>P3.8 — Softmax Convexity</h3>
+          <p>The <b>Softmax</b> function, or Log-Sum-Exp function, is defined as $f(x) = \log\left(\sum_{i=1}^n e^{x_i}\right)$. Prove that $f(x)$ is convex on $\mathbb{R}^n$.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Step 1: Compute Gradient.</strong>
+              $$ \frac{\partial f}{\partial x_k} = \frac{1}{\sum_j e^{x_j}} \cdot e^{x_k} $$
+              Let $z_k = \frac{e^{x_k}}{\sum_j e^{x_j}}$. Note that $z_k > 0$ and $\sum_k z_k = 1$ (it's a probability distribution).
+              The gradient is $\nabla f(x) = z$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Compute Hessian.</strong>
+              $$ \frac{\partial^2 f}{\partial x_k \partial x_l} = \frac{\partial z_k}{\partial x_l} $$
+              If $k=l$:
+              $$ \frac{\partial z_k}{\partial x_k} = \frac{e^{x_k}(\sum e^{x_j}) - e^{x_k}e^{x_k}}{(\sum e^{x_j})^2} = z_k - z_k^2 = z_k(1-z_k) $$
+              If $k \ne l$:
+              $$ \frac{\partial z_k}{\partial x_l} = \frac{0 - e^{x_k}e^{x_l}}{(\sum e^{x_j})^2} = -z_k z_l $$
+              Thus, the Hessian matrix is $\nabla^2 f(x) = \text{diag}(z) - zz^\top$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Prove PSD.</strong>
+              For any vector $v \in \mathbb{R}^n$:
+              $$ v^\top (\text{diag}(z) - zz^\top) v = \sum_i z_i v_i^2 - (v^\top z)^2 $$
+              Since $z_i > 0$ and $\sum z_i = 1$, we can interpret $z$ as probabilities. Then $\sum z_i v_i^2 = \mathbb{E}[V^2]$ and $(v^\top z)^2 = (\sum z_i v_i)^2 = (\mathbb{E}[V])^2$ where $V$ is a random variable taking value $v_i$ with probability $z_i$.
+              $$ \mathbb{E}[V^2] - (\mathbb{E}[V])^2 = \text{Var}(V) \ge 0 $$
+              Thus $v^\top \nabla^2 f(x) v \ge 0$, so the Hessian is positive semidefinite. Therefore, $f$ is convex.
+            </div>
+          </div>
+        </div>
 
         <div class="problem">
           <h3>Example: Concavity of the Geometric Mean (Page 74)</h3>
@@ -1287,7 +1301,6 @@
             </div>
           </div>
         </div>
-
       </section>
 
     </article>

@@ -989,6 +989,43 @@
           </div>
         </div>
       </div>
+
+      <!-- Problem 4.9 -->
+      <div class="problem">
+        <h3>P4.9 — Resource Allocation Formulation</h3>
+        <p>Consider a resource allocation problem where we want to distribute a total budget $B$ among $n$ projects to maximize total utility. The utility of project $i$ is given by $U_i(x_i) = \alpha_i \log(1 + x_i)$, where $x_i \ge 0$ is the investment in project $i$ and $\alpha_i > 0$. There are also linear constraints $Ax \le b$ representing resource limits.</p>
+        <p><strong>(a)</strong> Formulate this as a convex optimization problem.</p>
+        <p><strong>(b)</strong> Verify that the objective is concave (so minimizing negative utility is convex).</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Part (a): Formulation.</strong>
+            We want to maximize $\sum_{i=1}^n \alpha_i \log(1 + x_i)$ subject to $\sum x_i \le B$, $Ax \le b$, and $x \ge 0$.
+            Standard convex form minimizes a convex function. Thus:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & -\sum_{i=1}^n \alpha_i \log(1 + x_i) \\
+            \text{subject to} \quad & \mathbf{1}^T x \le B \\
+            & Ax \le b \\
+            & -x \le 0
+            \end{aligned}
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Convexity Verification.</strong>
+            Consider $f_i(x_i) = -\alpha_i \log(1 + x_i)$.
+            First derivative: $f_i'(x_i) = -\frac{\alpha_i}{1 + x_i}$.
+            Second derivative: $f_i''(x_i) = \frac{\alpha_i}{(1 + x_i)^2}$.
+            Since $\alpha_i > 0$ and $(1+x_i)^2 > 0$ for $x_i \ge 0$, we have $f_i''(x_i) > 0$.
+            Thus, each term is convex. The sum of convex functions is convex.
+            The constraints are all linear inequalities, which define a convex set.
+            Therefore, this is a convex optimization problem.
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 

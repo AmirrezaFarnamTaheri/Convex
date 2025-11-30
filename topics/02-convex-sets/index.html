@@ -985,6 +985,42 @@
             </div>
           </div>
         </div>
+
+        <div class="problem">
+          <h3>P2.9 — Voronoi Regions</h3>
+          <p>Let $x_1, \ldots, x_k \in \mathbb{R}^n$ be a set of points. The Voronoi region associated with $x_i$ is defined as the set of points in $\mathbb{R}^n$ that are closer to $x_i$ than to any other point $x_j$:
+          $$ V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2 \ \forall j \neq i\} $$
+          Prove that $V_i$ is a polyhedron (and thus a convex set).</p>
+
+          <div class="solution">
+            <h4>Solution</h4>
+
+            <div class="proof-step">
+              <strong>Step 1: Analyze pairwise condition.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ is equivalent to $\|x - x_i\|_2^2 \le \|x - x_j\|_2^2$.
+              Expanding this:
+              $$ (x - x_i)^\top (x - x_i) \le (x - x_j)^\top (x - x_j) $$
+              $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Simplify to linear inequality.</strong> The quadratic terms $x^\top x$ cancel out:
+              $$ -2x_i^\top x + \|x_i\|_2^2 \le -2x_j^\top x + \|x_j\|_2^2 $$
+              Rearranging terms to group $x$:
+              $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
+              This is a linear inequality of the form $a_{ij}^\top x \le b_{ij}$ where $a_{ij} = 2(x_j - x_i)$ and $b_{ij} = \|x_j\|_2^2 - \|x_i\|_2^2$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Intersection of halfspaces.</strong> The Voronoi region $V_i$ is the set of points that satisfy this linear inequality for all $j \neq i$:
+              $$ V_i = \bigcap_{j \neq i} \{x \mid 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2\} $$
+              Since each set in the intersection is a halfspace, $V_i$ is an intersection of $k-1$ halfspaces.
+            </div>
+
+            <div class="proof-step">
+              <strong>Conclusion:</strong> An intersection of finitely many halfspaces is a polyhedron. Therefore, the Voronoi region $V_i$ is a polyhedron, which is a convex set.
+            </div>
+          </div>
+        </div>
       </section>
 
       <section class="card-v2" id="section-8">

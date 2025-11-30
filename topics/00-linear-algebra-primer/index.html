@@ -1466,7 +1466,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
     <!-- SECTION 17: EXERCISES -->
     <section class="card-v2" id="section-17">
-      <h2><i data-feather="edit-3"></i> 17. Exercises</h2>
+      <h2><i data-feather="edit-3"></i> 17. Exercises and Advanced Problems</h2>
 
       <h3>Problem 1: Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
@@ -1574,11 +1574,35 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
       <div class="proof-enhanced">
         <h4>C3. Solve a small overdetermined system by (i) normal equations, (ii) QR, (iii) SVD, and compare answers.</h4>
-        <p><b>Solution:</b> Pick any $3 \times 2$ with independent columns; show all three methods agree to numerical precision. Discuss time and conditioning.</p>
+        <p><b>Solution:</b> Let's solve the system $Ax = b$ where:
+        $$ A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad b = \begin{pmatrix} 2 \\ 2 \\ 1 \end{pmatrix} $$
+        This system is overdetermined (3 equations, 2 unknowns).</p>
+
+        <p><b>(i) Normal Equations:</b> We solve $A^\top A x = A^\top b$.
+        <br>Step 1: Compute $A^\top A = \begin{pmatrix} 1 & 0 & 1 \\ 1 & 1 & 0 \end{pmatrix} \begin{pmatrix} 1 & 1 \\ 0 & 1 \\ 1 & 0 \end{pmatrix} = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$.
+        <br>Step 2: Compute $A^\top b = \begin{pmatrix} 1 & 0 & 1 \\ 1 & 1 & 0 \end{pmatrix} \begin{pmatrix} 2 \\ 2 \\ 1 \end{pmatrix} = \begin{pmatrix} 3 \\ 4 \end{pmatrix}$.
+        <br>Step 3: Solve $\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix} x = \begin{pmatrix} 3 \\ 4 \end{pmatrix}$.
+        <br>Multiplying by the inverse $(A^\top A)^{-1} = \frac{1}{3} \begin{pmatrix} 2 & -1 \\ -1 & 2 \end{pmatrix}$, we get:
+        $$ x = \frac{1}{3} \begin{pmatrix} 2 & -1 \\ -1 & 2 \end{pmatrix} \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \frac{1}{3} \begin{pmatrix} 2 \\ 5 \end{pmatrix} = \begin{pmatrix} 2/3 \\ 5/3 \end{pmatrix} \approx \begin{pmatrix} 0.667 \\ 1.667 \end{pmatrix} $$</p>
+
+        <p><b>(ii) QR Decomposition:</b> We factor $A = QR$ where $Q$ has orthonormal columns.
+        <br>Using Gram-Schmidt:
+        <br>$q_1 = \frac{a_1}{\|a_1\|} = \frac{1}{\sqrt{2}} (1, 0, 1)^\top$.
+        <br>$\tilde{q}_2 = a_2 - (q_1^\top a_2) q_1 = (1, 1, 0)^\top - \frac{1}{2}(1, 0, 1)^\top = (0.5, 1, -0.5)^\top$.
+        <br>$\|\tilde{q}_2\| = \sqrt{0.25 + 1 + 0.25} = \sqrt{1.5} = \sqrt{3/2}$.
+        <br>$q_2 = \frac{\tilde{q}_2}{\|\tilde{q}_2\|} = \sqrt{\frac{2}{3}} (0.5, 1, -0.5)^\top = \frac{1}{\sqrt{6}}(1, 2, -1)^\top$.
+        <br>Then we solve $Rx = Q^\top b$:
+        <br>$Q^\top b = \begin{pmatrix} \frac{1}{\sqrt{2}}(2+0+1) \\ \frac{1}{\sqrt{6}}(2+4-1) \end{pmatrix} = \begin{pmatrix} \frac{3}{\sqrt{2}} \\ \frac{5}{\sqrt{6}} \end{pmatrix}$.
+        <br>$R = \begin{pmatrix} \sqrt{2} & \frac{1}{\sqrt{2}} \\ 0 & \frac{\sqrt{3}}{\sqrt{2}} \end{pmatrix}$.
+        <br>Solving $\begin{pmatrix} \sqrt{2} & \frac{1}{\sqrt{2}} \\ 0 & \frac{\sqrt{3}}{\sqrt{2}} \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \end{pmatrix} = \begin{pmatrix} \frac{3}{\sqrt{2}} \\ \frac{5}{\sqrt{6}} \end{pmatrix}$ by back-substitution yields $x = (2/3, 5/3)^\top$.</p>
+
+        <p><b>(iii) SVD:</b> $A = U \Sigma V^\top$. The solution is $x = V \Sigma^{-1} U^\top b$.
+        <br>This computation yields the same result $x = (2/3, 5/3)^\top$.
+        <br><b>Comparison:</b> All three methods agree. The Normal Equations are fastest but least stable ($\kappa^2$). QR is standard and stable ($\kappa$). SVD is most robust but most expensive.</p>
       </div>
 
       <div class="proof-enhanced">
-        <h4>C4. (New) Show that the projection matrix $P = A(A^\top A)^{-1}A^\top$ is idempotent ($P^2=P$) and symmetric ($P^\top = P$).</h4>
+        <h4>C4. Show that the projection matrix $P = A(A^\top A)^{-1}A^\top$ is idempotent ($P^2=P$) and symmetric ($P^\top = P$).</h4>
         <p><b>Solution:</b>
         <br><b>Symmetry:</b>
         $$ P^\top = (A(A^\top A)^{-1}A^\top)^\top = (A^\top)^\top ((A^\top A)^{-1})^\top A^\top = A ((A^\top A)^\top)^{-1} A^\top = A (A^\top (A^\top)^\top)^{-1} A^\top = A(A^\top A)^{-1}A^\top = P $$
@@ -1622,13 +1646,35 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
       <div class="proof-enhanced">
         <h4>B3. Project $b = (1, 2, 3)^\top$ onto the affine set $\{x \mid [1 \ 1 \ 1]x = 3\}$.</h4>
-        <p><b>Solution:</b> One solution: find $x_0 = (1, 1, 1)^\top$ (satisfies the constraint). Compute $b - x_0 = (0, 1, 2)^\top$ and project onto $\mathcal{N}([1 \ 1 \ 1])$, i.e., vectors summing to zero. Using basis $z_1 = (1, -1, 0)$, $z_2 = (1, 0, -1)$, solve $\min_y \|Zy - (b - x_0)\|_2^2$, with $Z = [z_1 \ z_2]$. Recover $x^\star = x_0 + Zy^\star$.</p>
-      </div>
-    </section>
+        <p><b>Solution:</b> We want to find the point $p$ in the plane $x_1 + x_2 + x_3 = 3$ that is closest to $b = (1, 2, 3)^\top$.</p>
 
-    <!-- SECTION 18: ADVANCED MATRIX ANALYSIS PROBLEMS -->
-    <section class="card-v2" id="section-18">
-      <h2>18. Advanced Matrix Analysis Problems</h2>
+        <div class="proof-step">
+          <strong>Step 1: Use the explicit formula.</strong>
+          The projection of a vector $y$ onto the hyperplane $H = \{x \mid a^\top x = \beta\}$ is given by:
+          $$ \Pi_H(y) = y - \frac{a^\top y - \beta}{\|a\|_2^2} a $$
+          Here, $a = (1, 1, 1)^\top$, $\beta = 3$, and $y = (1, 2, 3)^\top$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Compute terms.</strong>
+          <ul>
+            <li>$a^\top y = 1(1) + 1(2) + 1(3) = 6$</li>
+            <li>$\|a\|_2^2 = 1^2 + 1^2 + 1^2 = 3$</li>
+            <li>Residual scalar: $\frac{a^\top y - \beta}{\|a\|_2^2} = \frac{6 - 3}{3} = \frac{3}{3} = 1$</li>
+          </ul>
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Compute projection.</strong>
+          $$ p = \begin{pmatrix} 1 \\ 2 \\ 3 \end{pmatrix} - 1 \begin{pmatrix} 1 \\ 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 0 \\ 1 \\ 2 \end{pmatrix} $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Verify.</strong>
+          Check if $p$ satisfies the constraint: $0 + 1 + 2 = 3$. Yes.
+          Check if $b - p$ is orthogonal to the plane: $b - p = (1, 1, 1)^\top$, which is the normal vector $a$. Yes.
+        </div>
+      </div>
 
       <div class="problem">
         <h3>Problem 9: Trace Properties and Commutators</h3>
