@@ -157,6 +157,16 @@
         <h3>2.1 Global Optimality</h3>
         <p>In general (nonconvex) optimization, algorithms can get stuck in <b>local minima</b>—points that are optimal within a small neighborhood but not globally. For convex problems, this pathology cannot occur:</p>
 
+        <div class="insight">
+          <h4>⚠️ Common Misconception: Unimodal vs. Convex</h4>
+          <p>It is often thought that any function with a single global minimum ("unimodal") is easy to optimize. This is <b>false</b>.</p>
+          <ul>
+            <li><b>Quasiconvexity:</b> A function can have a single minimum but still be non-convex (e.g., "bowl" shape with flat spots or weird kinks). While quasiconvex problems are solvable, they require specialized methods (bisection).</li>
+            <li><b>Stationary Points:</b> A non-convex function can have a single global minimum but many saddle points or local maxima, which can trap gradient-based algorithms (vanishing gradients).</li>
+            <li><b>Convexity is stronger:</b> Convexity guarantees not just uniqueness (under strict convexity) but also that <b>every</b> direction of descent points towards the optimum. This geometric structure allows for polynomial-time guarantees that mere unimodality does not.</li>
+          </ul>
+        </div>
+
         <div class="theorem-box">
           <h4>Theorem (Fundamental Property of Convex Optimization)</h4>
           <p>For a convex optimization problem, any local minimum is also a global minimum.</p>
@@ -648,6 +658,22 @@
           </ul>
         </div>
 
+        <div class="proof-enhanced">
+          <h4>Analytical Reason: Subgradients at Zero</h4>
+          <p>We can also see this algebraically. Consider minimizing a 1D objective $f(x) = \frac{1}{2}(x - y)^2 + \lambda |x|$.</p>
+          <div class="proof-step">
+            <strong>Smooth case ($\ell_2$):</strong> If we used $\lambda x^2$, the derivative is $(x-y) + 2\lambda x = 0$, giving $x = y / (1+2\lambda)$. This simply shrinks $y$ towards 0, but never hits exactly 0 unless $y=0$.
+          </div>
+          <div class="proof-step">
+            <strong>Sparse case ($\ell_1$):</strong> The subdifferential of $|x|$ at $x=0$ is the interval $[-1, 1]$. The optimality condition is:
+            $$ 0 \in \partial f(x) \iff 0 \in (x - y) + \lambda \partial |x| $$
+            If we test $x=0$, the condition becomes $0 \in -y + [-\lambda, \lambda]$, which is true if $|y| \le \lambda$.
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion:</strong> If the data evidence ($y$) is small (specifically $|y| \le \lambda$), the optimal solution is <b>exactly zero</b>. The "kink" in the absolute value function at zero creates a "force field" that traps small values at zero. This generalizes to high dimensions.
+          </div>
+        </div>
+
         <div class="example">
           <h4>Example: LASSO Regression</h4>
           <p>The LASSO (Least Absolute Shrinkage and Selection Operator) combines least squares loss with $\ell_1$ regularization:</p>
@@ -823,6 +849,52 @@
           $$
           \frac{\|x\|_2^2}{t} \le s \quad \iff \quad \|(2x, s-t)\|_2 \le s + t
           $$
+        </div>
+
+        <div class="example">
+          <h4>Example: Linear-Fractional Programming</h4>
+          <p>Consider minimizing a ratio of affine functions over a polyhedron:</p>
+          $$ \min_{x} \frac{c^\top x + d}{e^\top x + f} \quad \text{s.t.} \quad Ax \le b, \ e^\top x + f > 0 $$
+          <p>This is <b>quasiconvex</b> but not convex. However, we can transform it into a Linear Program (LP).</p>
+
+          <div class="proof-enhanced">
+            <h4>Step-by-Step Reformulation</h4>
+            <div class="proof-step">
+              <strong>Step 1: Change of variables.</strong>
+              Let $y = \frac{x}{e^\top x + f}$ and $z = \frac{1}{e^\top x + f}$. Note that $z > 0$.
+              Then $x = y/z$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Transform objective.</strong>
+              The objective becomes:
+              $$ \frac{c^\top x + d}{e^\top x + f} = c^\top \left(\frac{x}{e^\top x + f}\right) + d \left(\frac{1}{e^\top x + f}\right) = c^\top y + dz $$
+              This is linear in $y$ and $z$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Transform constraints.</strong>
+              Substituting $x = y/z$ into $Ax \le b$:
+              $$ A(y/z) \le b \iff Ay \le bz \iff Ay - bz \le 0 $$
+              (Since $z > 0$, we can multiply through without flipping inequality).
+              We also need the constraint that defines $z$:
+              $$ e^\top x + f = 1/z \implies e^\top (y/z) + f = 1/z \implies e^\top y + fz = 1 $$
+              And finally $z \ge 0$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 4: Final LP.</strong>
+              $$
+              \begin{aligned}
+              \min_{y, z} \quad & c^\top y + dz \\
+              \text{s.t.} \quad & Ay - bz \le 0 \\
+              & e^\top y + fz = 1 \\
+              & z \ge 0
+              \end{aligned}
+              $$
+              Solving this LP gives $y^*, z^*$, and we recover $x^* = y^*/z^*$.
+            </div>
+          </div>
         </div>
 
         <h3>6.6 Quick Reference Table</h3>

@@ -70,11 +70,12 @@
       <h3>Scalars, Vectors, Matrices</h3>
       <ul>
         <li><b>Scalars:</b> Real numbers $a \in \mathbb{R}$.</li>
-        <li><b>Column vectors:</b> $x \in \mathbb{R}^n$ are $n \times 1$ matrices with entries $x_i$.</li>
-        <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$; entry $a_{ij}$ is row $i$, column $j$.</li>
-        <li><b>Transpose:</b> $A^\top \in \mathbb{R}^{n \times m}$ satisfies $(A^\top)_{ij} = a_{ji}$.</li>
-        <li><b>Identity:</b> $I_n$ has ones on the diagonal; $I_n x = x$.</li>
-        <li><b>Standard basis:</b> $e_1, \dots, e_n$ where $e_i$ has a 1 in position $i$, zeros elsewhere. Every $x \in \mathbb{R}^n$ can be written $x = \sum_{i=1}^n x_i e_i$.</li>
+        <li><b>Column vectors:</b> $x \in \mathbb{R}^n$ are $n \times 1$ matrices with entries $x_i$.
+          <br><i>Why column vectors?</i> By convention, we treat vectors as columns to make matrix-vector multiplication $Ax$ algebraically consistent with linear maps $T(x)$. If $x$ were a row vector, we would have to write $xA^\top$, which is less standard. Throughout this course, unless specified otherwise, any vector $x$ is a column vector.</li>
+        <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$; entry $a_{ij}$ lies in row $i$, column $j$. The first dimension $m$ is the number of rows, and $n$ is the number of columns.</li>
+        <li><b>Transpose:</b> $A^\top \in \mathbb{R}^{n \times m}$ satisfies $(A^\top)_{ij} = a_{ji}$. It flips the matrix across its main diagonal.</li>
+        <li><b>Identity:</b> $I_n$ is the $n \times n$ square matrix with ones on the diagonal and zeros elsewhere; it satisfies $I_n x = x$ for all $x \in \mathbb{R}^n$.</li>
+        <li><b>Standard basis:</b> $e_1, \dots, e_n$ where $e_i$ has a 1 in position $i$ and zeros elsewhere. These are the columns of $I_n$. Every $x \in \mathbb{R}^n$ can be uniquely decomposed as $x = \sum_{i=1}^n x_i e_i$.</li>
       </ul>
 
       <figure style="text-align: center;">
@@ -288,6 +289,17 @@
       <p>The concept of duality is central to optimization. For any norm $\|\cdot\|$, we can define a corresponding <b>dual norm</b>, denoted $\|\cdot\|_*$, as:
       $$ \|y\|_* = \sup_{\|x\| \le 1} x^\top y $$
       The dual norm measures the maximum "stretch" of a vector $y$ when applied to unit-norm vectors $x$. This definition leads to some important pairings:</p>
+
+      <div class="insight">
+        <h4>💡 Geometric Intuition for Dual Norms</h4>
+        <p>Think of the dual norm as measuring how "aligned" a vector $y$ can be with vectors in the unit ball of the primal norm.</p>
+        <ul>
+          <li><b>$\ell_2$ is self-dual:</b> The unit ball is a sphere. The direction of maximum inner product with $y$ is simply $y$ itself (normalized). Thus $\|y\|_{2,*} = \|y\|_2$.</li>
+          <li><b>$\ell_1$ dual is $\ell_\infty$:</b> The $\ell_1$ unit ball is a diamond with corners at coordinate axes. To maximize $x^\top y$ over this diamond, you simply pick the corner $e_i$ (or $-e_i$) corresponding to the largest component of $y$. Thus, the maximum value is $\max_i |y_i| = \|y\|_\infty$.</li>
+          <li><b>$\ell_\infty$ dual is $\ell_1$:</b> The $\ell_\infty$ unit ball is a box (corners at $(\pm 1, \dots, \pm 1)$). To maximize $x^\top y$ over the box, you choose each $x_i$ to match the sign of $y_i$. The result is $\sum y_i \mathrm{sign}(y_i) = \sum |y_i| = \|y\|_1$.</li>
+        </ul>
+      </div>
+
       <ul>
         <li>The dual of the L2 norm is the L2 norm itself (it is self-dual).</li>
         <li>The dual of the L1 norm is the L-infinity norm.</li>
@@ -410,6 +422,39 @@
       $$ \lambda_{\max}(A) = \sup_{x \neq 0} \frac{x^\top A x}{x^\top x} = \sup_{\|x\|_2 = 1} x^\top A x $$
       <p>This is the <b>Rayleigh Quotient</b>. This definition proves that $\lambda_{\max}(A)$ is a convex function of $A$. Notice that for a fixed $x$, the function $g(A) = x^\top A x$ is <b>linear</b> in $A$. Since $\lambda_{\max}(A)$ is the <b>pointwise supremum</b> of a family of linear functions (indexed by $x$), it is a convex function.</p>
 
+      <h3>4.4 The Schur Complement Lemma</h3>
+      <p>A powerful tool for handling block matrices in optimization is the Schur Complement. It allows us to convert complicated nonlinear constraints into Linear Matrix Inequalities (LMIs).</p>
+
+      <div class="proof-enhanced">
+        <h4>Lemma (Schur Complement)</h4>
+        <p>Let $X \in \mathbb{S}^n$ be partitioned as:
+        $$ X = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} $$
+        where $A \in \mathbb{S}^k$, $C \in \mathbb{S}^{n-k}$. If $A \succ 0$ (positive definite), then the Schur complement of $A$ in $X$ is $S = C - B^\top A^{-1} B$.
+        </p>
+        <p><b>Statement:</b> $X \succeq 0$ if and only if $A \succ 0$ and $S \succeq 0$.</p>
+
+        <div class="proof-step">
+          <strong>Proof Step 1: Block Gaussian Elimination.</strong>
+          We can block-diagonalize $X$ using a specific congruence transformation. Consider the matrix:
+          $$ M = \begin{bmatrix} I & 0 \\ -B^\top A^{-1} & I \end{bmatrix} $$
+          Multiplying $X$ on both sides (congruence preserves inertia and PSD property):
+          $$ M X M^\top = \begin{bmatrix} I & 0 \\ -B^\top A^{-1} & I \end{bmatrix} \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} \begin{bmatrix} I & -A^{-1}B \\ 0 & I \end{bmatrix} $$
+          $$ = \begin{bmatrix} A & B \\ 0 & C - B^\top A^{-1} B \end{bmatrix} \begin{bmatrix} I & -A^{-1}B \\ 0 & I \end{bmatrix} $$
+          $$ = \begin{bmatrix} A & 0 \\ 0 & C - B^\top A^{-1} B \end{bmatrix} = \begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix} $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Proof Step 2: Conclusion.</strong>
+          Since $M$ is invertible, $X \succeq 0 \iff M X M^\top \succeq 0$.
+          A block diagonal matrix is PSD if and only if its diagonal blocks are PSD.
+          Thus, $X \succeq 0 \iff A \succeq 0 \text{ and } S \succeq 0$.
+          (Assuming $A \succ 0$ ensures $A^{-1}$ exists).
+        </div>
+      </div>
+      <p><b>Application:</b> This lemma turns the nonlinear constraint $\|Bx\|_2^2 \le c$ (equivalent to $x^\top B^\top B x \le c$) into an LMI:
+      $$ \begin{bmatrix} I & Bx \\ (Bx)^\top & c \end{bmatrix} \succeq 0 $$
+      This is central to Semidefinite Programming.</p>
+
       <p>A positive definite matrix $Q$ can be used to define a generalized norm, $\|x\|_Q = \sqrt{x^\top Q x}$. The unit ball for this norm, $\{x \mid x^\top Q x \le 1\}$, is an ellipsoid, whose geometry is determined by the eigenvalues and eigenvectors of $Q$.</p>
 
       <figure style="text-align: center;">
@@ -529,19 +574,31 @@
 
       <h4>Theorem: Existence of QR Decomposition</h4>
       <div class="proof-enhanced">
-        <p><strong>Statement:</strong> Every matrix $A \in \mathbb{R}^{m \times n}$ with $m \ge n$ can be factored as:
+        <p><strong>Statement:</strong> Every matrix $A \in \mathbb{R}^{m \times n}$ with $m \ge n$ and linearly independent columns can be factored as:
         $$ A = QR $$
-        where $Q \in \mathbb{R}^{m \times n}$ has orthonormal columns ($Q^\top Q = I_n$) and $R \in \mathbb{R}^{n \times n}$ is upper triangular.</p>
+        where $Q \in \mathbb{R}^{m \times n}$ has orthonormal columns ($Q^\top Q = I_n$) and $R \in \mathbb{R}^{n \times n}$ is upper triangular with positive diagonal entries.</p>
 
-        <p><strong>Proof Sketch (Gram-Schmidt):</strong> Apply Gram-Schmidt orthogonalization to the columns of $A$:
-        $$
-        \begin{aligned}
-        q_1 &= a_1 / \|a_1\|_2, \quad r_{11} = \|a_1\|_2 \\
-        \tilde{q}_2 &= a_2 - (q_1^\top a_2) q_1, \quad q_2 = \tilde{q}_2 / \|\tilde{q}_2\|_2 \\
-        &\vdots
-        \end{aligned}
-        $$
-        The matrix $R$ stores the coefficients: $r_{ij} = q_i^\top a_j$ for $i \le j$, and $r_{ij} = 0$ for $i > j$. The process is numerically stabilized using <strong>Householder reflections</strong> or <strong>Givens rotations</strong> in practice.</p>
+        <div class="proof-step">
+          <strong>Step 1: Gram-Schmidt Process.</strong> Let $a_1, \dots, a_n$ be the columns of $A$. We construct orthonormal vectors $q_1, \dots, q_n$ iteratively.
+          <br>For $k=1$: Set $u_1 = a_1$. Define $r_{11} = \|u_1\|_2$ and $q_1 = u_1 / r_{11}$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Iterative Step.</strong> For $k=2, \dots, n$:
+          <br>Project $a_k$ onto the space spanned by $q_1, \dots, q_{k-1}$:
+          $$ p_k = \sum_{j=1}^{k-1} (q_j^\top a_k) q_j $$
+          Define the orthogonal residual: $u_k = a_k - p_k$.
+          <br>Set $r_{jk} = q_j^\top a_k$ for $j < k$.
+          <br>Set $r_{kk} = \|u_k\|_2$ and $q_k = u_k / r_{kk}$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Matrix Form.</strong> Rearranging the equation for $a_k$:
+          $$ a_k = \sum_{j=1}^{k-1} r_{jk} q_j + r_{kk} q_k $$
+          This expresses the $k$-th column of $A$ as a linear combination of the first $k$ columns of $Q$.
+          $$ A = \begin{bmatrix} a_1 & \cdots & a_n \end{bmatrix} = \begin{bmatrix} q_1 & \cdots & q_n \end{bmatrix} \begin{bmatrix} r_{11} & r_{12} & \cdots \\ 0 & r_{22} & \cdots \\ \vdots & \vdots & \ddots \end{bmatrix} = QR $$
+          Since $r_{kk} > 0$ (assuming independent columns), $R$ is invertible.
+        </div>
       </div>
 
       <h4>Solving Least Squares via QR</h4>
@@ -569,7 +626,20 @@
           <li>$\Sigma \in \mathbb{R}^{m \times n}$ is a "diagonal" matrix with nonnegative entries $\sigma_1 \ge \sigma_2 \ge \cdots \ge \sigma_r > 0$ (the <strong>singular values</strong>), where $r = \text{rank}(A)$, and $\sigma_{r+1} = \cdots = 0$</li>
         </ul>
 
-        <p><strong>Proof Sketch:</strong> Consider $A^\top A \in \mathbb{S}_+^n$. By the spectral theorem, $A^\top A = V \Lambda V^\top$ where $\Lambda = \text{diag}(\lambda_1, \dots, \lambda_n)$ with $\lambda_i \ge 0$. Define $\sigma_i = \sqrt{\lambda_i}$ and $\Sigma = \text{diag}(\sigma_1, \dots, \sigma_r, 0, \dots, 0)$. For $i \le r$, set $u_i = Av_i / \sigma_i$. Extend $\{u_1, \dots, u_r\}$ to an orthonormal basis of $\mathbb{R}^m$ to form $U$. Then $A = U \Sigma V^\top$ follows from construction.</p>
+        <div class="proof-step">
+          <strong>Proof:</strong>
+          <p><b>Step 1: Eigenvalues of $A^\top A$.</b> The matrix $A^\top A$ is symmetric positive semidefinite. By the Spectral Theorem, there exists an orthogonal matrix $V = [v_1, \dots, v_n]$ and eigenvalues $\lambda_1 \ge \dots \ge \lambda_n \ge 0$ such that $A^\top A = V \text{diag}(\lambda_1, \dots, \lambda_n) V^\top$.</p>
+          <p><b>Step 2: Define Singular Values.</b> Let $r$ be the rank of $A$. Then $\lambda_1, \dots, \lambda_r > 0$ and $\lambda_{r+1} = \dots = \lambda_n = 0$. Define $\sigma_i = \sqrt{\lambda_i}$ for $i=1,\dots,r$.</p>
+          <p><b>Step 3: Construct Left Singular Vectors $U$.</b> For $i=1,\dots,r$, define $u_i = \frac{1}{\sigma_i} A v_i$.
+          We verify they are orthonormal:
+          $$ u_i^\top u_j = \frac{1}{\sigma_i \sigma_j} (A v_i)^\top (A v_j) = \frac{1}{\sigma_i \sigma_j} v_i^\top (A^\top A v_j) = \frac{1}{\sigma_i \sigma_j} v_i^\top (\lambda_j v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} \delta_{ij} = \delta_{ij} $$
+          </p>
+          <p><b>Step 4: Completion.</b> Extend $\{u_1, \dots, u_r\}$ to an orthonormal basis $\{u_1, \dots, u_m\}$ for $\mathbb{R}^m$. Let $U = [u_1, \dots, u_m]$ and $\Sigma$ be the $m \times n$ matrix with $\sigma_i$ on the diagonal and zeros elsewhere.</p>
+          <p><b>Step 5: Verification.</b> We check $A V = U \Sigma$.
+          <br>For $i \le r$: $(A V)_i = A v_i = \sigma_i u_i = (U \Sigma)_i$.
+          <br>For $i > r$: $A^\top A v_i = 0 \implies \|A v_i\|^2 = v_i^\top A^\top A v_i = 0 \implies A v_i = 0$. Also $(U \Sigma)_i = U \cdot 0 = 0$.
+          <br>Thus $A V = U \Sigma$, which implies $A = U \Sigma V^\top$.</p>
+        </div>
       </div>
 
       <h4>7.2.2 Compact and Truncated SVD</h4>
@@ -589,7 +659,23 @@
       </ol>
       <p>Thus, $A$ transforms the unit sphere in $\mathbb{R}^n$ into an ellipsoid in $\mathbb{R}^m$ with semi-axes of lengths $\sigma_1, \dots, \sigma_r$.</p>
 
-      <p><strong>Visualizing SVD:</strong> For $A \in \mathbb{R}^{2 \times 2}$, consider $A = U \Sigma V^\top$ acting on the unit circle. $V^\top$ rotates to align with $v_1, v_2$; $\Sigma$ stretches by $\sigma_1, \sigma_2$; $U$ rotates to align with $u_1, u_2$. The result is an ellipse with semi-major axis $\sigma_1 u_1$ and semi-minor axis $\sigma_2 u_2$.</p>
+      <div class="proof-enhanced">
+        <h4>Detailed Walkthrough: The Geometry of SVD in 2D</h4>
+        <p>Let's visualize exactly how $A = U \Sigma V^\top$ transforms a vector $x$. Consider the matrix:</p>
+        $$ A = \begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix} $$
+        <p>This simple matrix just stretches. But let's look at a general $A$. The transformation $Ax = U (\Sigma (V^\top x))$ happens in three steps:</p>
+        <ol>
+          <li><b>Rotate (Input Space):</b> First, multiplication by the orthogonal matrix $V^\top$ performs a rotation (or reflection) of the vector $x$. It aligns the standard basis vectors with the "right singular vectors" $v_1, v_2$.
+            <br><i>Effect:</i> The unit circle remains a circle, just rotated.
+          </li>
+          <li><b>Stretch:</b> Next, multiplication by the diagonal matrix $\Sigma$ stretches the rotated vector along the coordinate axes. The first coordinate is scaled by $\sigma_1$, the second by $\sigma_2$.
+            <br><i>Effect:</i> The circle becomes an ellipse aligned with the axes.
+          </li>
+          <li><b>Rotate (Output Space):</b> Finally, multiplication by $U$ rotates the ellipse to its final orientation. The axes of the ellipse align with the "left singular vectors" $u_1, u_2$.
+          </li>
+        </ol>
+        <p><b>Summary:</b> Every linear map is just a rotation, followed by a stretch, followed by another rotation. SVD gives you the coordinate systems ($V$ and $U$) in which the map is purely diagonal (a simple stretch).</p>
+      </div>
 
       <h4>7.2.4 SVD and Matrix Norms</h4>
       <p>Singular values determine all major matrix norms:</p>
@@ -608,7 +694,18 @@
         The same result holds for the spectral norm:
         $$ \min_{\text{rank}(B) \le k} \|A - B\|_2 = \|A - A_k\|_2 = \sigma_{k+1} $$</p>
 
-        <p><strong>Proof Sketch:</strong> By the SVD, $A = \sum_{i=1}^r \sigma_i u_i v_i^\top$. Any rank-$k$ matrix $B$ lies in a $k$-dimensional subspace. The projection theorem and properties of orthogonal bases yield that the optimal choice is to keep the top $k$ terms. The error is orthogonal to the retained subspace, giving the stated formulas.</p>
+        <div class="proof-step">
+          <strong>Proof (Spectral Norm Case):</strong>
+          <p>We want to show that if $\mathrm{rank}(B) \le k$, then $\|A - B\|_2 \ge \sigma_{k+1}$.</p>
+          <p><b>Step 1: Construct a test subspace.</b> Let $V_{k+1}$ be the subspace spanned by the first $k+1$ right singular vectors $v_1, \dots, v_{k+1}$. For any $x \in V_{k+1}$ with $\|x\|_2=1$:
+          $$ \|Ax\|_2 = \|\sum_{i=1}^{k+1} \sigma_i u_i v_i^\top x\|_2 = \sqrt{\sum_{i=1}^{k+1} \sigma_i^2 (v_i^\top x)^2} \ge \sigma_{k+1} \sqrt{\sum (v_i^\top x)^2} = \sigma_{k+1} $$
+          </p>
+          <p><b>Step 2: Use Rank-Nullity.</b> Since $\mathrm{rank}(B) \le k$, the nullspace $\mathcal{N}(B)$ has dimension at least $n-k$. The subspace $V_{k+1}$ has dimension $k+1$. The sum of dimensions is $(n-k) + (k+1) = n+1 > n$, so these two subspaces must have a non-trivial intersection.</p>
+          <p><b>Step 3: Evaluate error on intersection.</b> Let $z \in \mathcal{N}(B) \cap V_{k+1}$ with $\|z\|_2=1$.
+          $$ \|(A-B)z\|_2 = \|Az - Bz\|_2 = \|Az\|_2 \ge \sigma_{k+1} $$
+          Thus $\max_{\|x\|=1} \|(A-B)x\|_2 \ge \sigma_{k+1}$, so $\|A-B\|_2 \ge \sigma_{k+1}$.</p>
+          <p><b>Step 4: Achievability.</b> The truncated SVD $A_k$ has rank $k$, and $\|A - A_k\|_2 = \|\sum_{i=k+1}^r \sigma_i u_i v_i^\top\|_2 = \sigma_{k+1}$. Thus the lower bound is achieved.</p>
+        </div>
       </div>
 
       <p><strong>Applications:</strong> This theorem is the foundation for:</p>
@@ -1472,19 +1569,31 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
 
       <div class="proof-enhanced">
-        <h4>Solution Sketch</h4>
+        <h4>Solution</h4>
 
         <div class="proof-step">
-          <strong>General case ($1 < p < \infty$):</strong>
-          <p>By Hölder's inequality for $\ell_p$ spaces:</p>
-          $$ \left| \sum_i x_i y_i \right| \le \left(\sum_i |x_i|^p\right)^{1/p} \left(\sum_i |y_i|^q\right)^{1/q} = \|x\|_p \|y\|_q $$
-          <p>Equality is achieved when $|y_i|^q \propto |x_i|^p$. Specifically, choose:</p>
-          $$ x_i = \frac{\mathrm{sign}(y_i) |y_i|^{q-1}}{\|y\|_q^{q-1}} $$
-          <p>Then $\|x\|_p = 1$ and $x^\top y = \|y\|_q$, proving $(\|\cdot\|_p)^* = \|\cdot\|_q$.</p>
+          <strong>Part 1: Upper Bound (Hölder's Inequality).</strong>
+          Let $1/p + 1/q = 1$. For any $x$ with $\|x\|_p \le 1$:
+          $$ x^\top y = \sum x_i y_i \le \sum |x_i y_i| \le \left(\sum |x_i|^p\right)^{1/p} \left(\sum |y_i|^q\right)^{1/q} = \|x\|_p \|y\|_q \le \|y\|_q $$
+          Thus $\|y\|_* = \sup_{\|x\|_p \le 1} x^\top y \le \|y\|_q$.
         </div>
 
         <div class="proof-step">
-          <strong>Boundary cases:</strong> Already proven above: $(\|\cdot\|_1)^* = \|\cdot\|_\infty$ and $(\|\cdot\|_\infty)^* = \|\cdot\|_1$.
+          <strong>Part 2: Lower Bound (Achievability).</strong>
+          We construct a specific $x$ that achieves the bound. Let $y \neq 0$. Define $x$ by:
+          $$ x_i = \frac{\mathrm{sign}(y_i) |y_i|^{q-1}}{\|y\|_q^{q-1}} $$
+          Check the norm of $x$:
+          $$ \|x\|_p^p = \sum |x_i|^p = \frac{\sum |y_i|^{p(q-1)}}{\|y\|_q^{p(q-1)}} $$
+          Since $1/p + 1/q = 1 \implies p+q = pq \implies p(q-1) = q$:
+          $$ \|x\|_p^p = \frac{\sum |y_i|^q}{\|y\|_q^q} = \frac{\|y\|_q^q}{\|y\|_q^q} = 1 \implies \|x\|_p = 1 $$
+          Now compute the inner product:
+          $$ x^\top y = \sum \frac{\mathrm{sign}(y_i) |y_i|^{q-1} y_i}{\|y\|_q^{q-1}} = \frac{\sum |y_i|^q}{\|y\|_q^{q-1}} = \frac{\|y\|_q^q}{\|y\|_q^{q-1}} = \|y\|_q $$
+          Since we found an $x$ with $\|x\|_p=1$ such that $x^\top y = \|y\|_q$, we have $\|y\|_* \ge \|y\|_q$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Conclusion:</strong> Since $\|y\|_* \le \|y\|_q$ and $\|y\|_* \ge \|y\|_q$, we have $\|y\|_* = \|y\|_q$.
+          <br>The boundary cases ($p=1, q=\infty$) were proven in Section 13.
         </div>
       </div>
 
