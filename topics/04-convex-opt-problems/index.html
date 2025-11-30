@@ -82,7 +82,7 @@
         <li>The variable is $x \in \mathbb{R}^n$</li>
         <li>$f_0: \mathbb{R}^n \to \mathbb{R}$ is the <strong>objective function</strong> (convex)</li>
         <li>$f_i: \mathbb{R}^n \to \mathbb{R}$, $i = 1, \dots, m$ are <strong>inequality constraint functions</strong> (all convex)</li>
-        <li>$h_j: \mathbb{R}^n \to \mathbb{R}$, $j = 1, \dots, p$ are <strong>equality constraint functions</strong> (all affine, i.e., $h_j(x) = a_j^T x - b_j$)</li>
+        <li>$h_j: \mathbb{R}^n \to \mathbb{R}$, $j = 1, \dots, p$ are <strong>equality constraint functions</strong> (all affine, i.e., $h_j(x) = a_j^\top x - b_j$)</li>
       </ul>
 
       <h3>1.2 The Feasible Set</h3>
@@ -138,7 +138,7 @@
         <p style="margin: 0;">
           $
           \begin{aligned}
-          \text{minimize} \quad & c^T x \\
+          \text{minimize} \quad & c^\top x \\
           \text{subject to} \quad & Gx \preceq h \\
           & Ax = b
           \end{aligned}
@@ -214,7 +214,7 @@
         <p style="margin: 0;">
           $
           \begin{aligned}
-          \text{minimize} \quad & \frac{1}{2} x^T P x + q^T x + r \\
+          \text{minimize} \quad & \frac{1}{2} x^\top P x + q^\top x + r \\
           \text{subject to} \quad & Gx \preceq h \\
           & Ax = b
           \end{aligned}
@@ -227,7 +227,7 @@
       <div class="proof">
         <h4>Convexity of QP</h4>
         <div class="proof-step">
-          <strong>Objective convexity:</strong> Since $P \succeq 0$, the quadratic form $f_0(x) = \frac{1}{2} x^T P x + q^T x + r$ is convex. This follows from the second-order condition: $\nabla^2 f_0(x) = P \succeq 0$.
+          <strong>Objective convexity:</strong> Since $P \succeq 0$, the quadratic form $f_0(x) = \frac{1}{2} x^\top P x + q^\top x + r$ is convex. This follows from the second-order condition: $\nabla^2 f_0(x) = P \succeq 0$.
         </div>
         <div class="proof-step">
           <strong>Feasible set convexity:</strong> The constraints define a polyhedron, which is convex.
@@ -251,21 +251,21 @@
       <p style="text-align: center;">
         $
         \begin{aligned}
-        \text{minimize} \quad & x^T A^T A x - 2 b^T A x + b^T b \\
+        \text{minimize} \quad & x^\top A^\top A x - 2 b^\top A x + b^\top b \\
         \text{subject to} \quad & Cx \preceq d
         \end{aligned}
         $
       </p>
-      <p>This is a QP with $P = 2A^T A \succeq 0$ and $q = -2A^T b$.</p>
+      <p>This is a QP with $P = 2A^\top A \succeq 0$ and $q = -2A^\top b$.</p>
 
       <h4>Example 3.2: Markowitz Portfolio Optimization</h4>
       <p>Given $n$ assets with expected returns $\mu \in \mathbb{R}^n$ and covariance matrix $\Sigma \in \mathbb{S}_{++}^n$, find a portfolio $x \in \mathbb{R}^n$ (where $x_i$ is the fraction invested in asset $i$) minimizing risk for a target return $r_{\text{target}}$:</p>
       <p style="text-align: center;">
         $
         \begin{aligned}
-        \text{minimize} \quad & x^T \Sigma x \\
-        \text{subject to} \quad & \mu^T x \ge r_{\text{target}} \\
-        & \mathbf{1}^T x = 1 \\
+        \text{minimize} \quad & x^\top \Sigma x \\
+        \text{subject to} \quad & \mu^\top x \ge r_{\text{target}} \\
+        & \mathbf{1}^\top x = 1 \\
         & x \ge 0
         \end{aligned}
         $
@@ -287,8 +287,8 @@
         <p style="margin: 0;">
           $
           \begin{aligned}
-          \text{minimize} \quad & f^T x \\
-          \text{subject to} \quad & \|A_i x + b_i\|_2 \le c_i^T x + d_i, \quad i = 1, \dots, m \\
+          \text{minimize} \quad & f^\top x \\
+          \text{subject to} \quad & \|A_i x + b_i\|_2 \le c_i^\top x + d_i, \quad i = 1, \dots, m \\
           & Fx = g
           \end{aligned}
           $
@@ -345,48 +345,33 @@
       </p>
 
       <div class="proof-enhanced">
-        <h4>Derivation</h4>
+        <h4>Derivation (Unstructured Uncertainty)</h4>
         <div class="proof-step">
-          <strong>Step 1: Simplify the inner term.</strong>
-          Let $A(u) = A_0 + \sum u_i A_i$. Then $A(u)x - b = (A_0 x - b) + \sum u_i (A_i x)$.
-          Define $P \in \mathbb{R}^{m \times p}$ such that the $i$-th column is $A_i x$. Then $\sum u_i (A_i x) = P u$.
-          So we want to maximize $\| (A_0 x - b) + P u \|_2$ over $\|u\|_2 \le 1$.
+          <strong>Step 1: Define the uncertainty set.</strong>
+          Assume the matrix $A$ is uncertain but bounded: $A = A_0 + \Delta$, where $\|\Delta\|_2 \le \rho$. We want to minimize the worst-case residual:
+          $$ \min_x \max_{\|\Delta\|_2 \le \rho} \|(A_0 + \Delta)x - b\|_2 $$
         </div>
         <div class="proof-step">
-          <strong>Step 2: Apply Triangle Inequality.</strong>
-          $\| (A_0 x - b) + P u \|_2 \le \| A_0 x - b \|_2 + \| P u \|_2$.
-          We know $\|Pu\|_2 \le \|P\|_2 \|u\|_2$ (spectral norm), but here we want to maximize the vector norm directly.
-          Actually, we can use the triangle inequality directly on the vector sum. But wait, a tighter bound exists if we don't assume worst-case alignment immediately.
-          However, for the specific structure where $u$ is a vector of scalars, let's look closer.
-          Usually, Robust Least Squares with *unstructured* norm-bounded uncertainty (like in Lecture 01) yields a sum of norms.
-          With *structured* uncertainty (like here), it's more complex.
-          Wait, if $P u = \sum u_i (A_i x)$, then $\|P u\|_2$ is maximized when $u$ aligns with the singular vector.
-          Actually, let's use the property: $\max_{\|u\|_2 \le 1} \|v + P u\|_2$.
-          This maximization is not trivial.
-
-          Correction: The standard "Robust Least Squares" result that yields an SOCP typically assumes the uncertainty is of the form $(A+\Delta)x$ where $\|\Delta\|_F \le \rho$ or $\|\Delta\|_2 \le \rho$.
-          The structure $A(u) = A_0 + \sum u_i A_i$ leads to a more complex problem, often SDP or requiring approximations, UNLESS the $A_i$ have special structure or we use an upper bound.
-
-          However, if we assume the standard unstructured uncertainty (as in Lecture 01): $\mathcal{U} = \{A_0 + \Delta \mid \|\Delta\|_2 \le \rho\}$.
-          Then $\max_{\Delta} \|(A_0 + \Delta)x - b\|_2 = \|A_0 x - b\|_2 + \rho \|x\|_2$.
-          This yields $\min \|A_0 x - b\|_2 + \rho \|x\|_2$, which is an SOCP.
-
-          The formula presented in the original text: $\|A_0 x - b\|_2 + \|\text{col}(A_i x)\|_2 \le t$ corresponds to the case where the uncertainty is a *sum of rank-1 updates* or similar?
-          Let's re-verify the text I am replacing.
-          Original text formula: $\|A_0 x - b\|_2 + \left\|\begin{bmatrix} A_1 x \\ \vdots \\ A_p x \end{bmatrix}\right\|_2 \le t$.
-          The second term is $(\sum_i \|A_i x\|_2^2)^{1/2}$. This comes from stochastic uncertainty or a specific bound.
-
-          Let's stick to the provably correct, standard **unstructured** derivation which matches Lecture 01, as it is the canonical SOCP example.
-
-          <strong>Standard Unstructured Case:</strong>
-          Assume $A = A_0 + \Delta$ where $\|\Delta\|_2 \le \rho$.
-          Maximized residual: $\|(A_0 + \Delta)x - b\|_2 \le \|A_0 x - b\|_2 + \|\Delta x\|_2 \le \|A_0 x - b\|_2 + \rho \|x\|_2$.
-          This upper bound is achievable (tight) by choosing $\Delta$ aligned with the residual.
-          Thus we minimize $\|A_0 x - b\|_2 + \rho \|x\|_2$.
+          <strong>Step 2: Expand the inner maximization.</strong>
+          Let $r_0 = A_0 x - b$. The term inside the max is $\|r_0 + \Delta x\|_2$.
+          By the triangle inequality:
+          $$ \|r_0 + \Delta x\|_2 \le \|r_0\|_2 + \|\Delta x\|_2 \le \|r_0\|_2 + \|\Delta\|_2 \|x\|_2 \le \|r_0\|_2 + \rho \|x\|_2 $$
         </div>
         <div class="proof-step">
-          <strong>Step 3: SOCP Formulation.</strong>
-          $\min t_1 + \rho t_2$ s.t. $\|A_0 x - b\|_2 \le t_1$ and $\|x\|_2 \le t_2$.
+          <strong>Step 3: Show the bound is tight.</strong>
+          We need to show there exists a $\Delta^*$ with $\|\Delta^*\|_2 \le \rho$ that achieves this bound.
+          Choose $\Delta^* = \rho \frac{r_0}{\|r_0\|_2} \frac{x^\top}{\|x\|_2}$ (a rank-1 matrix).
+          Then $\|\Delta^*\|_2 = \rho$, and $\Delta^* x = \rho \frac{r_0}{\|r_0\|_2} \|x\|_2$.
+          The vector $\Delta^* x$ is parallel to $r_0$, so $\|r_0 + \Delta^* x\|_2 = \|r_0\|_2 + \|\Delta^* x\|_2 = \|r_0\|_2 + \rho \|x\|_2$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 4: Formulate as SOCP.</strong>
+          The problem becomes $\min_x (\|A_0 x - b\|_2 + \rho \|x\|_2)$.
+          We introduce slack variables $t_1, t_2$:
+          $$ \min_{x, t_1, t_2} \quad t_1 + \rho t_2 $$
+          $$ \text{s.t.} \quad \|A_0 x - b\|_2 \le t_1 $$
+          $$ \quad \quad \|x\|_2 \le t_2 $$
+          These are standard second-order cone constraints.
         </div>
       </div>
 
@@ -395,7 +380,7 @@
       <p style="text-align: center;">
         $
         \begin{aligned}
-        \text{minimize} \quad & \mathbf{1}^T y \\
+        \text{minimize} \quad & \mathbf{1}^\top y \\
         \text{subject to} \quad & -y \preceq x \preceq y \\
         & Ax = b
         \end{aligned}
@@ -421,7 +406,7 @@
         <p style="margin: 0;">
           $
           \begin{aligned}
-          \text{minimize} \quad & c^T x \\
+          \text{minimize} \quad & c^\top x \\
           \text{subject to} \quad & F(x) = F_0 + \sum_{i=1}^n x_i F_i \succeq 0 \\
           & Ax = b
           \end{aligned}
@@ -487,18 +472,18 @@
 
       <div class="proof">
         <h4>Embedding SOCP into SDP via Schur Complement</h4>
-        <p>We want to show that the second-order cone constraint $\|y\|_2 \le t$ (where $y = Ax+b, t = c^T x + d$) is equivalent to a Linear Matrix Inequality (LMI).</p>
+        <p>We want to show that the second-order cone constraint $\|y\|_2 \le t$ (where $y = Ax+b, t = c^\top x + d$) is equivalent to a Linear Matrix Inequality (LMI).</p>
 
         <div class="proof-step">
           <strong>Step 1: Schur Complement Lemma.</strong>
-          Recall that for a block matrix $M = \begin{bmatrix} A & B \\ B^T & C \end{bmatrix}$ with $A \succ 0$, we have $M \succeq 0 \iff C - B^T A^{-1} B \succeq 0$.
+          Recall that for a block matrix $M = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix}$ with $A \succ 0$, we have $M \succeq 0 \iff C - B^\top A^{-1} B \succeq 0$.
         </div>
 
         <div class="proof-step">
           <strong>Step 2: Construct the matrix.</strong>
           Consider the matrix:
           $$
-          M = \begin{bmatrix} tI & y \\ y^T & t \end{bmatrix}
+          M = \begin{bmatrix} tI & y \\ y^\top & t \end{bmatrix}
           $$
           Assume $t > 0$ (if $t=0$, we need $y=0$, which is handled by the limit or closure). Then $tI \succ 0$.
         </div>
@@ -507,18 +492,18 @@
           <strong>Step 3: Apply the Lemma.</strong>
           Identifying blocks: $A = tI$, $B = y$, $C = t$.
           The condition $M \succeq 0$ is equivalent to:
-          $$ t - y^T (tI)^{-1} y \ge 0 $$
-          $$ t - \frac{1}{t} y^T y \ge 0 $$
+          $$ t - y^\top (tI)^{-1} y \ge 0 $$
+          $$ t - \frac{1}{t} y^\top y \ge 0 $$
           Multiplying by $t$ (since $t > 0$):
-          $$ t^2 - y^T y \ge 0 \implies \|y\|_2^2 \le t^2 $$
+          $$ t^2 - y^\top y \ge 0 \implies \|y\|_2^2 \le t^2 $$
           Since $t > 0$, this is equivalent to $\|y\|_2 \le t$.
         </div>
 
         <div class="proof-step">
           <strong>Step 4: Conclusion.</strong>
-          The SOC constraint $\|Ax+b\|_2 \le c^T x + d$ is equivalent to the LMI:
+          The SOC constraint $\|Ax+b\|_2 \le c^\top x + d$ is equivalent to the LMI:
           $$
-          \begin{bmatrix} (c^T x + d) I & Ax + b \\ (Ax + b)^T & c^T x + d \end{bmatrix} \succeq 0
+          \begin{bmatrix} (c^\top x + d) I & Ax + b \\ (Ax + b)^\top & c^\top x + d \end{bmatrix} \succeq 0
           $$
           Since this constraint is linear in the matrix variable (which depends linearly on $x$), an SOCP is a special case of an SDP.
         </div>
@@ -763,7 +748,7 @@
         <p style="text-align: center;">
           $
           \begin{aligned}
-          \text{minimize} \quad & \max_{i=1,\dots,m} |a_i^T x - b_i|
+          \text{minimize} \quad & \max_{i=1,\dots,m} |a_i^\top x - b_i|
           \end{aligned}
           $
         </p>
@@ -775,7 +760,7 @@
           <h4>Solution</h4>
 
           <div class="proof-step">
-            <strong>Part (a): Convexity.</strong> The function $f(x) = \max_{i=1,\dots,m} |a_i^T x - b_i|$ is the pointwise maximum of functions $|a_i^T x - b_i|$. Since $|a_i^T x - b_i|$ is convex (it's the composition of the absolute value function with an affine function), and the pointwise maximum of convex functions is convex, $f(x)$ is convex. Thus, this is a convex optimization problem.
+            <strong>Part (a): Convexity.</strong> The function $f(x) = \max_{i=1,\dots,m} |a_i^\top x - b_i|$ is the pointwise maximum of functions $|a_i^\top x - b_i|$. Since $|a_i^\top x - b_i|$ is convex (it's the composition of the absolute value function with an affine function), and the pointwise maximum of convex functions is convex, $f(x)$ is convex. Thus, this is a convex optimization problem.
           </div>
 
           <div class="proof-step">
@@ -783,15 +768,15 @@
             $
             \begin{aligned}
             \text{minimize} \quad & t \\
-            \text{subject to} \quad & -t \le a_i^T x - b_i \le t, \quad i = 1, \dots, m
+            \text{subject to} \quad & -t \le a_i^\top x - b_i \le t, \quad i = 1, \dots, m
             \end{aligned}
             $
             This is equivalent to:
             $
             \begin{aligned}
             \text{minimize} \quad & t \\
-            \text{subject to} \quad & a_i^T x - b_i \le t, \quad i = 1, \dots, m \\
-            & -a_i^T x + b_i \le t, \quad i = 1, \dots, m
+            \text{subject to} \quad & a_i^\top x - b_i \le t, \quad i = 1, \dots, m \\
+            & -a_i^\top x + b_i \le t, \quad i = 1, \dots, m
             \end{aligned}
             $
             This is an LP in variables $(x, t) \in \mathbb{R}^{n+1}$.
@@ -812,21 +797,21 @@
           <div class="proof-step">
             <strong>Part (a): QP formulation.</strong> Expand the objective:
             $
-            \|Ax - b\|_2^2 = (Ax - b)^T (Ax - b) = x^T A^T A x - 2 b^T A x + b^T b
+            \|Ax - b\|_2^2 = (Ax - b)^\top (Ax - b) = x^\top A^\top A x - 2 b^\top A x + b^\top b
             $
-            The constant $b^T b$ doesn't affect the minimizer, so we can write:
+            The constant $b^\top b$ doesn't affect the minimizer, so we can write:
             $
             \begin{aligned}
-            \text{minimize} \quad & x^T (A^T A) x - 2 (A^T b)^T x \\
+            \text{minimize} \quad & x^\top (A^\top A) x - 2 (A^\top b)^\top x \\
             \text{subject to} \quad & x \succeq l \\
             & -x \succeq -u
             \end{aligned}
             $
-            In standard QP form with $P = 2 A^T A$, $q = -2 A^T b$, and inequality constraints $x \ge l$, $x \le u$.
+            In standard QP form with $P = 2 A^\top A$, $q = -2 A^\top b$, and inequality constraints $x \ge l$, $x \le u$.
           </div>
 
           <div class="proof-step">
-            <strong>Part (b): Strict convexity.</strong> The Hessian is $\nabla^2 f(x) = 2 A^T A$. The problem is strictly convex if and only if $A^T A \succ 0$, which occurs when $A$ has full column rank (i.e., $\text{rank}(A) = n$).
+            <strong>Part (b): Strict convexity.</strong> The Hessian is $\nabla^2 f(x) = 2 A^\top A$. The problem is strictly convex if and only if $A^\top A \succ 0$, which occurs when $A$ has full column rank (i.e., $\text{rank}(A) = n$).
           </div>
         </div>
       </div>
@@ -915,9 +900,9 @@
         <p style="text-align: center;">
           $
           \begin{aligned}
-          \text{maximize} \quad & \mu^T x \\
-          \text{subject to} \quad & x^T \Sigma x \le \sigma_{\max}^2 \\
-          & \mathbf{1}^T x = 1 \\
+          \text{maximize} \quad & \mu^\top x \\
+          \text{subject to} \quad & x^\top \Sigma x \le \sigma_{\max}^2 \\
+          & \mathbf{1}^\top x = 1 \\
           & x \ge 0
           \end{aligned}
           $
@@ -929,20 +914,20 @@
           <h4>Solution</h4>
 
           <div class="proof-step">
-            <strong>Part (a): Classification.</strong> The objective is linear (easy). The constraint $x^T \Sigma x \le \sigma_{\max}^2$ is a quadratic constraint. Since we're maximizing a linear function (equivalent to minimizing $-\mu^T x$), and we have a quadratic constraint, this is a <strong>Quadratically Constrained Quadratic Program (QCQP)</strong>, which is a subclass of SOCP (since $\Sigma \succ 0$).
+            <strong>Part (a): Classification.</strong> The objective is linear (easy). The constraint $x^\top \Sigma x \le \sigma_{\max}^2$ is a quadratic constraint. Since we're maximizing a linear function (equivalent to minimizing $-\mu^\top x$), and we have a quadratic constraint, this is a <strong>Quadratically Constrained Quadratic Program (QCQP)</strong>, which is a subclass of SOCP (since $\Sigma \succ 0$).
           </div>
 
           <div class="proof-step">
-            <strong>Part (b): SOCP reformulation.</strong> Since $\Sigma \succ 0$, we can write $\Sigma = L L^T$ (Cholesky factorization). Then $x^T \Sigma x = \|L^T x\|_2^2$, so the constraint becomes:
+            <strong>Part (b): SOCP reformulation.</strong> Since $\Sigma \succ 0$, we can write $\Sigma = L L^\top$ (Cholesky factorization). Then $x^\top \Sigma x = \|L^\top x\|_2^2$, so the constraint becomes:
             $
-            \|L^T x\|_2 \le \sigma_{\max}
+            \|L^\top x\|_2 \le \sigma_{\max}
             $
             The problem in standard SOCP form is:
             $
             \begin{aligned}
-            \text{minimize} \quad & -\mu^T x \\
-            \text{subject to} \quad & \|L^T x\|_2 \le \sigma_{\max} \\
-            & \mathbf{1}^T x = 1 \\
+            \text{minimize} \quad & -\mu^\top x \\
+            \text{subject to} \quad & \|L^\top x\|_2 \le \sigma_{\max} \\
+            & \mathbf{1}^\top x = 1 \\
             & x \ge 0
             \end{aligned}
             $
@@ -962,7 +947,7 @@
             <strong>Reformulation.</strong> Recall $\|x\|_1 = \sum_{i=1}^n |x_i|$. We introduce auxiliary variables $t \in \mathbb{R}^n$ and enforce $|x_i| \le t_i$ for all $i$:
             $
             \begin{aligned}
-            \text{minimize} \quad & \mathbf{1}^T t \\
+            \text{minimize} \quad & \mathbf{1}^\top t \\
             \text{subject to} \quad & -t \preceq x \preceq t \\
             & Ax = b
             \end{aligned}
@@ -970,11 +955,11 @@
           </div>
 
           <div class="proof-step">
-            <strong>Verification.</strong> The constraints $-t \preceq x \preceq t$ are equivalent to $-t_i \le x_i \le t_i$ for all $i$, which means $|x_i| \le t_i$. At optimality, we have $t_i = |x_i|$ (if $t_i > |x_i|$, we can decrease $t_i$ to reduce the objective). Thus $\mathbf{1}^T t = \sum_i t_i = \sum_i |x_i| = \|x\|_1$.
+            <strong>Verification.</strong> The constraints $-t \preceq x \preceq t$ are equivalent to $-t_i \le x_i \le t_i$ for all $i$, which means $|x_i| \le t_i$. At optimality, we have $t_i = |x_i|$ (if $t_i > |x_i|$, we can decrease $t_i$ to reduce the objective). Thus $\mathbf{1}^\top t = \sum_i t_i = \sum_i |x_i| = \|x\|_1$.
           </div>
 
           <div class="proof-step">
-            <strong>Conclusion.</strong> This is an LP in variables $(x, t) \in \mathbb{R}^{2n}$ with linear objective $\mathbf{1}^T t$ and linear constraints.
+            <strong>Conclusion.</strong> This is an LP in variables $(x, t) \in \mathbb{R}^{2n}$ with linear objective $\mathbf{1}^\top t$ and linear constraints.
           </div>
         </div>
       </div>
@@ -1069,7 +1054,7 @@
             $
             \begin{aligned}
             \text{minimize} \quad & -\sum_{i=1}^n \alpha_i \log(1 + x_i) \\
-            \text{subject to} \quad & \mathbf{1}^T x \le B \\
+            \text{subject to} \quad & \mathbf{1}^\top x \le B \\
             & Ax \le b \\
             & -x \le 0
             \end{aligned}
@@ -1095,13 +1080,13 @@
         <p>Consider the linear-fractional optimization problem:</p>
         $$
         \begin{aligned}
-        \text{minimize} \quad & \frac{c^T x + d}{e^T x + f} \\
+        \text{minimize} \quad & \frac{c^\top x + d}{e^\top x + f} \\
         \text{subject to} \quad & Ax \le b \\
-        & e^T x + f > 0
+        & e^\top x + f > 0
         \end{aligned}
         $$
         <p>This problem is quasiconvex but not convex. However, it can be transformed into a standard LP.</p>
-        <p><strong>(a)</strong> Perform the Charnes-Cooper transformation by introducing variables $y = \frac{x}{e^T x + f}$ and $z = \frac{1}{e^T x + f}$.</p>
+        <p><strong>(a)</strong> Perform the Charnes-Cooper transformation by introducing variables $y = \frac{x}{e^\top x + f}$ and $z = \frac{1}{e^\top x + f}$.</p>
         <p><strong>(b)</strong> Write the resulting equivalent problem and verify it is an LP.</p>
 
         <div class="solution">
@@ -1109,12 +1094,12 @@
 
           <div class="proof-step">
             <strong>Part (a): Variable Transformation.</strong>
-            Let $z = \frac{1}{e^T x + f}$. Since $e^T x + f > 0$, we have $z > 0$.
+            Let $z = \frac{1}{e^\top x + f}$. Since $e^\top x + f > 0$, we have $z > 0$.
             Let $y = zx$. Then $x = y/z$.
             Substitute into the objective:
-            $$ \frac{c^T x + d}{e^T x + f} = \frac{c^T (y/z) + d}{1/z} = c^T y + d z $$
+            $$ \frac{c^\top x + d}{e^\top x + f} = \frac{c^\top (y/z) + d}{1/z} = c^\top y + d z $$
             Substitute into the definition of $z$:
-            $$ e^T x + f = \frac{1}{z} \implies e^T (y/z) + f = \frac{1}{z} \implies e^T y + f z = 1 $$
+            $$ e^\top x + f = \frac{1}{z} \implies e^\top (y/z) + f = \frac{1}{z} \implies e^\top y + f z = 1 $$
             Substitute into the constraints $Ax \le b$:
             $$ A(y/z) \le b \implies Ay \le bz \implies Ay - bz \le 0 $$
           </div>
@@ -1124,14 +1109,39 @@
             The transformed problem is:
             $$
             \begin{aligned}
-            \text{minimize} \quad & c^T y + d z \\
+            \text{minimize} \quad & c^\top y + d z \\
             \text{subject to} \quad & Ay - bz \le 0 \\
-            & e^T y + f z = 1 \\
+            & e^\top y + f z = 1 \\
             & z \ge 0
             \end{aligned}
             $$
-            The constraint $z > 0$ is relaxed to $z \ge 0$ for standard LP form (usually handled by the fact that $z=0$ would imply unboundedness or infeasibility in the original problem context, or by $e^T y = 1$ if $z=0$ which corresponds to "points at infinity").
+            The constraint $z > 0$ is relaxed to $z \ge 0$ for standard LP form (usually handled by the fact that $z=0$ would imply unboundedness or infeasibility in the original problem context, or by $e^\top y = 1$ if $z=0$ which corresponds to "points at infinity").
             This is a Linear Program in variables $(y, z) \in \mathbb{R}^{n+1}$.
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem 4.11 -->
+      <div class="problem">
+        <h3>P4.11 — Vector Optimization (Pareto Optimality)</h3>
+        <p>A point $x^\star$ is <b>Pareto optimal</b> for the vector objective $f(x) = (f_1(x), \dots, f_k(x))$ if there is no feasible $y$ such that $f_i(y) \le f_i(x^\star)$ for all $i$ and $f_j(y) < f_j(x^\star)$ for at least one $j$.
+        Prove that minimizing the weighted sum $\sum w_i f_i(x)$ with weights $w > 0$ yields a Pareto optimal point.</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+          <div class="proof-step">
+            <strong>Setup:</strong> Let $x^\star$ minimize $S(x) = \sum_{i=1}^k w_i f_i(x)$ over the feasible set $\mathcal{F}$. Assume for contradiction that $x^\star$ is not Pareto optimal.
+          </div>
+          <div class="proof-step">
+            <strong>Contradiction:</strong> If $x^\star$ is not Pareto optimal, there exists a $y \in \mathcal{F}$ such that $f_i(y) \le f_i(x^\star)$ for all $i$ and $f_j(y) < f_j(x^\star)$ for some $j$.
+          </div>
+          <div class="proof-step">
+            <strong>Weighted Sum:</strong> Since $w_i > 0$:
+            $$ \sum_{i=1}^k w_i f_i(y) < \sum_{i=1}^k w_i f_i(x^\star) $$
+            (Strict inequality holds because at least one term is strictly smaller and none are larger).
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion:</strong> This implies $S(y) < S(x^\star)$, contradicting the fact that $x^\star$ minimizes $S(x)$. Therefore, $x^\star$ must be Pareto optimal.
           </div>
         </div>
       </div>

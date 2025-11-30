@@ -294,6 +294,25 @@
         $$
         <p>where $\mathbb{S}^n$ denotes symmetric $n \times n$ matrices. This is the foundation of Semidefinite Programming (SDP).</p>
 
+        <div class="proof-enhanced">
+          <h4>Proof: The PSD Cone is Convex</h4>
+          <p>We need to show that if $A \succeq 0$ and $B \succeq 0$, then $\theta A + (1-\theta)B \succeq 0$ for $\theta \in [0,1]$.</p>
+          <div class="proof-step">
+            <strong>Step 1: Definition Check.</strong> $A \succeq 0$ means $v^\top A v \ge 0$ for all vectors $v$. Similarly $v^\top B v \ge 0$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Linear Combination.</strong> Consider the quadratic form of the combination:
+            $$ v^\top (\theta A + (1-\theta)B) v = v^\top (\theta A) v + v^\top ((1-\theta) B) v $$
+            $$ = \theta (v^\top A v) + (1-\theta) (v^\top B v) $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Sign Analysis.</strong> Since $\theta \in [0,1]$, both coefficients are non-negative. Since $v^\top A v \ge 0$ and $v^\top B v \ge 0$, the weighted sum is non-negative.
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion:</strong> $v^\top (\theta A + (1-\theta)B) v \ge 0$ for all $v$, so the combination is PSD. Thus $\mathbb{S}^n_+$ is a convex cone.
+          </div>
+        </div>
+
         <!-- Removed Cone Geometry widget as it was redundant/less impactful than others -->
       </section>
 
@@ -639,6 +658,17 @@
 
         <p>This generalizes the standard componentwise order ($\mathbb{R}^n_+$ gives $x \le y$) and the Loewner order ($\mathbb{S}^n_+$ gives $X \preceq Y$).</p>
 
+        <div class="example">
+          <h4>Example: Matrix Inequalities</h4>
+          <p>Consider the inequality $A \preceq B$ where $A, B \in \mathbb{S}^n$. This is defined by the PSD cone $K = \mathbb{S}^n_+$.
+          $$ A \preceq B \iff B - A \in \mathbb{S}^n_+ \iff B - A \succeq 0 $$
+          <b>Concrete Example:</b>
+          Let $A = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$ and $B = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$.
+          $$ B - A = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix} $$
+          Is $B - A \succeq 0$? The eigenvalues of $\begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}$ are $2$ and $0$. Since they are non-negative, $B - A$ is PSD. Thus $A \preceq B$.
+          <br>Note that generalized inequalities are <b>partial</b> orders. It is possible that neither $X \preceq Y$ nor $Y \preceq X$ holds (matrices can be incomparable).</p>
+        </div>
+
         <div class="theorem-box">
           <h4>Properties of Generalized Inequalities</h4>
           <ul>
@@ -675,6 +705,16 @@
             <li>$\mathrm{int}(C) = \emptyset$ (no open ball in $\mathbb{R}^2$ fits inside a line)</li>
             <li>$\mathrm{aff}(C) = \{(t, 0) \mid t \in \mathbb{R}\}$ (the entire $x$-axis)</li>
             <li>$\mathrm{ri}(C) = \{(t, 0) \mid 0 < t < 1\}$ (interior relative to the $x$-axis)</li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h4>Example 1b: A Flat Disk in 3D</h4>
+          <p>Consider a flat circular disk floating in 3D space: $C = \{(x, y, 0) \mid x^2 + y^2 \le 1\}$.</p>
+          <ul>
+            <li><b>Interior:</b> Empty ($\emptyset$). A 3D ball has volume, but this disk is flat, so no 3D ball fits inside it.</li>
+            <li><b>Affine Hull:</b> The $xy$-plane ($z=0$).</li>
+            <li><b>Relative Interior:</b> The disk without its boundary circle: $\{(x, y, 0) \mid x^2 + y^2 < 1\}$. Viewed "relative" to the plane it lives in, it has an interior!</li>
           </ul>
         </div>
 
