@@ -970,6 +970,77 @@
           </div>
         </div>
       </div>
+
+      <!-- Problem 5.9 -->
+      <div class="problem">
+        <h3>P5.9 — Derivation of SDP Duality</h3>
+        <p>Semidefinite programming (SDP) is a powerful generalization of linear programming. In this problem, you will derive the dual of a standard form SDP step-by-step.</p>
+        <p>Consider the primal SDP:</p>
+        $$
+        \begin{aligned}
+        \text{minimize} \quad & \text{tr}(CX) \\
+        \text{subject to} \quad & \text{tr}(A_i X) = b_i, \quad i = 1, \dots, m \\
+        & X \succeq 0
+        \end{aligned}
+        $$
+        <p>where $C, A_1, \dots, A_m \in \mathbb{S}^n$ are symmetric matrices, and $X \in \mathbb{S}^n$ is the variable.</p>
+        <p><strong>(a)</strong> Form the Lagrangian $L(X, y, S)$ using the trace inner product.</p>
+        <p><strong>(b)</strong> Derive the dual function $g(y, S) = \inf_X L(X, y, S)$.</p>
+        <p><strong>(c)</strong> State the full dual problem.</p>
+
+        <div class="solution">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Part (a): The Lagrangian.</strong>
+            We associate dual variables $y \in \mathbb{R}^m$ with the equality constraints $\text{tr}(A_i X) = b_i$.
+            We associate a dual matrix variable $S \in \mathbb{S}^n$ with the inequality constraint $X \succeq 0$.
+            Note that $X \succeq 0$ is equivalent to $-X \preceq 0$. The generalized Lagrangian term for inequality $G(x) \preceq 0$ with dual variable $\Lambda \succeq 0$ is $\text{tr}(\Lambda^T G(x))$.
+            Here, we use the convention of adding weighted constraints. Since we require $X \succeq 0$, we can view this as a constraint $-X \in \mathbb{S}^n_-$. The term in the Lagrangian is typically subtracted: $-\text{tr}(SX)$ with $S \succeq 0$.
+            Alternatively, write the constraints as $b_i - \text{tr}(A_i X) = 0$ and $X \succeq 0$.
+            $$ L(X, y, S) = \text{tr}(CX) + \sum_{i=1}^m y_i (b_i - \text{tr}(A_i X)) - \text{tr}(SX) $$
+            where $S \succeq 0$.
+            Rearranging terms to group by $X$:
+            $$ L(X, y, S) = \text{tr}(CX) - \sum_{i=1}^m y_i \text{tr}(A_i X) - \text{tr}(SX) + \sum_{i=1}^m y_i b_i $$
+            Using linearity of trace:
+            $$ L(X, y, S) = \text{tr}\left( \left( C - \sum_{i=1}^m y_i A_i - S \right) X \right) + b^T y $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): The Dual Function.</strong>
+            The dual function is $g(y, S) = \inf_X L(X, y, S)$.
+            The Lagrangian is an affine function of $X$.
+            $$ L(X, y, S) = \text{tr}(M X) + b^T y \quad \text{where } M = C - \sum_{i=1}^m y_i A_i - S $$
+            We need to minimize $\text{tr}(MX)$ over $X \in \mathbb{S}^n$.
+            If $M \neq 0$, we can choose $X = -k M$. Then $\text{tr}(MX) = -k \text{tr}(M^2) = -k \|M\|_F^2$. As $k \to \infty$, this goes to $-\infty$.
+            Thus, the infimum is finite only if $M = 0$.
+            $$ g(y, S) = \begin{cases} b^T y & \text{if } C - \sum_{i=1}^m y_i A_i - S = 0 \\ -\infty & \text{otherwise} \end{cases} $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (c): The Dual Problem.</strong>
+            We maximize the dual function subject to dual feasibility ($S \succeq 0$).
+            $$
+            \begin{aligned}
+            \text{maximize} \quad & b^T y \\
+            \text{subject to} \quad & C - \sum_{i=1}^m y_i A_i - S = 0 \\
+            & S \succeq 0
+            \end{aligned}
+            $$
+            We can eliminate the slack matrix $S$ by writing the equality as an inequality:
+            $$ S = C - \sum_{i=1}^m y_i A_i $$
+            The constraint $S \succeq 0$ becomes:
+            $$ C - \sum_{i=1}^m y_i A_i \succeq 0 \iff \sum_{i=1}^m y_i A_i \preceq C $$
+            So the standard dual SDP is:
+            $$
+            \begin{aligned}
+            \text{maximize} \quad & b^T y \\
+            \text{subject to} \quad & \sum_{i=1}^m y_i A_i \preceq C
+            \end{aligned}
+            $$
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 

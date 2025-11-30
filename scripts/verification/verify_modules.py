@@ -2,38 +2,52 @@ from playwright.sync_api import sync_playwright
 import time
 
 def verify_modules():
+    modules = [
+        ("Module 00", "topics/00-linear-algebra-primer/index.html", "#section-17"),
+        ("Module 01", "topics/01-introduction/index.html", "#section-10"),
+        ("Module 02", "topics/02-convex-sets/index.html", "#section-7"),
+        ("Module 03", "topics/03-convex-functions/index.html", "#section-10"),
+        ("Module 04", "topics/04-convex-opt-problems/index.html", "#section-11"),
+        ("Module 05", "topics/05-duality/index.html", "#section-10"),
+    ]
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
 
-        # Modules to verify
-        modules = [
-            ("00-linear-algebra-primer", "topics/00-linear-algebra-primer/index.html"),
-            ("01-introduction", "topics/01-introduction/index.html"),
-            ("02-convex-sets", "topics/02-convex-sets/index.html"),
-            ("03-convex-functions", "topics/03-convex-functions/index.html"),
-            ("04-convex-opt-problems", "topics/04-convex-opt-problems/index.html"),
-            ("05-duality", "topics/05-duality/index.html")
-        ]
+        for name, path, section_id in modules:
+            try:
+                page = browser.new_page()
+                url = f"http://localhost:8000/{path}"
+                print(f"Verifying {name} at {url}")
 
-        for name, path in modules:
-            print(f"Verifying {name}...")
-            url = f"http://localhost:8000/{path}"
-            page.goto(url)
+                page.goto(url)
 
-            # Wait for content to load
-            page.wait_for_load_state("networkidle")
+                # Wait for the specific section to ensure content is loaded
+                try:
+                    page.wait_for_selector(section_id, timeout=5000)
+                    section = page.locator(section_id)
+                    section.scroll_into_view_if_needed()
 
-            # Scroll to the bottom to see exercises
-            page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-            time.sleep(1) # wait for smooth scroll if any
+                    # Small wait to ensure smooth scroll rendering if any
+                    time.sleep(0.5)
 
-            # Take screenshot of the bottom part of the page
-            # We can't take full page screenshots easily if they are too big, but we want to see the exercises.
-            # Let's take a screenshot of the viewport at the bottom.
-            screenshot_path = f"scripts/verification/verify_{name}.png"
-            page.screenshot(path=screenshot_path)
-            print(f"Screenshot saved to {screenshot_path}")
+                    filename = f"scripts/verification/{name.lower().replace(' ', '')}_exercises.png"
+                    page.screenshot(path=filename)
+                    print(f"{name} screenshot captured at {filename}")
+
+                except Exception as e:
+                    print(f"Error finding section {section_id} in {name}: {e}")
+                    # Fallback screenshot of the bottom of the page
+                    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                    time.sleep(0.5)
+                    filename = f"scripts/verification/{name.lower().replace(' ', '')}_bottom.png"
+                    page.screenshot(path=filename)
+                    print(f"{name} fallback screenshot captured at {filename}")
+
+                page.close()
+
+            except Exception as e:
+                print(f"Failed to verify {name}: {e}")
 
         browser.close()
 
