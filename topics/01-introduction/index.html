@@ -731,11 +731,58 @@
 
         <div class="example">
           <h4>Example: Robust Least Squares</h4>
-          <p>Minimize worst-case residual norm subject to ellipsoidal uncertainty:</p>
+          <p>Minimize worst-case residual norm subject to ellipsoidal uncertainty. Suppose the matrix $A$ is uncertain, modeled as $A + U$ where the uncertainty matrix $U$ has bounded spectral norm $\|U\|_2 \le \varepsilon$. A simplified but common version considers row-wise uncertainty or a structured uncertainty.</p>
+          <p>Let's consider the specific form where the uncertainty is in the matrix $A$, bounded by a norm. A standard formulation is:</p>
           $$
-          \min_{x} \max_{\|\delta\|_2 \le \varepsilon} \|(A + \delta)x - b\|_2
+          \min_{x} \max_{\|\Delta\|_2 \le \rho} \|(A + \Delta)x - b\|_2
           $$
-          <p>This can be reformulated as an SOCP (proof omitted here).</p>
+          <p>Let's derive the reformulation step-by-step.</p>
+
+          <div class="proof-enhanced">
+            <h4>Derivation of Robust Least Squares SOCP</h4>
+
+            <div class="proof-step">
+              <strong>Step 1: Expand the term.</strong>
+              The objective is to minimize the worst-case error. Let $r(x) = \max_{\|\Delta\|_2 \le \rho} \|(A + \Delta)x - b\|_2$.
+              Notice that $(A + \Delta)x - b = (Ax - b) + \Delta x$.
+              So we want to maximize $\|(Ax - b) + \Delta x\|_2$ over $\|\Delta\|_2 \le \rho$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Apply Triangle Inequality.</strong>
+              By the triangle inequality:
+              $$ \|(Ax - b) + \Delta x\|_2 \le \|Ax - b\|_2 + \|\Delta x\|_2 $$
+              Also, $\|\Delta x\|_2 \le \|\Delta\|_2 \|x\|_2 \le \rho \|x\|_2$.
+              Thus, $\|(A + \Delta)x - b\|_2 \le \|Ax - b\|_2 + \rho \|x\|_2$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Show the bound is tight.</strong>
+              We need to find a $\Delta$ with $\|\Delta\|_2 \le \rho$ that achieves this upper bound.
+              Let $u = Ax - b$. If $x=0$, the term is $\|b\|_2$, which matches the formula.
+              If $x \ne 0$, choose $\Delta$ to be a rank-1 matrix: $\Delta = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2}$.
+              Then $\|\Delta\|_2 = \rho \cdot 1 \cdot 1 = \rho$.
+              And $\Delta x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2 = \frac{\rho \|x\|_2}{\|Ax - b\|_2} (Ax - b)$.
+              This vector is a positive scalar multiple of $Ax - b$, so they align perfectly.
+              Thus, $\max_{\|\Delta\|_2 \le \rho} \|(A + \Delta)x - b\|_2 = \|Ax - b\|_2 + \rho \|x\|_2$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 4: Formulate as Optimization.</strong>
+              The problem becomes:
+              $$ \min_x \left( \|Ax - b\|_2 + \rho \|x\|_2 \right) $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 5: Convert to SOCP Standard Form.</strong>
+              Introduce auxiliary variables $t_1, t_2$:
+              $$ \min_{x, t_1, t_2} \quad t_1 + \rho t_2 $$
+              Subject to:
+              $$ \|Ax - b\|_2 \le t_1 $$
+              $$ \|x\|_2 \le t_2 $$
+              These are two second-order cone constraints. Thus, Robust Least Squares is an SOCP.
+            </div>
+          </div>
         </div>
 
         <h3>6.4 Maximum Function (Epigraph Form)</h3>

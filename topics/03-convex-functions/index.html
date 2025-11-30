@@ -331,12 +331,31 @@
         </div>
 
         <div class="proof-enhanced">
-          <h4>Proof Sketch</h4>
-          <p>The full proof uses Taylor's theorem with remainder. The key insight is:</p>
-          <ul>
-            <li><b>PSD Hessian:</b> The second-order Taylor expansion $f(y) \approx f(x) + \nabla f(x)^\top (y-x) + \frac{1}{2}(y-x)^\top \nabla^2 f(x) (y-x)$ shows that if $\nabla^2 f(x) \succeq 0$, the function curves upward (convex).</li>
-            <li><b>Direction test:</b> For any direction $v$, the one-dimensional function $g(t) = f(x + tv)$ satisfies $g''(t) = v^\top \nabla^2 f(x + tv) v \ge 0$, so $g$ is convex along every line (implies global convexity).</li>
-          </ul>
+          <h4>Proof: Second-Order Condition</h4>
+
+          <div class="proof-step">
+            <strong>Part 1: $(\Rightarrow)$ Convex implies PSD Hessian.</strong>
+            Suppose $f$ is convex. Consider any point $x$ and any direction $v$. Define the 1D function $g(t) = f(x + tv)$.
+            Since $f$ is convex, $g$ is convex on $\mathbb{R}$.
+            If $f$ is twice differentiable, then $g$ is twice differentiable, and $g''(t) = v^\top \nabla^2 f(x + tv) v$.
+            For a 1D twice differentiable convex function, the second derivative must be non-negative everywhere: $g''(0) \ge 0$.
+            Therefore, $v^\top \nabla^2 f(x) v \ge 0$ for all vectors $v$.
+            This is exactly the definition of $\nabla^2 f(x)$ being positive semidefinite (PSD).
+          </div>
+
+          <div class="proof-step">
+            <strong>Part 2: $(\Leftarrow)$ PSD Hessian implies Convexity.</strong>
+            Suppose $\nabla^2 f(x) \succeq 0$ for all $x \in \mathrm{dom}\, f$.
+            We use the second-order Taylor expansion with Lagrange remainder form. For any $x, y$:
+            $$ f(y) = f(x) + \nabla f(x)^\top (y - x) + \frac{1}{2} (y - x)^\top \nabla^2 f(z) (y - x) $$
+            where $z$ is some point on the line segment between $x$ and $y$.
+            Since $\nabla^2 f(z) \succeq 0$, the quadratic term is non-negative:
+            $$ \frac{1}{2} (y - x)^\top \nabla^2 f(z) (y - x) \ge 0 $$
+            Therefore:
+            $$ f(y) \ge f(x) + \nabla f(x)^\top (y - x) $$
+            This is precisely the <b>first-order condition</b> for convexity, which we already proved is equivalent to convexity.
+            Thus, $f$ is convex.
+          </div>
         </div>
 
         <h3>4.2 Strict and Strong Convexity via Hessian</h3>
