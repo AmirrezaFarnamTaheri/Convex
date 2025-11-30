@@ -754,6 +754,7 @@
         </ul>
       </section>
 
+      <!-- SECTION 7: EXERCISES -->
       <section class="card-v2" id="section-7">
         <h2><i data-feather="edit-3"></i> 7. Exercises</h2>
 
@@ -1036,18 +1037,21 @@
             <h4>Solution</h4>
 
             <div class="proof-step">
-              <strong>Step 1: Analyze pairwise condition.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ is equivalent to $\|x - x_i\|_2^2 \le \|x - x_j\|_2^2$.
-              Expanding this:
-              $$ (x - x_i)^\top (x - x_i) \le (x - x_j)^\top (x - x_j) $$
+              <strong>Step 1: Analyze pairwise condition.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ is equivalent to $\|x - x_i\|_2^2 \le \|x - x_j\|_2^2$ because both sides are nonnegative.
+              Expanding the squared norms:
+              $$ \|x - x_i\|_2^2 = (x - x_i)^\top (x - x_i) = x^\top x - 2x_i^\top x + x_i^\top x_i $$
+              $$ \|x - x_j\|_2^2 = (x - x_j)^\top (x - x_j) = x^\top x - 2x_j^\top x + x_j^\top x_j $$
+              Substituting these into the inequality:
               $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
             </div>
 
             <div class="proof-step">
-              <strong>Step 2: Simplify to linear inequality.</strong> The quadratic terms $x^\top x$ cancel out:
+              <strong>Step 2: Simplify to linear inequality.</strong> The quadratic terms $x^\top x$ cancel out from both sides:
               $$ -2x_i^\top x + \|x_i\|_2^2 \le -2x_j^\top x + \|x_j\|_2^2 $$
-              Rearranging terms to group $x$:
+              Rearranging terms to put $x$ on the left side:
+              $$ 2x_j^\top x - 2x_i^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
               $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
-              This is a linear inequality of the form $a_{ij}^\top x \le b_{ij}$ where $a_{ij} = 2(x_j - x_i)$ and $b_{ij} = \|x_j\|_2^2 - \|x_i\|_2^2$.
+              This is a linear inequality of the form $a_{ij}^\top x \le b_{ij}$ where $a_{ij} = 2(x_j - x_i)$ and $b_{ij} = \|x_j\|_2^2 - \|x_i\|_2^2$. Geometrically, this defines a halfspace bounded by the perpendicular bisector of the segment connecting $x_i$ and $x_j$.
             </div>
 
             <div class="proof-step">
@@ -1057,14 +1061,21 @@
             </div>
 
             <div class="proof-step">
-              <strong>Conclusion:</strong> An intersection of finitely many halfspaces is a polyhedron. Therefore, the Voronoi region $V_i$ is a polyhedron, which is a convex set.
+              <strong>Conclusion:</strong> By definition, the intersection of finitely many halfspaces is a polyhedron. Since every polyhedron is a convex set, the Voronoi region $V_i$ is a convex set.
             </div>
           </div>
         </div>
       </section>
 
-      <section class="card-v2" id="section-8">
-        <h2>8. Quick Reference Glossary</h2>
+      <!-- SECTION 8: SUMMARY -->
+      <section class="card-v2" id="summary">
+        <h2>8. Summary</h2>
+        <p><strong>Overview:</strong> This lecture presents the geometric foundations of convex optimization through the study of convex sets. We define convexity for sets, examine canonical examples such as hyperplanes, polyhedra, and cones, and establish operations that preserve convexity. The lecture concludes with the Separating and Supporting Hyperplane Theorems, which form the geometric basis for duality theory and optimality conditions.</p>
+      </section>
+
+      <!-- SECTION 9: GLOSSARY -->
+      <section class="card-v2" id="section-9">
+        <h2>9. Quick Reference Glossary</h2>
 
         <p>Essential terms from this lecture for quick lookup:</p>
 

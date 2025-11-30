@@ -206,9 +206,12 @@
           <div class="proof-step">
             <strong>Step 4: Construct a contradiction.</strong> As $\theta \to 0^+$, the point $z(\theta)$ approaches $x^*$. Specifically:
             $$
-            \|z(\theta) - x^*\|_2 = \|\theta(y - x^*)\|_2 = \theta \|y - x^*\|_2 \to 0 \text{ as } \theta \to 0^+
+            \|z(\theta) - x^*\|_2 = \|\theta(y - x^*)\|_2 = \theta \|y - x^*\|_2
             $$
-            Choose $\theta$ small enough so that $\|z(\theta) - x^*\|_2 < \delta$ (where $\delta$ is the local optimality radius). Then $z(\theta)$ is in the local neighborhood of $x^*$, but $f_0(z(\theta)) < f_0(x^*)$, contradicting the assumption that $x^*$ is a local minimum.
+            Since $x^*$ is a local minimum, there exists a radius $\delta > 0$ such that $f_0(x^*) \le f_0(x)$ for all feasible $x$ with $\|x - x^*\|_2 < \delta$.
+            <br>We can choose a sufficiently small $\theta \in (0, 1)$ such that $\theta \|y - x^*\|_2 < \delta$.
+            <br>For this choice of $\theta$, the point $z(\theta)$ lies within the local neighborhood ($\|z(\theta) - x^*\|_2 < \delta$).
+            <br>However, we established in Step 3 that $f_0(z(\theta)) < f_0(x^*)$. This contradicts the definition of $x^*$ as a local minimum.
           </div>
 
           <div class="proof-step">
@@ -815,7 +818,7 @@
 
         <div class="subsection">
           <h4>Pattern: Max in Objective</h4>
-          <p><b>Original:</b> $\min \max\{f_1(x), f_2(x), \ldots, f_m(x)\}$ where each $f_i$ is convex</p>
+          <p><b>Original:</b> $\min_x \max\{f_1(x), f_2(x), \ldots, f_m(x)\}$ where each $f_i$ is convex.</p>
           <p><b>Epigraph reformulation:</b></p>
           $$
           \begin{aligned}
@@ -823,7 +826,21 @@
           \text{s.t.} \quad & f_i(x) \le t, \quad i=1,\ldots,m
           \end{aligned}
           $$
-          <p><b>Why this works:</b> The minimum value of $t$ satisfying all constraints is exactly $\max_i f_i(x)$.</p>
+
+          <div class="proof-enhanced">
+            <h4>Derivation: Why this works</h4>
+            <div class="proof-step">
+              <strong>Step 1: Analyze the constraints.</strong> The constraints $f_i(x) \le t$ for all $i=1,\dots,m$ are equivalent to:
+              $$ \max_{i=1,\dots,m} f_i(x) \le t $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Optimize over t.</strong> For a fixed $x$, the smallest possible value of $t$ that satisfies the constraints is $t^*(x) = \max_i f_i(x)$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Joint minimization.</strong> Minimizing $t$ jointly with $x$ subject to these constraints is therefore equivalent to minimizing $t^*(x)$ over $x$:
+              $$ \min_{x, t} \{ t \mid \max_i f_i(x) \le t \} = \min_x \left( \min_{t \ge \max_i f_i(x)} t \right) = \min_x \max_i f_i(x) $$
+            </div>
+          </div>
         </div>
 
         <div class="example">
@@ -1066,6 +1083,7 @@
         </ol>
       </section>
 
+    <!-- SECTION 10: EXERCISES -->
       <section class="card-v2" id="section-10">
         <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
 
@@ -1274,6 +1292,12 @@
         </div>
       </section>
     </article>
+
+    <!-- SECTION 11: SUMMARY -->
+    <section class="card-v2" id="summary">
+      <h2>11. Summary</h2>
+      <p><strong>Overview:</strong> This lecture introduces convex optimization by defining what makes a problem "convex" and proving the fundamental theorem that any local minimum is also global. We examine the canonical problem families (LP, QP, SOCP, SDP), present the "loss + regularizer + constraints" modeling framework, and develop practical techniques for reformulating problems into standard convex forms.</p>
+    </section>
 
     <footer class="site-footer">
       <div class="container">

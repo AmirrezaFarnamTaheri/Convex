@@ -459,8 +459,56 @@
       </p>
       <p>The constraint $A(x) \preceq tI$ is equivalent to $tI - A(x) \succeq 0$, which is an LMI (linear matrix inequality).</p>
 
-      <h4>Example 5.2: Maximizing Geometric Mean</h4>
-      <p>Maximize $(x_1 x_2 \cdots x_n)^{1/n}$ subject to $Ax = b$, $x > 0$. Taking logs, this becomes minimizing $-\frac{1}{n}\sum_{i=1}^n \log x_i$ (a concave function, so we minimize its negative). This can be reformulated as an SDP using the perspective of the log-det function.</p>
+      <h4>Example 5.2: Matrix Norm Minimization (Operator Norm)</h4>
+      <p>Minimize the spectral norm (operator norm) of a matrix depending linearly on variables $x$: $\|A(x)\|_2$, where $A(x) = A_0 + \sum_{i=1}^n x_i A_i$.</p>
+
+      <div class="proof-enhanced">
+        <h4>Derivation of SDP Form</h4>
+        <div class="proof-step">
+          <strong>Step 1: Epigraph Form.</strong>
+          The problem is equivalent to:
+          $$ \text{minimize } t \quad \text{subject to } \|A(x)\|_2 \le t $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Singular Value Characterization.</strong>
+          The spectral norm $\|A\|_2$ is the maximum singular value $\sigma_{\max}(A)$.
+          The condition $\sigma_{\max}(A) \le t$ (for $t \ge 0$) is equivalent to saying all eigenvalues of $A^\top A$ are $\le t^2$:
+          $$ A(x)^\top A(x) \preceq t^2 I $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Schur Complement.</strong>
+          We can rewrite the quadratic matrix inequality $t^2 I - A(x)^\top A(x) \succeq 0$ using the Schur complement.
+          Recall that $\begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} \succeq 0$ iff $C \succeq 0$ and $A - B C^{-1} B^\top \succeq 0$.
+          We want to match $tI - A(x)^\top (tI)^{-1} A(x) \succeq 0$.
+          Set $A_{block} = tI$, $B_{block} = A(x)^\top$, $C_{block} = tI$.
+          Then the LMI is:
+          $$ \begin{bmatrix} tI & A(x)^\top \\ A(x) & tI \end{bmatrix} \succeq 0 $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 4: Final SDP Formulation.</strong>
+          $$
+          \begin{aligned}
+          \text{minimize} \quad & t \\
+          \text{subject to} \quad & \begin{bmatrix} tI & A(x)^\top \\ A(x) & tI \end{bmatrix} \succeq 0
+          \end{aligned}
+          $$
+          This is a standard SDP in variables $(x, t)$.
+        </div>
+      </div>
+
+      <!-- Widget 5: SDP Visualizer -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: SDP Visualizer</h3>
+        <p><strong>Purpose:</strong> 3D visualization of the positive semidefinite cone for $2 \times 2$ matrices.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Explore the geometry of $\mathbb{S}_+^2$ (a 3D cone in the space of symmetric matrices)</li>
+          <li>Understand how SDP constraints restrict feasible matrices</li>
+          <li>Connect eigenvalues to cone membership</li>
+        </ul>
+        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
 
       <h3>5.5 The Hierarchy: LP ⊂ QP ⊂ SOCP ⊂ SDP</h3>
       <p>This inclusion hierarchy is strict:</p>
@@ -557,6 +605,20 @@
         $
       </p>
       <p>where $A^\dagger$ is the pseudoinverse and $z \in \mathbb{R}^n$ is a new variable. This reduces the problem dimension.</p>
+
+      <!-- Widget 6: Problem Reformulation Tool -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: Problem Reformulation Tool</h3>
+        <p><strong>Purpose:</strong> Learn how to reformulate non-standard problems into LP, QP, SOCP, or SDP forms.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Select a non-standard problem (e.g., $\ell_1$, $\ell_\infty$ minimization)</li>
+          <li>See reformulation to standard form</li>
+          <li>Understand epigraph and slack variable techniques</li>
+        </ul>
+        <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
     </section>
 
     <!-- Section 7: Quasiconvex Optimization -->
@@ -619,100 +681,10 @@
 
       <h3>8.3 DCP in Practice: CVXPY</h3>
       <p>Tools like CVXPY verify DCP compliance and automatically transform problems to standard solver forms (LP, SOCP, SDP).</p>
-    </section>
-
-    <!-- Interactive widgets -->
-    <section class="card" id="widgets" style="margin-bottom: 32px;">
-      <h2>9. Interactive Widgets</h2>
-      <p>Explore the concepts of problem classification, formulation, and solution through interactive visualizations.</p>
-
-      <!-- Widget 1: Problem Form Recognizer -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">9.1 Problem Form Recognizer</h3>
-        <p><strong>Purpose:</strong> Automatically classify optimization problems into LP, QP, SOCP, or SDP based on their mathematical structure.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Input symbolic problem formulations</li>
-          <li>Get instant feedback on problem class</li>
-          <li>Understand which solver to use</li>
-        </ul>
-        <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 2: LP Visualizer -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">9.2 LP Visualizer</h3>
-        <p><strong>Purpose:</strong> Visualize 2D linear programs, showing the feasible region (polyhedron), objective contours, and optimal vertex.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Adjust constraint coefficients and see real-time updates</li>
-          <li>Understand how constraints define the feasible polytope</li>
-          <li>Observe optimal solution movement as parameters change</li>
-        </ul>
-        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 4: QP Solver Sandbox -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">9.3 QP Solver Sandbox</h3>
-        <p><strong>Purpose:</strong> Interactive sandbox for 2D quadratic programs with elliptical contours and linear constraints.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Modify $P$ matrix (Hessian) to control curvature</li>
-          <li>Add/remove linear constraints interactively</li>
-          <li>Visualize the tradeoff between objective and feasibility</li>
-        </ul>
-        <div id="widget-4" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 5: SDP Visualizer -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">9.4 SDP Visualizer</h3>
-        <p><strong>Purpose:</strong> 3D visualization of the positive semidefinite cone for $2 \times 2$ matrices.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Explore the geometry of $\mathbb{S}_+^2$ (a 3D cone in the space of symmetric matrices)</li>
-          <li>Understand how SDP constraints restrict feasible matrices</li>
-          <li>Connect eigenvalues to cone membership</li>
-        </ul>
-        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 6: Problem Reformulation Tool -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">9.5 Problem Reformulation Tool</h3>
-        <p><strong>Purpose:</strong> Learn how to reformulate non-standard problems into LP, QP, SOCP, or SDP forms.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Select a non-standard problem (e.g., $\ell_1$, $\ell_\infty$ minimization)</li>
-          <li>See reformulation to standard form</li>
-          <li>Understand epigraph and slack variable techniques</li>
-        </ul>
-        <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-
-      <!-- Widget 7: SOCP Explorer -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">9.6 SOCP Explorer</h3>
-        <p><strong>Purpose:</strong> Interactive 3D visualization of second-order cones (Lorentz cones) with applications to robust optimization.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Visualize the Lorentz cone $\{(x, t) \mid \|x\|_2 \le t\}$</li>
-          <li>Explore robust least-squares formulations</li>
-          <li>Understand SOCP constraint geometry</li>
-        </ul>
-        <div id="widget-7" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
 
       <!-- Widget 8: Solver Selection Guide -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">9.7 Solver Selection Guide</h3>
+        <h3 style="margin-top: 0;">Interactive: Solver Selection Guide</h3>
         <p><strong>Purpose:</strong> Decision tree tool for selecting the most appropriate solver (GLPK, CVXOPT, MOSEK, SeDuMi, etc.) based on problem structure and scale.</p>
         <ul style="font-size: 14px; line-height: 1.6;">
           <li>Input problem characteristics (size, sparsity, cone type)</li>
@@ -725,9 +697,15 @@
       </div>
     </section>
 
-    <!-- Readings -->
+    <!-- SECTION 11: SUMMARY -->
+    <section class="card" id="summary">
+      <h2>11. Summary</h2>
+      <p><strong>Overview:</strong> This lecture covers convex optimization problem classes—LP, QP, SOCP, SDP—and the mathematical foundations for recognizing, classifying, and formulating convex problems. We develop the theoretical underpinnings of standard forms and establish the hierarchy of problem classes that governs modern optimization.</p>
+    </section>
+
+    <!-- READINGS -->
     <section class="card" id="readings" style="margin-bottom: 32px;">
-      <h2>10. Readings & Resources</h2>
+      <h2>12. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 4 — Convex Optimization Problems</li>
         <li><strong>Nesterov, Introductory Lectures on Convex Optimization:</strong> Chapter 1 — Linear and Conic Programming</li>
@@ -736,9 +714,9 @@
       </ul>
     </section>
 
-    <!-- Problem Set & Solutions -->
-    <section class="card" id="section-11">
-      <h2>11. Problem Set & Solutions</h2>
+    <!-- SECTION 10: PROBLEM SET -->
+    <section class="card" id="section-10">
+      <h2>10. Problem Set & Solutions</h2>
       <p>These problems consolidate the lecture material and provide practice in problem classification, formulation, and reformulation.</p>
 
       <!-- Problem 4.1 -->

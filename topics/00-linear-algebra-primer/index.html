@@ -95,13 +95,97 @@
       <p>A function $T: \mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if and only if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$. Every linear map can be represented by a matrix $A$ with $T(x) = Ax$.</p>
 
       <h3>Componentwise Order Notation</h3>
-      <p>A notation used throughout optimization is the componentwise order. For vectors $x, y \in \mathbb{R}^n$:
-      </p>
+      <p>A notation used throughout optimization is the componentwise order. For vectors $x, y \in \mathbb{R}^n$:</p>
       <ul>
-        <li>$x \ge 0$ means $x_i \ge 0$ for all $i=1, \dots, n$.</li>
-        <li>$x \le y$ means $x_i \le y_i$ for all $i=1, \dots, n$.</li>
+        <li><b>$x \ge 0$</b> means $x_i \ge 0$ for all $i = 1, \dots, n$ (nonnegative).</li>
+        <li><b>$x > 0$</b> means $x_i > 0$ for all $i = 1, \dots, n$ (strictly positive).</li>
+        <li><b>$x \le y$</b> means $x_i \le y_i$ for all $i = 1, \dots, n$.</li>
       </ul>
-      <p>This provides a compact way to describe constraints, such as non-negativity. The vector $\mathbf{1}$ denotes the vector of all ones. This notation is essential for <a href="../02-convex-sets/index.html">Lecture 02</a>'s treatment of polyhedra and cones.</p>
+      <p>This is the <b>standard partial order</b> on $\mathbb{R}^n$ induced by the nonnegative orthant $\mathbb{R}^n_+ = \{x \mid x \ge 0\}$. The vector $\mathbf{1}$ denotes the vector of all ones. This notation is essential for <a href="../02-convex-sets/index.html">Lecture 02</a>'s treatment of polyhedra and cones.</p>
+
+      <h3>Matrix Calculus Basics</h3>
+      <p>Optimization algorithms rely heavily on gradients and Hessians. Computing derivatives with respect to vectors and matrices is a core skill.</p>
+
+      <h4>Gradients of Linear and Quadratic Forms</h4>
+      <p>For $x \in \mathbb{R}^n$, $A \in \mathbb{R}^{n \times n}$, and $b \in \mathbb{R}^n$:</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Function $f(x)$</th>
+            <th>Gradient $\nabla f(x)$</th>
+            <th>Hessian $\nabla^2 f(x)$</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>$b^\top x$</td>
+            <td>$b$</td>
+            <td>$0$</td>
+            <td>Linear function</td>
+          </tr>
+          <tr>
+            <td>$x^\top A x$</td>
+            <td>$(A + A^\top)x$</td>
+            <td>$A + A^\top$</td>
+            <td>General quadratic</td>
+          </tr>
+          <tr>
+            <td>$x^\top A x$</td>
+            <td>$2Ax$</td>
+            <td>$2A$</td>
+            <td>If $A$ is symmetric ($A=A^\top$)</td>
+          </tr>
+          <tr>
+            <td>$\|Ax - b\|_2^2$</td>
+            <td>$2A^\top(Ax - b)$</td>
+            <td>$2A^\top A$</td>
+            <td>Least Squares objective</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Gradients with Respect to Matrices</h4>
+      <p>For a matrix variable $X \in \mathbb{R}^{m \times n}$, the gradient is an $m \times n$ matrix.</p>
+      <ul>
+        <li><b>Rule 1: Linear Trace:</b> $\nabla_X \mathrm{tr}(A^\top X) = A$.
+        <br><i>Proof:</i> $\mathrm{tr}(A^\top X) = \sum_{i,j} A_{ij} X_{ij}$. The partial derivative with respect to $X_{ij}$ is $A_{ij}$.</li>
+        <li><b>Rule 2: Quadratic Trace:</b> $\nabla_X \mathrm{tr}(X^\top A X) = (A + A^\top)X$. If $A$ is symmetric, this is $2AX$.
+        <br><i>Note:</i> This corresponds to $\frac{d}{dx}(ax^2) = 2ax$.</li>
+        <li><b>Rule 3: Log Determinant:</b> $\nabla_X \log \det X = X^{-\top}$. If $X \in \mathbb{S}^n_{++}$ (symmetric positive definite), then $\nabla_X \log \det X = X^{-1}$.
+        <br>
+        <div class="proof-enhanced">
+          <h4>Derivation: Gradient of Log Determinant</h4>
+          <p>We use the first-order Taylor expansion $\log \det(X + \Delta) \approx \log \det X + \langle \nabla f(X), \Delta \rangle$.</p>
+          <div class="proof-step">
+            <strong>Step 1: Factor out X.</strong>
+            $$ \log \det (X + \Delta) = \log \det (X(I + X^{-1}\Delta)) = \log (\det X \det(I + X^{-1}\Delta)) $$
+            $$ = \log \det X + \log \det(I + X^{-1}\Delta) $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Linearize.</strong>
+            Using the property $\det(I + A) \approx 1 + \mathrm{tr}(A)$ for small $A$:
+            $$ \log \det(I + X^{-1}\Delta) \approx \log(1 + \mathrm{tr}(X^{-1}\Delta)) \approx \mathrm{tr}(X^{-1}\Delta) $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Identify Gradient.</strong>
+            The linear term is $\mathrm{tr}(X^{-1}\Delta) = \langle X^{-\top}, \Delta \rangle$.
+            Thus, by definition of the gradient, $\nabla_X \log \det X = X^{-\top}$.
+          </div>
+        </div>
+        </li>
+      </ul>
+      <div class="insight">
+        <h4>💡 Chain Rule for Matrix Functions</h4>
+        <p>If $f(X) = g(h(X))$, then the differential is $df = g'(h(X)) \circ dh$. For example, to differentiate $\|Ax - b\|_2^2$:</p>
+        <ol>
+          <li>Let $r = Ax - b$. Then $f = r^\top r$.</li>
+          <li>$df = 2r^\top dr$.</li>
+          <li>$dr = A dx$.</li>
+          <li>Substitute: $df = 2r^\top A dx = (2A^\top r)^\top dx$.</li>
+          <li>The gradient is the transpose of the coefficient of $dx^\top$ (or the vector multiplying $dx$), so $\nabla f = 2A^\top r = 2A^\top(Ax-b)$.</li>
+        </ol>
+      </div>
     </section>
 
     <!-- SECTION 1: FOUR FUNDAMENTAL SUBSPACES -->
@@ -300,17 +384,53 @@
         </ul>
       </div>
 
-      <ul>
-        <li>The dual of the L2 norm is the L2 norm itself (it is self-dual).</li>
-        <li>The dual of the L1 norm is the L-infinity norm.</li>
-        <li>The dual of the L-infinity norm is the L1 norm.</li>
-      </ul>
+      <div class="proof-enhanced">
+        <h4>Proof: $(\|\cdot\|_2)^* = \|\cdot\|_2$ (Self-Duality of Euclidean Norm)</h4>
+        <div class="proof-step">
+          <strong>Step 1: Upper bound.</strong> By Cauchy-Schwarz, for $\|x\|_2 \le 1$:
+          $$ x^\top y \le |x^\top y| \le \|x\|_2 \|y\|_2 \le \|y\|_2 $$
+          Thus $\|y\|_* \le \|y\|_2$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Achieve equality.</strong> Choose $x = y/\|y\|_2$ (assuming $y \neq 0$). Then $\|x\|_2 = 1$ and:
+          $$ x^\top y = \frac{y^\top y}{\|y\|_2} = \frac{\|y\|_2^2}{\|y\|_2} = \|y\|_2 $$
+          Hence $\|y\|_* \ge \|y\|_2$.
+        </div>
+        <div class="proof-step">
+          <strong>Conclusion:</strong> Therefore $\|y\|_* = \|y\|_2$.
+        </div>
+      </div>
 
       <div class="proof-enhanced">
-        <h4>Hölder's Inequality: A Generalization of Cauchy-Schwarz</h4>
-        <p>Hölder's inequality follows directly from the definition of the dual norm and bounds the inner product of two vectors:
-        $$ |x^\top y| \le \|x\| \cdot \|y\|_* $$
-        When the norm is the L2 norm, the dual norm is also the L2 norm, and we recover the Cauchy-Schwarz inequality. This inequality is used extensively in the study of dual cones in <a href="../02-convex-sets/index.html">Lecture 02</a> and throughout duality theory.</p>
+        <h4>Proof: $(\|\cdot\|_1)^* = \|\cdot\|_\infty$</h4>
+        <div class="proof-step">
+          <strong>Step 1: Upper bound.</strong> For $\|x\|_1 \le 1$:
+          $$ x^\top y = \sum_i x_i y_i \le \sum_i |x_i| |y_i| \le \max_i |y_i| \sum_i |x_i| \le \|y\|_\infty $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Achieve equality.</strong> Let $j = \arg\max_i |y_i|$. Choose $x = \mathrm{sign}(y_j) e_j$. Then $\|x\|_1 = 1$ and:
+          $$ x^\top y = \mathrm{sign}(y_j) y_j = |y_j| = \|y\|_\infty $$
+        </div>
+        <div class="proof-step">
+          <strong>Conclusion:</strong> $\|y\|_* = \|y\|_\infty$.
+        </div>
+      </div>
+
+      <h3>Hölder's Inequality (Dual-Norm Cauchy–Schwarz)</h3>
+      <p>For all $x, y \in \mathbb{R}^n$ and any norm $\|\cdot\|$:</p>
+      $$ x^\top y \le \|x\| \cdot \|y\|_* $$
+      <div class="proof-enhanced">
+        <h4>Proof of Hölder's Inequality</h4>
+        <div class="proof-step">
+          <strong>Case 1: $x = 0$.</strong> The inequality is trivially true: $0 \le 0$.
+        </div>
+        <div class="proof-step">
+          <strong>Case 2: $x \neq 0$.</strong> Write:
+          $$ x^\top y = \|x\| \cdot \frac{x^\top y}{\|x\|} = \|x\| \cdot \left(\frac{x}{\|x\|}\right)^\top y $$
+          Note that $\left\|\frac{x}{\|x\|}\right\| = 1$, so by the definition of dual norm:
+          $$ \left(\frac{x}{\|x\|}\right)^\top y \le \sup_{\|z\| \le 1} z^\top y = \|y\|_* $$
+          Combining: $x^\top y \le \|x\| \cdot \|y\|_*$.
+        </div>
       </div>
 
       <h3>Generalized (Weighted) Inner Product</h3>
@@ -329,8 +449,6 @@
       <p>For matrices $X, Y \in \mathbb{R}^{m \times n}$, the <b>trace inner product</b> is:
       $$ \langle X, Y \rangle = \mathrm{tr}(X^\top Y) = \sum_{ij} X_{ij} Y_{ij} $$
       The <b>Frobenius norm</b> is $\|X\|_F = \sqrt{\langle X, X \rangle} = \sqrt{\sum_{ij} X_{ij}^2}$.</p>
-
-      <p>The <b>Loewner order</b> for symmetric matrices: $X \succeq Y$ means $X - Y \succeq 0$ (i.e., $v^\top(X - Y)v \ge 0$ for all $v$). This is the backdrop for <a href="../02-convex-sets/index.html">Lecture 02</a>'s PSD cone and its dual.</p>
     </section>
 
     <!-- SECTION 3: ORTHOGONALITY AND QR -->
@@ -498,6 +616,30 @@
         <div id="widget-hessian-landscape" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
+      <h3>4.5 The Loewner Order</h3>
+      <p>For symmetric matrices $X, Y \in \mathbb{S}^n$, we write <b>$X \succeq Y$</b> if and only if $X - Y$ is <b>positive semidefinite (PSD)</b>, meaning:</p>
+      $$
+      v^\top (X - Y) v \ge 0 \quad \text{for all } v \in \mathbb{R}^n
+      $$
+
+      <div class="proof-enhanced">
+        <h4>Microfacts About the Loewner Order</h4>
+        <ul>
+          <li><b>Eigenvalue characterization:</b> $X \succeq 0$ if and only if all eigenvalues of $X$ are nonnegative.</li>
+          <li><b>Inner product property:</b> If $X \succeq 0$ and $Y \succeq 0$, then:
+            $$ \langle X, Y \rangle = \mathrm{tr}(XY) \ge 0 $$
+            (This follows because $XY$ has nonnegative trace when both are PSD.)
+          </li>
+          <li><b>Partial order:</b> The relation $\succeq$ is reflexive, transitive, and antisymmetric (hence a partial order).</li>
+        </ul>
+      </div>
+
+      <p>The Loewner order is the language of:</p>
+      <ul>
+        <li><b>Ellipsoids</b> (defined by PSD matrices in quadratic forms)</li>
+        <li><b>PSD cone</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$ in <a href="../02-convex-sets/index.html">Lecture 02</a></li>
+        <li><b>Semidefinite programs (SDPs)</b> in <a href="../04-convex-opt-problems/index.html">Lecture 04</a></li>
+      </ul>
     </section>
 
     <!-- SECTION 5: PROJECTIONS -->
@@ -519,13 +661,46 @@
       </p>
 
       <h3>Projection onto an Affine Set</h3>
-      <p>Projecting onto $\{x \mid Fx = g\}$ reduces to subspace projection by translating:</p>
-      <ol>
-        <li>Pick any $x_0$ with $Fx_0 = g$</li>
-        <li>Write the affine set as $x_0 + \mathcal{N}(F)$</li>
-        <li>Project $b - x_0$ onto $\mathcal{N}(F)$ using a basis $Z$ for $\mathcal{N}(F)$</li>
-        <li>Translate back</li>
-      </ol>
+      <p>Consider an affine set defined by $\mathcal{A} = \{ x \in \mathbb{R}^n \mid Fx = g \}$, where $F \in \mathbb{R}^{p \times n}$ has full row rank and $g \in \mathbb{R}^p$. Projecting onto this set reduces to subspace projection by translating.</p>
+
+      <h4>Parametric Representation</h4>
+      <p>Every point in $\mathcal{A}$ can be written as $x = x_0 + Zt$, where:</p>
+      <ul>
+        <li>$x_0$ is any particular solution satisfying $Fx_0 = g$.</li>
+        <li>$Z$ is a matrix whose columns form a basis for $\mathcal{N}(F)$ (the nullspace of $F$).</li>
+        <li>$t \in \mathbb{R}^k$ where $k = n - p$ (dimension of the nullspace).</li>
+      </ul>
+
+      <h4>Euclidean Projection Formula</h4>
+      <p>The <b>Euclidean projection</b> of any point $y \in \mathbb{R}^n$ onto $\mathcal{A}$ is given by:</p>
+      $$
+      \Pi_{\mathcal{A}}(y) = x_0 + Z(Z^\top Z)^{-1} Z^\top (y - x_0)
+      $$
+
+      <div class="proof-enhanced">
+        <h4>Geometric Interpretation and Derivation</h4>
+        <p>This formula says: "Project $(y - x_0)$ onto the nullspace $\mathcal{N}(F)$, then shift back by $x_0$."</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Translate to subspace problem.</strong>
+          We want to find $x \in \mathcal{A}$ minimizing $\|x - y\|_2$. Let $x = x_0 + w$, where $w \in \mathcal{N}(F)$.
+          The problem becomes minimizing $\|(x_0 + w) - y\|_2 = \|w - (y - x_0)\|_2$ subject to $w \in \mathcal{N}(F)$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Project onto nullspace.</strong>
+          This is now a projection of the vector $(y - x_0)$ onto the subspace $\mathcal{N}(F)$.
+          Since the columns of $Z$ form a basis for $\mathcal{N}(F)$, the projection matrix onto this subspace is $P_{\mathcal{N}(F)} = Z(Z^\top Z)^{-1} Z^\top$.
+          Thus, the optimal $w^*$ is:
+          $$ w^* = \Pi_{\mathcal{N}(F)}(y - x_0) = Z(Z^\top Z)^{-1} Z^\top (y - x_0) $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Shift back.</strong>
+          The projection onto the affine set is $x^* = x_0 + w^*$.
+          $$ \Pi_{\mathcal{A}}(y) = x_0 + Z(Z^\top Z)^{-1} Z^\top (y - x_0) $$
+        </div>
+      </div>
 
       <div class="proof-enhanced">
         <h3>Example 1: Projection onto a Line</h3>
@@ -890,43 +1065,7 @@
       $$ P_{\mathcal{R}(A^\top)} = V_r V_r^\top = A^+ A $$
       Both are symmetric ($P^\top = P$) and idempotent ($P^2 = P$), and they send any vector to its closest point in the respective subspace.</p>
 
-      <h3>7.8 Summary: When to Use What</h3>
-      <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
-        <thead>
-          <tr style="background: var(--panel); border-bottom: 2px solid var(--border);">
-            <th style="padding: 8px; text-align: left;">Method</th>
-            <th style="padding: 8px; text-align: left;">When to Use</th>
-            <th style="padding: 8px; text-align: left;">Complexity</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="border-bottom: 1px solid var(--border);">
-            <td style="padding: 8px;"><strong>Normal Equations</strong></td>
-            <td style="padding: 8px;">Small, well-conditioned problems; theoretical derivations</td>
-            <td style="padding: 8px;">$O(mn^2 + n^3)$</td>
-          </tr>
-          <tr style="border-bottom: 1px solid var(--border);">
-            <td style="padding: 8px;"><strong>QR Decomposition</strong></td>
-            <td style="padding: 8px;">Standard least squares; numerically stable; full rank</td>
-            <td style="padding: 8px;">$O(mn^2)$</td>
-          </tr>
-          <tr style="border-bottom: 1px solid var(--border);">
-            <td style="padding: 8px;"><strong>SVD</strong></td>
-            <td style="padding: 8px;">Rank-deficient, ill-conditioned; minimum-norm solution; analysis</td>
-            <td style="padding: 8px;">$O(mn^2)$</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px;"><strong>Randomized SVD</strong></td>
-            <td style="padding: 8px;">Large-scale, low-rank approximation; big data</td>
-            <td style="padding: 8px;">$O(mn \log k)$</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
-
-      <!-- 7.9 Worked Examples -->
-      <h3>7.9 Worked Examples</h3>
+      <h3>7.8 Worked Examples</h3>
 
       <h4>Example 7.1: Computing SVD by Hand (2×2 Matrix)</h4>
       <div class="proof-enhanced">
@@ -1288,278 +1427,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </ul>
     </section>
 
-    <!-- SECTION 12: DUAL NORMS AND HÖLDER'S INEQUALITY -->
+    <!-- SECTION 12: EXERCISES -->
     <section class="card-v2" id="section-12">
-      <h2>12. Dual Norms and Hölder's Inequality</h2>
-
-      <h3>Definition: Dual Norm</h3>
-      <p>For any norm $\|\cdot\|$ on $\mathbb{R}^n$, its <b>dual norm</b> is defined as:</p>
-      $$
-      \|y\|_* := \sup\{ x^\top y \mid \|x\| \le 1 \}
-      $$
-      <p>The dual norm measures the maximum linear functional $y$ can induce over the unit ball of the primal norm.</p>
-
-      <h3>Examples to Memorize</h3>
-      <ul>
-        <li><b>$\ell_2$ is self-dual:</b> $(\|\cdot\|_2)^* = \|\cdot\|_2$</li>
-        <li><b>$\ell_1$ and $\ell_\infty$ are duals:</b> $(\|\cdot\|_1)^* = \|\cdot\|_\infty$ and $(\|\cdot\|_\infty)^* = \|\cdot\|_1$</li>
-        <li><b>$\ell_p$ and $\ell_q$ are conjugate:</b> For $1/p + 1/q = 1$, we have $(\|\cdot\|_p)^* = \|\cdot\|_q$</li>
-      </ul>
-
-      <div class="proof-enhanced">
-        <h4>Proof: $(\|\cdot\|_2)^* = \|\cdot\|_2$ (Self-Duality of Euclidean Norm)</h4>
-
-        <div class="proof-step">
-          <strong>Step 1: Upper bound.</strong> By Cauchy-Schwarz, for $\|x\|_2 \le 1$:
-          $$ x^\top y \le |x^\top y| \le \|x\|_2 \|y\|_2 \le \|y\|_2 $$
-          Thus $\|y\|_* \le \|y\|_2$.
-        </div>
-
-        <div class="proof-step">
-          <strong>Step 2: Achieve equality.</strong> Choose $x = y/\|y\|_2$ (assuming $y \neq 0$). Then $\|x\|_2 = 1$ and:
-          $$ x^\top y = \frac{y^\top y}{\|y\|_2} = \frac{\|y\|_2^2}{\|y\|_2} = \|y\|_2 $$
-          Hence $\|y\|_* \ge \|y\|_2$.
-        </div>
-
-        <div class="proof-step">
-          <strong>Conclusion:</strong> Therefore $\|y\|_* = \|y\|_2$.
-        </div>
-      </div>
-
-      <div class="proof-enhanced">
-        <h4>Proof: $(\|\cdot\|_1)^* = \|\cdot\|_\infty$</h4>
-
-        <div class="proof-step">
-          <strong>Step 1: Upper bound.</strong> For $\|x\|_1 \le 1$:
-          $$ x^\top y = \sum_i x_i y_i \le \sum_i |x_i| |y_i| \le \max_i |y_i| \sum_i |x_i| \le \|y\|_\infty $$
-        </div>
-
-        <div class="proof-step">
-          <strong>Step 2: Achieve equality.</strong> Let $j = \arg\max_i |y_i|$. Choose $x = \mathrm{sign}(y_j) e_j$. Then $\|x\|_1 = 1$ and:
-          $$ x^\top y = \mathrm{sign}(y_j) y_j = |y_j| = \|y\|_\infty $$
-        </div>
-
-        <div class="proof-step">
-          <strong>Conclusion:</strong> $\|y\|_* = \|y\|_\infty$.
-        </div>
-      </div>
-
-      <h3>Hölder's Inequality (Dual-Norm Cauchy–Schwarz)</h3>
-      <p>For all $x, y \in \mathbb{R}^n$ and any norm $\|\cdot\|$:</p>
-      $$
-      x^\top y \le \|x\| \cdot \|y\|_*
-      $$
-
-      <div class="proof-enhanced">
-        <h4>Proof of Hölder's Inequality</h4>
-
-        <div class="proof-step">
-          <strong>Case 1: $x = 0$.</strong> The inequality is trivially true: $0 \le 0$.
-        </div>
-
-        <div class="proof-step">
-          <strong>Case 2: $x \neq 0$.</strong> Write:
-          $$ x^\top y = \|x\| \cdot \frac{x^\top y}{\|x\|} = \|x\| \cdot \left(\frac{x}{\|x\|}\right)^\top y $$
-          Note that $\left\|\frac{x}{\|x\|}\right\| = 1$, so by the definition of dual norm:
-          $$ \left(\frac{x}{\|x\|}\right)^\top y \le \sup_{\|z\| \le 1} z^\top y = \|y\|_* $$
-          Combining: $x^\top y \le \|x\| \cdot \|y\|_*$.
-        </div>
-      </div>
-
-      <h3>Why We Need This Later</h3>
-      <p>In <a href="../02-convex-sets/index.html">Lecture 02</a>, when computing <b>dual cones</b>, you will repeatedly use "$y^\top x \le \|y\|_* \|x\|$" with appropriate norms. This inequality is the workhorse of duality theory.</p>
-    </section>
-
-    <!-- SECTION 13: MATRIX CALCULUS BASICS -->
-    <section class="card-v2" id="section-13">
-      <h2>13. Matrix Calculus Basics</h2>
-
-      <p>Optimization algorithms rely heavily on gradients and Hessians. Computing derivatives with respect to vectors and matrices is a core skill. Here are the standard rules you will use repeatedly.</p>
-
-      <h3>Gradients of Linear and Quadratic Forms</h3>
-      <p>For $x \in \mathbb{R}^n$, $A \in \mathbb{R}^{n \times n}$, and $b \in \mathbb{R}^n$:</p>
-
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Function $f(x)$</th>
-            <th>Gradient $\nabla f(x)$</th>
-            <th>Hessian $\nabla^2 f(x)$</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>$b^\top x$</td>
-            <td>$b$</td>
-            <td>$0$</td>
-            <td>Linear function</td>
-          </tr>
-          <tr>
-            <td>$x^\top A x$</td>
-            <td>$(A + A^\top)x$</td>
-            <td>$A + A^\top$</td>
-            <td>General quadratic</td>
-          </tr>
-          <tr>
-            <td>$x^\top A x$</td>
-            <td>$2Ax$</td>
-            <td>$2A$</td>
-            <td>If $A$ is symmetric ($A=A^\top$)</td>
-          </tr>
-          <tr>
-            <td>$\|Ax - b\|_2^2$</td>
-            <td>$2A^\top(Ax - b)$</td>
-            <td>$2A^\top A$</td>
-            <td>Least Squares objective</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3>Gradients with Respect to Matrices</h3>
-      <p>For a matrix variable $X \in \mathbb{R}^{m \times n}$, the gradient is an $m \times n$ matrix.</p>
-
-      <ul>
-        <li><b>Rule 1: Linear Trace:</b> $\nabla_X \mathrm{tr}(A^\top X) = A$.
-        <br><i>Proof:</i> $\mathrm{tr}(A^\top X) = \sum_{i,j} A_{ij} X_{ij}$. The partial derivative with respect to $X_{ij}$ is $A_{ij}$.</li>
-        <li><b>Rule 2: Quadratic Trace:</b> $\nabla_X \mathrm{tr}(X^\top A X) = (A + A^\top)X$. If $A$ is symmetric, this is $2AX$.
-        <br><i>Note:</i> This is exactly like $\frac{d}{dx}(ax^2) = 2ax$.</li>
-        <li><b>Rule 3: Log Determinant:</b> $\nabla_X \log \det X = X^{-\top}$. If $X \in \mathbb{S}^n_{++}$ (symmetric positive definite), then $\nabla_X \log \det X = X^{-1}$.
-        <br><i>Key for Phase 2:</i> This derivative is crucial for deriving the Hessian of log-determinant functions.</li>
-      </ul>
-
-      <div class="insight">
-        <h4>💡 Chain Rule for Matrix Functions</h4>
-        <p>If $f(X) = g(h(X))$, then the differential is $df = g'(h(X)) \circ dh$. For example, to differentiate $\|Ax - b\|_2^2$:</p>
-        <ol>
-          <li>Let $r = Ax - b$. Then $f = r^\top r$.</li>
-          <li>$df = 2r^\top dr$.</li>
-          <li>$dr = A dx$.</li>
-          <li>Substitute: $df = 2r^\top A dx = (2A^\top r)^\top dx$.</li>
-          <li>The gradient is the transpose of the coefficient of $dx^\top$ (or the vector multiplying $dx$), so $\nabla f = 2A^\top r = 2A^\top(Ax-b)$.</li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- SECTION 14: MATRIX STRUCTURES FOR OPTIMIZATION -->
-    <section class="card-v2" id="section-14">
-      <h2>14. Matrix Inner Product, Frobenius Norm, and Loewner Order</h2>
-
-      <h3>Trace and Frobenius Inner Product</h3>
-      <p>For matrices $X, Y \in \mathbb{R}^{m \times n}$, define:</p>
-      $$
-      \langle X, Y \rangle := \mathrm{tr}(X^\top Y) = \sum_{i,j} X_{ij} Y_{ij}
-      $$
-      <p>This is an <b>inner product</b> on the space of $m \times n$ matrices (bilinear, symmetric, positive definite).</p>
-
-      <h3>Frobenius Norm</h3>
-      <p>The induced norm is the <b>Frobenius norm</b>:</p>
-      $$
-      \|X\|_F := \sqrt{\langle X, X \rangle} = \sqrt{\sum_{i,j} X_{ij}^2} = \sqrt{\mathrm{tr}(X^\top X)}
-      $$
-
-      <h3>Symmetric Matrices</h3>
-      <p>Denote the space of $n \times n$ symmetric matrices by:</p>
-      $$
-      \mathbb{S}^n = \{ X \in \mathbb{R}^{n \times n} \mid X = X^\top \}
-      $$
-
-      <h3>Loewner Order (Semidefinite Order)</h3>
-      <p>For $X, Y \in \mathbb{S}^n$, we write <b>$X \succeq Y$</b> if and only if $X - Y$ is <b>positive semidefinite (PSD)</b>, meaning:</p>
-      $$
-      v^\top (X - Y) v \ge 0 \quad \text{for all } v \in \mathbb{R}^n
-      $$
-
-      <div class="proof-enhanced">
-        <h4>Microfacts About the Loewner Order</h4>
-
-        <ul>
-          <li><b>Eigenvalue characterization:</b> $X \succeq 0$ if and only if all eigenvalues of $X$ are nonnegative.</li>
-          <li><b>Inner product property:</b> If $X \succeq 0$ and $Y \succeq 0$, then:
-            $$ \langle X, Y \rangle = \mathrm{tr}(XY) \ge 0 $$
-            (This follows because $XY$ has nonnegative trace when both are PSD.)
-          </li>
-          <li><b>Partial order:</b> The relation $\succeq$ is reflexive, transitive, and antisymmetric (hence a partial order).</li>
-        </ul>
-      </div>
-
-      <h3>Connection to Optimization</h3>
-      <p>The Loewner order is the language of:</p>
-      <ul>
-        <li><b>Ellipsoids</b> (defined by PSD matrices in quadratic forms)</li>
-        <li><b>PSD cone</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$ in <a href="../02-convex-sets/index.html">Lecture 02</a></li>
-        <li><b>Semidefinite programs (SDPs)</b> in <a href="../04-convex-opt-problems/index.html">Lecture 04</a></li>
-      </ul>
-    </section>
-
-    <!-- SECTION 15: COMPONENTWISE ORDER AND PROJECTION -->
-    <section class="card-v2" id="section-15">
-      <h2>15. Componentwise Order and Projection onto Affine Sets</h2>
-
-      <h3>Componentwise Order</h3>
-      <p>For vectors $x, y \in \mathbb{R}^n$, we write:</p>
-      <ul>
-        <li><b>$x \ge 0$</b> means $x_i \ge 0$ for all $i = 1, \dots, n$</li>
-        <li><b>$x \le y$</b> means $x_i \le y_i$ for all $i = 1, \dots, n$</li>
-        <li><b>$x > 0$</b> means $x_i > 0$ for all $i$ (strictly positive)</li>
-      </ul>
-      <p>This is the <b>standard partial order</b> on $\mathbb{R}^n$ induced by the nonnegative orthant $\mathbb{R}^n_+ = \{x \mid x \ge 0\}$.</p>
-
-      <h3>Projection onto an Affine Set</h3>
-      <p>Consider an affine set defined by:</p>
-      $$
-      \mathcal{A} = \{ x \in \mathbb{R}^n \mid Fx = g \}
-      $$
-      <p>where $F \in \mathbb{R}^{p \times n}$ has full row rank and $g \in \mathbb{R}^p$.</p>
-
-      <h4>Parametric Representation</h4>
-      <p>Every point in $\mathcal{A}$ can be written as:</p>
-      $$
-      x = x_0 + Zt
-      $$
-      <p>where:</p>
-      <ul>
-        <li>$x_0$ is any particular solution satisfying $Fx_0 = g$</li>
-        <li>$Z$ is a matrix whose columns form a basis for $\mathcal{N}(F)$ (the nullspace of $F$)</li>
-        <li>$t \in \mathbb{R}^k$ where $k = n - p$ (dimension of nullspace)</li>
-      </ul>
-
-      <h4>Euclidean Projection Formula</h4>
-      <p>The <b>Euclidean projection</b> of any point $y \in \mathbb{R}^n$ onto $\mathcal{A}$ is:</p>
-      $$
-      \Pi_{\mathcal{A}}(y) = x_0 + Z(Z^\top Z)^{-1} Z^\top (y - x_0)
-      $$
-
-      <div class="proof-enhanced">
-        <h4>Geometric Interpretation</h4>
-        <p>This formula says: "Project $(y - x_0)$ onto the nullspace $\mathcal{N}(F)$, then shift back by $x_0$."</p>
-
-        <div class="proof-step">
-          <strong>Step 1: Translate to subspace problem.</strong> Shifting by $x_0$ converts the affine set to a subspace (the nullspace of $F$).
-        </div>
-
-        <div class="proof-step">
-          <strong>Step 2: Project onto nullspace.</strong> The projection of $w = y - x_0$ onto $\mathrm{span}(Z)$ is:
-          $$ \Pi_{\mathcal{N}(F)}(w) = Z(Z^\top Z)^{-1} Z^\top w $$
-        </div>
-
-        <div class="proof-step">
-          <strong>Step 3: Shift back.</strong> Add $x_0$ to obtain the projection onto the affine set.
-        </div>
-      </div>
-
-      <h3>Why This Matters</h3>
-      <p>Projection onto affine sets is crucial for:</p>
-      <ul>
-        <li><b>Equality-constrained optimization</b> (nullspace methods)</li>
-        <li><b>Feasible point computation</b> in constrained problems</li>
-        <li><b>Active-set methods</b> in quadratic programming</li>
-      </ul>
-    </section>
-
-    <!-- SECTION 16: EXERCISES -->
-    <section class="card-v2" id="section-16">
-      <h2><i data-feather="edit-3"></i> 16. Exercises</h2>
+      <h2><i data-feather="edit-3"></i> 12. Exercises</h2>
 
       <h3>P0.1 — Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
@@ -1979,9 +1849,51 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </div>
     </section>
 
+    <!-- SECTION 13: SUMMARY -->
+    <section class="card-v2" id="summary">
+      <h2>13. Summary</h2>
+
+      <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical background necessary for optimization theory.</p>
+
+      <h3>Method Comparison: When to Use What</h3>
+      <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+        <thead>
+          <tr style="background: var(--panel); border-bottom: 2px solid var(--border);">
+            <th style="padding: 8px; text-align: left;">Method</th>
+            <th style="padding: 8px; text-align: left;">When to Use</th>
+            <th style="padding: 8px; text-align: left;">Complexity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;"><strong>Normal Equations</strong></td>
+            <td style="padding: 8px;">Small, well-conditioned problems; theoretical derivations</td>
+            <td style="padding: 8px;">$O(mn^2 + n^3)$</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;"><strong>QR Decomposition</strong></td>
+            <td style="padding: 8px;">Standard least squares; numerically stable; full rank</td>
+            <td style="padding: 8px;">$O(mn^2)$</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;"><strong>SVD</strong></td>
+            <td style="padding: 8px;">Rank-deficient, ill-conditioned; minimum-norm solution; analysis</td>
+            <td style="padding: 8px;">$O(mn^2)$</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px;"><strong>Randomized SVD</strong></td>
+            <td style="padding: 8px;">Large-scale, low-rank approximation; big data</td>
+            <td style="padding: 8px;">$O(mn \log k)$</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
+    </section>
+
     <!-- READINGS -->
     <section class="card-v2" id="readings">
-      <h2><i data-feather="book-open"></i> Readings & Resources</h2>
+      <h2>14. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, <em>Convex Optimization</em>, Appendix A.</li>
         <li><strong>Video Resource:</strong> Gilbert Strang's "The Fundamental Theorem of Linear Algebra" (MIT OpenCourseWare)</li>
