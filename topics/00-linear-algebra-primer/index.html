@@ -24,7 +24,7 @@
       <div class="brand">
         <a href="../../index.html">
           <img src="../../static/assets/branding/logo.svg" alt="Logo" />
-          <span>Convex Optimization</span>
+          <span>Convex Optimization</a>
         </a>
       </div>
       <nav class="nav">
@@ -38,9 +38,9 @@
     <header class="lecture-header card-v2">
       <h1>00. A Primer on Linear Algebra</h1>
       <div class="lecture-meta">
-        <span>Date: 2025-10-14</span>
-        <span>Duration: 90 min</span>
-        <span>Tags: prerequisites, review, linear-algebra, foundational</span>
+        <span>Date: 2025-10-14</a>
+        <span>Duration: 90 min</a>
+        <span>Tags: prerequisites, review, linear-algebra, foundational</a>
       </div>
       <div class="lecture-summary">
         <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical background necessary for optimization theory.</p>
@@ -108,10 +108,10 @@
     <section class="card-v2" id="section-1">
       <h2>1. Subspaces and the Four Fundamental Spaces</h2>
 
-      <p>A <b>linear subspace</b> is a set of vectors that is closed under addition and scalar multiplication. Given a matrix $A \in \mathbb{R}^{m \times n}$, we can define four fundamental subspaces that characterize the behavior of the linear map $T(x) = Ax$.</p>
+      <p>A <a href="#" class="definition-link">linear subspace</a> is a set of vectors that is closed under addition and scalar multiplication. Given a matrix $A \in \mathbb{R}^{m \times n}$, we can define four fundamental subspaces that characterize the behavior of the linear map $T(x) = Ax$.</p>
       <ul>
-        <li><b>Column Space (Range):</b> $\mathcal{R}(A) = \{Ax \mid x \in \mathbb{R}^n\} \subseteq \mathbb{R}^m$. This is the set of all possible outputs of the linear map, i.e., the span of the columns of $A$.</li>
-        <li><b>Nullspace (Kernel):</b> $\mathcal{N}(A) = \{x \in \mathbb{R}^n \mid Ax = 0\}$. This is the set of all input vectors that are mapped to the zero vector.</li>
+        <li><a href="#" class="definition-link" data-term="column space">Column Space (Range)</a>: $\mathcal{R}(A) = \{Ax \mid x \in \mathbb{R}^n\} \subseteq \mathbb{R}^m$. This is the set of all possible outputs of the linear map, i.e., the span of the columns of $A$.</li>
+        <li><a href="#" class="definition-link" data-term="nullspace">Nullspace (Kernel)</a>: $\mathcal{N}(A) = \{x \in \mathbb{R}^n \mid Ax = 0\}$. This is the set of all input vectors that are mapped to the zero vector.</li>
         <li><b>Row Space:</b> $\mathcal{R}(A^\top) \subseteq \mathbb{R}^n$. This is the span of the rows of $A$.</li>
         <li><b>Left Nullspace:</b> $\mathcal{N}(A^\top) = \{y \in \mathbb{R}^m \mid A^\top y = 0\}$. This is the nullspace of the transpose of $A$.</li>
       </ul>
@@ -194,7 +194,7 @@
       <h2>2. Inner Products, Norms, and Angles</h2>
 
       <h3>Inner Product</h3>
-      <p>An inner product on $\mathbb{R}^n$ is a mapping $\langle x, y \rangle$ that is bilinear, symmetric, and positive definite:</p>
+      <p>An <a href="#" class="definition-link">inner product</a> on $\mathbb{R}^n$ is a mapping $\langle x, y \rangle$ that is bilinear, symmetric, and positive definite:</p>
       <ul>
         <li>$\langle ax + by, z \rangle = a\langle x, z \rangle + b\langle y, z \rangle$</li>
         <li>$\langle x, y \rangle = \langle y, x \rangle$</li>
@@ -210,7 +210,7 @@
       </figure>
 
       <h3>Norms</h3>
-      <p>A norm is a function that assigns a strictly positive length or size to each vector in a vector space, except for the zero vector. A norm $\|\cdot\|$ must satisfy:</p>
+      <p>A <a href="#" class="definition-link">norm</a> is a function that assigns a strictly positive length or size to each vector in a vector space, except for the zero vector. A norm $\|\cdot\|$ must satisfy:</p>
       <ol>
         <li><b>Non-negativity:</b> $\|x\| \ge 0$, and $\|x\| = 0$ if and only if $x=0$.</li>
         <li><b>Absolute homogeneity:</b> $\|\alpha x\| = |\alpha| \|x\|$ for any scalar $\alpha$.</li>
@@ -388,7 +388,7 @@
       <p>This is the single most important definition in the course. It is the matrix equivalent of a "non-negative number."</p>
 
       <h4>Definition A: The Variational Definition</h4>
-      <p>A symmetric matrix $A \in \mathbb{S}^n$ is <b>Positive Semidefinite (PSD)</b>, denoted as $A \succeq 0$, if:</p>
+      <p>A symmetric matrix $A \in \mathbb{S}^n$ is <a href="#" class="definition-link" data-term="positive semidefinite">Positive Semidefinite (PSD)</a>, denoted as $A \succeq 0$, if:</p>
       $$ x^\top A x \ge 0 \quad \text{for all } x \in \mathbb{R}^n $$
       <p><b>Geometric Intuition (Curvature):</b> If $A$ represents the curvature of a function (the Hessian), the term $x^\top A x$ represents the <b>curvature in the direction of vector $x$</b>. If $x^\top A x \ge 0$ for all directions $x$, the function curves upward in every direction (it is a "bowl").</p>
 
@@ -645,7 +645,7 @@
 
       <h4>7.2.1 Definition and Existence</h4>
       <div class="proof-enhanced">
-        <p><strong>Theorem (SVD):</strong> Every matrix $A \in \mathbb{R}^{m \times n}$ admits a factorization:
+        <p><strong>Theorem (<a href="#" class="definition-link">SVD</a>):</strong> Every matrix $A \in \mathbb{R}^{m \times n}$ admits a factorization:
         $$ A = U \Sigma V^\top $$
         where:</p>
         <ul>
@@ -1991,7 +1991,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
     <footer class="site-footer">
       <div class="container">
-        <p>© <span id="year"></span> Convex Optimization Course</p>
+        <p>© <span id="year"></a> Convex Optimization Course</p>
       </div>
     </footer>
   </main></div>
@@ -2038,5 +2038,6 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     import { initLeastSquaresVisualizer } from './widgets/js/least-squares-visualizer.js';
     initLeastSquaresVisualizer('widget-least-squares');
   </script>
+  <script src="../../static/js/glossary-loader.js"></script>
 </body>
 </html>

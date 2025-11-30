@@ -17,7 +17,7 @@
       <div class="brand">
         <a href="../../index.html">
           <img src="../../static/assets/branding/logo.svg" alt="Logo" />
-          <span>Convex Optimization</span>
+          <span>Convex Optimization</a>
         </a>
       </div>
       <nav class="nav">
@@ -32,9 +32,9 @@
     <header class="lecture-header card-v2">
       <h1>02. The Geometry of Feasibility: Convex Sets</h1>
       <div class="lecture-meta">
-        <span>Date: 2025-10-28</span>
-        <span>Duration: 90 min</span>
-        <span>Tags: sets, geometry, foundational, theory</span>
+        <span>Date: 2025-10-28</a>
+        <span>Duration: 90 min</a>
+        <span>Tags: sets, geometry, foundational, theory</a>
       </div>
       <div class="lecture-summary">
         <p><strong>Overview:</strong> This lecture presents the geometric foundations of convex optimization through the study of convex sets. We define convexity for sets, examine canonical examples such as hyperplanes, polyhedra, and cones, and establish operations that preserve convexity. The lecture concludes with the Separating and Supporting Hyperplane Theorems, which form the geometric basis for duality theory and optimality conditions.</p>
@@ -77,7 +77,7 @@
 
         <h3>1.1 Affine Combinations and Affine Sets</h3>
 
-        <p>An <b>affine combination</b> of points $x_1, \ldots, x_k$ is a weighted sum where the weights sum to one:</p>
+        <p>An <a href="#" class="definition-link">affine combination</a> of points $x_1, \ldots, x_k$ is a weighted sum where the weights sum to one:</p>
         $$
         \sum_{i=1}^k \theta_i x_i \quad \text{where} \quad \sum_{i=1}^k \theta_i = 1
         $$
@@ -85,7 +85,7 @@
 
         <div class="theorem-box">
           <h4>Definition (Affine Set)</h4>
-          <p>A set $C$ is <b>affine</b> if it contains all affine combinations of its points. Equivalently, the line through any two points in $C$ lies entirely in $C$.</p>
+          <p>A set $C$ is <a href="#" class="definition-link">affine</a> if it contains all affine combinations of its points. Equivalently, the line through any two points in $C$ lies entirely in $C$.</p>
         </div>
 
         <div class="example">
@@ -100,7 +100,7 @@
 
         <h3>1.2 Convex Combinations and Convex Sets</h3>
 
-        <p>A <b>convex combination</b> is an affine combination with the additional constraint that all weights are nonnegative:</p>
+        <p>A <a href="#" class="definition-link">convex combination</a> is an affine combination with the additional constraint that all weights are nonnegative:</p>
         $$
         \sum_{i=1}^k \theta_i x_i \quad \text{where} \quad \theta_i \ge 0, \ \sum_{i=1}^k \theta_i = 1
         $$
@@ -108,7 +108,7 @@
 
         <div class="theorem-box">
           <h4>Definition (Convex Set)</h4>
-          <p>A set $C \subseteq \mathbb{R}^n$ is <b>convex</b> if for any two points $x, y \in C$ and any $\theta \in [0,1]$:</p>
+          <p>A set $C \subseteq \mathbb{R}^n$ is <a href="#" class="definition-link" data-term="convex function">convex</a> if for any two points $x, y \in C$ and any $\theta \in [0,1]$:</p>
           $$
           \theta x + (1-\theta)y \in C
           $$
@@ -124,7 +124,7 @@
 
         <h3>1.3 Convex Hull</h3>
 
-        <p>The <b>convex hull</b> of a set $S$, denoted $\mathrm{conv}(S)$, is the set of all convex combinations of points in $S$:</p>
+        <p>The <a href="#" class="definition-link">convex hull</a> of a set $S$, denoted $\mathrm{conv}(S)$, is the set of all convex combinations of points in $S$:</p>
         $$
         \mathrm{conv}(S) = \left\{\sum_{i=1}^k \theta_i x_i \ \bigg| \ x_i \in S, \ \theta_i \ge 0, \ \sum_{i=1}^k \theta_i = 1, \ k \in \mathbb{N}\right\}
         $$
@@ -165,13 +165,13 @@
 
         <h3>2.1 Hyperplanes and Halfspaces</h3>
 
-        <p>A <b>hyperplane</b> is a set of the form:</p>
+        <p>A <a href="#" class="definition-link">hyperplane</a> is a set of the form:</p>
         $$
         H = \{x \in \mathbb{R}^n \mid a^\top x = b\}
         $$
         <p>where $a \in \mathbb{R}^n \setminus \{0\}$ and $b \in \mathbb{R}$. The vector $a$ is the <b>normal vector</b> (perpendicular to the hyperplane).</p>
 
-        <p>A <b>halfspace</b> is a set of the form:</p>
+        <p>A <a href="#" class="definition-link">halfspace</a> is a set of the form:</p>
         $$
         H^+ = \{x \in \mathbb{R}^n \mid a^\top x \le b\}
         $$
@@ -241,13 +241,13 @@
 
         <h3>2.3 Polyhedra</h3>
 
-        <p>A <b>polyhedron</b> is the solution set of finitely many linear inequalities and equalities:</p>
+        <p>A <a href="#" class="definition-link">polyhedron</a> is the solution set of finitely many linear inequalities and equalities:</p>
         $$
         \mathcal{P} = \{x \in \mathbb{R}^n \mid Ax \le b, \ Cx = d\}
         $$
         <p>Since it's an intersection of halfspaces (convex) and hyperplanes (convex), a polyhedron is convex.</p>
 
-        <p>A <b>polytope</b> is a bounded polyhedron. Equivalently, it's the convex hull of finitely many points.</p>
+        <p>A <a href="#" class="definition-link">polytope</a> is a bounded polyhedron. Equivalently, it's the convex hull of finitely many points.</p>
 
         <div class="example">
           <h4>Important Special Cases</h4>
@@ -273,9 +273,9 @@
 
         <h3>2.4 Cones and Important Cone Examples</h3>
 
-        <p>A set $K$ is a <b>cone</b> if for every $x \in K$ and $\theta \ge 0$, we have $\theta x \in K$ (closed under nonnegative scaling).</p>
+        <p>A set $K$ is a <a href="#" class="definition-link">cone</a> if for every $x \in K$ and $\theta \ge 0$, we have $\theta x \in K$ (closed under nonnegative scaling).</p>
 
-        <p>A <b>convex cone</b> is a cone that is also convex. Equivalently, $K$ is a convex cone if for all $x, y \in K$ and $\theta_1, \theta_2 \ge 0$:</p>
+        <p>A <a href="#" class="definition-link">convex cone</a> is a cone that is also convex. Equivalently, $K$ is a convex cone if for all $x, y \in K$ and $\theta_1, \theta_2 \ge 0$:</p>
         $$
         \theta_1 x + \theta_2 y \in K
         $$
@@ -572,7 +572,7 @@
 
         <h3>5.2 Proper Cones</h3>
 
-        <p>A cone $K$ is <b>proper</b> if it satisfies four key properties:</p>
+        <p>A cone $K$ is <a href="#" class="definition-link">proper</a> if it satisfies four key properties:</p>
         <ol>
           <li><b>Convex:</b> $K$ is a convex cone</li>
           <li><b>Closed:</b> $K$ contains all its limit points</li>
@@ -584,7 +584,7 @@
 
         <h3>5.3 The Dual Cone</h3>
 
-        <p>The <b>dual cone</b> of $K$ is defined as:</p>
+        <p>The <a href="#" class="definition-link">dual cone</a> of $K$ is defined as:</p>
         $$
         K^* = \{y \in \mathbb{R}^n \mid y^\top x \ge 0 \ \forall x \in K\}
         $$
@@ -1102,7 +1102,7 @@
 
     <footer class="site-footer">
       <div class="container">
-        <p>© <span id="year"></span> Convex Optimization Course</p>
+        <p>© <span id="year"></a> Convex Optimization Course</p>
       </div>
     </footer>
   </main></div>
@@ -1132,5 +1132,6 @@
     import { initSeparatingHyperplane } from './widgets/js/separating-hyperplane.js';
     initSeparatingHyperplane('widget-separating-hyperplane');
   </script>
+  <script src="../../static/js/glossary-loader.js"></script>
 </body>
 </html>

@@ -23,7 +23,7 @@
       <div class="brand">
         <a href="../../index.html">
           <img src="../../static/assets/branding/logo.svg" alt="Logo" />
-          <span>Convex Optimization</span>
+          <span>Convex Optimization</a>
         </a>
       </div>
       <nav class="nav">
@@ -38,9 +38,9 @@
     <header class="lecture-header card-v2">
       <h1>01. Introduction: What Makes a Problem Convex?</h1>
       <div class="lecture-meta">
-        <span>Date: 2025-10-21</span>
-        <span>Duration: 90 min</span>
-        <span>Tags: intro, motivation, overview, modeling, fundamentals</span>
+        <span>Date: 2025-10-21</a>
+        <span>Duration: 90 min</a>
+        <span>Tags: intro, motivation, overview, modeling, fundamentals</a>
       </div>
       <div class="lecture-summary">
         <p><strong>Overview:</strong> This lecture introduces convex optimization by defining what makes a problem "convex" and proving the fundamental theorem that any local minimum is also global. We examine the canonical problem families (LP, QP, SOCP, SDP), present the "loss + regularizer + constraints" modeling framework, and develop practical techniques for reformulating problems into standard convex forms.</p>
@@ -98,7 +98,7 @@
         </figure>
 
         <h3>1.2 Formal Definition</h3>
-        <p>A mathematical optimization problem is <b>convex</b> if it can be written in the standard form:</p>
+        <p>A mathematical optimization problem is <a href="#" class="definition-link" data-term="convex function">convex</a> if it can be written in the standard form:</p>
         $$
         \begin{aligned}
         \min_{x \in \mathbb{R}^n} \quad & f_0(x) && \text{(Objective function)} \\
@@ -108,9 +108,9 @@
         $$
         <p>where <b>three critical structural conditions</b> must be satisfied:</p>
         <ol>
-          <li><b>Convex objective:</b> The objective function $f_0 : \mathbb{R}^n \to \mathbb{R}$ is convex.</li>
+          <li><b>Convex objective:</b> The objective function $f_0 : \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link" data-term="convex function">convex</a>.</li>
           <li><b>Convex inequality constraints:</b> Each constraint function $f_i : \mathbb{R}^n \to \mathbb{R}$ is convex.</li>
-          <li><b>Affine equality constraints:</b> All equality constraints are linear (affine), of the form $Ax = b$.</li>
+          <li><b>Affine equality constraints:</b> All equality constraints are <a href="#" class="definition-link">linear (affine)</a>, of the form $Ax = b$.</li>
         </ol>
 
         <div class="insight">
@@ -125,7 +125,7 @@
         </div>
 
         <h3>1.3 The Feasible Set</h3>
-        <p>The <b>feasible set</b> (also called feasible region or constraint set) is:</p>
+        <p>The <a href="#" class="definition-link">feasible set</a> (also called feasible region or constraint set) is:</p>
         $$
         \mathcal{F} = \{x \in \mathbb{R}^n \mid f_i(x) \le 0 \ \forall i, \ Ax = b\}
         $$
@@ -363,7 +363,7 @@
         </figure>
 
         <h3>4.1 Linear Programming (LP)</h3>
-        <p>The simplest convex problem has both a linear objective and linear constraints:</p>
+        <p>The simplest convex problem has both a linear objective and linear constraints. A <a href="#" class="definition-link" data-term="linear program">Linear Program (LP)</a> is defined as:</p>
         $$
         \begin{aligned}
         \min_{x} \quad & c^\top x \\
@@ -375,7 +375,7 @@
         <div class="subsection">
           <h4>Properties and Characteristics</h4>
           <ul>
-            <li><b>Feasible set:</b> A polyhedron (intersection of finitely many halfspaces and hyperplanes).</li>
+            <li><b>Feasible set:</b> A <a href="#" class="definition-link">polyhedron</a> (intersection of finitely many halfspaces and hyperplanes).</li>
             <li><b>Optimal solution:</b> Always at a vertex (extreme point) if it exists.</li>
             <li><b>Algorithms:</b> Simplex method (exponential worst-case, fast in practice), Interior-point methods (polynomial-time).</li>
             <li><b>Complexity:</b> Polynomial time via interior-point methods.</li>
@@ -415,7 +415,7 @@
         </div>
 
         <h3>4.2 Quadratic Programming (QP)</h3>
-        <p>QPs have a convex quadratic objective and linear constraints:</p>
+        <p><a href="#" class="definition-link" data-term="quadratic program">Quadratic Programs (QP)</a> have a convex quadratic objective and linear constraints:</p>
         $$
         \begin{aligned}
         \min_{x} \quad & \frac{1}{2}x^\top Q x + c^\top x \\
@@ -462,7 +462,7 @@
         </div>
 
         <h3>4.3 Second-Order Cone Programming (SOCP)</h3>
-        <p>SOCPs involve second-order cone constraints (Euclidean norm constraints):</p>
+        <p><a href="#" class="definition-link" data-term="socp">SOCPs</a> involve second-order cone constraints (Euclidean norm constraints):</p>
         $$
         \begin{aligned}
         \min_{x} \quad & c^\top x \\
@@ -495,7 +495,7 @@
         </div>
 
         <h3>4.4 Semidefinite Programming (SDP)</h3>
-        <p>SDPs optimize over positive semidefinite matrix variables:</p>
+        <p><a href="#" class="definition-link" data-term="sdp">SDPs</a> optimize over positive semidefinite matrix variables:</p>
         $$
         \begin{aligned}
         \min_{X} \quad & \langle C, X \rangle = \mathrm{tr}(C^\top X) \\
@@ -1277,7 +1277,7 @@
 
     <footer class="site-footer">
       <div class="container">
-        <p>© <span id="year"></span> Convex Optimization Course</p>
+        <p>© <span id="year"></a> Convex Optimization Course</p>
       </div>
     </footer>
   </main></div>
@@ -1307,5 +1307,6 @@
     import { initProblemFlowchart } from './widgets/js/problem-flowchart.js';
     initProblemFlowchart('widget-problem-flowchart');
   </script>
+  <script src="../../static/js/glossary-loader.js"></script>
 </body>
 </html>
