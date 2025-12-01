@@ -73,197 +73,215 @@
       <section class="card-v2" id="section-1">
         <h2>1. Affine and Convex Sets: Definitions and Basic Properties</h2>
 
-        <p>The geometry of optimization is built on understanding how points combine. Two fundamental operations define the landscape:</p>
+        <p>The geometry of optimization is built on understanding how points combine. We begin with the fundamental distinction between lines (affine) and segments (convex).</p>
 
         <h3>1.1 Affine Combinations and Affine Sets</h3>
 
-        <p>An <a href="#" class="definition-link">affine combination</a> of points $x_1, \ldots, x_k$ is a weighted sum where the weights sum to one:</p>
-        $$
-        \sum_{i=1}^k \theta_i x_i \quad \text{where} \quad \sum_{i=1}^k \theta_i = 1
-        $$
-        <p>Weights can be negative—there's no nonnegativity requirement. Affine combinations describe lines, planes, and hyperplanes.</p>
+        <figure style="text-align: center; margin: 24px 0; float: right; width: 40%; margin-left: 20px;">
+          <img src="assets/1.png"
+               alt="Line vs. Line Segment: A visual distinction between the infinite line (affine hull) and the finite segment (convex hull) connecting two points."
+               style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 1.1:</i> The line segment connecting $ and $ (solid blue) represents $\theta \in [0,1]$. The infinite line (dashed) represents the affine combination for all $\theta \in \mathbb{R}$.</figcaption>
+        </figure>
+
+        <p>An <a href="#" class="definition-link">affine combination</a> of points , \ldots, x_k$ is a weighted sum where the weights sum to one:</p>
+        1316
+        x = \sum_{i=1}^k \theta_i x_i \quad \text{where} \quad \sum_{i=1}^k \theta_i = 1
+        1316
+        <p>Weights can be negative—there\'s no nonnegativity requirement. Affine combinations describe lines, planes, and hyperplanes.</p>
 
         <div class="theorem-box">
           <h4>Definition (Affine Set)</h4>
-          <p>A set $C$ is <a href="#" class="definition-link">affine</a> if it contains all affine combinations of its points. Equivalently, the line through any two points in $C$ lies entirely in $C$.</p>
+          <p>A set $ is <a href="#" class="definition-link">affine</a> if it contains all affine combinations of its points. Equivalently, the line through any two points in $ lies entirely in $.</p>
         </div>
 
-        <div class="example">
-          <h4>Examples of Affine Sets</h4>
-          <ul>
-            <li><b>Solution set of linear equations:</b> $\{x \mid Ax = b\}$ is always affine (it's a hyperplane or subspace).</li>
-            <li><b>$\mathbb{R}^n$ itself:</b> The entire space is trivially affine.</li>
-            <li><b>Empty set:</b> Vacuously affine (no pairs of points to check).</li>
-            <li><b>Single point $\{x_0\}$:</b> Affine (the only "line" through one point is the point itself).</li>
-          </ul>
+        <h4>Affine Sets as Translated Subspaces</h4>
+        <p>Every affine set is merely a linear subspace that has been shifted (translated) away from the origin.</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/2.png"
+               alt="Affine Set as a Translated Subspace: A 3D visualization showing a subspace V passing through the origin and an affine set C which is V shifted by a vector x0."
+               style="max-width: 60%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 1.2:</i> An affine set $ can always be written as  + V$, where $ is a linear subspace and  \in C$.</figcaption>
+        </figure>
+
+        <div class="proof-enhanced">
+          <h4>Theorem: Characterization of Affine Sets</h4>
+          <p>A set $ is affine if and only if  = x_0 + V = \{x_0 + v \mid v \in V\}$ for some subspace $.</p>
+
+          <div class="proof-step">
+            <strong>($\Leftarrow$)</strong> Assume  = x_0 + V$. Let , x_2 \in C$, so  = x_0 + v_1$ and  = x_0 + v_2$ for , v_2 \in V$.
+            For any $\theta \in \mathbb{R}$:
+            1316
+            \theta x_1 + (1-\theta)x_2 = \theta(x_0 + v_1) + (1-\theta)(x_0 + v_2) = x_0 + (\theta v_1 + (1-\theta)v_2)
+            1316
+            Since $ is a subspace, $\theta v_1 + (1-\theta)v_2 \in V$. Thus the combination is in  + V = C$.
+          </div>
+
+          <div class="proof-step">
+            <strong>($\Rightarrow$)</strong> Assume $ is affine. Pick  \in C$ and define  = C - x_0$. We show $ is a subspace.
+            <ul>
+              <li>-bash \in V$ since  - x_0 = 0$.</li>
+              <li>Closed under scaling: If  \in V$, then  = x - x_0$. Since $ is affine, for any $\alpha$, the point $\alpha x + (1-\alpha)x_0 = x_0 + \alpha(x-x_0) = x_0 + \alpha v$ is in $. Thus $\alpha v \in C - x_0 = V$.</li>
+              <li>Closed under addition: If , v_2 \in V$, then  = x_0 + v_1$ and  = x_0 + v_2$ are in $. Since $ is affine, the midpoint $\frac{1}{2}x_1 + \frac{1}{2}x_2 = x_0 + \frac{1}{2}(v_1 + v_2)$ is in $. By scaling closure,  + (v_1 + v_2) \in C$, so  + v_2 \in V$.</li>
+            </ul>
+          </div>
         </div>
+
+        <p>This explains why the solution set of linear equations $\{x \mid Ax=b\}$ is affine: it is the translation of the nullspace of $ by a particular solution.</p>
 
         <h3>1.2 Convex Combinations and Convex Sets</h3>
 
+        <figure style="text-align: center; margin: 24px 0; float: right; width: 35%; margin-left: 20px;">
+            <img src="assets/3.png"
+                 alt="Convex vs. Non-Convex Sets: Comparison showing that in a non-convex set, a line segment between two interior points can exit the set."
+                 style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+            <figcaption><i>Figure 1.3:</i> Convex vs. Non-Convex sets.</figcaption>
+        </figure>
+
         <p>A <a href="#" class="definition-link">convex combination</a> is an affine combination with the additional constraint that all weights are nonnegative:</p>
-        $$
+        1316
         \sum_{i=1}^k \theta_i x_i \quad \text{where} \quad \theta_i \ge 0, \ \sum_{i=1}^k \theta_i = 1
-        $$
-        <p>This describes "filled-in" shapes like line segments, triangles, and convex polytopes.</p>
+        1316
+        <p>This describes the "filled-in" shape between points. For two points, it describes the line <b>segment</b> connecting them.</p>
 
         <div class="theorem-box">
           <h4>Definition (Convex Set)</h4>
-          <p>A set $C \subseteq \mathbb{R}^n$ is <a href="#" class="definition-link" data-term="convex function">convex</a> if for any two points $x, y \in C$ and any $\theta \in [0,1]$:</p>
-          $$
+          <p>A set  \subseteq \mathbb{R}^n$ is <a href="#" class="definition-link" data-term="convex function">convex</a> if for any two points , y \in C$ and any $\theta \in [0,1]$:</p>
+          1316
           \theta x + (1-\theta)y \in C
-          $$
+          1316
           <p><b>Geometric meaning:</b> The line segment connecting any two points in the set lies entirely within the set—no "dents" or "holes."</p>
         </div>
 
-        <figure style="text-align: center; margin: 24px 0;">
-          <img src="../../static/assets/topics/02-convex-sets/convex-set-definition.svg"
-               alt="Visual definition of convex and non-convex sets"
-               style="max-width: 100%; height: auto; border-radius: 8px;" />
-          <figcaption><i>Figure 1.1:</i> In a convex set (left), the line segment between any two points lies entirely within the set. In a non-convex set (right), some line segments escape.</figcaption>
-        </figure>
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Tool: Convex Geometry Lab</h3>
+          <p><b>Draw Custom Sets:</b> Use the pen tool to draw polygons. Double-click to close. Verify if your custom shapes are convex.</p>
+          <div id="widget-convex-geometry-lab" style="width: 100%; position: relative;"></div>
+        </div>
 
         <h3>1.3 Convex Hull</h3>
 
-        <p>The <a href="#" class="definition-link">convex hull</a> of a set $S$, denoted $\mathrm{conv}(S)$, is the set of all convex combinations of points in $S$:</p>
-        $$
+        <p>The <a href="#" class="definition-link">convex hull</a> of a set $, denoted $\mathrm{conv}(S)$, is the set of all convex combinations of points in $:</p>
+        1316
         \mathrm{conv}(S) = \left\{\sum_{i=1}^k \theta_i x_i \ \bigg| \ x_i \in S, \ \theta_i \ge 0, \ \sum_{i=1}^k \theta_i = 1, \ k \in \mathbb{N}\right\}
-        $$
-        <p>It is the smallest convex set containing $S$—analogous to stretching a rubber band around all the points.</p>
+        1316
+        <p>It is the smallest convex set containing $.</p>
+
+        <div class="row" style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+                <figure style="text-align: center; margin: 0;">
+                  <img src="assets/4.png"
+                       alt="The Convex Hull: A scatter of points with a rubber-band-like polygon enclosing them."
+                       style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+                  <figcaption><i>Figure 1.4:</i> The convex hull of a set of points acts like a rubber band snapped tight around them.</figcaption>
+                </figure>
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <figure style="text-align: center; margin: 0;">
+                  <img src="assets/15.png"
+                       alt="Convex Hull of a Non-Convex Set: A non-convex star shape with its convex hull filling in the gaps."
+                       style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+                  <figcaption><i>Figure 1.5:</i> The convex hull "fills in" dents and holes to create a convex shape.</figcaption>
+                </figure>
+            </div>
+        </div>
 
         <div class="theorem-box">
-          <h4>Theorem (Carathéodory's Theorem)</h4>
-          <p>If $S \subseteq \mathbb{R}^n$, then every point in $\mathrm{conv}(S)$ can be written as a convex combination of at most $n+1$ points from $S$.</p>
-          <p><b>Implication:</b> To describe any point in the convex hull, we never need more than $n+1$ points, regardless of how large $S$ is!</p>
+          <h4>Theorem (Carathéodory\'s Theorem)</h4>
+          <p>If  \subseteq \mathbb{R}^n$, then every point in $\mathrm{conv}(S)$ can be written as a convex combination of at most +1$ points from $.</p>
+          <p>For example, in $\mathbb{R}^2$, any point in the convex hull of a cloud of points lies within a triangle formed by just 3 of those points.</p>
         </div>
 
         <figure style="text-align: center; margin: 24px 0;">
-          <img src="../../static/assets/topics/02-convex-sets/convex-hull.svg"
-               alt="Illustration of a convex hull"
-               style="max-width: 100%; height: auto; border-radius: 8px;" />
-          <figcaption><i>Figure 1.2:</i> The convex hull of a set of points—the "rubber band" effect.</figcaption>
+          <img src="assets/16.png"
+               alt="Caratheodory\'s Theorem Visualized: A point inside a large convex hull is shown to be contained within a triangle formed by just 3 vertices."
+               style="max-width: 60%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 1.6:</i> Carathéodory\'s theorem in $\mathbb{R}^2$: Any point  \in \mathrm{conv}(S)$ is a convex combination of at most +1=3$ points.</figcaption>
         </figure>
 
-        <h3>1.4 Key Properties</h3>
-
-        <ul>
-          <li>Every affine set is convex (but not vice versa).</li>
-          <li>The intersection of any collection of convex sets is convex (proven in Section 3).</li>
-          <li>The union of convex sets is generally <b>not</b> convex.</li>
-        </ul>
-
-        <div class="widget-container" style="margin: 24px 0;">
-          <h3 style="margin-top: 0;">Interactive Tool: Convex Set Checker</h3>
-          <p><b>Test Convexity Interactively:</b> Use the drawing tools below to create shapes and verify their convexity. Any "dent" will be flagged as a violation of the line segment property.</p>
-          <!-- Note: The standalone drawing widget has been merged into the lab below for a unified experience. -->
-        </div>
       </section>
 
       <section class="card-v2" id="section-2">
         <h2>2. Canonical Convex Sets: Building Blocks</h2>
 
-        <p>These fundamental convex sets appear repeatedly in optimization formulations. Recognizing them is essential for problem classification.</p>
+        <p>Convex optimization relies on a library of standard convex sets. Recognizing these forms is the first step in formulating problems.</p>
 
         <h3>2.1 Hyperplanes and Halfspaces</h3>
 
-        <p>A <a href="#" class="definition-link">hyperplane</a> is a set of the form:</p>
-        $$
-        H = \{x \in \mathbb{R}^n \mid a^\top x = b\}
-        $$
-        <p>where $a \in \mathbb{R}^n \setminus \{0\}$ and $b \in \mathbb{R}$. The vector $a$ is the <b>normal vector</b> (perpendicular to the hyperplane).</p>
-
-        <p>A <a href="#" class="definition-link">halfspace</a> is a set of the form:</p>
-        $$
+        <p>A <a href="#" class="definition-link">hyperplane</a> is an affine set of dimension -1$, defined by a linear equation:</p>
+        1316
+        H = \{x \in \mathbb{R}^n \mid a^\top x = b\} \quad (a \neq 0)
+        1316
+        <p>A <a href="#" class="definition-link">halfspace</a> is the region on one side of a hyperplane:</p>
+        1316
         H^+ = \{x \in \mathbb{R}^n \mid a^\top x \le b\}
-        $$
-        <p>This is the region on one side of the hyperplane. The complement halfspace is $H^- = \{x \mid a^\top x \ge b\}$.</p>
+        1316
 
-        <div class="proof-enhanced">
-          <h4>Proof: Hyperplanes and Halfspaces are Convex</h4>
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/6.png"
+               alt="Hyperplane and Halfspaces in 3D: A plane separating 3D space into two half-spaces."
+               style="max-width: 70%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 2.1:</i> A hyperplane (affine and convex) divides space into two halfspaces (convex). The vector $ is the normal.</figcaption>
+        </figure>
 
-          <div class="proof-step">
-            <strong>Hyperplane:</strong> Take $x, y \in H$ and $\theta \in [0,1]$. Then:
-            $$
-            a^\top(\theta x + (1-\theta)y) = \theta a^\top x + (1-\theta)a^\top y = \theta b + (1-\theta)b = b
-            $$
-            So $\theta x + (1-\theta)y \in H$, proving $H$ is convex (and affine).
-          </div>
-
-          <div class="proof-step">
-            <strong>Halfspace:</strong> Take $x, y \in H^+$ and $\theta \in [0,1]$. Then:
-            $$
-            a^\top(\theta x + (1-\theta)y) = \theta a^\top x + (1-\theta)a^\top y \le \theta b + (1-\theta)b = b
-            $$
-            So $\theta x + (1-\theta)y \in H^+$, proving $H^+$ is convex.
-          </div>
-        </div>
+        <p><b>Convexity:</b> Both are convex. For a halfspace, if ^\top x \le b$ and ^\top y \le b$, then ^\top (\theta x + (1-\theta)y) = \theta (a^\top x) + (1-\theta)(a^\top y) \le \theta b + (1-\theta)b = b$.</p>
 
         <h3>2.2 Norm Balls and Ellipsoids</h3>
 
-        <p>A <b>norm ball</b> centered at $x_c$ with radius $r$ is:</p>
-        $$
-        B(x_c, r) = \{x \in \mathbb{R}^n \mid \|x - x_c\| \le r\}
-        $$
-        <p>where $\|\cdot\|$ is any norm. All norm balls are convex (by the triangle inequality).</p>
+        <p>A <b>norm ball</b> for any norm $\|\cdot\|$ is convex:</p>
+        1316
+        B = \{x \mid \|x - x_c\| \le r\}
+        1316
+        <p>This follows directly from the triangle inequality (which is effectively the convexity condition for the norm function).</p>
 
-        <p>An <b>ellipsoid</b> is a set of the form:</p>
-        $$
-        \mathcal{E}(x_c, P) = \{x \in \mathbb{R}^n \mid (x - x_c)^\top P^{-1} (x - x_c) \le 1\}
-        $$
-        <p>where $P \in \mathbb{S}^n_{++}$ (symmetric positive definite). The matrix $P$ determines the shape and orientation:</p>
-        <ul>
-          <li>Eigenvectors of $P$ give the principal axes directions</li>
-          <li>Square roots of eigenvalues of $P$ give the axis lengths</li>
-        </ul>
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/8.png"
+               alt="Unit Balls of Various Norms: Nested shapes of L1 (diamond), L2 (circle), and L-infinity (square) balls."
+               style="max-width: 50%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 2.2:</i> Unit balls for different norms (, L_2, L_\infty$). All are convex.</figcaption>
+        </figure>
 
-        <div class="insight">
-          <h4>💡 Why Ellipsoids Matter</h4>
-          <p>Ellipsoids appear everywhere in optimization:</p>
-          <ul>
-            <li><b>Quadratic constraints:</b> $x^\top Q x \le 1$ defines an ellipsoid (if $Q \succ 0$)</li>
-            <li><b>Confidence regions:</b> In statistics, confidence ellipsoids arise from covariance matrices</li>
-            <li><b>Robust optimization:</b> Ellipsoidal uncertainty sets lead to tractable SOCP formulations</li>
-            <li><b>Level sets:</b> Level sets of convex quadratic functions are ellipsoids</li>
-          </ul>
-        </div>
+        <p>An <b>ellipsoid</b> is the image of a Euclidean ball under an affine map. Explicitly:</p>
+        1316
+        \mathcal{E} = \{x \mid (x - x_c)^\top P^{-1} (x - x_c) \le 1\}
+        1316
+        <p>where  \in \mathbb{S}^n_{++}$ (symmetric positive definite). The eigenvalues of $ determine the squared lengths of the semi-axes.</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/7.png"
+               alt="Anatomy of an Ellipsoid: Wireframe ellipsoid showing principal axes aligned with eigenvectors of P."
+               style="max-width: 60%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 2.3:</i> The semi-axes of an ellipsoid align with the eigenvectors $ of $, with lengths $\sqrt{\lambda_i}$.</figcaption>
+        </figure>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Explorer: Ellipsoid Geometry</h3>
-          <p><b>See How PSD Matrices Define Ellipsoids:</b> An ellipsoid is defined by $\{x \mid (x-x_c)^\top P^{-1} (x-x_c) \le 1\}$ where $P \succ 0$. This tool lets you:</p>
-          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Adjust matrix P:</b> Modify the PSD matrix entries and watch the ellipsoid reshape in real-time</li>
-            <li><b>Visualize eigenvectors:</b> The principal axes align with eigenvectors of $P$</li>
-            <li><b>Observe eigenvalue effects:</b> Axis lengths are proportional to $\sqrt{\lambda_i}$ where $\lambda_i$ are eigenvalues</li>
-            <li><b>Understand constraints:</b> This is the geometric representation of quadratic constraints in QP and SOCP</li>
-          </ul>
-          <p><i>Key connection:</i> Understanding ellipsoid geometry is crucial for QP and SOCP formulations. The level sets of the objective $\frac{1}{2}x^\top Q x$ are ellipsoids!</p>
+          <p><b>Visualize $:</b> Modify the PSD matrix entries to reshape the ellipsoid. See how eigenvalues control axis lengths.</p>
           <div id="widget-ellipsoid-explorer" style="width: 100%; height: 400px; position: relative;"></div>
         </div>
 
         <h3>2.3 Polyhedra</h3>
 
         <p>A <a href="#" class="definition-link">polyhedron</a> is the solution set of finitely many linear inequalities and equalities:</p>
-        $$
+        1316
         \mathcal{P} = \{x \in \mathbb{R}^n \mid Ax \le b, \ Cx = d\}
-        $$
-        <p>Since it's an intersection of halfspaces (convex) and hyperplanes (convex), a polyhedron is convex.</p>
+        1316
+        <p>It is the intersection of finitely many halfspaces and hyperplanes. Since intersection preserves convexity (see Section 3), polyhedra are convex.</p>
 
-        <p>A <a href="#" class="definition-link">polytope</a> is a bounded polyhedron. Equivalently, it's the convex hull of finitely many points.</p>
-
-        <div class="example">
-          <h4>Important Special Cases</h4>
-          <ul>
-            <li><b>Simplex:</b> $\Delta^n = \{x \in \mathbb{R}^n \mid x \ge 0, \mathbf{1}^\top x = 1\}$ (probability distributions on $n$ elements)</li>
-            <li><b>Unit cube:</b> $[0,1]^n = \{x \in \mathbb{R}^n \mid 0 \le x_i \le 1 \ \forall i\}$</li>
-            <li><b>Nonnegative orthant:</b> $\mathbb{R}^n_+ = \{x \in \mathbb{R}^n \mid x \ge 0\}$ (unbounded)</li>
-          </ul>
-        </div>
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/9.png"
+               alt="Polyhedron Construction: A 3D solid defined by the intersection of multiple flat planes."
+               style="max-width: 60%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 2.4:</i> A polyhedron is the "safe zone" intersection of finite halfspaces.</figcaption>
+        </figure>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Visualizer: Polyhedron Builder</h3>
           <p><b>Build Feasible Regions from Constraints:</b> A polyhedron is the intersection of finitely many halfspaces. This tool brings LP feasible sets to life:</p>
           <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <li><b>Add constraints one at a time:</b> Drag to define linear inequalities $a^\top x \le b$</li>
-            <li><b>Visualize normals:</b> See the normal vector $a$ pointing <i>out</i> of the feasible region</li>
+            <li><b>Add constraints one at a time:</b> Drag to define linear inequalities ^\top x \le b$</li>
+            <li><b>Visualize normals:</b> See the normal vector $ pointing <i>out</i> of the feasible region</li>
             <li><b>Watch the intersection:</b> As you add constraints, see how the feasible region is carved out of the plane</li>
             <li><b>Flip constraints:</b> Interactively reverse the inequality direction ($\le$ to $\ge$) to see the effect</li>
           </ul>
@@ -273,47 +291,60 @@
 
         <h3>2.4 Cones and Important Cone Examples</h3>
 
-        <p>A set $K$ is a <a href="#" class="definition-link">cone</a> if for every $x \in K$ and $\theta \ge 0$, we have $\theta x \in K$ (closed under nonnegative scaling).</p>
+        <p>A set $ is a <a href="#" class="definition-link">cone</a> if for every  \in K$ and $\theta \ge 0$, we have $\theta x \in K$ (closed under nonnegative scaling).</p>
 
-        <p>A <a href="#" class="definition-link">convex cone</a> is a cone that is also convex. Equivalently, $K$ is a convex cone if for all $x, y \in K$ and $\theta_1, \theta_2 \ge 0$:</p>
-        $$
+        <p>A <a href="#" class="definition-link">convex cone</a> is a cone that is also convex. Equivalently, $ is a convex cone if for all , y \in K$ and $\theta_1, \theta_2 \ge 0$:</p>
+        1316
         \theta_1 x + \theta_2 y \in K
-        $$
+        1316
 
-        <h4>The Second-Order Cone (Lorentz Cone)</h4>
-        <p>One of the most important cones in optimization is:</p>
-        $$
+        <figure style="text-align: center; margin: 24px 0; float: left; width: 40%; margin-right: 20px;">
+             <img src="assets/5.png"
+                  alt="Second-Order Cone: 3D \'Ice Cream Cone\' shape."
+                  style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+             <figcaption><i>Figure 2.5:</i> The Second-Order Cone (Ice Cream Cone).</figcaption>
+        </figure>
+
+        <h4>The Second-Order Cone (SOC)</h4>
+        <p>Also called the Lorentz cone or "Ice Cream" cone:</p>
+        1316
         \mathcal{Q}^{n+1} = \{(x, t) \in \mathbb{R}^{n+1} \mid \|x\|_2 \le t\}
-        $$
-        <p>Visualized in 3D, it looks like an ice cream cone. It's the foundation of Second-Order Cone Programming (SOCP).</p>
+        1316
+        <p>This cone is central to Second-Order Cone Programming (SOCP).</p>
+        <br style="clear:both;">
 
-        <h4>The Positive Semidefinite Cone</h4>
+        <h4>The Positive Semidefinite (PSD) Cone</h4>
         <p>The set of all positive semidefinite matrices forms a cone:</p>
-        $$
+        1316
         \mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}
-        $$
-        <p>where $\mathbb{S}^n$ denotes symmetric $n \times n$ matrices. This is the foundation of Semidefinite Programming (SDP).</p>
+        1316
+        <p>where $\mathbb{S}^n$ denotes symmetric  \times n$ matrices. This is the foundation of Semidefinite Programming (SDP).</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/10.png"
+               alt="PSD Cone of 2x2 Matrices: A 3D cone shape representing the set of 2x2 PSD matrices."
+               style="max-width: 50%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 2.6:</i> The PSD cone $\mathbb{S}^2_+$ visualized in $\mathbb{R}^3$. The boundary represents singular matrices.</figcaption>
+        </figure>
 
         <div class="proof-enhanced">
           <h4>Proof: The PSD Cone is Convex</h4>
-          <p>We need to show that if $A \succeq 0$ and $B \succeq 0$, then $\theta A + (1-\theta)B \succeq 0$ for $\theta \in [0,1]$.</p>
+          <p>We need to show that if  \succeq 0$ and  \succeq 0$, then $\theta A + (1-\theta)B \succeq 0$ for $\theta \in [0,1]$.</p>
           <div class="proof-step">
-            <strong>Step 1: Definition Check.</strong> $A \succeq 0$ means $v^\top A v \ge 0$ for all vectors $v$. Similarly $v^\top B v \ge 0$.
+            <strong>Step 1: Definition Check.</strong>  \succeq 0$ means ^\top A v \ge 0$ for all vectors $. Similarly ^\top B v \ge 0$.
           </div>
           <div class="proof-step">
             <strong>Step 2: Linear Combination.</strong> Consider the quadratic form of the combination:
-            $$ v^\top (\theta A + (1-\theta)B) v = v^\top (\theta A) v + v^\top ((1-\theta) B) v $$
-            $$ = \theta (v^\top A v) + (1-\theta) (v^\top B v) $$
+            1316 v^\top (\theta A + (1-\theta)B) v = v^\top (\theta A) v + v^\top ((1-\theta) B) v 1316
+            1316 = \theta (v^\top A v) + (1-\theta) (v^\top B v) 1316
           </div>
           <div class="proof-step">
-            <strong>Step 3: Sign Analysis.</strong> Since $\theta \in [0,1]$, both coefficients are non-negative. Since $v^\top A v \ge 0$ and $v^\top B v \ge 0$, the weighted sum is non-negative.
+            <strong>Step 3: Sign Analysis.</strong> Since $\theta \in [0,1]$, both coefficients are non-negative. Since ^\top A v \ge 0$ and ^\top B v \ge 0$, the weighted sum is non-negative.
           </div>
           <div class="proof-step">
-            <strong>Conclusion:</strong> $v^\top (\theta A + (1-\theta)B) v \ge 0$ for all $v$, so the combination is PSD. Thus $\mathbb{S}^n_+$ is a convex cone.
+            <strong>Conclusion:</strong> ^\top (\theta A + (1-\theta)B) v \ge 0$ for all $, so the combination is PSD. Thus $\mathbb{S}^n_+$ is a convex cone.
           </div>
         </div>
-
-        <!-- Removed Cone Geometry widget as it was redundant/less impactful than others -->
       </section>
 
       <section class="card-v2" id="section-3">
@@ -328,48 +359,69 @@
           <p>The intersection of any collection (finite or infinite) of convex sets is convex.</p>
         </div>
 
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/11.png"
+               alt="Intersection of Convex Sets: Venn diagram showing the intersection of two convex sets is convex."
+               style="max-width: 50%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 3.1:</i> The union of convex sets is rarely convex, but their intersection always is.</figcaption>
+        </figure>
+
         <div class="proof-enhanced">
           <h4>Proof</h4>
 
           <div class="proof-step">
-            <strong>Setup:</strong> Let $\{C_i\}_{i \in I}$ be a collection of convex sets, and let $C = \bigcap_{i \in I} C_i$. Take any $x, y \in C$ and $\theta \in [0,1]$.
+            <strong>Setup:</strong> Let $\{C_i\}_{i \in I}$ be a collection of convex sets, and let  = \bigcap_{i \in I} C_i$. Take any , y \in C$ and $\theta \in [0,1]$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 1:</strong> By definition of intersection, $x \in C_i$ and $y \in C_i$ for all $i \in I$.
+            <strong>Step 1:</strong> By definition of intersection,  \in C_i$ and  \in C_i$ for all  \in I$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 2:</strong> Since each $C_i$ is convex:
-            $$
+            <strong>Step 2:</strong> Since each $ is convex:
+            1316
             \theta x + (1-\theta)y \in C_i \quad \forall i \in I
-            $$
+            1316
           </div>
 
           <div class="proof-step">
-            <strong>Step 3:</strong> Therefore, $\theta x + (1-\theta)y \in \bigcap_{i \in I} C_i = C$, proving $C$ is convex.
+            <strong>Step 3:</strong> Therefore, $\theta x + (1-\theta)y \in \bigcap_{i \in I} C_i = C$, proving $ is convex.
           </div>
         </div>
 
-        <div class="example">
-          <h4>Application: Polyhedra are Convex</h4>
-          <p>A polyhedron $\mathcal{P} = \{x \mid Ax \le b, Cx = d\}$ is an intersection of:</p>
-          <ul>
-            <li>Finitely many halfspaces $\{x \mid a_i^\top x \le b_i\}$ (each convex)</li>
-            <li>Finitely many hyperplanes $\{x \mid c_j^\top x = d_j\}$ (each convex)</li>
-          </ul>
-          <p>By the intersection theorem, $\mathcal{P}$ is convex.</p>
+        <h4>Example: Trigonometric Polynomials</h4>
+        <p>Consider the set of coefficients  \in \mathbb{R}^m$ such that the polynomial (t) = \sum x_k \cos(kt)$ satisfies $|p_x(t)| \le 1$ for all $.
+        1316 S = \{x \mid |c(t)^\top x| \le 1 \ \forall t \} = \bigcap_t \{x \mid -1 \le c(t)^\top x \le 1\} 1316
+        Each constraint for a fixed $ is a "slab" (intersection of two halfspaces). The set $ is the intersection of infinitely many such slabs.</p>
+
+        <div class="row" style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+                <figure style="text-align: center; margin: 0;">
+                  <img src="assets/12.png"
+                       alt="Trig Polynomial Set: Smooth convex shape formed by tangents."
+                       style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+                  <figcaption><i>Figure 3.2:</i> The set $ is convex.</figcaption>
+                </figure>
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <figure style="text-align: center; margin: 0;">
+                  <img src="assets/13.png"
+                       alt="Intersection of Infinite Halfspaces: Lines forming the boundary of a convex set."
+                       style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+                  <figcaption><i>Figure 3.3:</i> Visualizing $ as the intersection of infinitely many halfspaces.</figcaption>
+                </figure>
+            </div>
         </div>
 
         <h3>3.2 Affine Functions Preserve Convexity</h3>
 
-        <p>Let $f : \mathbb{R}^n \to \mathbb{R}^m$ be an affine function, $f(x) = Ax + b$.</p>
+        <p>Let  : \mathbb{R}^n \to \mathbb{R}^m$ be an affine function, (x) = Ax + b$.</p>
 
         <div class="theorem-box">
           <h4>Theorem (Affine Image and Preimage)</h4>
           <ul>
-            <li><b>Image:</b> If $C \subseteq \mathbb{R}^n$ is convex, then $f(C) = \{Ax + b \mid x \in C\} \subseteq \mathbb{R}^m$ is convex.</li>
-            <li><b>Preimage (Inverse Image):</b> If $D \subseteq \mathbb{R}^m$ is convex, then $f^{-1}(D) = \{x \in \mathbb{R}^n \mid Ax + b \in D\}$ is convex.</li>
+            <li><b>Image:</b> If  \subseteq \mathbb{R}^n$ is convex, then (C) = \{Ax + b \mid x \in C\} \subseteq \mathbb{R}^m$ is convex.</li>
+            <li><b>Preimage (Inverse Image):</b> If  \subseteq \mathbb{R}^m$ is convex, then ^{-1}(D) = \{x \in \mathbb{R}^n \mid Ax + b \in D\}$ is convex.</li>
           </ul>
         </div>
 
@@ -377,48 +429,86 @@
           <h4>Proof</h4>
 
           <div class="proof-step">
-            <strong>Image:</strong> Take $y_1, y_2 \in f(C)$, so $y_1 = Ax_1 + b$ and $y_2 = Ax_2 + b$ for some $x_1, x_2 \in C$. For $\theta \in [0,1]$:
-            $$
+            <strong>Image:</strong> Take , y_2 \in f(C)$, so  = Ax_1 + b$ and  = Ax_2 + b$ for some , x_2 \in C$. For $\theta \in [0,1]$:
+            1316
             \theta y_1 + (1-\theta)y_2 = \theta(Ax_1 + b) + (1-\theta)(Ax_2 + b) = A(\theta x_1 + (1-\theta)x_2) + b
-            $$
-            Since $C$ is convex, $\theta x_1 + (1-\theta)x_2 \in C$, so $\theta y_1 + (1-\theta)y_2 \in f(C)$.
+            1316
+            Since $ is convex, $\theta x_1 + (1-\theta)x_2 \in C$, so $\theta y_1 + (1-\theta)y_2 \in f(C)$.
           </div>
 
           <div class="proof-step">
-            <strong>Preimage:</strong> Take $x_1, x_2 \in f^{-1}(D)$, so $Ax_1 + b \in D$ and $Ax_2 + b \in D$. For $\theta \in [0,1]$:
-            $$
+            <strong>Preimage:</strong> Take , x_2 \in f^{-1}(D)$, so  + b \in D$ and  + b \in D$. For $\theta \in [0,1]$:
+            1316
             A(\theta x_1 + (1-\theta)x_2) + b = \theta(Ax_1 + b) + (1-\theta)(Ax_2 + b)
-            $$
-            Since $D$ is convex, the right side is in $D$, so $\theta x_1 + (1-\theta)x_2 \in f^{-1}(D)$.
+            1316
+            Since $ is convex, the right side is in $, so $\theta x_1 + (1-\theta)x_2 \in f^{-1}(D)$.
           </div>
         </div>
 
-        <div class="example">
-          <h4>Application: Ellipsoids are Convex</h4>
-          <p>An ellipsoid $\mathcal{E} = \{x \mid (x - x_c)^\top P^{-1} (x - x_c) \le 1\}$ where $P \succ 0$ can be written as:</p>
-          $$
-          \mathcal{E} = \{x \mid \|P^{-1/2}(x - x_c)\|_2 \le 1\}
-          $$
-          <p>This is the preimage of the Euclidean ball $\{z \mid \|z\|_2 \le 1\}$ (convex) under the affine map $f(x) = P^{-1/2}(x - x_c)$. Since preimages preserve convexity, $\mathcal{E}$ is convex.</p>
+        <div class="row" style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+                <figure style="text-align: center; margin: 0;">
+                  <img src="assets/17.png"
+                       alt="Affine Image: Projection of a polyhedron."
+                       style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+                  <figcaption><i>Figure 3.4:</i> Projection is an affine map. The shadow of a convex object is convex.</figcaption>
+                </figure>
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <figure style="text-align: center; margin: 0;">
+                  <img src="assets/18.png"
+                       alt="Affine Preimage: Slicing a cone to get an ellipse."
+                       style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+                  <figcaption><i>Figure 3.5:</i> Intersecting a cone with a plane (affine preimage) yields a convex cross-section.</figcaption>
+                </figure>
+            </div>
         </div>
+
+        <h4>Example: Image vs Preimage of a Ball</h4>
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/22.png"
+               alt="Image vs Preimage of Unit Ball: Ellipsoid vs Slab."
+               style="max-width: 80%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 3.6:</i> The image of a unit ball under $ is an ellipsoid (left). The preimage under a rank-deficient $ is an unbounded cylinder or slab (right).</figcaption>
+        </figure>
 
         <h3>3.3 Perspective and Linear-Fractional Functions</h3>
 
-        <p>The <b>perspective function</b> $P : \mathbb{R}^{n+1} \to \mathbb{R}^n$ is defined by:</p>
-        $$
+        <p>The <b>perspective function</b>  : \mathbb{R}^{n+1} \to \mathbb{R}^n$ is a central projection:</p>
+        1316
         P(x, t) = x/t, \quad \mathrm{dom}\, P = \{(x, t) \mid t > 0\}
-        $$
+        1316
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/23.png"
+               alt="Pinhole Camera Model: 3D object projecting onto a 2D plane via perspective."
+               style="max-width: 60%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 3.7:</i> The perspective function projects a convex set in 3D onto a convex "shadow" on the plane =1$.</figcaption>
+        </figure>
 
         <div class="theorem-box">
           <h4>Theorem</h4>
-          <p>The perspective function preserves convexity: if $C \subseteq \mathbb{R}^{n+1}$ is convex, then $P(C)$ is convex.</p>
+          <p>The perspective function preserves convexity. If  \subseteq \operatorname{dom} P$ is convex, then (C)$ is convex. If  \subseteq \mathbb{R}^n$ is convex, ^{-1}(D)$ is convex.</p>
         </div>
 
         <p>A <b>linear-fractional function</b> is a composition of perspective with an affine function:</p>
-        $$
+        1316
         f(x) = \frac{Ax + b}{c^\top x + d}
-        $$
-        <p>Linear-fractional functions also preserve convexity.</p>
+        1316
+        <p>Since it is a composition of convexity-preserving operations, it also preserves convexity (on the domain where ^\top x + d > 0$).</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/25.png"
+               alt="Warping the Grid: A linear-fractional map deforming a grid."
+               style="max-width: 80%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 3.8:</i> A linear-fractional map warps space significantly (lines become conics), but it maps convex sets to convex sets.</figcaption>
+        </figure>
+
+        <p><b>Counter-example:</b> A general non-affine map like (x,y) = x/y$ (without the specific structure of perspective) does <b>not</b> preserve convexity in general.</p>
+        <figure style="text-align: center; margin: 24px 0;">
+            <img src="assets/19.png" alt="Division Counterexample" style="max-width: 50%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+            <figcaption><i>Figure 3.9:</i> The division map (x,y)=x/y$ can map a convex square to a non-convex set.</figcaption>
+        </figure>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Laboratory: Convex Geometry</h3>
@@ -429,7 +519,7 @@
             <li><b>Apply Operations:</b> Select multiple sets (Shift+Click) and apply operations like <b>Intersection</b>, <b>Convex Hull</b>, or <b>Minkowski Sum</b>.</li>
             <li><b>Verify Convexity:</b> The lab automatically labels sets as Convex (C) or Non-Convex (NC).</li>
           </ul>
-          <p><i>Key Concept:</i> Notice how the intersection of any two sets (even non-convex ones) doesn't guarantee convexity, but the intersection of <i>convex</i> sets is always convex!</p>
+          <p><i>Key Concept:</i> Notice how the intersection of any two sets (even non-convex ones) doesn\'t guarantee convexity, but the intersection of <i>convex</i> sets is always convex!</p>
           <div id="widget-convex-geometry-lab" style="width: 100%; position: relative;"></div>
         </div>
       </section>
@@ -437,111 +527,31 @@
       <section class="card-v2" id="section-4">
         <h2>4. Separating and Supporting Hyperplane Theorems</h2>
 
-        <p>These theorems are the geometric backbone of duality theory, optimality conditions, and many algorithms in convex optimization.</p>
+        <p>The geometric heart of convex analysis lies in separation: if two convex sets don\'t touch, we can slide a sheet of paper (hyperplane) between them.</p>
 
-        <h3>4.1 The Separating Hyperplane Theorem</h3>
+        <h3>4.1 Separating Hyperplane Theorem</h3>
 
         <div class="theorem-box">
           <h4>Theorem (Separating Hyperplane)</h4>
-          <p>Let $C, D \subseteq \mathbb{R}^n$ be nonempty, disjoint, convex sets. Then there exists a hyperplane that separates them: there exist $a \in \mathbb{R}^n \setminus \{0\}$ and $b \in \mathbb{R}$ such that:</p>
-          $$
+          <p>Let , D \subseteq \mathbb{R}^n$ be nonempty, disjoint, convex sets. Then there exists a hyperplane that separates them: there exist  \in \mathbb{R}^n \setminus \{0\}$ and  \in \mathbb{R}$ such that:</p>
+          1316
           a^\top x \le b \quad \forall x \in C, \qquad a^\top y \ge b \quad \forall y \in D
-          $$
-          <p>If additionally one of $C$ or $D$ is compact, or if $\mathrm{dist}(C, D) > 0$, then we can achieve <b>strict separation</b> (with $<$ and $>$ instead of $\le$ and $\ge$).</p>
+          1316
+          <p>If additionally one of $ or $ is compact, or if $\mathrm{dist}(C, D) > 0$, then we can achieve <b>strict separation</b> (with $<$ and $>$ instead of $\le$ and $\ge$).</p>
         </div>
 
         <figure style="text-align: center; margin: 24px 0;">
-          <img src="../../static/assets/topics/02-convex-sets/separating-hyperplane.svg"
-               alt="Illustration of the Separating Hyperplane Theorem"
-               style="max-width: 100%; height: auto; border-radius: 8px;" />
-          <figcaption><i>Figure 4.1:</i> A hyperplane separating two disjoint convex sets $C$ and $D$.</figcaption>
+          <img src="assets/35.png"
+               alt="Separating Hyperplane: A line strictly separating two convex sets."
+               style="max-width: 60%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 4.1:</i> Strict separation of two disjoint convex sets. The normal $ is related to the vector connecting the closest points.</figcaption>
         </figure>
 
-        <div class="proof-enhanced">
-          <h4>Proof (Constructive via Projection)</h4>
-
-          <div class="proof-step">
-            <strong>Step 1: Form the difference set.</strong> Define $S = C - D = \{c - d \mid c \in C, d \in D\}$. Since $C$ and $D$ are convex, $S$ is convex. Since $C \cap D = \emptyset$, we have $0 \notin S$.
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 2: Project zero onto $S$.</strong> Let $p$ be the unique projection of $0$ onto $\mathrm{cl}(S)$ (the closure). This exists and is unique because closed convex sets have unique projections. Since $0 \notin S$, we have $p \neq 0$.
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 3: Use projection characterization.</strong> For any $z \in S$, the projection property (from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a>) gives:
-            $$
-            p^\top z \ge p^\top p = \|p\|_2^2 > 0
-            $$
-            Writing $z = c - d$ for arbitrary $c \in C, d \in D$:
-            $$
-            p^\top c - p^\top d \ge \|p\|_2^2 > 0 \quad \implies \quad p^\top c \ge p^\top d + \|p\|_2^2
-            $$
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 4: Define the separating hyperplane.</strong> Set $a = p$ and choose:
-            $$
-            b = \frac{1}{2}\left(\inf_{c \in C} a^\top c + \sup_{d \in D} a^\top d\right)
-            $$
-            Then $a^\top c \ge b \ge a^\top d$ for all $c \in C, d \in D$, achieving separation.
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 5: Strict separation.</strong> If $\mathrm{dist}(C, D) = \delta > 0$ or one set is compact, we can choose $b$ strictly between the supremum and infimum to get strict inequalities.
-          </div>
-        </div>
-
-        <h3>4.2 The Supporting Hyperplane Theorem</h3>
-
-        <div class="theorem-box">
-          <h4>Theorem (Supporting Hyperplane)</h4>
-          <p>Let $C \subseteq \mathbb{R}^n$ be a nonempty, closed, convex set, and let $x_0 \in \partial C$ (the boundary of $C$). Then there exists a <b>supporting hyperplane</b> to $C$ at $x_0$: there exists $a \in \mathbb{R}^n \setminus \{0\}$ such that:</p>
-          $$
-          a^\top x \le a^\top x_0 \quad \forall x \in C
-          $$
-          <p>The hyperplane $\{x \mid a^\top x = a^\top x_0\}$ "supports" $C$ at $x_0$—it touches $C$ at $x_0$ and $C$ lies entirely on one side.</p>
-        </div>
-
+        <p>This theorem fails for non-convex sets, as shown below:</p>
         <figure style="text-align: center; margin: 24px 0;">
-          <img src="../../static/assets/topics/02-convex-sets/supporting-hyperplane.svg"
-               alt="Illustration of the Supporting Hyperplane Theorem"
-               style="max-width: 100%; height: auto; border-radius: 8px;" />
-          <figcaption><i>Figure 4.2:</i> A supporting hyperplane to a convex set at a boundary point.</figcaption>
+            <img src="assets/37.png" alt="Separation Failure" style="max-width: 40%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+            <figcaption><i>Figure 4.2:</i> A non-convex set can "hug" another set, making linear separation impossible.</figcaption>
         </figure>
-
-        <div class="proof-enhanced">
-          <h4>Proof (via Projection)</h4>
-
-          <div class="proof-step">
-            <strong>Step 1: Take an exterior point.</strong> Since $x_0 \in \partial C$ (boundary), there exists a sequence $\{y_k\} \subset \mathbb{R}^n \setminus C$ with $y_k \to x_0$.
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 2: Project each $y_k$ onto $C$.</strong> Let $p_k = \Pi_C(y_k)$ be the projection. By the projection characterization:
-            $$
-            (y_k - p_k)^\top (x - p_k) \le 0 \quad \forall x \in C
-            $$
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 3: Pass to the limit.</strong> As $k \to \infty$, we have $p_k \to x_0$ (since $y_k \to x_0$ and projections are continuous). Normalize $a_k = (y_k - p_k) / \|y_k - p_k\|_2$ and extract a convergent subsequence $a_k \to a$ with $\|a\|_2 = 1$. Taking limits:
-            $$
-            a^\top (x - x_0) \le 0 \quad \forall x \in C
-            $$
-            Rearranging: $a^\top x \le a^\top x_0$ for all $x \in C$.
-          </div>
-        </div>
-
-        <div class="insight">
-          <h4>🔑 Why These Theorems Matter</h4>
-          <ul>
-            <li><b>Duality:</b> The separating hyperplane theorem is the geometric foundation of Lagrangian duality (Lecture 05)</li>
-            <li><b>Optimality:</b> The supporting hyperplane theorem leads to first-order optimality conditions (KKT conditions)</li>
-            <li><b>Algorithms:</b> Cutting-plane methods and bundle methods rely on separating hyperplanes</li>
-            <li><b>Subgradients:</b> Supporting hyperplanes define subgradients for non-smooth convex functions</li>
-          </ul>
-        </div>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Explorer: Separating Hyperplanes</h3>
@@ -556,6 +566,57 @@
           <p><i>Connection to optimization:</i> This is exactly what happens in SVM classification—finding the maximum-margin separating hyperplane between two classes of data points!</p>
           <div id="widget-separating-hyperplane" style="width: 100%; height: 450px; position: relative;"></div>
         </div>
+
+        <h3>4.2 The Supporting Hyperplane Theorem</h3>
+
+        <div class="theorem-box">
+          <h4>Theorem (Supporting Hyperplane)</h4>
+          <p>Let  \subseteq \mathbb{R}^n$ be a nonempty, closed, convex set, and let  \in \partial C$ (the boundary of $). Then there exists a <b>supporting hyperplane</b> to $ at $: there exists  \in \mathbb{R}^n \setminus \{0\}$ such that:</p>
+          1316
+          a^\top x \le a^\top x_0 \quad \forall x \in C
+          1316
+          <p>The hyperplane $\{x \mid a^\top x = a^\top x_0\}$ "supports" $ at $—it touches $ at $ and $ lies entirely on one side.</p>
+        </div>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/36.png"
+               alt="Supporting Hyperplane: A tangent plane to a convex body."
+               style="max-width: 50%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 4.3:</i> A supporting hyperplane "supports" the convex set at a boundary point.</figcaption>
+        </figure>
+
+        <div class="proof-enhanced">
+          <h4>Proof (via Projection)</h4>
+
+          <div class="proof-step">
+            <strong>Step 1: Take an exterior point.</strong> Since  \in \partial C$ (boundary), there exists a sequence $\{y_k\} \subset \mathbb{R}^n \setminus C$ with  \to x_0$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Project each $ onto $.</strong> Let  = \Pi_C(y_k)$ be the projection. By the projection characterization:
+            1316
+            (y_k - p_k)^\top (x - p_k) \le 0 \quad \forall x \in C
+            1316
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: Pass to the limit.</strong> As  \to \infty$, we have  \to x_0$ (since  \to x_0$ and projections are continuous). Normalize  = (y_k - p_k) / \|y_k - p_k\|_2$ and extract a convergent subsequence  \to a$ with $\|a\|_2 = 1$. Taking limits:
+            1316
+            a^\top (x - x_0) \le 0 \quad \forall x \in C
+            1316
+            Rearranging: ^\top x \le a^\top x_0$ for all  \in C$.
+          </div>
+        </div>
+
+        <div class="insight">
+          <h4>🔑 Why These Theorems Matter</h4>
+          <ul>
+            <li><b>Duality:</b> The separating hyperplane theorem is the geometric foundation of Lagrangian duality (Lecture 05)</li>
+            <li><b>Optimality:</b> The supporting hyperplane theorem leads to first-order optimality conditions (KKT conditions)</li>
+            <li><b>Algorithms:</b> Cutting-plane methods and bundle methods rely on separating hyperplanes</li>
+            <li><b>Subgradients:</b> Supporting hyperplanes define subgradients for non-smooth convex functions</li>
+          </ul>
+        </div>
       </section>
 
       <section class="card-v2" id="section-5">
@@ -563,46 +624,79 @@
 
         <h3>5.1 Cones and Convex Cones</h3>
 
-        <p>A set $K \subseteq \mathbb{R}^n$ is a <b>cone</b> if $\theta x \in K$ for all $x \in K$ and $\theta \ge 0$ (closed under nonnegative scaling).</p>
+        <p>A set  \subseteq \mathbb{R}^n$ is a <b>cone</b> if $\theta x \in K$ for all  \in K$ and $\theta \ge 0$ (closed under nonnegative scaling).</p>
 
-        <p>A <b>convex cone</b> satisfies both cone and convexity properties. Equivalently, $K$ is a convex cone if:</p>
-        $$
+        <p>A <b>convex cone</b> satisfies both cone and convexity properties. Equivalently, $ is a convex cone if:</p>
+        1316
         x, y \in K, \ \theta_1, \theta_2 \ge 0 \quad \implies \quad \theta_1 x + \theta_2 y \in K
-        $$
+        1316
 
         <h3>5.2 Proper Cones</h3>
 
-        <p>A cone $K$ is <a href="#" class="definition-link">proper</a> if it satisfies four key properties:</p>
+        <p>A cone $ is <a href="#" class="definition-link">proper</a> if it satisfies four key properties:</p>
         <ol>
-          <li><b>Convex:</b> $K$ is a convex cone</li>
-          <li><b>Closed:</b> $K$ contains all its limit points</li>
-          <li><b>Pointed:</b> $K \cap (-K) = \{0\}$ (no line through the origin lies in $K$)</li>
+          <li><b>Convex:</b> $ is a convex cone</li>
+          <li><b>Closed:</b> $ contains all its limit points</li>
+          <li><b>Pointed:</b>  \cap (-K) = \{0\}$ (no line through the origin lies in $)</li>
           <li><b>Solid:</b> $\mathrm{int}(K) \neq \emptyset$ (has nonempty interior)</li>
         </ol>
 
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/27.png"
+               alt="Cone Zoo: Comparison of proper (ice cream), non-pointed (wedge), and non-solid (flat) cones."
+               style="max-width: 90%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 5.1:</i> To be "proper," a cone must not be flat (solid) and must not contain full lines (pointed).</figcaption>
+        </figure>
+
         <p>Proper cones can define <b>generalized inequalities</b> (partial orders) on $\mathbb{R}^n$.</p>
+        <p>Examples of proper cones:
+        <ul>
+            <li>$\mathbb{R}^n_+$ (Nonnegative orthant)</li>
+            <li>$\mathcal{Q}^{n+1}$ (Second-order cone)</li>
+            <li>$\mathbb{S}^n_+$ (PSD cone)</li>
+            <li>Cone of nonnegative polynomials on 1$</li>
+        </ul>
+        </p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+             <img src="assets/28.png" alt="Nonnegative Polynomial Cone" style="max-width: 50%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+             <figcaption><i>Figure 5.2:</i> The cone of coefficients for polynomials that are nonnegative on an interval.</figcaption>
+        </figure>
 
         <h3>5.3 The Dual Cone</h3>
 
-        <p>The <a href="#" class="definition-link">dual cone</a> of $K$ is defined as:</p>
-        $$
+        <p>The <a href="#" class="definition-link">dual cone</a> of $ is defined as:</p>
+        1316
         K^* = \{y \in \mathbb{R}^n \mid y^\top x \ge 0 \ \forall x \in K\}
-        $$
-        <p>It consists of all vectors that make a nonnegative inner product with every vector in $K$.</p>
+        1316
+        <p>It consists of all vectors that make a nonnegative inner product with every vector in $.</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/32.png"
+               alt="Dual Cone Geometry: 2D example of a cone and its dual."
+               style="max-width: 50%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 5.3:</i> Geometrically, ^*$ contains normals to hyperplanes that support $ at the origin.</figcaption>
+        </figure>
 
         <div class="theorem-box">
           <h4>Properties of Dual Cones</h4>
           <ul>
-            <li>$K^*$ is always closed and convex (even if $K$ is not)</li>
-            <li><b>Bipolar theorem:</b> If $K$ is a closed convex cone, then $(K^*)^* = K$</li>
-            <li><b>Reverses inclusion:</b> $K_1 \subseteq K_2 \implies K_2^* \subseteq K_1^*$</li>
-            <li><b>Intersection/Sum duality:</b> $(K_1 + K_2)^* = K_1^* \cap K_2^*$ and $(K_1 \cap K_2)^* = \mathrm{cl}(K_1^* + K_2^*)$</li>
+            <li>^*$ is always closed and convex (even if $ is not)</li>
+            <li><b>Bipolar theorem:</b> If $ is a closed convex cone, then ^* = K$</li>
+            <li><b>Reverses inclusion:</b>  \subseteq K_2 \implies K_2^* \subseteq K_1^*$</li>
+            <li><b>Intersection/Sum duality:</b> ^* = K_1^* \cap K_2^*$ and ^* = \mathrm{cl}(K_1^* + K_2^*)$</li>
           </ul>
         </div>
 
         <h3>5.4 Self-Dual Cones</h3>
 
-        <p>Some of the most important cones in optimization are <b>self-dual</b>: $K^* = K$.</p>
+        <p>Some of the most important cones in optimization are <b>self-dual</b>: ^* = K$.</p>
+        <p>Remarkably, the Orthant, SOC, and PSD cones are all self-dual.</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+             <img src="assets/33.png" alt="Self-Dual Cones" style="max-width: 60%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+             <figcaption><i>Figure 5.4:</i> The "Big Three" self-dual cones.</figcaption>
+        </figure>
 
         <h4>Nonnegative Orthant</h4>
         <p>$\mathbb{R}^n_+ = \{x \in \mathbb{R}^n \mid x \ge 0\}$ is self-dual.</p>
@@ -610,14 +704,14 @@
         <div class="proof-enhanced">
           <h4>Proof of Self-Duality</h4>
           <div class="proof-step">
-            <strong>($\subseteq$):</strong> If $y \in \mathbb{R}^n_+$, then for any $x \in \mathbb{R}^n_+$:
-            $$
+            <strong>($\subseteq$):</strong> If  \in \mathbb{R}^n_+$, then for any  \in \mathbb{R}^n_+$:
+            1316
             y^\top x = \sum_{i=1}^n y_i x_i \ge 0
-            $$
-            (since all terms are nonnegative). Thus $y \in (\mathbb{R}^n_+)^*$.
+            1316
+            (since all terms are nonnegative). Thus  \in (\mathbb{R}^n_+)^*$.
           </div>
           <div class="proof-step">
-            <strong>($\supseteq$):</strong> If $y \in (\mathbb{R}^n_+)^*$, then $y^\top x \ge 0$ for all $x \ge 0$. Taking $x = e_i$ (standard basis vector), we get $y_i \ge 0$ for all $i$. Thus $y \in \mathbb{R}^n_+$.
+            <strong>($\supseteq$):</strong> If  \in (\mathbb{R}^n_+)^*$, then ^\top x \ge 0$ for all  \ge 0$. Taking  = e_i$ (standard basis vector), we get  \ge 0$ for all $. Thus  \in \mathbb{R}^n_+$.
           </div>
         </div>
 
@@ -627,20 +721,20 @@
         <div class="proof-enhanced">
           <h4>Proof of Self-Duality</h4>
           <div class="proof-step">
-            <strong>($\subseteq$):</strong> If $(y, s) \in \mathcal{Q}$ (so $\|y\|_2 \le s$) and $(x, t) \in \mathcal{Q}$ (so $\|x\|_2 \le t$), then by Cauchy-Schwarz:
-            $$
+            <strong>($\subseteq$):</strong> If  \in \mathcal{Q}$ (so $\|y\|_2 \le s$) and  \in \mathcal{Q}$ (so $\|x\|_2 \le t$), then by Cauchy-Schwarz:
+            1316
             y^\top x + st \ge -\|y\|_2 \|x\|_2 + st \ge -st + st = 0
-            $$
-            Thus $(y, s) \in \mathcal{Q}^*$.
+            1316
+            Thus  \in \mathcal{Q}^*$.
           </div>
           <div class="proof-step">
-            <strong>($\supseteq$):</strong> If $(y, s) \notin \mathcal{Q}$, then $\|y\|_2 > s$. We show $(y, s) \notin \mathcal{Q}^*$ by finding $(x, t) \in \mathcal{Q}$ with $y^\top x + st < 0$:
+            <strong>($\supseteq$):</strong> If  \notin \mathcal{Q}$, then $\|y\|_2 > s$. We show  \notin \mathcal{Q}^*$ by finding  \in \mathcal{Q}$ with ^\top x + st < 0$:
             <ul>
-              <li>If $s < 0$: Take $(x, t) = (0, 1) \in \mathcal{Q}$. Then $y^\top x + st = s < 0$.</li>
-              <li>If $s \ge 0$ but $\|y\|_2 > s$: Take $(x, t) = (-y/\|y\|_2, 1) \in \mathcal{Q}$. Then:
-                $$
+              <li>If  < 0$: Take  = (0, 1) \in \mathcal{Q}$. Then ^\top x + st = s < 0$.</li>
+              <li>If  \ge 0$ but $\|y\|_2 > s$: Take  = (-y/\|y\|_2, 1) \in \mathcal{Q}$. Then:
+                1316
                 y^\top x + st = -\|y\|_2 + s < 0
-                $$
+                1316
               </li>
             </ul>
           </div>
@@ -649,34 +743,73 @@
         <h4>Positive Semidefinite Cone</h4>
         <p>$\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$ is self-dual (with the trace inner product $\langle X, Y \rangle = \mathrm{tr}(X^\top Y)$).</p>
 
+        <p>However, norm cones are dual to the dual-norm cone ($ is dual to \infty$).</p>
+        <figure style="text-align: center; margin: 24px 0;">
+             <img src="assets/34.png" alt="Dual of Norm Cones" style="max-width: 60%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+             <figcaption><i>Figure 5.5:</i> The $ norm cone (inverted pyramid) is dual to the \infty$ norm cone (rotated pyramid).</figcaption>
+        </figure>
+
         <h3>5.5 Generalized Inequalities</h3>
 
-        <p>A proper cone $K$ defines a partial order $\preceq_K$ on $\mathbb{R}^n$:</p>
-        $$
+        <p>A proper cone $ defines a partial order $\preceq_K$ on $\mathbb{R}^n$:</p>
+        1316
         x \preceq_K y \quad \iff \quad y - x \in K
-        $$
+        1316
 
-        <p>This generalizes the standard componentwise order ($\mathbb{R}^n_+$ gives $x \le y$) and the Loewner order ($\mathbb{S}^n_+$ gives $X \preceq Y$).</p>
+        <p>This generalizes the standard componentwise order ($\mathbb{R}^n_+$ gives  \le y$) and the Loewner order ($\mathbb{S}^n_+$ gives  \preceq Y$).</p>
+
+        <div class="row" style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+                <figure style="text-align: center; margin: 0;">
+                  <img src="assets/29.png"
+                       alt="Visualizing Generalized Inequality: A cone K rooted at the origin and an inverted cone at y showing the region x <= y."
+                       style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+                  <figcaption><i>Figure 5.6:</i> Visualizing  \preceq_K y$. $ must lie in the "shadow" of $ cast by himBHsK$.</figcaption>
+                </figure>
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <figure style="text-align: center; margin: 0;">
+                  <img src="assets/30.png"
+                       alt="Matrix Inequality: PSD cone ordering."
+                       style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+                  <figcaption><i>Figure 5.7:</i> Matrix inequality  \preceq B$ means -A$ is in the PSD cone.</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <h4>Minimum vs. Minimal</h4>
+        <p>Because the order is partial, we distinguish between:</p>
+        <ul>
+            <li><b>Minimum:</b>  \in S$ is the minimum if  \preceq_K y$ for <i>all</i>  \in S$. (Unique if it exists).</li>
+            <li><b>Minimal:</b>  \in S$ is minimal if no  \in S$ satisfies  \preceq_K x$ (except $ itself).</li>
+        </ul>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/31.png"
+               alt="Minimum vs Minimal: A set with a clear minimum point vs a Pareto frontier of minimal points."
+               style="max-width: 80%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 5.8:</i> Left: $ is the minimum. Right: The red boundary is the set of minimal elements (Pareto frontier).</figcaption>
+        </figure>
 
         <div class="example">
           <h4>Example: Matrix Inequalities</h4>
-          <p>Consider the inequality $A \preceq B$ where $A, B \in \mathbb{S}^n$. This is defined by the PSD cone $K = \mathbb{S}^n_+$.
-          $$ A \preceq B \iff B - A \in \mathbb{S}^n_+ \iff B - A \succeq 0 $$
+          <p>Consider the inequality  \preceq B$ where , B \in \mathbb{S}^n$. This is defined by the PSD cone  = \mathbb{S}^n_+$.
+          1316 A \preceq B \iff B - A \in \mathbb{S}^n_+ \iff B - A \succeq 0 1316
           <b>Concrete Example:</b>
-          Let $A = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$ and $B = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$.
-          $$ B - A = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix} $$
-          Is $B - A \succeq 0$? The eigenvalues of $\begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}$ are $2$ and $0$. Since they are non-negative, $B - A$ is PSD. Thus $A \preceq B$.
-          <br>Note that generalized inequalities are <b>partial</b> orders. It is possible that neither $X \preceq Y$ nor $Y \preceq X$ holds (matrices can be incomparable).</p>
+          Let  = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$ and  = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$.
+          1316 B - A = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix} 1316
+          Is  - A \succeq 0127 The eigenvalues of $\begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}$ are $ and -bash$. Since they are non-negative,  - A$ is PSD. Thus  \preceq B$.
+          <br>Note that generalized inequalities are <b>partial</b> orders. It is possible that neither  \preceq Y$ nor  \preceq X$ holds (matrices can be incomparable).</p>
         </div>
 
         <div class="theorem-box">
           <h4>Properties of Generalized Inequalities</h4>
           <ul>
-            <li><b>Reflexive:</b> $x \preceq_K x$ (since $0 \in K$)</li>
-            <li><b>Antisymmetric:</b> $x \preceq_K y$ and $y \preceq_K x \implies x = y$ (by pointedness)</li>
-            <li><b>Transitive:</b> $x \preceq_K y \preceq_K z \implies x \preceq_K z$ (by convexity)</li>
-            <li><b>Preserved by addition:</b> $x \preceq_K y \implies x + z \preceq_K y + z$</li>
-            <li><b>Preserved by nonnegative scaling:</b> $x \preceq_K y, \alpha \ge 0 \implies \alpha x \preceq_K \alpha y$</li>
+            <li><b>Reflexive:</b>  \preceq_K x$ (since -bash \in K$)</li>
+            <li><b>Antisymmetric:</b>  \preceq_K y$ and  \preceq_K x \implies x = y$ (by pointedness)</li>
+            <li><b>Transitive:</b>  \preceq_K y \preceq_K z \implies x \preceq_K z$ (by convexity)</li>
+            <li><b>Preserved by addition:</b>  \preceq_K y \implies x + z \preceq_K y + z$</li>
+            <li><b>Preserved by nonnegative scaling:</b>  \preceq_K y, \alpha \ge 0 \implies \alpha x \preceq_K \alpha y$</li>
           </ul>
         </div>
       </section>
@@ -688,32 +821,32 @@
 
         <h3>6.1 Basic Topological Definitions</h3>
 
-        <p>Let $C \subseteq \mathbb{R}^n$ be any set.</p>
+        <p>Let  \subseteq \mathbb{R}^n$ be any set.</p>
 
         <ul>
-          <li><b>Closure</b> $\mathrm{cl}(C)$: The set of all limits of convergent sequences in $C$. It's the smallest closed set containing $C$.</li>
-          <li><b>Interior</b> $\mathrm{int}(C)$: Points with some open ball fully contained in $C$. Intuitively, "strictly inside" $C$.</li>
-          <li><b>Boundary</b> $\partial C = \mathrm{cl}(C) \setminus \mathrm{int}(C)$: The "edge" of $C$.</li>
-          <li><b>Affine hull</b> $\mathrm{aff}(C)$: The smallest affine set containing $C$.</li>
-          <li><b>Relative interior</b> $\mathrm{ri}(C)$: The interior of $C$ <i>relative to</i> $\mathrm{aff}(C)$. Points strictly inside when viewed in the affine hull.</li>
+          <li><b>Closure</b> $\mathrm{cl}(C)$: The set of all limits of convergent sequences in $. It\'s the smallest closed set containing $.</li>
+          <li><b>Interior</b> $\mathrm{int}(C)$: Points with some open ball fully contained in $. Intuitively, "strictly inside" $.</li>
+          <li><b>Boundary</b> $\partial C = \mathrm{cl}(C) \setminus \mathrm{int}(C)$: The "edge" of $.</li>
+          <li><b>Affine hull</b> $\mathrm{aff}(C)$: The smallest affine set containing $.</li>
+          <li><b>Relative interior</b> $\mathrm{ri}(C)$: The interior of $ <i>relative to</i> $\mathrm{aff}(C)$. Points strictly inside when viewed in the affine hull.</li>
         </ul>
 
         <div class="example">
           <h4>Example 1: Line Segment in $\mathbb{R}^2$</h4>
-          <p>Consider $C = \{(t, 0) \mid 0 \le t \le 1\}$ (a line segment on the $x$-axis).</p>
+          <p>Consider  = \{(t, 0) \mid 0 \le t \le 1\}$ (a line segment on the himBHsaxis).</p>
           <ul>
             <li>$\mathrm{int}(C) = \emptyset$ (no open ball in $\mathbb{R}^2$ fits inside a line)</li>
-            <li>$\mathrm{aff}(C) = \{(t, 0) \mid t \in \mathbb{R}\}$ (the entire $x$-axis)</li>
-            <li>$\mathrm{ri}(C) = \{(t, 0) \mid 0 < t < 1\}$ (interior relative to the $x$-axis)</li>
+            <li>$\mathrm{aff}(C) = \{(t, 0) \mid t \in \mathbb{R}\}$ (the entire himBHsaxis)</li>
+            <li>$\mathrm{ri}(C) = \{(t, 0) \mid 0 < t < 1\}$ (interior relative to the himBHsaxis)</li>
           </ul>
         </div>
 
         <div class="example">
           <h4>Example 1b: A Flat Disk in 3D</h4>
-          <p>Consider a flat circular disk floating in 3D space: $C = \{(x, y, 0) \mid x^2 + y^2 \le 1\}$.</p>
+          <p>Consider a flat circular disk floating in 3D space:  = \{(x, y, 0) \mid x^2 + y^2 \le 1\}$.</p>
           <ul>
             <li><b>Interior:</b> Empty ($\emptyset$). A 3D ball has volume, but this disk is flat, so no 3D ball fits inside it.</li>
-            <li><b>Affine Hull:</b> The $xy$-plane ($z=0$).</li>
+            <li><b>Affine Hull:</b> The himBHsplane (=0$).</li>
             <li><b>Relative Interior:</b> The disk without its boundary circle: $\{(x, y, 0) \mid x^2 + y^2 < 1\}$. Viewed "relative" to the plane it lives in, it has an interior!</li>
           </ul>
         </div>
@@ -733,14 +866,14 @@
         <div class="theorem-box">
           <h4>Facts About Convex Sets</h4>
           <ol>
-            <li>$\mathrm{cl}(C)$, $\mathrm{int}(C)$ (if nonempty), and $\mathrm{ri}(C)$ are all convex when $C$ is convex.</li>
-            <li>If $C$ is convex with nonempty interior, then $\mathrm{cl}(C) = \mathrm{cl}(\mathrm{int}(C))$ and $\mathrm{int}(C) = \mathrm{int}(\mathrm{cl}(C))$.</li>
+            <li>$\mathrm{cl}(C)$, $\mathrm{int}(C)$ (if nonempty), and $\mathrm{ri}(C)$ are all convex when $ is convex.</li>
+            <li>If $ is convex with nonempty interior, then $\mathrm{cl}(C) = \mathrm{cl}(\mathrm{int}(C))$ and $\mathrm{int}(C) = \mathrm{int}(\mathrm{cl}(C))$.</li>
             <li><b>Relative interior of intersection:</b> If $\mathrm{ri}(C) \cap \mathrm{ri}(D) \neq \emptyset$, then:
-              $$
+              1316
               \mathrm{ri}(C \cap D) = \mathrm{ri}(C) \cap \mathrm{ri}(D)
-              $$
+              1316
             </li>
-            <li><b>Affine functions:</b> If $f(x) = Ax + b$, then $f(\mathrm{ri}(C)) = \mathrm{ri}(f(C))$ for convex $C$.</li>
+            <li><b>Affine functions:</b> If (x) = Ax + b$, then (\mathrm{ri}(C)) = \mathrm{ri}(f(C))$ for convex $.</li>
           </ol>
         </div>
 
@@ -748,10 +881,20 @@
 
         <p>Relative interior is crucial for:</p>
         <ul>
-          <li><b>Constraint qualifications:</b> Slater's condition for strong duality (Lecture 05) requires a point in $\mathrm{ri}(\mathrm{dom}(f_0))$</li>
+          <li><b>Constraint qualifications:</b> Slater\'s condition for strong duality (Lecture 05) requires a point in $\mathrm{ri}(\mathrm{dom}(f_0))$</li>
           <li><b>Optimality conditions:</b> KKT conditions require regularity at boundary points</li>
           <li><b>Interior-point methods:</b> Algorithms that approach optimality from the relative interior</li>
         </ul>
+
+        <h3>6.4 Indicator Functions and Sublevel Sets</h3>
+        <p>A convex set $ can be represented by its indicator function $\delta_C(x)$ (0 if  \in C$, $\infty$ otherwise). $\delta_C$ is a convex function.</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/14.png"
+               alt="Indicator Function: A function that is 0 on a convex set and infinity elsewhere."
+               style="max-width: 50%; height: auto; border-radius: 8px; border: 1px solid #ddd;" />
+          <figcaption><i>Figure 6.1:</i> The indicator function effectively turns a constraint set into an objective term.</figcaption>
+        </figure>
       </section>
 
       <!-- SECTION 7: EXERCISES -->
@@ -761,277 +904,40 @@
         <p>These problems consolidate all exercises from throughout the lecture and add additional practice.</p>
 
         <div class="problem">
-          <h3>P2.1 — Convexity of Distance Set</h3>
-          <p>Show that the set of points closer to a given point $x_0$ than to another point $y_0$, defined as:</p>
-          $$
-          C = \{x \in \mathbb{R}^n \mid \|x - x_0\|_2 \le \|x - y_0\|_2\}
-          $$
-          <p>is a convex set.</p>
+          <h3>P2.1 — The Hyperbolic Cone</h3>
+          <p>Consider the set  = \{x \in \mathbb{R}^n \mid x^\top P x \le (c^\top x)^2, c^\top x \ge 0\}$ where  \in \mathbb{S}^n_+$. Show that this "Hyperbolic Cone" is convex.</p>
+
+          <figure style="text-align: center; margin: 12px 0;">
+               <img src="assets/20.png" alt="Hyperbolic Cone" style="max-width: 40%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 7.1:</i> The Hyperbolic cone is a stack of ellipses.</figcaption>
+          </figure>
 
           <div class="solution">
             <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Step 1: Square both sides.</strong> Since both sides are non-negative, squaring preserves the inequality:
-              $$
-              \|x - x_0\|_2^2 \le \|x - y_0\|_2^2
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Expand.</strong>
-              $$
-              (x - x_0)^\top (x - x_0) \le (x - y_0)^\top (x - y_0)
-              $$
-              $$
-              x^\top x - 2x_0^\top x + x_0^\top x_0 \le x^\top x - 2y_0^\top x + y_0^\top y_0
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Simplify.</strong> The $x^\top x$ terms cancel:
-              $$
-              -2x_0^\top x + \|x_0\|_2^2 \le -2y_0^\top x + \|y_0\|_2^2
-              $$
-              $$
-              2(y_0 - x_0)^\top x \le \|y_0\|_2^2 - \|x_0\|_2^2
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 4: Recognize as halfspace.</strong> This is a linear inequality $a^\top x \le b$ where $a = 2(y_0 - x_0)$ and $b = \|y_0\|_2^2 - \|x_0\|_2^2$. A halfspace is convex, therefore $C$ is convex.
-            </div>
+            <p>We can rewrite the condition ^\top P x \le (c^\top x)^2$ as $\|P^{1/2}x\|_2 \le c^\top x$. This is the preimage of the Second-Order Cone $\mathcal{Q}$ under the linear map (x) = (P^{1/2}x, c^\top x)$. Since the SOC is convex and linear preimages preserve convexity, $ is convex.</p>
           </div>
         </div>
 
         <div class="problem">
-          <h3>P2.2 — Dual of a Subspace</h3>
-          <p>Let $V \subseteq \mathbb{R}^n$ be a linear subspace. Prove that its dual cone is the orthogonal complement:</p>
-          $$
-          V^* = V^\perp = \{y \in \mathbb{R}^n \mid y^\top x = 0 \ \forall x \in V\}
-          $$
+          <h3>P2.2 — Linear Matrix Inequalities (LMI)</h3>
+          <p>Show that the set $\{x \mid x_1 A_1 + \dots + x_n A_n \preceq B\}$ is convex.</p>
+
+          <figure style="text-align: center; margin: 12px 0;">
+               <img src="assets/21.png" alt="LMI Feasible Region" style="max-width: 40%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 7.2:</i> A Spectrahedron: the feasible set of an LMI.</figcaption>
+          </figure>
 
           <div class="solution">
             <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Step 1: Recall definition.</strong> $V^* = \{y \mid y^\top x \ge 0 \ \forall x \in V\}$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Show $V^\perp \subseteq V^*$.</strong> If $y \in V^\perp$, then $y^\top x = 0$ for all $x \in V$. Since $0 \ge 0$, we have $y \in V^*$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Show $V^* \subseteq V^\perp$.</strong> Suppose $y \in V^*$, so $y^\top x \ge 0$ for all $x \in V$. Since $V$ is a subspace, if $x \in V$, then $-x \in V$ as well. Therefore:
-              $$
-              y^\top (-x) \ge 0 \quad \implies \quad y^\top x \le 0
-              $$
-              The only way for both $y^\top x \ge 0$ and $y^\top x \le 0$ to hold is if $y^\top x = 0$ for all $x \in V$. Thus $y \in V^\perp$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> $V^* = V^\perp$.
-            </div>
+            <p>Define the affine map (x) = B - \sum x_i A_i$. The set is ^{-1}(\mathbb{S}^n_+)$. Since the PSD cone is convex and affine preimages preserve convexity, the LMI feasible set is convex.</p>
           </div>
         </div>
 
         <div class="problem">
-          <h3>P2.3 — Convexity of Quadratic Sublevel Set</h3>
-          <p>Show that the set:</p>
-          $$
-          C = \{x \in \mathbb{R}^n \mid x^\top Q x + c^\top x + d \le 0\}
-          $$
-          <p>is convex when $Q \in \mathbb{S}^n_+$ (positive semidefinite).</p>
-
-          <div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Step 1: Identify as sublevel set.</strong> Define $f(x) = x^\top Q x + c^\top x + d$. The Hessian is $\nabla^2 f(x) = 2Q \succeq 0$ (PSD), so $f$ is convex.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Setup convexity proof.</strong> Take $x, y \in C$ and $\theta \in [0,1]$. This means $f(x) \le 0$ and $f(y) \le 0$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Apply convexity of $f$.</strong>
-              $$
-              f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \le \theta \cdot 0 + (1-\theta) \cdot 0 = 0
-              $$
-              Therefore, $\theta x + (1-\theta)y \in C$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> $C$ is convex (sublevel sets of convex functions are convex).
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P2.4 — Relative Interior of the Simplex</h3>
-          <p>Let $\Delta^n = \{x \in \mathbb{R}^n \mid x \ge 0, \mathbf{1}^\top x = 1\}$ be the standard simplex. Show that:</p>
-          $$
-          \mathrm{ri}(\Delta^n) = \{x \in \mathbb{R}^n \mid x > 0, \mathbf{1}^\top x = 1\}
-          $$
-
-          <div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Step 1: Identify affine hull.</strong> $\mathrm{aff}(\Delta^n) = \{x \in \mathbb{R}^n \mid \mathbf{1}^\top x = 1\}$ (the hyperplane, without requiring $x \ge 0$).
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Interior relative to affine hull.</strong> A point $x \in \Delta^n$ is in $\mathrm{ri}(\Delta^n)$ if there exists $\varepsilon > 0$ such that the ball $B(x, \varepsilon) \cap \mathrm{aff}(\Delta^n)$ is contained in $\Delta^n$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Necessity ($\Rightarrow$).</strong> If $x_i = 0$ for some $i$, then any ball around $x$ in the hyperplane contains points with $x_i < 0$, which violates $\Delta^n \subseteq \{x \ge 0\}$. Thus, all coordinates must be strictly positive.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 4: Sufficiency ($\Leftarrow$).</strong> If $x > 0$ with $\mathbf{1}^\top x = 1$, let $\varepsilon = \min_i x_i > 0$. For any $y \in B(x, \varepsilon/2) \cap \mathrm{aff}(\Delta^n)$:
-              $$
-              y_i \ge x_i - \|y - x\|_\infty \ge x_i - \varepsilon/2 > 0
-              $$
-              Thus $y \in \Delta^n$, so $x \in \mathrm{ri}(\Delta^n)$.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P2.5 — Separation by Projection</h3>
-          <p>Let $C$ be a nonempty closed convex set and $y \notin C$. Prove that the vector $a = y - \Pi_C(y)$ (where $\Pi_C$ denotes projection onto $C$) defines a strictly separating hyperplane:</p>
-          $$
-          a^\top x \le a^\top p < a^\top y \quad \forall x \in C
-          $$
-          <p>where $p = \Pi_C(y)$.</p>
-
-          <div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Step 1: Projection characterization.</strong> By the projection theorem (Lecture 00), for all $x \in C$:
-              $$
-              (y - p)^\top (x - p) \le 0
-              $$
-              Expanding with $a = y - p$:
-              $$
-              a^\top x - a^\top p \le 0 \quad \implies \quad a^\top x \le a^\top p
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Strict inequality at $y$.</strong> Since $p \neq y$ (because $y \notin C$), we have $a = y - p \neq 0$, so $\|a\|_2 > 0$. Then:
-              $$
-              a^\top y = a^\top p + a^\top (y - p) = a^\top p + \|a\|_2^2 > a^\top p
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> Combining both inequalities: $a^\top x \le a^\top p < a^\top y$ for all $x \in C$, giving strict separation.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P2.6 — Self-Duality of Second-Order Cone</h3>
-          <p>Prove that the second-order cone $\mathcal{Q} = \{(x, t) \in \mathbb{R}^{n+1} \mid \|x\|_2 \le t\}$ is self-dual: $\mathcal{Q}^* = \mathcal{Q}$.</p>
-
-          <div class="solution">
-            <h4>Solution</h4>
-            <p>We prove both inclusions.</p>
-
-            <div class="proof-step">
-              <strong>($\subseteq$): $\mathcal{Q} \subseteq \mathcal{Q}^*$.</strong> Let $(y, s) \in \mathcal{Q}$, so $\|y\|_2 \le s$. For any $(x, t) \in \mathcal{Q}$ (so $\|x\|_2 \le t$):
-              $$
-              y^\top x + st \ge -|y^\top x| + st \ge -\|y\|_2 \|x\|_2 + st \ge -st + st = 0
-              $$
-              (using Cauchy-Schwarz and the cone constraints). Thus $(y, s) \in \mathcal{Q}^*$.
-            </div>
-
-            <div class="proof-step">
-              <strong>($\supseteq$): $\mathcal{Q}^* \subseteq \mathcal{Q}$.</strong> Let $(y, s) \in \mathcal{Q}^*$. We must show $\|y\|_2 \le s$.
-              Assume for contradiction that $\|y\|_2 > s$.
-              <ul>
-                <li><b>Case 1:</b> If $s < 0$, take $(x, t) = (0, 1) \in \mathcal{Q}$. Then $y^\top x + st = s < 0$, contradicting $(y, s) \in \mathcal{Q}^*$.</li>
-                <li><b>Case 2:</b> If $s \ge 0$ but $\|y\|_2 > s$, take $(x, t) = (-y/\|y\|_2, 1) \in \mathcal{Q}$ (since $\|x\|_2 = 1 = t$). Then:
-                  $$
-                  y^\top x + st = y^\top(-y/\|y\|_2) + s = -\|y\|_2 + s < 0
-                  $$
-                  contradicting $(y, s) \in \mathcal{Q}^*$.
-                </li>
-              </ul>
-              Therefore, $\|y\|_2 \le s$, so $(y, s) \in \mathcal{Q}$.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P2.7 — Dual Cone Identities</h3>
-          <p>For closed convex cones $K_1, K_2 \subseteq \mathbb{R}^n$, prove:</p>
-          $$
-          (K_1 + K_2)^* = K_1^* \cap K_2^*
-          $$
-
-          <div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>($\supseteq$):</strong> Let $y \in K_1^* \cap K_2^*$. For any $x \in K_1 + K_2$, we can write $x = x_1 + x_2$ where $x_1 \in K_1, x_2 \in K_2$. Then:
-              $$
-              y^\top x = y^\top(x_1 + x_2) = y^\top x_1 + y^\top x_2 \ge 0 + 0 = 0
-              $$
-              (since $y \in K_1^*$ and $y \in K_2^*$). Thus $y \in (K_1 + K_2)^*$.
-            </div>
-
-            <div class="proof-step">
-              <strong>($\subseteq$):</strong> Let $y \in (K_1 + K_2)^*$. Then $y^\top(x_1 + x_2) \ge 0$ for all $x_1 \in K_1, x_2 \in K_2$. Taking $x_2 = 0$:
-              $$
-              y^\top x_1 \ge 0 \quad \forall x_1 \in K_1 \quad \implies \quad y \in K_1^*
-              $$
-              Similarly, taking $x_1 = 0$ gives $y \in K_2^*$. Thus $y \in K_1^* \cap K_2^*$.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P2.8 — Generalized Inequality Properties</h3>
-          <p>Let $K$ be a proper cone defining a generalized inequality $\preceq_K$. Prove that $\preceq_K$ is:</p>
-          <ol type="a">
-            <li>Reflexive: $x \preceq_K x$</li>
-            <li>Antisymmetric: $x \preceq_K y$ and $y \preceq_K x \implies x = y$</li>
-            <li>Transitive: $x \preceq_K y \preceq_K z \implies x \preceq_K z$</li>
-          </ol>
-
-          <div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>(a) Reflexive:</strong> $x \preceq_K x$ means $x - x = 0 \in K$. Since every cone contains the origin, this is true.
-            </div>
-
-            <div class="proof-step">
-              <strong>(b) Antisymmetric:</strong> If $x \preceq_K y$ and $y \preceq_K x$, then $y - x \in K$ and $x - y \in K$. Thus $(y - x) \in K \cap (-K)$. By pointedness (property of proper cones), $K \cap (-K) = \{0\}$, so $y - x = 0$, i.e., $x = y$.
-            </div>
-
-            <div class="proof-step">
-              <strong>(c) Transitive:</strong> If $x \preceq_K y$ and $y \preceq_K z$, then $y - x \in K$ and $z - y \in K$. Since $K$ is a convex cone (closed under addition):
-              $$
-              (z - y) + (y - x) = z - x \in K
-              $$
-              Thus $x \preceq_K z$.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P2.9 — Voronoi Regions</h3>
-          <p>Let $x_1, \ldots, x_k \in \mathbb{R}^n$ be a set of points. The Voronoi region associated with $x_i$ is defined as the set of points in $\mathbb{R}^n$ that are closer to $x_i$ than to any other point $x_j$:
-          $$ V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2 \ \forall j \neq i\} $$
-          Prove that $V_i$ is a polyhedron (and thus a convex set).</p>
+          <h3>P2.3 — Voronoi Regions</h3>
+          <p>Let , \ldots, x_k \in \mathbb{R}^n$ be a set of points. The Voronoi region associated with $ is defined as the set of points in $\mathbb{R}^n$ that are closer to $ than to any other point $:
+          1316 V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2 \ \forall j \neq i\} 1316
+          Prove that $ is a polyhedron (and thus a convex set).</p>
 
           <div class="solution">
             <h4>Solution</h4>
@@ -1039,73 +945,70 @@
             <div class="proof-step">
               <strong>Step 1: Analyze pairwise condition.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ is equivalent to $\|x - x_i\|_2^2 \le \|x - x_j\|_2^2$ because both sides are nonnegative.
               Expanding the squared norms:
-              $$ \|x - x_i\|_2^2 = (x - x_i)^\top (x - x_i) = x^\top x - 2x_i^\top x + x_i^\top x_i $$
-              $$ \|x - x_j\|_2^2 = (x - x_j)^\top (x - x_j) = x^\top x - 2x_j^\top x + x_j^\top x_j $$
+              1316 \|x - x_i\|_2^2 = (x - x_i)^\top (x - x_i) = x^\top x - 2x_i^\top x + x_i^\top x_i 1316
+              1316 \|x - x_j\|_2^2 = (x - x_j)^\top (x - x_j) = x^\top x - 2x_j^\top x + x_j^\top x_j 1316
               Substituting these into the inequality:
-              $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
+              1316 x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j 1316
             </div>
 
             <div class="proof-step">
-              <strong>Step 2: Simplify to linear inequality.</strong> The quadratic terms $x^\top x$ cancel out from both sides:
-              $$ -2x_i^\top x + \|x_i\|_2^2 \le -2x_j^\top x + \|x_j\|_2^2 $$
-              Rearranging terms to put $x$ on the left side:
-              $$ 2x_j^\top x - 2x_i^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
-              $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
-              This is a linear inequality of the form $a_{ij}^\top x \le b_{ij}$ where $a_{ij} = 2(x_j - x_i)$ and $b_{ij} = \|x_j\|_2^2 - \|x_i\|_2^2$. Geometrically, this defines a halfspace bounded by the perpendicular bisector of the segment connecting $x_i$ and $x_j$.
+              <strong>Step 2: Simplify to linear inequality.</strong> The quadratic terms ^\top x$ cancel out from both sides:
+              1316 -2x_i^\top x + \|x_i\|_2^2 \le -2x_j^\top x + \|x_j\|_2^2 1316
+              Rearranging terms to put $ on the left side:
+              1316 2x_j^\top x - 2x_i^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 1316
+              1316 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 1316
+              This is a linear inequality of the form {ij}^\top x \le b_{ij}$ where {ij} = 2(x_j - x_i)$ and {ij} = \|x_j\|_2^2 - \|x_i\|_2^2$. Geometrically, this defines a halfspace bounded by the perpendicular bisector of the segment connecting $ and $.
             </div>
 
             <div class="proof-step">
-              <strong>Step 3: Intersection of halfspaces.</strong> The Voronoi region $V_i$ is the set of points that satisfy this linear inequality for all $j \neq i$:
-              $$ V_i = \bigcap_{j \neq i} \{x \mid 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2\} $$
-              Since each set in the intersection is a halfspace, $V_i$ is an intersection of $k-1$ halfspaces.
+              <strong>Step 3: Intersection of halfspaces.</strong> The Voronoi region $ is the set of points that satisfy this linear inequality for all  \neq i$:
+              1316 V_i = \bigcap_{j \neq i} \{x \mid 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2\} 1316
+              Since each set in the intersection is a halfspace, $ is an intersection of -1$ halfspaces.
             </div>
 
             <div class="proof-step">
-              <strong>Conclusion:</strong> By definition, the intersection of finitely many halfspaces is a polyhedron. Since every polyhedron is a convex set, the Voronoi region $V_i$ is a convex set.
+              <strong>Conclusion:</strong> By definition, the intersection of finitely many halfspaces is a polyhedron. Since every polyhedron is a convex set, the Voronoi region $ is a convex set.
             </div>
           </div>
         </div>
+
+        <div class="problem">
+          <h3>P2.4 — Convexity of Distance Set</h3>
+          <p>Show that the set of points closer to a given point $ than to another point $, defined as:</p>
+          1316
+          C = \{x \in \mathbb{R}^n \mid \|x - x_0\|_2 \le \|x - y_0\|_2\}
+          1316
+          <p>is a convex set.</p>
+          <div class="solution">
+            <h4>Solution</h4>
+            <p>See P2.3 above; this is the same derivation for a single pair of points. It defines a halfspace.</p>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P2.5 — Separation by Projection</h3>
+          <p>Let $ be a nonempty closed convex set and  \notin C$. Prove that the vector  = y - \Pi_C(y)$ defines a strictly separating hyperplane.</p>
+          <div class="solution">
+             <h4>Solution</h4>
+             <p>This follows from the projection theorem. For any  \in C$, ^\top(x-p) \le 0$ where =\Pi_C(y)$. This implies ^\top x \le (y-p)^\top p$. Since  \ne p$, we have ^\top y > (y-p)^\top p$, giving strict separation.</p>
+          </div>
+        </div>
+
       </section>
 
-      <!-- SECTION 8: SUMMARY -->
-      <section class="card-v2" id="summary">
-        <h2>8. Summary</h2>
-        <p><strong>Overview:</strong> This lecture presents the geometric foundations of convex optimization through the study of convex sets. We define convexity for sets, examine canonical examples such as hyperplanes, polyhedra, and cones, and establish operations that preserve convexity. The lecture concludes with the Separating and Supporting Hyperplane Theorems, which form the geometric basis for duality theory and optimality conditions.</p>
-      </section>
-
-      <!-- SECTION 9: GLOSSARY -->
-      <section class="card-v2" id="section-9">
-        <h2>9. Quick Reference Glossary</h2>
-
-        <p>Essential terms from this lecture for quick lookup:</p>
-
+      <section class="card-v2" id="section-8">
+        <h2>8. Quick Reference Glossary</h2>
         <ul style="column-count: 2; column-gap: 2rem;">
-          <li><b>Affine combination:</b> $\sum_i \theta_i x_i$ with $\sum_i \theta_i = 1$</li>
-          <li><b>Affine set:</b> Contains all affine combinations of its points</li>
-          <li><b>Boundary ($\partial C$):</b> $\mathrm{cl}(C) \setminus \mathrm{int}(C)$</li>
-          <li><b>Closure ($\mathrm{cl}(C)$):</b> All limit points of sequences in $C$</li>
-          <li><b>Cone:</b> $x \in K, \theta \ge 0 \implies \theta x \in K$</li>
-          <li><b>Conic combination:</b> $\sum_i \theta_i x_i$ with $\theta_i \ge 0$</li>
-          <li><b>Convex combination:</b> $\sum_i \theta_i x_i$ with $\theta_i \ge 0, \sum_i \theta_i = 1$</li>
-          <li><b>Convex cone:</b> Cone that is also convex</li>
-          <li><b>Convex hull ($\mathrm{conv}(S)$):</b> All convex combinations of points in $S$</li>
-          <li><b>Convex set:</b> Contains all line segments between its points</li>
-          <li><b>Dual cone ($K^*$):</b> $\{y \mid y^\top x \ge 0 \ \forall x \in K\}$</li>
-          <li><b>Ellipsoid:</b> $\{x \mid (x-x_c)^\top P^{-1}(x-x_c) \le 1\}$</li>
-          <li><b>Generalized inequality:</b> $x \preceq_K y$ iff $y - x \in K$</li>
-          <li><b>Halfspace:</b> $\{x \mid a^\top x \le b\}$</li>
-          <li><b>Hyperplane:</b> $\{x \mid a^\top x = b\}$</li>
-          <li><b>Interior ($\mathrm{int}(C)$):</b> Points with open ball fully in $C$</li>
-          <li><b>Norm ball:</b> $\{x \mid \|x - x_c\| \le r\}$</li>
-          <li><b>Polyhedron:</b> $\{x \mid Ax \le b, Cx = d\}$</li>
-          <li><b>Polytope:</b> Bounded polyhedron</li>
-          <li><b>Proper cone:</b> Convex, closed, pointed, solid</li>
-          <li><b>PSD cone ($\mathbb{S}^n_+$):</b> $\{X \succeq 0\}$</li>
-          <li><b>Relative interior ($\mathrm{ri}(C)$):</b> Interior relative to $\mathrm{aff}(C)$</li>
-          <li><b>Second-order cone ($\mathcal{Q}$):</b> $\{(x,t) \mid \|x\|_2 \le t\}$</li>
-          <li><b>Separating hyperplane:</b> Divides two disjoint convex sets</li>
-          <li><b>Simplex ($\Delta^n$):</b> $\{x \ge 0 \mid \mathbf{1}^\top x = 1\}$</li>
-          <li><b>Supporting hyperplane:</b> Touches boundary, set on one side</li>
+          <li><b>Affine set:</b> Contains lines through any two points.</li>
+          <li><b>Convex set:</b> Contains segments between any two points.</li>
+          <li><b>Convex hull:</b> Smallest convex set containing $.</li>
+          <li><b>Hyperplane:</b> $\{x \mid a^\top x = b\}$.</li>
+          <li><b>Halfspace:</b> $\{x \mid a^\top x \le b\}$.</li>
+          <li><b>Polyhedron:</b> Intersection of finite halfspaces.</li>
+          <li><b>Cone:</b> Closed under positive scaling.</li>
+          <li><b>Proper cone:</b> Convex, closed, pointed, solid.</li>
+          <li><b>Dual cone:</b> $\{y \mid y^\top x \ge 0 \forall x \in K\}$.</li>
+          <li><b>Separating Hyperplane:</b> Plane between disjoint convex sets.</li>
         </ul>
       </section>
 
