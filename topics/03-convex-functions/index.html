@@ -411,26 +411,43 @@
           <div id="widget-hessian-heatmap" style="width: 100%; height: 450px; position: relative;"></div>
         </div>
 
-        <h3>4.4 Advanced Calculus: Log-Convexity Derivations</h3>
+        <h3>4.4 Log-Convex and Log-Concave Functions</h3>
 
-        <h4>4.4.1 Second-Order Condition for Log-Convexity</h4>
-        <p>A scalar function $f(x)$ is <b>log-convex</b> if $\ln f(x)$ is convex, and <b>log-concave</b> if $\ln f(x)$ is concave. To check this condition using the second-order test, we must compute the Hessian of $h(x) = \ln f(x)$.</p>
-        <p>Using the chain rule and product rule:</p>
-        $$ \nabla \ln f(x) = \frac{\nabla f(x)}{f(x)} $$
-        $$ \nabla^2 \ln f(x) = \frac{f(x)\nabla^2 f(x) - \nabla f(x)\nabla f(x)^\top}{f(x)^2} $$
-        $$ \nabla^2 \ln f(x) = \frac{1}{f(x)}\nabla^2 f(x) - \frac{1}{f(x)^2}\nabla f(x)\nabla f(x)^\top $$
-        <p>For $f$ to be log-concave ($\nabla^2 \ln f \preceq 0$), we require the Hessian of the log to be negative semidefinite, which simplifies to:</p>
+        <figure style="text-align: center;">
+          <img src="assets/log_concave_gaussian.png"
+               alt="Gaussian density vs its log"
+               style="max-width: 60%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
+          <figcaption><i>Figure 4.1:</i> The Gaussian density function (top) is bell-shaped and not concave. However, its logarithm (bottom) is a downward-opening parabola, which is concave. Thus, the Gaussian is log-concave.</figcaption>
+        </figure>
+
+        <h4>4.4.1 Definitions</h4>
+        <p>A function $f: \mathbb{R}^n \to \mathbb{R}_{++}$ is <b>log-convex</b> if $\log f$ is convex. Equivalently:</p>
+        $$ f(\theta x + (1-\theta)y) \le f(x)^\theta f(y)^{1-\theta} $$
+        <p>It is <b>log-concave</b> if $\log f$ is concave. Equivalently:</p>
+        $$ f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta} $$
+
+        <div class="insight">
+          <h4>Key Examples</h4>
+          <ul>
+            <li><b>Affine:</b> $f(x) = a^\top x + b$ is log-concave on $\{x \mid a^\top x + b > 0\}$.</li>
+            <li><b>Powers:</b> $x^a$ on $\mathbb{R}_{++}$ is log-convex if $a \le 0$, and log-concave if $a \ge 0$.</li>
+            <li><b>Gaussian Density:</b> $f(x) \propto e^{-\frac{1}{2}(x-\mu)^\top \Sigma^{-1}(x-\mu)}$ is log-concave.</li>
+            <li><b>Determinant:</b> $\det(X)$ is log-concave on $\mathbb{S}^n_{++}$ (since $\log \det$ is concave).</li>
+          </ul>
+        </div>
+
+        <h4>4.4.2 Hessian Condition</h4>
+        <p>Using the chain rule, $\nabla^2 \log f(x) = \frac{1}{f(x)}\nabla^2 f(x) - \frac{1}{f(x)^2}\nabla f(x)\nabla f(x)^\top$.</p>
+        <p>Thus $f$ is log-concave if and only if:</p>
         $$ f(x) \nabla^2 f(x) \preceq \nabla f(x) \nabla f(x)^\top $$
+        <p>(For log-convexity, the inequality is reversed).</p>
 
-        <h4>4.4.2 First-Order Condition for Log-Concavity</h4>
-        <p>An alternative characterization uses the first-order condition for concavity applied to $\ln f$. A function $f$ is log-concave if and only if $\ln f$ is concave, which means:</p>
-        $$ \ln f(y) \le \ln f(x) + \nabla (\ln f(x))^\top (y-x) $$
-        $$ \ln f(y) \le \ln f(x) + \frac{\nabla f(x)^\top (y-x)}{f(x)} $$
-        <p>Exponentiating both sides gives a geometric inequality useful for error analysis:</p>
-        $$ f(y) \le f(x) \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right) $$
-
-        <h4>4.4.3 Sublevel Sets of Log-Concave Functions</h4>
-        <p>If $f$ is log-concave and $a \ge 0$, then the function $g = f - a$ is also log-concave (on the domain where $f(x) > a$). This result implies that if a probability density is log-concave, its "shifted" versions retain this property, which is crucial in reliability theory and survival analysis.</p>
+        <h4>4.4.3 Integration Preserves Log-Concavity</h4>
+        <div class="theorem-box">
+          <h4>Theorem (Prékopa)</h4>
+          <p>If $f(x, y)$ is log-concave, then the marginal function $g(x) = \int f(x, y) dy$ is log-concave.</p>
+          <p>This is a deep result with massive implications in probability. It implies that marginals of log-concave distributions (like the multivariate normal) are log-concave. It also implies that the convolution of log-concave functions is log-concave.</p>
+        </div>
       </section>
 
       <section class="card-v2" id="section-5">
@@ -484,13 +501,57 @@
         </div>
 
         <div class="theorem-box">
-          <h4>2. Scalar Composition</h4>
-          <p>Let $h: \mathbb{R} \to \mathbb{R}$ and $g: \mathbb{R}^n \to \mathbb{R}$. Then $f(x) = h(g(x))$ is convex if:</p>
-          <ul>
-            <li>$g$ is <b>convex</b> ($\cup$), and $h$ is <b>convex</b> ($\cup$) and <b>non-decreasing</b> ($\nearrow$).</li>
-            <li>$g$ is <b>concave</b> ($\cap$), and $h$ is <b>convex</b> ($\cup$) and <b>non-increasing</b> ($\searrow$).</li>
-          </ul>
-          <p><i>Mnemonic:</i> To keep the result Convex ($\cup$), if the inner function is Concave ($\cap$, "flipped"), the outer function must "reverse" the ordering (Decreasing, $\searrow$).</p>
+          <h4>2. Scalar Composition Rule ($f=h\circ g$) in Depth</h4>
+          <p>Let $g: \mathbb{R}^n \to \mathbb{R}$ and $h: \mathbb{R} \to \mathbb{R}$. Then $f(x) = h(g(x))$ is convex if:</p>
+          <ol>
+            <li>$g$ is <b>convex</b>, and $h$ is <b>convex</b> and <b>non-decreasing</b>.</li>
+            <li>$g$ is <b>concave</b>, and $h$ is <b>convex</b> and <b>non-increasing</b>.</li>
+            <li>$g$ is <b>affine</b>, and $h$ is <b>convex</b> (monotonicity not required).</li>
+          </ol>
+
+          <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin: 20px 0;">
+            <figure style="flex: 1; min-width: 300px; text-align: center;">
+              <img src="assets/convex_composition_case1.png"
+                   alt="Composition Case 1: Convex inner + Convex Increasing outer"
+                   style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
+              <figcaption><i>Figure 5.1:</i> Case 1. The convex inner function "curves up". The increasing outer function preserves this order, and its own convexity amplifies the curvature.</figcaption>
+            </figure>
+            <figure style="flex: 1; min-width: 300px; text-align: center;">
+              <img src="assets/convex_composition_case2.png"
+                   alt="Composition Case 2: Concave inner + Convex Decreasing outer"
+                   style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
+              <figcaption><i>Figure 5.2:</i> Case 2. The concave inner function "curves down". The decreasing outer function flips this to "curve up", and its own convexity reinforces the result.</figcaption>
+            </figure>
+          </div>
+
+          <div class="proof-enhanced">
+            <h4>Detailed Proof of Case 1 (Convex + Non-decreasing)</h4>
+            <div class="proof-step">
+              <strong>Step 1: Domain Sanity.</strong>
+              Let $x, y \in \mathrm{dom}\, f$. Since $h$ is convex, its domain is convex. Thus, the convex combination of $g(x)$ and $g(y)$ stays in $\mathrm{dom}\, h$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Inner Convexity.</strong>
+              By convexity of $g$:
+              $$ g(\theta x + (1-\theta)y) \le \theta g(x) + (1-\theta)g(y) $$
+              Let $u = g(\theta x + (1-\theta)y)$ and $v = \theta g(x) + (1-\theta)g(y)$. So $u \le v$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Outer Monotonicity.</strong>
+              Since $h$ is non-decreasing:
+              $$ h(u) \le h(v) \implies h(g(\theta x + (1-\theta)y)) \le h(\theta g(x) + (1-\theta)g(y)) $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 4: Outer Convexity.</strong>
+              By convexity of $h$:
+              $$ h(\theta g(x) + (1-\theta)g(y)) \le \theta h(g(x)) + (1-\theta)h(g(y)) $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 5: Chain.</strong>
+              $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) $$
+              Thus $f$ is convex.
+            </div>
+          </div>
         </div>
 
         <div class="example">
@@ -504,12 +565,24 @@
         </div>
 
         <div class="theorem-box">
-          <h4>3. Vector Composition</h4>
-          <p>Let $h: \mathbb{R}^k \to \mathbb{R}$ and $g: \mathbb{R}^n \to \mathbb{R}^k$. Then $f(x) = h(g(x))$ is convex if:</p>
+          <h4>3. Vector Composition Rule ($f=h\circ g$) in Depth</h4>
+          <p>Let $g: \mathbb{R}^n \to \mathbb{R}^k$ and $h: \mathbb{R}^k \to \mathbb{R}$. Then $f(x) = h(g_1(x), \dots, g_k(x))$ is convex if $h$ is convex and for each $i \in \{1, \dots, k\}$:</p>
           <ul>
-            <li>$h$ is convex and <b>non-decreasing in each argument</b>, and each $g_i$ is <b>convex</b>.</li>
-            <li>$h$ is convex and <b>non-increasing in each argument</b>, and each $g_i$ is <b>concave</b>.</li>
+            <li>$g_i$ is <b>convex</b> and $h$ is <b>non-decreasing</b> in the $i$-th argument.</li>
+            <li>$g_i$ is <b>concave</b> and $h$ is <b>non-increasing</b> in the $i$-th argument.</li>
+            <li>$g_i$ is <b>affine</b> (monotonicity in $i$-th argument not required).</li>
           </ul>
+
+          <div class="proof-enhanced">
+            <h4>Differential View (Intuition)</h4>
+            <p>For $n=1$, the chain rule gives the second derivative:</p>
+            $$ f''(x) = \underbrace{h''(g(x)) [g'(x)]^2}_{\ge 0 \text{ by } h \text{ convex}} + \underbrace{h'(g(x)) g''(x)}_{\text{sign depends on rule}} $$
+            <ul>
+              <li>If $g$ convex ($g'' \ge 0$) and $h$ increasing ($h' \ge 0$), the second term is $\ge 0$.</li>
+              <li>If $g$ concave ($g'' \le 0$) and $h$ decreasing ($h' \le 0$), the product is $(-)(-) \ge 0$.</li>
+            </ul>
+            <p>This confirms the rule matches the condition $f''(x) \ge 0$.</p>
+          </div>
         </div>
 
         <div class="example">
@@ -540,8 +613,33 @@
           $$
           g(x, t) = t f(x/t), \quad t > 0
           $$
-          <p>is convex on $\mathrm{dom}\, g = \{(x, t) \mid x/t \in \mathrm{dom}\, f, \ t > 0\}$.</p>
-          <p><b>Geometric Intuition:</b> The epigraph of the perspective function is a cone generated by the epigraph of $f$ (scaled linearly with $t$).</p>
+          <p>is convex on $\mathrm{dom}\, g = \{(x, t) \mid x/t \in \mathrm{dom}\, f, \ t > 0\}$. The perspective function preserves convexity.</p>
+          <p><b>Geometric Intuition (Cone over Epigraph):</b></p>
+          <p>The epigraph of the perspective function is related to the conic hull of the epigraph of $f$. Specifically, if we take the cone generated by $\text{epi}(f)$ in $\mathbb{R}^{n+2}$ and slice it at $t$, we recover the epigraph of the scaled function. Since the conic hull of a convex set is convex, and slicing preserves convexity, the perspective function is convex.</p>
+        </div>
+
+        <div class="proof-enhanced">
+          <h4>Inequality Proof of Convexity</h4>
+          <div class="proof-step">
+            <strong>Step 1: Setup.</strong>
+            Let $(x_1, t_1), (x_2, t_2) \in \text{dom } g$ and $\theta \in [0, 1]$. Let $(\bar{x}, \bar{t}) = \theta(x_1, t_1) + (1-\theta)(x_2, t_2)$.
+            We need to show $g(\bar{x}, \bar{t}) \le \theta g(x_1, t_1) + (1-\theta) g(x_2, t_2)$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Convex combination trick.</strong>
+            Note that $\frac{\bar{x}}{\bar{t}} = \frac{\theta x_1 + (1-\theta)x_2}{\bar{t}} = \frac{\theta t_1}{\bar{t}}\frac{x_1}{t_1} + \frac{(1-\theta)t_2}{\bar{t}}\frac{x_2}{t_2}$.
+            Let $\mu = \frac{\theta t_1}{\bar{t}}$. Then $1-\mu = \frac{(1-\theta)t_2}{\bar{t}}$. Thus $\frac{\bar{x}}{\bar{t}}$ is a convex combination of $\frac{x_1}{t_1}$ and $\frac{x_2}{t_2}$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Apply convexity of $f$.</strong>
+            $$ f\left(\frac{\bar{x}}{\bar{t}}\right) \le \mu f\left(\frac{x_1}{t_1}\right) + (1-\mu) f\left(\frac{x_2}{t_2}\right) $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 4: Scale back.</strong>
+            Multiply by $\bar{t}$:
+            $$ \bar{t} f\left(\frac{\bar{x}}{\bar{t}}\right) \le \bar{t}\mu f\left(\frac{x_1}{t_1}\right) + \bar{t}(1-\mu) f\left(\frac{x_2}{t_2}\right) $$
+            $$ g(\bar{x}, \bar{t}) \le \theta t_1 f\left(\frac{x_1}{t_1}\right) + (1-\theta)t_2 f\left(\frac{x_2}{t_2}\right) = \theta g(x_1, t_1) + (1-\theta) g(x_2, t_2) $$
+          </div>
         </div>
 
         <div class="example">
@@ -762,41 +860,64 @@
       <section class="card-v2" id="section-8">
         <h2>8. Quasi-Convex Functions</h2>
 
-        <h3>8.1 Definition</h3>
+        <h3>8.1 Definition via Sublevel Sets</h3>
         <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link">quasi-convex</a> if its domain is convex and all its <b>sublevel sets</b> are convex:</p>
         $$
         S_\alpha = \{x \in \mathrm{dom}\, f \mid f(x) \le \alpha\}
         $$
         <p>is convex for all $\alpha \in \mathbb{R}$.</p>
+        <p>Similarly, $f$ is <b>quasi-concave</b> if $-f$ is quasi-convex (its superlevel sets are convex), and <b>quasilinear</b> if it is both quasi-convex and quasi-concave.</p>
 
-        <div class="insight">
-          <h4>💡 Intuition</h4>
-          <p>Quasi-convexity is a weaker property than convexity. It means the function has "convex contour lines" but doesn't require the graph to curve upward everywhere.</p>
-        </div>
+        <figure style="text-align: center;">
+          <img src="assets/quasiconvex_sublevel.png"
+               alt="Sublevel sets of a quasiconvex function"
+               style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
+          <figcaption><i>Figure 8.1:</i> A quasiconvex function may not be convex (it can be "bell-shaped" or flattened), but its sublevel sets $S_\alpha$ must always be convex sets.</figcaption>
+        </figure>
 
-        <h3>8.2 Jensen's Inequality for Quasi-Convex Functions</h3>
+        <h3>8.2 Modified Jensen's Inequality</h3>
         <p>$f$ is quasi-convex if and only if for all $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$:</p>
         $$
         f(\theta x + (1-\theta)y) \le \max\{f(x), f(y)\}
         $$
-        <p>(Compare to convexity: $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$.)</p>
+        <p>This condition says that the value of the function on a segment never exceeds the larger of the two endpoint values. It forbids "bumps" in the middle of a valley.</p>
 
-        <h3>8.3 Examples</h3>
+        <h3>8.3 First-Order Condition</h3>
+        <p>If $f$ is differentiable, it is quasi-convex if and only if:</p>
+        $$ f(y) \le f(x) \implies \nabla f(x)^\top (y - x) \le 0 $$
+        <p>Geometrically, this means that if you look in a direction where the function value decreases (or stays same), the gradient must oppose that motion (make an obtuse angle).</p>
+
+        <figure style="text-align: center;">
+          <img src="assets/quasiconvex_gradient.png"
+               alt="First-order condition for quasiconvexity"
+               style="max-width: 60%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
+          <figcaption><i>Figure 8.2:</i> The gradient $\nabla f(x)$ at a point on a level curve points "outward" from the sublevel set. Any vector $y-x$ leading to a lower value $f(y) \le f(x)$ forms an obtuse angle with the gradient.</figcaption>
+        </figure>
+
+        <h3>8.4 Examples in Detail</h3>
 
         <div class="example">
-          <h4>Example 1: Rank of a Matrix</h4>
-          <p>The function $f(X) = \text{rank}(X)$ on Positive Semidefinite matrices is <b>Quasiconcave</b>. This means the set of matrices with rank at least $k$ is a convex set.</p>
-          <p><i>Proof:</i> Using the intersection of nullspaces, one can show $\text{rank}(X+Y) \ge \min(\text{rank}(X), \text{rank}(Y))$, satisfying the superlevel set condition.</p>
+          <h4>Example 1: Linear-Fractional Function</h4>
+          <p>The function $f(x) = \frac{a^\top x + b}{c^\top x + d}$ on $\{x \mid c^\top x + d > 0\}$ is quasilinear.</p>
+          <p><i>Proof:</i> The sublevel set $S_\alpha = \{x \mid \frac{a^\top x + b}{c^\top x + d} \le \alpha\}$ is equivalent to the intersection of two halfspaces: $(a - \alpha c)^\top x + (b - \alpha d) \le 0$ and $c^\top x + d > 0$. The intersection of convex sets is convex.</p>
         </div>
 
         <div class="example">
-          <h4>Example 2: Quasilinear Functions</h4>
-          <p>A function is <b>quasilinear</b> if it is both quasiconvex and quasiconcave. Continuous quasilinear functions can be shown to be "monotone functions of linear functions", i.e., $f(x) = g(a^\top x)$ where $g$ is monotone.</p>
+          <h4>Example 2: Distance Ratio</h4>
+          <p>The function $f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ on $\{x \mid \|x-a\|_2 \le \|x-b\|_2\}$ is quasiconvex.</p>
+          <p><i>Proof:</i> The condition $f(x) \le \tau$ becomes $\|x-a\|_2 \le \tau \|x-b\|_2$. For $\tau \ge 1$, this condition defines a convex set (related to Second Order Cones).</p>
         </div>
 
         <div class="example">
-          <h4>Example 3: Ceiling Function</h4>
-          <p>$f(x) = \lceil x \rceil$ is quasi-convex but not convex (the graph has jumps, not smooth curvature).</p>
+          <h4>Example 3: Internal Rate of Return (IRR)</h4>
+          <p>Consider a cash flow $x = (x_0, \dots, x_n)$ with $x_0 < 0$ and $\sum x_i > 0$. The <b>Internal Rate of Return</b> $\text{IRR}(x)$ is the interest rate $r$ such that the present value is zero: $\sum x_i (1+r)^{-i} = 0$.</p>
+          <p>We claim $\text{IRR}(x)$ is a <b>quasiconcave</b> function of the cash flow vector $x$.</p>
+          <div class="proof-enhanced">
+            <h4>Proof</h4>
+            <p>The superlevel set $\{x \mid \text{IRR}(x) \ge R\}$ consists of cash flows whose present value at rate $R$ is non-negative (assuming standard investment profile). This condition is linear in $x$:
+            $$ \sum_{i=0}^n x_i (1+R)^{-i} \ge 0 $$
+            Since the superlevel sets are halfspaces (convex), the function is quasiconcave.</p>
+          </div>
         </div>
 
         <h3>8.4 Quasi-Convex Optimization</h3>

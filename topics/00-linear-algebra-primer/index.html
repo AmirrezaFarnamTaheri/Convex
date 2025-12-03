@@ -565,34 +565,55 @@
       <p>This is the <b>Rayleigh Quotient</b>. This definition proves that $\lambda_{\max}(A)$ is a convex function of $A$. Notice that for a fixed $x$, the function $g(A) = x^\top A x$ is <b>linear</b> in $A$. Since $\lambda_{\max}(A)$ is the <b>pointwise supremum</b> of a family of linear functions (indexed by $x$), it is a convex function.</p>
 
       <h3>4.4 The Schur Complement Lemma</h3>
-      <p>A powerful tool for handling block matrices in optimization is the Schur Complement. It allows us to convert complicated nonlinear constraints into Linear Matrix Inequalities (LMIs).</p>
+      <p>A powerful tool for handling block matrices in optimization is the Schur Complement. It allows us to convert complicated nonlinear constraints into Linear Matrix Inequalities (LMIs) and provides a systematic way to check positive semidefiniteness.</p>
+
+      <figure style="text-align: center;">
+        <img src="assets/schur_complement_block.png"
+             alt="Schur Complement Block Matrix Transformation Visualization"
+             style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
+        <figcaption><i>Figure 4.3:</i> Visualization of the Schur complement process. Left: Original block matrix. Center: Elimination matrix. Right: Resulting block upper-triangular matrix where the top-left block has been transformed into the Schur complement.</figcaption>
+      </figure>
 
       <div class="proof-enhanced">
-        <h4>Lemma (Schur Complement)</h4>
-        <p>Let $X \in \mathbb{S}^n$ be partitioned as:
-        $$ X = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} $$
-        where $A \in \mathbb{S}^k$, $C \in \mathbb{S}^{n-k}$. If $A \succ 0$ (positive definite), then the Schur complement of $A$ in $X$ is $S = C - B^\top A^{-1} B$.
-        </p>
-        <p><b>Statement:</b> $X \succeq 0$ if and only if $A \succ 0$ and $S \succeq 0$.</p>
+        <h4>1. Block Matrix Setup and Dimensions</h4>
+        <p>Consider a block matrix $M$ partitioned as follows:</p>
+        $$ M = \begin{bmatrix} A & B \\ C & D \end{bmatrix} $$
+        <p>where $A \in \mathbb{R}^{p \times p}$, $B \in \mathbb{R}^{p \times q}$, $C \in \mathbb{R}^{q \times p}$, and $D \in \mathbb{R}^{q \times q}$. Assume $D$ is invertible.</p>
+        <p>The <b>Schur complement</b> of $D$ in $M$ is defined as:</p>
+        $$ S := A - B D^{-1} C $$
+
+        <h4>2. Constructing the Elimination Matrix</h4>
+        <p>To analyze $M$, we perform block Gaussian elimination. Define the elimination matrix $E$:</p>
+        $$ E = \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} $$
+        <p>This matrix is block lower-triangular with unit diagonal blocks, so $\det(E) = 1$. Multiplying $M$ by $E$ on the right yields:</p>
+        $$ ME = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} = \begin{bmatrix} A - BD^{-1}C & B \\ 0 & D \end{bmatrix} = \begin{bmatrix} S & B \\ 0 & D \end{bmatrix} $$
+        <p>Since $ME$ is block upper-triangular, its determinant is the product of the determinants of its diagonal blocks: $\det(ME) = \det(S)\det(D)$. Because $\det(E) = 1$, we derive the <b>Determinant Identity</b>:</p>
+        $$ \det(M) = \det(D) \det(A - B D^{-1} C) $$
+
+        <h4>3. Symmetric Variant: Schur Complement of $A$</h4>
+        <p>Similarly, if $A$ is invertible, we can eliminate $C$ using the Schur complement of $A$, defined as $D - C A^{-1} B$. The determinant identity becomes:</p>
+        $$ \det(M) = \det(A) \det(D - C A^{-1} B) $$
+
+        <h4>4. Schur Complement and Positive Semidefiniteness</h4>
+        <p>This is the crucial property for convex optimization. Let $M$ be a symmetric matrix ($C = B^\top$):</p>
+        $$ M = \begin{bmatrix} A & B \\ B^\top & D \end{bmatrix} $$
+        <p><b>Theorem:</b> If $D \succ 0$, then $M \succeq 0$ if and only if the Schur complement $S = A - B D^{-1} B^\top \succeq 0$.</p>
 
         <div class="proof-step">
-          <strong>Proof Step 1: Block Gaussian Elimination.</strong>
-          We can block-diagonalize $X$ using a specific congruence transformation. Consider the matrix:
-          $$ M = \begin{bmatrix} I & 0 \\ -B^\top A^{-1} & I \end{bmatrix} $$
-          Multiplying $X$ on both sides (congruence preserves inertia and PSD property):
-          $$ M X M^\top = \begin{bmatrix} I & 0 \\ -B^\top A^{-1} & I \end{bmatrix} \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} \begin{bmatrix} I & -A^{-1}B \\ 0 & I \end{bmatrix} $$
-          $$ = \begin{bmatrix} A & B \\ 0 & C - B^\top A^{-1} B \end{bmatrix} \begin{bmatrix} I & -A^{-1}B \\ 0 & I \end{bmatrix} $$
-          $$ = \begin{bmatrix} A & 0 \\ 0 & C - B^\top A^{-1} B \end{bmatrix} = \begin{bmatrix} A & 0 \\ 0 & S \end{bmatrix} $$
+          <strong>Proof ($\Rightarrow$):</strong> Assume $M \succeq 0$.
+          Consider test vectors $z = [x^\top, -(D^{-1}B^\top x)^\top]^\top$. Then:
+          $$ z^\top M z = x^\top (A - B D^{-1} B^\top) x = x^\top S x $$
+          Since $M \succeq 0$, $z^\top M z \ge 0$ for all $z$, which implies $x^\top S x \ge 0$ for all $x$. Thus $S \succeq 0$.
         </div>
 
         <div class="proof-step">
-          <strong>Proof Step 2: Conclusion.</strong>
-          Since $M$ is invertible, $X \succeq 0 \iff M X M^\top \succeq 0$.
-          A block diagonal matrix is PSD if and only if its diagonal blocks are PSD.
-          Thus, $X \succeq 0 \iff A \succeq 0 \text{ and } S \succeq 0$.
-          (Assuming $A \succ 0$ ensures $A^{-1}$ exists).
+          <strong>Proof ($\Leftarrow$):</strong> Assume $S \succeq 0$ and $D \succ 0$.
+          Take any $z = [x^\top, y^\top]^\top$. We can factor $M$ using the elimination matrix from the proof of the lemma:
+          $$ z^\top M z = x^\top S x + (y + D^{-1}B^\top x)^\top D (y + D^{-1}B^\top x) $$
+          Since $S \succeq 0$, the first term is non-negative. Since $D \succ 0$, the second term is non-negative. Thus $z^\top M z \ge 0$ for all $z$.
         </div>
       </div>
+
       <p><b>Application:</b> This lemma turns the nonlinear constraint $\|Bx\|_2^2 \le c$ (equivalent to $x^\top B^\top B x \le c$) into an LMI:
       $$ \begin{bmatrix} I & Bx \\ (Bx)^\top & c \end{bmatrix} \succeq 0 $$
       This is central to Semidefinite Programming.</p>
