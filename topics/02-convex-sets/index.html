@@ -182,6 +182,32 @@
           <figcaption><i>Figure 1.2:</i> The convex hull of a set of points (black dots) acts like a rubber band (blue polygon) snapped tight around them.</figcaption>
         </figure>
 
+        <div class="row" style="display: flex; gap: 20px; justify-content: center; margin: 24px 0;">
+            <figure style="text-align: center; flex: 1;">
+              <img src="assets/convex-hull-nonconvex.png"
+                   alt="Convex hull of a crescent shape"
+                   style="width: 100%; height: auto; border-radius: 8px;" />
+              <figcaption><i>Figure 1.3:</i> The convex hull of a non-convex set (dark grey crescent) fills in the "gaps" (light blue), creating the smallest convex superset.</figcaption>
+            </figure>
+            <figure style="text-align: center; flex: 1;">
+              <img src="assets/caratheodory.png"
+                   alt="Caratheodory's theorem visualization"
+                   style="width: 100%; height: auto; border-radius: 8px;" />
+              <figcaption><i>Figure 1.4:</i> Carathéodory's Theorem: Any point $x$ in the hull of many points (black) can be formed by a convex combination of just $n+1$ of them (red triangle in $\mathbb{R}^2$).</figcaption>
+            </figure>
+        </div>
+
+        <div class="insight">
+          <h4>Visualizing Sublevel Sets</h4>
+          <p>Convex sets are intimately linked to convex functions. The <a href="#" class="definition-link">indicator function</a> of a set $C$, $\delta_C(x) = 0$ if $x \in C$ and $\infty$ otherwise, is a convex function if and only if $C$ is convex. Furthermore, the sublevel sets of any convex function are convex sets.</p>
+          <figure style="text-align: center; margin: 24px 0;">
+             <img src="assets/indicator-function.png"
+                  alt="3D plot of an indicator function"
+                  style="max-width: 60%; height: auto; border-radius: 8px;" />
+             <figcaption><i>Figure 1.5:</i> The sublevel set of a convex function (like the indicator function shown here) corresponds to the convex set itself.</figcaption>
+          </figure>
+        </div>
+
         <h3>1.4 Key Properties</h3>
 
         <ul>
@@ -379,6 +405,17 @@
             <strong>Conclusion:</strong> The sum is non-negative, so $z^\top (\theta A + (1-\theta)B) z \ge 0$ for all $z$. Thus the combination is PSD.
           </div>
         </div>
+
+        <div class="example">
+            <h4>Spectrahedra: The Shape of SDP</h4>
+            <p>The intersection of the PSD cone with an affine subspace is called a <a href="#" class="definition-link">spectrahedron</a>. These are the feasible sets for Semidefinite Programs (SDPs). Unlike polyhedra, they have smooth, curved boundaries.</p>
+            <figure style="text-align: center; margin: 24px 0;">
+              <img src="assets/spectrahedron.png"
+                   alt="A spectrahedron (feasible set of an LMI)"
+                   style="max-width: 50%; height: auto; border-radius: 8px;" />
+              <figcaption><i>Figure 2.6:</i> A spectrahedron looks like a "puffy" polygon. Its faces are flat where the affine space cuts the cone's boundary, but its edges and corners can be smooth curves.</figcaption>
+            </figure>
+        </div>
       </section>
 
 
@@ -447,6 +484,21 @@
 
         <p>Let $f : \mathbb{R}^n \to \mathbb{R}^m$ be an affine function, $f(x) = Ax + b$.</p>
 
+        <div class="row" style="display: flex; gap: 20px; justify-content: center; margin: 24px 0;">
+             <figure style="text-align: center; flex: 1;">
+               <img src="assets/affine-image-projection.png"
+                    alt="Projection of a polyhedron onto 2D space"
+                    style="width: 100%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 3.4:</i> The image of a convex set (polyhedron) under an affine map (projection) is convex.</figcaption>
+             </figure>
+             <figure style="text-align: center; flex: 1;">
+               <img src="assets/affine-preimage-cone.png"
+                    alt="Slice of a cone by a plane"
+                    style="width: 100%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 3.5:</i> The preimage of a convex cone (intersection with a plane) is a convex set (an ellipse).</figcaption>
+             </figure>
+        </div>
+
         <div class="theorem-box">
           <h4>Theorem (Affine Image and Preimage)</h4>
           <ul>
@@ -482,6 +534,23 @@
           \mathcal{E} = \{x \mid \|P^{-1/2}(x - x_c)\|_2 \le 1\}
           $$
           <p>This is the preimage of the Euclidean ball $\{z \mid \|z\|_2 \le 1\}$ (convex) under the affine map $f(x) = P^{-1/2}(x - x_c)$. Since preimages preserve convexity, $\mathcal{E}$ is convex.</p>
+          <figure style="text-align: center; margin: 24px 0;">
+               <img src="assets/image-vs-preimage-ball.png"
+                    alt="Comparison of image vs preimage of a ball"
+                    style="max-width: 60%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 3.6:</i> The image of a ball is an ellipsoid (left). The preimage of a ball (slab) is also convex (right).</figcaption>
+          </figure>
+        </div>
+
+        <div class="insight">
+            <h4>Counterexample: Non-Affine Maps</h4>
+            <p>Convexity is fragile. Non-affine maps, such as $f(x) = 1/x$ or $f(x) = x^2$, do not generally preserve convexity of sets.</p>
+            <figure style="text-align: center; margin: 24px 0;">
+               <img src="assets/division-counterexample.png"
+                    alt="Division function mapping a convex set to non-convex"
+                    style="max-width: 50%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 3.7:</i> The "division" map $f(x,y) = x/y$ can tear a convex square into two disjoint (non-convex) pieces.</figcaption>
+            </figure>
         </div>
 
         <h3>3.3 Perspective and Linear-Fractional Functions</h3>
@@ -490,17 +559,51 @@
         $$
         P(x, t) = x/t, \quad \mathrm{dom}\, P = \{(x, t) \mid t > 0\}
         $$
+        <p>Geometrically, this corresponds to a pinhole camera projection: points $(x,t)$ are projected onto the plane $t=1$ via lines through the origin.</p>
+
+        <div class="row" style="display: flex; gap: 20px; justify-content: center; margin: 24px 0;">
+             <figure style="text-align: center; flex: 1;">
+               <img src="assets/pinhole-camera.png"
+                    alt="Geometric intuition of perspective projection"
+                    style="width: 100%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 3.8:</i> The perspective map $P(x,t) = x/t$ projects 3D points onto the $t=1$ plane. The image of a convex object (ellipsoid) is a convex shadow.</figcaption>
+             </figure>
+             <figure style="text-align: center; flex: 1;">
+               <img src="assets/perspective-domain.png"
+                    alt="Domain of the perspective map"
+                    style="width: 100%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 3.9:</i> The domain is restricted to $t > 0$. As $t \to 0$, the projected point shoots to infinity.</figcaption>
+             </figure>
+        </div>
 
         <div class="theorem-box">
           <h4>Theorem</h4>
           <p>The perspective function preserves convexity: if $C \subseteq \mathbb{R}^{n+1}$ is convex, then $P(C)$ is convex.</p>
         </div>
 
-        <p>A <b>linear-fractional function</b> is a composition of perspective with an affine function:</p>
+        <p>A <a href="#" class="definition-link">linear-fractional function</a> is a composition of perspective with an affine function:</p>
         $$
         f(x) = \frac{Ax + b}{c^\top x + d}
         $$
-        <p>Linear-fractional functions also preserve convexity.</p>
+        <p>Since it is composed of operations that preserve convexity (Affine $\to$ Perspective), linear-fractional functions also preserve convexity.</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+             <img src="assets/composition-maps.png"
+                  alt="Block diagram of function composition"
+                  style="max-width: 60%; height: auto; border-radius: 8px;" />
+             <figcaption><i>Figure 3.10:</i> Linear-fractional functions are built by composing an affine map $g(x)$ with the perspective map $P$.</figcaption>
+        </figure>
+
+        <div class="example">
+             <h4>Visualizing Projective Geometry</h4>
+             <p>Linear-fractional maps can distort space significantly, turning parallel lines into converging ones (like train tracks on a horizon), yet they strictly preserve the convexity of sets.</p>
+             <figure style="text-align: center; margin: 24px 0;">
+                  <img src="assets/warping-grid.png"
+                       alt="Grid warped by a linear-fractional map"
+                       style="max-width: 60%; height: auto; border-radius: 8px;" />
+                  <figcaption><i>Figure 3.11:</i> A regular grid (left) is warped by a linear-fractional transformation (right). Squares become "conic" quadrilaterals, but they remain convex sets.</figcaption>
+             </figure>
+        </div>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Laboratory: Convex Geometry</h3>
@@ -533,10 +636,10 @@
         </div>
 
         <figure style="text-align: center; margin: 24px 0;">
-          <img src="../../static/assets/topics/02-convex-sets/separating-hyperplane.svg"
+          <img src="assets/separating-hyperplane-strict.png"
                alt="Illustration of the Separating Hyperplane Theorem"
-               style="max-width: 100%; height: auto; border-radius: 8px;" />
-          <figcaption><i>Figure 4.1:</i> A hyperplane separating two disjoint convex sets $C$ and $D$.</figcaption>
+               style="max-width: 80%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 4.1:</i> A hyperplane separating two disjoint convex sets $C$ and $D$. For closed sets, we can construct the separator using the projection of 0 onto their difference set $C-D$.</figcaption>
         </figure>
 
         <div class="proof-enhanced">
@@ -586,10 +689,10 @@
         </div>
 
         <figure style="text-align: center; margin: 24px 0;">
-          <img src="../../static/assets/topics/02-convex-sets/supporting-hyperplane.svg"
+          <img src="assets/supporting-hyperplane-tangent.png"
                alt="Illustration of the Supporting Hyperplane Theorem"
-               style="max-width: 100%; height: auto; border-radius: 8px;" />
-          <figcaption><i>Figure 4.2:</i> A supporting hyperplane to a convex set at a boundary point.</figcaption>
+               style="max-width: 80%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 4.2:</i> A supporting hyperplane to a convex set at a boundary point. It "kisses" the set without cutting into it.</figcaption>
         </figure>
 
         <div class="proof-enhanced">
@@ -623,6 +726,12 @@
             <li><b>Algorithms:</b> Cutting-plane methods and bundle methods rely on separating hyperplanes</li>
             <li><b>Subgradients:</b> Supporting hyperplanes define subgradients for non-smooth convex functions</li>
           </ul>
+          <figure style="text-align: center; margin: 24px 0;">
+               <img src="assets/separation-failure.png"
+                    alt="Failure of separation for non-convex sets"
+                    style="max-width: 60%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 4.3:</i> <b>Cautionary Tale:</b> If the sets are not convex (like the C-shape), a separating hyperplane may not exist. This is why convexity is required for strong duality.</figcaption>
+          </figure>
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">
@@ -661,12 +770,20 @@
             </ul>
         </div>
 
-        <figure style="text-align: center; margin: 24px 0;">
-          <img src="assets/second-order-cone.png"
-               alt="3D visualization of the second-order cone (ice cream cone)"
-               style="max-width: 50%; height: auto; border-radius: 8px;" />
-          <figcaption><i>Figure 5.1:</i> The Second-Order Cone in $\mathbb{R}^3$, often called the "ice-cream cone".</figcaption>
-        </figure>
+        <div class="row" style="display: flex; gap: 20px; justify-content: center; margin: 24px 0;">
+             <figure style="text-align: center; flex: 1;">
+               <img src="assets/second-order-cone.png"
+                    alt="3D visualization of the second-order cone (ice cream cone)"
+                    style="width: 100%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 5.1:</i> The Second-Order Cone in $\mathbb{R}^3$ (ice-cream cone) is defined by $\|x\|_2 \le t$.</figcaption>
+             </figure>
+             <figure style="text-align: center; flex: 1;">
+               <img src="assets/hyperbolic-cone.png"
+                    alt="3D visualization of a hyperbolic cone"
+                    style="width: 100%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 5.2:</i> A Hyperbolic Cone (generalized version). The cross-sections are ellipses that grow as you move up the axis.</figcaption>
+             </figure>
+        </div>
 
         <h3>5.2 Proper Cones</h3>
 
@@ -679,6 +796,24 @@
 
         <p>Proper cones are geometrically "sharp" (pointed) and "full-dimensional" (solid). They are used to define generalized inequalities.</p>
 
+        <figure style="text-align: center; margin: 24px 0;">
+             <img src="assets/cone-zoo.png"
+                  alt="Examples of proper and improper cones"
+                  style="max-width: 90%; height: auto; border-radius: 8px;" />
+             <figcaption><i>Figure 5.3:</i> The "Cone Zoo". Left: A proper cone (closed, pointed, solid). Center: A wedge (not pointed, contains a line). Right: A flat slice (not solid, empty interior).</figcaption>
+        </figure>
+
+        <div class="example">
+            <h4>Example: Nonnegative Polynomials</h4>
+            <p>The set of polynomials of degree $n$ that are non-negative on an interval $[0,1]$ forms a proper convex cone in the space of coefficients.</p>
+            <figure style="text-align: center; margin: 24px 0;">
+                 <img src="assets/nonnegative-poly-cone.png"
+                      alt="Cone of nonnegative polynomials"
+                      style="max-width: 50%; height: auto; border-radius: 8px;" />
+                 <figcaption><i>Figure 5.4:</i> Visualizing the cone of polynomials $P(t)$ such that $P(t) \ge 0$ for $t \in [0,1]$. The boundary corresponds to polynomials with roots in the interval.</figcaption>
+            </figure>
+        </div>
+
         <h3>5.3 Generalized Inequalities</h3>
 
         <p>A proper cone $K$ defines a partial ordering $\preceq_K$ on $\mathbb{R}^n$:</p>
@@ -690,6 +825,21 @@
         x \prec_K y \iff y - x \in \text{int}(K)
         $$
 
+        <div class="row" style="display: flex; gap: 20px; justify-content: center; margin: 24px 0;">
+             <figure style="text-align: center; flex: 1;">
+               <img src="assets/generalized-inequality-cone.png"
+                    alt="Visualizing generalized inequality"
+                    style="width: 100%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 5.5:</i> Visualizing $x \preceq_K y$. The point $x$ must lie in the "shadow" of $y$ cast by the cone $-K$.</figcaption>
+             </figure>
+             <figure style="text-align: center; flex: 1;">
+               <img src="assets/matrix-inequality-cone.png"
+                    alt="Matrix inequality ordering"
+                    style="width: 100%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 5.6:</i> Partial ordering in the PSD cone. $A \preceq B$ means $B-A$ is in the PSD cone.</figcaption>
+             </figure>
+        </div>
+
         <div class="theorem-box">
           <h4>Properties of Generalized Inequalities</h4>
           <ul>
@@ -700,6 +850,17 @@
           </ul>
         </div>
 
+        <div class="insight">
+             <h4>Minimum vs. Minimal</h4>
+             <p>Because the ordering is partial, we distinguish between a <b>minimum</b> element (smaller than everyone, e.g., the origin in $\mathbb{R}^n_+$) and a <b>minimal</b> element (nothing is smaller than it, but it might not compare to everyone).</p>
+             <figure style="text-align: center; margin: 24px 0;">
+                  <img src="assets/minimum-vs-minimal.png"
+                       alt="Minimum vs minimal elements"
+                       style="max-width: 60%; height: auto; border-radius: 8px;" />
+                  <figcaption><i>Figure 5.7:</i> Left: Minimum element (unique). Right: Minimal elements (red boundary). In vector optimization (Pareto optimality), we seek minimal elements.</figcaption>
+             </figure>
+        </div>
+
         <h3>5.4 The Dual Cone</h3>
 
         <p>The <a href="#" class="definition-link">dual cone</a> of a cone $K$ is the set of all vectors making a non-obtuse angle with every vector in $K$:</p>
@@ -707,6 +868,13 @@
         K^* = \{y \in \mathbb{R}^n \mid y^\top x \ge 0 \ \forall x \in K\}
         $$
         <p>The dual cone $K^*$ is always a closed convex cone, regardless of whether $K$ is convex or closed.</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+             <img src="assets/dual-cone-geometry.png"
+                  alt="Geometry of primal and dual cones"
+                  style="max-width: 50%; height: auto; border-radius: 8px;" />
+             <figcaption><i>Figure 5.8:</i> The dual cone $K^*$ (red) consists of vectors that make an angle $\le 90^\circ$ with every vector in $K$ (blue).</figcaption>
+        </figure>
 
         <div class="theorem-box">
             <h4>Important Dualities</h4>
@@ -716,6 +884,21 @@
                 <li>$\mathcal{Q}^{n+1}$ is <b>self-dual</b>: $(\mathcal{Q}^{n+1})^* = \mathcal{Q}^{n+1}$</li>
                 <li>$(L_p \text{ norm cone})^* = L_q \text{ norm cone}$ where $1/p + 1/q = 1$.</li>
             </ul>
+        </div>
+
+        <div class="row" style="display: flex; gap: 20px; justify-content: center; margin: 24px 0;">
+             <figure style="text-align: center; flex: 1;">
+               <img src="assets/self-dual-cones.png"
+                    alt="The three major self-dual cones"
+                    style="width: 100%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 5.9:</i> The Big Three self-dual cones: Nonnegative Orthant, Second-Order Cone, and PSD Cone.</figcaption>
+             </figure>
+             <figure style="text-align: center; flex: 1;">
+               <img src="assets/dual-norm-cones.png"
+                    alt="Dual relationship between L1 and L-infinity cones"
+                    style="width: 100%; height: auto; border-radius: 8px;" />
+               <figcaption><i>Figure 5.10:</i> Duality of Norm Cones: The dual of the $L_1$ cone is the $L_\infty$ cone.</figcaption>
+             </figure>
         </div>
       </section>
 
