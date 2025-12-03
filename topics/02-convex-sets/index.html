@@ -81,20 +81,59 @@
         $$
         \sum_{i=1}^k \theta_i x_i \quad \text{where} \quad \sum_{i=1}^k \theta_i = 1
         $$
-        <p>Weights can be negative—there's no nonnegativity requirement. Affine combinations describe lines, planes, and hyperplanes.</p>
+        <p>Unlike linear combinations, affine combinations do not require the origin to be included. Weights can be negative—there's no nonnegativity requirement. Affine combinations describe lines, planes, and hyperplanes.</p>
 
         <div class="theorem-box">
           <h4>Definition (Affine Set)</h4>
-          <p>A set $C$ is <a href="#" class="definition-link">affine</a> if it contains all affine combinations of its points. Equivalently, the line through any two points in $C$ lies entirely in $C$.</p>
+          <p>A set $C$ is <a href="#" class="definition-link">affine</a> if it contains all affine combinations of its points. Equivalently, the <b>infinite line</b> passing through any two points in $C$ lies entirely in $C$.</p>
+          $$ x_1, x_2 \in C, \ \theta \in \mathbb{R} \implies \theta x_1 + (1-\theta)x_2 \in C $$
         </div>
+
+        <h4>Affine Sets as Translated Subspaces</h4>
+        <p>Geometrically, every affine set is just a linear subspace that has been shifted (translated) away from the origin.</p>
+
+        <div class="theorem-box">
+          <h4>Theorem: Affine Set $\iff$ Translated Subspace</h4>
+          <p>A set $C \subseteq \mathbb{R}^n$ is affine if and only if it can be written as:</p>
+          $$
+          C = x_0 + V = \{x_0 + v \mid v \in V\}
+          $$
+          <p>where $x_0$ is any specific point in $C$, and $V$ is a linear subspace of $\mathbb{R}^n$.</p>
+          <div class="proof-enhanced">
+            <h4>Proof</h4>
+            <div class="proof-step">
+              <strong>($\Leftarrow$):</strong> Suppose $C = x_0 + V$. Let $x_1, x_2 \in C$. Then $x_1 = x_0 + v_1$ and $x_2 = x_0 + v_2$ for some $v_1, v_2 \in V$.
+              For any $\theta \in \mathbb{R}$:
+              $$
+              \theta x_1 + (1-\theta)x_2 = \theta(x_0 + v_1) + (1-\theta)(x_0 + v_2)
+              = x_0 + [\theta v_1 + (1-\theta)v_2]
+              $$
+              Since $V$ is a subspace, it is closed under linear combinations, so the bracketed term is in $V$. Thus the combination is in $x_0 + V = C$.
+            </div>
+            <div class="proof-step">
+              <strong>($\Rightarrow$):</strong> Suppose $C$ is affine. Pick any $x_0 \in C$ and define $V = C - x_0 = \{x - x_0 \mid x \in C\}$. We show $V$ is a subspace.
+              <ul>
+                <li>$0 \in V$ since $x_0 \in C$.</li>
+                <li>Let $v_1, v_2 \in V$ and $\alpha, \beta \in \mathbb{R}$. We want $\alpha v_1 + \beta v_2 \in V$. This follows from the affine property of $C$ (specifically, closure under affine sums leads to closure of difference vectors under linear combinations).</li>
+              </ul>
+              Thus $C = x_0 + V$.
+            </div>
+          </div>
+        </div>
+
+        <figure style="text-align: center;">
+          <img src="assets/affine-subspace.png"
+               alt="An affine set C shown as a red plane parallel to a blue subspace V passing through the origin"
+               style="max-width: 60%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 1.0:</i> An affine set $C$ (red) is a subspace $V$ (blue) translated by a vector $x_0$. Note that $V$ passes through the origin, while $C$ does not necessarily.</figcaption>
+        </figure>
 
         <div class="example">
           <h4>Examples of Affine Sets</h4>
           <ul>
-            <li><b>Solution set of linear equations:</b> $\{x \mid Ax = b\}$ is always affine (it's a hyperplane or subspace).</li>
-            <li><b>$\mathbb{R}^n$ itself:</b> The entire space is trivially affine.</li>
-            <li><b>Empty set:</b> Vacuously affine (no pairs of points to check).</li>
-            <li><b>Single point $\{x_0\}$:</b> Affine (the only "line" through one point is the point itself).</li>
+            <li><b>Solution set of linear equations:</b> $C = \{x \mid Ax = b\}$. If $x_0$ is a particular solution ($Ax_0 = b$), then $C = x_0 + \mathcal{N}(A)$, where the nullspace $\mathcal{N}(A)$ is the associated subspace.</li>
+            <li><b>$\mathbb{R}^n$ itself:</b> The entire space is trivially affine ($V = \mathbb{R}^n, x_0 = 0$).</li>
+            <li><b>Single point $\{x_0\}$:</b> Affine ($V = \{0\}$).</li>
           </ul>
         </div>
 
@@ -116,10 +155,10 @@
         </div>
 
         <figure style="text-align: center; margin: 24px 0;">
-          <img src="../../static/assets/topics/02-convex-sets/convex-set-definition.svg"
+          <img src="assets/convex-vs-nonconvex.png"
                alt="Visual definition of convex and non-convex sets"
                style="max-width: 100%; height: auto; border-radius: 8px;" />
-          <figcaption><i>Figure 1.1:</i> In a convex set (left), the line segment between any two points lies entirely within the set. In a non-convex set (right), some line segments escape.</figcaption>
+          <figcaption><i>Figure 1.1:</i> In a convex set (right), the line segment between any two points lies entirely within the set. In a non-convex set (left), some line segments (red) cross outside the set boundaries.</figcaption>
         </figure>
 
         <h3>1.3 Convex Hull</h3>
@@ -137,10 +176,10 @@
         </div>
 
         <figure style="text-align: center; margin: 24px 0;">
-          <img src="../../static/assets/topics/02-convex-sets/convex-hull.svg"
+          <img src="assets/convex-hull.png"
                alt="Illustration of a convex hull"
-               style="max-width: 100%; height: auto; border-radius: 8px;" />
-          <figcaption><i>Figure 1.2:</i> The convex hull of a set of points—the "rubber band" effect.</figcaption>
+               style="max-width: 60%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 1.2:</i> The convex hull of a set of points (black dots) acts like a rubber band (blue polygon) snapped tight around them.</figcaption>
         </figure>
 
         <h3>1.4 Key Properties</h3>

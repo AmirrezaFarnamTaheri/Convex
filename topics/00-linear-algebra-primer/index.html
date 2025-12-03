@@ -67,6 +67,30 @@
     <section class="card-v2" id="section-0">
       <h2>0. Notation and Basic Objects</h2>
 
+      <h3>Preliminaries: Lines and Line Segments</h3>
+      <p>We work in $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum x_i y_i$ and Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are fundamental to defining convexity.</p>
+
+      <h4>Line through two points</h4>
+      <p>Given two distinct points $x_1, x_2 \in \mathbb{R}^n$, the <b>line</b> passing through them is the set of all affine combinations of these points:</p>
+      $$
+      y = \theta x_1 + (1-\theta)x_2, \quad \theta \in \mathbb{R}
+      $$
+      <p>As $\theta$ varies over $\mathbb{R}$, $y$ traces out the infinite line.</p>
+
+      <h4>Line segment between two points</h4>
+      <p>The <b>line segment</b> connecting $x_1$ and $x_2$, denoted $[x_1, x_2]$, corresponds to restricting the parameter $\theta$ to the interval $[0, 1]$:</p>
+      $$
+      y = \theta x_1 + (1-\theta)x_2, \quad 0 \le \theta \le 1
+      $$
+      <p>This parametrization is key: a set is convex if and only if it contains the line segment between any pair of its points.</p>
+
+      <figure style="text-align: center;">
+        <img src="assets/line-vs-segment.png"
+             alt="Comparison of a line segment (blue) versus the infinite line (grey) passing through two points"
+             style="max-width: 60%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
+        <figcaption><i>Figure 0.1:</i> The line segment (solid blue, $0 \le \theta \le 1$) is a subset of the infinite affine line (dashed grey, $\theta \in \mathbb{R}$).</figcaption>
+      </figure>
+
       <h3>Scalars, Vectors, Matrices</h3>
       <ul>
         <li><b>Scalars:</b> Real numbers $a \in \mathbb{R}$.</li>
@@ -82,7 +106,7 @@
         <img src="../../static/assets/topics/00-linear-algebra-primer/matrix-multiplication.svg"
              alt="Matrix multiplication diagram showing how rows and columns combine"
              style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
-        <figcaption><i>Figure 0.1:</i> Matrix multiplication visualized—how rows of the first matrix combine with columns of the second.</figcaption>
+        <figcaption><i>Figure 0.2:</i> Matrix multiplication visualized—how rows of the first matrix combine with columns of the second.</figcaption>
       </figure>
 
       <h3>Matrix–Vector and Matrix–Matrix Multiplication</h3>
@@ -306,10 +330,10 @@
       $$
 
       <figure style="text-align: center;">
-        <img src="../../static/assets/topics/00-linear-algebra-primer/vector-norms.svg"
-             alt="Comparison of different norm unit balls"
-             style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
-        <figcaption><i>Figure 2.2:</i> The "unit ball" (the set of all vectors with norm less than or equal to 1) for the L1, L2, and infinity norms. The different shapes illustrate how these norms measure distance differently.</figcaption>
+        <img src="assets/norm-balls.png"
+             alt="Comparison of L1, L2, and Infinity norm unit balls"
+             style="max-width: 70%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
+        <figcaption><i>Figure 2.2:</i> The "unit ball" $\{x \mid \|x\| \le 1\}$ for the $\ell_1$ (diamond), $\ell_2$ (circle), and $\ell_\infty$ (square) norms.</figcaption>
       </figure>
 
       <div class="widget-container" style="margin: 24px 0;">
