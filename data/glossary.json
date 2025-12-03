@@ -20,11 +20,11 @@
     "url": "../../topics/00-linear-algebra-primer/index.html#section-2"
   },
   "positive semidefinite": {
-    "definition": "A symmetric matrix A is PSD if xᵀAx ≥ 0 for all vectors x. Equivalently, all its eigenvalues are non-negative.",
+    "definition": "A symmetric matrix A is PSD if x\u1d40Ax \u2265 0 for all vectors x. Equivalently, all its eigenvalues are non-negative.",
     "url": "../../topics/00-linear-algebra-primer/index.html#section-4"
   },
   "svd": {
-    "definition": "Singular Value Decomposition: Factorization of a matrix into A = UΣVᵀ, representing rotation, scaling, and rotation.",
+    "definition": "Singular Value Decomposition: Factorization of a matrix into A = U\u03a3V\u1d40, representing rotation, scaling, and rotation.",
     "url": "../../topics/00-linear-algebra-primer/index.html#section-7"
   },
   "convex optimization problem": {
@@ -32,7 +32,7 @@
     "url": "../../topics/01-introduction/index.html#section-1"
   },
   "convex function": {
-    "definition": "A function f is convex if its domain is a convex set and f(θx + (1-θ)y) ≤ θf(x) + (1-θ)f(y).",
+    "definition": "A function f is convex if its domain is a convex set and f(\u03b8x + (1-\u03b8)y) \u2264 \u03b8f(x) + (1-\u03b8)f(y).",
     "url": "../../topics/03-convex-functions/index.html#section-1"
   },
   "affine": {
@@ -44,7 +44,7 @@
     "url": "../../topics/02-convex-sets/index.html#section-1"
   },
   "translated subspace": {
-    "definition": "A set of the form {x₀ + v | v ∈ V} where V is a linear subspace. This is the geometric characterization of an affine set.",
+    "definition": "A set of the form {x\u2080 + v | v \u2208 V} where V is a linear subspace. This is the geometric characterization of an affine set.",
     "url": "../../topics/02-convex-sets/index.html#section-1"
   },
   "feasible set": {
@@ -72,7 +72,7 @@
     "url": "../../topics/04-convex-opt-problems/index.html#section-3"
   },
   "socp": {
-    "definition": "Second-Order Cone Program: Optimization problem with linear objective and second-order cone constraints ||Ax+b||₂ ≤ cᵀx+d.",
+    "definition": "Second-Order Cone Program: Optimization problem with linear objective and second-order cone constraints ||Ax+b||\u2082 \u2264 c\u1d40x+d.",
     "url": "../../topics/04-convex-opt-problems/index.html#section-4"
   },
   "sdp": {
@@ -92,11 +92,11 @@
     "url": "../../topics/02-convex-sets/index.html#section-1"
   },
   "hyperplane": {
-    "definition": "A set {x | aᵀx = b}. It divides the space into two halfspaces.",
+    "definition": "A set {x | a\u1d40x = b}. It divides the space into two halfspaces.",
     "url": "../../topics/02-convex-sets/index.html#section-2"
   },
   "halfspace": {
-    "definition": "A set {x | aᵀx ≤ b}. It is a convex set bounded by a hyperplane.",
+    "definition": "A set {x | a\u1d40x \u2264 b}. It is a convex set bounded by a hyperplane.",
     "url": "../../topics/02-convex-sets/index.html#section-2"
   },
   "polytope": {
@@ -104,7 +104,7 @@
     "url": "../../topics/02-convex-sets/index.html#section-2"
   },
   "cone": {
-    "definition": "A set closed under non-negative scaling: if x in K, then θx in K for θ ≥ 0.",
+    "definition": "A set closed under non-negative scaling: if x in K, then \u03b8x in K for \u03b8 \u2265 0.",
     "url": "../../topics/02-convex-sets/index.html#section-2"
   },
   "convex cone": {
@@ -112,47 +112,52 @@
     "url": "../../topics/02-convex-sets/index.html#section-2"
   },
   "proper cone": {
-    "definition": "A convex cone that is closed, pointed (contains no lines), and solid (has interior). Used to define generalized inequalities.",
-    "url": "../../topics/02-convex-sets/index.html#section-5"
+    "term": "Proper Cone",
+    "definition": "A convex cone that is closed, pointed (contains no line), and solid (has non-empty interior).",
+    "url": "topics/02-convex-sets/index.html#section-5"
   },
   "dual cone": {
-    "definition": "The set of vectors y such that yᵀx ≥ 0 for all x in K.",
-    "url": "../../topics/02-convex-sets/index.html#section-5"
+    "term": "Dual Cone",
+    "definition": "The set $K^* = \\{y \\mid y^T x \\ge 0 \\ \\forall x \\in K\\}$. It consists of all vectors making a non-obtuse angle with every vector in the cone $K$.",
+    "url": "topics/02-convex-sets/index.html#section-5"
   },
   "lorentz cone": {
-    "definition": "The second-order cone Q = {(x,t) | ||x||₂ ≤ t}. Also known as the ice-cream cone.",
+    "definition": "The second-order cone Q = {(x,t) | ||x||\u2082 \u2264 t}. Also known as the ice-cream cone.",
     "url": "../../topics/02-convex-sets/index.html#section-2"
   },
   "psd cone": {
-    "definition": "The set of positive semidefinite matrices, Sⁿ₊ = {X ∈ Sⁿ | X ⪰ 0}.",
+    "definition": "The set of positive semidefinite matrices, S\u207f\u208a = {X \u2208 S\u207f | X \u2ab0 0}.",
     "url": "../../topics/02-convex-sets/index.html#section-2"
   },
   "minkowski sum": {
-    "definition": "The set sum A + B = {a + b | a ∈ A, b ∈ B}. Preserves convexity.",
+    "definition": "The set sum A + B = {a + b | a \u2208 A, b \u2208 B}. Preserves convexity.",
     "url": "../../topics/02-convex-sets/index.html#section-3"
   },
   "perspective function": {
-    "definition": "The map P(x,t) = x/t for t > 0. It preserves convexity.",
-    "url": "../../topics/02-convex-sets/index.html#section-3"
+    "term": "Perspective Function",
+    "definition": "The function $P(x,t) = x/t$ defined for $t>0$. It maps points in $\\mathbb{R}^{n+1}$ to $\\mathbb{R}^n$ and preserves convexity.",
+    "url": "topics/02-convex-sets/index.html#section-3"
   },
   "linear-fractional function": {
-    "definition": "A function of the form f(x) = (Ax+b) / (cᵀx+d). Preimages and images of convex sets under this map are convex.",
-    "url": "../../topics/02-convex-sets/index.html#section-3"
+    "term": "Linear-Fractional Function",
+    "definition": "A function of the form $f(x) = (Ax+b)/(c^T x + d)$. It is the composition of the perspective function with an affine function.",
+    "url": "topics/02-convex-sets/index.html#section-3"
   },
   "strict separation": {
     "definition": "Two disjoint convex sets can be separated by a hyperplane such that one set is strictly greater than the threshold and the other strictly less.",
     "url": "../../topics/02-convex-sets/index.html#section-4"
   },
   "supporting hyperplane": {
-    "definition": "A hyperplane that touches a convex set at the boundary and contains the set on one side.",
-    "url": "../../topics/02-convex-sets/index.html#section-4"
+    "term": "Supporting Hyperplane",
+    "definition": "A hyperplane that passes through a boundary point of a convex set such that the entire set lies on one side of the hyperplane.",
+    "url": "topics/02-convex-sets/index.html#section-4"
   },
   "strictly convex": {
     "definition": "A function where Jensen's inequality is strict for distinct points. Implies unique global minimum.",
     "url": "../../topics/03-convex-functions/index.html#section-1"
   },
   "strongly convex": {
-    "definition": "A function that is at least as convex as a quadratic: f(x) - (m/2)||x||² is convex.",
+    "definition": "A function that is at least as convex as a quadratic: f(x) - (m/2)||x||\u00b2 is convex.",
     "url": "../../topics/03-convex-functions/index.html#section-1"
   },
   "concave": {
@@ -160,23 +165,23 @@
     "url": "../../topics/03-convex-functions/index.html#section-1"
   },
   "epigraph": {
-    "definition": "The set of points lying on or above the graph of a function. epi(f) = {(x,t) | f(x) ≤ t}.",
+    "definition": "The set of points lying on or above the graph of a function. epi(f) = {(x,t) | f(x) \u2264 t}.",
     "url": "../../topics/03-convex-functions/index.html#section-2"
   },
   "convex conjugate": {
-    "definition": "The function f*(y) = sup(yᵀx - f(x)). It is always convex.",
+    "definition": "The function f*(y) = sup(y\u1d40x - f(x)). It is always convex.",
     "url": "../../topics/03-convex-functions/index.html#section-7"
   },
   "quasi-convex": {
-    "definition": "A function where all sublevel sets {x | f(x) ≤ α} are convex.",
+    "definition": "A function where all sublevel sets {x | f(x) \u2264 \u03b1} are convex.",
     "url": "../../topics/03-convex-functions/index.html#section-8"
   },
   "standard form": {
-    "definition": "Minimize convex f₀(x) subject to convex inequality constraints fᵢ(x) ≤ 0 and affine equality constraints Ax=b.",
+    "definition": "Minimize convex f\u2080(x) subject to convex inequality constraints f\u1d62(x) \u2264 0 and affine equality constraints Ax=b.",
     "url": "../../topics/04-convex-opt-problems/index.html#section-1"
   },
   "lagrangian": {
-    "definition": "The function L(x,λ,ν) = f₀(x) + Σλᵢfᵢ(x) + Σνⱼhⱼ(x), augmenting the objective with weighted constraints.",
+    "definition": "The function L(x,\u03bb,\u03bd) = f\u2080(x) + \u03a3\u03bb\u1d62f\u1d62(x) + \u03a3\u03bd\u2c7ch\u2c7c(x), augmenting the objective with weighted constraints.",
     "url": "../../topics/05-duality/index.html#section-1"
   },
   "weak duality": {
@@ -200,7 +205,42 @@
     "url": "../../topics/05-duality/index.html#section-4"
   },
   "jensen's inequality": {
-    "definition": "The inequality f(E[X]) ≤ E[f(X)] for a convex function f.",
+    "definition": "The inequality f(E[X]) \u2264 E[f(X)] for a convex function f.",
     "url": "../../topics/03-convex-functions/index.html#section-1"
+  },
+  "hyperbolic cone": {
+    "term": "Hyperbolic Cone",
+    "definition": "A convex cone defined by a quadratic inequality of the form $x^T P x \\le (c^T x)^2$ with $c^T x \\ge 0$. It is the preimage of the second-order cone under a linear map.",
+    "url": "topics/02-convex-sets/index.html#section-3"
+  },
+  "spectrahedron": {
+    "term": "Spectrahedron",
+    "definition": "The intersection of the cone of positive semidefinite matrices with an affine subspace. It is the feasible set of a linear matrix inequality (LMI).",
+    "url": "topics/02-convex-sets/index.html#section-3"
+  },
+  "linear matrix inequality": {
+    "term": "Linear Matrix Inequality (LMI)",
+    "definition": "A constraint of the form $F(x) = F_0 + x_1 F_1 + \\dots + x_n F_n \\succeq 0$, where $F_i$ are symmetric matrices. The solution set is a spectrahedron.",
+    "url": "topics/02-convex-sets/index.html#section-3"
+  },
+  "generalized inequality": {
+    "term": "Generalized Inequality",
+    "definition": "A partial order $\\preceq_K$ defined by a proper cone $K$: $x \\preceq_K y$ if and only if $y - x \\in K$.",
+    "url": "topics/02-convex-sets/index.html#section-5"
+  },
+  "minimum element": {
+    "term": "Minimum Element",
+    "definition": "An element $x \\in S$ such that $x \\preceq_K y$ for all $y \\in S$. If it exists, it is unique.",
+    "url": "topics/02-convex-sets/index.html#section-5"
+  },
+  "minimal element": {
+    "term": "Minimal Element",
+    "definition": "An element $x \\in S$ such that no other $y \\in S$ satisfies $y \\preceq_K x$ (unless $y=x$).",
+    "url": "topics/02-convex-sets/index.html#section-5"
+  },
+  "separating hyperplane": {
+    "term": "Separating Hyperplane",
+    "definition": "A hyperplane that divides two disjoint convex sets, placing one in each of the two halfspaces defined by the hyperplane.",
+    "url": "topics/02-convex-sets/index.html#section-4"
   }
 }
