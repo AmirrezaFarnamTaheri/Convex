@@ -1,0 +1,179 @@
+
+
+1. Basic Setup and One-Dimensional Geometry
+
+Image 1: Conjugate Function as Maximum Gap
+
+Description: A 2D plot showing a convex function curve $f(x) = x^2/2 + 1$ (blue curve).
+
+A linear function $h(x) = yx$ (for a fixed slope $y=1.5$) is drawn as a straight red line passing through the origin.
+
+The vertical gap $yx - f(x)$ is highlighted at several $x$ points.
+
+The maximum gap occurs at a specific point $x^*$. A vertical arrow labeled "Supremum Value = $f^*(y)$" connects the line $yx$ down to the curve $f(x)$ at this optimal $x^*$.
+
+This visualizes the definition $f^*(y) = \sup_x (yx - f(x))$.
+
+Image 2: Supporting Line Interpretation
+
+Description: A geometric construction for a 1D convex function.
+
+A convex curve $f(x)$ is plotted.
+
+A tangent line with slope $y$ touches the curve at point $x^*$.
+
+The equation of this tangent line is $L(x) = yx - f^*(y)$.
+
+The line intersects the vertical y-axis at the value $-f^*(y)$.
+
+This visually demonstrates that $f^*(y)$ determines the vertical intercept (negative) of the supporting hyperplane with slope $y$.
+
+2. Convexity of the Conjugate
+
+Image 3: Conjugate as Supremum of Affine Functions
+
+Description: A plot in the dual variable space $y$.
+
+Several affine lines $g_x(y) = x \cdot y - f(x)$ are drawn for different fixed values of $x$ (e.g., $x_1, x_2, x_3$). Each line has slope $x$ and intercept $-f(x)$.
+
+The function $f^*(y)$ is the upper envelope (pointwise supremum) of all these lines.
+
+The resulting upper envelope forms a convex "V" shape or curve, visually proving that the conjugate $f^*$ is always convex, regardless of the shape of $f$.
+
+Image 4: Epigraph Intersection
+
+Description: A 3D visualization of the epigraph of $f^*$.
+
+The space represents $(y, \alpha)$.
+
+Multiple half-spaces $H_x = \{(y, \alpha) \mid y^T x - f(x) \le \alpha\}$ are shown as flat planes with "below" regions shaded.
+
+The intersection of all these half-spaces forms a convex polyhedral-like solid, which is the epigraph of $f^*$.
+
+This corresponds to the "intersection of halfspaces" proof of convexity.
+
+3. Fenchel-Young Inequality
+
+Image 5: Fenchel-Young Geometry
+
+Description: A diagram illustrating the inequality $f(x) + f^*(y) \ge xy$.
+
+A convex function $f(x)$ and a line with slope $y$ passing through the origin are shown.
+
+The value $xy$ is the area of a rectangle with sides $x$ and $y$ (abstractly).
+
+More intuitively: The tangent line with slope $y$ has equation $L(z) = yz - f^*(y)$.
+
+At any point $x$, the function value $f(x)$ is visibly above the tangent line value: $f(x) \ge yx - f^*(y)$, which rearranges to the Fenchel-Young inequality.
+
+The "equality case" is highlighted where the tangent touches the curve.
+
+4. Classical Examples
+
+Image 6: Conjugate of Absolute Value (Dual Norm Indicator)
+
+Description: A side-by-side plot.
+
+Left (Primal): The absolute value function $f(x) = |x|$. It's a V-shape.
+
+Right (Dual): The conjugate function $f^*(y)$. It is the indicator function of the interval $[-1, 1]$.
+
+For $y \in (-1, 1)$, the value is $0$ (flat line on the axis).
+
+At $y = -1$ and $y = 1$, vertical walls shoot up to infinity.
+
+Outside $[-1, 1]$, the function is undefined or $+\infty$.
+
+This visualizes the conjugate of a norm being the indicator of the dual unit ball.
+
+Image 7: Conjugate of Indicator Function (Support Function)
+
+Description: A geometric illustration in 2D space.
+
+A convex set $C$ (e.g., a pentagon) is shown.
+
+A direction vector $y$ is drawn from the origin.
+
+A supporting hyperplane (line) perpendicular to $y$ touches the boundary of $C$ at the furthest point in direction $y$.
+
+The distance from the origin to this supporting line (projected onto $y$) is labeled $\sigma_C(y) = \delta_C^*(y)$.
+
+This visualizes the conjugate of the indicator function as the support function.
+
+5. Biconjugate and Convexification
+
+Image 8: Biconjugate as Convex Hull
+
+Description: A comparison of a non-convex function and its biconjugate.
+
+Function: A smooth "W" shaped curve $f(x)$ (non-convex, with two local minima).
+
+Biconjugate: A dashed line connects the two bottom tips of the "W", bridging the gap. This new function $f^{**}(x)$ follows the original curve on the outer wings but is flat in the middle.
+
+This visually represents the "closed convex envelope" or the tightest convex lower bound of the original non-convex function.
+
+
+
+
+1. Basic Setup and One-Dimensional Geometry
+Image 1: Conjugate Function as Maximum Gap This image visualizes the conjugate function f 
+∗
+ (y) as the maximum vertical gap between the line yx and the function f(x).
+
+
+
+
+
+Image 2: Supporting Line Interpretation This image shows the geometric interpretation of the conjugate function. The value −f 
+∗
+ (y) is the y-intercept of the tangent line to f(x) with slope y.
+
+
+
+
+
+2. Convexity of the Conjugate
+Image 3: Conjugate as Supremum of Affine Functions This plot in the dual space demonstrates that the conjugate function f 
+∗
+ (y) is the convex upper envelope of a family of affine functions.
+
+
+
+
+
+Image 4: Epigraph Intersection A 3D visualization showing the epigraph of f 
+∗
+ (y) as the intersection of multiple half-spaces, which is a convex set.
+
+
+
+
+
+3. Fenchel-Young Inequality
+Image 5: Fenchel-Young Geometry This image illustrates the Fenchel-Young inequality f(x)+f 
+∗
+ (y)≥xy. It shows that the convex function f(x) is always above its supporting hyperplane, with equality when the tangent line touches the curve.
+
+
+
+
+
+4. Classical Examples
+Image 6: Conjugate of Absolute Value (Dual Norm Indicator) A side-by-side plot showing the absolute value function f(x)=∣x∣ and its conjugate f 
+∗
+ (y), which is the indicator function of the dual unit ball [−1,1].
+
+
+
+
+
+Image 7: Conjugate of Indicator Function (Support Function) This image illustrates that the conjugate of the indicator function of a convex set is its support function.
+
+
+
+
+
+5. Biconjugate and Convexification
+Image 8: Biconjugate as Convex Hull This plot compares a non-convex function f(x) with its biconjugate f 
+∗∗
+ (x), demonstrating that the biconjugate is the tightest convex lower bound, or the convex hull, of the function.

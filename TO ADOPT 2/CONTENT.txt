@@ -1,0 +1,525 @@
+Let’s zoom in on **the conjugate function** slide and really unwrap what’s going on.
+
+---
+
+## 1. Basic setup and notation
+
+We work with a function
+
+[
+f : \mathbb{R}^n \to \mathbb{R}\cup{+\infty},
+]
+
+not necessarily convex (yet). Allowing (+\infty) lets us encode constraints (e.g. “(x) must be in a certain set”).
+
+We also fix an inner product on (\mathbb{R}^n); in these notes it’s the standard one
+
+[
+\langle y,x\rangle = y^T x = \sum_{i=1}^n y_i x_i.
+]
+
+---
+
+## 2. Definition of the conjugate
+
+The **conjugate** (also called the **Fenchel–Legendre transform**) of (f) is the function
+
+[
+\boxed{ \displaystyle
+f^*(y) ;=; \sup_{x\in \operatorname{dom} f} \big( y^T x - f(x) \big)
+}
+]
+
+where (\operatorname{dom} f = { x \mid f(x) < +\infty}).
+
+* Input: a vector (y\in\mathbb{R}^n).
+* Output: the **best possible value** of “linear function minus (f)” you can get by choosing (x).
+
+For each fixed (y), define
+
+[
+\phi_y(x) = y^T x - f(x).
+]
+
+Then (f^*(y) = \sup_x \phi_y(x)).
+
+So:
+
+> For each slope (y) you ask: “How well can the linear function (x\mapsto y^T x) beat (f(x))?”
+> The answer is (f^*(y)).
+
+If it can beat (f) arbitrarily badly (i.e. (\phi_y(x)\to +\infty)), then (f^*(y)=+\infty).
+If it can never beat it at all, you might get a finite or negative number.
+
+---
+
+## 3. One–dimensional geometric picture
+
+Take (n=1), so (x,y\in\mathbb{R}), and write (f:\mathbb{R}\to\mathbb{R}\cup{+\infty}).
+
+For fixed (y),
+
+[
+\phi_y(x) = yx - f(x)
+]
+
+is just a scalar function of (x).
+
+Rearrange:
+
+[
+yx - f(x) \le \alpha
+\quad \Longleftrightarrow \quad
+f(x) \ge yx - \alpha.
+]
+
+Interpretation:
+
+* (f(x)) is some curve.
+* A line with slope (y) and intercept (-\alpha) is (x\mapsto yx -\alpha).
+* The inequality says: **for all (x), the line lies below the curve** (f(x)).
+
+Now, consider all lines with slope (y) that lie below the graph of (f). Among these, take the one with the **largest** intercept (closest to the curve from below). Call its intercept (-f^*(y)).
+
+Then:
+
+[
+f^*(y) = \sup_x (yx - f(x)) = \text{(negative of that best intercept)}.
+]
+
+So geometrically:
+
+> **(f^*(y)) encodes the highest line of slope (y) that stays below the function (f).**
+
+This is exactly what the slide’s picture is showing: a dashed line touching the curve from below at some point (x^*); the vertical intercept of that line is related to (f^*(y)).
+
+More explicitly, for the touching line:
+
+[
+\ell(x) = yx - f^*(y).
+]
+
+The condition “(\ell(x) \le f(x)) for all (x)” is equivalent to the definition of (f^*).
+
+---
+
+## 4. Convexity of the conjugate
+
+Your slide says:
+
+> (f^*) is convex (even if (f) is not).
+
+Let’s prove this in a couple of complementary ways.
+
+### 4.1 Short conceptual proof: supremum of affine functions
+
+For any fixed (x), the map
+
+[
+g_x(y) = y^T x - f(x)
+]
+
+is **affine** in (y): it’s linear in (y) plus the constant (-f(x)).
+
+Then
+
+[
+f^*(y) = \sup_{x} g_x(y) = \sup_{x} \big( y^T x - f(x)\big)
+]
+
+is a **supremum of affine functions**. Basic convex analysis fact:
+
+> The pointwise supremum of any family of convex (in particular affine) functions is convex.
+
+Proof sketch of that fact: if (h(y) = \sup_i h_i(y)) and each (h_i) is convex, then for any (y_1,y_2) and (\theta\in[0,1]),
+
+[
+\begin{aligned}
+h(\theta y_1 + (1-\theta) y_2)
+&= \sup_i h_i(\theta y_1 + (1-\theta) y_2) \
+&\le \sup_i \big( \theta h_i(y_1) + (1-\theta) h_i(y_2)\big) \
+&\le \theta \sup_i h_i(y_1) + (1-\theta) \sup_i h_i(y_2) \
+&= \theta h(y_1) + (1-\theta) h(y_2),
+\end{aligned}
+]
+
+using convexity of each (h_i). So (h) is convex.
+
+Applying this with (h_i = g_x), we’re done.
+
+So even if (f) is ugly and nonconvex, (f^*) is always convex.
+
+---
+
+### 4.2 More geometric proof via epigraphs
+
+The **epigraph** of a function (h) is
+
+[
+\operatorname{epi} h = { (y,\alpha)\in \mathbb{R}^n\times\mathbb{R} \mid h(y)\le \alpha}.
+]
+
+A function is convex iff its epigraph is a convex set.
+
+Let’s compute epi(f^*):
+
+[
+\begin{aligned}
+(y,\alpha)\in \operatorname{epi} f^*
+&\Longleftrightarrow f^*(y)\le \alpha \
+&\Longleftrightarrow \sup_x (y^T x - f(x)) \le \alpha \
+&\Longleftrightarrow y^T x - f(x) \le \alpha \quad \forall x \
+&\Longleftrightarrow f(x) \ge y^T x - \alpha \quad \forall x.
+\end{aligned}
+]
+
+So
+
+[
+\operatorname{epi} f^* = \bigcap_{x\in \operatorname{dom}f} H_x,
+]
+
+where
+
+[
+H_x = {(y,\alpha) \mid y^T x - f(x) \le \alpha}
+]
+
+is a halfspace in (\mathbb{R}^{n+1}) (affine linear inequality in ((y,\alpha))). Each (H_x) is convex; intersection of any family of convex sets is convex; hence epi(f^*) is convex; therefore (f^*) is convex.
+
+That’s the “intersection–of–halfspaces” view corresponding to those dashed lines in the figure.
+
+---
+
+## 5. Where does the supremum happen?
+
+In the nice differentiable convex case, there is a beautiful first–order characterization.
+
+Assume:
+
+* (f) is convex and differentiable.
+* For given (y), the supremum defining (f^*(y)) is attained at some (x^*).
+
+We want (x^*) to solve
+
+[
+\max_x \big( y^T x - f(x)\big).
+]
+
+Compute gradient in (x):
+
+[
+\nabla_x \left( y^T x - f(x) \right)
+= y - \nabla f(x).
+]
+
+Setting gradient to zero at optimum:
+
+[
+y - \nabla f(x^*) = 0
+\quad\Longleftrightarrow\quad
+y = \nabla f(x^*).
+]
+
+So the slope (y) is exactly the gradient of (f) at the contact point (x^*). This is the tangent line picture:
+
+* The line (x\mapsto y^T x - f^*(y)) is **tangent** to (f) at (x^*).
+* The slope of that line is the gradient of (f) at (x^*).
+
+In general (possibly nondifferentiable) we replace gradient with **subgradient**:
+
+(y\in\partial f(x^*)) iff (x^*) is a maximizer in the definition of (f^*(y)).
+
+---
+
+## 6. Fenchel–Young inequality and equality case
+
+A fundamental inequality:
+
+[
+\boxed{
+f(x) + f^*(y) ;\ge; y^T x \quad \text{for all } x,y.
+}
+]
+
+Proof: by definition of (f^*(y)),
+
+[
+f^*(y) = \sup_{z} (y^T z - f(z)) \ge y^T x - f(x).
+]
+
+Rearrange: (f(x)+f^*(y)\ge y^T x).
+
+Equality case is key:
+
+> (f(x) + f^*(y) = y^T x \quad\Longleftrightarrow\quad y \in \partial f(x).)
+
+So knowing the conjugate essentially tells you about the subgradients of (f), and vice versa. This is why conjugates are central in duality.
+
+---
+
+## 7. Classical examples
+
+Let’s compute some concrete conjugates so this doesn’t stay abstract.
+
+### 7.1 Quadratic: (f(x) = \frac12 |x|_2^2) (scalar or vector)
+
+For simplicity start in 1D: (f(x)=\frac12 x^2).
+
+We want
+
+[
+f^*(y) = \sup_x \big( yx - \tfrac12 x^2 \big).
+]
+
+This is a concave quadratic in (x). Differentiate:
+
+[
+\frac{d}{dx}(yx - \tfrac12 x^2) = y - x.
+]
+
+Set derivative to zero: (x^* = y). Plug back:
+
+[
+f^*(y) = yx^* - \tfrac12 (x^*)^2 = y^2 - \tfrac12 y^2 = \tfrac12 y^2.
+]
+
+So this quadratic is **self–conjugate** up to the same scaling:
+
+[
+f^*(y) = \tfrac12 y^2 = f(y).
+]
+
+In (\mathbb{R}^n), same calculation with gradients gives
+
+[
+f(x) = \tfrac12 |x|_2^2
+\quad\Longrightarrow\quad
+f^*(y) = \tfrac12 |y|_2^2.
+]
+
+This is the continuous analogue of “Fourier transform of a Gaussian is a Gaussian”: nice things stay nice.
+
+---
+
+### 7.2 Indicator of a convex set: support function
+
+Let (C\subset\mathbb{R}^n) be a convex set, and define
+
+[
+\delta_C(x) =
+\begin{cases}
+0, & x\in C,\
++\infty, & x\notin C.
+\end{cases}
+]
+
+This is the **indicator function** of (C).
+
+Then
+
+[
+\begin{aligned}
+\delta_C^*(y)
+&= \sup_x \big( y^T x - \delta_C(x)\big) \
+&= \sup_{x\in C} \big( y^T x - 0\big) \
+&= \sup_{x\in C} y^T x.
+\end{aligned}
+]
+
+This is the **support function** of (C), usually denoted (\sigma_C(y)).
+
+Geometric meaning:
+
+> For each direction (y), (\sigma_C(y)) is how far you can go in that direction while staying inside (C), measured in inner product units.
+
+Connection to earlier convex set slides:
+
+* Hyperplanes were sets like ({x\mid a^T x = b}).
+* Halfspaces: ({x\mid a^T x \le b}).
+
+Here (\sigma_C(y)) gives the “furthest supporting hyperplane” of (C) with normal (y): the boundary of
+
+[
+{x\mid y^T x \le \sigma_C(y)}
+]
+
+is a supporting hyperplane of (C).
+
+So: **conjugate of an indicator function = support function of the set**.
+
+---
+
+### 7.3 Norms and dual norms
+
+Let (|\cdot|) be any norm on (\mathbb{R}^n). Consider
+
+[
+f(x)=|x|.
+]
+
+Its conjugate is the indicator of the **dual unit ball**.
+
+Recall the dual norm:
+
+[
+|y|** = \sup*{|x|\le 1} y^T x.
+]
+
+Compute:
+
+[
+\begin{aligned}
+f^*(y)
+&= \sup_x \big( y^T x - |x| \big) \
+&= \sup_{t\ge 0} \sup_{|u|\le 1} \big( y^T (t u) - |t u|\big)
+\quad \text{(write }x=tu\text{ with }|u|\le 1\text{)}\
+&= \sup_{t\ge 0} \sup_{|u|\le 1} \big( t y^T u - t|u|\big) \
+&= \sup_{t\ge 0} t \sup_{|u|\le 1} \big( y^T u - 1\big).
+\end{aligned}
+]
+
+Now:
+
+* For any (u) with (|u|\le 1), (y^T u \le |y|_*).
+* So (\sup_{|u|\le 1} (y^T u - 1) = |y|_* - 1).
+
+Thus
+
+[
+f^*(y) = \sup_{t\ge 0} t(|y|_* - 1).
+]
+
+* If (|y|_* > 1), this is (+\infty) (take (t\to\infty)).
+* If (|y|_* \le 1), the best is (t=0), giving (0).
+
+So
+
+[
+\boxed{
+f^*(y) =
+\begin{cases}
+0, & |y|_* \le 1,\
++\infty, & |y|_* > 1.
+\end{cases}
+}
+]
+
+That is exactly the indicator of the **dual norm unit ball**.
+
+For (|\cdot|_2), dual norm is itself, so:
+
+* conjugate of (|\cdot|_2) = indicator of Euclidean unit ball.
+
+This interacts later with cones, norm balls, and dual cones.
+
+---
+
+### 7.4 Linear function: (f(x) = a^T x + b)
+
+Let (a\in\mathbb{R}^n), (b\in\mathbb{R}). Then
+
+[
+\begin{aligned}
+f^*(y)
+&= \sup_x \big( y^T x - a^T x - b \big) \
+&= \sup_x \big( (y-a)^T x - b \big).
+\end{aligned}
+]
+
+* If (y\neq a), then ((y-a)^T x) can be made arbitrarily large in magnitude by scaling (x), so (f^*(y)=+\infty).
+* If (y = a), then the term is identically (-b), so supremum is (-b).
+
+So
+
+[
+f^*(y) =
+\begin{cases}
+-b, & y=a,\
++\infty, & y\neq a.
+\end{cases}
+]
+
+This is “indicator of a single point (a), plus a constant”.
+
+Geometrically: all tangents to a linear function with correct slope coincide with the function; any other slope gives no supporting line (it always crosses).
+
+---
+
+## 8. Relationship with convexification (biconjugate)
+
+Very important fact (you’ll meet it in duality):
+
+[
+f^{**} = (f^*)^* = \text{closed convex hull of } f.
+]
+
+More precisely:
+
+* (f^{**}) is the **largest closed convex function below (f)** (the lower semicontinuous convex envelope).
+* If (f) is already closed and convex, then (f^{**} = f).
+
+So the conjugate is not just some random transform; doing it twice **projects** (f) onto the space of closed convex functions.
+
+That’s why the conjugate is the natural language of convex duality: you can take a possibly nonconvex primal, conjugate bits of it, and end up with a clean convex dual problem.
+
+---
+
+## 9. Connecting back to your sketches
+
+Your extra drawings are capturing exactly the “tangent line” story:
+
+* You draw the curve (f).
+* You draw a straight line (\ell(x)) touching the curve at some point (x^*).
+* This line has equation
+  [
+  \ell(x) = y^T (x - x^*) + f(x^*)
+  ]
+  (a line with slope (y) passing through ((x^*, f(x^*)))).
+* The intercept of this line on the vertical axis is (-f^*(y)) (up to sign conventions).
+
+If (f) is convex, that line sits **below** (f) everywhere and touches it at (x^*). Algebraically this is
+
+[
+f(x) ;\ge; f(x^*) + y^T (x - x^*),
+]
+
+which is exactly the subgradient inequality with (y\in\partial f(x^*)). And plugging (x^*) into Fenchel–Young gives
+
+[
+f(x^*) + f^*(y) = y^T x^*.
+]
+
+So:
+
+* Subgradient inequality ⟺ supporting line picture ⟺ conjugate definition.
+
+All the geometry on that slide is really just this triple equivalence.
+
+---
+
+## 10. Tiny roadmap to remember
+
+When you think “conjugate”, remember these five bullet–points:
+
+1. **Definition**
+   [
+   f^*(y) = \sup_x (y^T x - f(x)).
+   ]
+
+2. **Geometry**
+   For each slope (y), (f^*(y)) is the vertical shift of the **highest line of slope (y)** that lies below (f).
+
+3. **Convexity**
+   (f^*) is **always convex** because it’s a supremum of affine functions in (y).
+
+4. **Fenchel–Young**
+   [
+   f(x) + f^*(y) \ge y^T x
+   ]
+   with equality iff (y\in\partial f(x)).
+
+5. **Biconjugate**
+   (f^{**}) is the closed convex envelope of (f); if (f) is closed convex, then (f^{**}=f).
+
+Once these are internalized, all the duality results in the later slides become much easier: most dual problems are just “apply conjugate to the right pieces and rearrange”.

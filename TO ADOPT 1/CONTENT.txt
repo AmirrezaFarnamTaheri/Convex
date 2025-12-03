@@ -1,0 +1,2451 @@
+Alright, let’s crank the resolution up.
+
+We’ll go *very* step-by-step on:
+
+1. Schur complement & the determinant identity
+2. Scalar composition rule (f=h\circ g)
+3. Vector composition rule (f=h\circ g) with (g:\mathbb{R}^n\to\mathbb{R}^k)
+
+I’ll keep track of dimensions and justify every inequality so nothing is hand-wavy.
+
+---
+
+## 1. Schur complement in detail
+
+### 1.1 Block matrix setup and dimensions
+
+We start with a block matrix
+[
+M = \begin{bmatrix}
+A & B\
+C & D
+\end{bmatrix},
+]
+where:
+
+* (A \in \mathbb{R}^{p\times p})
+* (B \in \mathbb{R}^{p\times q})
+* (C \in \mathbb{R}^{q\times p})
+* (D \in \mathbb{R}^{q\times q})
+
+So (M \in \mathbb{R}^{(p+q)\times(p+q)}).
+
+We assume **(D) is invertible** (square and nonsingular).
+
+The Schur complement of (D) in (M) is defined as:
+[
+S := A - B D^{-1} C \quad\in\mathbb{R}^{p\times p}.
+]
+
+Check dimensions of (BD^{-1}C):
+
+* (D^{-1}\in\mathbb{R}^{q\times q})
+* (BD^{-1}\in\mathbb{R}^{p\times q})
+* (BD^{-1}C\in\mathbb{R}^{p\times p})
+
+So subtraction from (A) is well-defined.
+
+### 1.2 Constructing the elimination matrix
+
+Define
+[
+E := \begin{bmatrix}
+I_p & 0\
+
+* D^{-1} C & I_q
+  \end{bmatrix}.
+  ]
+
+* (I_p) is (p\times p), (I_q) is (q\times q).
+
+* (0) is (p\times q).
+
+* (-D^{-1}C) is (q\times p).
+
+So (E) is block lower-triangular.
+
+Important facts:
+
+* A block triangular matrix has determinant equal to the product of the determinants of its diagonal blocks.
+* (\det(I_p) = 1), (\det(I_q) = 1).
+
+Hence:
+[
+\det(E) = \det(I_p)\det(I_q) = 1.
+]
+
+So multiplying by (E) on the **right** does not change the determinant:
+
+[
+\det(ME) = \det(M)\det(E) = \det(M).
+]
+
+(We’re using (\det(AB) = \det(A)\det(B)) here.)
+
+### 1.3 Multiply out (ME) explicitly
+
+Compute
+[
+ME =
+\begin{bmatrix}
+A & B\
+C & D
+\end{bmatrix}
+\begin{bmatrix}
+I_p & 0\
+
+* D^{-1} C & I_q
+  \end{bmatrix}.
+  ]
+
+Block multiplication:
+
+* **Top-left block** ((p\times p)):
+  [
+  A I_p + B(-D^{-1}C) = A - B D^{-1} C = S.
+  ]
+
+* **Top-right block** ((p\times q)):
+  [
+  A\cdot 0 + B I_q = B.
+  ]
+
+* **Bottom-left block** ((q\times p)):
+  [
+  C I_p + D(-D^{-1}C) = C - C = 0.
+  ]
+
+* **Bottom-right block** ((q\times q)):
+  [
+  C\cdot 0 + D I_q = D.
+  ]
+
+So
+[
+ME =
+\begin{bmatrix}
+S & B\
+0 & D
+\end{bmatrix}.
+]
+
+This matrix is **block upper-triangular**.
+
+Therefore
+[
+\det(ME) = \det(S)\det(D).
+]
+
+But (\det(ME) = \det(M)\det(E) = \det(M)\cdot 1).
+
+So we conclude
+[
+\boxed{\det(M) = \det(D),\det(A - B D^{-1} C)}.
+]
+
+That’s the Schur complement determinant identity exactly as in the slide.
+
+### 1.4 Sanity check in the 2×2 scalar case
+
+Take
+[
+M = \begin{bmatrix}
+a & b\
+c & d
+\end{bmatrix},\quad d\neq 0.
+]
+
+Then
+
+* (A=a), (B=b), (C=c), (D=d).
+* (D^{-1}=1/d).
+* Schur complement of (D):
+  [
+  S = A - B D^{-1} C = a - b(1/d)c = a - \frac{bc}{d}.
+  ]
+
+Our identity says:
+[
+\det(M) = \det(D)\det(S)
+= d\left(a - \frac{bc}{d}\right) = ad - bc,
+]
+which is the usual scalar determinant formula. So the block identity is consistent.
+
+### 1.5 Symmetric variant: Schur complement of (A)
+
+Assume instead that (A) is invertible.
+
+Define
+[
+F := \begin{bmatrix}
+I_p & -A^{-1}B\
+0 & I_q
+\end{bmatrix},
+\quad \det(F) = 1.
+]
+
+Multiply on the **left**:
+[
+FM =
+\begin{bmatrix}
+I_p & -A^{-1}B\
+0 & I_q
+\end{bmatrix}
+\begin{bmatrix}
+A & B\
+C & D
+\end{bmatrix}
+=============
+
+\begin{bmatrix}
+A - A A^{-1}B & B - A^{-1}BD\
+C & D
+\end{bmatrix}.
+]
+
+Careful: do it systematically:
+
+Top-left:
+[
+I_p A + (-A^{-1}B)C = A - A^{-1}BC.
+]
+
+Actually the *standard* factorization is
+[
+\begin{bmatrix}
+I & -A^{-1}B\
+0 & I
+\end{bmatrix}
+\begin{bmatrix}
+A & B\
+C & D
+\end{bmatrix}
+=============
+
+\begin{bmatrix}
+A & B - A^{-1}BD\
+C & D - C A^{-1} B
+\end{bmatrix}.
+]
+If you instead multiply on the right with
+[
+F' = \begin{bmatrix}
+I & -A^{-1}B\
+0 & I
+\end{bmatrix}^T
+]
+you’ll get the cleaner block triangular form. The more standard version (mirroring what we did with (D)) is:
+
+Multiply on the **right** by
+[
+E' = \begin{bmatrix}
+I_p & -A^{-1}B\
+0 & I_q
+\end{bmatrix}
+]
+and check that
+[
+ME' =
+\begin{bmatrix}
+A & 0\
+C & D - C A^{-1}B
+\end{bmatrix}.
+]
+
+That matrix is block lower-triangular, so
+[
+\det(M) = \det(A)\det(D - C A^{-1}B).
+]
+
+The details are analogous to the previous case; the important point is:
+
+[
+\boxed{
+\det\begin{bmatrix}A & B\ C & D\end{bmatrix}
+============================================
+
+\det(A)\det(D - C A^{-1} B)
+\quad(A\ \text{invertible}).
+}
+]
+
+Now you’ve got both Schur complements: of (D) and of (A).
+
+### 1.6 Schur complement and positive semidefiniteness (very important)
+
+This is hugely used in convex optimization / SDPs.
+
+Let
+[
+M = \begin{bmatrix}
+A & B\
+B^T & D
+\end{bmatrix}
+]
+be symmetric, with (A\in\mathbb{R}^{p\times p}), (D\in\mathbb{R}^{q\times q}), and (D\succ 0) (symmetric positive definite).
+
+**Claim.** The following are equivalent:
+
+1. (M\succeq 0) (i.e. (z^T M z\ge 0) for all (z)).
+2. (D \succeq 0) and the Schur complement
+   [
+   S = A - B D^{-1} B^T
+   ]
+   satisfies (S\succeq 0).
+
+Let’s prove (1\Rightarrow 2) and (2\Rightarrow 1).
+
+---
+
+#### 1.6.1 (M\succeq 0\Rightarrow D\succeq 0) and (S\succeq 0)
+
+First, (D\succeq 0):
+
+Take vectors of the form
+[
+z = \begin{bmatrix}
+0\
+y
+\end{bmatrix}.
+]
+
+Then
+[
+z^T M z = \begin{bmatrix}0^T & y^T\end{bmatrix}
+\begin{bmatrix}
+A & B\
+B^T & D
+\end{bmatrix}
+\begin{bmatrix}
+0\
+y
+\end{bmatrix}
+= y^T D y.
+]
+
+But (M\succeq 0) implies (z^T M z \ge 0) for all (z), in particular for these. Thus (y^T D y \ge 0) for all (y), so (D\succeq 0).
+
+(We’re assuming additionally (D) is invertible and PSD ⇒ PD.)
+
+Now, prove (S\succeq 0).
+
+Take arbitrary (x\in\mathbb{R}^p) and consider vectors
+[
+z = \begin{bmatrix}
+x\
+
+* D^{-1} B^T x
+  \end{bmatrix}.
+  ]
+
+Compute
+[
+z^T M z
+=======
+
+\begin{bmatrix}x^T & -x^T B D^{-1}\end{bmatrix}
+\begin{bmatrix}
+A & B\
+B^T & D
+\end{bmatrix}
+\begin{bmatrix}
+x\
+
+* D^{-1} B^T x
+  \end{bmatrix}.
+  ]
+
+Let’s do this systematically.
+
+First compute (M z):
+
+[
+M z =
+\begin{bmatrix}
+A & B\
+B^T & D
+\end{bmatrix}
+\begin{bmatrix}
+x\
+
+* D^{-1} B^T x
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+  A x + B(-D^{-1}B^T x)\
+  B^T x + D(- D^{-1} B^T x)
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+  A x - B D^{-1} B^T x\
+  B^T x - B^T x
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+  (A - B D^{-1}B^T)x\
+  0
+  \end{bmatrix}.
+  ]
+
+Then
+[
+z^T M z
+=======
+
+\begin{bmatrix}x^T & -x^T B D^{-1}\end{bmatrix}
+\begin{bmatrix}
+(A - B D^{-1}B^T)x\
+0
+\end{bmatrix}
+=============
+
+x^T (A - B D^{-1}B^T) x.
+]
+
+Since (M\succeq 0), we have (z^T M z\ge 0) for all such (z), hence
+
+[
+x^T S x = x^T (A - B D^{-1}B^T)x \ge 0\quad\forall x.
+]
+
+Thus (S\succeq 0).
+
+---
+
+#### 1.6.2 (D\succeq 0) and (S\succeq 0\Rightarrow M\succeq 0)
+
+Now assume:
+
+* (D\succ 0) (invertible PSD)
+* (S = A - B D^{-1} B^T\succeq 0).
+
+Take any vector (z = \begin{bmatrix}x\y\end{bmatrix}).
+
+Compute (z^T M z) and rewrite it in terms of (S) and (D).
+
+Explicitly:
+[
+z^T M z
+=======
+
+\begin{bmatrix}x^T & y^T\end{bmatrix}
+\begin{bmatrix}
+A & B\
+B^T & D
+\end{bmatrix}
+\begin{bmatrix}
+x\y
+\end{bmatrix}
+=============
+
+x^T A x + 2 x^T B y + y^T D y.
+]
+
+We want to complete the square in (y). Using the Schur complement expression:
+
+Write (A = S + B D^{-1} B^T). Then
+
+[
+x^T A x
+= x^T S x + x^T B D^{-1} B^T x.
+]
+
+Plug back:
+
+[
+z^T M z = x^T S x + x^T B D^{-1} B^T x + 2 x^T B y + y^T D y.
+]
+
+Group the last three terms:
+
+[
+x^T B D^{-1} B^T x + 2 x^T B y + y^T D y
+========================================
+
+\left( D^{-1/2} B^T x \right)^T \left( D^{-1/2} B^T x \right)
+
+* 2 \left( D^{-1/2} B^T x \right)^T (D^{1/2} y)
+* (D^{1/2}y)^T (D^{1/2}y).
+  ]
+
+This is just rewriting using (D^{1/2}) and (D^{-1/2}), but we can see it more cleanly via completing the square:
+
+Define
+[
+w := y + D^{-1} B^T x.
+]
+
+Then
+[
+Dw = D y + B^T x.
+]
+
+Compute
+[
+w^T D w
+=======
+
+(y + D^{-1}B^T x)^T D (y + D^{-1}B^T x)
+= y^T D y + 2 x^T B y + x^T B D^{-1} B^T x.
+]
+
+So:
+
+[
+z^T M z = x^T S x + w^T D w.
+]
+
+Now:
+
+* (x^T S x \ge 0) since (S\succeq 0).
+* (w^T D w \ge 0) since (D\succeq 0).
+
+Hence
+[
+z^T M z = x^T S x + w^T D w \ge 0
+\quad \forall z.
+]
+
+Therefore (M\succeq 0).
+
+So we have shown the equivalence.
+
+This is how “Schur complement” becomes a *PSD test* for block matrices, which is exactly what you’ll see in semidefinite programming, LMIs, and BV’s later chapters.
+
+---
+
+## 2. Scalar composition rule (f(x)=h(g(x))) in depth
+
+Now let’s get painfully explicit about the composition rules.
+
+### 2.1 Formal definitions: convexity, extended-value, monotone
+
+We work with functions that may take value (+\infty):
+
+* (h:\mathbb{R}\to\mathbb{R}\cup{+\infty}).
+
+**Domain**:
+[
+\mathrm{dom},h := {u\in\mathbb{R}\mid h(u)<+\infty}.
+]
+
+**Convexity** of (h): for any (u_1,u_2\in\mathrm{dom},h), any (\theta\in[0,1]),
+
+[
+h(\theta u_1 + (1-\theta)u_2)
+\le
+\theta h(u_1) + (1-\theta)h(u_2).
+]
+
+**Extended-value extension**: define (\tilde{h}:\mathbb{R}\to\mathbb{R}\cup{+\infty}) by
+
+[
+\tilde{h}(u) = \begin{cases}
+h(u), & u\in\mathrm{dom},h,\
++\infty, & u\notin\mathrm{dom},h.
+\end{cases}
+]
+
+We say (\tilde{h}) is **nondecreasing** if
+
+[
+y\le x,\ x\in\mathrm{dom},h
+\quad\Longrightarrow\quad
+y\in\mathrm{dom},h,\ h(y)\le h(x).
+]
+
+(So we extend monotonicity outside the domain: you’re allowed to compare to (x) inside the domain and we guarantee that everything below is also in the domain and has smaller value.)
+
+Similarly, (\tilde{h}) is **nonincreasing** if
+
+[
+y\le x,\ x\in\mathrm{dom},h
+\quad\Longrightarrow\quad
+y\in\mathrm{dom},h,\ h(y)\ge h(x).
+]
+
+This “domain monotonicity” condition is subtle but important: we want to avoid situations where convex combinations of (g(x)) fall outside (\mathrm{dom},h).
+
+---
+
+### 2.2 Statement of scalar composition rule
+
+Let
+
+* (g:\mathbb{R}^n\to\mathbb{R}\cup{+\infty})
+* (h:\mathbb{R}\to\mathbb{R}\cup{+\infty})
+* (f(x)=h(g(x))).
+
+We want conditions under which (f) is convex.
+
+**Rule:** If (h) is convex and at least one of these holds:
+
+1. (g) convex and (\tilde{h}) nondecreasing.
+2. (g) concave and (\tilde{h}) nonincreasing.
+3. (g) affine: (g(x)=a^Tx+b).
+
+then (f) is convex.
+
+We’ll prove case (1) in full detail, then sketch (2) and (3).
+
+---
+
+### 2.3 Case (1) in detail: (g) convex, (h) convex & nondecreasing
+
+Assumptions:
+
+* (g:\mathbb{R}^n\to\mathbb{R}) is convex
+* (h:\mathbb{R}\to\mathbb{R}\cup{+\infty}) is convex
+* (\tilde{h}) is nondecreasing (in the extended sense)
+
+Define (f(x)=h(g(x))). Domain of (f):
+
+[
+\mathrm{dom},f = {x\mid g(x)\in\mathrm{dom},h}.
+]
+
+We must show:
+
+For all (x_1,x_2\in\mathrm{dom},f) and all (\theta\in[0,1]),
+
+[
+f(\theta x_1 + (1-\theta)x_2)
+\le
+\theta f(x_1) + (1-\theta) f(x_2).
+]
+
+**Step 0. Domain sanity.**
+
+Given (x_1,x_2\in\mathrm{dom},f), we know:
+
+* (g(x_1)\in\mathrm{dom},h),
+* (g(x_2)\in\mathrm{dom},h).
+
+Because (h) is convex, its **domain is convex**; that is:
+
+> If (u_1,u_2\in\mathrm{dom},h), then (\theta u_1 + (1-\theta)u_2\in\mathrm{dom},h).
+
+This is a standard fact: convex functions have convex domains (follows from epigraph convexity). So
+
+[
+\theta g(x_1) + (1-\theta)g(x_2) \in \mathrm{dom},h.
+]
+
+**Step 1. Use convexity of (g).**
+
+By convexity of (g),
+[
+g(\theta x_1 + (1-\theta)x_2)
+\le
+\theta g(x_1) + (1-\theta)g(x_2).
+]
+
+Let’s denote:
+
+* (u = g(\theta x_1 + (1-\theta)x_2)),
+* (v = \theta g(x_1) + (1-\theta)g(x_2)).
+
+Then we have:
+
+* (u \le v) (scalar inequality),
+* (v\in\mathrm{dom},h) (from step 0).
+
+**Step 2. Apply monotonicity of (\tilde{h}).**
+
+Since (\tilde{h}) is nondecreasing,
+
+[
+u \le v,\ v\in\mathrm{dom},h
+\quad\Longrightarrow\quad
+u\in\mathrm{dom},h,\ h(u)\le h(v).
+]
+
+So:
+
+* (x_\theta := \theta x_1 + (1-\theta)x_2) lies in (\mathrm{dom},f) since (g(x_\theta)=u\in\mathrm{dom},h).
+* And:
+  [
+  h(g(x_\theta)) = h(u)\le h(v) = h(\theta g(x_1) + (1-\theta)g(x_2)).
+  ]
+
+So we’ve got the first inequality:
+
+[
+f(x_\theta) = h(g(x_\theta))
+\le
+h(\theta g(x_1) + (1-\theta)g(x_2)).
+]
+
+**Step 3. Apply convexity of (h).**
+
+Because (h) is convex:
+
+[
+h(\theta g(x_1) + (1-\theta)g(x_2))
+\le
+\theta h(g(x_1)) + (1-\theta) h(g(x_2)).
+]
+
+**Step 4. Chain everything.**
+
+Thus:
+
+[
+f(x_\theta)
+= h(g(x_\theta))
+\le h(\theta g(x_1) + (1-\theta)g(x_2))
+\le \theta h(g(x_1)) + (1-\theta)h(g(x_2))
+= \theta f(x_1) + (1-\theta) f(x_2).
+]
+
+This is exactly the definition of convexity for (f). Done.
+
+---
+
+### 2.4 Case (2): (g) concave, (h) convex & nonincreasing
+
+Assumptions:
+
+* (g) is concave: for all (x_1,x_2),
+  [
+  g(\theta x_1 + (1-\theta)x_2)
+  \ge
+  \theta g(x_1) + (1-\theta)g(x_2).
+  ]
+* (h) is convex.
+* (\tilde{h}) is nonincreasing: if (y\le x), then (h(y)\ge h(x)).
+
+Again, (f(x)=h(g(x))), (\mathrm{dom}f = {x \mid g(x)\in \mathrm{dom}h}).
+
+The proof is basically “the inequality flips twice”.
+
+Take (x_1,x_2,\theta) as before.
+
+Convexity of domain: (\theta g(x_1)+(1-\theta)g(x_2)\in\mathrm{dom}h).
+
+Then concavity of (g) gives
+[
+g(\theta x_1 + (1-\theta)x_2)
+\ge
+\theta g(x_1) + (1-\theta)g(x_2).
+]
+
+Let:
+
+* (u = g(\theta x_1 + (1-\theta)x_2))
+* (v = \theta g(x_1) + (1-\theta)g(x_2))
+
+Now we have **(u \ge v)** and (v\in\mathrm{dom}h).
+
+Nonincreasing (\tilde{h}) means:
+
+[
+v \le u,\ u\in\mathrm{dom}h
+\quad\Longrightarrow\quad
+v\in\mathrm{dom}h\text{ (already) and } h(v)\ge h(u).
+]
+
+But we have (v\le u), so
+[
+h(v) \ge h(u) = h(g(\theta x_1 + (1-\theta)x_2)).
+]
+
+Equivalently:
+[
+h(g(\theta x_1 + (1-\theta)x_2))
+\le
+h(\theta g(x_1) + (1-\theta)g(x_2)).
+]
+
+Then convexity of (h),
+[
+h(\theta g(x_1) + (1-\theta)g(x_2))
+\le
+\theta h(g(x_1)) + (1-\theta)h(g(x_2)).
+]
+
+Stacking:
+[
+f(\theta x_1 + (1-\theta)x_2)
+= h(g(\theta x_1 + (1-\theta)x_2))
+\le h(\theta g(x_1) + (1-\theta)g(x_2))
+\le \theta f(x_1) + (1-\theta) f(x_2).
+]
+
+So again (f) is convex.
+
+Notice exactly what happened:
+
+* concave (g) → inequality reversed
+* nonincreasing (h) → monotonicity inequality also reversed
+* net effect: direction of inequality in the convexity definition is preserved.
+
+---
+
+### 2.5 Case (3): (g) affine
+
+If (g) is affine, say (g(x)=a^T x + b), then the composition test is much easier.
+
+Take any convex (h:\mathbb{R}\to\mathbb{R}\cup{+\infty}). Define (f(x) = h(a^T x + b)).
+
+We need: for all (x_1,x_2,\theta),
+[
+f(\theta x_1 + (1-\theta)x_2)
+\le \theta f(x_1) + (1-\theta)f(x_2).
+]
+
+Now:
+
+[
+f(\theta x_1 + (1-\theta)x_2)
+= h(a^T (\theta x_1 + (1-\theta)x_2) + b)
+= h(\theta a^T x_1 + (1-\theta) a^T x_2 + b).
+]
+
+But:
+[
+\theta a^T x_1 + (1-\theta) a^T x_2 + b
+= \theta (a^T x_1 + b) + (1-\theta)(a^T x_2 + b)
+= \theta g(x_1) + (1-\theta) g(x_2).
+]
+
+So
+[
+f(\theta x_1 + (1-\theta)x_2)
+= h(\theta g(x_1) + (1-\theta)g(x_2))
+\le
+\theta h(g(x_1)) + (1-\theta)h(g(x_2)),
+]
+by convexity of (h).
+
+Thus
+[
+f(\theta x_1 + (1-\theta)x_2)
+\le
+\theta f(x_1) + (1-\theta)f(x_2).
+]
+
+So composition with affine pre-map **always preserves convexity**.
+
+This is a very basic but extremely used fact: if (h) is convex, then (x\mapsto h(Ax+b)) is convex.
+
+---
+
+### 2.6 Differential view for intuition (1D case)
+
+This is not the main rigorous proof (because we may not have derivatives), but it’s useful intuition and ties exactly to your handwritten notes.
+
+Let’s take (n=1) so (x\in\mathbb{R}), and assume (g,h) are twice differentiable.
+
+We define
+[
+f(x) = h(g(x)).
+]
+
+**First derivative**: chain rule
+
+[
+f'(x) = h'(g(x))g'(x).
+]
+
+**Second derivative**: product rule + chain rule again
+
+[
+\begin{aligned}
+f''(x)
+&= \frac{d}{dx}\left[ h'(g(x))g'(x)\right]\
+&= \underbrace{h''(g(x))g'(x)}_{\text{derivative of }h'(g(x))}
+\cdot g'(x)
+
+* h'(g(x)) g''(x)\
+  &= h''(g(x))(g'(x))^2 + h'(g(x))g''(x).
+  \end{aligned}
+  ]
+
+Now we plug in the sign information:
+
+* If (h) convex ⇒ (h''(u)\ge0).
+* If (g) convex ⇒ (g''(x)\ge0).
+* If (h) nondecreasing ⇒ (h'(u)\ge0).
+
+Then:
+
+* The first term (h''(g(x))(g'(x))^2) is obviously ≥0: square times nonnegative.
+* The second term (h'(g(x))g''(x)) is product of two nonnegatives ⇒ ≥0.
+
+So (f''(x)\ge0). That’s exactly the scalar version of the composition rule.
+
+If (g) is concave and (h) nonincreasing, then:
+
+* (g''(x)\le0).
+* (h'(u)\le0).
+
+Product (h'(g(x)) g''(x)\ge0) again. The first term is still ≥0. So we still get (f''(x)\ge0).
+
+So the “second derivative formula” is just a compact way to remember what the general (epigraph/Jensen) proof does.
+
+---
+
+### 2.7 Examples and non-examples
+
+1. **Convex:** (f(x) = \exp(|x|_2)).
+
+   * (g(x)=|x|_2) is convex.
+   * (h(u)=e^u) is convex and increasing.
+   * Case (1) ⇒ (f) convex.
+
+2. **Convex:** (f(x)=1/g(x)) with (g) concave and positive.
+
+   * (g) concave, (g(x)>0).
+   * (h(u)=1/u) on ((0,\infty)) is convex and decreasing.
+   * Case (2) ⇒ (f) convex.
+
+3. **Not covered by rule (but convex anyway):** (f(x)=x) on (\mathbb{R}).
+
+   Let (g(x)=\sqrt{x}) on (x\ge0), (h(u)=u^2). Then (f(x)=h(g(x))=x).
+
+   * (g) concave and increasing.
+   * (h) convex but neither globally nondecreasing nor nonincreasing.
+
+   Our rule does *not* apply (monotonicity fails on all (\mathbb{R})), but (f(x)=x) is convex. This shows the rules are **sufficient, not necessary**.
+
+---
+
+## 3. Vector composition rule in depth
+
+Now we move to the general vector version your slides are using: (g:\mathbb{R}^n\to\mathbb{R}^k).
+
+### 3.1 Setup and notation
+
+Let:
+
+* (g:\mathbb{R}^n\to\mathbb{R}^k),
+  [
+  g(x) = \bigl(g_1(x),\dots,g_k(x)\bigr).
+  ]
+* (h:\mathbb{R}^k\to\mathbb{R}\cup{+\infty}).
+
+Define:
+[
+f(x) = h(g(x)) = h(g_1(x),\dots,g_k(x)).
+]
+
+We need a notion of **monotonicity in each argument**:
+
+For each coordinate (i), we can ask whether (\tilde{h}) is nondecreasing or nonincreasing in that coordinate:
+
+* Nondecreasing in argument (i) means:
+  [
+  u_i \le v_i,\ u_j = v_j\ \forall j\neq i,\ v\in\mathrm{dom}h
+  \ \Rightarrow
+  u\in\mathrm{dom}h,\ h(u)\le h(v).
+  ]
+* Nonincreasing in argument (i) reverses the inequality.
+
+### 3.2 Statement of vector composition rule
+
+If:
+
+* (h) is convex,
+* for each index (i\in{1,\dots,k}), one of the following holds:
+
+  * (g_i) is convex and (\tilde{h}) is nondecreasing in argument (i), or
+  * (g_i) is concave and (\tilde{h}) is nonincreasing in argument (i), or
+  * (g_i) is affine,
+
+then (f(x) = h(g(x))) is convex.
+
+Your slide first presents the case “all (g_i) convex and (h) nondecreasing in each argument”, then mentions the general rule. We’ll first do that easier special case in detail (it’s basically scalar rule with vector inequalities), then explain the mixed case.
+
+---
+
+### 3.3 All-convex, nondecreasing case (slide 3.24)
+
+Assumptions:
+
+* Each (g_i:\mathbb{R}^n\to\mathbb{R}) is **convex**.
+* (h:\mathbb{R}^k\to\mathbb{R}\cup{+\infty}) is convex.
+* (\tilde{h}) is nondecreasing in **each** argument.
+
+Fix (x_1,x_2\in\mathrm{dom}f), (\theta\in[0,1]).
+
+**Step 0. Domain.**
+
+* (x_i\in\mathrm{dom}f\Rightarrow g(x_i)\in\mathrm{dom}h).
+* Convexity of (h) ⇒ (\mathrm{dom}h) convex, so
+  [
+  v := \theta g(x_1) + (1-\theta)g(x_2)\in\mathrm{dom}h.
+  ]
+
+**Step 1. Vector inequality from convexity of each (g_i).**
+
+For each coordinate (i):
+
+[
+g_i(\theta x_1 + (1-\theta)x_2)
+\le
+\theta g_i(x_1) + (1-\theta)g_i(x_2).
+]
+
+Collect these into a vector inequality (coordinate-wise):
+
+[
+u := g(\theta x_1 + (1-\theta)x_2)
+;\le;
+v := \theta g(x_1) + (1-\theta)g(x_2).
+]
+
+So (u\le v) componentwise.
+
+**Step 2. Use monotonicity of (\tilde{h}) in each argument.**
+
+From the assumption, (u\le v) and (v\in\mathrm{dom}h) imply:
+
+* (u\in\mathrm{dom}h),
+* (h(u)\le h(v)).
+
+So we have
+[
+f(\theta x_1 + (1-\theta)x_2)
+= h(u)
+\le h(v) = h(\theta g(x_1) + (1-\theta)g(x_2)).
+]
+
+**Step 3. Convexity of (h).**
+
+Convexity of (h) yields
+[
+h(\theta g(x_1) + (1-\theta)g(x_2))
+\le
+\theta h(g(x_1)) + (1-\theta)h(g(x_2)).
+]
+
+Thus
+[
+f(\theta x_1 + (1-\theta)x_2)
+\le \theta f(x_1) + (1-\theta)f(x_2).
+]
+
+So (f) is convex.
+
+This is literally the scalar proof but with vector inequalities.
+
+---
+
+### 3.4 Mixed convex/concave/affine case
+
+Now suppose (h) is convex and we have a mix of behaviours:
+
+* For some indices (i) we only know (g_i) is **concave**, but we also know (h) is nonincreasing in that argument.
+* For some indices (j), (g_j) is **affine**.
+* For the rest, (g_\ell) is convex and (h) nondecreasing.
+
+There are a couple of ways to prove convexity; one clean conceptual proof is:
+
+1. Introduce new functions to convert concave parts into convex ones by sign flips.
+2. Apply the all-convex case to a modified outer function.
+
+Sketch:
+
+* Suppose indices split into three disjoint blocks: (C) (convex), (D) (concave), (A) (affine).
+
+* Define a new function (\tilde{g}:\mathbb{R}^n\to\mathbb{R}^{k}) by
+  [
+  \tilde{g}_i(x) =
+  \begin{cases}
+  g_i(x), & i\in C\cup A,\
+  -g_i(x), & i\in D.
+  \end{cases}
+  ]
+
+  Then:
+
+  * For (i\in C): (\tilde{g}_i) convex.
+  * For (i\in D): (-g_i) is convex (negative of concave).
+  * For (i\in A): affine is also convex.
+
+  So every coordinate of (\tilde{g}) is convex.
+
+* Now define (\tilde{h}:\mathbb{R}^k\to\mathbb{R}\cup{+\infty}) by
+  [
+  \tilde{h}(u_C, u_D, u_A)
+  = h\bigl(u_C, -u_D, u_A\bigr),
+  ]
+  where (u_C) is the block of coordinates indexed by (C), etc.
+
+  Intuitively: to undo the sign flip in (\tilde{g}), we flip again inside (h).
+
+* Convexity of (\tilde{h}): since we obtained (\tilde{h}) by composing (h) with an affine map ((u_C,u_D,u_A)\mapsto(u_C,-u_D,u_A)), and convex functions remain convex under affine precomposition, (\tilde{h}) is convex.
+
+* Monotonicity:
+
+  * For coordinates from (C): (h) is nondecreasing in that argument, and we didn’t flip the sign, so (\tilde{h}) is nondecreasing in those coordinates.
+  * For coordinates from (D): (h) is nonincreasing in argument (i). But the (i)-th argument of (\tilde{h}) appears as (-u_i) inside (h), so increasing (u_i) *decreases* (-u_i) and by nonincreasing of (h) we get *nondecreasing* behaviour for (\tilde{h}) in coordinate (i).
+  * For coordinates from (A): affine, monotonicity doesn’t matter.
+
+  Net effect: **(\tilde{h}) is nondecreasing in every argument** (extended-value sense), which is exactly what the all-convex case requires.
+
+* Finally,
+  [
+  f(x) = h(g(x)) = \tilde{h}(\tilde{g}(x)).
+  ]
+  Now we are in the “all (g_i) convex, outer (\tilde{h}) convex and nondecreasing” situation, so by the previous theorem, (f) is convex.
+
+This is the clean structural explanation behind BV’s mixed rule.
+
+---
+
+### 3.5 Differential chain rule for vector composition (your Jacobian/Hessian notes)
+
+Your handwritten notes show:
+
+* Jacobian (Dg(x))
+* Derivative of matrix products
+* Final formula (f''(t) = g'(t)^T \nabla^2 h(g(t))g'(t) + \nabla h(g(t))^T g''(t))
+
+Let’s derive this carefully in the general (n)-dimensional case, but in a way that matches both the 1D-in (t) version and the general Hessian.
+
+#### 3.5.1 General chain rule: first derivative
+
+Let:
+
+* (g:\mathbb{R}^n\to\mathbb{R}^k)
+* (h:\mathbb{R}^k\to\mathbb{R})
+* (f(x)=h(g(x))).
+
+Assume everything is differentiable.
+
+At a point (x), we have:
+
+* Jacobian of (g): (Dg(x)\in\mathbb{R}^{k\times n}). The (i)-th row is (\nabla g_i(x)^T).
+* Gradient of (h): (\nabla h(g(x))\in\mathbb{R}^k) (column vector).
+
+The multivariable chain rule says:
+
+[
+\nabla f(x) = Dg(x)^T \nabla h(g(x)) \in\mathbb{R}^n.
+]
+
+Equivalently (row/column convention):
+
+[
+Df(x) = Dh(g(x))\cdot Dg(x),
+]
+where (Dh(g(x))) is (1\times k), (Dg(x)) is (k\times n), so the product is (1\times n). That’s exactly what your note
+[
+[Df]*{1\times n} = [Dh(g(x))]*{1\times k} [Dg(x)]_{k\times n}
+]
+is encoding.
+
+#### 3.5.2 Second derivative via directional second derivative
+
+To avoid messy index notation, define the second directional derivative along any vector (v\in\mathbb{R}^n):
+
+Consider the 1D function
+[
+\phi(t) = f(x + t v) = h(g(x+tv)).
+]
+
+Then by 1D calculus,
+[
+\phi'(t) = \nabla f(x+tv)^T v,\quad
+\phi''(t) = v^T \nabla^2 f(x+tv) v.
+]
+
+So (v^T\nabla^2 f(x)v = \phi''(0)).
+
+We can apply the 1D chain rule we already know, but now to the composite ((h, g\circ \ell)) where (\ell(t)=x+tv).
+
+Define:
+[
+z(t) = g(x+tv) \in \mathbb{R}^k,
+\quad
+\psi(u)=h(u).
+]
+
+Then (\phi(t) = \psi(z(t))).
+
+* (z'(t) = Dg(x+tv)v\in\mathbb{R}^k).
+* (z''(t) =) second derivative of (g) along direction (v); if each (g_i) is twice differentiable, then
+  [
+  [z''(t)]_i = v^T \nabla^2 g_i(x+tv) v.
+  ]
+
+The 1D vector chain rule (the one we derived before) gives:
+
+[
+\phi''(t) = z'(t)^T H_h(z(t)) z'(t)
+
+* \nabla h(z(t))^T z''(t),
+  ]
+  where (H_h(u)=\nabla^2 h(u)\in\mathbb{R}^{k\times k}).
+
+At (t=0):
+
+[
+\phi''(0) =
+(Dg(x)v)^T H_h(g(x)) (Dg(x)v)
+
+* \nabla h(g(x))^T z''(0),
+  ]
+  and
+  [
+  z''(0)_i = v^T \nabla^2 g_i(x) v.
+  ]
+
+So
+[
+\boxed{
+v^T\nabla^2 f(x)v
+=================
+
+(Dg(x)v)^T H_h(g(x)) (Dg(x)v)
+
+* \sum_{i=1}^k \frac{\partial h}{\partial u_i}(g(x)), v^T\nabla^2 g_i(x)v.
+  }
+  ]
+
+If we write in slightly more compact form:
+
+[
+v^T\nabla^2 f(x)v
+= (Dg(x)v)^T \nabla^2 h(g(x)) (Dg(x)v)
+;+; \nabla h(g(x))^T \bigl( G''(x)[v,v]\bigr),
+]
+where (G''(x)[v,v]) is the vector of second directional derivatives of (g_i) along (v).
+
+Now the convexity rule is exactly that **each term is ≥ 0** under the conditions:
+
+* (h) convex ⇒ (H_h(g(x))) positive semidefinite ⇒ first quadratic form ≥0.
+* For indices where (g_i) convex and (h) nondecreasing in that argument:
+
+  * (v^T\nabla^2 g_i(x)v\ge0)
+  * (\frac{\partial h}{\partial u_i}(g(x))\ge0)
+    ⇒ product ≥0.
+* For indices where (g_i) concave and (h) nonincreasing:
+
+  * (v^T\nabla^2 g_i(x)v\le0)
+  * (\frac{\partial h}{\partial u_i}(g(x))\le0)
+    ⇒ product ≥0.
+* For affine (g_i): (\nabla^2 g_i(x)=0) ⇒ contributes 0.
+
+So every directional second derivative (v^T\nabla^2 f(x)v\ge0). That is equivalent to (\nabla^2 f(x)\succeq 0). So (f) convex.
+
+This matches exactly the “f''(x)=g'(x)^T ∇²h(g(x)) g'(x) + ∇h(g(x))^T g''(x)” formula in your notes when (n=1) and we suppress the direction (v).
+
+---
+
+### 3.6 Classic vector-composition examples
+
+1. **Log-sum-exp**: (f(x) = \log\sum_{i=1}^m \exp(g_i(x))).
+
+   * Define (g(x) = (g_1(x),\dots,g_m(x))). Suppose each (g_i) is convex.
+   * Define (h(u) = \log\sum_{i=1}^m e^{u_i}).
+
+   Facts:
+
+   * (h) is convex (standard).
+   * (h) is nondecreasing in each component (increasing any component increases the sum inside log).
+
+   So we’re in the vector case: all (g_i) convex, (h) convex and nondecreasing in each argument ⇒ (f) convex.
+
+2. **Softmax-like things**:
+
+   (f(x) = \log\frac{\sum_i e^{a_i(x)}}{\sum_j e^{b_j(x)}}).
+
+   If each (a_i,b_j) is convex, then numerator and denominator logs are convex, their difference is not necessarily convex. So this *doesn’t* follow from a simple composition rule—you have to be more careful. This is a nice example where composition rules warn you not to assume convexity blindly.
+
+3. **Sum of logs**:
+   Suppose each (g_i) concave and positive; then (x\mapsto\sum_i \log g_i(x)) is concave.
+
+   This is a vector version, but we usually apply scalar composition rule to each term and then sum: log concave + positive concave; then use that sum of concave functions is concave.
+
+---
+
+## Wrap-up mental map
+
+You now have the **full anatomy** of these slides:
+
+* Schur complement:
+
+  * Block Gaussian elimination with determinant-1 multipliers.
+  * Determinant factorization with (D^{-1}) or (A^{-1}).
+  * PSD characterization via completing the square: (M\succeq 0\iff) both diagonal block and Schur complement PSD.
+
+* Scalar composition rule (f=h\circ g):
+
+  * Rigorous convexity proof using domains, convexity of (g), monotonicity of (\tilde{h}), and convexity of (h).
+  * Three cases: convex (g)/increasing (h); concave (g)/decreasing (h); affine (g)/arbitrary convex (h).
+  * Differential sanity check: (f''(x) = h''(g(x))(g'(x))^2 + h'(g(x))g''(x)) has nonnegative terms under the rule.
+
+* Vector composition rule:
+
+  * Same idea with vector inequalities.
+  * Mixed convex/concave/affine components handled by sign flips and affine changes of variables in (h).
+  * Differential chain rule with Jacobian and Hessian:
+    [
+    v^T\nabla^2 f(x)v =
+    (Dg(x)v)^T\nabla^2 h(g(x))(Dg(x)v)
+
+    * \sum_i \frac{\partial h}{\partial u_i}(g(x)),v^T\nabla^2 g_i(x)v,
+      ]
+      and sign analysis.
+
+Alright, let’s really unpack this batch. I’ll go topic by topic, and inside each topic I’ll go:
+
+1. Definition
+2. Intuition / geometry
+3. Detailed algebraic proof(s)
+4. Examples and connections
+
+---
+
+## 1. Perspective of a function (slides 3.25–3.26)
+
+### 1.1 Setup and notation
+
+Let
+
+[
+f:\mathbb{R}^n \to \mathbb{R}\cup{+\infty}
+]
+
+be a (possibly extended-valued) function. Assume for now:
+
+* (\operatorname{dom} f = {x \mid f(x) < +\infty}) is nonempty.
+* (f) is convex in the usual sense:
+  for all (x_1,x_2\in\operatorname{dom}f) and (\theta\in[0,1]),
+  [
+  f(\theta x_1 + (1-\theta)x_2)
+  \le
+  \theta f(x_1) + (1-\theta)f(x_2).
+  ]
+
+### 1.2 Definition of perspective
+
+The **perspective** of (f) is a new function
+
+[
+g:\mathbb{R}^n\times\mathbb{R}\to \mathbb{R}\cup{+\infty}
+]
+
+defined by
+
+[
+g(x,t) = t,f!\left(\frac{x}{t}\right),
+]
+
+with **domain**
+
+[
+\operatorname{dom} g
+====================
+
+{(x,t)\in\mathbb{R}^n\times\mathbb{R}\mid t>0,; x/t\in\operatorname{dom} f}.
+]
+
+So:
+
+* You only allow (t>0).
+* You rescale the space variable by (1/t), feed to (f), and multiply by (t).
+
+**Why this exact form?**
+Because:
+
+* It behaves like a homogeneous version of (f). If you scale both (x) and (t):
+
+  [
+  g(\lambda x, \lambda t)
+  = \lambda t,f!\left(\frac{\lambda x}{\lambda t}\right)
+  = \lambda t, f(x/t)
+  = \lambda g(x,t),
+  ]
+
+  so (g) is **positively homogeneous of degree 1**: scaling inputs by (\lambda>0) scales output by (\lambda).
+  That’s very cone-friendly.
+
+* It naturally appears when you rewrite a **fraction**
+
+  [
+  \frac{a^Tx+b}{c^Tx+d}
+  ]
+
+  as something conic; perspective is the key building block.
+
+---
+
+### 1.3 Geometric intuition via epigraphs
+
+Recall the **epigraph** of (f):
+
+[
+\operatorname{epi} f
+= {(u,\alpha)\in\mathbb{R}^n\times\mathbb{R}\mid \alpha\ge f(u)}.
+]
+
+Convexity of (f) ⇔ epi(f) is a convex set in (\mathbb{R}^{n+1}).
+
+Now consider the **conic hull** (cone) of epi(f) in (\mathbb{R}^{n+2}):
+
+[
+\mathcal{C}
+===========
+
+{(\tau u, \tau, \tau\alpha)\mid \tau\ge 0,\ (u,\alpha)\in \operatorname{epi} f}
+\subset \mathbb{R}^{n+2}.
+]
+
+This is just “all rays from the origin through epi(f)”; clearly convex if epi(f) is convex.
+
+Now fix (\tau=1). Intersect (\mathcal{C}) with the hyperplane ({(x,1,\beta)}):
+
+[
+\mathcal{C}\cap{ \tau = 1}
+==========================
+
+# {(x,1,\beta)\mid (x,1,\beta) = (1\cdot u, 1, 1\cdot\alpha),\ (u,\alpha)\in\operatorname{epi} f}
+
+{(x,1,\alpha)\mid (x,\alpha)\in \operatorname{epi} f}.
+]
+
+Now apply the linear map
+[
+(x,\tau,\beta)\mapsto (x,\tau,\beta/\tau)
+]
+restricted to (\tau>0). Under that reparameterization, you can show the third coordinate becomes (f(x/\tau)), and scaling by (\tau) gives exactly epi((g)):
+
+[
+\operatorname{epi} g
+====================
+
+{(x,t,\gamma)\mid t>0,;\gamma\ge t f(x/t)}.
+]
+
+Intersecting and linearly transforming convex sets preserves convexity, so epi(g) is convex. Therefore (g) is convex.
+
+That’s the **“cone over epigraph then slice”** picture.
+
+---
+
+### 1.4 Direct inequality proof (the slide’s proof)
+
+We want to prove:
+
+> If (f) is convex, then (g(x,t)=t f(x/t)) is convex on ({t>0}).
+
+#### Step 1: what we must show
+
+Take any two points ((x_1,t_1)), ((x_2,t_2)) in dom(g). So:
+
+* (t_1>0,\ t_2>0),
+* (x_1/t_1,\ x_2/t_2\in\operatorname{dom}f).
+
+Let (\theta\in[0,1]). Convexity of (g) means:
+
+[
+g\big(\theta(x_1,t_1)+(1-\theta)(x_2,t_2)\big)
+\le
+\theta g(x_1,t_1) + (1-\theta) g(x_2,t_2).
+\tag{★}
+]
+
+Compute the convex combination:
+
+[
+\theta(x_1,t_1)+(1-\theta)(x_2,t_2)
+===================================
+
+# (\bar x,\bar t)
+
+\big(\theta x_1+(1-\theta)x_2,;\theta t_1+(1-\theta)t_2\big).
+]
+
+Note (\bar t>0) since convex combo of positive numbers. So LHS of (★) is
+
+[
+g(\bar x,\bar t) = \bar t, f(\bar x/\bar t).
+]
+
+RHS is
+
+[
+\theta t_1 f(x_1/t_1) + (1-\theta)t_2 f(x_2/t_2).
+]
+
+So inequality (★) is equivalent to
+
+[
+\bar t,f(\bar x/\bar t)
+\le
+\theta t_1 f(x_1/t_1) + (1-\theta)t_2 f(x_2/t_2).
+\tag{1}
+]
+
+Our job is to prove (1).
+
+#### Step 2: rewrite the weird ratio as a convex combination
+
+We have
+
+[
+\frac{\bar x}{\bar t}
+=====================
+
+\frac{\theta x_1+(1-\theta)x_2}{\theta t_1+(1-\theta)t_2}.
+]
+
+Define
+
+[
+\mu
+===
+
+\frac{\theta t_1}{\theta t_1+(1-\theta)t_2},
+\qquad
+1-\mu
+=====
+
+\frac{(1-\theta)t_2}{\theta t_1+(1-\theta)t_2}.
+]
+
+Check:
+
+* Numerators and denominator are positive ⇒ (\mu\in(0,1)).
+* (\mu + (1-\mu)=1).
+
+Now compute
+
+[
+\mu\frac{x_1}{t_1} + (1-\mu)\frac{x_2}{t_2}
+===========================================
+
+\frac{\theta t_1}{\bar t} \cdot \frac{x_1}{t_1}
+
+* \frac{(1-\theta)t_2}{\bar t} \cdot \frac{x_2}{t_2}
+  =
+  \frac{\theta x_1 + (1-\theta)x_2}{\bar t}
+  =
+  \frac{\bar x}{\bar t}.
+  ]
+
+So the “nasty” (\bar x/\bar t) is actually the convex combination
+
+[
+\frac{\bar x}{\bar t} = \mu(x_1/t_1)+(1-\mu)(x_2/t_2).
+\tag{2}
+]
+
+#### Step 3: apply convexity of (f)
+
+Since (f) is convex and (\mu\in[0,1]),
+
+[
+f(\bar x/\bar t)
+================
+
+f\big(\mu(x_1/t_1)+(1-\mu)(x_2/t_2)\big)
+\le
+\mu, f(x_1/t_1) + (1-\mu) f(x_2/t_2).
+\tag{3}
+]
+
+Multiply both sides of (3) by (\bar t) (positive):
+
+[
+\bar t, f(\bar x/\bar t)
+\le
+\bar t \big[\mu f(x_1/t_1) + (1-\mu)f(x_2/t_2)\big].
+\tag{4}
+]
+
+Expand right-hand side:
+
+[
+\bar t,\mu f(x_1/t_1)
++
+\bar t(1-\mu)f(x_2/t_2).
+]
+
+Now use the definition of (\mu):
+
+* (\bar t\mu
+  = (\theta t_1+(1-\theta)t_2) \cdot \frac{\theta t_1}{\bar t}
+  = \theta t_1).
+
+* (\bar t(1-\mu)
+  = (\theta t_1+(1-\theta)t_2) \cdot \frac{(1-\theta)t_2}{\bar t}
+  = (1-\theta)t_2).
+
+So (4) becomes
+
+[
+\bar t, f(\bar x/\bar t)
+\le
+\theta t_1 f(x_1/t_1)
++
+(1-\theta)t_2 f(x_2/t_2),
+]
+
+which is exactly (1). Hence (★) holds, so (g) is convex.
+
+That’s the inequality-style proof.
+
+---
+
+### 1.5 Concrete examples of perspectives
+
+#### Example 1: quadratic over scalar
+
+Let (f(x)=|x|_2^2). Then
+
+[
+g(x,t) = t|x/t|_2^2 = \frac{|x|_2^2}{t},\quad t>0.
+]
+
+So ((x,t)\mapsto |x|_2^2/t) is convex on ({t>0}).
+
+This is the standard building block of the second-order cone:
+
+[
+\left{(x,t)\mid |x|_2^2 \le t^2,\ t\ge 0\right}
+\quad \leftrightarrow\quad
+\frac{|x|_2^2}{t} \le t,\ t>0.
+]
+
+#### Example 2: negative log and relative entropy
+
+Let (f(x) = -\log x), domain (\mathbb{R}_{++}). Then
+
+[
+g(x,t) = t(-\log(x/t))
+= t\log t - t\log x,\quad x>0,t>0.
+]
+
+If you plug (x = p/q) and (t = q) this turns into expressions of the form (q\log q - q\log p), i.e. terms in Kullback–Leibler divergence.
+
+---
+
+## 2. Quasiconvex functions (slides 3.29–3.32)
+
+Now we generalize convexity.
+
+### 2.1 Definition via sublevel sets
+
+Let (f:\mathbb{R}^n\to \mathbb{R}\cup{+\infty}).
+
+We say (f) is **quasiconvex** if:
+
+1. (\operatorname{dom} f) is convex.
+2. For **every** (\alpha\in\mathbb{R}), the **sublevel set**
+
+   [
+   S_\alpha = {x\in\operatorname{dom} f\mid f(x)\le \alpha}
+   ]
+
+   is convex.
+
+So instead of the whole epigraph being convex, we only ask that every “horizontal slice below height (\alpha)” is convex.
+
+Similarly:
+
+* (f) is **quasiconcave** if (-f) is quasiconvex (superlevel sets convex).
+* (f) is **quasilinear** if it is both quasiconvex and quasiconcave.
+
+**Basic relation:**
+
+Convex ⇒ quasiconvex, but not vice versa.
+
+* If (f) is convex, epi(f) is convex. Fix (\alpha); then epi(f) intersected with the horizontal plane ({(x,\alpha)}) and projected down gives (S_\alpha), which is convex. So convex (f) is automatically quasiconvex.
+
+* Quasiconvex allows functions like (\sqrt{|x|}) which are “bowl-ish” in their level sets but not convex in the value sense.
+
+---
+
+### 2.2 Modified Jensen inequality (slide “Properties – modified Jensen”)
+
+For convex (f) we have Jensen:
+
+[
+f(\theta x + (1-\theta)y)
+\le
+\theta f(x) + (1-\theta)f(y).
+]
+
+For quasiconvex (f) we weaken this to:
+
+> For all (x,y\in\operatorname{dom}f), for all (\theta\in[0,1]),
+> [
+> f(\theta x + (1-\theta)y)
+> \le
+> \max{f(x),f(y)}.
+> \tag{QC-Jensen}
+> ]
+
+This says: along the line segment, the function never rises **above the higher endpoint**. It can have flat parts or dips; it just can’t “overshoot”.
+
+#### (A) Quasiconvex ⇒ (QC-Jensen)
+
+Assume (f) is quasiconvex.
+
+Take any (x,y) and set
+
+[
+\alpha = \max{f(x),f(y)}.
+]
+
+Then (x,y\in S_\alpha={z\mid f(z)\le\alpha}), which is convex. So for any (\theta\in[0,1]),
+
+[
+z_\theta = \theta x + (1-\theta)y \in S_\alpha,
+]
+
+hence (f(z_\theta)\le\alpha). That is exactly (QC-Jensen).
+
+#### (B) (QC-Jensen) + convex domain ⇒ quasiconvex
+
+Now suppose domain of (f) is convex and (QC-Jensen) holds.
+
+Take any (\alpha) and any (x,y\in S_\alpha). Then (f(x)\le\alpha) and (f(y)\le\alpha). For any (\theta),
+
+[
+f(\theta x + (1-\theta)y)
+\le
+\max{f(x),f(y)}\le \alpha.
+]
+
+So (\theta x + (1-\theta)y\in S_\alpha). Therefore (S_\alpha) is convex for all (\alpha), and (f) is quasoconvex.
+
+So for convex domain, **quasiconvexity ↔ (QC-Jensen)**.
+
+---
+
+### 2.3 Examples: detailed
+
+#### Example 1: (f(x) = \sqrt{|x|}) is quasiconvex on (\mathbb{R})
+
+Take any (\alpha\in\mathbb{R}):
+
+* If (\alpha < 0):
+
+  (\sqrt{|x|}\ge 0) for all (x), so (S_\alpha = \varnothing), which is convex.
+
+* If (\alpha \ge 0):
+
+  [
+  S_\alpha
+  = {x\mid \sqrt{|x|}\le \alpha}
+  \iff |x|\le \alpha^2
+  \iff -\alpha^2 \le x \le \alpha^2.
+  ]
+
+  So (S_\alpha = [-\alpha^2,\alpha^2]), an interval, hence convex.
+
+All sublevel sets convex ⇒ (f) quasiconvex.
+
+To see it’s **not convex**: pick (x=-1, y=1). Then (f(x)=f(y)=1). At (\theta=1/2), midpoint (0): (f(0)=0). Convexity inequality would demand
+
+[
+f(0) \le \frac12 f(-1)+\frac12 f(1) = 1,
+]
+
+which is fine; that alone doesn’t break convexity. But checking second derivative or more points shows it’s not globally convex. Quasiconvex is strictly weaker.
+
+---
+
+#### Example 2: Ceiling function is quasilinear
+
+[
+f(x) = \lceil x \rceil = \inf{z\in\mathbb{Z}\mid z\ge x}.
+]
+
+* For any integer (k),
+
+  [
+  S_k = {x\mid \lceil x\rceil \le k}
+  = (-\infty,k].
+  ]
+
+  This is convex (interval).
+
+* For quasiconcavity, examine superlevel sets:
+
+  [
+  T_k = {x\mid \lceil x \rceil \ge k}
+  = [k-1,\infty).
+  ]
+
+Both are convex intervals ⇒ (f) is quasiconvex and quasiconcave ⇒ quasilinear.
+
+---
+
+#### Example 3: (\log x) is quasilinear on (\mathbb{R}_{++})
+
+Sublevel set for (\alpha):
+
+[
+S_\alpha
+========
+
+# {x>0\mid \log x \le \alpha}
+
+# {x>0\mid x \le e^\alpha}
+
+(0,e^\alpha],
+]
+
+convex.
+
+Superlevel set:
+
+[
+T_\alpha
+========
+
+# {x>0\mid \log x \ge \alpha}
+
+[e^\alpha,\infty),
+]
+
+also convex. So (\log) is quasilinear.
+
+---
+
+#### Example 4: linear-fractional function is quasilinear
+
+Let (a,c\in\mathbb{R}^n,\ b,d\in\mathbb{R}). Define
+
+[
+f(x) = \frac{a^Tx + b}{c^Tx+d},
+\quad
+\operatorname{dom}f = {x\mid c^Tx+d>0}.
+]
+
+**Sublevel set**:
+
+[
+S_\alpha
+========
+
+# {x\in\operatorname{dom}f \mid f(x)\le \alpha}
+
+\left{x\mid
+\frac{a^Tx+b}{c^Tx+d}\le\alpha,\ c^Tx+d>0
+\right}.
+]
+
+Multiply both sides of the inequality by the positive denominator:
+
+[
+a^Tx+b \le \alpha (c^Tx+d)
+\quad\text{and}\quad c^Tx+d>0.
+]
+
+Rearrange the first:
+
+[
+(a-\alpha c)^T x + (b-\alpha d) \le 0.
+]
+
+So
+
+[
+S_\alpha
+========
+
+{x\mid (a-\alpha c)^T x + (b-\alpha d)\le0,\ c^Tx+d>0}.
+]
+
+Each constraint is a halfspace; intersection of halfspaces is convex ⇒ (S_\alpha) convex.
+
+**Superlevel set**:
+
+[
+T_\alpha
+========
+
+# {x\mid f(x)\ge\alpha,\ c^Tx+d>0}
+
+{x\mid (a-\alpha c)^Tx + (b-\alpha d)\ge0,\ c^Tx+d>0},
+]
+
+again intersection of halfspaces ⇒ convex. So (f) is quasiconvex and quasiconcave ⇒ **quasilinear**.
+
+(This is exactly why linear-fractional optimization can be converted to a convex problem.)
+
+---
+
+#### Example 5: distance ratio is quasiconvex
+
+Let (a,b\in\mathbb{R}^n). Define
+
+[
+f(x) = \frac{|x-a|_2}{|x-b|_2},
+\quad
+\operatorname{dom} f = {x\mid |x-a|\le |x-b|}.
+]
+
+Take (\tau\ge 0). Sublevel set:
+
+[
+S_\tau = {x\mid f(x)\le\tau,\ x\in\operatorname{dom}f}
+= {x\mid |x-a|\le\tau|x-b|,\ |x-a|\le|x-b|}.
+]
+
+When (\tau\ge 1) the second inequality is redundant; main structure is
+
+[
+|x-a|\le\tau|x-b|.
+\tag{★}
+]
+
+Introduce variables
+
+[
+u = x-a,\quad v = x-b.
+]
+
+Then (u-v = b-a) is constant; ((u,v)) lies in an affine subspace
+(\mathcal{A} = {(u,v)\mid u-v=b-a}).
+
+Define the cone
+
+[
+K = {(u,v)\mid |u|_2\le \tau |v|_2},
+]
+
+which is a second-order cone (convex). The set of pairs ((u,v)) satisfying (★) is exactly (\mathcal{A}\cap K), which is convex as intersection of convex sets. The map ((u,v)\mapsto x) (via (x = u+a)) is affine, so the image of a convex set is convex. Hence (S_\tau) is convex ⇒ (f) is quasiconvex.
+
+---
+
+## 3. Internal Rate of Return (IRR) is quasiconcave (slide 3.31)
+
+Now a more econ-flavored example.
+
+### 3.1 Setup
+
+Cash flow (x=(x_0,\dots,x_n)), where (x_i) is payment at time (i) **to us**:
+
+* (x_i>0): inflow
+* (x_i<0): outflow
+
+Assume:
+
+* (x_0<0) (initial investment),
+* (\sum_{i=0}^n x_i > 0) (total net profit positive).
+
+For interest rate (r\ge 0), **present value**:
+
+[
+\text{PV}(x,r) = \sum_{i=0}^n x_i (1+r)^{-i}.
+]
+
+We define the **internal rate of return**:
+
+[
+\text{IRR}(x)
+=============
+
+\inf{ r\ge0 \mid \text{PV}(x,r) = 0}.
+]
+
+Under mild conditions PV is strictly decreasing in (r), so there is a unique root; but we don’t need full uniqueness here.
+
+### 3.2 Monotonicity of PV in (r)
+
+Fix (x). Each term:
+
+[
+(1+r)^{-i} x_i
+]
+
+is (weakly) decreasing in (r) when (x_i\ge0) and increasing if (x_i<0). But with the standard IRR assumptions (initial outflow, later inflows), PV is strictly decreasing for (r\ge0). Intuitively: higher discount rate punishes future cash flows more.
+
+We’ll use the consequence:
+
+* PV is continuous in (r),
+* PV tends to (-\infty) as (r\to\infty),
+* PV(0) = (\sum x_i>0).
+
+So there is at least one root (r^*=\text{IRR}(x)), and PV(>0) for (r<r^*), PV(\le 0) for (r\ge r^*).
+
+### 3.3 Characterizing superlevel sets of IRR
+
+Claim from the slide:
+
+[
+\text{IRR}(x)\ge R
+\quad\Longleftrightarrow\quad
+\sum_{i=0}^n (1+r)^{-i} x_i > 0
+\ \text{for all }0\le r<R.
+\tag{†}
+]
+
+**(⇒)** Suppose IRR(x) ≥ R. By definition, the smallest (r) where PV(x,r) hits 0 is at least R. That means for all (r<R), we’re still **before** the zero crossing, so PV(x,r)>0. That’s exactly the RHS.
+
+**(⇐)** Conversely, assume PV(x,r)>0 for all (r<R). Then the zero crossing, if it exists, cannot occur before (R); otherwise PV would be ≤0 for some (r<R). Therefore IRR(x)≥R.
+
+Thus the superlevel set
+
+[
+{x\mid \text{IRR}(x)\ge R}
+]
+
+can be written as
+
+[
+\bigcap_{r\in[0,R)} \left{x\mid \sum_{i=0}^n (1+r)^{-i} x_i > 0\right}.
+]
+
+For fixed (r), the condition
+
+[
+\sum_{i=0}^n (1+r)^{-i} x_i > 0
+]
+
+is **linear in (x)**: it is
+
+[
+\langle a(r), x \rangle > 0,
+]
+
+where (a(r)_i = (1+r)^{-i}). This defines an **open halfspace** in (x)-space, which is convex.
+
+An arbitrary intersection of convex sets is convex, so the intersection over all (r\in[0,R)) is convex.
+
+Hence all superlevel sets of IRR are convex ⇒ IRR is **quasiconcave**.
+
+That’s the whole story: “having IRR at least (R)” is a convex condition on the cash-flow vector.
+
+---
+
+## 4. First-order condition for quasiconvexity
+
+On the slide: “First-order condition: differentiable (f) with convex domain is quasiconvex iff
+
+[
+f(y)\le f(x) \Rightarrow \nabla f(x)^T (y-x) \le 0.
+]”
+
+Let’s unpack.
+
+### 4.1 Direction: quasiconvex ⇒ gradient condition
+
+Assume:
+
+* dom(f) is convex.
+* (f) is differentiable.
+* (f) is quasiconvex.
+
+Take arbitrary (x,y) in dom(f) with (f(y)\le f(x)).
+
+Consider the line segment from (x) to (y):
+
+[
+z(\theta) = (1-\theta)x + \theta y, \quad \theta\in[0,1].
+]
+
+Define the scalar function along that segment:
+
+[
+\phi(\theta) = f(z(\theta)).
+]
+
+By quasiconvexity & (QC-Jensen):
+
+* (f(z(\theta))\le\max{f(x),f(y)} = f(x)) for all (\theta\in[0,1]).
+* So (\phi(\theta)\le \phi(0)) for all (\theta\in[0,1]).
+* That means (\theta=0) is a **global maximizer** of (\phi) on ([0,1]).
+
+For a differentiable function, a maximizer in the interior of an interval has derivative zero; at an endpoint with one-sided derivative, the correct condition is derivative from inside is ≤ 0. Here 0 is an endpoint; from the right:
+
+[
+\phi'(0^+)\le 0.
+]
+
+Compute (\phi'):
+
+[
+\phi'(\theta)
+=============
+
+\nabla f(z(\theta))^T z'(\theta).
+]
+
+But
+
+[
+z'(\theta) = y-x,
+]
+
+so
+
+[
+\phi'(\theta)
+=============
+
+\nabla f(z(\theta))^T (y-x).
+]
+
+At (\theta=0), (z(0)=x), so
+
+[
+\phi'(0^+)
+==========
+
+\nabla f(x)^T (y-x)
+\le 0.
+]
+
+That’s exactly the gradient condition.
+
+---
+
+### 4.2 Direction: gradient condition ⇒ quasiconvex
+
+Now assume:
+
+> (G) For all (x,y): if (f(y)\le f(x)) then (\nabla f(x)^T (y-x)\le0).
+
+We must show: for any (\alpha), the sublevel set (S_\alpha={x\mid f(x)\le\alpha}) is convex.
+
+Take any (x_1,x_2\in S_\alpha). For any (\theta\in[0,1]), define
+
+[
+z(\theta)=(1-\theta)x_1 + \theta x_2.
+]
+
+We want to prove (f(z(\theta))\le\alpha) for all (\theta), i.e. (\theta\mapsto f(z(\theta))) never exceeds the endpoint values.
+
+Define (\phi(\theta)=f(z(\theta))) again. Suppose for contradiction that (\phi) is **strictly larger** than (\alpha) somewhere inside, say at some (\theta^*\in(0,1)):
+
+[
+\phi(\theta^*) > \alpha \ge f(x_1),f(x_2).
+]
+
+So (\phi) has a local maximum at (\theta^*) (because at both ends the value is ≤ α < φ(θ*)). For differentiable φ, a local maximum at interior point means φ′(θ*)=0.
+
+But
+
+[
+\phi'(\theta) = \nabla f(z(\theta))^T (x_2 - x_1).
+]
+
+So
+
+[
+\nabla f(z(\theta^*))^T(x_2-x_1)=0.
+\tag{1}
+]
+
+Now look at the gradient condition (G) applied at (x=z(\theta^*)), first with (y=x_1), then with (y=x_2).
+
+* (f(x_1)\le\alpha < f(z(\theta^*))) ⇒ we **cannot** apply (G) with “(y=x_1), (x=z(\theta^*))” because the premise is (f(y)\le f(x)). Here (f(y)=f(x_1)\le \alpha < f(z(\theta^*))=f(x)), so yes, we **can** apply:
+
+  [
+  \nabla f(z(\theta^*))^T(x_1 - z(\theta^*))\le0.
+  ]
+
+  Rearranging:
+
+  [
+  \nabla f(z(\theta^*))^T(z(\theta^*) - x_1) \ge 0.
+  \tag{2}
+  ]
+
+* Similarly with (y=x_2):
+
+  [
+  \nabla f(z(\theta^*))^T(z(\theta^*) - x_2)\ge 0.
+  \tag{3}
+  ]
+
+Now write (z(\theta^*)) as convex combination:
+
+[
+z(\theta^*) = (1-\theta^*)x_1 + \theta^* x_2,
+]
+
+so
+
+[
+z(\theta^*) - x_1 = \theta^*(x_2 - x_1),
+\quad
+z(\theta^*) - x_2 = (1-\theta^*)(x_1 - x_2) = -(1-\theta^*)(x_2 - x_1).
+]
+
+Plug into (2) and (3):
+
+* From (2):
+
+  [
+  \theta^*\nabla f(z(\theta^*))^T (x_2 - x_1)\ge 0.
+  ]
+
+* From (3):
+
+  [
+  -(1-\theta^*)\nabla f(z(\theta^*))^T (x_2 - x_1)\ge 0
+  \quad\Rightarrow\quad
+  \nabla f(z(\theta^*))^T (x_2 - x_1)\le 0.
+  ]
+
+Combine with (1) (which says the same inner product is 0) and we see everything is consistent; no contradiction yet. To get full formal proof you usually argue more globally (show any interior strict maximum leads to a direction where gradient violates (G)), but the standard theorem is:
+
+> Under differentiability and convex domain, (G) ⇔ quasiconvexity.
+
+Intuitively: gradient condition says “if you move from a higher point (x) towards any point (y) with lower or equal value, the gradient at (x) does not point in that direction”. This forbids interior “humps” that would break quasiconvex level sets.
+
+For our purposes: remember gradient condition as the **first-order test**: sublevel sets like nested convex “onion layers”; gradient is always pointing “outwards” perpendicular to supporting hyperplanes.
+
+---
+
+## 5. Quasiconvex properties recap
+
+From slides:
+
+* Modified Jensen:
+
+  [
+  0\le\theta\le1 \Rightarrow
+  f(\theta x + (1-\theta)y) \le \max{f(x),f(y)}.
+  ]
+
+* First-order condition (above).
+
+* Sums: sum of quasiconvex functions is **not** necessarily quasiconvex (unlike convexity).
+
+---
+
+## 6. Log-convex and log-concave functions (slides 3.33–3.34)
+
+Now we tilt things into log space.
+
+### 6.1 Definitions
+
+Assume (f(x)>0) on its domain.
+
+* (f) is **log-concave** if (\log f) is concave:
+
+  [
+  \log f(\theta x + (1-\theta)y)
+  \ge
+  \theta \log f(x) + (1-\theta)\log f(y).
+  ]
+
+  Exponentiating:
+
+  [
+  f(\theta x + (1-\theta)y)
+  \ge
+  f(x)^\theta f(y)^{1-\theta}.
+  ]
+
+* (f) is **log-convex** if (\log f) is convex:
+
+  [
+  f(\theta x + (1-\theta)y)
+  \le
+  f(x)^\theta f(y)^{1-\theta}.
+  ]
+
+Note the **geometric mean** on the RHS. For convexity we compare to **arithmetic mean**; here we compare to geometric mean.
+
+Basic facts:
+
+* Log-concave ⇒ quasiconcave. Superlevel sets of a concave function are convex, and (\log) is monotone.
+* Log-convex ⇒ quasiconvex.
+
+---
+
+### 6.2 Example: power (x^a) on (\mathbb{R}_{++})
+
+Let (f(x)=x^a) with (x>0).
+
+[
+\log f(x) = a\log x.
+]
+
+* (\log x) is concave on (\mathbb{R}_{++}).
+* Multiply by (a):
+
+  * If (a\ge0): (a\log x) is concave ⇒ (f) is log-concave.
+  * If (a\le0): (a\log x) is convex ⇒ (f) is log-convex.
+
+So:
+
+* Powers (x^a) with (a\ge0): log-concave.
+* Powers (x^a) with (a\le0): log-convex.
+
+---
+
+### 6.3 Many densities are log-concave
+
+For a multivariate normal density with mean (\bar x) and covariance (\Sigma),
+
+[
+f(x) = \frac{1}{(2\pi)^{n/2}\sqrt{\det\Sigma}}
+\exp\left(-\frac12 (x-\bar x)^T\Sigma^{-1}(x-\bar x)\right),
+]
+
+we have
+
+[
+\log f(x) = \text{const} - \frac12 (x-\bar x)^T\Sigma^{-1}(x-\bar x).
+]
+
+The quadratic term ((x-\bar x)^T\Sigma^{-1}(x-\bar x)) is convex (Σ⁻¹ ≻ 0), so its negative is concave, so log f is concave ⇒ f is log-concave.
+
+The cumulative Gaussian (\Phi(x)=\frac1{\sqrt{2\pi}}\int_{-\infty}^x e^{-u^2/2},du) is also log-concave, though proving it is more involved (uses Prékopa–Leindler).
+
+---
+
+### 6.4 Hessian condition for log-concavity
+
+Assume (f) is twice differentiable and positive on a convex domain.
+
+Set
+
+[
+g(x) = \log f(x).
+]
+
+Then
+
+[
+\nabla g(x) = \frac{\nabla f(x)}{f(x)}.
+]
+
+For the Hessian, use product and chain rule:
+
+1. Write (\nabla g = f^{-1}\nabla f).
+
+2. Differentiate:
+
+   [
+   \nabla^2 g
+   = \nabla(f^{-1}\nabla f)
+   = \nabla(f^{-1}) \nabla f^T + f^{-1}\nabla^2 f.
+   ]
+
+3. But (\nabla(f^{-1}) = -f^{-2} \nabla f), so
+
+   [
+   \nabla^2 g
+   ==========
+
+   -f^{-2} \nabla f,\nabla f^T + f^{-1}\nabla^2 f.
+   ]
+
+   Reordering:
+
+   [
+   \nabla^2 g
+   = \frac{1}{f}\nabla^2 f - \frac{1}{f^2}\nabla f,\nabla f^T.
+   ]
+
+Log-concavity means (g) is concave ⇒
+
+[
+\nabla^2 g(x) \preceq 0 \quad\text{for all }x.
+]
+
+Multiply both sides by (f(x)^2>0):
+
+[
+f(x)\nabla^2 f(x) - \nabla f(x)\nabla f(x)^T \preceq 0,
+]
+
+or equivalently
+
+[
+f(x)\nabla^2 f(x)\preceq \nabla f(x)\nabla f(x)^T.
+]
+
+So:
+
+> (f) twice differentiable and positive is log-concave
+> iff
+> [
+> f\nabla^2 f \preceq \nabla f\nabla f^T.
+> ]
+
+That’s the matrix inequality on the slide.
+
+For intuition, in 1D this reduces to:
+
+[
+f(x) f''(x) \le (f'(x))^2.
+]
+
+---
+
+### 6.5 Basic properties (slide 3.34)
+
+Let (f,g>0) log-concave.
+
+1. **Product preserves log-concavity**
+
+   Define (h(x)=f(x)g(x)). Then
+
+   [
+   \log h(x)
+   = \log f(x) + \log g(x),
+   ]
+
+   sum of concave functions ⇒ concave ⇒ (h) is log-concave.
+
+   This generalizes: product of any finite number of log-concave functions is log-concave.
+
+2. **Sum does NOT preserve log-concavity**
+
+   Take two well-separated Gaussian bumps; each is log-concave, but the sum has two peaks; log of that sum is not concave.
+
+3. **Integration preserves log-concavity (Prékopa’s theorem)**
+
+   Suppose (f(x,y)) is log-concave on (\mathbb{R}^n\times\mathbb{R}^m). Define
+
+   [
+   g(x) = \int_{\mathbb{R}^m} f(x,y),dy.
+   ]
+
+   Then (g) is log-concave.
+
+   Sketch idea: rewrite the log-concavity inequality for (f) and integrate both sides, then invoke Prékopa–Leindler inequality (functional analog of Brunn–Minkowski). It’s nontrivial but fundamental in convex geometry and probability.
+
+This “integration preserves log-concavity” is crucial: many marginals of log-concave distributions are log-concave.
+
+---
+
+## 7. Quick structural summary to keep in your head
+
+Just to consolidate:
+
+* **Perspective**:
+  (g(x,t) = t f(x/t)), (t>0).
+  If (f) convex ⇒ (g) convex.
+  Proof: either via the (\mu) trick (algebra) or via epigraph → cone → slice.
+
+* **Quasiconvexity**:
+  Sublevel sets convex ⇔ modified Jensen:
+  [
+  f(\theta x + (1-\theta)y)\le\max{f(x),f(y)}.
+  ]
+  Differentiable case:
+  (f(y)\le f(x) \Rightarrow \nabla f(x)^T (y-x)\le0).
+
+* **Examples**:
+
+  * (\sqrt{|x|}) quasiconvex.
+  * Ceiling & log: quasilinear.
+  * Linear-fractional functions: quasilinear (sub/superlevel sets are intersections of halfspaces).
+  * Distance ratio: quasiconvex via embedding into SOCP.
+
+* **IRR**:
+  Superlevel sets are intersections of open halfspaces indexed by (r\in[0,R)) ⇒ quasiconcave.
+
+* **Log-concave / log-convex**:
+  (f) positive; log f concave (or convex).
+  Hessian criterion: (f\nabla^2 f \preceq \nabla f\nabla f^T).
+  Products and marginals of log-concave stay log-concave; sums may fail.
+
+These are basically the “function-side” analogues of all the geometric set stuff you saw earlier (perspective, cones, intersections, supporting hyperplanes). They are the toolbox you use to recognize when an ugly-looking expression is secretly convex or quasiconvex so you’re allowed to optimize it safely.
