@@ -756,11 +756,13 @@
         \boxed{f^*(y) = \sup_{x \in \mathrm{dom}\, f} \left( y^\top x - f(x) \right)}
         $$
         <p>Here, $y \in \mathbb{R}^n$ acts as a "slope" vector. The value $f^*(y)$ answers the question: <b>"How well can the linear function $x \mapsto y^\top x$ beat the function $f(x)$?"</b></p>
+        <p>For each fixed slope $y$, we define the function $\phi_y(x) = y^\top x - f(x)$. Then $f^*(y) = \sup_x \phi_y(x)$. If the linear function can beat $f$ <b>arbitrarily badly</b> (i.e., $\phi_y(x) \to +\infty$), then $f^*(y) = +\infty$. If it can never beat it substantially, you might get a finite or even negative number.</p>
 
         <div class="insight">
           <h4>💡 1D Interpretation: Maximum Gap</h4>
           <p>For $n=1$, consider a fixed slope $y$. The term $yx - f(x)$ represents the vertical distance (gap) between the line $L(x) = yx$ (passing through origin) and the curve $f(x)$. The conjugate $f^*(y)$ is the maximum such gap.</p>
           <p>Geometrically, this corresponds to finding a line with slope $y$ that is tangent to $f(x)$. The "supporting line" equation is $y^\top x - f^*(y) \le f(x)$, meaning $-f^*(y)$ is the $y$-intercept of the supporting hyperplane with normal $(y, -1)$.</p>
+          <p>The conjugate $f^*(y)$ encodes the <b>highest line of slope $y$ that stays below the function $f$</b>.</p>
         </div>
 
         <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin: 20px 0;">
@@ -768,13 +770,13 @@
             <img src="assets/conjugate_definition_gap.png"
                  alt="Conjugate as maximum vertical gap between line yx and function f(x)"
                  style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
-            <figcaption><i>Figure 7.1:</i> <b>The Maximum Gap View.</b> For a fixed slope $y$, we look for the point $x^*$ that maximizes the distance $yx - f(x)$. The value of this maximum distance is $f^*(y)$.</figcaption>
+            <figcaption><i>Figure 7.1:</i> <b>The Maximum Gap View.</b> For a fixed slope $y$, we look for the point $x^*$ that maximizes the distance $yx - f(x)$. The value of this maximum distance is $f^*(y)$. A vertical arrow labeled "Supremum Value = $f^*(y)$" connects the line $yx$ down to the curve $f(x)$ at this optimal $x^*$.</figcaption>
           </figure>
           <figure style="flex: 1; min-width: 300px; text-align: center;">
             <img src="assets/conjugate_supporting_line.png"
                  alt="Conjugate determines the intercept of the supporting line"
                  style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
-            <figcaption><i>Figure 7.2:</i> <b>The Supporting Line View.</b> The tangent line to $f(x)$ with slope $y$ has the equation $\ell(x) = yx - f^*(y)$. Thus, $f^*(y)$ encodes the (negative) vertical intercept of this tangent.</figcaption>
+            <figcaption><i>Figure 7.2:</i> <b>The Supporting Line View.</b> The tangent line to $f(x)$ with slope $y$ has the equation $\ell(x) = yx - f^*(y)$. The line intersects the vertical y-axis at the value $-f^*(y)$. This visually demonstrates that $f^*(y)$ determines the vertical intercept (negative) of the supporting hyperplane with slope $y$.</figcaption>
           </figure>
         </div>
 
@@ -787,6 +789,16 @@
           The conjugate is the pointwise supremum of this family of affine functions:
           $$ f^*(y) = \sup_{x \in \mathrm{dom}\, f} g_x(y) $$
           Since the supremum of any collection of convex functions is convex, $f^*$ is convex.</p>
+          <p><b>Detailed Check:</b> Let $h(y) = \sup_i h_i(y)$ where each $h_i$ is convex. For any $y_1, y_2$ and $\theta \in [0, 1]$:</p>
+          $$
+          \begin{aligned}
+          h(\theta y_1 + (1-\theta)y_2) &= \sup_i h_i(\theta y_1 + (1-\theta)y_2) \\
+          &\le \sup_i (\theta h_i(y_1) + (1-\theta)h_i(y_2)) \\
+          &\le \theta \sup_i h_i(y_1) + (1-\theta) \sup_i h_i(y_2) \\
+          &= \theta h(y_1) + (1-\theta)h(y_2)
+          \end{aligned}
+          $$
+          <p>Applying this with $h_i = g_x$ completes the proof.</p>
         </div>
 
         <div class="proof-enhanced">
@@ -801,13 +813,13 @@
             <img src="assets/conjugate_convexity_affine.png"
                  alt="f* is the upper envelope of affine functions"
                  style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
-            <figcaption><i>Figure 7.3:</i> The conjugate $f^*(y)$ (thick curve) is the upper envelope of the lines $x \cdot y - f(x)$. This "V-shape" structure guarantees convexity.</figcaption>
+            <figcaption><i>Figure 7.3:</i> The conjugate $f^*(y)$ (thick curve) is the upper envelope of the lines $x \cdot y - f(x)$. The function $f^*(y)$ is the upper envelope (pointwise supremum) of all these lines. The resulting upper envelope forms a convex "V" shape or curve, visually proving that the conjugate $f^*$ is always convex.</figcaption>
           </figure>
           <figure style="flex: 1; min-width: 300px; text-align: center;">
             <img src="assets/conjugate_epigraph_intersection.png"
                  alt="Epigraph of f* as intersection of halfspaces"
                  style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
-            <figcaption><i>Figure 7.4:</i> In 3D space $(y_1, y_2, t)$, the epigraph of $f^*$ is formed by intersecting halfspaces defined by each $x$. The resulting solid is convex.</figcaption>
+            <figcaption><i>Figure 7.4:</i> In 3D space $(y_1, y_2, t)$, the epigraph of $f^*$ is formed by intersecting halfspaces defined by each $x$. The resulting solid is convex. This corresponds to the "intersection of halfspaces" proof of convexity.</figcaption>
           </figure>
         </div>
 
@@ -821,6 +833,7 @@
           $$
           <p><b>Equality holds if and only if</b> $y \in \partial f(x)$ (i.e., $y$ is a subgradient of $f$ at $x$).</p>
         </div>
+        <p>So knowing the conjugate essentially tells you about the subgradients of $f$, and vice versa. This is why conjugates are central in duality.</p>
 
         <figure style="text-align: center;">
           <img src="assets/conjugate_fenchel_young.png"
@@ -834,6 +847,7 @@
         <p>The first-order condition for the maximum at $x^*$ is:</p>
         $$ \nabla_x (y^\top x - f(x)) = y - \nabla f(x^*) = 0 \implies y = \nabla f(x^*) $$
         <p><b>Interpretation:</b> The slope $y$ corresponds to the gradient at the point $x^*$ where the gap is maximized. If $f$ is strictly convex, this mapping is invertible: $x^* = (\nabla f)^{-1}(y)$.</p>
+        <p>In general (possibly nondifferentiable), we replace gradient with <b>subgradient</b>: $y \in \partial f(x^*)$ if and only if $x^*$ is a maximizer in the definition of $f^*(y)$.</p>
 
         <h3>7.5 Classical Examples</h3>
 
@@ -842,7 +856,7 @@
           <p>Let $f(x) = \frac{1}{2}x^\top Q x$ with $Q \succ 0$. To find $f^*(y)$, maximize $y^\top x - \frac{1}{2}x^\top Q x$.</p>
           <p>Gradient is $y - Qx = 0 \implies x^* = Q^{-1}y$. Substitute back:</p>
           $$ f^*(y) = y^\top (Q^{-1}y) - \frac{1}{2}(Q^{-1}y)^\top Q (Q^{-1}y) = y^\top Q^{-1} y - \frac{1}{2}y^\top Q^{-1} y = \frac{1}{2}y^\top Q^{-1} y $$
-          <p>If $Q=I$ (Euclidean norm squared), then $f^*(y) = \frac{1}{2}\|y\|_2^2$. This is the "Fourier transform of a Gaussian is a Gaussian" of convex analysis.</p>
+          <p>If $Q=I$ (Euclidean norm squared), then $f^*(y) = \frac{1}{2}\|y\|_2^2$. This is the continuous analogue of "Fourier transform of a Gaussian is a Gaussian": nice things stay nice.</p>
         </div>
 
         <div class="example">
@@ -850,26 +864,49 @@
           <p>Let $f(x) = \delta_C(x)$ (0 if $x \in C$, $+\infty$ else) for a convex set $C$.</p>
           $$ f^*(y) = \sup_x (y^\top x - \delta_C(x)) = \sup_{x \in C} y^\top x = \sigma_C(y) $$
           <p>The conjugate of the indicator function is the <b>support function</b> of the set $C$.</p>
+          <p><b>Geometric meaning:</b> For each direction $y$, $\sigma_C(y)$ is how far you can go in that direction while staying inside $C$, measured in inner product units.</p>
           <figure style="text-align: center; margin-top: 1rem;">
             <img src="assets/conjugate_indicator_support.png" alt="Conjugate of indicator is support function" style="max-width: 60%; border: 1px solid var(--border); border-radius: 8px; padding: 10px;" />
-            <figcaption><i>Figure 7.6:</i> The support function $\sigma_C(y)$ measures the extent of set $C$ in direction $y$.</figcaption>
+            <figcaption><i>Figure 7.6:</i> The support function $\sigma_C(y)$ measures the extent of set $C$ in direction $y$. A supporting hyperplane (line) perpendicular to $y$ touches the boundary of $C$ at the furthest point in direction $y$.</figcaption>
           </figure>
         </div>
 
         <div class="example">
           <h4>3. Norm $\leftrightarrow$ Dual Norm Ball</h4>
-          <p>Let $f(x) = \|x\|$ (any norm). Then:</p>
+          <p>Let $f(x) = \|x\|$ (any norm). Its conjugate is the indicator of the <b>dual unit ball</b>.</p>
+          <p>Recall the dual norm: $\|y\|_* = \sup_{\|x\|\le 1} y^\top x$. Compute $f^*(y)$:</p>
+          $$
+          \begin{aligned}
+          f^*(y) &= \sup_x \big( y^\top x - \|x\| \big) \\
+          &= \sup_{t\ge 0} \sup_{\|u\|\le 1} \big( y^\top (t u) - \|t u\|\big) \quad \text{(write }x=tu\text{ with }\|u\|\le 1\text{)}\\
+          &= \sup_{t\ge 0} t \left( \sup_{\|u\|\le 1} y^\top u - 1\right) \\
+          &= \sup_{t\ge 0} t(\|y\|_* - 1).
+          \end{aligned}
+          $$
+          <p>If $\|y\|_* > 1$, the term $\|y\|_* - 1 > 0$, so we can drive the supremum to $+\infty$ by taking $t \to \infty$. If $\|y\|_* \le 1$, the term is $\le 0$, so the maximum is attained at $t=0$, giving 0.</p>
           $$ f^*(y) = \begin{cases} 0 & \|y\|_* \le 1 \\ +\infty & \|y\|_* > 1 \end{cases} $$
-          <p>The conjugate is the indicator of the dual unit ball.
-          <br><i>Proof:</i> $f^*(y) = \sup_x (y^\top x - \|x\|)$. If $\|y\|_* > 1$, align $x$ with $y$ and scale to infinity to get $+\infty$. If $\|y\|_* \le 1$, then $y^\top x \le \|x\|\|y\|_* \le \|x\|$, so $y^\top x - \|x\| \le 0$ (max is 0 at $x=0$).</p>
           <figure style="text-align: center; margin-top: 1rem;">
             <img src="assets/conjugate_dual_norm_ball.png" alt="Conjugate of absolute value is indicator of interval [-1, 1]" style="max-width: 60%; border: 1px solid var(--border); border-radius: 8px; padding: 10px;" />
-            <figcaption><i>Figure 7.7:</i> Example for $f(x)=|x|$ (L1 norm in 1D). The conjugate is the indicator of $[-1, 1]$ (L-infinity unit ball).</figcaption>
+            <figcaption><i>Figure 7.7:</i> Example for $f(x)=|x|$ (L1 norm in 1D). The conjugate is the indicator of $[-1, 1]$ (L-infinity unit ball). Outside $[-1, 1]$, the function is undefined or $+\infty$.</figcaption>
           </figure>
         </div>
 
         <div class="example">
-          <h4>4. Log-Sum-Exp $\leftrightarrow$ Negative Entropy</h4>
+          <h4>4. Linear Function</h4>
+          <p>Let $f(x) = a^\top x + b$. Then:</p>
+          $$
+          \begin{aligned}
+          f^*(y) &= \sup_x (y^\top x - a^\top x - b) \\
+          &= \sup_x ((y-a)^\top x - b)
+          \end{aligned}
+          $$
+          <p>If $y \ne a$, we can make $(y-a)^\top x$ arbitrarily large. If $y=a$, the value is $-b$.</p>
+          $$ f^*(y) = \begin{cases} -b & y=a \\ +\infty & y \ne a \end{cases} $$
+          <p>This is the indicator of the single point $\{a\}$ plus the constant $-b$. Geometrically, all tangents to a linear function coincide with the function itself; any other slope gives no supporting line.</p>
+        </div>
+
+        <div class="example">
+          <h4>5. Log-Sum-Exp $\leftrightarrow$ Negative Entropy</h4>
           <p>For $f(x) = \log(\sum e^{x_i})$, the conjugate is the negative entropy restricted to the probability simplex:</p>
           $$ f^*(y) = \sum_{i=1}^n y_i \log y_i \quad \text{on } \Delta_n = \{y \ge 0, \mathbf{1}^\top y = 1\} $$
           <p>See the detailed derivation in the problem set or previous sections.</p>
@@ -883,6 +920,7 @@
           <p>The biconjugate $f^{**}$ is the <b>closed convex hull</b> of $f$. This means $f^{**}$ is the largest closed convex function such that $f^{**}(x) \le f(x)$ for all $x$.</p>
           <p><b>Corollary:</b> If $f$ is already closed and convex, then $f^{**} = f$.</p>
         </div>
+        <p>So the conjugate is not just some random transform; doing it twice <b>projects</b> $f$ onto the space of closed convex functions. That's why the conjugate is the natural language of convex duality: you can take a possibly nonconvex primal, conjugate bits of it, and end up with a clean convex dual problem.</p>
 
         <figure style="text-align: center;">
           <img src="assets/conjugate_biconjugate.png"
@@ -895,11 +933,12 @@
         <p>When working with conjugates, remember these five pillars:</p>
         <ol>
           <li><b>Definition:</b> $f^*(y) = \sup_x (y^\top x - f(x))$ (Max gap).</li>
-          <li><b>Geometry:</b> $f^*(y)$ encodes the intercept of the supporting hyperplane with slope $y$.</li>
+          <li><b>Geometry:</b> $f^*(y)$ is the vertical shift of the <b>highest line of slope $y$</b> that lies below $f$.</li>
           <li><b>Convexity:</b> $f^*$ is <i>always</i> convex (supremum of affine functions).</li>
           <li><b>Fenchel-Young:</b> $f(x) + f^*(y) \ge y^\top x$, with equality iff $y \in \partial f(x)$.</li>
           <li><b>Duality:</b> $f^{**}$ is the convex hull of $f$. This operation is the engine behind Lagrangian Duality.</li>
         </ol>
+        <p>Once these are internalized, all the duality results in the later lectures become much easier: most dual problems are just "apply conjugate to the right pieces and rearrange".</p>
 
       </section>
 
