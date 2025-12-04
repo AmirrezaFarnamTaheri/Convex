@@ -7,94 +7,67 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Create toggle button
-  const tocHeader = tocWrapper.querySelector('h2');
-  if (tocHeader) {
-    const toggleBtn = document.createElement('button');
-    toggleBtn.className = 'toc-toggle-btn';
-    toggleBtn.setAttribute('aria-label', 'Toggle table of contents');
-    toggleBtn.innerHTML = `
-      <svg class="toc-toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    `;
+  // --- TOC Generation ---
+  // Only generate if empty (to avoid redundancy if hardcoded)
+  if (tocContainer.innerHTML.trim() === '') {
+      const headings = content.querySelectorAll('h2, h3');
+      let tocHTML = '<ul>';
 
-    // Insert button next to header
-    tocHeader.style.display = 'flex';
-    tocHeader.style.justifyContent = 'space-between';
-    tocHeader.style.alignItems = 'center';
-    tocHeader.style.cursor = 'pointer';
-    tocHeader.appendChild(toggleBtn);
+      headings.forEach(heading => {
+        // Ensure heading has ID
+        if (!heading.id && heading.parentElement.id) {
+             heading.id = heading.parentElement.id + '-heading';
+        } else if (!heading.id) {
+            heading.id = 'section-' + Math.random().toString(36).substr(2, 9);
+        }
 
-    // Load saved state from localStorage
-    const tocState = localStorage.getItem('toc-expanded');
-    const isExpanded = tocState === null ? true : tocState === 'true';
+        // Use parent ID if available for section linking
+        const id = heading.parentElement.id || heading.id;
 
-    if (!isExpanded) {
-      tocContainer.classList.add('toc-collapsed');
-      toggleBtn.classList.add('collapsed');
-    }
+        if (heading.tagName === 'H2') {
+            tocHTML += `<li><a href="#${id}">${heading.textContent}</a></li>`;
+        } else {
+            tocHTML += `<ul><li><a href="#${id}">${heading.textContent}</a></li></ul>`;
+        }
+      });
 
-    // Toggle functionality
-    const toggleToc = () => {
-      const isCurrentlyExpanded = !tocContainer.classList.contains('toc-collapsed');
-
-      if (isCurrentlyExpanded) {
-        tocContainer.classList.add('toc-collapsed');
-        toggleBtn.classList.add('collapsed');
-        localStorage.setItem('toc-expanded', 'false');
-      } else {
-        tocContainer.classList.remove('toc-collapsed');
-        toggleBtn.classList.remove('collapsed');
-        localStorage.setItem('toc-expanded', 'true');
-      }
-    };
-
-    tocHeader.addEventListener('click', toggleToc);
+      tocHTML += '</ul>';
+      tocContainer.innerHTML = tocHTML;
   }
 
-  // Generate TOC
-  const headings = content.querySelectorAll('h2, h3');
-  let tocHTML = '<ul>';
-
-  headings.forEach(heading => {
-    const id = heading.parentElement.id;
-    if (id) {
-      if (heading.tagName === 'H2') {
-        tocHTML += `<li><a href="#${id}">${heading.textContent}</a></li>`;
-      } else {
-        tocHTML += `<ul><li><a href="#${id}">${heading.textContent}</a></li></ul>`;
-      }
-    }
-  });
-
-  tocHTML += '</ul>';
-  tocContainer.innerHTML = tocHTML;
-
-  // Active state tracking
+  // --- Active State Tracking ---
   const links = tocContainer.querySelectorAll('a');
   const sections = [];
   links.forEach(link => {
-    const section = document.querySelector(link.getAttribute('href'));
-    if (section) {
-      sections.push(section);
+    const href = link.getAttribute('href');
+    if (href.startsWith('#')) {
+        const section = document.querySelector(href);
+        if (section) {
+            sections.push(section);
+        }
     }
   });
 
+  // Debounced scroll handler
+  let timeout;
   window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      if (pageYOffset >= sectionTop - 60) {
-        current = section.getAttribute('id');
-      }
-    });
+      if (timeout) return;
+      timeout = setTimeout(() => {
+          let current = '';
+          sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (window.pageYOffset >= sectionTop - 100) {
+                current = section.getAttribute('id');
+            }
+          });
 
-    links.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href').slice(1) === current) {
-        link.classList.add('active');
-      }
-    });
+          links.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').slice(1) === current) {
+                link.classList.add('active');
+            }
+          });
+          timeout = null;
+      }, 100);
   });
 });
