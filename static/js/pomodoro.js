@@ -1,40 +1,105 @@
 /**
  * Pomodoro Timer Widget
- * Simple timer for focus sessions.
+ * A focus timer with customizable duration and visual/audio feedback.
  */
 
 class PomodoroWidget {
     constructor() {
-        this.timeLeft = 25 * 60; // 25 minutes
+        this.defaults = {
+            workDuration: 25, // minutes
+            breakDuration: 5,
+        };
+
+        // Load preferences
+        const saved = JSON.parse(localStorage.getItem('pomodoro-prefs') || '{}');
+        this.workDuration = saved.workDuration || this.defaults.workDuration;
+        this.breakDuration = saved.breakDuration || this.defaults.breakDuration;
+
+        this.timeLeft = this.workDuration * 60;
         this.timerId = null;
         this.isRunning = false;
+        this.mode = 'work'; // 'work' or 'break'
 
+        this.init();
+    }
+
+    init() {
         this.createUI();
+        // Request notification permission
+        if ('Notification' in window && Notification.permission !== 'granted') {
+            Notification.requestPermission();
+        }
     }
 
     createUI() {
+        // Remove existing if any
+        const existing = document.querySelector('.pomodoro-widget');
+        if (existing) existing.remove();
+
         const container = document.createElement('div');
-        container.className = 'pomodoro-widget';
+        container.className = 'pomodoro-widget glass';
+        // Styling handled in CSS, but inline for now to ensure visibility if CSS not fully updated
+        // Moving styles to class in convex-unified.css is better, but ensuring self-contained structure here.
+
         container.innerHTML = `
-            <i data-feather="clock"></i>
-            <span class="pomodoro-timer">25:00</span>
-            <button class="btn btn-ghost" style="padding: 4px;" id="pomodoro-toggle">
-                <i data-feather="play"></i>
-            </button>
-            <button class="btn btn-ghost" style="padding: 4px;" id="pomodoro-reset">
-                <i data-feather="rotate-ccw"></i>
-            </button>
+            <div class="pomodoro-header">
+                <div class="pomodoro-status">
+                    <i data-feather="${this.mode === 'work' ? 'briefcase' : 'coffee'}"></i>
+                    <span>${this.mode === 'work' ? 'Focus' : 'Break'}</span>
+                </div>
+                <button class="btn btn-ghost btn-xs" id="pomo-settings-btn" title="Settings">
+                    <i data-feather="settings"></i>
+                </button>
+            </div>
+
+            <div class="pomodoro-time">${this.formatTime(this.timeLeft)}</div>
+
+            <div class="pomodoro-controls">
+                <button class="btn btn-primary btn-sm" id="pomo-toggle">
+                    <i data-feather="play"></i> Start
+                </button>
+                <button class="btn btn-ghost btn-sm" id="pomo-reset" title="Reset">
+                    <i data-feather="rotate-ccw"></i>
+                </button>
+            </div>
+
+            <!-- Settings Panel (Hidden) -->
+            <div class="pomodoro-settings hidden">
+                <div class="control-group">
+                    <label>Focus (min)</label>
+                    <input type="number" id="pomo-work-input" value="${this.workDuration}" min="1" max="60">
+                </div>
+                <div class="control-group">
+                    <label>Break (min)</label>
+                    <input type="number" id="pomo-break-input" value="${this.breakDuration}" min="1" max="30">
+                </div>
+                <button class="btn btn-secondary btn-sm" id="pomo-save-settings" style="width: 100%; margin-top: 8px;">Save</button>
+            </div>
         `;
 
         document.body.appendChild(container);
 
-        this.display = container.querySelector('.pomodoro-timer');
-        this.toggleBtn = container.querySelector('#pomodoro-toggle');
+        // Bind Elements
+        this.display = container.querySelector('.pomodoro-time');
+        this.toggleBtn = container.querySelector('#pomo-toggle');
+        this.statusIcon = container.querySelector('.pomodoro-status i');
+        this.statusText = container.querySelector('.pomodoro-status span');
+        this.settingsPanel = container.querySelector('.pomodoro-settings');
 
+        // Event Listeners
         this.toggleBtn.onclick = () => this.toggle();
-        container.querySelector('#pomodoro-reset').onclick = () => this.reset();
+        container.querySelector('#pomo-reset').onclick = () => this.reset();
+        container.querySelector('#pomo-settings-btn').onclick = () => this.toggleSettings();
+        container.querySelector('#pomo-save-settings').onclick = () => this.saveSettings();
 
+        // Render Icons
         if (typeof feather !== 'undefined') feather.replace();
+    }
+
+    formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     }
 
     toggle() {
@@ -47,41 +112,108 @@ class PomodoroWidget {
 
     start() {
         this.isRunning = true;
-        this.toggleBtn.innerHTML = '<i data-feather="pause"></i>';
+        this.toggleBtn.innerHTML = '<i data-feather="pause"></i> Pause';
+        this.toggleBtn.classList.replace('btn-primary', 'btn-secondary');
         if (typeof feather !== 'undefined') feather.replace();
 
         this.timerId = setInterval(() => {
             this.timeLeft--;
-            this.updateDisplay();
+            this.display.textContent = this.formatTime(this.timeLeft);
+
+            // Update title
+            document.title = `(${this.formatTime(this.timeLeft)}) Convex Opt`;
 
             if (this.timeLeft <= 0) {
-                this.pause();
-                alert('Pomodoro complete!');
-                this.reset();
+                this.complete();
             }
         }, 1000);
     }
 
     pause() {
         this.isRunning = false;
-        this.toggleBtn.innerHTML = '<i data-feather="play"></i>';
-        if (typeof feather !== 'undefined') feather.replace();
         clearInterval(this.timerId);
+        this.toggleBtn.innerHTML = '<i data-feather="play"></i> Resume';
+        this.toggleBtn.classList.replace('btn-secondary', 'btn-primary');
+        document.title = 'Convex Optimization'; // Reset title
+        if (typeof feather !== 'undefined') feather.replace();
     }
 
     reset() {
         this.pause();
-        this.timeLeft = 25 * 60;
-        this.updateDisplay();
+        this.timeLeft = (this.mode === 'work' ? this.workDuration : this.breakDuration) * 60;
+        this.display.textContent = this.formatTime(this.timeLeft);
+        this.toggleBtn.innerHTML = '<i data-feather="play"></i> Start';
+        if (typeof feather !== 'undefined') feather.replace();
     }
 
-    updateDisplay() {
-        const m = Math.floor(this.timeLeft / 60);
-        const s = this.timeLeft % 60;
-        this.display.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    complete() {
+        this.pause();
+
+        // Notify
+        this.sendNotification();
+
+        // Switch mode
+        if (this.mode === 'work') {
+            this.mode = 'break';
+            this.timeLeft = this.breakDuration * 60;
+            this.statusText.textContent = 'Break Time';
+            this.statusIcon.setAttribute('data-feather', 'coffee');
+        } else {
+            this.mode = 'work';
+            this.timeLeft = this.workDuration * 60;
+            this.statusText.textContent = 'Focus Time';
+            this.statusIcon.setAttribute('data-feather', 'briefcase');
+        }
+
+        this.display.textContent = this.formatTime(this.timeLeft);
+        this.toggleBtn.innerHTML = '<i data-feather="play"></i> Start';
+        if (typeof feather !== 'undefined') feather.replace();
+    }
+
+    toggleSettings() {
+        this.settingsPanel.classList.toggle('hidden');
+    }
+
+    saveSettings() {
+        const work = parseInt(document.getElementById('pomo-work-input').value);
+        const brk = parseInt(document.getElementById('pomo-break-input').value);
+
+        if (work > 0 && brk > 0) {
+            this.workDuration = work;
+            this.breakDuration = brk;
+
+            localStorage.setItem('pomodoro-prefs', JSON.stringify({
+                workDuration: work,
+                breakDuration: brk
+            }));
+
+            this.reset();
+            this.toggleSettings();
+        }
+    }
+
+    sendNotification() {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(this.mode === 'work' ? 'Focus Session Complete!' : 'Break Over!', {
+                body: this.mode === 'work' ? 'Time for a break.' : 'Time to focus.',
+                icon: '/static/images/logo.svg'
+            });
+        } else {
+            // Fallback audio or alert
+            try {
+                const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-simple-tone-571.mp3');
+                audio.play();
+            } catch(e) {
+                console.log('Audio playback failed');
+            }
+        }
     }
 }
 
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    new PomodoroWidget();
+    // Only init if not on print view
+    if (!window.matchMedia('print').matches) {
+        new PomodoroWidget();
+    }
 });

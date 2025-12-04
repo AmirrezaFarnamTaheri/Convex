@@ -4,8 +4,8 @@
  * A comprehensive, modern CSS design system consolidating all styles
  * for the Convex Optimization course website.
  *
- * Version: 3.1.0
- * Last Updated: 2025-11-06
+ * Version: 3.2.0
+ * Last Updated: 2025-11-17
  */
 
 /* ====================
@@ -131,9 +131,9 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
 
-  --shadow-glow-primary: 0 0 32px rgba(24, 144, 255, 0.25);
-  --shadow-glow-accent: 0 0 32px rgba(95, 250, 173, 0.2);
-  --shadow-glow-success: 0 0 24px rgba(74, 222, 128, 0.2);
+  --shadow-glow-primary: 0 0 32px rgba(24, 144, 255, 0.15);
+  --shadow-glow-accent: 0 0 32px rgba(95, 250, 173, 0.15);
+  --shadow-glow-success: 0 0 24px rgba(74, 222, 128, 0.15);
 
   /* === Gradients === */
   --gradient-primary: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
@@ -381,8 +381,8 @@ pre code {
   width: 250px;
   flex-shrink: 0;
   position: sticky;
-  top: 120px;
-  height: calc(100vh - 140px);
+  top: 100px; /* Adjusted for sticky header */
+  height: calc(100vh - 120px);
   overflow-y: auto;
   transition: width var(--transition-base), opacity var(--transition-base);
 }
@@ -398,6 +398,7 @@ pre code {
   z-index: var(--z-fixed);
   background: var(--surface-1);
   border-right: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-xl);
 }
 
 .lecture-content {
@@ -472,7 +473,7 @@ pre code {
 
 .card-v2:hover {
   border-color: var(--border-accent);
-  transform: translateY(-4px) scale(1.002);
+  transform: translateY(-2px); /* Subtler lift */
   box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
 }
 
@@ -501,7 +502,7 @@ pre code {
    ==================== */
 #toc-container {
   padding: var(--space-6);
-  background: var(--gradient-surface);
+  background: var(--surface-1); /* Cleaner look */
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-md);
@@ -528,8 +529,6 @@ pre code {
 .sidebar.collapsed #toc {
   display: none; /* Hide list when collapsed */
 }
-
-/* Show icon when collapsed? This is handled by js adding an icon button */
 
 #toc-container h2 {
   font-size: var(--font-size-xl);
@@ -606,7 +605,6 @@ pre code {
 /* ====================
    ENHANCED PROOF/EXAMPLE BLOCKS
    ==================== */
-/* REMOVED EMOJIS from content property */
 .proof-enhanced, .example-enhanced, .solution-enhanced {
   position: relative;
   padding: var(--space-6);
@@ -623,7 +621,7 @@ pre code {
 }
 
 .proof-enhanced::before {
-  content: 'PROOF'; /* Emoji removed */
+  content: 'PROOF';
   position: absolute;
   top: calc(var(--space-3) * -1);
   left: var(--space-4);
@@ -643,7 +641,7 @@ pre code {
 }
 
 .example-enhanced::before {
-  content: 'EXAMPLE'; /* Emoji removed */
+  content: 'EXAMPLE';
   position: absolute;
   top: calc(var(--space-3) * -1);
   left: var(--space-4);
@@ -663,7 +661,7 @@ pre code {
 }
 
 .solution-enhanced::before {
-  content: 'SOLUTION'; /* Emoji removed */
+  content: 'SOLUTION';
   position: absolute;
   top: calc(var(--space-3) * -1);
   left: var(--space-4);
@@ -686,7 +684,7 @@ pre code {
 .env-collapsed .env-collapsible-content {
   max-height: 0;
   opacity: 0;
-  padding: 0; /* remove padding if part of content */
+  padding: 0;
 }
 
 .env-toggle-btn {
@@ -708,7 +706,7 @@ pre code {
 /* L-SHAPE ARROW FOR STEPS */
 .proof-step, .example-step {
   margin: var(--space-4) 0;
-  padding-left: var(--space-6); /* Increased padding for arrow */
+  padding-left: var(--space-6);
   position: relative;
 }
 
@@ -726,7 +724,7 @@ pre code {
   height: 12px;
   border-left: 2px solid var(--primary-500);
   border-bottom: 2px solid var(--primary-500);
-  border-bottom-left-radius: 6px; /* Curve */
+  border-bottom-left-radius: 6px;
   opacity: 0.7;
 }
 
@@ -798,6 +796,16 @@ pre code {
 .btn-ghost:hover {
   background: var(--surface-2);
   border-color: var(--primary-500);
+}
+
+.btn-sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+.btn-xs {
+  padding: 4px;
+  font-size: 0.75rem;
 }
 
 /* ====================
@@ -1187,6 +1195,11 @@ pre code {
   to { transform: rotate(360deg); }
 }
 
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ====================
    SCROLLBAR STYLING
    ==================== */
@@ -1210,7 +1223,7 @@ pre code {
 }
 
 /* ====================
-   LECTURE GRID & CARDS (Added for Index Page)
+   LECTURE GRID & CARDS (Index Page)
    ==================== */
 .lecture-grid {
   display: grid;
@@ -1387,6 +1400,30 @@ pre code {
   resize: vertical;
 }
 
+/* Markdown Rendering in Notes */
+.note-preview {
+  background: var(--surface-base);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  overflow-wrap: break-word;
+  line-height: 1.5;
+}
+.note-preview p {
+  margin-bottom: 0.5em;
+}
+.note-preview ul, .note-preview ol {
+  padding-left: 1.5em;
+  margin-bottom: 0.5em;
+}
+.note-preview code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
 /* ====================
    POMODORO WIDGET
    ==================== */
@@ -1398,18 +1435,147 @@ pre code {
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: var(--space-3);
-  box-shadow: var(--shadow-md);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 200px;
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
+  transition: transform var(--transition-base), opacity var(--transition-base);
+}
+
+.pomodoro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.pomodoro-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.pomodoro-time {
+  font-family: var(--font-mono);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  text-align: center;
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(24, 144, 255, 0.2);
+}
+
+.pomodoro-controls {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+.pomodoro-settings {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  animation: slideDown 0.2s ease-out;
+}
+
+.pomodoro-settings.hidden {
+  display: none;
+}
+
+/* ====================
+   THEME SWITCHER
+   ==================== */
+.theme-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: var(--space-2);
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 160px;
+  z-index: var(--z-popover);
+  box-shadow: var(--shadow-xl);
+  backdrop-filter: blur(var(--blur-lg));
+}
+
+.theme-dropdown.hidden {
+  display: none;
+}
+
+.theme-option {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  width: 100%;
 }
 
-.pomodoro-timer {
-  font-family: var(--font-mono);
-  font-size: var(--font-size-xl);
-  font-weight: 700;
+.theme-option:hover {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.theme-option.active {
+  background: rgba(24, 144, 255, 0.1);
   color: var(--primary-500);
+}
+
+.theme-color-preview {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+}
+
+/* ====================
+   PROGRESS TRACKER
+   ==================== */
+.reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  z-index: var(--z-tooltip);
+  width: 0%;
+  transition: width 0.1s;
+  box-shadow: 0 0 10px rgba(24, 144, 255, 0.5);
+}
+
+.completion-widget {
+  margin-top: var(--space-12);
+  padding: var(--space-6);
+  background: var(--surface-2);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  text-align: center;
+}
+
+.completion-widget.completed {
+  background: rgba(74, 222, 128, 0.1);
+  border-color: var(--success);
 }
 
 /* ====================
@@ -1426,6 +1592,12 @@ pre code {
     top: 0;
     height: auto;
     margin-bottom: var(--space-6);
+  }
+
+  /* Make TOC collapsible or smaller on mobile */
+  #toc-container {
+      max-height: 400px;
+      overflow-y: auto;
   }
 }
 
@@ -1449,6 +1621,11 @@ pre code {
   .card-v2 {
     padding: var(--space-4);
   }
+
+  .notes-panel {
+      width: 90vw;
+      right: 5vw;
+  }
 }
 
 /* ====================
@@ -1467,6 +1644,8 @@ pre code {
   .card-v2 {
     border: 1px solid #ccc;
     page-break-inside: avoid;
+    box-shadow: none;
+    background: white;
   }
 }
 
@@ -1483,7 +1662,7 @@ pre code {
 
 @media (prefers-contrast: high) {
   :root {
-    --border-subtle: rgba(255, 255, 255, 0.2);
-    --border-default: rgba(255, 255, 255, 0.4);
+    --border-subtle: rgba(255, 255, 255, 0.4);
+    --border-default: rgba(255, 255, 255, 0.6);
   }
 }

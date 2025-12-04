@@ -1097,7 +1097,17 @@
             <li>$\min x^\top Q x$ subject to $Dx \le e$, where $Q$ is not guaranteed to be PSD.</li>
             <li>$\min \|x\|_2^2$ subject to $x_i \in \{0, 1\}$ for all $i$.</li>
           </ol>
-          <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Convexity Rules:</b> Norms are convex. Affine constraints define convex sets. Maximizing a convex function (or minimizing a concave one) is generally non-convex.</li>
+            <li><b>Integer Constraints:</b> Discrete sets like $\{0, 1\}$ are never convex, making problems NP-hard (Combinatorial Optimization).</li>
+            <li><b>PSD Requirement:</b> Quadratic forms $x^\top Q x$ are only convex if $Q \succeq 0$. Indefinite $Q$ creates saddle points.</li>
+        </ul>
+      </div>
+
+<div class="solution">
             <h4>Solutions</h4>
             <ol type="a">
               <li><b>✅ Convex.</b> The objective $\|Ax - b\|_2^2$ is a convex quadratic function (composition of convex $\|\cdot\|_2^2$ with affine $Ax - b$), and the constraint $Fx = g$ is affine.</li>
@@ -1112,7 +1122,16 @@
         <div class="problem">
           <h3>P1.2 — Real-World Modeling: Warehouse Location</h3>
           <p>You are tasked with optimizing the placement of a distribution warehouse to minimize the sum of squared Euclidean distances to $k$ retail locations $r_1, \ldots, r_k \in \mathbb{R}^2$. The warehouse must be located within a region defined by linear inequalities $C x \le d$. Formulate this as a convex optimization problem.</p>
-          <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Sum of Convex Functions:</b> The objective is a sum of squared norms. Since norm squared is convex and sum preserves convexity, the problem is convex.</li>
+            <li><b>Geometric Interpretation:</b> This is related to the Fermat-Weber problem (minimizing sum of distances), but using squared Euclidean distance makes it a simple Quadratic Program (finding the centroid).</li>
+        </ul>
+      </div>
+
+<div class="solution">
             <h4>Solution</h4>
 
             <div class="proof-step">
@@ -1153,7 +1172,16 @@
           $$
           \min_{x \in \mathbb{R}^n} \|Ax - b\|_1 \quad \text{s.t.} \quad \|x\|_\infty \le 1
           $$
-          <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Epigraph Transformation:</b> Minimizing a norm $\|y\|_1$ is equivalent to minimizing $\sum t_i$ subject to $|y_i| \le t_i$.</li>
+            <li><b>Linearization:</b> Absolute values and infinity norms are piecewise linear convex functions, so they can always be converted to Linear Programs (LPs).</li>
+        </ul>
+      </div>
+
+<div class="solution">
             <h4>Solution</h4>
 
             <div class="proof-step">
@@ -1192,7 +1220,16 @@
         <div class="problem">
           <h3>P1.4 — Prove: Feasible Set is Convex</h3>
           <p>Prove that for a convex optimization problem, the feasible set $\mathcal{F} = \{x \mid f_i(x) \le 0, Ax = b\}$ is convex.</p>
-          <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Definition of Convex Set:</b> Contains the line segment between any two points.</li>
+            <li><b>Intersection Property:</b> The feasible set is the intersection of sublevel sets of convex functions (inequalities) and hyperplanes (equalities). Since intersections of convex sets are convex, $\mathcal{F}$ is convex.</li>
+        </ul>
+      </div>
+
+<div class="solution">
             <h4>Solution</h4>
 
             <div class="proof-step">
@@ -1224,7 +1261,16 @@
         <div class="problem">
           <h3>P1.5 — Proving Uniqueness</h3>
           <p>Prove that if $f_0$ is strictly convex, then the optimization problem has at most one global minimizer.</p>
-          <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Strict Convexity:</b> The chord lies strictly above the function graph.</li>
+            <li><b>Uniqueness:</b> If there were two global minima, the midpoint would have a strictly lower value, which is impossible. Thus, the solution is unique.</li>
+        </ul>
+      </div>
+
+<div class="solution">
             <h4>Solution</h4>
 
             <div class="proof-step">
@@ -1261,7 +1307,16 @@
           $$ P(y_i=1 \mid x_i; w) = \frac{1}{1 + e^{-w^\top x_i}} $$
           Formulate the problem of finding the weight vector $w$ that maximizes the log-likelihood of the data as a convex optimization problem. (Note: $P(y_i=-1 \mid x_i; w) = 1 - P(y_i=1) = \frac{1}{1 + e^{w^\top x_i}}$).
           </p>
-          <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Concavity of Log-Likelihood:</b> In exponential families, the log-likelihood is concave. Minimizing the negative log-likelihood (NLL) is a convex problem.</li>
+            <li><b>Logistic Loss:</b> The function $f(z) = \log(1+e^z)$ is convex. This ensures that logistic regression has no local minima.</li>
+        </ul>
+      </div>
+
+<div class="solution">
             <h4>Solution</h4>
 
             <div class="proof-step">
