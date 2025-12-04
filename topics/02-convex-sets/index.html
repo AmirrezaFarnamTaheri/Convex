@@ -1371,7 +1371,214 @@
             </div>
           </div>
         </div>
-      </section>
+
+        <div class="problem">
+          <h3>P2.10 — Convexity of Norm Cone</h3>
+          <p>Let $S = \{(x,t) \in \mathbb{R}^n \times \mathbb{R} \mid \|x\| \le t\}$. Show that $S$ is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Epigraphs:</b> The epigraph of a convex function $f$ (set of points lying above the graph) is always a convex set.</li>
+                <li><b>Triangle Inequality:</b> The defining property of a norm $\|x+y\| \le \|x\| + \|y\|$ is directly responsible for the convexity of norm balls and cones.</li>
+            </ul>
+          </div>
+
+          <div class="solution-enhanced">
+            <h4>Solution</h4>
+            <p><b>Method 1: Direct Proof via Triangle Inequality</b></p>
+            <div class="proof-step">
+              <strong>Step 1: Unpack membership.</strong> Let $(x_1, t_1) \in S$ and $(x_2, t_2) \in S$. This means $\|x_1\| \le t_1$ and $\|x_2\| \le t_2$. Note that $t_1, t_2 \ge 0$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Convex combination.</strong> Let $\lambda \in [0,1]$. We examine the point $(\lambda x_1 + (1-\lambda)x_2, \lambda t_1 + (1-\lambda)t_2)$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Apply inequalities.</strong>
+              $$ \|\lambda x_1 + (1-\lambda)x_2\| \le \lambda \|x_1\| + (1-\lambda) \|x_2\| $$
+              (by triangle inequality and homogeneity).
+              $$ \le \lambda t_1 + (1-\lambda) t_2 $$
+              (by membership in $S$).
+            </div>
+            <div class="proof-step">
+              <strong>Conclusion:</strong> The convex combination satisfies the condition $\|x\| \le t$, so $S$ is convex.
+            </div>
+
+            <p><b>Method 2: Epigraph of Convex Function</b></p>
+            <div class="proof-step">
+              Define $f(x) = \|x\|$. Since every norm is a convex function (by triangle inequality), its epigraph $\mathrm{epi}(f) = \{(x,t) \mid f(x) \le t\}$ is a convex set. Since $S = \mathrm{epi}(\|\cdot\|)$, $S$ is convex.
+            </div>
+          </div>
+        </div>
+        <div class="problem">
+          <h3>P2.11 — Convex Hull of Finite Points</h3>
+          <p>Given points $x_1, \dots, x_k \in \mathbb{R}^n$, show that the set of all convex combinations:
+          $$ C = \left\{ \sum_{i=1}^k \theta_i x_i \ \middle|\ \theta_i \ge 0, \sum \theta_i = 1 \right\} $$
+          is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Convex Hull Definition:</b> Can be defined constructively (all convex combinations) or intersectionally (smallest convex set containing points).</li>
+                <li><b>Coefficients:</b> The key is to show that a convex combination of convex combinations is still a convex combination (weights remain non-negative and sum to 1).</li>
+            </ul>
+          </div>
+
+          <div class="solution-enhanced">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Step 1: Pick two points.</strong> Let $u, v \in C$.
+              $$ u = \sum \alpha_i x_i, \quad v = \sum \beta_i x_i $$
+              where $\sum \alpha_i = 1, \alpha \ge 0$ and $\sum \beta_i = 1, \beta \ge 0$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Combine them.</strong> Let $\lambda \in [0,1]$.
+              $$ \lambda u + (1-\lambda)v = \lambda \sum \alpha_i x_i + (1-\lambda) \sum \beta_i x_i = \sum (\lambda \alpha_i + (1-\lambda)\beta_i) x_i $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Verify weights.</strong> Let $\gamma_i = \lambda \alpha_i + (1-\lambda)\beta_i$.
+              <ul>
+                <li>Non-negativity: Since $\lambda, \alpha, \beta \ge 0$, $\gamma_i \ge 0$.</li>
+                <li>Sum to 1: $\sum \gamma_i = \lambda \sum \alpha_i + (1-\lambda) \sum \beta_i = \lambda(1) + (1-\lambda)(1) = 1$.</li>
+              </ul>
+            </div>
+            <div class="proof-step">
+              <strong>Conclusion:</strong> The combined point is a valid convex combination of $\{x_i\}$, so it lies in $C$.
+            </div>
+          </div>
+        </div>
+        <div class="problem">
+          <h3>P2.12 — Minkowski Sum of Sets</h3>
+          <p>The Minkowski sum is $X + Y = \{x+y \mid x \in X, y \in Y\}$.</p>
+          <ol type="a">
+            <li>Show that if $X, Y$ are convex, $X+Y$ is convex.</li>
+            <li>Give an example where $X$ is not convex but $X+Y$ is convex.</li>
+          </ol>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Linear Maps:</b> $X+Y$ is the image of $X \times Y$ under the linear map $f(x,y)=x+y$. Linear maps preserve convexity.</li>
+                <li><b>Filling Holes:</b> Adding a "fat" set to a "holey" set can fill in the holes (e.g., convolution smoothing).</li>
+            </ul>
+          </div>
+
+          <div class="solution-enhanced">
+            <h4>Solution</h4>
+
+            <p><b>(a) Convexity Proof</b></p>
+            <div class="proof-step">
+              Let $u, v \in X+Y$. Then $u = x_1+y_1$ and $v = x_2+y_2$ with $x_i \in X, y_i \in Y$.
+              For $\lambda \in [0,1]$:
+              $$ \lambda u + (1-\lambda)v = \lambda(x_1+y_1) + (1-\lambda)(x_2+y_2) = (\lambda x_1 + (1-\lambda)x_2) + (\lambda y_1 + (1-\lambda)y_2) $$
+              By convexity of $X$ and $Y$, the terms in parentheses are in $X$ and $Y$ respectively. Thus the sum is in $X+Y$.
+            </div>
+
+            <p><b>(b) Counter-intuitive Example</b></p>
+            <div class="proof-step">
+              Let $X = \mathbb{Z}$ (integers, clearly not convex) and $Y = [0, 1]$.
+              $$ X + Y = \{k + t \mid k \in \mathbb{Z}, t \in [0,1]\} = \bigcup_{k \in \mathbb{Z}} [k, k+1] = \mathbb{R} $$
+              Since $\mathbb{R}$ is convex, $X+Y$ is convex even though $X$ is not.
+            </div>
+          </div>
+        </div>
+        <div class="problem">
+          <h3>P2.13 — Convexity of Thickened Sets</h3>
+          <p>Let $C \subseteq \mathbb{R}^n$ be a closed convex set. Define the thickened set $C_\varepsilon = \{y \mid \mathrm{dist}(y, C) \le \varepsilon\}$. Show that $C_\varepsilon$ is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Distance Function:</b> $d_C(x) = \inf_{y \in C} \|x-y\|$ is a convex function if $C$ is convex.</li>
+                <li><b>Minkowski Sum Equivalent:</b> $C_\varepsilon = C + B(0, \varepsilon)$. Since sum of convex sets is convex, this is immediate.</li>
+            </ul>
+          </div>
+
+          <div class="solution-enhanced">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Method 1: Minkowski Sum.</strong>
+              We claim $C_\varepsilon = C + \overline{B}(0, \varepsilon)$.
+              <br>($\subseteq$) If $\mathrm{dist}(y, C) \le \varepsilon$, let $x^*$ be the projection of $y$ onto $C$ (exists since $C$ closed). Then $\|y - x^*\| \le \varepsilon$. Let $z = y - x^*$, so $z \in \overline{B}(0, \varepsilon)$. Then $y = x^* + z \in C + \overline{B}(0, \varepsilon)$.
+              <br>($\supseteq$) If $y = x + z$ with $x \in C, \|z\| \le \varepsilon$, then $\mathrm{dist}(y, C) \le \|y-x\| = \|z\| \le \varepsilon$.
+              <br>Since $C$ and $\overline{B}(0, \varepsilon)$ are convex, their sum is convex.
+            </div>
+
+            <div class="proof-step">
+              <strong>Method 2: Convexity of Distance Function.</strong>
+              Let $f(y) = \mathrm{dist}(y, C)$.
+              $$ f(\lambda y_1 + (1-\lambda)y_2) = \inf_{x \in C} \|\lambda y_1 + (1-\lambda)y_2 - x\| $$
+              Let $x = \lambda x_1 + (1-\lambda)x_2$ for any $x_1, x_2 \in C$.
+              $$ \le \|\lambda(y_1-x_1) + (1-\lambda)(y_2-x_2)\| \le \lambda \|y_1-x_1\| + (1-\lambda)\|y_2-x_2\| $$
+              Taking infimum over $x_1, x_2$ yields $f(\lambda y_1 + (1-\lambda)y_2) \le \lambda f(y_1) + (1-\lambda)f(y_2)$.
+              Thus $f$ is convex, and its sublevel set $C_\varepsilon$ is convex.
+            </div>
+          </div>
+        </div>
+        <div class="problem">
+          <h3>P2.14 — Closure of a Convex Set</h3>
+          <p>Show that if $C$ is convex, its closure $\mathrm{cl}(C)$ is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Sequences:</b> Limit points preserve non-strict inequalities like $\theta x + (1-\theta)y \in \dots$</li>
+                <li><b>Topological Intuition:</b> You cannot "bend" the boundary of a convex set inwards without creating a non-convex interior.</li>
+            </ul>
+          </div>
+
+          <div class="solution-enhanced">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              Let $a, b \in \mathrm{cl}(C)$. By definition, there exist sequences $\{x_k\} \subset C$ such that $x_k \to a$ and $\{y_k\} \subset C$ such that $y_k \to b$.
+            </div>
+            <div class="proof-step">
+              Let $\lambda \in [0,1]$. Since $C$ is convex:
+              $$ z_k := \lambda x_k + (1-\lambda)y_k \in C \quad \forall k $$
+            </div>
+            <div class="proof-step">
+              By continuity of vector addition and scalar multiplication:
+              $$ \lim_{k \to \infty} z_k = \lambda a + (1-\lambda)b $$
+            </div>
+            <div class="proof-step">
+              Thus, $\lambda a + (1-\lambda)b$ is the limit of a sequence in $C$, so it belongs to $\mathrm{cl}(C)$.
+            </div>
+          </div>
+        </div>
+        <div class="problem">
+          <h3>P2.15 — Product of Convex Sets</h3>
+          <p>Let $X \subseteq \mathbb{R}^n, Y \subseteq \mathbb{R}^m$.</p>
+          <ol type="a">
+            <li>Show that if $X, Y$ are convex, then $X \times Y$ is convex in $\mathbb{R}^{n+m}$.</li>
+            <li>If $X$ is not convex (and $Y$ nonempty), can $X \times Y$ be convex?</li>
+          </ol>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Cartesian Product:</b> Geometry works component-wise. A convex combination in the product space is just a convex combination of the components.</li>
+                <li><b>Projection Property:</b> If a product is convex, its projections (the factors $X$ and $Y$) must be convex.</li>
+            </ul>
+          </div>
+
+          <div class="solution-enhanced">
+            <h4>Solution</h4>
+            <p><b>(a) Convexity of Product</b></p>
+            <div class="proof-step">
+              Let $u_1 = (x_1, y_1), u_2 = (x_2, y_2) \in X \times Y$.
+              $$ \lambda u_1 + (1-\lambda)u_2 = (\lambda x_1 + (1-\lambda)x_2, \lambda y_1 + (1-\lambda)y_2) $$
+              Since $X$ is convex, the first component is in $X$. Since $Y$ is convex, the second is in $Y$. Thus the pair is in $X \times Y$.
+            </div>
+
+            <p><b>(b) Non-convex Factor</b></p>
+            <div class="proof-step">
+              <b>No.</b> If $X \times Y$ is convex and $Y$ is nonempty (contains some $y_0$), then the "slice" $\{ (x, y_0) \mid x \in X \}$ must be convex. This slice is essentially $X$.
+              <br>Formally: If $x_1, x_2 \in X$, then $(x_1, y_0), (x_2, y_0) \in X \times Y$. By convexity, $(\lambda x_1 + (1-\lambda)x_2, y_0) \in X \times Y$, which implies $\lambda x_1 + (1-\lambda)x_2 \in X$.
+              Thus, if the product is convex, both factors must be convex.
+            </div>
+          </div>
+        </div>
+</section>
 
       <!-- SECTION 8: SUMMARY -->
       <section class="card-v2" id="summary">
