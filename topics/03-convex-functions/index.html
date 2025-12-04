@@ -566,24 +566,151 @@
           $$
         </div>
 
-        <h3>5.2 Pointwise Maximum and Supremum</h3>
+        <h3>5.2 Pointwise Maximum of Convex Functions</h3>
+        <p>Let $f_1, \dots, f_m: \mathbb{R}^n \to \mathbb{R} \cup \{+\infty\}$ be convex functions. Define their <b>pointwise maximum</b>:</p>
+        $$
+        f(x) = \max_{i=1,\dots,m} f_i(x)
+        $$
+
         <div class="theorem-box">
-          <h4>Theorem</h4>
-          <p>If $f_1, \ldots, f_m$ are convex, then $f(x) = \max\{f_1(x), \ldots, f_m(x)\}$ is convex.</p>
-          <p>More generally, if $f(x, y)$ is convex in $x$ for each $y \in \mathcal{A}$, then:</p>
-          $$
-          g(x) = \sup_{y \in \mathcal{A}} f(x, y)
-          $$
-          <p>is convex in $x$ (provided the supremum is finite).</p>
+          <h4>Claim</h4>
+          <p>The pointwise maximum function $f$ is convex.</p>
+        </div>
+
+        <div class="insight">
+          <h4>Intuition</h4>
+          <p>Take several convex curves; at each $x$ keep the one that lies highest. The upper envelope still bends "upwards"; you never get a concave dip by taking a max of convex curves. Geometrically, the epigraph is the intersection of epigraphs.</p>
+        </div>
+
+        <div class="proof-enhanced">
+          <h4>Algebraic Proof</h4>
+          <div class="proof-step">
+            <strong>Step 1: Definition.</strong>
+            Let $x, y \in \mathbb{R}^n$ and $0 \le \theta \le 1$. We need to show $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta) f(y)$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Convexity of components.</strong>
+            For each fixed $i$, convexity of $f_i$ gives:
+            $$ f_i(\theta x + (1-\theta)y) \le \theta f_i(x) + (1-\theta) f_i(y) $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Max over both sides.</strong>
+            $$ \max_i f_i(\theta x + (1-\theta)y) \le \max_i \big( \theta f_i(x) + (1-\theta) f_i(y) \big) $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 4: Inequality for max.</strong>
+            Use the inequality $\max_i (\theta a_i + (1-\theta)b_i) \le \theta \max_i a_i + (1-\theta)\max_i b_i$.
+            $$ \max_i \big( \theta f_i(x) + (1-\theta) f_i(y) \big) \le \theta \max_i f_i(x) + (1-\theta)\max_i f_i(y) = \theta f(x) + (1-\theta) f(y) $$
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion:</strong> $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta) f(y)$.
+          </div>
+        </div>
+
+        <div class="proof-enhanced">
+          <h4>Geometric Proof (Epigraph)</h4>
+          <p>The epigraph of the max is the intersection of the epigraphs:
+          $$ \mathrm{epi}\, f = \bigcap_{i=1}^m \mathrm{epi}\, f_i $$
+          Since a point $(x,t)$ satisfies $t \ge \max_i f_i(x)$ if and only if $t \ge f_i(x)$ for all $i$.
+          The intersection of convex sets is convex, so $\mathrm{epi}\, f$ is convex.</p>
+        </div>
+
+        <h4>Examples of Pointwise Maxima</h4>
+        <div class="example">
+          <h4>1. Piecewise-Linear (Max of Affine Functions)</h4>
+          <p>Let $\ell_i(x) = a_i^\top x + b_i$ for $i=1,\dots,m$. Define:</p>
+          $$ f(x) = \max_{1\le i\le m} (a_i^\top x + b_i) $$
+          <p>Each $\ell_i$ is convex, so $f$ is convex. Geometrically, this is a polyhedral convex function (its epigraph is a polyhedron).</p>
         </div>
 
         <div class="example">
-          <h4>Application: Support Function (Problem 3.28)</h4>
-          <p>For any set $C$, the <b>support function</b> $S_C(x) = \sup_{y \in C} x^\top y$ is convex (being the supremum of linear—hence convex—functions $x^\top y$ over $y \in C$).</p>
-          <p>This is related to the <b>Fundamental Theorem of Convex Geometry</b> (Problem 3.28): A closed convex function is essentially the "upper envelope" of all the affine functions that lie beneath it.</p>
+          <h4>2. Sum of the $r$ Largest Components</h4>
+          <p>For $x \in \mathbb{R}^n$, let $x_{[1]} \ge x_{[2]} \ge \cdots \ge x_{[n]}$ denote components sorted in descending order. Define:</p>
+          $$ f(x) = \sum_{k=1}^r x_{[k]} $$
+          <p>This function is convex. It can be represented as the maximum over all subsets of size $r$:</p>
+          $$ f(x) = \max \left\{ \sum_{j=1}^r x_{i_j} \mid 1 \le i_1 < \cdots < i_r \le n \right\} $$
+          <p>Since the sum of any specific subset of coordinates is a linear function $x \mapsto c^\top x$ (where $c$ has 1s at chosen indices), $f$ is the pointwise maximum of linear functions, hence convex. This is known as the <b>Ky Fan norm</b>.</p>
         </div>
 
-        <h3>5.3 Composition Rules</h3>
+        <h3>5.3 Pointwise Supremum over an Index Set</h3>
+        <p>The "max of finitely many" generalizes to the supremum over an arbitrary index set $\mathcal{A}$.</p>
+
+        <div class="theorem-box">
+          <h4>Theorem</h4>
+          <p>Let $\mathcal{A}$ be any index set. For each $y \in \mathcal{A}$, let $f(\cdot, y)$ be convex in $x$. Define:</p>
+          $$ g(x) = \sup_{y \in \mathcal{A}} f(x, y) $$
+          <p>Then $g(x)$ is convex.</p>
+        </div>
+
+        <div class="proof-enhanced">
+          <h4>Proof</h4>
+          <p>Let $x_1, x_2 \in \mathbb{R}^n$ and $\theta \in [0, 1]$.
+          $$ g(\theta x_1 + (1-\theta)x_2) = \sup_y f(\theta x_1 + (1-\theta)x_2, y) $$
+          $$ \le \sup_y \big( \theta f(x_1, y) + (1-\theta) f(x_2, y) \big) $$
+          $$ \le \theta \sup_y f(x_1, y) + (1-\theta) \sup_y f(x_2, y) = \theta g(x_1) + (1-\theta) g(x_2) $$
+          Geometrically, $\mathrm{epi}\, g = \bigcap_{y \in \mathcal{A}} \mathrm{epi}\, f(\cdot, y)$, which is an intersection of convex sets.</p>
+        </div>
+
+        <h4>Examples of Pointwise Supremum</h4>
+        <div class="example">
+          <h4>1. Support Function</h4>
+          <p>For any set $C \subset \mathbb{R}^n$, the support function $S_C(x) = \sup_{y \in C} y^\top x$ is the pointwise supremum of linear functions $x \mapsto y^\top x$ indexed by $y \in C$. Thus $S_C$ is always convex, regardless of whether $C$ is convex.</p>
+        </div>
+
+        <div class="example">
+          <h4>2. Distance to Farthest Point</h4>
+          <p>Let $C \subset \mathbb{R}^n$. The function $f(x) = \sup_{y \in C} \|x - y\|$ (distance to the farthest point in $C$) is convex, because for each fixed $y$, $x \mapsto \|x - y\|$ is convex.</p>
+        </div>
+
+        <div class="example">
+          <h4>3. Maximum Eigenvalue</h4>
+          <p>For $X \in \mathbb{S}^n$, the maximum eigenvalue $\lambda_{\max}(X)$ is convex. By the Rayleigh-Ritz theorem:</p>
+          $$ \lambda_{\max}(X) = \sup_{\|y\|_2=1} y^\top X y $$
+          <p>For each fixed unit vector $y$, the map $X \mapsto y^\top X y$ is linear in $X$. Thus $\lambda_{\max}$ is the supremum of linear functions.</p>
+        </div>
+
+        <h3>5.4 Partial Minimization</h3>
+        <p>We now look at minimizing over some coordinates: $g(x) = \inf_{y \in C} f(x, y)$.</p>
+
+        <div class="theorem-box">
+          <h4>Theorem</h4>
+          <p>If $f(x, y)$ is <b>jointly convex</b> in $(x, y)$ and $C$ is a convex set, then:</p>
+          $$ g(x) = \inf_{y \in C} f(x, y) $$
+          <p>is convex (provided $g(x) > -\infty$).</p>
+        </div>
+
+        <div class="insight">
+          <h4>Geometric Picture</h4>
+          <p>The epigraph of $g$ is the <b>projection</b> of the epigraph of $f$ onto the $(x, t)$ space (projecting out $y$). Since the projection of a convex set is convex, $g$ is convex.</p>
+        </div>
+
+        <div class="proof-enhanced">
+          <h4>Algebraic Proof</h4>
+          <p>Let $x_1, x_2$ and $\theta \in [0, 1]$. We want $g(x_\theta) \le \theta g(x_1) + (1-\theta)g(x_2)$.
+          <br>Write the infimum redundantly: $g(x_\theta) = \inf_{y_1, y_2 \in C} f(x_\theta, \theta y_1 + (1-\theta)y_2)$.
+          <br>By joint convexity: $f(x_\theta, \theta y_1 + (1-\theta)y_2) \le \theta f(x_1, y_1) + (1-\theta) f(x_2, y_2)$.
+          <br>Taking infimum over $y_1, y_2$:
+          $$ g(x_\theta) \le \theta \inf_{y_1} f(x_1, y_1) + (1-\theta) \inf_{y_2} f(x_2, y_2) = \theta g(x_1) + (1-\theta) g(x_2) $$
+          </p>
+        </div>
+
+        <h4>Examples of Partial Minimization</h4>
+        <div class="example">
+          <h4>1. Distance to a Convex Set</h4>
+          <p>For a convex set $S$, $d(x, S) = \inf_{y \in S} \|x - y\|$.
+          <br>Here $f(x, y) = \|x - y\|$ is convex in $(x, y)$ and $S$ is convex. Thus $d(x, S)$ is convex.</p>
+        </div>
+
+        <div class="example">
+          <h4>2. Schur Complement</h4>
+          <p>Let $f(x, y) = x^\top A x + 2x^\top B y + y^\top C y$ with $C \succ 0$ and $\begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} \succeq 0$.
+          <br>Minimizing over $y$ yields $y^*(x) = -C^{-1}B^\top x$. Substituting back:
+          $$ g(x) = \inf_y f(x, y) = x^\top (A - B C^{-1} B^\top) x $$
+          Since partial minimization preserves convexity, $g(x)$ is convex, which implies the Schur complement $A - B C^{-1} B^\top \succeq 0$.
+          </p>
+        </div>
+
+        <h3>5.5 Composition Rules</h3>
 
         <div class="theorem-box">
           <h4>1. Affine Composition</h4>
@@ -695,23 +822,7 @@
           <p>The function $f(x) = (\prod_{i=1}^k g_i(x))^{1/k}$ is concave if all $g_i(x)$ are non-negative and concave. (Primitive: Geometric mean is concave and non-decreasing).</p>
         </div>
 
-        <h3>5.4 Minimization</h3>
-        <div class="theorem-box">
-          <h4>Theorem</h4>
-          <p>If $f(x, y)$ is convex in $(x, y)$ and $C$ is a convex set, then:</p>
-          $$
-          g(x) = \inf_{y \in C} f(x, y)
-          $$
-          <p>is convex in $x$ (if the infimum is finite).</p>
-        </div>
-        <p><b>Intuition:</b> The epigraph of $g$ is the projection of the epigraph of $f$ onto the $x$-space, and projections of convex sets are convex.</p>
-
-        <div class="example">
-          <h4>Application: Distance to a Convex Set</h4>
-          <p>For a convex set $C$, the squared distance function $f(x) = \inf_{y \in C} \|x - y\|_2^2$ is convex. (The function $\|x - y\|_2^2$ is jointly convex in $(x, y)$, so minimizing over $y \in C$ preserves convexity in $x$.)</p>
-        </div>
-
-        <h3>5.5 Perspective</h3>
+        <h3>5.6 Perspective Function</h3>
         <div class="theorem-box">
           <h4>Definition and Property</h4>
           <p>If $f: \mathbb{R}^n \to \mathbb{R}$ is convex, then its <b>perspective</b> $g: \mathbb{R}^{n+1} \to \mathbb{R}$ defined by:</p>
@@ -759,7 +870,7 @@
           <br>More generally, $f(x) = \frac{\|Ax+b\|_2^2}{c^\top x + d}$ is convex (Affine composition of perspective).</p>
         </div>
 
-        <h3>5.6 Power Functions and Homogeneity</h3>
+        <h3>5.7 Power Functions and Homogeneity</h3>
 
         <p>Power functions are a rich source of examples and inequalities.</p>
 
@@ -776,6 +887,25 @@
         <p>This can be used to prove that for $x, y \ge 0$ and $p \ge 1$:</p>
         $$ \boxed{ x^p + y^p \ge x + y \quad \text{for } x,y \in [0,1] } $$
         <p>Also, due to homogeneity ($(\lambda x)^p = \lambda^p x^p$), we can scale inequalities. For example, the function $f(x, y) = \frac{x^2}{y}$ arises from the homogeneity of quadratics.</p>
+
+        <h3>5.8 What Doesn't Preserve Convexity?</h3>
+        <p>A common pitfall is to assume the <b>minimum</b> of convex functions is convex. It is generally <b>not</b>.</p>
+        <div class="insight">
+          <h4>Counterexample</h4>
+          <p>Let $f_1(x) = (x-1)^2$ and $f_2(x) = (x+1)^2$. Both are convex. Their minimum $g(x) = \min((x-1)^2, (x+1)^2)$ is "W"-shaped, with a local maximum at $x=0$, clearly nonconvex.</p>
+        </div>
+        <p>Similarly, minimizing over a <b>nonconvex</b> set usually breaks convexity. For example, the distance to a nonconvex set is generally nonconvex.</p>
+
+        <h3>5.9 Summary: Mental Checklist</h3>
+        <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px;">
+          <h4 style="margin-top: 0;">Quick Recognition Guide</h4>
+          <ul style="margin-top: 0.5rem;">
+            <li><b>Pointwise Max / Sup:</b> "Upper envelope". Intersection of epigraphs. (e.g., $\lambda_{\max}$, support function).</li>
+            <li><b>Partial Minimization:</b> "Projection". Requires joint convexity. (e.g., distance to convex set, Schur complement).</li>
+            <li><b>Composition:</b> Check curvature ("bowl vs dome") and monotonicity.</li>
+            <li><b>Perspective:</b> Scales the domain and function value together; preserves convexity.</li>
+          </ul>
+        </div>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Builder: Operations Preserving Convexity</h3>
@@ -798,8 +928,7 @@
           <div id="widget-operations-preserving" style="width: 100%; height: 500px; position: relative;"></div>
         </div>
       </section>
-
-      <section class="card-v2" id="section-6">
+<section class="card-v2" id="section-6">
         <h2>6. Strong Convexity and Smoothness</h2>
 
         <h3>6.1 Strong Convexity: Definition and Properties</h3>
