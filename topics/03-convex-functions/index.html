@@ -72,14 +72,36 @@
         <h3>1.1 Convex Functions: The Core Definition</h3>
         <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link" data-term="convex function">convex</a> if its domain $\mathrm{dom}\, f$ is a convex set, and for all $x, y \in \mathrm{dom}\, f$ and all $\theta \in [0, 1]$:</p>
         $$
-        f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)
+        \boxed{ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) }
+        \tag{1}
         $$
-        <p>This is <a href="#" class="definition-link">Jensen's inequality</a> for two points. It states that the function value at a convex combination of points is at most the corresponding convex combination of function values.</p>
+        <p>This basic inequality states that the function value at a convex combination of points is at most the corresponding convex combination of function values. Geometrically, the <b>chord</b> connecting any two points $(x, f(x))$ and $(y, f(y))$ on the graph lies <b>above</b> the graph.</p>
 
         <div class="insight">
           <h4>💡 Geometric Intuition</h4>
           <p>The chord connecting any two points on the graph of $f$ lies above (or on) the graph. Equivalently, $f$ "curves upward"—there are no "dents" or concave regions.</p>
         </div>
+
+        <h3>1.2 Jensen's Inequality: The General Form</h3>
+        <p>The basic definition involving two points generalizes to any number of points and even to integrals (expectations).</p>
+
+        <h4>Finite Form</h4>
+        <p>If $f$ is convex, $x_1, \dots, x_k \in \mathrm{dom}\, f$, and $\theta_1, \dots, \theta_k \ge 0$ with $\sum \theta_i = 1$, then:</p>
+        $$
+        f\left(\sum_{i=1}^k \theta_i x_i\right) \le \sum_{i=1}^k \theta_i f(x_i)
+        $$
+        <p><b>Proof Sketch (Induction):</b>
+        <br>For $k=2$, this is the definition. Assume it holds for $k-1$.
+        <br>Write $\sum_{i=1}^k \theta_i x_i = \theta_k x_k + (1-\theta_k) \sum_{i=1}^{k-1} \frac{\theta_i}{1-\theta_k} x_i$.
+        <br>Apply the 2-point definition to combine $x_k$ and the aggregate term, then use the inductive hypothesis on the sum of $k-1$ terms.</p>
+
+        <h4>Expectation Form</h4>
+        <p>This generalizes to random variables. If $Z$ is a random variable taking values in $\mathrm{dom}\, f$, and $f$ is convex, then:</p>
+        $$
+        \boxed{ f(\mathbb{E}[Z]) \le \mathbb{E}[f(Z)] }
+        $$
+        <p>provided the expectations exist.
+        <br><i>Interpretation:</i> For a convex cost function, the cost of the average scenario is less than or equal to the average cost of all scenarios. Uncertainty typically increases expected cost for convex functions.</p>
 
         <h3>1.2 Strict and Strong Convexity</h3>
 
@@ -229,62 +251,65 @@
           <h4>Proof</h4>
 
           <div class="proof-step">
-            <strong>($\Rightarrow$) Convex implies first-order condition:</strong> Suppose $f$ is convex. Fix $x, y \in \mathrm{dom}\, f$ and consider the function $g(t) = f(x + t(y - x))$ for $t \in [0, 1]$.
+            <strong>($\Rightarrow$) Convex implies first-order condition:</strong>
+            <p>We use the "Restriction to a line" principle. Fix $x, y \in \mathrm{dom}\, f$ and define $v = y-x$. Consider the 1-D function $g(t) = f(x + tv)$ on $t \in [0, 1]$.</p>
+            <p>Since $f$ is convex, $g$ is a convex function of one variable.</p>
           </div>
 
           <div class="proof-step">
-            <strong>Step 1:</strong> By convexity:
-            $$
-            g(t) = f(x + t(y - x)) \le (1-t)f(x) + t f(y)
-            $$
-            Rearranging:
-            $$
-            f(x + t(y - x)) - f(x) \le t(f(y) - f(x))
-            $$
+            <strong>Step 1: 1D Convexity Inequality.</strong>
+            For a differentiable convex function $g: \mathbb{R} \to \mathbb{R}$, the graph lies above the tangent line:
+            $$ g(b) \ge g(a) + g'(a)(b-a) $$
+            Set $a=0$ and $b=1$. Then:
+            $$ g(1) \ge g(0) + g'(0)(1-0) $$
           </div>
 
           <div class="proof-step">
-            <strong>Step 2:</strong> Divide by $t > 0$ and take $t \to 0^+$:
-            $$
-            \lim_{t \to 0^+} \frac{f(x + t(y - x)) - f(x)}{t} \le f(y) - f(x)
-            $$
+            <strong>Step 2: Translate back to $f$.</strong>
+            <ul>
+              <li>$g(1) = f(x + 1 \cdot v) = f(y)$</li>
+              <li>$g(0) = f(x)$</li>
+              <li>$g'(t) = \nabla f(x+tv)^\top v$, so $g'(0) = \nabla f(x)^\top (y-x)$</li>
+            </ul>
           </div>
 
           <div class="proof-step">
-            <strong>Step 3:</strong> The left side is the directional derivative, which equals $\nabla f(x)^\top (y - x)$ since $f$ is differentiable:
-            $$
-            \nabla f(x)^\top (y - x) \le f(y) - f(x)
-            $$
-            Rearranging gives the desired inequality.
+            <strong>Step 3: Conclusion.</strong>
+            Substituting these back into the inequality:
+            $$ f(y) \ge f(x) + \nabla f(x)^\top (y-x) $$
           </div>
 
           <div class="proof-step">
-            <strong>($\Leftarrow$) First-order condition implies convex:</strong> Suppose the first-order condition holds. Take $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$. Let $z = \theta x + (1-\theta)y$.
+            <strong>($\Leftarrow$) First-order condition implies convex:</strong>
+            Suppose the first-order condition holds. Take $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$. Let $z = \theta x + (1-\theta)y$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 1:</strong> Apply the first-order condition at $z$ with $x$ and $y$:
+            <strong>Step 1: Apply condition at $z$.</strong>
+            Apply the first-order inequality at base point $z$ for targets $x$ and $y$:
             $$
-            f(x) \ge f(z) + \nabla f(z)^\top (x - z)
+            f(x) \ge f(z) + \nabla f(z)^\top (x - z) \quad (1)
             $$
             $$
-            f(y) \ge f(z) + \nabla f(z)^\top (y - z)
-            $$
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 2:</strong> Multiply the first inequality by $\theta$ and the second by $(1-\theta)$, then add:
-            $$
-            \theta f(x) + (1-\theta)f(y) \ge f(z) + \nabla f(z)^\top (\theta(x - z) + (1-\theta)(y - z))
+            f(y) \ge f(z) + \nabla f(z)^\top (y - z) \quad (2)
             $$
           </div>
 
           <div class="proof-step">
-            <strong>Step 3:</strong> Since $z = \theta x + (1-\theta)y$, we have $\theta(x - z) + (1-\theta)(y - z) = 0$:
+            <strong>Step 2: Convex combination.</strong>
+            Multiply (1) by $\theta$ and (2) by $(1-\theta)$ and sum them:
+            $$
+            \theta f(x) + (1-\theta)f(y) \ge f(z) + \nabla f(z)^\top \underbrace{(\theta(x - z) + (1-\theta)(y - z))}_{=0}
+            $$
+            The vector term vanishes because $z$ is the weighted average of $x$ and $y$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: Conclusion.</strong>
             $$
             \theta f(x) + (1-\theta)f(y) \ge f(z) = f(\theta x + (1-\theta)y)
             $$
-            proving convexity.
+            This is exactly the definition of convexity.
           </div>
         </div>
 
@@ -338,26 +363,26 @@
 
           <div class="proof-step">
             <strong>Part 1: $(\Rightarrow)$ Convex implies PSD Hessian.</strong>
-            Suppose $f$ is convex. Consider any point $x$ and any direction $v$. Define the 1D function $g(t) = f(x + tv)$.
-            Since $f$ is convex, $g$ is convex on $\mathbb{R}$.
-            If $f$ is twice differentiable, then $g$ is twice differentiable, and $g''(t) = v^\top \nabla^2 f(x + tv) v$.
-            For a 1D twice differentiable convex function, the second derivative must be non-negative everywhere: $g''(0) \ge 0$.
-            Therefore, $v^\top \nabla^2 f(x) v \ge 0$ for all vectors $v$.
-            This is exactly the definition of $\nabla^2 f(x)$ being positive semidefinite (PSD).
+            <p>Suppose $f$ is convex. Fix any point $x$ and direction $v \in \mathbb{R}^n$. Define $g(t) = f(x + tv)$.</p>
+            <ul>
+              <li>Since $f$ is convex, its restriction $g$ is convex.</li>
+              <li>For a twice differentiable function $g: \mathbb{R} \to \mathbb{R}$, convexity implies $g''(t) \ge 0$ for all $t$.</li>
+              <li>By the chain rule, $g''(t) = v^\top \nabla^2 f(x+tv) v$.</li>
+              <li>At $t=0$, we get $v^\top \nabla^2 f(x) v \ge 0$.</li>
+            </ul>
+            <p>Since this holds for any vector $v$, the matrix $\nabla^2 f(x)$ is positive semidefinite.</p>
           </div>
 
           <div class="proof-step">
             <strong>Part 2: $(\Leftarrow)$ PSD Hessian implies Convexity.</strong>
-            Suppose $\nabla^2 f(x) \succeq 0$ for all $x \in \mathrm{dom}\, f$.
-            We use the second-order Taylor expansion with Lagrange remainder form. For any $x, y$:
-            $$ f(y) = f(x) + \nabla f(x)^\top (y - x) + \frac{1}{2} (y - x)^\top \nabla^2 f(z) (y - x) $$
-            where $z$ is some point on the line segment between $x$ and $y$.
-            Since $\nabla^2 f(z) \succeq 0$, the quadratic term is non-negative:
-            $$ \frac{1}{2} (y - x)^\top \nabla^2 f(z) (y - x) \ge 0 $$
-            Therefore:
-            $$ f(y) \ge f(x) + \nabla f(x)^\top (y - x) $$
-            This is precisely the <b>first-order condition</b> for convexity, which we already proved is equivalent to convexity.
-            Thus, $f$ is convex.
+            <p>Suppose $\nabla^2 f(x) \succeq 0$ for all $x$. Fix $x, y$ and let $v = y-x$. Consider $g(t) = f(x+tv)$ for $t \in [0, 1]$.</p>
+            <ul>
+              <li>The second derivative is $g''(t) = v^\top \nabla^2 f(x+tv) v$.</li>
+              <li>Since the Hessian is PSD everywhere, $g''(t) \ge 0$ for all $t$.</li>
+              <li>A function with non-negative second derivative is convex.</li>
+              <li>Therefore, $g$ is convex on $[0, 1]$.</li>
+            </ul>
+            <p>Since the restriction to every line segment is convex, $f$ is convex.</p>
           </div>
         </div>
 
@@ -386,13 +411,36 @@
           <p>Therefore, $f$ is convex if and only if $Q \succeq 0$.</p>
         </div>
 
-        <div class="example">
-          <h4>Example 2: Log-Sum-Exp</h4>
-          <p>The function $f(x) = \log(\sum_{i=1}^n e^{x_i})$ is convex. To verify, compute the Hessian:</p>
-          $$
-          \nabla^2 f(x) = \frac{1}{(\sum_j e^{x_j})^2} \left( (\sum_j e^{x_j})(\mathrm{diag}(e^{x_1}, \ldots, e^{x_n})) - e^x e^{x^\top} \right)
-          $$
-          <p>This can be simplified to show $\nabla^2 f(x) = \mathrm{diag}(z) - zz^\top$ where $z_i = e^{x_i} / \sum_j e^{x_j}$ (a probability vector). This is the covariance matrix of a discrete distribution, hence PSD.</p>
+        <div class="proof-enhanced">
+          <h4>Example 2: Log-Sum-Exp (Full Derivation)</h4>
+          <p>Let $f(x) = \log S(x)$ where $S(x) = \sum_{k=1}^n e^{x_k}$. We prove convexity by showing the Hessian is PSD.</p>
+
+          <div class="proof-step">
+            <strong>Step 1: Gradient.</strong>
+            Using the chain rule: $\frac{\partial f}{\partial x_i} = \frac{1}{S} \frac{\partial S}{\partial x_i} = \frac{e^{x_i}}{S}$.
+            Define the probability vector $z$ where $z_i = e^{x_i}/S$. Note $z_i > 0$ and $\sum z_i = 1$.
+            Then $\nabla f(x) = z$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Hessian.</strong>
+            Differentiate $\frac{\partial f}{\partial x_i} = z_i$ with respect to $x_j$:
+            $$ \frac{\partial^2 f}{\partial x_i \partial x_j} = \frac{\partial}{\partial x_j} \left(\frac{e^{x_i}}{S}\right) = \frac{S \cdot \delta_{ij} e^{x_i} - e^{x_i} e^{x_j}}{S^2} = \frac{e^{x_i}}{S}\delta_{ij} - \frac{e^{x_i}}{S}\frac{e^{x_j}}{S} $$
+            $$ (\nabla^2 f(x))_{ij} = z_i \delta_{ij} - z_i z_j $$
+            In matrix form: $\nabla^2 f(x) = \text{diag}(z) - zz^\top$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: PSD Check via Cauchy-Schwarz.</strong>
+            For any $v \in \mathbb{R}^n$:
+            $$ v^\top \nabla^2 f(x) v = \sum_i z_i v_i^2 - (z^\top v)^2 = \sum_i z_i v_i^2 - \left(\sum_i z_i v_i\right)^2 $$
+            Let $a_i = \sqrt{z_i} v_i$ and $b_i = \sqrt{z_i}$.
+            Then $\sum a_i^2 = \sum z_i v_i^2$, $\sum b_i^2 = \sum z_i = 1$, and $\sum a_i b_i = \sum z_i v_i$.
+            By Cauchy-Schwarz $(\sum a_i b_i)^2 \le (\sum a_i^2)(\sum b_i^2)$:
+            $$ \left(\sum z_i v_i\right)^2 \le \left(\sum z_i v_i^2\right) \cdot 1 $$
+            Rearranging gives $\sum z_i v_i^2 - (\sum z_i v_i)^2 \ge 0$.
+            Thus $v^\top \nabla^2 f(x) v \ge 0$, so $f$ is convex.
+          </div>
         </div>
 
         <div class="proof-enhanced">
@@ -502,13 +550,21 @@
           $$
           f(x) = \sum_{i=1}^m w_i f_i(x)
           $$
-          <p>is convex.</p>
+          <p>is convex. This extends to infinite sums and integrals (provided they converge).</p>
         </div>
-        <p><b>Proof:</b> Direct from the definition:
-        $$
-        f(\theta x + (1-\theta)y) = \sum_i w_i f_i(\theta x + (1-\theta)y) \le \sum_i w_i (\theta f_i(x) + (1-\theta)f_i(y)) = \theta f(x) + (1-\theta)f(y)
-        $$
-        </p>
+
+        <div class="proof-enhanced">
+          <h4>Proof</h4>
+          <p>For any $x, y$ and $\theta \in [0, 1]$:</p>
+          $$
+          \begin{aligned}
+          f(\theta x + (1-\theta)y) &= \sum_{i=1}^m w_i f_i(\theta x + (1-\theta)y) \\
+          &\le \sum_{i=1}^m w_i \big( \theta f_i(x) + (1-\theta)f_i(y) \big) \quad \text{(convexity of } f_i, \ w_i \ge 0\text{)} \\
+          &= \theta \sum_{i=1}^m w_i f_i(x) + (1-\theta) \sum_{i=1}^m w_i f_i(y) \\
+          &= \theta f(x) + (1-\theta) f(y)
+          \end{aligned}
+          $$
+        </div>
 
         <h3>5.2 Pointwise Maximum and Supremum</h3>
         <div class="theorem-box">
@@ -532,11 +588,20 @@
         <div class="theorem-box">
           <h4>1. Affine Composition</h4>
           <p>If $f: \mathbb{R}^k \to \mathbb{R}$ is convex, and $x \mapsto Ax + b$ is an affine map, then the composition $g(x) = f(Ax + b)$ is convex.</p>
-          <p><b>Intuition:</b> Linear transformations stretch the domain but never warp a "bowl" into a "saddle."</p>
+          <p><b>Proof:</b>
+          $$
+          \begin{aligned}
+          g(\theta x + (1-\theta)y) &= f(A(\theta x + (1-\theta)y) + b) \\
+          &= f(\theta(Ax+b) + (1-\theta)(Ay+b)) \\
+          &\le \theta f(Ax+b) + (1-\theta)f(Ay+b) \\
+          &= \theta g(x) + (1-\theta)g(y)
+          \end{aligned}
+          $$
+          </p>
           <p><b>Examples:</b></p>
           <ul>
-            <li><b>Norm of Affine:</b> $\|Ax - b\|$ is convex (Primitive: Norm).</li>
-            <li><b>Trace of Inverse:</b> $\mathrm{tr}((A_0 + \sum x_i A_i)^{-1})$ is convex (Primitive: Trace of Inverse).</li>
+            <li><b>Log-Barrier:</b> $f(x) = -\sum \log(b_i - a_i^\top x)$. Inner: affine $b-a^\top x$. Outer: $-\log(\cdot)$ convex. Sum of convex is convex.</li>
+            <li><b>Norm of Affine:</b> $\|Ax - b\|$ is convex.</li>
           </ul>
         </div>
 
@@ -693,6 +758,24 @@
           <p>The function $f(x, y) = \frac{x^2}{y}$ for $y > 0$ is convex (Perspective of $x^2$).
           <br>More generally, $f(x) = \frac{\|Ax+b\|_2^2}{c^\top x + d}$ is convex (Affine composition of perspective).</p>
         </div>
+
+        <h3>5.6 Power Functions and Homogeneity</h3>
+
+        <p>Power functions are a rich source of examples and inequalities.</p>
+
+        <h4>Convexity of $x^p$</h4>
+        <p>The function $f(x) = x^p$ on $\mathbb{R}_{++}$ is:</p>
+        <ul>
+            <li><b>Convex</b> for $p \ge 1$ or $p \le 0$ ($f''(x) = p(p-1)x^{p-2} \ge 0$).</li>
+            <li><b>Concave</b> for $0 \le p \le 1$ ($f''(x) \le 0$).</li>
+        </ul>
+
+        <h4>Homogeneity and Inequalities</h4>
+        <p>For $p \ge 1$, $f(x) = x^p$ is convex. Using the tangent line inequality at $x=1$ ($f(x) \ge f(1) + f'(1)(x-1)$):</p>
+        $$ x^p \ge 1 + p(x-1) $$
+        <p>This can be used to prove that for $x, y \ge 0$ and $p \ge 1$:</p>
+        $$ \boxed{ x^p + y^p \ge x + y \quad \text{for } x,y \in [0,1] } $$
+        <p>Also, due to homogeneity ($(\lambda x)^p = \lambda^p x^p$), we can scale inequalities. For example, the function $f(x, y) = \frac{x^2}{y}$ arises from the homogeneity of quadratics.</p>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Builder: Operations Preserving Convexity</h3>
@@ -991,6 +1074,18 @@
         S_\alpha = \{x \in \mathrm{dom}\, f \mid f(x) \le \alpha\}
         $$
         <p>is convex for all $\alpha \in \mathbb{R}$.</p>
+
+        <div class="proof-enhanced">
+          <h4>Theorem: Convex $\implies$ Quasiconvex</h4>
+          <p>If $f$ is convex, it is also quasiconvex.</p>
+          <p><b>Proof:</b> Let $S_\alpha = \{x \mid f(x) \le \alpha\}$. Take $x, y \in S_\alpha$ and $\theta \in [0, 1]$.
+          $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \le \theta \alpha + (1-\theta)\alpha = \alpha $$
+          So the convex combination is in $S_\alpha$. Thus $S_\alpha$ is convex.</p>
+        </div>
+
+        <p><b>Converse is False:</b> A function can have convex sublevel sets without being convex.
+        <br><i>Example:</i> $f(x) = \sqrt{|x|}$ on $\mathbb{R}$. Sublevel sets are intervals $[-\alpha^2, \alpha^2]$ (convex), but the function is "bell-shaped" (concave on $x>0$, not convex overall).</p>
+
         <p>Similarly, $f$ is <b>quasi-concave</b> if $-f$ is quasi-convex (its superlevel sets are convex), and <b>quasilinear</b> if it is both quasi-convex and quasi-concave.</p>
 
         <figure style="text-align: center;">
