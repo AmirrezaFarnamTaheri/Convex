@@ -766,6 +766,9 @@
             <ul>
                 <li><b>Non-negative orthant:</b> $\mathbb{R}^n_+ = \{x \in \mathbb{R}^n \mid x_i \ge 0\}$</li>
                 <li><b>Second-order cone (Lorentz cone):</b> $\mathcal{Q}^{n+1} = \{(x, t) \in \mathbb{R}^{n+1} \mid \|x\|_2 \le t\}$</li>
+                <li><b>Norm Cone (Epigraph of a Norm):</b> For any norm $\|\cdot\|$, the set $C = \{(x, t) \mid \|x\| \le t\}$ is a convex cone.
+                  <br><i>Proof:</i> If $(x, t) \in C$, then $\|\alpha x\| = \alpha \|x\| \le \alpha t$, so $\alpha(x, t) \in C$. If $\|x\| \le t$ and $\|y\| \le s$, then $\|x+y\| \le \|x\| + \|y\| \le t + s$, so $(x+y, t+s) \in C$. This generalizes the Second-Order Cone.
+                </li>
                 <li><b>PSD Cone:</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$</li>
             </ul>
         </div>

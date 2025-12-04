@@ -216,6 +216,41 @@
           <li>The gradient is the transpose of the coefficient of $dx^\top$ (or the vector multiplying $dx$), so $\nabla f = 2A^\top r = 2A^\top(Ax-b)$.</li>
         </ol>
       </div>
+
+      <div class="proof-enhanced">
+        <h4>Detailed Derivation: Hessian of Least Squares</h4>
+        <p>Let $f(x) = \|Ax - b\|_2^2$. We show $\nabla^2 f(x) = 2A^\top A$ and prove its convexity.</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Expand.</strong>
+          $$ f(x) = (Ax - b)^\top (Ax - b) = x^\top A^\top A x - 2b^\top A x + b^\top b $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Gradient.</strong>
+          Differentiating term by term:
+          <ul>
+            <li>$\nabla (x^\top A^\top A x) = 2A^\top A x$ (since $A^\top A$ is symmetric)</li>
+            <li>$\nabla (-2b^\top A x) = \nabla (-2(A^\top b)^\top x) = -2A^\top b$</li>
+            <li>$\nabla (b^\top b) = 0$</li>
+          </ul>
+          Summing these: $\nabla f(x) = 2A^\top A x - 2A^\top b = 2A^\top (Ax - b)$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Hessian.</strong>
+          Differentiating $\nabla f(x)$ with respect to $x$:
+          $$ \nabla^2 f(x) = \nabla_x (2A^\top A x) = 2A^\top A $$
+          Note that the Hessian is a constant matrix (independent of $x$), which is typical for quadratic functions.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Convexity (PSD Check).</strong>
+          For any vector $v \in \mathbb{R}^n$:
+          $$ v^\top \nabla^2 f(x) v = v^\top (2A^\top A) v = 2(Av)^\top (Av) = 2\|Av\|_2^2 \ge 0 $$
+          Since the quadratic form is always non-negative, the Hessian is Positive Semidefinite (PSD). Thus, the least squares objective is always <b>convex</b>.
+        </div>
+      </div>
     </section>
 
     <!-- SECTION 1: FOUR FUNDAMENTAL SUBSPACES -->
