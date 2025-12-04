@@ -23,7 +23,7 @@
     <div class="container">
       <div class="brand">
         <a href="../../index.html">
-          <img src="../../static/assets/branding/logo.svg" alt="Logo" />
+          <img src="../../static/images/logo.svg" alt="Logo" />
           <span>Convex Optimization</a>
         </a>
       </div>
@@ -327,7 +327,25 @@
         </ul>
       </div>
 
-      <h3>2.2 Algebraic Properties</h3>
+
+      <h3>2.2 The "Isotropic Scaling" Lemma</h3>
+      <p>A classic result connects the geometry of eigenvectors to the structure of the matrix. What if <i>every</i> vector is an eigenvector?</p>
+      <div class="theorem-box">
+        <h4>Lemma: Scalar Matrices</h4>
+        <p>If every non-zero vector $x \in \mathbb{R}^n$ is an eigenvector of $A$ (i.e., $Ax = \lambda(x)x$), then $A$ must be a scalar multiple of the identity: $A = \lambda I$.</p>
+      </div>
+      <div class="proof-enhanced">
+        <h4>Proof</h4>
+        <p>Let $u, v$ be linearly independent vectors. By assumption, $Au = \lambda_u u$ and $Av = \lambda_v v$.
+        Consider their sum $w = u+v$. We must have $A(u+v) = \lambda_w (u+v)$.
+        $$ \lambda_w u + \lambda_w v = \lambda_w(u+v) = A(u+v) = Au + Av = \lambda_u u + \lambda_v v $$
+        Rearranging: $(\lambda_w - \lambda_u)u + (\lambda_w - \lambda_v)v = 0$.
+        Since $u$ and $v$ are independent, the coefficients must vanish: $\lambda_w = \lambda_u$ and $\lambda_w = \lambda_v$.
+        Thus $\lambda_u = \lambda_v$ for any independent pair. By transitivity, all vectors share the same eigenvalue $\lambda$. Thus $Ax = \lambda x$ for all $x$, so $A = \lambda I$.</p>
+      </div>
+      <p><b>Geometric Intuition:</b> A general matrix distorts a circle into an ellipse. If <i>every</i> direction is a principal axis (eigenvector), the ellipse must be a circle (isotropic scaling).</p>
+
+      <h3>2.3 Algebraic Properties</h3>
 
       <h4>Linearity of Trace</h4>
       <p>The trace is a linear functional:
@@ -346,7 +364,22 @@
       More generally, $\mathrm{tr}(ABC) = \mathrm{tr}(BCA) = \mathrm{tr}(CAB)$. This property is crucial for deriving matrix gradients.
       </p>
 
-      <h3>2.3 Similarity and Basis Independence</h3>
+
+      <div class="example">
+        <h4>Worked Example: Trace and Determinant Caveats</h4>
+        <p>While $\mathrm{tr}(A+B) = \mathrm{tr}(A) + \mathrm{tr}(B)$, other properties are subtler.</p>
+
+        <p><b>1. Trace of Product:</b> $\mathrm{tr}(AB) \neq \mathrm{tr}(A)\mathrm{tr}(B)$.
+        <br>Let $A = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}$ and $B = \begin{bmatrix} 0 & 0 \\ 0 & 1 \end{bmatrix}$.
+        <br>$\mathrm{tr}(A)=1, \mathrm{tr}(B)=1 \implies \mathrm{tr}(A)\mathrm{tr}(B)=1$.
+        <br>But $AB = 0$, so $\mathrm{tr}(AB) = 0$.</p>
+
+        <p><b>2. Determinant of Sum:</b> $\det(A+B) \neq \det(A) + \det(B)$.
+        <br>Using the same matrices: $\det(A)=0, \det(B)=0$.
+        <br>But $A+B = I$, so $\det(A+B)=1 \neq 0+0$.</p>
+      </div>
+
+      <h3>2.4 Similarity and Basis Independence</h3>
       <p>Two matrices $A$ and $B$ are <b>similar</b> if $B = P A P^{-1}$ for some invertible $P$. This represents the same linear operator in a different basis.</p>
       <div class="theorem-box">
         <h4>Theorem: Invariance under Similarity</h4>
@@ -359,7 +392,7 @@
         <p>Thus, they have the <b>same eigenvalues</b>.</p>
       </div>
 
-      <h3>2.4 Spectral Shift</h3>
+      <h3>2.5 Spectral Shift</h3>
       <p>Adding a multiple of the identity shifts the eigenvalues but preserves eigenvectors.
       If $Ax = \lambda x$, then:
       $$ (A + tI)x = Ax + tIx = (\lambda + t)x. $$
@@ -609,6 +642,21 @@
         <li>There exists a set of <b>orthonormal eigenvectors</b> $q_1, \dots, q_n$.</li>
         <li>$A$ can be diagonalized as $A = Q \Lambda Q^\top$, where $Q$ is an orthogonal matrix ($Q^\top Q = I$) containing the eigenvectors, and $\Lambda$ is a diagonal matrix containing the eigenvalues.</li>
       </ol>
+
+      <h4>Why are Eigenvectors of Symmetric Matrices Orthogonal?</h4>
+      <p>The Spectral Theorem guarantees orthogonal eigenvectors for symmetric matrices. The proof relies on the adjoint property.</p>
+      <div class="proof-enhanced">
+        <h4>Proof of Orthogonality</h4>
+        <p>Let $A$ be symmetric ($A^\top = A$). Let $v_1, v_2$ be eigenvectors with distinct eigenvalues $\lambda_1 \neq \lambda_2$.
+        $$ A v_1 = \lambda_1 v_1, \quad A v_2 = \lambda_2 v_2 $$
+        Consider the inner product $\langle A v_1, v_2 \rangle$. We can evaluate it two ways:</p>
+        <ol>
+          <li>$\langle A v_1, v_2 \rangle = \langle \lambda_1 v_1, v_2 \rangle = \lambda_1 \langle v_1, v_2 \rangle$</li>
+          <li>$\langle A v_1, v_2 \rangle = \langle v_1, A^\top v_2 \rangle = \langle v_1, A v_2 \rangle = \langle v_1, \lambda_2 v_2 \rangle = \lambda_2 \langle v_1, v_2 \rangle$</li>
+        </ol>
+        <p>Subtracting gives $(\lambda_1 - \lambda_2) \langle v_1, v_2 \rangle = 0$. Since $\lambda_1 \neq \lambda_2$, we must have $\langle v_1, v_2 \rangle = 0$.</p>
+      </div>
+
       <p><b>Why this matters for convexity:</b> The "shape" of a multivariable function (bowl vs. saddle) is entirely determined by the signs of the eigenvalues of its Hessian.</p>
 
       <h3>5.2 Positive Semidefinite (PSD) Matrices</h3>
@@ -1080,6 +1128,13 @@
       </ul>
 
       <!-- 7.3 Pseudoinverse (Moore-Penrose Inverse) -->
+
+      <h4>Note: Connection to Polar Decomposition</h4>
+      <p>The SVD is closely related to the <b>Polar Decomposition</b> $A = U P$, where $U$ is orthogonal and $P$ is symmetric positive semidefinite.
+      <br>Using SVD $A = U \Sigma V^\top$, we can write:
+      $$ A = (U V^\top) (V \Sigma V^\top) $$
+      Here, $Q = U V^\top$ is orthogonal (rotation), and $P = V \Sigma V^\top$ is symmetric PSD (stretch). This parallels the complex number form $z = e^{i\theta} r$. In the PSD case ($U=V$), this reduces to $A = I (U \Sigma U^\top)$, which is just the spectral decomposition.</p>
+
       <h3>8.3 The Pseudoinverse (Moore-Penrose Inverse)</h3>
 
       <h4>8.3.1 Definition via SVD</h4>
@@ -1581,7 +1636,16 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <h3>P0.1 — Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
 
-      <div class="proof-enhanced">
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Dual Norm Definition:</b> $\|y\|_* = \sup_{\|x\| \le 1} x^\top y$. <a href="#section-3">[Section 3]</a></li>
+            <li><b>Hölder's Inequality:</b> $|x^\top y| \le \|x\|_p \|y\|_q$. <a href="#section-3">[Section 3]</a></li>
+            <li><b>Achievability condition:</b> Equality in Hölder holds when $x$ and $y$ are aligned in a specific way.</li>
+        </ul>
+      </div>
+
+      <div class="solution-enhanced">
         <h4>Solution</h4>
 
         <div class="proof-step">
@@ -2057,8 +2121,11 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
   <script src="../../static/js/math-renderer.js"></script>
-  <script src="../../static/js/theme-switcher.js"></script>
   <script src="../../static/js/toc.js"></script>
+  <script src="../../static/js/ui-enhancements.js"></script>
+  <script src="../../static/js/notes-widget.js"></script>
+  <script src="../../static/js/pomodoro.js"></script>
+  <script src="../../static/js/progress-tracker.js"></script>
   <script>
     feather.replace();
     document.getElementById('year').textContent = new Date().getFullYear();
