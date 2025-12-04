@@ -351,6 +351,11 @@
       <p>The trace is a linear functional:
       $$ \mathrm{tr}(A + B) = \mathrm{tr}(A) + \mathrm{tr}(B) \quad \text{and} \quad \mathrm{tr}(cA) = c\,\mathrm{tr}(A). $$
       </p>
+      <div class="proof-enhanced">
+        <h4>Proof</h4>
+        <p>By definition, $\mathrm{tr}(A) = \sum_{i=1}^n a_{ii}$. Then:</p>
+        $$ \mathrm{tr}(A+B) = \sum_{i=1}^n (a_{ii} + b_{ii}) = \sum_{i=1}^n a_{ii} + \sum_{i=1}^n b_{ii} = \mathrm{tr}(A) + \mathrm{tr}(B) $$
+      </div>
 
       <h4>Multiplicativity of Determinant</h4>
       <p>The determinant is multiplicative:
@@ -372,11 +377,14 @@
         <p><b>1. Trace of Product:</b> $\mathrm{tr}(AB) \neq \mathrm{tr}(A)\mathrm{tr}(B)$.
         <br>Let $A = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}$ and $B = \begin{bmatrix} 0 & 0 \\ 0 & 1 \end{bmatrix}$.
         <br>$\mathrm{tr}(A)=1, \mathrm{tr}(B)=1 \implies \mathrm{tr}(A)\mathrm{tr}(B)=1$.
-        <br>But $AB = 0$, so $\mathrm{tr}(AB) = 0$.</p>
+        <br>But $AB = 0$, so $\mathrm{tr}(AB) = 0$. Thus multiplicativity fails.</p>
 
         <p><b>2. Determinant of Sum:</b> $\det(A+B) \neq \det(A) + \det(B)$.
-        <br>Using the same matrices: $\det(A)=0, \det(B)=0$.
-        <br>But $A+B = I$, so $\det(A+B)=1 \neq 0+0$.</p>
+        <br>A nice conceptual counterexample: Take $A = I$ and $B = -I$ (for even $n$).
+        <br>$\det(A) = 1$, $\det(B) = (-1)^n = 1$.
+        <br>$\det(A+B) = \det(0) = 0$.
+        <br>But $\det(A) + \det(B) = 1 + 1 = 2 \neq 0$.
+        <br>This inequality is true generically; $\det$ is multiplicative, not additive.</p>
       </div>
 
       <h3>2.4 Similarity and Basis Independence</h3>
