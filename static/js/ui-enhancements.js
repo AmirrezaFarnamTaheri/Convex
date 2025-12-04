@@ -1,9 +1,9 @@
 /**
  * UI Enhancements for Convex Optimization Course
  * Handles:
- * - Collapsible Environment Boxes (Proofs, Solutions)
+ * - Collapsible Environment Boxes
  * - Sidebar/TOC Toggling
- * - Theme Switching
+ * - Theme Switching (Refined)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,10 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initCollapsibleEnvironments() {
-    // Select all environment boxes that should be collapsible
-    // Proofs, Solutions, Answers are collapsed by default.
-    // Examples, Theorems, Definitions are generally expanded but can be toggled.
-
     const collapsibleSelectors = [
         { selector: '.proof-enhanced', defaultCollapsed: true, label: 'Proof' },
         { selector: '.solution-enhanced', defaultCollapsed: true, label: 'Solution' },
@@ -32,38 +28,27 @@ function initCollapsibleEnvironments() {
 }
 
 function makeCollapsible(box, defaultCollapsed, label) {
-    // Check if already initialized
     if (box.querySelector('.env-toggle-btn')) return;
-
-    // Create wrapper for content if not already wrapped
-    // We assume the box contains content directly.
-    // We need to move children to a wrapper, except for the "header" or pseudo-element logic.
-    // Since pseudo-elements are on the box itself, we can just wrap inner HTML.
 
     const contentWrapper = document.createElement('div');
     contentWrapper.className = 'env-collapsible-content';
 
-    // Move all children to wrapper
     while (box.firstChild) {
         contentWrapper.appendChild(box.firstChild);
     }
     box.appendChild(contentWrapper);
 
-    // Create Toggle Button
     const btn = document.createElement('button');
     btn.className = 'env-toggle-btn';
     btn.innerHTML = defaultCollapsed ? '<i data-feather="chevron-down"></i>' : '<i data-feather="chevron-up"></i>';
     btn.setAttribute('aria-label', 'Toggle ' + label);
 
-    // Add button to top-right of box
-    box.appendChild(btn); // Position absolute handles placement
+    box.appendChild(btn);
 
-    // Set initial state
     if (defaultCollapsed) {
         box.classList.add('env-collapsed');
     }
 
-    // Toggle Logic
     btn.addEventListener('click', () => {
         const isCollapsed = box.classList.toggle('env-collapsed');
         btn.innerHTML = isCollapsed ? '<i data-feather="chevron-down"></i>' : '<i data-feather="chevron-up"></i>';
@@ -74,8 +59,6 @@ function makeCollapsible(box, defaultCollapsed, label) {
 function initSidebarToggle() {
     const sidebar = document.querySelector('.sidebar');
     if (!sidebar) return;
-
-    // Check if toggle already exists (from toc.js maybe, but we are replacing that logic)
     if (document.getElementById('sidebar-toggle')) return;
 
     const toggleBtn = document.createElement('button');
@@ -99,7 +82,6 @@ function initSidebarToggle() {
 
     document.body.appendChild(toggleBtn);
 
-    // Load state
     const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
     if (isCollapsed) {
         sidebar.classList.add('collapsed');
@@ -108,8 +90,6 @@ function initSidebarToggle() {
     toggleBtn.addEventListener('click', () => {
         const collapsed = sidebar.classList.toggle('collapsed');
         localStorage.setItem('sidebar-collapsed', collapsed);
-
-        // Trigger resize for widgets
         window.dispatchEvent(new Event('resize'));
     });
 
@@ -117,72 +97,76 @@ function initSidebarToggle() {
 }
 
 function initThemeSwitcher() {
-    // We can expose a global function or look for a UI element
-    // Let's look for a theme button in the nav, if not found, create a floating one or append to Nav
-
     const nav = document.querySelector('.nav');
     if (!nav) return;
-
-    // Check if already exists
     if (document.getElementById('theme-dropdown-trigger')) return;
 
     const container = document.createElement('div');
     container.style.position = 'relative';
 
+    // Trigger Button
     const btn = document.createElement('button');
     btn.id = 'theme-dropdown-trigger';
     btn.className = 'btn btn-ghost';
     btn.innerHTML = '<i data-feather="droplet"></i> Theme';
 
+    // Dropdown Menu
     const dropdown = document.createElement('div');
-    dropdown.className = 'glass';
-    dropdown.style.position = 'absolute';
-    dropdown.style.top = '100%';
-    dropdown.style.right = '0';
-    dropdown.style.padding = '8px';
-    dropdown.style.borderRadius = '8px';
-    dropdown.style.display = 'none';
-    dropdown.style.flexDirection = 'column';
-    dropdown.style.gap = '4px';
-    dropdown.style.minWidth = '120px';
-    dropdown.style.zIndex = '1050';
+    dropdown.className = 'theme-dropdown hidden';
 
     const themes = [
-        { id: 'default', name: 'Ocean (Default)' },
-        { id: 'emerald', name: 'Emerald' },
-        { id: 'amethyst', name: 'Amethyst' },
-        { id: 'sunset', name: 'Sunset' }
+        { id: 'default', name: 'Ocean', color: '#1890ff' },
+        { id: 'emerald', name: 'Emerald', color: '#10b981' },
+        { id: 'amethyst', name: 'Amethyst', color: '#8b5cf6' },
+        { id: 'sunset', name: 'Sunset', color: '#f97316' }
     ];
 
+    // Current Theme
+    const currentTheme = localStorage.getItem('theme') || 'default';
+
     themes.forEach(theme => {
-        const tBtn = document.createElement('button');
-        tBtn.className = 'btn btn-ghost';
-        tBtn.style.justifyContent = 'flex-start';
-        tBtn.style.fontSize = '0.85rem';
-        tBtn.textContent = theme.name;
-        tBtn.addEventListener('click', () => {
+        const option = document.createElement('button');
+        option.className = `theme-option ${currentTheme === theme.id ? 'active' : ''}`;
+
+        // Color preview dot
+        const dot = document.createElement('span');
+        dot.className = 'theme-color-preview';
+        dot.style.backgroundColor = theme.color;
+
+        const label = document.createElement('span');
+        label.textContent = theme.name;
+
+        option.appendChild(dot);
+        option.appendChild(label);
+
+        option.addEventListener('click', () => {
             setTheme(theme.id);
-            dropdown.style.display = 'none';
+            // Update active state in UI
+            dropdown.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            dropdown.classList.add('hidden');
         });
-        dropdown.appendChild(tBtn);
+
+        dropdown.appendChild(option);
     });
 
+    // Toggle Logic
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+        dropdown.classList.toggle('hidden');
     });
 
+    // Close on click outside
     document.addEventListener('click', () => {
-        dropdown.style.display = 'none';
+        dropdown.classList.add('hidden');
     });
 
     container.appendChild(btn);
     container.appendChild(dropdown);
     nav.appendChild(container);
 
-    // Init theme from storage
-    const savedTheme = localStorage.getItem('theme') || 'default';
-    setTheme(savedTheme);
+    // Apply initial theme
+    setTheme(currentTheme);
 
     if (typeof feather !== 'undefined') feather.replace();
 }

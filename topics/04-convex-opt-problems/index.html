@@ -734,7 +734,16 @@
         <p><strong>(a)</strong> Is this a convex optimization problem? Justify your answer.</p>
         <p><strong>(b)</strong> Reformulate it as a standard LP.</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Convexity Rules:</b> The objective $\max_i |a_i^\top x - b_i|$ is a composition of convex functions (affine $\to$ absolute value $\to$ max), so it is convex.</li>
+            <li><b>Epigraph Transformation:</b> Minimizing a maximum ($t \ge \max f_i$) is equivalent to minimizing $t$ subject to $f_i \le t$ for all $i$.</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -769,7 +778,16 @@
         <p><strong>(a)</strong> Write this problem in standard QP form.</p>
         <p><strong>(b)</strong> Under what conditions on $A$ is the problem strictly convex (thus having a unique solution)?</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Standard QP Form:</b> $\min \frac{1}{2}x^\top P x + q^\top x$ s.t. $Gx \le h, Ax = b$.</li>
+            <li><b>Strict Convexity:</b> A QP is strictly convex if $P \succ 0$ (positive definite). For least squares, $P = 2A^\top A$, so strict convexity requires $A$ to have full column rank.</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -807,7 +825,16 @@
         <p><strong>(a)</strong> Show that this is an SOCP by reformulating it in standard SOCP form.</p>
         <p><strong>(b)</strong> Compare this to Tikhonov regularization $\|Ax - b\|_2^2 + \lambda \|x\|_2^2$, which is a QP.</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>SOCP Definition:</b> Minimizing a linear objective subject to Second-Order Cone constraints $\|Ax+b\|_2 \le c^\top x + d$.</li>
+            <li><b>Norm Handling:</b> To minimize a sum of norms $\sum \|A_i x\|$, introduce slack variables $t_i$ and constraints $\|A_i x\| \le t_i$.</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -835,7 +862,16 @@
         <p><strong>(a)</strong> Formulate this as an SDP.</p>
         <p><strong>(b)</strong> Write the dual problem (you may use the general SDP duality results).</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>LMI Representation:</b> The constraint $\lambda_{\max}(A) \le t$ is equivalent to the Linear Matrix Inequality $tI - A \succeq 0$.</li>
+            <li><b>SDP Duality:</b> The dual of minimizing the max eigenvalue involves the trace inner product and a PSD matrix variable with trace 1 (a density matrix).</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -888,7 +924,16 @@
         <p><strong>(a)</strong> Classify this problem (LP, QP, SOCP, or SDP).</p>
         <p><strong>(b)</strong> Reformulate it to fit your classification.</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>QCQP:</b> Quadratic constraints are convex only if the matrix is PSD.</li>
+            <li><b>SOCP equivalence:</b> A convex quadratic constraint $x^\top P x \le t$ can always be written as $\|P^{1/2}x\|_2 \le \sqrt{t}$ (if $t$ is constant) or rotated SOC constraints.</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -918,7 +963,16 @@
         <h3>P4.6 — Equivalence: $\ell_1$ Minimization and LP</h3>
         <p>Show that the problem $\min \|x\|_1$ subject to $Ax = b$ is equivalent to an LP.</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>L1 Reformulation:</b> $|x| \le t \iff -t \le x \le t$. This splits one non-linear constraint into two linear ones.</li>
+            <li><b>Sparse Solutions:</b> While the LP formulation doesn't explicitly show "corners", the geometry of the feasible set (polytope) ensures vertex solutions, which often correspond to sparse vectors in $\ell_1$ problems.</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -949,7 +1003,16 @@
         <p><strong>(a)</strong> Show that $f$ is quasiconvex (but not convex) on $\mathbb{R}_{++}^2$.</p>
         <p><strong>(b)</strong> Describe how to solve this problem using bisection over $t$ and convex feasibility problems.</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Quasiconvexity:</b> Sublevel sets are convex. For linear-fractional functions, $f(x) \le t \iff c^\top x + d \le t(e^\top x + f)$, which is linear in $x$ for fixed $t$.</li>
+            <li><b>Bisection Method:</b> A robust algorithm for quasiconvex problems. It solves a sequence of convex feasibility problems to bracket the optimal value.</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -994,7 +1057,16 @@
         <p><strong>(a)</strong> Show that the volume of $\mathcal{E}$ is proportional to $\det(A^{-1})$.</p>
         <p><strong>(b)</strong> Formulate the problem as an SDP by using the objective $\log \det(A)$ (which is concave in $A$ for $A \succ 0$).</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Geometric Volume:</b> The volume of $\{x \mid \|Ax\| \le 1\}$ is proportional to $\det(A^{-1})$.</li>
+            <li><b>Log-Det Concavity:</b> $\log \det X$ is a barrier function for the PSD cone. Maximizing it (or minimizing $-\log \det$) pushes the matrix away from singularity.</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -1022,7 +1094,16 @@
         <p><strong>(a)</strong> Formulate this as a convex optimization problem.</p>
         <p><strong>(b)</strong> Verify that the objective is concave (so minimizing negative utility is convex).</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Concave Utility:</b> Diminishing returns ($\log x$, $\sqrt{x}$) lead to concave utility functions.</li>
+            <li><b>Separable Objective:</b> The objective is a sum of functions of single variables $\sum f_i(x_i)$. This structure is computationally favorable (e.g., for distributed optimization).</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -1067,7 +1148,16 @@
         <p><strong>(a)</strong> Perform the Charnes-Cooper transformation by introducing variables $y = \frac{x}{e^\top x + f}$ and $z = \frac{1}{e^\top x + f}$.</p>
         <p><strong>(b)</strong> Write the resulting equivalent problem and verify it is an LP.</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Projective Transformation:</b> The change of variables $y = x/t, z = 1/t$ linearizes the ratio. This is the "homogenization" trick in projective geometry.</li>
+            <li><b>Constraint Mapping:</b> Linear constraints on $x$ map to linear constraints on $y, z$.</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -1105,7 +1195,16 @@
         <p>A point $x^\star$ is <b>Pareto optimal</b> for the vector objective $f(x) = (f_1(x), \dots, f_k(x))$ if there is no feasible $y$ such that $f_i(y) \le f_i(x^\star)$ for all $i$ and $f_j(y) < f_j(x^\star)$ for at least one $j$.
         Prove that minimizing the weighted sum $\sum w_i f_i(x)$ with weights $w > 0$ yields a Pareto optimal point.</p>
 
-        <div class="solution">
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Scalarization:</b> Converting a vector problem to a scalar one via weighted sum is a standard technique.</li>
+            <li><b>Sufficiency vs Necessity:</b> Minimizing weighted sums (with positive weights) always finds a Pareto point. For convex problems, <i>every</i> Pareto point can be found this way (necessity).</li>
+        </ul>
+      </div>
+
+<div class="solution">
           <h4>Solution</h4>
           <div class="proof-step">
             <strong>Setup:</strong> Let $x^\star$ minimize $S(x) = \sum_{i=1}^k w_i f_i(x)$ over the feasible set $\mathcal{F}$. Assume for contradiction that $x^\star$ is not Pareto optimal.
