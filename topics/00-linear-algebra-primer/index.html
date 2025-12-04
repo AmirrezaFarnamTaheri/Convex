@@ -23,7 +23,7 @@
     <div class="container">
       <div class="brand">
         <a href="../../index.html">
-          <img src="../../static/assets/branding/logo.svg" alt="Logo" />
+          <img src="../../static/images/logo.svg" alt="Logo" />
           <span>Convex Optimization</a>
         </a>
       </div>
@@ -1636,7 +1636,16 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <h3>P0.1 — Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
 
-      <div class="proof-enhanced">
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Dual Norm Definition:</b> $\|y\|_* = \sup_{\|x\| \le 1} x^\top y$. <a href="#section-3">[Section 3]</a></li>
+            <li><b>Hölder's Inequality:</b> $|x^\top y| \le \|x\|_p \|y\|_q$. <a href="#section-3">[Section 3]</a></li>
+            <li><b>Achievability condition:</b> Equality in Hölder holds when $x$ and $y$ are aligned in a specific way.</li>
+        </ul>
+      </div>
+
+      <div class="solution-enhanced">
         <h4>Solution</h4>
 
         <div class="proof-step">
@@ -2112,8 +2121,11 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
   <script src="../../static/js/math-renderer.js"></script>
-  <script src="../../static/js/theme-switcher.js"></script>
   <script src="../../static/js/toc.js"></script>
+  <script src="../../static/js/ui-enhancements.js"></script>
+  <script src="../../static/js/notes-widget.js"></script>
+  <script src="../../static/js/pomodoro.js"></script>
+  <script src="../../static/js/progress-tracker.js"></script>
   <script>
     feather.replace();
     document.getElementById('year').textContent = new Date().getFullYear();
