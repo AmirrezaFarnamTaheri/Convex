@@ -67,6 +67,12 @@
     <section class="card-v2" id="section-0">
       <h2>0. Notation and Basic Objects</h2>
 
+
+      <h3>Preliminaries: Topology on $\mathbb{Z}$ (A Warm-up)</h3>
+      <p>Before diving into linear algebra, let's consider a simple topological warmup. Consider a function $f: \mathbb{Z} \to \mathbb{R}$. We ask: are sets of the form $\{n \in \mathbb{Z} : f(n) > r\}$ open in $\mathbb{Z}$?</p>
+      <p>Using the subspace topology from $\mathbb{R}$, <b>every subset of $\mathbb{Z}$ is open</b>.
+      <br><i>Why?</i> For each integer $k$, the interval $(k - 1/2, k + 1/2)$ is open in $\mathbb{R}$. Its intersection with $\mathbb{Z}$ is the singleton $\{k\}$. Since every singleton is open, and any subset is a union of singletons, every subset is open. Thus, <b>every function $f: \mathbb{Z} \to \mathbb{R}$ is continuous</b> in this topology.</p>
+
       <h3>Preliminaries: Lines and Line Segments</h3>
       <p>We work in $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum x_i y_i$ and Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are fundamental to defining convexity.</p>
 
@@ -298,8 +304,73 @@
     </section>
 
     <!-- SECTION 2: INNER PRODUCTS AND NORMS -->
+
+    <!-- SECTION 2: ALGEBRAIC INVARIANTS -->
     <section class="card-v2" id="section-2">
-      <h2>2. Inner Products, Norms, and Angles</h2>
+      <h2>2. Algebraic Invariants: Determinant, Trace, and Eigenvalues</h2>
+
+      <p>While a matrix $A$ represents a linear map in a specific basis, we are often interested in properties that are intrinsic to the map itself, independent of the basis. These are called <b>invariants</b>.</p>
+
+      <h3>2.1 The "Big Three" Invariants</h3>
+      <p>For a square matrix $A \in \mathbb{R}^{n \times n}$ with eigenvalues $\lambda_1, \dots, \lambda_n$ (counted with algebraic multiplicity):</p>
+      <ul>
+        <li><b>Trace:</b> $\mathrm{tr}(A) = \sum_{i=1}^n A_{ii} = \sum_{i=1}^n \lambda_i$.</li>
+        <li><b>Determinant:</b> $\det(A) = \prod_{i=1}^n \lambda_i$.</li>
+        <li><b>Eigenvalues:</b> Roots of the characteristic polynomial $p_A(\lambda) = \det(A - \lambda I)$.</li>
+      </ul>
+
+      <div class="insight">
+        <h4>Geometric Interpretation</h4>
+        <ul>
+          <li><b>Determinant as Volume:</b> $|\det(A)|$ is the factor by which the linear map scales volume. If $S$ is a set with volume $V$, then $A(S)$ has volume $|\det(A)| V$. The sign indicates orientation (preservation vs. reversal).</li>
+          <li><b>Eigenvalues as Stretch Factors:</b> If $Ax = \lambda x$, the map simply scales the vector $x$ by $\lambda$. If a matrix has a full set of eigenvectors, it maps a unit circle to an ellipse whose semiaxes are aligned with the eigenvectors and have lengths $|\lambda_i|$.</li>
+        </ul>
+      </div>
+
+      <h3>2.2 Algebraic Properties</h3>
+
+      <h4>Linearity of Trace</h4>
+      <p>The trace is a linear functional:
+      $$ \mathrm{tr}(A + B) = \mathrm{tr}(A) + \mathrm{tr}(B) \quad \text{and} \quad \mathrm{tr}(cA) = c\,\mathrm{tr}(A). $$
+      </p>
+
+      <h4>Multiplicativity of Determinant</h4>
+      <p>The determinant is multiplicative:
+      $$ \det(AB) = \det(A)\det(B). $$
+      This reflects the geometric fact that the volume scaling of a composite map is the product of the individual scalings. Note that $\det(AB) = \det(BA)$ even if $AB \neq BA$.
+      </p>
+
+      <h4>Trace of a Product (Cyclic Property)</h4>
+      <p>In general, $\mathrm{tr}(AB) \neq \mathrm{tr}(A)\mathrm{tr}(B)$. However, the trace is <b>cyclic</b>:
+      $$ \mathrm{tr}(AB) = \mathrm{tr}(BA). $$
+      More generally, $\mathrm{tr}(ABC) = \mathrm{tr}(BCA) = \mathrm{tr}(CAB)$. This property is crucial for deriving matrix gradients.
+      </p>
+
+      <h3>2.3 Similarity and Basis Independence</h3>
+      <p>Two matrices $A$ and $B$ are <b>similar</b> if $B = P A P^{-1}$ for some invertible $P$. This represents the same linear operator in a different basis.</p>
+      <div class="theorem-box">
+        <h4>Theorem: Invariance under Similarity</h4>
+        <p>If $A$ and $B$ are similar, they share the same algebraic invariants:</p>
+        <ul>
+          <li>$\det(PAP^{-1}) = \det(P)\det(A)\det(P^{-1}) = \det(A)$.</li>
+          <li>$\mathrm{tr}(PAP^{-1}) = \mathrm{tr}(AP^{-1}P) = \mathrm{tr}(A)$.</li>
+          <li>$p_{PAP^{-1}}(\lambda) = \det(PAP^{-1} - \lambda I) = \det(P(A-\lambda I)P^{-1}) = p_A(\lambda)$.</li>
+        </ul>
+        <p>Thus, they have the <b>same eigenvalues</b>.</p>
+      </div>
+
+      <h3>2.4 Spectral Shift</h3>
+      <p>Adding a multiple of the identity shifts the eigenvalues but preserves eigenvectors.
+      If $Ax = \lambda x$, then:
+      $$ (A + tI)x = Ax + tIx = (\lambda + t)x. $$
+      Thus, the eigenvalues of $A+tI$ are $\{\lambda_i + t\}$.
+      <br><b>Warning:</b> In general, $\det(A+B) \neq \det(A) + \det(B)$. For example, $\det(I+I) = 2^n \neq 1+1$.
+      </p>
+    </section>
+
+
+    <section class="card-v2" id="section-3">
+      <h2>3. Inner Products, Norms, and Angles</h2>
 
       <h3>Inner Product</h3>
       <p>An <a href="#" class="definition-link">inner product</a> on $\mathbb{R}^n$ is a mapping $\langle x, y \rangle$ that is bilinear, symmetric, and positive definite:</p>
@@ -314,8 +385,15 @@
         <img src="../../static/assets/topics/00-linear-algebra-primer/vector-addition-parallelogram.png"
              alt="Parallelogram law for vector addition"
              style="max-width: 70%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: white;" />
-        <figcaption><i>Figure 2.1:</i> The parallelogram law of vector addition, a geometric reflection of the algebraic properties of inner products.</figcaption>
+        <figcaption><i>Figure 3.1:</i> The parallelogram law of vector addition, a geometric reflection of the algebraic properties of inner products.</figcaption>
       </figure>
+
+
+      <h3>The Adjoint: Moving Matrices Across Inner Products</h3>
+      <p>A fundamental property connecting matrices and inner products is the definition of the <b>transpose</b> (or adjoint). For any $A \in \mathbb{R}^{m \times n}$, $x \in \mathbb{R}^n$, and $y \in \mathbb{R}^m$:
+      $$ \boxed{\langle Ax, y \rangle = \langle x, A^\top y \rangle} $$
+      or in dot product notation, $(Ax)^\top y = x^\top (A^\top y)$. This identity allows us to "move" the matrix $A$ from one side of the inner product to the other by taking its transpose. It is the workhorse behind gradients of quadratic forms and the definition of orthogonality.
+      </p>
 
       <h3>Norms</h3>
       <p>A <a href="#" class="definition-link">norm</a> is a function that assigns a strictly positive length or size to each vector in a vector space, except for the zero vector. A norm $\|\cdot\|$ must satisfy:</p>
@@ -333,7 +411,7 @@
         <img src="assets/norm-balls.png"
              alt="Comparison of L1, L2, and Infinity norm unit balls"
              style="max-width: 70%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
-        <figcaption><i>Figure 2.2:</i> The "unit ball" $\{x \mid \|x\| \le 1\}$ for the $\ell_1$ (diamond), $\ell_2$ (circle), and $\ell_\infty$ (square) norms.</figcaption>
+        <figcaption><i>Figure 3.2:</i> The "unit ball" $\{x \mid \|x\| \le 1\}$ for the $\ell_1$ (diamond), $\ell_2$ (circle), and $\ell_\infty$ (square) norms.</figcaption>
       </figure>
 
       <div class="widget-container" style="margin: 24px 0;">
@@ -476,11 +554,18 @@
     </section>
 
     <!-- SECTION 3: ORTHOGONALITY AND QR -->
-    <section class="card-v2" id="section-3">
-      <h2>3. Orthogonality and Orthonormal Bases</h2>
+    <section class="card-v2" id="section-4">
+      <h2>4. Orthogonality and Orthonormal Bases</h2>
 
       <h3>Orthonormal Sets</h3>
       <p>A set of vectors $q_1, \dots, q_k$ is <b>orthonormal</b> if its elements are mutually orthogonal and each has a norm of 1. Formally, $q_i^\top q_j = \delta_{ij}$, where $\delta_{ij}$ is the Kronecker delta (1 if $i=j$, 0 otherwise). A square matrix $Q$ with orthonormal columns is an <b>orthogonal matrix</b>, satisfying the important property $Q^\top Q = I$, which means $Q^{-1} = Q^\top$. Orthonormal bases are computationally desirable because they are numerically stable and simplify many calculations, such as projections.</p>
+
+      <h3>Angle Preservation and Orthogonal Matrices</h3>
+      <p>A linear map $A$ preserves angles if $\frac{\langle Ax, Ay \rangle}{\|Ax\|\|Ay\|} = \frac{\langle x, y \rangle}{\|x\|\|y\|}$ for all $x, y$.
+      A stronger condition is that $A$ preserves inner products: $\langle Ax, Ay \rangle = \langle x, y \rangle$.
+      <br>Using the adjoint property, $\langle x, A^\top A y \rangle = \langle x, y \rangle$ for all $x, y$, which implies $A^\top A = I$.
+      Thus, <b>matrices that preserve geometry (lengths and angles) are exactly the orthogonal matrices</b> (possibly scaled).</p>
+
 
       <h3>The Gram–Schmidt Process</h3>
       <p>The Gram-Schmidt process is an algorithm for constructing an orthonormal basis from a set of linearly independent vectors. Starting with a vector, it iteratively subtracts the components that lie in the direction of the previously processed vectors, leaving a new, orthogonal vector that is then normalized.
@@ -511,10 +596,10 @@
     </section>
 
     <!-- SECTION 4: PSD MATRICES -->
-    <section class="card-v2" id="section-4">
-      <h2>4. Positive Semidefinite Matrices</h2>
+    <section class="card-v2" id="section-5">
+      <h2>5. Positive Semidefinite Matrices</h2>
 
-      <h3>4.1 The Space of Symmetric Matrices ($\mathbb{S}^n$)</h3>
+      <h3>5.1 The Space of Symmetric Matrices ($\mathbb{S}^n$)</h3>
       <p>In convex optimization, we care deeply about the Hessian matrix $\nabla^2 f(x)$. By Schwarz's Theorem, if a function is twice continuously differentiable, its Hessian is symmetric. A matrix $A \in \mathbb{R}^{n \times n}$ is symmetric if $A = A^\top$. The set of such matrices is denoted $\mathbb{S}^n$.</p>
 
       <h4>The Spectral Theorem</h4>
@@ -526,7 +611,7 @@
       </ol>
       <p><b>Why this matters for convexity:</b> The "shape" of a multivariable function (bowl vs. saddle) is entirely determined by the signs of the eigenvalues of its Hessian.</p>
 
-      <h3>4.2 Positive Semidefinite (PSD) Matrices</h3>
+      <h3>5.2 Positive Semidefinite (PSD) Matrices</h3>
       <p>This is the single most important definition in the course. It is the matrix equivalent of a "non-negative number."</p>
 
       <h4>Definition A: The Variational Definition</h4>
@@ -537,6 +622,13 @@
       <h4>Definition B: The Eigenvalue Definition</h4>
       <p>A symmetric matrix $A \in \mathbb{S}^n$ is PSD if and only if all its eigenvalues are non-negative:</p>
       $$ \lambda_i(A) \ge 0 \quad \text{for all } i = 1, \dots, n $$
+
+      <h4>Factorization of PSD Matrices</h4>
+      <p>A symmetric matrix $A$ is PSD if and only if it can be written as a Gram matrix: $A = B^\top B$ for some $B$.
+      <br><i>Proof:</i> If $A \succeq 0$, spectral decomposition gives $A = Q \Lambda Q^\top = (Q \Lambda^{1/2}) (Q \Lambda^{1/2})^\top$. Let $B = (Q \Lambda^{1/2})^\top$.
+      Conversely, if $A = B^\top B$, then $x^\top A x = \|Bx\|_2^2 \ge 0$.
+      </p>
+
 
       <div class="proof-enhanced">
         <h4>Proof: Equivalence of Definitions</h4>
@@ -559,19 +651,19 @@
         </div>
       </div>
 
-      <h3>4.3 The Rayleigh Quotient and Eigenvalues</h3>
+      <h3>5.3 The Rayleigh Quotient and Eigenvalues</h3>
       <p>The <b>maximum eigenvalue</b> $\lambda_{\max}(A)$ can be defined as an optimization problem:</p>
       $$ \lambda_{\max}(A) = \sup_{x \neq 0} \frac{x^\top A x}{x^\top x} = \sup_{\|x\|_2 = 1} x^\top A x $$
       <p>This is the <b>Rayleigh Quotient</b>. This definition proves that $\lambda_{\max}(A)$ is a convex function of $A$. Notice that for a fixed $x$, the function $g(A) = x^\top A x$ is <b>linear</b> in $A$. Since $\lambda_{\max}(A)$ is the <b>pointwise supremum</b> of a family of linear functions (indexed by $x$), it is a convex function.</p>
 
-      <h3>4.4 The Schur Complement Lemma</h3>
+      <h3>5.4 The Schur Complement Lemma</h3>
       <p>A powerful tool for handling block matrices in optimization is the Schur Complement. It allows us to convert complicated nonlinear constraints into Linear Matrix Inequalities (LMIs) and provides a systematic way to check positive semidefiniteness.</p>
 
       <figure style="text-align: center;">
         <img src="assets/schur_complement_block.png"
              alt="Schur Complement Block Matrix Transformation Visualization"
              style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
-        <figcaption><i>Figure 4.3:</i> Visualization of the Schur complement process. Left: Original block matrix. Center: Elimination matrix. Right: Resulting block upper-triangular matrix where the top-left block has been transformed into the Schur complement.</figcaption>
+        <figcaption><i>Figure 5.3:</i> Visualization of the Schur complement process. Left: Original block matrix. Center: Elimination matrix. Right: Resulting block upper-triangular matrix where the top-left block has been transformed into the Schur complement.</figcaption>
       </figure>
 
       <div class="proof-enhanced">
@@ -624,14 +716,14 @@
         <img src="../../static/assets/topics/00-linear-algebra-primer/eigenvalues-psd.png"
              alt="Eigenvalue visualization for PSD matrices"
              style="max-width: 80%; height: auto; border: 1px solid var(--border); border-radius: 8px;" />
-        <figcaption><i>Figure 4.1:</i> Eigenvalues and positive semidefiniteness—the signs determine the matrix's curvature properties.</figcaption>
+        <figcaption><i>Figure 5.1:</i> Eigenvalues and positive semidefiniteness—the signs determine the matrix's curvature properties.</figcaption>
       </figure>
 
       <figure style="text-align: center;">
         <img src="../../static/assets/topics/00-linear-algebra-primer/eigenvectors.gif"
              alt="Animated eigenvector visualization"
              style="max-width: 70%; height: auto; border: 1px solid var(--border); border-radius: 8px;" />
-        <figcaption><i>Figure 4.2:</i> Eigenvectors in action—how matrices transform space along principal directions.</figcaption>
+        <figcaption><i>Figure 5.2:</i> Eigenvectors in action—how matrices transform space along principal directions.</figcaption>
       </figure>
 
       <div class="widget-container" style="margin: 24px 0;">
@@ -661,7 +753,7 @@
         <div id="widget-hessian-landscape" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <h3>4.5 The Loewner Order</h3>
+      <h3>5.5 The Loewner Order</h3>
       <p>For symmetric matrices $X, Y \in \mathbb{S}^n$, we write <b>$X \succeq Y$</b> if and only if $X - Y$ is <b>positive semidefinite (PSD)</b>, meaning:</p>
       $$
       v^\top (X - Y) v \ge 0 \quad \text{for all } v \in \mathbb{R}^n
@@ -688,8 +780,8 @@
     </section>
 
     <!-- SECTION 5: PROJECTIONS -->
-    <section class="card-v2" id="section-5">
-      <h2>5. Projections onto Subspaces and Affine Sets</h2>
+    <section class="card-v2" id="section-6">
+      <h2>6. Projections onto Subspaces and Affine Sets</h2>
 
       <h3>Orthogonal Projection onto a Subspace</h3>
       <p>Let $\mathcal{S} \subseteq \mathbb{R}^m$ be a subspace and $b \in \mathbb{R}^m$. The <b>orthogonal projection</b> $p \in \mathcal{S}$ of $b$ is the unique vector in $\mathcal{S}$ minimizing $\|b - p\|_2$. It is characterized by the <b>orthogonality condition</b>:
@@ -758,8 +850,8 @@
     </section>
 
     <!-- SECTION 6: LEAST SQUARES -->
-    <section class="card-v2" id="section-6">
-      <h2>6. The Method of Least Squares</h2>
+    <section class="card-v2" id="section-7">
+      <h2>7. The Method of Least Squares</h2>
 
       <h3>The Problem: Overdetermined Systems</h3>
       <p>Often in practice, we encounter a system of linear equations $Ax=b$ where there is no exact solution because the vector $b$ does not lie in the column space of $A$. This is common when $m > n$ (more equations than unknowns). The goal of least squares is to find the "best" approximate solution by minimizing the squared Euclidean norm of the residual vector $r = Ax-b$:
@@ -812,13 +904,13 @@
     </section>
 
     <!-- SECTION 7: QR, SVD, PSEUDOINVERSE (COMPREHENSIVE) -->
-    <section class="card-v2" id="section-7">
-      <h2>7. Advanced Factorizations: QR, SVD, Pseudoinverse, and Applications</h2>
+    <section class="card-v2" id="section-8">
+      <h2>8. Advanced Factorizations: QR, SVD, Pseudoinverse, and Applications</h2>
 
       <p><strong>Motivation:</strong> While Gaussian elimination and normal equations work in theory, numerical stability and efficiency demand better methods. The QR decomposition and Singular Value Decomposition (SVD) are standard tools in modern numerical linear algebra—providing robust, stable solutions to least squares, revealing matrix structure, and enabling dimensionality reduction and data compression.</p>
 
       <!-- 7.1 QR Decomposition -->
-      <h3>7.1 QR Decomposition (Orthogonal-Triangular Factorization)</h3>
+      <h3>8.1 QR Decomposition (Orthogonal-Triangular Factorization)</h3>
 
       <h4>Theorem: Existence of QR Decomposition</h4>
       <div class="proof-enhanced">
@@ -861,9 +953,9 @@
       <p><strong>Complexity:</strong> $O(mn^2)$ for computing QR, $O(n^2)$ for back substitution. For $m \gg n$, this is far more efficient than forming $A^\top A$ ($O(mn^2)$) and solving $A^\top A x = A^\top b$ ($O(n^3)$).</p>
 
       <!-- 7.2 Singular Value Decomposition -->
-      <h3>7.2 Singular Value Decomposition (SVD)</h3>
+      <h3>8.2 Singular Value Decomposition (SVD)</h3>
 
-      <h4>7.2.1 Definition and Existence</h4>
+      <h4>8.2.1 Definition and Existence</h4>
       <div class="proof-enhanced">
         <p><strong>Theorem (<a href="#" class="definition-link">SVD</a>):</strong> Every matrix $A \in \mathbb{R}^{m \times n}$ admits a factorization:
         $$ A = U \Sigma V^\top $$
@@ -890,7 +982,7 @@
         </div>
       </div>
 
-      <h4>7.2.2 Compact and Truncated SVD</h4>
+      <h4>8.2.2 Compact and Truncated SVD</h4>
       <p>When $m \gg n$ or $A$ has low rank $r \ll \min(m,n)$, we can use more efficient representations:</p>
       <ul>
         <li><strong>Full SVD:</strong> $A = U_{m \times m} \Sigma_{m \times n} V^\top_{n \times n}$ (standard form, $U$ and $V$ square)</li>
@@ -898,7 +990,7 @@
         <li><strong>Truncated SVD (rank-$k$ approximation):</strong> $A_k = U_k \Sigma_k V_k^\top = \sum_{i=1}^k \sigma_i u_i v_i^\top$, using only the top $k$ singular values ($k < r$). This is the <strong>best rank-$k$ approximation</strong> to $A$ in both Frobenius and spectral norms (Eckart-Young theorem).</li>
       </ul>
 
-      <h4>7.2.3 Geometric Interpretation</h4>
+      <h4>8.2.3 Geometric Interpretation</h4>
       <p>The SVD reveals how $A$ acts as a linear transformation:</p>
       <ol>
         <li><strong>$V^\top$:</strong> Rotates (and possibly reflects) input space, aligning with principal axes</li>
@@ -925,7 +1017,7 @@
         <p><b>Summary:</b> Every linear map is just a rotation, followed by a stretch, followed by another rotation. SVD gives you the coordinate systems ($V$ and $U$) in which the map is purely diagonal (a simple stretch).</p>
       </div>
 
-      <h4>7.2.4 SVD and Matrix Norms</h4>
+      <h4>8.2.4 SVD and Matrix Norms</h4>
       <p>Singular values determine all major matrix norms:</p>
       <ul>
         <li><strong>Spectral norm (2-norm):</strong> $\|A\|_2 = \sigma_1 = \sigma_{\max}(A)$ (largest singular value)</li>
@@ -933,7 +1025,17 @@
         <li><strong>Nuclear norm (trace norm):</strong> $\|A\|_* = \sum_{i=1}^r \sigma_i$ (sum of singular values, convex envelope of rank)</li>
       </ul>
 
-      <h4>7.2.5 The Eckart-Young-Mirsky Theorem</h4>
+      <h4>Derivation: Operator Norm and Singular Values</h4>
+      <p>The spectral norm $\|A\|_2$ has a deep connection to the singular values.
+      $$ \|A\|_2 = \max_{\|x\|_2=1} \|Ax\|_2 $$
+      Consider the squared norm: $\|Ax\|_2^2 = \langle Ax, Ax \rangle = \langle x, A^\top A x \rangle$.
+      This is a quadratic form with the symmetric PSD matrix $A^\top A$. The maximum value of the Rayleigh quotient $\frac{x^\top M x}{x^\top x}$ is the maximum eigenvalue $\lambda_{\max}(M)$.
+      Therefore:
+      $$ \|A\|_2^2 = \lambda_{\max}(A^\top A) = \sigma_1^2 \implies \|A\|_2 = \sigma_1 $$
+      This confirms that the operator norm is the largest singular value, representing the maximum stretch factor of the matrix.
+      </p>
+
+      <h4>8.2.5 The Eckart-Young-Mirsky Theorem</h4>
       <div class="proof-enhanced">
         <p><strong>Theorem (Optimal Low-Rank Approximation):</strong> Let $A = U \Sigma V^\top$ be the SVD of $A \in \mathbb{R}^{m \times n}$ with rank $r$. For any $k < r$, the best rank-$k$ approximation to $A$ in the Frobenius norm is:
         $$ A_k = \sum_{i=1}^k \sigma_i u_i v_i^\top = U_k \Sigma_k V_k^\top $$
@@ -964,7 +1066,7 @@
         <li><strong>Recommender systems:</strong> Matrix completion via low-rank factorization (Netflix Prize)</li>
       </ul>
 
-      <h4>7.2.6 Connection to Eigendecomposition</h4>
+      <h4>8.2.6 Connection to Eigendecomposition</h4>
       <p>For <strong>symmetric</strong> $A = A^\top$, the SVD reduces to the spectral theorem:</p>
       <ul>
         <li>Eigenvalues $\lambda_i$ and singular values $\sigma_i$ are related: $\sigma_i = |\lambda_i|$</li>
@@ -978,15 +1080,15 @@
       </ul>
 
       <!-- 7.3 Pseudoinverse (Moore-Penrose Inverse) -->
-      <h3>7.3 The Pseudoinverse (Moore-Penrose Inverse)</h3>
+      <h3>8.3 The Pseudoinverse (Moore-Penrose Inverse)</h3>
 
-      <h4>7.3.1 Definition via SVD</h4>
+      <h4>8.3.1 Definition via SVD</h4>
       <p>For $A = U \Sigma V^\top$ with singular values $\sigma_1, \dots, \sigma_r > 0$, the <strong>pseudoinverse</strong> is:
       $$ A^+ = V \Sigma^+ U^\top $$
       where $\Sigma^+ \in \mathbb{R}^{n \times m}$ is formed by taking the reciprocal of nonzero singular values and transposing:
       $$ \Sigma^+ = \begin{bmatrix} \text{diag}(1/\sigma_1, \dots, 1/\sigma_r) & 0 \\ 0 & 0 \end{bmatrix}^\top $$</p>
 
-      <h4>7.3.2 Moore-Penrose Axioms</h4>
+      <h4>8.3.2 Moore-Penrose Axioms</h4>
       <p>The pseudoinverse $A^+$ is the <strong>unique</strong> matrix satisfying:</p>
       <ol>
         <li>$A A^+ A = A$</li>
@@ -996,7 +1098,7 @@
       </ol>
       <p>These axioms uniquely define $A^+$ without reference to SVD.</p>
 
-      <h4>7.3.3 Properties and Applications</h4>
+      <h4>8.3.3 Properties and Applications</h4>
       <ul>
         <li><strong>Least squares:</strong> $x^+ = A^+ b$ is the <strong>minimum-norm least-squares solution</strong>: it minimizes $\|Ax - b\|_2$ over all $x$, and among all minimizers, it has the smallest $\|x\|_2$.</li>
         <li><strong>Inverse when invertible:</strong> If $A$ is square and invertible, $A^+ = A^{-1}$.</li>
@@ -1005,7 +1107,7 @@
       </ul>
 
       <!-- 7.4 Principal Component Analysis (PCA) -->
-      <h3>7.4 Principal Component Analysis (PCA) via SVD</h3>
+      <h3>8.4 Principal Component Analysis (PCA) via SVD</h3>
 
       <p><strong>Problem:</strong> Given data $X \in \mathbb{R}^{n \times d}$ ($n$ samples, $d$ features), find a $k$-dimensional subspace that captures maximum variance.</p>
 
@@ -1029,21 +1131,21 @@
       </ul>
 
       <!-- 7.5 Condition Numbers and Perturbation Theory -->
-      <h3>7.5 Condition Numbers and Numerical Stability</h3>
+      <h3>8.5 Condition Numbers and Numerical Stability</h3>
 
-      <h4>7.5.1 Definition</h4>
+      <h4>8.5.1 Definition</h4>
       <p>The <strong>condition number</strong> of a matrix $A \in \mathbb{R}^{m \times n}$ with $\text{rank}(A) = n$ is:
       $$ \kappa(A) = \frac{\sigma_{\max}(A)}{\sigma_{\min}(A)} = \frac{\sigma_1}{\sigma_n} $$
       For square nonsingular $A$, this is equivalent to $\kappa(A) = \|A\|_2 \|A^{-1}\|_2$.</p>
 
-      <h4>7.5.2 Interpretation</h4>
+      <h4>8.5.2 Interpretation</h4>
       <p>The condition number measures how <strong>sensitive</strong> the solution of $Ax = b$ is to perturbations in $A$ or $b$:</p>
       <ul>
         <li><strong>Well-conditioned ($\kappa \approx 1$):</strong> $\sigma_1 \approx \sigma_n$; matrix is "balanced"; small changes in input → small changes in output</li>
         <li><strong>Ill-conditioned ($\kappa \gg 1$):</strong> $\sigma_1 \gg \sigma_n$; matrix is nearly singular; small changes in input → large changes in output</li>
       </ul>
 
-      <h4>7.5.3 Perturbation Bound</h4>
+      <h4>8.5.3 Perturbation Bound</h4>
       <div class="proof-enhanced">
         <p><strong>Theorem (Relative Error Bound):</strong> Let $Ax = b$ and $A(x + \Delta x) = b + \Delta b$. If $\|\Delta b\|_2 / \|b\|_2$ is small, then:
         $$ \frac{\|\Delta x\|_2}{\|x\|_2} \le \kappa(A) \frac{\|\Delta b\|_2}{\|b\|_2} $$</p>
@@ -1051,15 +1153,15 @@
         <p><strong>Implication:</strong> A perturbation of size $\epsilon$ in $b$ can cause a perturbation of size $\kappa(A) \cdot \epsilon$ in $x$. If $\kappa(A) = 10^{10}$ and we have machine precision $\epsilon_{\text{mach}} \approx 10^{-16}$, we lose $\log_{10}(\kappa) = 10$ digits of precision!</p>
       </div>
 
-      <h4>7.5.4 Why Normal Equations Fail</h4>
+      <h4>8.5.4 Why Normal Equations Fail</h4>
       <p>The normal equations $A^\top A x = A^\top b$ square the condition number:
       $$ \kappa(A^\top A) = \frac{\sigma_1^2}{\sigma_n^2} = \kappa(A)^2 $$
       If $A$ is already ill-conditioned, forming $A^\top A$ makes it catastrophically worse. <strong>This is why QR and SVD are preferred.</strong></p>
 
       <!-- 7.6 Numerical Algorithms -->
-      <h3>7.6 Numerical Algorithms for SVD</h3>
+      <h3>8.6 Numerical Algorithms for SVD</h3>
 
-      <h4>7.6.1 Golub-Kahan-Reinsch Algorithm</h4>
+      <h4>8.6.1 Golub-Kahan-Reinsch Algorithm</h4>
       <p>The standard algorithm for computing SVD:</p>
       <ol>
         <li><strong>Bidiagonalization:</strong> Reduce $A$ to bidiagonal form $B$ using Householder reflections: $A = U_1 B V_1^\top$ (cost: $O(mn^2)$)</li>
@@ -1068,7 +1170,7 @@
       </ol>
       <p><strong>Total complexity:</strong> $O(mn^2)$ for $m \ge n$. For large-scale problems, randomized SVD algorithms achieve $O(mn \log k)$ for rank-$k$ approximation.</p>
 
-      <h4>7.6.2 Randomized SVD (for Large Matrices)</h4>
+      <h4>8.6.2 Randomized SVD (for Large Matrices)</h4>
       <p>For massive matrices where exact SVD is prohibitive, <strong>randomized algorithms</strong> provide fast, accurate rank-$k$ approximations:</p>
       <ol>
         <li>Sample $k + p$ random vectors and form $Q$ via QR of $A \Omega$ ($\Omega$ random)</li>
@@ -1103,16 +1205,16 @@
       </div>
 
       <!-- 7.7 Projection Revisited -->
-      <h3>7.7 Projection Revisited (with SVD)</h3>
+      <h3>8.7 Projection Revisited (with SVD)</h3>
       <p>Using the SVD $A = U \Sigma V^\top$ with rank $r$, the projector onto $\mathcal{R}(A)$ is:
       $$ P_{\mathcal{R}(A)} = U_r U_r^\top = A A^+ $$
       where $U_r$ consists of the first $r$ columns of $U$ (corresponding to nonzero singular values). Similarly:
       $$ P_{\mathcal{R}(A^\top)} = V_r V_r^\top = A^+ A $$
       Both are symmetric ($P^\top = P$) and idempotent ($P^2 = P$), and they send any vector to its closest point in the respective subspace.</p>
 
-      <h3>7.8 Worked Examples</h3>
+      <h3>8.8 Worked Examples</h3>
 
-      <h4>Example 7.1: Computing SVD by Hand (2×2 Matrix)</h4>
+      <h4>Example 8.1: Computing SVD by Hand (2×2 Matrix)</h4>
       <div class="proof-enhanced">
         <p><strong>Problem:</strong> Compute the SVD of $A = \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix}$.</p>
 
@@ -1163,7 +1265,7 @@
         </div>
       </div>
 
-      <h4>Example 7.2: Low-Rank Approximation for Data Compression</h4>
+      <h4>Example 8.2: Low-Rank Approximation for Data Compression</h4>
       <div class="proof-enhanced">
         <p><strong>Problem:</strong> Given data matrix $X \in \mathbb{R}^{100 \times 50}$ (100 samples, 50 features) with $\text{rank}(X) = 50$, compute a rank-10 approximation that retains 90% of the "energy" (Frobenius norm squared).</p>
 
@@ -1207,7 +1309,7 @@
         </div>
       </div>
 
-      <h4>Example 7.3: Solving Rank-Deficient Least Squares</h4>
+      <h4>Example 8.3: Solving Rank-Deficient Least Squares</h4>
       <div class="proof-enhanced">
         <p><strong>Problem:</strong> Solve $\min \|Ax - b\|_2$ where $A = \begin{bmatrix} 1 & 2 & 3 \\ 2 & 4 & 6 \end{bmatrix}$ (rank 1) and $b = \begin{bmatrix} 1 \\ 2 \end{bmatrix}$.</p>
 
@@ -1250,7 +1352,7 @@
         </div>
       </div>
 
-      <h4>Example 7.4: Condition Number Analysis</h4>
+      <h4>Example 8.4: Condition Number Analysis</h4>
       <div class="proof-enhanced">
         <p><strong>Problem:</strong> Compare the condition numbers of $A$ and $A^\top A$ for $A = \begin{bmatrix} 1 & 0 \\ 0 & 0.01 \\ 0 & 0 \end{bmatrix}$.</p>
 
@@ -1285,9 +1387,9 @@
       </div>
 
       <!-- 7.10 Applications to Optimization -->
-      <h3>7.10 SVD Applications in Convex Optimization</h3>
+      <h3>8.10 SVD Applications in Convex Optimization</h3>
 
-      <h4>7.10.1 Preconditioning Gradient Descent</h4>
+      <h4>8.10.1 Preconditioning Gradient Descent</h4>
       <p>Consider minimizing a quadratic $f(x) = \frac{1}{2}x^\top A x - b^\top x$ where $A = U \Sigma^2 U^\top \succ 0$. Standard gradient descent has convergence rate dependent on $\kappa(A)$:</p>
       $$
       \left\|x^{(k)} - x^*\right\|_A \le \left(\frac{\kappa(A) - 1}{\kappa(A) + 1}\right)^k \|x^{(0)} - x^*\|_A
@@ -1301,14 +1403,14 @@
       </ol>
       <p>This is the essence of <strong>Newton's method</strong>: use second-order information (Hessian = $A$) to precondition.</p>
 
-      <h4>7.10.2 Total Least Squares (TLS)</h4>
+      <h4>8.10.2 Total Least Squares (TLS)</h4>
       <p>Standard least squares minimizes $\|Ax - b\|_2$ assuming $A$ is exact and $b$ is noisy. <strong>Total Least Squares</strong> accounts for errors in both:</p>
       $$
       \min_{\Delta A, \Delta b, x} \left\|\begin{bmatrix} \Delta A & \Delta b \end{bmatrix}\right\|_F \quad \text{s.t.} \quad (A + \Delta A)x = b + \Delta b
       $$
       <p><strong>Solution via SVD:</strong> Form augmented matrix $[A \mid b]$ and compute SVD. The TLS solution is given by the right singular vector corresponding to the smallest singular value. This is used in errors-in-variables regression.</p>
 
-      <h4>7.10.3 Matrix Completion and Recommender Systems</h4>
+      <h4>8.10.3 Matrix Completion and Recommender Systems</h4>
       <p>The <strong>Netflix Prize</strong> problem: Given a sparse ratings matrix $R \in \mathbb{R}^{m \times n}$ (users × movies) with only $\sim$1% entries observed, recover the full matrix. Assumption: $R$ is low-rank (users have a few latent preferences).</p>
       <p><strong>Formulation:</strong></p>
       $$
@@ -1320,14 +1422,14 @@
       $$
       <p>This is a <strong>semidefinite program</strong> (SDP), solvable via convex optimization. The nuclear norm promotes low-rank solutions.</p>
 
-      <h4>7.10.4 Robust PCA: Separating Low-Rank and Sparse Components</h4>
+      <h4>8.10.4 Robust PCA: Separating Low-Rank and Sparse Components</h4>
       <p>Given data $M = L + S$ where $L$ is low-rank (signal) and $S$ is sparse (outliers/noise), recover both:</p>
       $$
       \min_{L, S} \|L\|_* + \lambda \|S\|_1 \quad \text{s.t.} \quad L + S = M
       $$
       <p>This convex formulation (Principal Component Pursuit) provably recovers $L$ and $S$ under mild conditions. Applications: video surveillance (background = low-rank, foreground = sparse), data cleaning, anomaly detection.</p>
 
-      <h4>7.10.5 Dimensionality Reduction for Large-Scale Optimization</h4>
+      <h4>8.10.5 Dimensionality Reduction for Large-Scale Optimization</h4>
       <p>For problems with $n \gg 1$ variables but low effective dimension (e.g., $x$ lies near a $k$-dimensional subspace), use SVD to reduce dimension:</p>
       <ol>
         <li>Collect samples $x^{(1)}, \dots, x^{(m)}$ from the feasible set or initialization</li>
@@ -1339,9 +1441,9 @@
       <p>This is used in <strong>active subspace methods</strong> for high-dimensional inverse problems and PDE-constrained optimization.</p>
 
       <!-- 7.11 Computational Considerations -->
-      <h3>7.11 Computational Considerations and Software</h3>
+      <h3>8.11 Computational Considerations and Software</h3>
 
-      <h4>7.11.1 When NOT to Compute Full SVD</h4>
+      <h4>8.11.1 When NOT to Compute Full SVD</h4>
       <p>For a matrix $A \in \mathbb{R}^{m \times n}$ with $m, n \approx 10^6$, full SVD costs $O(mn^2) \approx 10^{18}$ operations—infeasible! Alternatives:</p>
       <ul>
         <li><strong>Truncated SVD:</strong> Use iterative methods (Lanczos, Arnoldi) to compute only top $k$ singular values/vectors. Cost: $O(mnk)$ with $k \ll n$. Libraries: ARPACK, PROPACK.</li>
@@ -1349,7 +1451,7 @@
         <li><strong>Streaming SVD:</strong> For data that doesn't fit in memory, update SVD incrementally as new rows arrive.</li>
       </ul>
 
-      <h4>7.11.2 Numerical Stability: Avoiding $A^\top A$</h4>
+      <h4>8.11.2 Numerical Stability: Avoiding $A^\top A$</h4>
       <p><strong>Bad practice (loses precision):</strong></p>
       <pre style="background: var(--panel); padding: 12px; border-radius: 4px; overflow-x: auto;">
 # Python / NumPy example (DON'T DO THIS for ill-conditioned A!)
@@ -1364,7 +1466,7 @@ sigma = np.sqrt(eigenvalues)  # numerical errors amplified!</pre>
 import numpy as np
 U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</pre>
 
-      <h4>7.11.3 Software Recommendations</h4>
+      <h4>8.11.3 Software Recommendations</h4>
       <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
         <thead>
           <tr style="background: var(--panel); border-bottom: 2px solid var(--border);">
@@ -1408,7 +1510,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </tbody>
       </table>
 
-      <h4>7.11.4 Sparse vs Dense SVD</h4>
+      <h4>8.11.4 Sparse vs Dense SVD</h4>
       <p><strong>Sparse matrices:</strong> If $A$ has mostly zeros (e.g., graph Laplacians, finite element matrices), use specialized sparse SVD algorithms that exploit sparsity. Never convert to dense!</p>
       <p><strong>Structured matrices:</strong> For Toeplitz, circulant, or FFT-structured matrices, fast $O(n \log n)$ multiplication enables iterative SVD via Krylov methods.</p>
 
@@ -1416,8 +1518,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- SECTION 8: VARIANTS -->
-    <section class="card-v2" id="section-8">
-      <h2>8. Variants You Will Need</h2>
+    <section class="card-v2" id="section-9">
+      <h2>9. Variants You Will Need</h2>
 
       <h3>(a) Weighted Least Squares (WLS)</h3>
       <p>Given SPD weight $W \in \mathbb{R}^{m \times m}$:
@@ -1433,8 +1535,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
 
     <!-- SECTION 9: IMPLEMENTATION GUIDE -->
-    <section class="card-v2" id="section-9">
-      <h2>9. Implementation Mini-Guide (What to Actually Do in Code)</h2>
+    <section class="card-v2" id="section-10">
+      <h2>10. Implementation Mini-Guide (What to Actually Do in Code)</h2>
 
       <ul>
         <li>For standard, well-conditioned problems, <b>QR decomposition</b> is the recommended method. It is numerically stable and computationally efficient.</li>
@@ -1446,8 +1548,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- SECTION 10: SANITY CHECKLIST -->
-    <section class="card-v2" id="section-10">
-      <h2>10. Sanity Checklist (What to Remember in Practice)</h2>
+    <section class="card-v2" id="section-11">
+      <h2>11. Sanity Checklist (What to Remember in Practice)</h2>
 
       <ul>
         <li>Always check the <b>dimensions</b> of your matrices and vectors.</li>
@@ -1460,8 +1562,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- SECTION 11: QUICK REFERENCE -->
-    <section class="card-v2" id="section-11">
-      <h2>11. Key Formulas</h2>
+    <section class="card-v2" id="section-12">
+      <h2>12. Key Formulas</h2>
 
       <ul>
         <li><b>Normal Equations:</b> $A^\top A x^\star = A^\top b$</li>
@@ -1473,8 +1575,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- SECTION 12: EXERCISES -->
-    <section class="card-v2" id="section-12">
-      <h2><i data-feather="edit-3"></i> 12. Exercises</h2>
+    <section class="card-v2" id="section-13">
+      <h2><i data-feather="edit-3"></i> 13. Exercises</h2>
 
       <h3>P0.1 — Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
@@ -1895,8 +1997,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- SECTION 13: SUMMARY -->
-    <section class="card-v2" id="summary">
-      <h2>13. Summary</h2>
+    <section class="card-v2" id="section-14">
+      <h2>14. Summary</h2>
 
       <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical background necessary for optimization theory.</p>
 
@@ -1937,8 +2039,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- READINGS -->
-    <section class="card-v2" id="readings">
-      <h2>14. Readings & Resources</h2>
+    <section class="card-v2" id="section-15">
+      <h2>15. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, <em>Convex Optimization</em>, Appendix A.</li>
         <li><strong>Video Resource:</strong> Gilbert Strang's "The Fundamental Theorem of Linear Algebra" (MIT OpenCourseWare)</li>
