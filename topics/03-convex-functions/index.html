@@ -525,12 +525,36 @@
         </div>
 
         <h4>4.4.2 Hessian Condition</h4>
-        <p>Using the chain rule, $\nabla^2 \log f(x) = \frac{1}{f(x)}\nabla^2 f(x) - \frac{1}{f(x)^2}\nabla f(x)\nabla f(x)^\top$.</p>
-        <p>Thus $f$ is log-concave if and only if:</p>
-        $$ f(x) \nabla^2 f(x) \preceq \nabla f(x) \nabla f(x)^\top $$
-        <p>(For log-convexity, the inequality is reversed).</p>
+        <p>Assume $f > 0$ and $f$ is twice differentiable. We derive the condition for log-concavity.</p>
+        <div class="proof-enhanced">
+          <h4>Derivation</h4>
+          <p>Let $g(x) = \log f(x)$. By the chain rule:
+          $$ \nabla g(x) = \frac{\nabla f(x)}{f(x)} $$
+          The Hessian of $g$ is:
+          $$ \nabla^2 g(x) = \frac{f(x)\nabla^2 f(x) - \nabla f(x)\nabla f(x)^\top}{f(x)^2} $$
+          For $f$ to be log-concave, we require $\nabla^2 g(x) \preceq 0$ (negative semidefinite). Since $f(x)^2 > 0$, this is equivalent to the numerator being negative semidefinite:
+          $$ f(x)\nabla^2 f(x) - \nabla f(x)\nabla f(x)^\top \preceq 0 $$
+          Rearranging terms yields the condition:
+          $$ \boxed{ f(x) \nabla^2 f(x) \preceq \nabla f(x) \nabla f(x)^\top } $$
+          For log-convexity, the inequality is reversed.</p>
+        </div>
 
-        <h4>4.4.3 Integration Preserves Log-Concavity</h4>
+        <h4>4.4.3 Algebra of Log-Concavity</h4>
+        <p>Log-concavity is preserved under multiplication, but not addition.</p>
+
+        <div class="theorem-box">
+          <h4>Product Rule</h4>
+          <p>If $f_1, \dots, f_k$ are log-concave, their product $F(x) = \prod f_i(x)$ is log-concave.</p>
+          <p><b>Proof:</b> $\log F(x) = \sum \log f_i(x)$. Since each $\log f_i$ is concave, their sum is concave. Thus $F$ is log-concave.</p>
+        </div>
+
+        <div class="insight">
+          <h4>Summation Warning</h4>
+          <p>The sum of log-concave functions is <b>not necessarily</b> log-concave. (Contrast this with ordinary convexity, where sums are safe).
+          <br><i>Example:</i> Two separated Gaussian bumps. Their sum has two modes (peaks) with a valley in between. The logarithm of this sum will have a non-concave "dip" in the valley.</p>
+        </div>
+
+        <h4>4.4.4 Integration Preserves Log-Concavity</h4>
         <div class="theorem-box">
           <h4>Theorem (Prékopa)</h4>
           <p>If $f(x, y)$ is log-concave, then the marginal function $g(x) = \int f(x, y) dy$ is log-concave.</p>
@@ -806,20 +830,49 @@
           </ul>
 
           <div class="proof-enhanced">
-            <h4>Differential View (Intuition)</h4>
-            <p>For $n=1$, the chain rule gives the second derivative:</p>
-            $$ f''(x) = \underbrace{h''(g(x)) [g'(x)]^2}_{\ge 0 \text{ by } h \text{ convex}} + \underbrace{h'(g(x)) g''(x)}_{\text{sign depends on rule}} $$
-            <ul>
-              <li>If $g$ convex ($g'' \ge 0$) and $h$ increasing ($h' \ge 0$), the second term is $\ge 0$.</li>
-              <li>If $g$ concave ($g'' \le 0$) and $h$ decreasing ($h' \le 0$), the product is $(-)(-) \ge 0$.</li>
-            </ul>
-            <p>This confirms the rule matches the condition $f''(x) \ge 0$.</p>
+            <h4>Rigorous Proof (Convex + Non-decreasing Case)</h4>
+            <p>We prove the case where each $g_i$ is convex and $h$ is convex and non-decreasing in each coordinate.</p>
+            <div class="proof-step">
+              <strong>Step 1: Vector Jensen Inequality.</strong>
+              Since each $g_i$ is convex, for $\theta \in [0,1]$:
+              $$ g(\theta x + (1-\theta)y) \le \theta g(x) + (1-\theta)g(y) \quad \text{(componentwise)} $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Monotonicity.</strong>
+              Since $h$ is non-decreasing in every coordinate, applying it preserves the inequality:
+              $$ h(g(\theta x + (1-\theta)y)) \le h(\theta g(x) + (1-\theta)g(y)) $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Convexity of Outer Function.</strong>
+              By convexity of $h$:
+              $$ h(\theta g(x) + (1-\theta)g(y)) \le \theta h(g(x)) + (1-\theta) h(g(y)) $$
+            </div>
+            <div class="proof-step">
+              <strong>Conclusion.</strong> Combining these:
+              $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) $$
+            </div>
           </div>
         </div>
 
         <div class="example">
-          <h4>Example: Geometric Mean</h4>
-          <p>The function $f(x) = (\prod_{i=1}^k g_i(x))^{1/k}$ is concave if all $g_i(x)$ are non-negative and concave. (Primitive: Geometric mean is concave and non-decreasing).</p>
+          <h4>Example 1: Sum of Logs (Concave)</h4>
+          <p>Let $u(x) = \sum_{i=1}^m \log g_i(x)$ where each $g_i$ is concave and positive.</p>
+          <ul>
+            <li>Inner map: $g(x) = (g_1(x), \dots, g_m(x))$ is concave.</li>
+            <li>Outer map: $h(y) = \sum \log y_i$. Since $\log$ is concave and increasing, $h$ is concave and increasing.</li>
+            <li>Result: $u$ is concave.</li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h4>Example 2: Log-Sum-Exp of Convex Functions</h4>
+          <p>Let $f(x) = \log\left(\sum_{i=1}^m \exp(g_i(x))\right)$ where each $g_i$ is convex.</p>
+          <ul>
+            <li>Inner map: $g(x)$ is convex.</li>
+            <li>Outer map: $h(y) = \log(\sum e^{y_i})$ (Log-Sum-Exp).</li>
+            <li>Properties of $h$: It is convex and <b>non-decreasing</b> in each argument (derivative is softmax probability > 0).</li>
+            <li>Result: $f$ is convex.</li>
+          </ul>
         </div>
 
         <h3>5.6 Perspective Function</h3>
@@ -856,6 +909,13 @@
             $$ \bar{t} f\left(\frac{\bar{x}}{\bar{t}}\right) \le \bar{t}\mu f\left(\frac{x_1}{t_1}\right) + \bar{t}(1-\mu) f\left(\frac{x_2}{t_2}\right) $$
             $$ g(\bar{x}, \bar{t}) \le \theta t_1 f\left(\frac{x_1}{t_1}\right) + (1-\theta)t_2 f\left(\frac{x_2}{t_2}\right) = \theta g(x_1, t_1) + (1-\theta) g(x_2, t_2) $$
           </div>
+        </div>
+
+        <div class="example">
+          <h4>Example: Relative Entropy</h4>
+          <p>Let $f(u) = -\log u$, which is convex. Its perspective is:
+          $$ g(x, t) = t f(x/t) = -t \log(x/t) = t \log t - t \log x $$
+          This is related to the relative entropy function $x \log(x/y)$, which is jointly convex.</p>
         </div>
 
         <div class="example">
@@ -1246,30 +1306,74 @@
         <h3>8.4 Examples in Detail</h3>
 
         <div class="example">
-          <h4>Example 1: Linear-Fractional Function</h4>
+          <h4>Example 1: $\sqrt{|x|}$ (Quasiconvex)</h4>
+          <p>The function $f(x) = \sqrt{|x|}$ is defined on $\mathbb{R}$.
+          <br>Sublevel sets $S_\alpha = \{x \mid \sqrt{|x|} \le \alpha\}$.
+          <br>If $\alpha < 0$, $S_\alpha = \emptyset$.
+          <br>If $\alpha \ge 0$, $|x| \le \alpha^2 \iff -\alpha^2 \le x \le \alpha^2$, which is the interval $[-\alpha^2, \alpha^2]$.
+          <br>Since intervals are convex, $f$ is quasiconvex. It is clearly not convex (bell-shaped near 0).</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 2: Ceiling Function (Quasilinear)</h4>
+          <p>Let $f(x) = \lceil x \rceil$.
+          <br><b>Sublevel sets:</b> $\lceil x \rceil \le \alpha \iff x \le \lfloor \alpha \rfloor$. $S_\alpha = (-\infty, \lfloor \alpha \rfloor]$, which is convex.
+          <br><b>Superlevel sets:</b> $\lceil x \rceil \ge \alpha \iff x > \lceil \alpha \rceil - 1$. This is also a convex interval.
+          <br>Thus, the ceiling function is quasilinear (monotone).</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 3: Logarithm (Quasilinear)</h4>
+          <p>Let $f(x) = \log x$ on $\mathbb{R}_{++}$.
+          <br>Sublevel sets: $\log x \le \alpha \implies x \le e^\alpha$. Interval $(0, e^\alpha]$.
+          <br>Superlevel sets: $\log x \ge \alpha \implies x \ge e^\alpha$. Interval $[e^\alpha, \infty)$.
+          <br>Both are convex, so $\log x$ is quasilinear.</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 4: Product $x_1 x_2$ (Quasiconcave)</h4>
+          <p>Let $f(x) = x_1 x_2$ on $\mathbb{R}_{++}^2$.
+          <br>Superlevel sets: $x_1 x_2 \ge \alpha$ (for $\alpha > 0$).
+          <br>Take logs: $\log x_1 + \log x_2 \ge \log \alpha$.
+          <br>Since $\log$ is a monotonic transformation and the set $\{(y_1, y_2) \mid y_1 + y_2 \ge C\}$ is convex, the original set is convex. Thus $f$ is quasiconcave.</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 5: Linear-Fractional Function</h4>
           <p>The function $f(x) = \frac{a^\top x + b}{c^\top x + d}$ on $\{x \mid c^\top x + d > 0\}$ is quasilinear.</p>
-          <p><i>Proof:</i> The sublevel set $S_\alpha = \{x \mid \frac{a^\top x + b}{c^\top x + d} \le \alpha\}$ is equivalent to the intersection of two halfspaces: $(a - \alpha c)^\top x + (b - \alpha d) \le 0$ and $c^\top x + d > 0$. The intersection of convex sets is convex.</p>
+          <p><i>Proof:</i> The sublevel set $S_\alpha = \{x \mid \frac{a^\top x + b}{c^\top x + d} \le \alpha\}$ is equivalent to the intersection of two halfspaces: $(a - \alpha c)^\top x + (b - \alpha d) \le 0$ and $c^\top x + d > 0$. The intersection of convex sets is convex. Similarly for superlevel sets.</p>
         </div>
 
         <div class="example">
-          <h4>Example 2: Distance Ratio</h4>
+          <h4>Example 6: Distance Ratio</h4>
           <p>The function $f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ on $\{x \mid \|x-a\|_2 \le \|x-b\|_2\}$ is quasiconvex.</p>
-          <p><i>Proof:</i> The condition $f(x) \le \tau$ becomes $\|x-a\|_2 \le \tau \|x-b\|_2$. For $\tau \ge 1$, this condition defines a convex set (related to Second Order Cones).</p>
-        </div>
-
-        <div class="example">
-          <h4>Example 3: Internal Rate of Return (IRR)</h4>
-          <p>Consider a cash flow $x = (x_0, \dots, x_n)$ with $x_0 < 0$ and $\sum x_i > 0$. The <b>Internal Rate of Return</b> $\text{IRR}(x)$ is the interest rate $r$ such that the present value is zero: $\sum x_i (1+r)^{-i} = 0$.</p>
-          <p>We claim $\text{IRR}(x)$ is a <b>quasiconcave</b> function of the cash flow vector $x$.</p>
           <div class="proof-enhanced">
-            <h4>Proof</h4>
-            <p>The superlevel set $\{x \mid \text{IRR}(x) \ge R\}$ consists of cash flows whose present value at rate $R$ is non-negative (assuming standard investment profile). This condition is linear in $x$:
-            $$ \sum_{i=0}^n x_i (1+R)^{-i} \ge 0 $$
-            Since the superlevel sets are halfspaces (convex), the function is quasiconcave.</p>
+            <h4>Detailed Check</h4>
+            <p>Condition: $\frac{\|x-a\|_2}{\|x-b\|_2} \le \alpha$. Squaring gives $\|x-a\|_2^2 \le \alpha^2 \|x-b\|_2^2$.
+            $$ x^\top x - 2a^\top x + a^\top a \le \alpha^2(x^\top x - 2b^\top x + b^\top b) $$
+            $$ (1-\alpha^2)x^\top x - 2(a - \alpha^2 b)^\top x + (a^\top a - \alpha^2 b^\top b) \le 0 $$
+            For $\alpha \le 1$ (consistent with domain), $1-\alpha^2 \ge 0$, so this is a convex quadratic constraint. Thus the sublevel set is convex.</p>
           </div>
         </div>
 
-        <h3>8.4 Quasi-Convex Optimization</h3>
+        <div class="example">
+          <h4>Example 7: Internal Rate of Return (IRR)</h4>
+          <p>Consider a cash flow $x = (x_0, \dots, x_n)$ with $x_0 < 0$ and $\sum x_i > 0$. The <b>Internal Rate of Return</b> $\text{IRR}(x)$ is the smallest $r \ge 0$ such that $\sum x_i (1+r)^{-i} = 0$.</p>
+          <p>We claim $\text{IRR}(x)$ is a <b>quasiconcave</b> function of the cash flow vector $x$.</p>
+          <div class="proof-enhanced">
+            <h4>Rigorous Proof</h4>
+            <p>We want to show the superlevel set $S_R = \{x \mid \text{IRR}(x) \ge R\}$ is convex.
+            <br>By definition, IRR is the root. Since the Present Value $PV(r) = \sum x_i (1+r)^{-i}$ is decreasing in $r$ (for typical cash flows), having a root at $r^* \ge R$ implies $PV(r) \ge 0$ for all $r \in [0, R]$.
+            $$ \text{IRR}(x) \ge R \iff \sum_{i=0}^n x_i (1+r)^{-i} \ge 0 \quad \forall r \in [0, R) $$
+            This is an intersection of infinitely many linear inequalities (halfspaces) indexed by $r$. Since an intersection of convex sets is convex, $S_R$ is convex. Thus IRR is quasiconcave.</p>
+          </div>
+        </div>
+
+        <h3>8.5 Properties of Quasiconvex Functions</h3>
+        <p><b>Warning:</b> Sums of quasiconvex functions are <b>not</b> necessarily quasiconvex.
+        <br><i>Counterexample:</i> Let $f_1$ and $f_2$ be quasiconvex "staircase" functions. While individually their sublevel sets are convex intervals, their sum can create a non-convex "bump" (a local minimum followed by a local maximum). Unlike convexity, quasiconvexity is not preserved under addition.</p>
+
+        <h3>8.6 Quasi-Convex Optimization</h3>
         <p>Minimizing a quasi-convex function over a convex set is a <b>quasi-convex optimization problem</b>. These are harder than convex problems (local minima can exist), but still more tractable than general nonconvex problems.</p>
         <p><b>Solution method:</b> Bisection on the objective value, solving feasibility problems $\{x \mid f(x) \le t, x \in C\}$ for various $t$.</p>
 
