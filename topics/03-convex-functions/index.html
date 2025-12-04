@@ -750,111 +750,157 @@
       <section class="card-v2" id="section-7">
         <h2>7. The Convex Conjugate (Fenchel Conjugate)</h2>
 
-        <h3>7.1 Definition</h3>
-        <p>The <a href="#" class="definition-link">convex conjugate</a> (or <b>Fenchel conjugate</b>) of a function $f: \mathbb{R}^n \to \mathbb{R}$ is:</p>
+        <h3>7.1 Definition and Geometric Intuition</h3>
+        <p>The <a href="#" class="definition-link" data-term="convex conjugate">convex conjugate</a> (or <b>Fenchel-Legendre transform</b>) of a function $f: \mathbb{R}^n \to \mathbb{R} \cup \{+\infty\}$ is defined as:</p>
         $$
-        f^*(y) = \sup_{x \in \mathrm{dom}\, f} \left( y^\top x - f(x) \right)
+        \boxed{f^*(y) = \sup_{x \in \mathrm{dom}\, f} \left( y^\top x - f(x) \right)}
         $$
-        <p>The conjugate $f^*$ is always convex, even if $f$ is not (it's the supremum of affine functions in $y$).</p>
+        <p>Here, $y \in \mathbb{R}^n$ acts as a "slope" vector. The value $f^*(y)$ answers the question: <b>"How well can the linear function $x \mapsto y^\top x$ beat the function $f(x)$?"</b></p>
 
-        <h3>7.2 Geometric Interpretation</h3>
-        <p>For a given $y$, the value $f^*(y)$ is the maximum "gap" between the linear function $y^\top x$ and $f(x)$. Geometrically, $y$ parameterizes the slope of a line, and $f^*(y)$ is the maximum intercept such that the line $y^\top x - f^*(y)$ supports the epigraph of $f$ from below.</p>
+        <div class="insight">
+          <h4>💡 1D Interpretation: Maximum Gap</h4>
+          <p>For $n=1$, consider a fixed slope $y$. The term $yx - f(x)$ represents the vertical distance (gap) between the line $L(x) = yx$ (passing through origin) and the curve $f(x)$. The conjugate $f^*(y)$ is the maximum such gap.</p>
+          <p>Geometrically, this corresponds to finding a line with slope $y$ that is tangent to $f(x)$. The "supporting line" equation is $y^\top x - f^*(y) \le f(x)$, meaning $-f^*(y)$ is the $y$-intercept of the supporting hyperplane with normal $(y, -1)$.</p>
+        </div>
 
-        <h3>7.3 Fenchel-Moreau Theorem (Biconjugate)</h3>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin: 20px 0;">
+          <figure style="flex: 1; min-width: 300px; text-align: center;">
+            <img src="assets/conjugate_definition_gap.png"
+                 alt="Conjugate as maximum vertical gap between line yx and function f(x)"
+                 style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
+            <figcaption><i>Figure 7.1:</i> <b>The Maximum Gap View.</b> For a fixed slope $y$, we look for the point $x^*$ that maximizes the distance $yx - f(x)$. The value of this maximum distance is $f^*(y)$.</figcaption>
+          </figure>
+          <figure style="flex: 1; min-width: 300px; text-align: center;">
+            <img src="assets/conjugate_supporting_line.png"
+                 alt="Conjugate determines the intercept of the supporting line"
+                 style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
+            <figcaption><i>Figure 7.2:</i> <b>The Supporting Line View.</b> The tangent line to $f(x)$ with slope $y$ has the equation $\ell(x) = yx - f^*(y)$. Thus, $f^*(y)$ encodes the (negative) vertical intercept of this tangent.</figcaption>
+          </figure>
+        </div>
+
+        <h3>7.2 Convexity of the Conjugate</h3>
+        <p>A remarkable property of the conjugate is that <b>$f^*$ is always convex</b>, regardless of whether $f$ is convex, concave, or neither.</p>
+
+        <div class="proof-enhanced">
+          <h4>Proof 1: Supremum of Affine Functions</h4>
+          <p>For any fixed $x$, the function $g_x(y) = y^\top x - f(x)$ is affine (linear plus a constant) in $y$.
+          The conjugate is the pointwise supremum of this family of affine functions:
+          $$ f^*(y) = \sup_{x \in \mathrm{dom}\, f} g_x(y) $$
+          Since the supremum of any collection of convex functions is convex, $f^*$ is convex.</p>
+        </div>
+
+        <div class="proof-enhanced">
+          <h4>Proof 2: Epigraph Intersection</h4>
+          <p>The epigraph of $f^*$ is the intersection of a family of halfspaces.
+          $$ (y, t) \in \mathrm{epi}\, f^* \iff f^*(y) \le t \iff \sup_x (y^\top x - f(x)) \le t \iff y^\top x - f(x) \le t \ \forall x $$
+          This defines an intersection of closed halfspaces $H_x = \{(y, t) \mid x^\top y - t \le f(x)\}$, which is always a convex set.</p>
+        </div>
+
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin: 20px 0;">
+          <figure style="flex: 1; min-width: 300px; text-align: center;">
+            <img src="assets/conjugate_convexity_affine.png"
+                 alt="f* is the upper envelope of affine functions"
+                 style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
+            <figcaption><i>Figure 7.3:</i> The conjugate $f^*(y)$ (thick curve) is the upper envelope of the lines $x \cdot y - f(x)$. This "V-shape" structure guarantees convexity.</figcaption>
+          </figure>
+          <figure style="flex: 1; min-width: 300px; text-align: center;">
+            <img src="assets/conjugate_epigraph_intersection.png"
+                 alt="Epigraph of f* as intersection of halfspaces"
+                 style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
+            <figcaption><i>Figure 7.4:</i> In 3D space $(y_1, y_2, t)$, the epigraph of $f^*$ is formed by intersecting halfspaces defined by each $x$. The resulting solid is convex.</figcaption>
+          </figure>
+        </div>
+
+        <h3>7.3 Fenchel-Young Inequality</h3>
+        <p>A fundamental result in convex analysis, analogous to the Cauchy-Schwarz inequality for vectors.</p>
         <div class="theorem-box">
-          <h4>Theorem</h4>
-          <p>If $f$ is convex, proper (not identically $+\infty$), and lower semicontinuous, then:</p>
+          <h4>Theorem (Fenchel-Young)</h4>
+          <p>For any function $f$ and any $x, y$:</p>
           $$
-          f^{**}(x) = f(x)
+          f(x) + f^*(y) \ge y^\top x
           $$
-          <p>That is, taking the conjugate twice recovers the original function.</p>
+          <p><b>Equality holds if and only if</b> $y \in \partial f(x)$ (i.e., $y$ is a subgradient of $f$ at $x$).</p>
         </div>
 
-        <h3>7.4 Examples</h3>
+        <figure style="text-align: center;">
+          <img src="assets/conjugate_fenchel_young.png"
+               alt="Geometric illustration of Fenchel-Young inequality"
+               style="max-width: 60%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
+          <figcaption><i>Figure 7.5:</i> <b>Fenchel-Young Geometry.</b> The inequality $f(x) \ge yx - f^*(y)$ says the function curve stays above the tangent line. They touch (equality) exactly when the slope $y$ matches the derivative $f'(x)$.</figcaption>
+        </figure>
+
+        <h3>7.4 Where is the Supremum Attained?</h3>
+        <p>If $f$ is convex and differentiable, we can find $f^*(y)$ by maximizing $y^\top x - f(x)$.</p>
+        <p>The first-order condition for the maximum at $x^*$ is:</p>
+        $$ \nabla_x (y^\top x - f(x)) = y - \nabla f(x^*) = 0 \implies y = \nabla f(x^*) $$
+        <p><b>Interpretation:</b> The slope $y$ corresponds to the gradient at the point $x^*$ where the gap is maximized. If $f$ is strictly convex, this mapping is invertible: $x^* = (\nabla f)^{-1}(y)$.</p>
+
+        <h3>7.5 Classical Examples</h3>
 
         <div class="example">
-          <h4>Example 1: Conjugate of a Norm</h4>
-          <p>For $f(x) = \|x\|$ where $\|\cdot\|$ is any norm, the conjugate is the <b>indicator function</b> of the dual norm ball:</p>
-          $$
-          f^*(y) = \begin{cases}
-          0 & \text{if } \|y\|_* \le 1 \\
-          +\infty & \text{otherwise}
-          \end{cases}
-          $$
-          <p>where $\|\cdot\|_*$ is the dual norm.</p>
-        </div>
-
-        <div class="example">
-          <h4>Example 2: Conjugate of Quadratic</h4>
-          <p>For $f(x) = \frac{1}{2}x^\top Q x$ where $Q \succ 0$:</p>
-          $$
-          f^*(y) = \frac{1}{2}y^\top Q^{-1} y
-          $$
-        </div>
-
-        <div class="example">
-          <h4>Example 3: Conjugate of Negative Entropy</h4>
-          <p>For $f(x) = \sum_{i=1}^n x_i \log x_i$ (negative entropy, defined on $x > 0$):</p>
-          $$
-          f^*(y) = \sum_{i=1}^n e^{y_i - 1}
-          $$
+          <h4>1. Quadratic Function (Self-Conjugate)</h4>
+          <p>Let $f(x) = \frac{1}{2}x^\top Q x$ with $Q \succ 0$. To find $f^*(y)$, maximize $y^\top x - \frac{1}{2}x^\top Q x$.</p>
+          <p>Gradient is $y - Qx = 0 \implies x^* = Q^{-1}y$. Substitute back:</p>
+          $$ f^*(y) = y^\top (Q^{-1}y) - \frac{1}{2}(Q^{-1}y)^\top Q (Q^{-1}y) = y^\top Q^{-1} y - \frac{1}{2}y^\top Q^{-1} y = \frac{1}{2}y^\top Q^{-1} y $$
+          <p>If $Q=I$ (Euclidean norm squared), then $f^*(y) = \frac{1}{2}\|y\|_2^2$. This is the "Fourier transform of a Gaussian is a Gaussian" of convex analysis.</p>
         </div>
 
         <div class="example">
-          <h4>Example 4: Conjugate of Log-Sum-Exp</h4>
-          <p>Consider the <b>Log-Sum-Exp</b> function $f(x) = \log(\sum_{i=1}^n e^{x_i})$. Its conjugate is the negative entropy restricted to the simplex.</p>
-
-          <div class="proof-enhanced">
-            <h4>Derivation Step-by-Step</h4>
-            <div class="proof-step">
-              <strong>Step 1: Set up the optimization problem.</strong>
-              The conjugate is defined as $f^*(y) = \sup_{x} \{ y^\top x - \log(\sum_{i=1}^n e^{x_i}) \}$.
-              Let $L(x) = y^\top x - \log(\sum_{i=1}^n e^{x_i})$. This function is concave (linear minus convex), so we can find the maximum by setting the gradient to zero.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Optimality conditions.</strong>
-              Differentiating with respect to $x_k$:
-              $$ \frac{\partial L}{\partial x_k} = y_k - \frac{e^{x_k}}{\sum_{j=1}^n e^{x_j}} = 0 \quad \implies \quad y_k = \frac{e^{x_k}}{\sum_{j=1}^n e^{x_j}} $$
-              Summing this over all $k$:
-              $$ \sum_{k=1}^n y_k = \sum_{k=1}^n \frac{e^{x_k}}{\sum_{j=1}^n e^{x_j}} = \frac{\sum_{k=1}^n e^{x_k}}{\sum_{j=1}^n e^{x_j}} = 1 $$
-              Also, since exponentials are positive, we must have $y_k > 0$.
-              <br><b>Crucial Observation:</b> If $\sum y_k \neq 1$ or if any $y_k < 0$, the system has no solution.
-              <ul>
-                <li>If any $y_k < 0$, letting $x_k \to -\infty$ makes the term $y_k x_k \to +\infty$ while the log-sum-exp term stays bounded or decreases slower, driving the supremum to $+\infty$.</li>
-                <li>If $\sum y_k \neq 1$, consider $x + c\mathbf{1}$. Then $L(x+c\mathbf{1}) = y^\top x + c(\sum y_k) - \log(e^c \sum e^{x_i}) = L(x) + c(\sum y_k - 1)$. If $\sum y_k \neq 1$, we can choose $c \to \pm \infty$ to drive $L$ to $+\infty$.</li>
-              </ul>
-              Thus, $\mathrm{dom}(f^*) = \{y \mid y \ge 0, \mathbf{1}^\top y = 1\}$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Solve for $x$ in terms of $y$.</strong>
-              From $y_k = \frac{e^{x_k}}{\sum e^{x_j}}$, we have $e^{x_k} = y_k (\sum e^{x_j})$.
-              Taking logs: $x_k = \log y_k + \log(\sum e^{x_j})$.
-              Let $C = \log(\sum e^{x_j})$. Then $x_k = \log y_k + C$.
-              (Note: The value of $C$ cancels out in the final expression, reflecting that $x$ is only determined up to a constant shift).
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 4: Substitute back into the objective.</strong>
-              Compute $y^\top x$:
-              $$ y^\top x = \sum_{k=1}^n y_k (\log y_k + C) = \sum_{k=1}^n y_k \log y_k + C \sum_{k=1}^n y_k = \sum_{k=1}^n y_k \log y_k + C $$
-              Compute the log-sum-exp term:
-              $$ \log\left(\sum_{k=1}^n e^{x_k}\right) = \log\left(\sum_{k=1}^n e^{\log y_k + C}\right) = \log\left(e^C \sum_{k=1}^n y_k\right) = \log(e^C \cdot 1) = C $$
-              Finally, subtract:
-              $$ f^*(y) = (y^\top x) - f(x) = \left(\sum_{k=1}^n y_k \log y_k + C\right) - C = \sum_{k=1}^n y_k \log y_k $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong>
-              The conjugate of the Log-Sum-Exp function is the <b>negative entropy</b> function restricted to the probability simplex:
-              $$ f^*(y) = \begin{cases} \sum_{i=1}^n y_i \log y_i & \text{if } y \ge 0, \mathbf{1}^\top y = 1 \\ +\infty & \text{otherwise} \end{cases} $$
-            </div>
-          </div>
+          <h4>2. Indicator Function $\leftrightarrow$ Support Function</h4>
+          <p>Let $f(x) = \delta_C(x)$ (0 if $x \in C$, $+\infty$ else) for a convex set $C$.</p>
+          $$ f^*(y) = \sup_x (y^\top x - \delta_C(x)) = \sup_{x \in C} y^\top x = \sigma_C(y) $$
+          <p>The conjugate of the indicator function is the <b>support function</b> of the set $C$.</p>
+          <figure style="text-align: center; margin-top: 1rem;">
+            <img src="assets/conjugate_indicator_support.png" alt="Conjugate of indicator is support function" style="max-width: 60%; border: 1px solid var(--border); border-radius: 8px; padding: 10px;" />
+            <figcaption><i>Figure 7.6:</i> The support function $\sigma_C(y)$ measures the extent of set $C$ in direction $y$.</figcaption>
+          </figure>
         </div>
 
-        <h3>7.5 Role in Duality</h3>
-        <p>The convex conjugate is the mathematical foundation of <b>Lagrangian duality</b> (Lecture 05). The dual problem can be expressed in terms of the conjugates of the primal objective and constraint functions.</p>
+        <div class="example">
+          <h4>3. Norm $\leftrightarrow$ Dual Norm Ball</h4>
+          <p>Let $f(x) = \|x\|$ (any norm). Then:</p>
+          $$ f^*(y) = \begin{cases} 0 & \|y\|_* \le 1 \\ +\infty & \|y\|_* > 1 \end{cases} $$
+          <p>The conjugate is the indicator of the dual unit ball.
+          <br><i>Proof:</i> $f^*(y) = \sup_x (y^\top x - \|x\|)$. If $\|y\|_* > 1$, align $x$ with $y$ and scale to infinity to get $+\infty$. If $\|y\|_* \le 1$, then $y^\top x \le \|x\|\|y\|_* \le \|x\|$, so $y^\top x - \|x\| \le 0$ (max is 0 at $x=0$).</p>
+          <figure style="text-align: center; margin-top: 1rem;">
+            <img src="assets/conjugate_dual_norm_ball.png" alt="Conjugate of absolute value is indicator of interval [-1, 1]" style="max-width: 60%; border: 1px solid var(--border); border-radius: 8px; padding: 10px;" />
+            <figcaption><i>Figure 7.7:</i> Example for $f(x)=|x|$ (L1 norm in 1D). The conjugate is the indicator of $[-1, 1]$ (L-infinity unit ball).</figcaption>
+          </figure>
+        </div>
+
+        <div class="example">
+          <h4>4. Log-Sum-Exp $\leftrightarrow$ Negative Entropy</h4>
+          <p>For $f(x) = \log(\sum e^{x_i})$, the conjugate is the negative entropy restricted to the probability simplex:</p>
+          $$ f^*(y) = \sum_{i=1}^n y_i \log y_i \quad \text{on } \Delta_n = \{y \ge 0, \mathbf{1}^\top y = 1\} $$
+          <p>See the detailed derivation in the problem set or previous sections.</p>
+        </div>
+
+        <h3>7.6 Biconjugate and Convexification</h3>
+        <p>What happens if we apply the operation twice? The <b>biconjugate</b> $f^{**} = (f^*)^*$ relates back to $f$.</p>
+
+        <div class="theorem-box">
+          <h4>Theorem (Fenchel-Moreau)</h4>
+          <p>The biconjugate $f^{**}$ is the <b>closed convex hull</b> of $f$. This means $f^{**}$ is the largest closed convex function such that $f^{**}(x) \le f(x)$ for all $x$.</p>
+          <p><b>Corollary:</b> If $f$ is already closed and convex, then $f^{**} = f$.</p>
+        </div>
+
+        <figure style="text-align: center;">
+          <img src="assets/conjugate_biconjugate.png"
+               alt="Biconjugate as convex hull of non-convex function"
+               style="max-width: 60%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
+          <figcaption><i>Figure 7.8:</i> <b>Convexification.</b> For a non-convex function $W$-shaped function $f$, the biconjugate $f^{**}$ "fills in" the non-convex valley, creating the tightest possible convex underestimator.</figcaption>
+        </figure>
+
+        <h3>7.7 Summary Roadmap</h3>
+        <p>When working with conjugates, remember these five pillars:</p>
+        <ol>
+          <li><b>Definition:</b> $f^*(y) = \sup_x (y^\top x - f(x))$ (Max gap).</li>
+          <li><b>Geometry:</b> $f^*(y)$ encodes the intercept of the supporting hyperplane with slope $y$.</li>
+          <li><b>Convexity:</b> $f^*$ is <i>always</i> convex (supremum of affine functions).</li>
+          <li><b>Fenchel-Young:</b> $f(x) + f^*(y) \ge y^\top x$, with equality iff $y \in \partial f(x)$.</li>
+          <li><b>Duality:</b> $f^{**}$ is the convex hull of $f$. This operation is the engine behind Lagrangian Duality.</li>
+        </ol>
+
       </section>
 
       <section class="card-v2" id="section-8">
