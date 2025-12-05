@@ -2230,11 +2230,14 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
           <div class="proof-step">
             <strong>(c) Equivalence of Convergence:</strong>
-            <p>Using the inequality from (b) on the residual matrix $E_k = A_k - A$:
+            <p>Apply the inequalities from (b) to the difference matrix $E_k = A_k - A$:
             $$ \|E_k\| \le \|E_k\|_{HS} \le \sqrt{n} \|E_k\| $$
-            If $\|E_k\| \to 0$, then $\|E_k\|_{HS} \to 0$ by the sandwich theorem.
-            If $\|E_k\|_{HS} \to 0$, then $\|E_k\| \to 0$.
-            This illustrates that all norms on finite-dimensional spaces induce the same topology.</p>
+            We examine both directions:</p>
+            <ul>
+                <li>If $\|A_k - A\| \to 0$, then by the upper bound, $0 \le \|A_k - A\|_{HS} \le \sqrt{n}\|A_k - A\| \to 0$.</li>
+                <li>Conversely, if $\|A_k - A\|_{HS} \to 0$, then by the lower bound, $0 \le \|A_k - A\| \le \|A_k - A\|_{HS} \to 0$.</li>
+            </ul>
+            <p>So convergence in one norm implies convergence in the other. This illustrates that all norms on finite-dimensional spaces induce the same topology.</p>
           </div>
         </div>
       </div>
@@ -2266,7 +2269,12 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
           </div>
 
           <div class="proof-step">
-            <strong>(b) Compactness:</strong> $\mathcal{O}_n$ is bounded ($\|U\|_{HS}^2 = n$) and closed (preimage of $I$ under continuous map $X \mapsto X^\top X$).
+            <strong>(b) Compactness:</strong> A subset of $\mathbb{R}^{n^2}$ is compact if and only if it is closed and bounded (Heine-Borel).
+            <ul>
+                <li><b>Boundedness:</b> For any $U \in \mathcal{O}_n$, $\|U\|_{HS}^2 = \mathrm{tr}(U^\top U) = \mathrm{tr}(I) = n$. Thus $\mathcal{O}_n$ lies on the sphere of radius $\sqrt{n}$, so it is bounded.</li>
+                <li><b>Closedness:</b> Consider the continuous map $f(A) = A^\top A$. Then $\mathcal{O}_n = f^{-1}(\{I\})$. Since the singleton set $\{I\}$ is closed, its preimage $\mathcal{O}_n$ is closed.</li>
+            </ul>
+            Thus, $\mathcal{O}_n$ is compact.
           </div>
 
           <div class="proof-step">
@@ -2284,11 +2292,20 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
           <div class="proof-step">
             <strong>(e) Preserves Orthogonality $\implies$ Scaled Orthogonal:</strong>
-            <p>Let $u_i = A e_i$. Since $e_i \perp e_j$, we have $u_i \perp u_j$.
-            Let $x = e_i + e_j$ and $y = e_i - e_j$. Note $x \perp y$.
-            So $Ax \perp Ay \implies (u_i + u_j)^\top (u_i - u_j) = 0 \implies \|u_i\|^2 - \|u_j\|^2 = 0$.
-            Thus all columns have same norm $c$. $A^\top A = \text{diag}(c^2, \dots, c^2) = c^2 I$.
-            So $A = cU$ where $U = A/c \in \mathcal{O}_n$.</p>
+            <p>We are given that $\langle x, y \rangle = 0 \implies \langle Ax, Ay \rangle = 0$. We derive the structure of $A$ in steps.</p>
+            <ul>
+                <li><b>Step 1: Basis vectors.</b> Let $e_i$ be the standard basis. Since $\langle e_i, e_j \rangle = 0$ for $i \ne j$, we must have $\langle A e_i, A e_j \rangle = 0$. Thus, the columns $u_i = A e_i$ are pairwise orthogonal. Let $\alpha_i = \|u_i\| = \|A e_i\|$.</li>
+                <li><b>Step 2: Weighted Inner Product.</b> For any $x, y$, we have $Ax = \sum x_i u_i$ and $Ay = \sum y_j u_j$.
+                $$ \langle Ax, Ay \rangle = \sum_{i,j} x_i y_j \langle u_i, u_j \rangle = \sum_i \alpha_i^2 x_i y_i $$
+                This defines a weighted inner product.</li>
+                <li><b>Step 3: Force equal weights.</b> Fix $i \ne j$. Let $x = e_i + e_j$ and $y = e_i - e_j$. Then $\langle x, y \rangle = 1 - 1 = 0$.
+                By hypothesis, $\langle Ax, Ay \rangle = 0$. Using the formula from Step 2:
+                $$ \langle Ax, Ay \rangle = \alpha_i^2(1)(1) + \alpha_j^2(1)(-1) = \alpha_i^2 - \alpha_j^2 = 0 $$
+                Thus $\alpha_i^2 = \alpha_j^2$ for all $i,j$. Let this common value be $c^2$.</li>
+                <li><b>Step 4: Identify Matrix.</b> Since $\alpha_i = c$ for all $i$, we have $\langle Ax, Ay \rangle = c^2 \sum x_i y_i = c^2 \langle x, y \rangle$.
+                This implies $\langle x, A^\top A y \rangle = \langle x, c^2 I y \rangle$ for all $x, y$, so $A^\top A = c^2 I$.</li>
+                <li><b>Step 5: Factor.</b> If $c > 0$, let $U = \frac{1}{c} A$. Then $U^\top U = I$, so $U \in \mathcal{O}_n$, and $A = cU$. If $c=0$, $A=0$, which is $0 \cdot I$.</li>
+            </ul>
           </div>
         </div>
       </div>
