@@ -404,6 +404,22 @@
       More generally, $\mathrm{tr}(ABC) = \mathrm{tr}(BCA) = \mathrm{tr}(CAB)$. This property is crucial for deriving matrix gradients.
       </p>
 
+      <div class="proof-enhanced">
+        <h4>Proof: $\mathrm{tr}(AB) = \mathrm{tr}(BA)$</h4>
+        <div class="proof-step">
+          <strong>Coordinate Definition:</strong> Let $A \in \mathbb{R}^{m \times n}$ and $B \in \mathbb{R}^{n \times m}$. The diagonal elements of the product $AB$ are:
+          $$ (AB)_{ii} = \sum_{k=1}^n a_{ik} b_{ki} $$
+        </div>
+        <div class="proof-step">
+          <strong>Summing the diagonal:</strong>
+          $$ \mathrm{tr}(AB) = \sum_{i=1}^m (AB)_{ii} = \sum_{i=1}^m \sum_{k=1}^n a_{ik} b_{ki} $$
+        </div>
+        <div class="proof-step">
+          <strong>Switching order:</strong> Since the sums are finite, we can swap the order of summation:
+          $$ \sum_{k=1}^n \sum_{i=1}^m b_{ki} a_{ik} = \sum_{k=1}^n (BA)_{kk} = \mathrm{tr}(BA) $$
+        </div>
+      </div>
+
 
       <div class="example">
         <h4>Worked Example: Trace and Determinant Caveats</h4>
@@ -615,9 +631,26 @@
       <p>If $Q \in \mathbb{R}^{n \times n}$ is symmetric positive definite (SPD), then $\langle x, y \rangle_Q := x^\top Q y$ is an inner product with induced norm $\|x\|_Q = \sqrt{x^\top Q x}$. This yields <b>quadratic forms</b> and ellipsoidal distance.</p>
 
       <h3>Spectral Norm and Convexity</h3>
-      <p>The <b>spectral norm</b> of a matrix $X \in \mathbb{R}^{m \times n}$ (not necessarily symmetric) is its maximum singular value:
+      <p>The <b>spectral norm</b> (or operator norm) of a matrix $X \in \mathbb{R}^{m \times n}$ is induced by the Euclidean vector norm:
+      $$ \|X\|_2 = \sup_{v \neq 0} \frac{\|Xv\|_2}{\|v\|_2} $$
+      It turns out this equals the maximum singular value:
       $$ \|X\|_2 = \sigma_{\max}(X) = \sqrt{\lambda_{\max}(X^\top X)} $$
       Since $X^\top X$ is always Positive Semidefinite ($v^\top X^\top X v = \|Xv\|_2^2 \ge 0$), its eigenvalues are non-negative.</p>
+
+      <div class="proof-enhanced">
+        <h4>Proof: $\|X\|_2 = \sqrt{\lambda_{\max}(X^\top X)}$</h4>
+        <div class="proof-step">
+          <strong>Step 1: Squared Norm.</strong>
+          $$ \|X\|_2^2 = \sup_{v \neq 0} \frac{\|Xv\|_2^2}{\|v\|_2^2} = \sup_{v \neq 0} \frac{v^\top X^\top X v}{v^\top v} $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Rayleigh Quotient.</strong> The expression $\frac{v^\top M v}{v^\top v}$ for a symmetric matrix $M$ is the Rayleigh Quotient. Its maximum value is exactly $\lambda_{\max}(M)$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Conclusion.</strong>
+          $$ \|X\|_2^2 = \lambda_{\max}(X^\top X) \implies \|X\|_2 = \sqrt{\lambda_{\max}(X^\top X)} $$
+        </div>
+      </div>
 
       <p><b>Dual Representation (Crucial for Convexity Proofs):</b> Just like the max eigenvalue, the spectral norm can be written as a supremum:
       $$ \|X\|_2 = \sup_{\|u\|_2=1, \|v\|_2=1} u^\top X v $$
@@ -642,6 +675,15 @@
       <br>Using the adjoint property, $\langle x, A^\top A y \rangle = \langle x, y \rangle$ for all $x, y$, which implies $A^\top A = I$.
       Thus, <b>matrices that preserve geometry (lengths and angles) are exactly the orthogonal matrices</b> (possibly scaled).</p>
 
+      <div class="insight">
+        <h4>The Orthogonal Group $O_n$</h4>
+        <p>The set of all $n \times n$ orthogonal matrices forms a group, denoted $O_n$.</p>
+        <ul>
+          <li><b>Closure:</b> If $Q_1, Q_2 \in O_n$, then $(Q_1 Q_2)^\top (Q_1 Q_2) = Q_2^\top Q_1^\top Q_1 Q_2 = Q_2^\top I Q_2 = I$.</li>
+          <li><b>Inverse:</b> $Q^{-1} = Q^\top$, which is also orthogonal.</li>
+          <li><b>Compactness:</b> $O_n$ is a compact set in $\mathbb{R}^{n \times n}$. It is closed (preimage of $I$ under continuous map $f(A)=A^\top A$) and bounded (columns have unit norm).</li>
+        </ul>
+      </div>
 
       <h3>The Gram–Schmidt Process</h3>
       <p>The Gram-Schmidt process is an algorithm for constructing an orthonormal basis from a set of linearly independent vectors. Starting with a vector, it iteratively subtracts the components that lie in the direction of the previously processed vectors, leaving a new, orthogonal vector that is then normalized.

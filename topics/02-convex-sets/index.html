@@ -605,6 +605,31 @@
              </figure>
         </div>
 
+        <h3>3.4 Minkowski Sum</h3>
+        <p>The <a href="#" class="definition-link">Minkowski sum</a> of two sets $C, D \subseteq \mathbb{R}^n$ is the set of all vector sums:</p>
+        $$ C + D = \{x + y \mid x \in C, y \in D\} $$
+
+        <div class="theorem-box">
+          <h4>Theorem</h4>
+          <p>If $C$ and $D$ are convex, then $C+D$ is convex.</p>
+        </div>
+
+        <div class="proof-enhanced">
+          <h4>Proof</h4>
+          <p>Let $u, v \in C+D$. Then $u = c_1 + d_1$ and $v = c_2 + d_2$ for some $c_i \in C, d_i \in D$.
+          For any $\theta \in [0,1]$:</p>
+          $$
+          \theta u + (1-\theta)v = \theta(c_1 + d_1) + (1-\theta)(c_2 + d_2)
+          = [\theta c_1 + (1-\theta)c_2] + [\theta d_1 + (1-\theta)d_2]
+          $$
+          <p>Since $C$ is convex, the first bracket is in $C$. Since $D$ is convex, the second is in $D$. Thus the sum is in $C+D$.</p>
+        </div>
+
+        <h3>3.5 Cartesian Product</h3>
+        <p>The product of convex sets $C \subseteq \mathbb{R}^n$ and $D \subseteq \mathbb{R}^m$ is convex in $\mathbb{R}^{n+m}$:</p>
+        $$ C \times D = \{(x, y) \mid x \in C, y \in D\} $$
+        <p>This follows because component-wise convex combinations preserve membership in $C$ and $D$ respectively.</p>
+
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Laboratory: Convex Geometry</h3>
           <p><b>Draw, Combine, and Verify:</b> This unified workspace lets you experiment with convex sets and operations. It combines drawing capabilities with set algebra:</p>
@@ -958,7 +983,10 @@
         <div class="theorem-box">
           <h4>Facts About Convex Sets</h4>
           <ol>
-            <li>$\mathrm{cl}(C)$, $\mathrm{int}(C)$ (if nonempty), and $\mathrm{ri}(C)$ are all convex when $C$ is convex.</li>
+            <li><b>Closure is Convex:</b> $\mathrm{cl}(C)$ is convex.
+              <br><i>Proof:</i> Let $a, b \in \mathrm{cl}(C)$. Then there exist sequences $a_k \to a, b_k \to b$ with $a_k, b_k \in C$. For any $\theta$, the sequence $z_k = \theta a_k + (1-\theta)b_k$ lies in $C$ (by convexity) and converges to $\theta a + (1-\theta)b$. Thus the limit is in $\mathrm{cl}(C)$.
+            </li>
+            <li>$\mathrm{int}(C)$ (if nonempty) and $\mathrm{ri}(C)$ are convex.</li>
             <li>If $C$ is convex with nonempty interior, then $\mathrm{cl}(C) = \mathrm{cl}(\mathrm{int}(C))$ and $\mathrm{int}(C) = \mathrm{int}(\mathrm{cl}(C))$.</li>
             <li><b>Relative interior of intersection:</b> If $\mathrm{ri}(C) \cap \mathrm{ri}(D) \neq \emptyset$, then:
               $$
