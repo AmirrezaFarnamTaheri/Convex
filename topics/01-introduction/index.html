@@ -1070,9 +1070,10 @@
       <section class="section-card" id="section-10">
         <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
 
-        <div class="problem">
-          <h3>P1.1 — Classify as Convex / Not Convex</h3>
-          <p>For each problem, state if it is convex and provide a one-sentence justification.</p>
+
+<div class="problem">
+  <h3>P1.1 — Classify as Convex / Not Convex</h3>
+  <p>For each problem, state if it is convex and provide a one-sentence justification.</p>
           <ol type="a">
             <li>$\min \|Ax - b\|_2^2$ subject to $Fx = g$.</li>
             <li>$\min -\|x\|_2$ subject to $Ax \le b$.</li>
@@ -1090,8 +1091,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-            <h4>Solutions</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Convexity depends on the structure. Affine maps preserve convexity. The negative of a convex function is concave. Integer constraints destroy convexity.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <h4>Solutions</h4>
             <ol type="a">
               <li><b>✅ Convex.</b> The objective $\|Ax - b\|_2^2$ is a convex quadratic function (composition of convex $\|\cdot\|_2^2$ with affine $Ax - b$), and the constraint $Fx = g$ is affine.</li>
               <li><b>❌ Not Convex.</b> The objective function $-\|x\|_2$ is concave (negative of a convex function), making this a concave maximization problem.</li>
@@ -1099,12 +1106,12 @@
               <li><b>❌ Not Convex.</b> The quadratic form $x^\top Q x$ is only guaranteed to be convex if $Q \succeq 0$ (positive semidefinite). Without this assumption, the problem is nonconvex.</li>
               <li><b>❌ Not Convex.</b> The integer constraint $x_i \in \{0, 1\}$ makes the feasible set non-convex (it's a finite set of points, not a convex set).</li>
             </ol>
-          </div>
-        </div>
+  </div>
+</div>
 
-        <div class="problem">
-          <h3>P1.2 — Real-World Modeling: Warehouse Location</h3>
-          <p>You are tasked with optimizing the placement of a distribution warehouse to minimize the sum of squared Euclidean distances to $k$ retail locations $r_1, \ldots, r_k \in \mathbb{R}^2$. The warehouse must be located within a region defined by linear inequalities $C x \le d$. Formulate this as a convex optimization problem.</p>
+<div class="problem">
+  <h3>P1.2 — Real-World Modeling: Warehouse Location</h3>
+  <p>You are tasked with optimizing the placement of a distribution warehouse to minimize the sum of squared Euclidean distances to $k$ retail locations $r_1, \ldots, r_k \in \mathbb{R}^2$. The warehouse must be located within a region defined by linear inequalities $C x \le d$. Formulate this as a convex optimization problem.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
@@ -1115,10 +1122,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-            <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Sum of convex functions is convex. Squared Euclidean distance is convex. This is a QP.</p>
+  </div>
 
-            <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
               <strong>Step 1: Define decision variable.</strong> Let $x \in \mathbb{R}^2$ be the warehouse location (coordinates in the plane).
             </div>
 
@@ -1147,12 +1158,12 @@
               $$
               This is a <b>Quadratic Program (QP)</b> since the objective is quadratic and constraints are linear.
             </div>
-          </div>
-        </div>
+  </div>
+</div>
 
-        <div class="problem">
-          <h3>P1.3 — Reformulation: $\ell_1$ Regression as LP</h3>
-          <p>Show how to reformulate the following problem as a linear program:</p>
+<div class="problem">
+  <h3>P1.3 — Reformulation: $\ell_1$ Regression as LP</h3>
+  <p>Show how to reformulate the following problem as a linear program:</p>
           $$
           \min_{x \in \mathbb{R}^n} \|Ax - b\|_1 \quad \text{s.t.} \quad \|x\|_\infty \le 1
           $$
@@ -1165,10 +1176,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-            <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Minimizing L1 norm is equivalent to LP via splitting variables or epigraph form. Infinity norm constraints are box constraints.</p>
+  </div>
 
-            <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
               <strong>Step 1: Introduce slack variables for the objective.</strong> Write $\|Ax - b\|_1 = \sum_{i=1}^m |[Ax - b]_i|$. Introduce variables $t_i \ge 0$ to represent the absolute values:
               $$
               |[Ax - b]_i| \le t_i \quad \iff \quad -t_i \le [Ax - b]_i \le t_i
@@ -1198,12 +1213,12 @@
               $$
               This is an LP with $n + m$ variables and $2m + 2n$ inequality constraints (plus nonnegativity on $t$).
             </div>
-          </div>
-        </div>
+  </div>
+</div>
 
-        <div class="problem">
-          <h3>P1.4 — Prove: Feasible Set is Convex</h3>
-          <p>Prove that for a convex optimization problem, the feasible set $\mathcal{F} = \{x \mid f_i(x) \le 0, Ax = b\}$ is convex.</p>
+<div class="problem">
+  <h3>P1.4 — Prove: Feasible Set is Convex</h3>
+  <p>Prove that for a convex optimization problem, the feasible set $\mathcal{F} = \{x \mid f_i(x) \le 0, Ax = b\}$ is convex.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
@@ -1213,10 +1228,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-            <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>The feasible set is the intersection of sublevel sets of convex functions. Intersection preserves convexity.</p>
+  </div>
 
-            <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
               <strong>Setup:</strong> Take any $x, y \in \mathcal{F}$ and $\theta \in [0,1]$. We must show $z = \theta x + (1-\theta)y \in \mathcal{F}$.
             </div>
 
@@ -1239,12 +1258,12 @@
             <div class="proof-step">
               <strong>Conclusion:</strong> Since $z$ satisfies all constraints, $z \in \mathcal{F}$. Therefore, $\mathcal{F}$ is convex.
             </div>
-          </div>
-        </div>
+  </div>
+</div>
 
-        <div class="problem">
-          <h3>P1.5 — Proving Uniqueness</h3>
-          <p>Prove that if $f_0$ is strictly convex, then the optimization problem has at most one global minimizer.</p>
+<div class="problem">
+  <h3>P1.5 — Proving Uniqueness</h3>
+  <p>Prove that if $f_0$ is strictly convex, then the optimization problem has at most one global minimizer.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
@@ -1254,10 +1273,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-            <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Strict convexity implies that the graph lies strictly above the chord. This geometry prevents multiple global minima.</p>
+  </div>
 
-            <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
               <strong>Setup (proof by contradiction):</strong> Assume there are two distinct global minimizers, $x$ and $y$, with $x \neq y$. Let the optimal value be $p^* = f_0(x) = f_0(y)$.
             </div>
 
@@ -1282,12 +1305,12 @@
             <div class="proof-step">
               <strong>Conclusion:</strong> We found a feasible point $z$ with $f_0(z) < p^*$, which contradicts that $p^*$ is the global minimum. Thus, the assumption that there are two distinct minimizers must be false.
             </div>
-          </div>
-        </div>
+  </div>
+</div>
 
-        <div class="problem">
-          <h3>P1.6 — Modeling: Maximum Likelihood Estimation</h3>
-          <p>Consider a logistic regression model for binary classification. We have data points $(x_i, y_i)$ where $x_i \in \mathbb{R}^n$ are feature vectors and $y_i \in \{-1, 1\}$ are labels. The probability that $y_i = 1$ is modeled as:
+<div class="problem">
+  <h3>P1.6 — Modeling: Maximum Likelihood Estimation</h3>
+  <p>Consider a logistic regression model for binary classification. We have data points $(x_i, y_i)$ where $x_i \in \mathbb{R}^n$ are feature vectors and $y_i \in \{-1, 1\}$ are labels. The probability that $y_i = 1$ is modeled as:
           $$ P(y_i=1 \mid x_i; w) = \frac{1}{1 + e^{-w^\top x_i}} $$
           Formulate the problem of finding the weight vector $w$ that maximizes the log-likelihood of the data as a convex optimization problem. (Note: $P(y_i=-1 \mid x_i; w) = 1 - P(y_i=1) = \frac{1}{1 + e^{w^\top x_i}}$).
           </p>
@@ -1300,10 +1323,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-            <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Logistic regression minimizes the negative log-likelihood. The log-sum-exp function is convex, ensuring global optimality.</p>
+  </div>
 
-            <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
               <strong>Step 1: Write the likelihood function.</strong> Assuming independent samples, the likelihood is:
               $$ L(w) = \prod_{i=1}^m P(y_i \mid x_i; w) $$
               We can unify the probability expression. Notice that $P(y_i \mid x_i; w) = \frac{1}{1 + e^{-y_i w^\top x_i}}$.
@@ -1327,8 +1354,9 @@
               $$ \min_{w \in \mathbb{R}^n} \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$
               This is an unconstrained convex optimization problem.
             </div>
-          </div>
-        </div>
+  </div>
+</div>
+
       </section>
     </article>
 

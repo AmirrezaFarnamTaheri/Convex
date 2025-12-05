@@ -718,9 +718,10 @@
       <p>These problems consolidate the lecture material and provide practice in problem classification, formulation, and reformulation.</p>
 
       <!-- Problem 4.1 -->
-      <div class="problem">
-        <h3>P4.1 — Classify and Reformulate: Minimizing Maximum Absolute Deviation</h3>
-        <p>Consider the problem:</p>
+
+<div class="problem">
+  <h3>P4.1 — Classify and Reformulate: Minimizing Maximum Absolute Deviation</h3>
+  <p>Consider the problem:</p>
         <p style="text-align: center;">
           $
           \begin{aligned}
@@ -741,10 +742,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Minimizing a maximum (minimax) is a canonical convex problem. We use the epigraph trick: minimize $t$ subject to the max function $\le t$, which unfolds into multiple linear constraints.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Convexity.</strong> The function $f(x) = \max_{i=1,\dots,m} |a_i^\top x - b_i|$ is the pointwise maximum of functions $|a_i^\top x - b_i|$. Since $|a_i^\top x - b_i|$ is convex (it's the composition of the absolute value function with an affine function), and the pointwise maximum of convex functions is convex, $f(x)$ is convex. Thus, this is a convex optimization problem.
           </div>
 
@@ -766,13 +771,12 @@
             $
             This is an LP in variables $(x, t) \in \mathbb{R}^{n+1}$.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 4.2 -->
-      <div class="problem">
-        <h3>P4.2 — QP Formulation: Constrained Least Squares</h3>
-        <p>Consider the problem of finding $x \in \mathbb{R}^n$ that minimizes $\|Ax - b\|_2^2$ subject to $l \preceq x \preceq u$ (box constraints).</p>
+<div class="problem">
+  <h3>P4.2 — QP Formulation: Constrained Least Squares</h3>
+  <p>Consider the problem of finding $x \in \mathbb{R}^n$ that minimizes $\|Ax - b\|_2^2$ subject to $l \preceq x \preceq u$ (box constraints).</p>
         <p><strong>(a)</strong> Write this problem in standard QP form.</p>
         <p><strong>(b)</strong> Under what conditions on $A$ is the problem strictly convex (thus having a unique solution)?</p>
 
@@ -785,10 +789,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Box-constrained least squares is a QP. The Hessian $A^\top A$ determines convexity; strict convexity requires full column rank.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): QP formulation.</strong> Expand the objective:
             $
             \|Ax - b\|_2^2 = (Ax - b)^\top (Ax - b) = x^\top A^\top A x - 2 b^\top A x + b^\top b
@@ -807,13 +815,12 @@
           <div class="proof-step">
             <strong>Part (b): Strict convexity.</strong> The Hessian is $\nabla^2 f(x) = 2 A^\top A$. The problem is strictly convex if and only if $A^\top A \succ 0$, which occurs when $A$ has full column rank (i.e., $\text{rank}(A) = n$).
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 4.3 -->
-      <div class="problem">
-        <h3>P4.3 — SOCP Reformulation: $\ell_2$ Regularized Least Squares</h3>
-        <p>Consider the problem:</p>
+<div class="problem">
+  <h3>P4.3 — SOCP Reformulation: $\ell_2$ Regularized Least Squares</h3>
+  <p>Consider the problem:</p>
         <p style="text-align: center;">
           $
           \text{minimize} \quad \|Ax - b\|_2 + \lambda \|x\|_2
@@ -832,10 +839,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Sum of norms is SOCP. Tikhonov (sum of squares) is QP. SOCP is more general but QP is faster. The transformation requires introducing slack variables for each norm.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): SOCP reformulation.</strong> Introduce auxiliary variables $t_1, t_2$ for the two norms:
             $
             \begin{aligned}
@@ -850,13 +861,12 @@
           <div class="proof-step">
             <strong>Part (b): Comparison to QP.</strong> Tikhonov regularization $\|Ax - b\|_2^2 + \lambda \|x\|_2^2$ is a QP (quadratic objective). The $\ell_2$ regularized version $\|Ax - b\|_2 + \lambda \|x\|_2$ is not a QP but an SOCP. Both are convex; the choice depends on application requirements (e.g., sparsity-promoting properties differ).
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 4.4 -->
-      <div class="problem">
-        <h3>P4.4 — SDP Example: Largest Eigenvalue Minimization</h3>
-        <p>Consider the problem of minimizing $\lambda_{\max}(A_0 + x_1 A_1 + x_2 A_2)$ where $A_0, A_1, A_2 \in \mathbb{S}^n$ are given symmetric matrices.</p>
+<div class="problem">
+  <h3>P4.4 — SDP Example: Largest Eigenvalue Minimization</h3>
+  <p>Consider the problem of minimizing $\lambda_{\max}(A_0 + x_1 A_1 + x_2 A_2)$ where $A_0, A_1, A_2 \in \mathbb{S}^n$ are given symmetric matrices.</p>
         <p><strong>(a)</strong> Formulate this as an SDP.</p>
         <p><strong>(b)</strong> Write the dual problem (you may use the general SDP duality results).</p>
 
@@ -869,10 +879,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Eigenvalues are roots of characteristic polynomials, but $\lambda_{\max}$ has a variational definition (Rayleigh quotient) that proves convexity. Its epigraph is defined by a Linear Matrix Inequality (LMI).</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): SDP formulation.</strong> We use the characterization $\lambda_{\max}(M) \le t \iff M \preceq tI$:
             $
             \begin{aligned}
@@ -902,13 +916,12 @@
             $
             where $Z \in \mathbb{S}^n$ is the dual variable. This is also an SDP.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 4.5 -->
-      <div class="problem">
-        <h3>P4.5 — Problem Classification: Portfolio Optimization with Risk Constraint</h3>
-        <p>Consider a portfolio optimization problem with $n$ assets, expected returns $\mu \in \mathbb{R}^n$, and covariance matrix $\Sigma \in \mathbb{S}_{++}^n$:</p>
+<div class="problem">
+  <h3>P4.5 — Problem Classification: Portfolio Optimization with Risk Constraint</h3>
+  <p>Consider a portfolio optimization problem with $n$ assets, expected returns $\mu \in \mathbb{R}^n$, and covariance matrix $\Sigma \in \mathbb{S}_{++}^n$:</p>
         <p style="text-align: center;">
           $
           \begin{aligned}
@@ -931,10 +944,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Quadratic constraints define ellipsoids. Maximizing a linear function over an ellipsoid is a classic convex problem (QCQP/SOCP).</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Classification.</strong> The objective is linear (easy). The constraint $x^\top \Sigma x \le \sigma_{\max}^2$ is a quadratic constraint. Since we're maximizing a linear function (equivalent to minimizing $-\mu^\top x$), and we have a quadratic constraint, this is a <strong>Quadratically Constrained Quadratic Program (QCQP)</strong>, which is a subclass of SOCP (since $\Sigma \succ 0$).
           </div>
 
@@ -953,13 +970,12 @@
             \end{aligned}
             $
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 4.6 -->
-      <div class="problem">
-        <h3>P4.6 — Equivalence: $\ell_1$ Minimization and LP</h3>
-        <p>Show that the problem $\min \|x\|_1$ subject to $Ax = b$ is equivalent to an LP.</p>
+<div class="problem">
+  <h3>P4.6 — Equivalence: $\ell_1$ Minimization and LP</h3>
+  <p>Show that the problem $\min \|x\|_1$ subject to $Ax = b$ is equivalent to an LP.</p>
 
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -970,10 +986,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>The $\ell_1$ norm encourages sparsity. Its unit ball is a polytope, allowing reformulation as an LP by splitting variables or using slack variables.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Reformulation.</strong> Recall $\|x\|_1 = \sum_{i=1}^n |x_i|$. We introduce auxiliary variables $t \in \mathbb{R}^n$ and enforce $|x_i| \le t_i$ for all $i$:
             $
             \begin{aligned}
@@ -991,13 +1011,12 @@
           <div class="proof-step">
             <strong>Conclusion.</strong> This is an LP in variables $(x, t) \in \mathbb{R}^{2n}$ with linear objective $\mathbf{1}^\top t$ and linear constraints.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 4.7 -->
-      <div class="problem">
-        <h3>P4.7 — Quasiconvex Optimization: Bisection Algorithm</h3>
-        <p>Consider minimizing $f(x) = \frac{x_1}{x_2}$ subject to $x_1 + x_2 \le 1$, $x_1, x_2 > 0$.</p>
+<div class="problem">
+  <h3>P4.7 — Quasiconvex Optimization: Bisection Algorithm</h3>
+  <p>Consider minimizing $f(x) = \frac{x_1}{x_2}$ subject to $x_1 + x_2 \le 1$, $x_1, x_2 > 0$.</p>
         <p><strong>(a)</strong> Show that $f$ is quasiconvex (but not convex) on $\mathbb{R}_{++}^2$.</p>
         <p><strong>(b)</strong> Describe how to solve this problem using bisection over $t$ and convex feasibility problems.</p>
 
@@ -1010,10 +1029,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Linear-fractional functions have convex sublevel sets (halfspaces) but are not convex functions. Bisection allows solving quasiconvex problems using a sequence of convex feasibility checks.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Quasiconvexity.</strong> The sublevel set is:
             $
             S_\alpha = \left\{(x_1, x_2) \in \mathbb{R}_{++}^2 \mid \frac{x_1}{x_2} \le \alpha\right\} = \{(x_1, x_2) \mid x_1 \le \alpha x_2, \; x_1, x_2 > 0\}
@@ -1045,13 +1068,12 @@
             $
             This is an LP feasibility problem. We bisect on $t \in [l, u]$ until convergence.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 4.8 -->
-      <div class="problem">
-        <h3>P4.8 — Minimum Enclosing Ellipsoid as SDP</h3>
-        <p>Given points $x_1, \dots, x_m \in \mathbb{R}^n$, find the minimum-volume ellipsoid $\mathcal{E} = \{x \mid \|Ax - b\|_2 \le 1\}$ containing all points.</p>
+<div class="problem">
+  <h3>P4.8 — Minimum Enclosing Ellipsoid as SDP</h3>
+  <p>Given points $x_1, \dots, x_m \in \mathbb{R}^n$, find the minimum-volume ellipsoid $\mathcal{E} = \{x \mid \|Ax - b\|_2 \le 1\}$ containing all points.</p>
         <p><strong>(a)</strong> Show that the volume of $\mathcal{E}$ is proportional to $\det(A^{-1})$.</p>
         <p><strong>(b)</strong> Formulate the problem as an SDP by using the objective $\log \det(A)$ (which is concave in $A$ for $A \succ 0$).</p>
 
@@ -1064,10 +1086,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>The volume of an ellipsoid is related to the determinant. $\log \det$ is a concave barrier function for the PSD cone, essential for interior point methods.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Volume formula.</strong> An ellipsoid $\mathcal{E} = \{Bz + c \mid \|z\|_2 \le 1\}$ has volume $V = \alpha_n \det(B)$, where $\alpha_n$ is the volume of the unit ball in $\mathbb{R}^n$. For $\mathcal{E} = \{x \mid \|Ax - b\|_2 \le 1\}$, we have $x = A^{-1} z + A^{-1} b$ where $\|z\|_2 \le 1$. Thus $B = A^{-1}$ and $V \propto \det(A^{-1})$.
           </div>
 
@@ -1082,13 +1108,12 @@
             $
             The objective $-\log \det(A)$ is convex (since $\log \det$ is concave). Using the fact that $-\log \det(A) = \text{tr}(\log(A^{-1}))$ and epigraph formulations, this can be written as an SDP.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 4.9 -->
-      <div class="problem">
-        <h3>P4.9 — Resource Allocation Formulation</h3>
-        <p>Consider a resource allocation problem where we want to distribute a total budget $B$ among $n$ projects to maximize total utility. The utility of project $i$ is given by $U_i(x_i) = \alpha_i \log(1 + x_i)$, where $x_i \ge 0$ is the investment in project $i$ and $\alpha_i > 0$. There are also linear constraints $Ax \le b$ representing resource limits.</p>
+<div class="problem">
+  <h3>P4.9 — Resource Allocation Formulation</h3>
+  <p>Consider a resource allocation problem where we want to distribute a total budget $B$ among $n$ projects to maximize total utility. The utility of project $i$ is given by $U_i(x_i) = \alpha_i \log(1 + x_i)$, where $x_i \ge 0$ is the investment in project $i$ and $\alpha_i > 0$. There are also linear constraints $Ax \le b$ representing resource limits.</p>
         <p><strong>(a)</strong> Formulate this as a convex optimization problem.</p>
         <p><strong>(b)</strong> Verify that the objective is concave (so minimizing negative utility is convex).</p>
 
@@ -1101,10 +1126,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Logarithmic utility (diminishing returns) makes the objective concave (minimization convex). Separable structure simplifies optimization.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Formulation.</strong>
             We want to maximize $\sum_{i=1}^n \alpha_i \log(1 + x_i)$ subject to $\sum x_i \le B$, $Ax \le b$, and $x \ge 0$.
             Standard convex form minimizes a convex function. Thus:
@@ -1128,13 +1157,12 @@
             The constraints are all linear inequalities, which define a convex set.
             Therefore, this is a convex optimization problem.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 4.10 -->
-      <div class="problem">
-        <h3>P4.10 — Standard Form Transformation: Linear-Fractional Programming</h3>
-        <p>Consider the linear-fractional optimization problem:</p>
+<div class="problem">
+  <h3>P4.10 — Standard Form Transformation: Linear-Fractional Programming</h3>
+  <p>Consider the linear-fractional optimization problem:</p>
         $$
         \begin{aligned}
         \text{minimize} \quad & \frac{c^\top x + d}{e^\top x + f} \\
@@ -1155,10 +1183,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Projective transformation (homogenization) linearizes the fractional objective, converting the problem to an LP. This is the Charnes-Cooper transformation.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Variable Transformation.</strong>
             Let $z = \frac{1}{e^\top x + f}$. Since $e^\top x + f > 0$, we have $z > 0$.
             Let $y = zx$. Then $x = y/z$.
@@ -1184,13 +1216,12 @@
             The constraint $z > 0$ is relaxed to $z \ge 0$ for standard LP form (usually handled by the fact that $z=0$ would imply unboundedness or infeasibility in the original problem context, or by $e^\top y = 1$ if $z=0$ which corresponds to "points at infinity").
             This is a Linear Program in variables $(y, z) \in \mathbb{R}^{n+1}$.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 4.11 -->
-      <div class="problem">
-        <h3>P4.11 — Vector Optimization (Pareto Optimality)</h3>
-        <p>A point $x^\star$ is <b>Pareto optimal</b> for the vector objective $f(x) = (f_1(x), \dots, f_k(x))$ if there is no feasible $y$ such that $f_i(y) \le f_i(x^\star)$ for all $i$ and $f_j(y) < f_j(x^\star)$ for at least one $j$.
+<div class="problem">
+  <h3>P4.11 — Vector Optimization (Pareto Optimality)</h3>
+  <p>A point $x^\star$ is <b>Pareto optimal</b> for the vector objective $f(x) = (f_1(x), \dots, f_k(x))$ if there is no feasible $y$ such that $f_i(y) \le f_i(x^\star)$ for all $i$ and $f_j(y) < f_j(x^\star)$ for at least one $j$.
         Prove that minimizing the weighted sum $\sum w_i f_i(x)$ with weights $w > 0$ yields a Pareto optimal point.</p>
 
 
@@ -1202,9 +1233,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
-          <div class="proof-step">
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Scalarization (weighted sum) converts a vector optimization problem into a standard scalar convex problem. Positive weights guarantee Pareto optimality.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Setup:</strong> Let $x^\star$ minimize $S(x) = \sum_{i=1}^k w_i f_i(x)$ over the feasible set $\mathcal{F}$. Assume for contradiction that $x^\star$ is not Pareto optimal.
           </div>
           <div class="proof-step">
@@ -1218,8 +1254,9 @@
           <div class="proof-step">
             <strong>Conclusion:</strong> This implies $S(y) < S(x^\star)$, contradicting the fact that $x^\star$ minimizes $S(x)$. Therefore, $x^\star$ must be Pareto optimal.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
+
     </section>
   </main>
 

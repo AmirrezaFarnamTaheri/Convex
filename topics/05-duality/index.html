@@ -625,9 +625,10 @@
       <p>These problems consolidate the duality theory and provide practice in deriving duals, verifying KKT conditions, and applying sensitivity analysis.</p>
 
       <!-- Problem 5.1 -->
-      <div class="problem">
-        <h3>P5.1 — Derive the Dual of a Simple QP</h3>
-        <p>Consider the QP:</p>
+
+<div class="problem">
+  <h3>P5.1 — Derive the Dual of a Simple QP</h3>
+  <p>Consider the QP:</p>
         <p style="text-align: center;">
           $
           \text{minimize} \quad \frac{1}{2} x^\top x + c^\top x \quad \text{s.t.} \quad Ax = b
@@ -646,10 +647,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>The dual of a QP is also a QP. The relationship relies on the conjugacy of the quadratic form $1/2 x^\top x$.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Lagrangian.</strong>
             $
             L(x, \nu) = \frac{1}{2} x^\top x + c^\top x + \nu^\top (Ax - b)
@@ -678,13 +683,12 @@
             $
             This is an unconstrained concave maximization (or convex minimization of the negative).
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 5.2 -->
-      <div class="problem">
-        <h3>P5.2 — Verify KKT Conditions for a 2D Problem</h3>
-        <p>Consider:</p>
+<div class="problem">
+  <h3>P5.2 — Verify KKT Conditions for a 2D Problem</h3>
+  <p>Consider:</p>
         <p style="text-align: center;">
           $
           \text{minimize} \quad x_1^2 + x_2^2 \quad \text{s.t.} \quad x_1 + x_2 \ge 1, \; x_1, x_2 \ge 0
@@ -701,10 +705,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>KKT conditions are a system of equations/inequalities representing force balance (stationarity) and geometric constraints.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Step 1: Reformulate with standard form.</strong> Convert to minimization with $f_0(x) = x_1^2 + x_2^2$, constraints $-x_1 - x_2 \le -1$, $-x_1 \le 0$, $-x_2 \le 0$.
           </div>
 
@@ -749,13 +757,12 @@
           <div class="proof-step">
             <strong>Conclusion.</strong> All KKT conditions are satisfied, so $(1/2, 1/2)$ is optimal.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 5.3 -->
-      <div class="problem">
-        <h3>P5.3 — LP Duality: Derive and Verify</h3>
-        <p>Consider the LP:</p>
+<div class="problem">
+  <h3>P5.3 — LP Duality: Derive and Verify</h3>
+  <p>Consider the LP:</p>
         <p style="text-align: center;">
           $
           \text{minimize} \quad 3x_1 + 2x_2 \quad \text{s.t.} \quad x_1 + x_2 \ge 4, \; 2x_1 + x_2 \ge 5, \; x_1, x_2 \ge 0
@@ -774,10 +781,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>LP duality is symmetric. Constraints in primal become variables in dual, and cost vectors swap with RHS vectors.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Derive dual.</strong> Rewrite in standard form:
             $
           \text{min } c^\top x \text{ s.t. } -A x \le -b, \; x \ge 0
@@ -804,13 +815,12 @@
           <div class="proof-step">
             <strong>Part (c): Verify strong duality.</strong> Since $p^* = d^* = 9$, strong duality holds.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 5.4 -->
-      <div class="problem">
-        <h3>P5.4 — Slater's Condition</h3>
-        <p>Consider the problem:</p>
+<div class="problem">
+  <h3>P5.4 — Slater's Condition</h3>
+  <p>Consider the problem:</p>
         <p style="text-align: center;">
           $
           \text{minimize} \quad x^2 \quad \text{s.t.} \quad (x - 1)^2 \le 0
@@ -829,10 +839,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Slater's condition (strict feasibility) is the standard certificate for strong duality. Without it, duality gaps can occur even in convex problems.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Slater's condition.</strong> The constraint $(x - 1)^2 \le 0$ is satisfied only when $x = 1$ (since squares are nonnegative). There is no point with $(x - 1)^2 < 0$ (strict inequality). Thus, Slater's condition is NOT satisfied.
           </div>
 
@@ -857,13 +871,12 @@
             </ul>
             Thus $p^* = 1 > 0 = d^*$, and there is a duality gap. Strong duality does NOT hold.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 5.5 -->
-      <div class="problem">
-        <h3>P5.5 — Sensitivity Analysis: Shadow Prices</h3>
-        <p>Consider the LP:</p>
+<div class="problem">
+  <h3>P5.5 — Sensitivity Analysis: Shadow Prices</h3>
+  <p>Consider the LP:</p>
         <p style="text-align: center;">
           $
           \text{minimize} \quad x_1 + x_2 \quad \text{s.t.} \quad x_1 + 2x_2 \ge 3, \; x_1, x_2 \ge 0
@@ -883,10 +896,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>The dual variable $\lambda_i$ is the derivative of the optimal value with respect to the constraint bound. It prices the resource.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Shadow price interpretation.</strong> $\lambda^* = 1$ means that if we relax the constraint $x_1 + 2x_2 \ge 3$ to $x_1 + 2x_2 \ge 3 - u$ (i.e., perturb RHS by $+u$), the optimal value decreases at rate $\lambda^* = 1$. In other words, each unit decrease in the RHS requirement saves 1 unit of cost.
           </div>
 
@@ -908,13 +925,12 @@
             $
             And indeed, $-\lambda^* = -1 \cdot (-1) = 1$ (note: sign convention depends on how perturbation is defined). The magnitude matches the shadow price.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 5.6 -->
-      <div class="problem">
-        <h3>P5.6 — SVM Dual Formulation</h3>
-        <p>For the hard-margin SVM:</p>
+<div class="problem">
+  <h3>P5.6 — SVM Dual Formulation</h3>
+  <p>For the hard-margin SVM:</p>
         <p style="text-align: center;">
           $
           \text{minimize} \quad \frac{1}{2} \|w\|_2^2 \quad \text{s.t.} \quad y_i (w^\top x_i + b) \ge 1, \; i = 1, \dots, n
@@ -932,10 +948,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>The dual SVM allows using kernels because it depends only on dot products $x_i^\top x_j$. This projects data into high dimensions implicitly.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Lagrangian.</strong>
             $
             L(w, b, \alpha) = \frac{1}{2} \|w\|_2^2 + \sum_{i=1}^n \alpha_i (1 - y_i (w^\top x_i + b))
@@ -970,13 +990,12 @@
             $
             This is a QP in $\alpha$, enabling the kernel trick: replace $x_i^\top x_j$ with $K(x_i, x_j)$.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 5.7 -->
-      <div class="problem">
-        <h3>P5.7 — Complementary Slackness in Portfolio Optimization</h3>
-        <p>Consider the portfolio problem (Lecture 04):</p>
+<div class="problem">
+  <h3>P5.7 — Complementary Slackness in Portfolio Optimization</h3>
+  <p>Consider the portfolio problem (Lecture 04):</p>
         <p style="text-align: center;">
           $
           \text{minimize} \quad x^\top \Sigma x \quad \text{s.t.} \quad \mu^\top x \ge r_{\text{target}}, \; \mathbf{1}^\top x = 1, \; x \ge 0
@@ -995,10 +1014,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Complementary slackness links primal geometry (active constraints) to dual variables (nonzero forces).</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): Dual variable $\lambda_3$.</strong> The constraint is $x_3 \ge 0$, or equivalently $-x_3 \le 0$ in standard form. The complementary slackness condition is $\lambda_3 x_3^* = 0$.
             Since $x_3^* = 0$, this condition is trivially satisfied for any $\lambda_3 \ge 0$.
             <br>However, we can infer more from the stationarity condition. The KKT stationarity condition is:
@@ -1014,13 +1037,12 @@
             <strong>Part (b): Return constraint.</strong> The return constraint $\mu^\top x \ge r_{\text{target}}$ (or $-\mu^\top x \le -r_{\text{target}}$) is active, meaning $\mu^\top x^* = r_{\text{target}}$. The complementary slackness condition is $\nu_{\text{ret}} (\mu^\top x^* - r_{\text{target}}) = 0$, which is satisfied.
             Typically, if a constraint is active, its associated dual variable $\nu_{\text{ret}}$ is positive ($\nu_{\text{ret}} > 0$), reflecting the "cost" or sensitivity of the optimal value to the return requirement.
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 5.8 -->
-      <div class="problem">
-        <h3>P5.8 — Entropy Maximization Dual</h3>
-        <p>Consider the entropy maximization problem:</p>
+<div class="problem">
+  <h3>P5.8 — Entropy Maximization Dual</h3>
+  <p>Consider the entropy maximization problem:</p>
         <p style="text-align: center;">
           $
           \text{minimize} \quad \sum_{i=1}^n x_i \log x_i \quad \text{s.t.} \quad Ax = b, \; \mathbf{1}^\top x = 1, \; x > 0
@@ -1037,10 +1059,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Maximum entropy is dual to maximum likelihood (exponential families). The dual involves the Log-Sum-Exp function.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Step 1: Conjugate of negative entropy.</strong>
             The objective function is $f_0(x) = \sum x_i \log x_i$. This is separable, so we can find the conjugate of the scalar function $\phi(u) = u \log u$.
             $\phi^*(y) = \sup_{u > 0} (uy - u \log u)$.
@@ -1078,13 +1104,12 @@
             $$ \text{maximize} \quad -b^\top \nu - \log\left(\sum_{i=1}^n e^{-a_i^\top \nu}\right) $$
             This is an unconstrained geometric programming dual (Log-Sum-Exp).
           </div>
-        </div>
-      </div>
+  </div>
+</div>
 
-      <!-- Problem 5.9 -->
-      <div class="problem">
-        <h3>P5.9 — Derivation of SDP Duality</h3>
-        <p>Semidefinite programming (SDP) is a powerful generalization of linear programming. In this problem, you will derive the dual of a standard form SDP.</p>
+<div class="problem">
+  <h3>P5.9 — Derivation of SDP Duality</h3>
+  <p>Semidefinite programming (SDP) is a powerful generalization of linear programming. In this problem, you will derive the dual of a standard form SDP.</p>
         <p>Consider the primal SDP:</p>
         $$
         \begin{aligned}
@@ -1107,10 +1132,14 @@
         </ul>
       </div>
 
-<div class="solution-box">
-          <h4>Solution</h4>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>SDP duality generalizes LP duality. The trace inner product $\text{tr}(CX)$ replaces the dot product $c^\top x$.</p>
+  </div>
 
-          <div class="proof-step">
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
             <strong>Part (a): The Lagrangian.</strong>
             We associate dual variables $y \in \mathbb{R}^m$ with the equality constraints $\text{tr}(A_i X) = b_i$.
             We associate a dual matrix variable $S \in \mathbb{S}^n$ with the inequality constraint $X \succeq 0$.
@@ -1158,8 +1187,9 @@
             \end{aligned}
             $$
           </div>
-        </div>
-      </div>
+  </div>
+</div>
+
     </section>
   </main>
 
