@@ -181,18 +181,42 @@
             </figure>
         </div>
 
-        <div class="insight">
-          <h4>Visualizing Sublevel Sets</h4>
-          <p>Convex sets are intimately linked to convex functions. The <a href="#" class="definition-link">indicator function</a> of a set $C$, $\delta_C(x) = 0$ if $x \in C$ and $\infty$ otherwise, is a convex function if and only if $C$ is convex. Furthermore, the sublevel sets of any convex function are convex sets.</p>
-          <figure style="text-align: center; margin: 24px 0;">
+        <h3>1.4 Sets Defined by Functions</h3>
+
+        <p>A powerful way to generate convex sets is to derive them from convex functions (<a href="../03-convex-functions/index.html">Lecture 03</a>). Two primary objects bridge the gap between sets and functions: sublevel sets and epigraphs.</p>
+
+        <h4>(a) Sublevel Sets</h4>
+        <p>The $\alpha$-<a href="#" class="definition-link">sublevel set</a> of a function $f : \mathbb{R}^n \to \mathbb{R}$ is the set of all points where the function value is below a threshold $\alpha$:</p>
+        $$
+        C_\alpha = \{x \in \mathrm{dom} f \mid f(x) \le \alpha\}
+        $$
+        <div class="theorem-box">
+          <h4>Theorem</h4>
+          <p>If $f$ is a convex function, then its sublevel set $C_\alpha$ is a convex set for any $\alpha \in \mathbb{R}$.</p>
+          <p><i>Note:</i> The converse is false. Functions whose sublevel sets are convex but who are not themselves convex are called <b>quasiconvex</b>.</p>
+        </div>
+
+        <figure style="text-align: center; margin: 24px 0;">
              <img src="assets/indicator-function.png"
                   alt="3D plot of an indicator function"
                   style="max-width: 60%; height: auto; border-radius: 8px;" />
-             <figcaption><i>Figure 1.5:</i> The sublevel set of a convex function (like the indicator function shown here) corresponds to the convex set itself.</figcaption>
-          </figure>
+             <figcaption><i>Figure 1.5:</i> The sublevel set of a convex function corresponds to a convex set. For example, the unit ball is the 1-sublevel set of the norm function $f(x) = \|x\|$.</figcaption>
+        </figure>
+
+        <h4>(b) Epigraphs</h4>
+        <p>The <a href="#" class="definition-link">epigraph</a> of a function $f$ is the set of points lying on or above its graph in $\mathbb{R}^{n+1}$:</p>
+        $$
+        \mathrm{epi}(f) = \{(x, t) \in \mathbb{R}^{n+1} \mid x \in \mathrm{dom} f, \ f(x) \le t\}
+        $$
+        <p>This object is the "Rosetta Stone" connecting the algebra of functions to the geometry of sets.</p>
+
+        <div class="theorem-box">
+          <h4>Fundamental Bridge Theorem</h4>
+          <p>A function $f$ is <b>convex</b> if and only if its <b>epigraph</b> $\mathrm{epi}(f)$ is a <b>convex set</b>.</p>
+          <p>This allows us to translate operations on functions (like taking a maximum) into operations on sets (like intersection), providing geometric proofs for analytic properties.</p>
         </div>
 
-        <h3>1.4 Key Properties</h3>
+        <h3>1.5 Key Properties</h3>
 
         <ul>
           <li>Every affine set is convex (but not vice versa).</li>
