@@ -66,9 +66,9 @@
 
 
       <h3>Preliminaries: Topology on $\mathbb{Z}$ (A Warm-up)</h3>
-      <p>Before diving into linear algebra, let's consider a simple topological warmup. Consider a function $f: \mathbb{Z} \to \mathbb{R}$. We ask: are sets of the form $\{n \in \mathbb{Z} : f(n) > r\}$ open in $\mathbb{Z}$?</p>
+      <p>Consider a function $f: \mathbb{Z} \to \mathbb{R}$. We ask: are sets of the form $\{n \in \mathbb{Z} : f(n) > r\}$ open in $\mathbb{Z}$?</p>
       <p>Using the subspace topology from $\mathbb{R}$, <b>every subset of $\mathbb{Z}$ is open</b>.
-      <br><i>Why?</i> For each integer $k$, the interval $(k - 1/2, k + 1/2)$ is open in $\mathbb{R}$. Its intersection with $\mathbb{Z}$ is the singleton $\{k\}$. Since every singleton is open, and any subset is a union of singletons, every subset is open. Thus, <b>every function $f: \mathbb{Z} \to \mathbb{R}$ is continuous</b> in this topology.</p>
+      <br><i>Reasoning:</i> For each integer $k$, the interval $(k - 1/2, k + 1/2)$ is open in $\mathbb{R}$. Its intersection with $\mathbb{Z}$ is the singleton $\{k\}$. Since every singleton is open, and any subset is a union of singletons, every subset is open. Consequently, <b>every function $f: \mathbb{Z} \to \mathbb{R}$ is continuous</b> in this topology.</p>
 
       <h3>Preliminaries: Lines and Line Segments</h3>
       <p>We work in $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum x_i y_i$ and Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are fundamental to defining convexity.</p>
@@ -98,7 +98,7 @@
       <ul>
         <li><b>Scalars:</b> Real numbers $a \in \mathbb{R}$.</li>
         <li><b>Column vectors:</b> $x \in \mathbb{R}^n$ are $n \times 1$ matrices with entries $x_i$.
-          <br><i>Why column vectors?</i> By convention, we treat vectors as columns to make matrix-vector multiplication $Ax$ algebraically consistent with linear maps $T(x)$. If $x$ were a row vector, we would have to write $xA^\top$, which is less standard. Throughout this course, unless specified otherwise, any vector $x$ is a column vector.</li>
+          <br><i>Note on convention:</i> We treat vectors as columns to maintain algebraic consistency with matrix-vector multiplication $Ax$ representing linear maps $T(x)$. Treating $x$ as a row vector would necessitate the notation $xA^\top$. Throughout this course, unless specified otherwise, any vector $x$ is a column vector.</li>
         <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$; entry $a_{ij}$ lies in row $i$, column $j$. The first dimension $m$ is the number of rows, and $n$ is the number of columns.</li>
         <li><b>Transpose:</b> $A^\top \in \mathbb{R}^{n \times m}$ satisfies $(A^\top)_{ij} = a_{ji}$. It flips the matrix across its main diagonal.</li>
         <li><b>Identity:</b> $I_n$ is the $n \times n$ square matrix with ones on the diagonal and zeros elsewhere; it satisfies $I_n x = x$ for all $x \in \mathbb{R}^n$.</li>
@@ -215,7 +215,7 @@
       </div>
 
       <div class="proof-box">
-        <h4>Detailed Derivation: Hessian of Least Squares</h4>
+        <h4>Derivation: Hessian of Least Squares</h4>
         <p>Let $f(x) = \|Ax - b\|_2^2$. We show $\nabla^2 f(x) = 2A^\top A$ and prove its convexity.</p>
 
         <div class="proof-step">
@@ -715,7 +715,7 @@
       <h2>5. Positive Semidefinite Matrices</h2>
 
       <h3>5.1 The Space of Symmetric Matrices ($\mathbb{S}^n$)</h3>
-      <p>In convex optimization, we care deeply about the Hessian matrix $\nabla^2 f(x)$. By Schwarz's Theorem, if a function is twice continuously differentiable, its Hessian is symmetric. A matrix $A \in \mathbb{R}^{n \times n}$ is symmetric if $A = A^\top$. The set of such matrices is denoted $\mathbb{S}^n$.</p>
+      <p>In convex optimization, a central object is the Hessian matrix $\nabla^2 f(x)$. By Schwarz's Theorem, if a function is twice continuously differentiable, its Hessian is symmetric. A matrix $A \in \mathbb{R}^{n \times n}$ is symmetric if $A = A^\top$. The set of such matrices is denoted $\mathbb{S}^n$.</p>
 
       <h4>The Spectral Theorem</h4>
       <p>If $A \in \mathbb{S}^n$, then:</p>
@@ -739,10 +739,10 @@
         <p>Subtracting gives $(\lambda_1 - \lambda_2) \langle v_1, v_2 \rangle = 0$. Since $\lambda_1 \neq \lambda_2$, we must have $\langle v_1, v_2 \rangle = 0$.</p>
       </div>
 
-      <p><b>Why this matters for convexity:</b> The "shape" of a multivariable function (bowl vs. saddle) is entirely determined by the signs of the eigenvalues of its Hessian.</p>
+      <p><b>Implication for convexity:</b> The "shape" of a multivariable function (bowl vs. saddle) is entirely determined by the signs of the eigenvalues of its Hessian.</p>
 
       <h3>5.2 Positive Semidefinite (PSD) Matrices</h3>
-      <p>This is the single most important definition in the course. It is the matrix equivalent of a "non-negative number" and underpins the definition of <b>Convex Functions</b> (<a href="../03-convex-functions/index.html">Lecture 03</a>) and <b>Semidefinite Programming</b> (<a href="../04-convex-opt-problems/index.html">Lecture 04</a>).</p>
+      <p>This definition is central to the course. It provides the matrix equivalent of a "non-negative number" and underpins the definition of <b>Convex Functions</b> (<a href="../03-convex-functions/index.html">Lecture 03</a>) and <b>Semidefinite Programming</b> (<a href="../04-convex-opt-problems/index.html">Lecture 04</a>).</p>
 
       <h4>Definition A: The Variational Definition</h4>
       <p>A symmetric matrix $A \in \mathbb{S}^n$ is <a href="#" class="definition-link" data-term="positive semidefinite">Positive Semidefinite (PSD)</a>, denoted as $A \succeq 0$, if:</p>
@@ -811,10 +811,10 @@
         $$ ME = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} = \begin{bmatrix} A - BD^{-1}C & B \\ 0 & D \end{bmatrix} = \begin{bmatrix} S & B \\ 0 & D \end{bmatrix} $$
 
         <div class="insight">
-          <h4>💡 Why choose this particular Elimination Matrix?</h4>
-          <p>The goal is to eliminate the bottom-left block $C$, similar to Gaussian elimination. We want the $(2,1)$ block of the product to be zero:
+          <h4>💡 Choice of Elimination Matrix</h4>
+          <p>The goal is to eliminate the bottom-left block $C$, analogous to Gaussian elimination. We require the $(2,1)$ block of the product to be zero:
           $$ C \cdot I_p + D \cdot X = 0 \implies D X = -C \implies X = -D^{-1}C $$
-          This forces the choice of the entry $-D^{-1}C$ in the elimination matrix $E$.</p>
+          This determines the entry $-D^{-1}C$ in the elimination matrix $E$.</p>
         </div>
 
         <p>Since $ME$ is block upper-triangular, its determinant is the product of the determinants of its diagonal blocks: $\det(ME) = \det(S)\det(D)$. Because $\det(E) = 1$, we derive the <b>Determinant Identity</b>:</p>
@@ -1149,7 +1149,7 @@
       <p>Thus, $A$ transforms the unit sphere in $\mathbb{R}^n$ into an ellipsoid in $\mathbb{R}^m$ with semi-axes of lengths $\sigma_1, \dots, \sigma_r$.</p>
 
       <div class="proof-box">
-        <h4>Detailed Walkthrough: The Geometry of SVD in 2D</h4>
+        <h4>Walkthrough: The Geometry of SVD in 2D</h4>
         <p>Let's visualize exactly how $A = U \Sigma V^\top$ transforms a vector $x$. Consider the matrix:</p>
         $$ A = \begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix} $$
         <p>This simple matrix just stretches. But let's look at a general $A$. The transformation $Ax = U (\Sigma (V^\top x))$ happens in three steps:</p>
@@ -1175,7 +1175,7 @@
       </ul>
 
       <h4>Derivation: Operator Norm and Singular Values</h4>
-      <p>The spectral norm $\|A\|_2$ has a deep connection to the singular values.
+      <p>The spectral norm $\|A\|_2$ has a fundamental connection to the singular values.
       $$ \|A\|_2 = \max_{\|x\|_2=1} \|Ax\|_2 $$
       Consider the squared norm: $\|Ax\|_2^2 = \langle Ax, Ax \rangle = \langle x, A^\top A x \rangle$.
       This is a quadratic form with the symmetric PSD matrix $A^\top A$. The maximum value of the Rayleigh quotient $\frac{x^\top M x}{x^\top x}$ is the maximum eigenvalue $\lambda_{\max}(M)$.
@@ -1276,7 +1276,7 @@
         <li><strong>Projection:</strong> Project onto top-$k$ components: $Z = \tilde{X} V_k \in \mathbb{R}^{n \times k}$</li>
       </ol>
 
-      <p><strong>Why SVD?</strong> The covariance matrix $C = \frac{1}{n} \tilde{X}^\top \tilde{X} = \frac{1}{n} V \Sigma^2 V^\top$ (from SVD). Eigenvalues of $C$ are $\sigma_i^2 / n$, eigenvectors are columns of $V$. SVD directly provides the principal components without forming $C$ explicitly—more stable and efficient.</p>
+      <p><strong>Why SVD?</strong> The covariance matrix $C = \frac{1}{n} \tilde{X}^\top \tilde{X} = \frac{1}{n} V \Sigma^2 V^\top$ (from SVD). The eigenvalues of $C$ are $\sigma_i^2 / n$, and its eigenvectors are the columns of $V$. Thus, SVD directly provides the principal components without forming $C$ explicitly, which is more numerically stable and efficient.</p>
 
       <p><strong>Applications:</strong></p>
       <ul>
@@ -1309,10 +1309,10 @@
         <p><strong>Implication:</strong> A perturbation of size $\epsilon$ in $b$ can cause a perturbation of size $\kappa(A) \cdot \epsilon$ in $x$. If $\kappa(A) = 10^{10}$ and we have machine precision $\epsilon_{\text{mach}} \approx 10^{-16}$, we lose $\log_{10}(\kappa) = 10$ digits of precision!</p>
       </div>
 
-      <h4>8.5.4 Why Normal Equations Fail</h4>
+      <h4>8.5.4 Numerical Stability of Normal Equations</h4>
       <p>The normal equations $A^\top A x = A^\top b$ square the condition number:
       $$ \kappa(A^\top A) = \frac{\sigma_1^2}{\sigma_n^2} = \kappa(A)^2 $$
-      If $A$ is already ill-conditioned, forming $A^\top A$ makes it catastrophically worse. <strong>This is why QR and SVD are preferred.</strong></p>
+      If $A$ is already ill-conditioned, forming $A^\top A$ significantly degrades precision. <strong>Consequently, QR and SVD are preferred for robust numerical solutions.</strong></p>
 
       <!-- 7.6 Numerical Algorithms -->
       <h3>8.6 Numerical Algorithms for SVD</h3>
@@ -1734,6 +1734,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     <section class="section-card" id="section-13">
       <h2><i data-feather="edit-3"></i> 13. Exercises</h2>
 
+<div class="problem">
       <h3>P0.1 — Dual of $\ell_p$ Norm</h3>
       <p><b>Problem:</b> Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Handle the boundary cases $p = 1 \Rightarrow q = \infty$ and $p = \infty \Rightarrow q = 1$.</p>
 
@@ -1775,6 +1776,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </div>
       </div>
 
+</div>
+<div class="problem">
       <h3>P0.2 — Frobenius Cauchy–Schwarz</h3>
       <p><b>Problem:</b> Prove that for matrices $X, Y \in \mathbb{R}^{m \times n}$:</p>
       $$
@@ -1796,6 +1799,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <p>View matrices as vectors in $\mathbb{R}^{mn}$ by stacking columns. The Frobenius inner product corresponds to the standard Euclidean inner product on $\mathbb{R}^{mn}$, and the Frobenius norm corresponds to the Euclidean norm. Therefore, the standard Cauchy-Schwarz inequality applies directly.</p>
       </div>
 
+</div>
+<div class="problem">
       <h3>P0.3 — Loewner Order Transitivity</h3>
       <p><b>Problem:</b> If $X \succeq Y$ and $Y \succeq Z$ (all in $\mathbb{S}^n$), prove that $X \succeq Z$.</p>
 
@@ -1816,6 +1821,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <p>Since the sum of two PSD matrices is PSD (each has nonnegative eigenvalues in their respective quadratic forms), we conclude $X - Z \succeq 0$, i.e., $X \succeq Z$.</p>
       </div>
 
+</div>
+<div class="problem">
       <h3>P0.4 — Projection onto Affine Set Example</h3>
       <p><b>Problem:</b> Find the Euclidean projection of $y = (1, 2, 3)^\top$ onto the affine set:</p>
       $$
@@ -1858,6 +1865,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </div>
       </div>
 
+</div>
+<div class="problem">
       <h3>P0.5 — Subspace Fundamentals</h3>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -1884,6 +1893,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         Since this holds for any $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$, the subspaces are orthogonal.</p>
       </div>
 
+</div>
+<div class="problem">
       <h3>P0.6 — Projections and Least Squares</h3>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -1947,6 +1958,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </p>
       </div>
 
+</div>
+<div class="problem">
       <h3>P0.7 — Pseudoinverse & Rank Deficiency</h3>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -1968,7 +1981,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <p><b>Solution:</b> Use SVD or basic projector algebra: $P^2 = P$, $P^\top = P$, range/nullspace relations.</p>
       </div>
 
-      <h3>P0.8 — Additional Practice</h3>
+</div>
+<div class="problem">
+      <h3>P0.8 — Practice Problems</h3>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
@@ -2031,6 +2046,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
           Check if $b - p$ is orthogonal to the plane: $b - p = (1, 1, 1)^\top$, which is the normal vector $a$. Yes.
         </div>
       </div>
+
+</div>
 
             <div class="problem">
         <h3>P0.9 — Trace Properties and Commutators</h3>

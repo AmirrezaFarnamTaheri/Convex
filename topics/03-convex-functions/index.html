@@ -441,8 +441,8 @@
         </div>
 
         <div class="proof-box">
-          <h4>Detailed Proof: Concavity of Log-Determinant</h4>
-          <p>The function $f(X) = \log \det X$ is <b>concave</b> on $\mathbb{S}^n_{++}$. We use the "restriction to a line" technique to prove this rigorously.</p>
+          <h4>Proof: Concavity of Log-Determinant</h4>
+          <p>The function $f(X) = \log \det X$ is <b>concave</b> on $\mathbb{S}^n_{++}$. We use the "restriction to a line" technique to prove this formally.</p>
 
           <div class="proof-step">
             <strong>Step 1: Restrict to a line.</strong>
@@ -555,7 +555,7 @@
         <div class="theorem-box">
           <h4>Theorem (Prékopa)</h4>
           <p>If $f(x, y)$ is log-concave, then the marginal function $g(x) = \int f(x, y) dy$ is log-concave.</p>
-          <p>This is a deep result with massive implications in probability. It implies that marginals of log-concave distributions (like the multivariate normal) are log-concave. It also implies that the convolution of log-concave functions is log-concave.</p>
+          <p>This is a fundamental result with massive implications in probability. It implies that marginals of log-concave distributions (like the multivariate normal) are log-concave. It also implies that the convolution of log-concave functions is log-concave.</p>
         </div>
       </section>
 
@@ -778,7 +778,7 @@
           </div>
 
           <div class="proof-box">
-            <h4>Detailed Proof of Case 1 (Convex + Non-decreasing)</h4>
+            <h4>Proof of Case 1 (Convex + Non-decreasing)</h4>
             <div class="proof-step">
               <strong>Step 1: Domain Sanity.</strong>
               Let $x, y \in \mathrm{dom}\, f$. Since $h$ is convex, its domain is convex. Thus, the convex combination of $g(x)$ and $g(y)$ stays in $\mathrm{dom}\, h$.
@@ -1218,7 +1218,7 @@
           <h4>5. Log-Sum-Exp $\leftrightarrow$ Negative Entropy</h4>
           <p>For $f(x) = \log(\sum e^{x_i})$, the conjugate is the negative entropy restricted to the probability simplex:</p>
           $$ f^*(y) = \sum_{i=1}^n y_i \log y_i \quad \text{on } \Delta_n = \{y \ge 0, \mathbf{1}^\top y = 1\} $$
-          <p>See the detailed derivation in the problem set or previous sections.</p>
+          <p>See the derivation in the problem set or previous sections.</p>
         </div>
 
         <h3>7.6 Biconjugate and Convexification</h3>
@@ -1345,7 +1345,7 @@
           <h4>Example 6: Distance Ratio</h4>
           <p>The function $f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ on $\{x \mid \|x-a\|_2 \le \|x-b\|_2\}$ is quasiconvex.</p>
           <div class="proof-box">
-            <h4>Detailed Check</h4>
+            <h4>Check</h4>
             <p>Condition: $\frac{\|x-a\|_2}{\|x-b\|_2} \le \alpha$. Squaring gives $\|x-a\|_2^2 \le \alpha^2 \|x-b\|_2^2$.
             $$ x^\top x - 2a^\top x + a^\top a \le \alpha^2(x^\top x - 2b^\top x + b^\top b) $$
             $$ (1-\alpha^2)x^\top x - 2(a - \alpha^2 b)^\top x + (a^\top a - \alpha^2 b^\top b) \le 0 $$
@@ -1358,7 +1358,7 @@
           <p>Consider a cash flow $x = (x_0, \dots, x_n)$ with $x_0 < 0$ and $\sum x_i > 0$. The <b>Internal Rate of Return</b> $\text{IRR}(x)$ is the smallest $r \ge 0$ such that $\sum x_i (1+r)^{-i} = 0$.</p>
           <p>We claim $\text{IRR}(x)$ is a <b>quasiconcave</b> function of the cash flow vector $x$.</p>
           <div class="proof-box">
-            <h4>Rigorous Proof</h4>
+            <h4>Proof</h4>
             <p>We want to show the superlevel set $S_R = \{x \mid \text{IRR}(x) \ge R\}$ is convex.
             <br>By definition, IRR is the root. Since the Present Value $PV(r) = \sum x_i (1+r)^{-i}$ is decreasing in $r$ (for typical cash flows), having a root at $r^* \ge R$ implies $PV(r) \ge 0$ for all $r \in [0, R]$.
             $$ \text{IRR}(x) \ge R \iff \sum_{i=0}^n x_i (1+r)^{-i} \ge 0 \quad \forall r \in [0, R) $$
@@ -1504,219 +1504,63 @@
 
       <!-- SECTION 10: EXERCISES -->
       <section class="section-card" id="section-10">
-        <h2><i data-feather="edit-3"></i> 10. Exercises and Detailed Examples</h2>
+        <h2><i data-feather="edit-3"></i> 10. Exercises and Examples</h2>
+<div class="problem">
+<h3>P3.1 — Verify Convexity Using First-Order Conditions</h3>
 
-        <div class="problem">
-          <h3>P3.1 — Verify Convexity Using First-Order Conditions</h3>
-          <p>Prove that $f(x) = e^x$ is convex on $\mathbb{R}$ using the first-order condition.</p>
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Tangent Underestimator:</b> The first-order condition $\nabla f(x)$ defines a global linear underestimator: $f(y) \ge f(x) + \nabla f(x)^\top (y-x)$. Geometrically, the tangent plane lies below the graph.</li>
-            <li><b>Inequality Source:</b> Many famous inequalities (like $e^x \ge 1+x$) are simply statements that a specific convex function lies above its tangent line at a specific point.</li>
-        </ul>
-      </div>
-
+<p>Prove that $f(x) = e^x$ is convex on $\mathbb{R}$ using the first-order condition.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Tangent Underestimator:</b> The first-order condition $\nabla f(x)$ defines a global linear underestimator: $f(y) \ge f(x) + \nabla f(x)^\top (y-x)$. Geometrically, the tangent plane lies below the graph.</li>
             <li><b>Inequality Source:</b> Many famous inequalities (like $e^x \ge 1+x$) are simply statements that a specific convex function lies above its tangent line at a specific point.</li>
-        </ul>
-      </div>
+        </ul></div>
 
-<div class="solution">
-            <h4>Solution</h4>
+</div>
+<div class="problem">
+<h3>P3.2 — Verify Convexity Using Second-Order Conditions</h3>
 
-            <div class="proof-step">
-              <strong>Step 1: Compute gradient.</strong> For $f(x) = e^x$, we have $f'(x) = e^x$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Apply first-order condition.</strong> We need to show $f(y) \ge f(x) + f'(x)(y - x)$ for all $x, y \in \mathbb{R}$.
-              Substituting:
-              $$
-              e^y \ge e^x + e^x(y - x) = e^x(1 + y - x)
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Simplify.</strong> Divide both sides by $e^x > 0$ and let $t = y - x$:
-              $$
-              e^t \ge 1 + t
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 4: Verify inequality.</strong> The inequality $e^t \ge 1 + t$ for all $t \in \mathbb{R}$ follows from the Taylor series:
-              $$
-              e^t = 1 + t + \frac{t^2}{2!} + \frac{t^3}{3!} + \cdots \ge 1 + t
-              $$
-              (all terms after $1 + t$ are non-negative for $t \ge 0$, and the inequality reverses then reverses back for $t < 0$ by inspecting the series).
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> Therefore, $f(x) = e^x$ is convex.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P3.2 — Verify Convexity Using Second-Order Conditions</h3>
-          <p>Show that $f(x) = \|x\|_2^2$ is convex on $\mathbb{R}^n$ using the Hessian test.</p>
+<p>Show that $f(x) = \|x\|_2^2$ is convex on $\mathbb{R}^n$ using the Hessian test.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Curvature Test (Hessian):</b> The Hessian matrix $\nabla^2 f(x)$ captures the local curvature. If the curvature is "non-negative" (Positive Semidefinite) in every direction at every point, the function is globally convex ("bowl shape").</li>
             <li><b>Quadratic Flatness:</b> Quadratic functions have constant curvature (constant Hessian). If this constant curvature matrix $Q$ is PSD, the entire surface is a convex bowl.</li>
-        </ul>
-      </div>
+        </ul></div>
 
+</div>
+<div class="problem">
+<h3>P3.3 — Composition of Convex Functions</h3>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Curvature Test (Hessian):</b> The Hessian matrix $\nabla^2 f(x)$ captures the local curvature. If the curvature is "non-negative" (Positive Semidefinite) in every direction at every point, the function is globally convex ("bowl shape").</li>
-            <li><b>Quadratic Flatness:</b> Quadratic functions have constant curvature (constant Hessian). If this constant curvature matrix $Q$ is PSD, the entire surface is a convex bowl.</li>
-        </ul>
-      </div>
-
-<div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Step 1: Compute gradient.</strong>
-              $$
-              f(x) = x^\top x \implies \nabla f(x) = 2x
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Compute Hessian.</strong>
-              $$
-              \nabla^2 f(x) = 2I
-              $$
-              where $I$ is the $n \times n$ identity matrix.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Check PSD.</strong> The identity matrix $I$ is positive definite (all eigenvalues equal 1 > 0), so $2I$ is also positive definite, hence positive semidefinite.
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> Since $\nabla^2 f(x) = 2I \succeq 0$ for all $x \in \mathbb{R}^n$, the function $f(x) = \|x\|_2^2$ is convex. In fact, it's strongly convex with parameter $m = 2$.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P3.3 — Composition of Convex Functions</h3>
-          <p>Let $f(x) = -\log(x)$ on $\mathbb{R}_{++}$ and $g(x) = e^x$ on $\mathbb{R}$. Is $h(x) = f(g(x)) = -\log(e^x) = -x$ convex?</p>
+<p>Let $f(x) = -\log(x)$ on $\mathbb{R}_{++}$ and $g(x) = e^x$ on $\mathbb{R}$. Is $h(x) = f(g(x)) = -\log(e^x) = -x$ convex?</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Composition Rule Limitations:</b> The standard rules (e.g., Convex + Increasing) are sufficient but not necessary. A composition can be convex even if the rules don't apply.</li>
             <li><b>Direct Verification:</b> When composition rules are inconclusive (e.g., Convex + Decreasing), one must fall back to the definition or derivative tests. In this case, algebraic cancellation reveals a linear (hence convex) structure.</li>
-        </ul>
-      </div>
+        </ul></div>
 
+</div>
+<div class="problem">
+<h3>P3.4 — Maximum of Convex Functions</h3>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Composition Rule Limitations:</b> The standard rules (e.g., Convex + Increasing) are sufficient but not necessary. A composition can be convex even if the rules don't apply.</li>
-            <li><b>Direct Verification:</b> When composition rules are inconclusive (e.g., Convex + Decreasing), one must fall back to the definition or derivative tests. In this case, algebraic cancellation reveals a linear (hence convex) structure.</li>
-        </ul>
-      </div>
-
-<div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Analyze composition rule:</strong> We have $h(x) = f(g(x))$ where:
-              <ul>
-                <li>$g(x) = e^x$ is convex and increasing on $\mathbb{R}$.</li>
-                <li>$f(x) = -\log(x)$ is convex on $\mathbb{R}_{++}$.</li>
-              </ul>
-            </div>
-
-            <div class="proof-step">
-              <strong>Check monotonicity:</strong> For the composition $h = f \circ g$ to be convex when both $f$ and $g$ are convex, we need $f$ to be <b>non-decreasing</b>. However, $f(x) = -\log(x)$ is <b>decreasing</b> (since $f'(x) = -1/x < 0$).
-            </div>
-
-            <div class="proof-step">
-              <strong>Alternative: Direct verification.</strong> We can directly compute: $h(x) = -x$ is linear (hence both convex and concave). So yes, it's convex, but not strictly.
-            </div>
-
-            <div class="proof-step">
-              <strong>Lesson:</strong> The composition rules are <i>sufficient</i> conditions, not necessary. The composition $f \circ g$ can still be convex even when the standard rules don't apply—you need to verify directly.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P3.4 — Maximum of Convex Functions</h3>
-          <p>Prove that if $f_1, f_2: \mathbb{R}^n \to \mathbb{R}$ are convex, then $f(x) = \max\{f_1(x), f_2(x)\}$ is convex.</p>
+<p>Prove that if $f_1, f_2: \mathbb{R}^n \to \mathbb{R}$ are convex, then $f(x) = \max\{f_1(x), f_2(x)\}$ is convex.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Pointwise Maximum Property:</b> The maximum of any collection of convex functions is always convex. This operation preserves the "upward curving" nature.</li>
             <li><b>Epigraph Intersection:</b> Geometrically, the epigraph of the maximum function $f = \max(f_1, f_2)$ is the intersection of the epigraphs of $f_1$ and $f_2$. Since the intersection of convex sets is convex, the result is convex.</li>
-        </ul>
-      </div>
+        </ul></div>
 
+</div>
+<div class="problem">
+<h3>P3.5 — Strong Convexity</h3>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Pointwise Maximum Property:</b> The maximum of any collection of convex functions is always convex. This operation preserves the "upward curving" nature.</li>
-            <li><b>Epigraph Intersection:</b> Geometrically, the epigraph of the maximum function $f = \max(f_1, f_2)$ is the intersection of the epigraphs of $f_1$ and $f_2$. Since the intersection of convex sets is convex, the result is convex.</li>
-        </ul>
-      </div>
-
-<div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Setup:</strong> Take any $x, y \in \mathbb{R}^n$ and $\theta \in [0, 1]$. Let $z = \theta x + (1-\theta)y$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 1: Bound $f(z)$.</strong> By definition:
-              $$
-              f(z) = \max\{f_1(z), f_2(z)\}
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Apply convexity of $f_1$ and $f_2$.</strong>
-              $$
-              f_1(z) \le \theta f_1(x) + (1-\theta)f_1(y) \le \theta \max\{f_1(x), f_2(x)\} + (1-\theta)\max\{f_1(y), f_2(y)\}
-              $$
-              $$
-              = \theta f(x) + (1-\theta)f(y)
-              $$
-              Similarly, $f_2(z) \le \theta f(x) + (1-\theta)f(y)$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Conclude.</strong> Since both $f_1(z)$ and $f_2(z)$ are at most $\theta f(x) + (1-\theta)f(y)$, their maximum is also:
-              $$
-              f(z) = \max\{f_1(z), f_2(z)\} \le \theta f(x) + (1-\theta)f(y)
-              $$
-              proving $f$ is convex.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P3.5 — Strong Convexity</h3>
-          <p>Show that $f(x) = \frac{1}{2}x^\top Q x$ is $\lambda_{\min}(Q)$-strongly convex if $Q \succ 0$.</p>
+<p>Show that $f(x) = \frac{1}{2}x^\top Q x$ is $\lambda_{\min}(Q)$-strongly convex if $Q \succ 0$.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
@@ -1724,100 +1568,26 @@
             <li><b>Strong Convexity Definition:</b> Requires a uniform minimum curvature $m > 0$. The function must curve upward at least as fast as a quadratic parabola $m x^2$.</li>
             <li><b>Quadratic Lower Bound:</b> Strong convexity implies $f(y) \ge f(x) + \nabla f(x)^\top(y-x) + \frac{m}{2}\|y-x\|^2$, providing a tighter bound than simple convexity.</li>
             <li><b>Matrix Inequality:</b> For Hessians, $Q \succeq mI$ means the smallest eigenvalue $\lambda_{\min}(Q)$ is at least $m$.</li>
-        </ul>
-      </div>
+        </ul></div>
 
+</div>
+<div class="problem">
+<h3>P3.6 — Conjugate Function</h3>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Strong Convexity Definition:</b> Requires a uniform minimum curvature $m > 0$. The function must curve upward at least as fast as a quadratic parabola $m x^2$.</li>
-            <li><b>Quadratic Lower Bound:</b> Strong convexity implies $f(y) \ge f(x) + \nabla f(x)^\top(y-x) + \frac{m}{2}\|y-x\|^2$, providing a tighter bound than simple convexity.</li>
-            <li><b>Matrix Inequality:</b> For Hessians, $Q \succeq mI$ means the smallest eigenvalue $\lambda_{\min}(Q)$ is at least $m$.</li>
-        </ul>
-      </div>
-
-<div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Use Hessian characterization:</strong> We have:
-              $$
-              \nabla^2 f(x) = Q
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Check strong convexity condition:</strong> A function is $m$-strongly convex if $\nabla^2 f(x) \succeq mI$ for all $x$. Here, we need:
-              $$
-              Q \succeq mI
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Eigenvalue interpretation:</strong> The condition $Q \succeq mI$ is equivalent to saying all eigenvalues of $Q$ are at least $m$. Since $Q$ is symmetric, its eigenvalues are real. The smallest eigenvalue is $\lambda_{\min}(Q)$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> Since all eigenvalues of $Q$ are at least $\lambda_{\min}(Q)$, we have $Q \succeq \lambda_{\min}(Q) I$. Therefore, $f$ is $\lambda_{\min}(Q)$-strongly convex.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P3.6 — Conjugate Function</h3>
-          <p>Compute the conjugate of $f(x) = \frac{1}{2}\|x\|_2^2$.</p>
+<p>Compute the conjugate of $f(x) = \frac{1}{2}\|x\|_2^2$.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Legendre Transform Calculation:</b> For differentiable strictly convex functions, the conjugate $f^*(y)$ is found by maximizing $y^\top x - f(x)$. The maximum occurs where the gradient matches the slope: $\nabla f(x) = y$.</li>
-            <li><b>Self-Conjugacy of Quadratics:</b> The quadratic function $\frac{1}{2}\|x\|^2$ is the unique function (up to scaling) that is its own convex conjugate. This mirrors the Fourier transform property of Gaussians, establishing a deep link between Euclidean geometry and duality.</li>
-        </ul>
-      </div>
+            <li><b>Self-Conjugacy of Quadratics:</b> The quadratic function $\frac{1}{2}\|x\|^2$ is the unique function (up to scaling) that is its own convex conjugate. This mirrors the Fourier transform property of Gaussians, establishing a fundamental link between Euclidean geometry and duality.</li>
+        </ul></div>
 
+</div>
+<div class="problem">
+<h3>P3.7 — Quasi-Convexity</h3>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Legendre Transform Calculation:</b> For differentiable strictly convex functions, the conjugate $f^*(y)$ is found by maximizing $y^\top x - f(x)$. The maximum occurs where the gradient matches the slope: $\nabla f(x) = y$.</li>
-            <li><b>Self-Conjugacy of Quadratics:</b> The quadratic function $\frac{1}{2}\|x\|^2$ is the unique function (up to scaling) that is its own convex conjugate. This mirrors the Fourier transform property of Gaussians, establishing a deep link between Euclidean geometry and duality.</li>
-        </ul>
-      </div>
-
-<div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Definition:</strong> The conjugate is:
-              $$
-              f^*(y) = \sup_{x \in \mathbb{R}^n} \left( y^\top x - \frac{1}{2}\|x\|_2^2 \right)
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Find supremum:</strong> The function $g(x) = y^\top x - \frac{1}{2}\|x\|_2^2$ is concave in $x$ (Hessian is $-I \preceq 0$). The maximum is attained where:
-              $$
-              \nabla_x g(x) = y - x = 0 \implies x = y
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Compute supremum value:</strong> Substituting $x = y$:
-              $$
-              f^*(y) = y^\top y - \frac{1}{2}\|y\|_2^2 = \|y\|_2^2 - \frac{1}{2}\|y\|_2^2 = \frac{1}{2}\|y\|_2^2
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> The conjugate of $f(x) = \frac{1}{2}\|x\|_2^2$ is $f^*(y) = \frac{1}{2}\|y\|_2^2$. The quadratic is <b>self-conjugate</b>!
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P3.7 — Quasi-Convexity</h3>
-          <p>Show that $f(x) = \lceil x \rceil$ (ceiling function) is quasi-convex but not convex.</p>
+<p>Show that $f(x) = \lceil x \rceil$ (ceiling function) is quasi-convex but not convex.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
@@ -1825,109 +1595,26 @@
             <li><b>Quasi-Convexity Definition:</b> A function is quasi-convex if all its sublevel sets $S_\alpha = \{x \mid f(x) \le \alpha\}$ are convex sets. This is a weaker condition than convexity.</li>
             <li><b>Monotonicity and Steps:</b> Any monotonic function on $\mathbb{R}$ (even discontinuous ones like the ceiling function) is both quasi-convex and quasi-concave (quasilinear).</li>
             <li><b>Jensen Failure:</b> Quasi-convexity does not satisfy Jensen's inequality ($f(\text{avg}) \le \text{avg}(f)$). It only satisfies the weaker condition $f(\text{avg}) \le \max(f(a), f(b))$.</li>
-        </ul>
-      </div>
+        </ul></div>
 
+</div>
+<div class="problem">
+<h3>P3.8 — Softmax Convexity</h3>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Quasi-Convexity Definition:</b> A function is quasi-convex if all its sublevel sets $S_\alpha = \{x \mid f(x) \le \alpha\}$ are convex sets. This is a weaker condition than convexity.</li>
-            <li><b>Monotonicity and Steps:</b> Any monotonic function on $\mathbb{R}$ (even discontinuous ones like the ceiling function) is both quasi-convex and quasi-concave (quasilinear).</li>
-            <li><b>Jensen Failure:</b> Quasi-convexity does not satisfy Jensen's inequality ($f(\text{avg}) \le \text{avg}(f)$). It only satisfies the weaker condition $f(\text{avg}) \le \max(f(a), f(b))$.</li>
-        </ul>
-      </div>
-
-<div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Verify quasi-convexity:</strong> The sublevel sets are:
-              $$
-              S_\alpha = \{x \in \mathbb{R} \mid \lceil x \rceil \le \alpha\}
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Characterize sublevel sets:</strong> Since $\lceil x \rceil$ is the smallest integer $\ge x$, we have $\lceil x \rceil \le \alpha$ if and only if $x \le \lfloor\alpha\rfloor$. Thus:
-              $$
-              S_\alpha = (-\infty, \lfloor\alpha\rfloor]
-              $$
-              which is an interval (convex). Since all sublevel sets are convex, $f$ is quasi-convex.
-            </div>
-
-            <div class="proof-step">
-              <strong>Show not convex:</strong> Convexity requires $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ for all $x, y, \theta \in [0,1]$.
-              Consider $x=0$ and $y=0.6$.
-              <ul>
-                <li>$f(0) = \lceil 0 \rceil = 0$</li>
-                <li>$f(0.6) = \lceil 0.6 \rceil = 1$</li>
-              </ul>
-              Let $\theta = 0.5$, so the midpoint is $z = 0.5(0) + 0.5(0.6) = 0.3$.
-              <ul>
-                <li>Actual value: $f(0.3) = \lceil 0.3 \rceil = 1$</li>
-                <li>Convex combination: $0.5 f(0) + 0.5 f(0.6) = 0.5(0) + 0.5(1) = 0.5$</li>
-              </ul>
-              Since $1 \not\le 0.5$, the inequality is violated. Therefore, the ceiling function is <b>not convex</b>.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P3.8 — Softmax Convexity</h3>
-          <p>The <b>Softmax</b> function, or Log-Sum-Exp function, is defined as $f(x) = \log\left(\sum_{i=1}^n e^{x_i}\right)$. Prove that $f(x)$ is convex on $\mathbb{R}^n$.</p>
+<p>The <b>Softmax</b> function, or Log-Sum-Exp function, is defined as $f(x) = \log\left(\sum_{i=1}^n e^{x_i}\right)$. Prove that $f(x)$ is convex on $\mathbb{R}^n$.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Log-Sum-Exp (Softmax):</b> This function is a smooth, convex approximation of the max function: $\text{LSE}(x) \approx \max_i x_i$. It is fundamental in logistic regression and geometric programming.</li>
             <li><b>Hessian as Covariance:</b> The Hessian of the LSE function is the covariance matrix of the softmax probability distribution. Since covariance matrices are always Positive Semidefinite (PSD), the function is convex.</li>
-        </ul>
-      </div>
+        </ul></div>
 
+</div>
+<div class="problem">
+<h3>P3.9 — Concavity of the Geometric Mean</h3>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Log-Sum-Exp (Softmax):</b> This function is a smooth, convex approximation of the max function: $\text{LSE}(x) \approx \max_i x_i$. It is fundamental in logistic regression and geometric programming.</li>
-            <li><b>Hessian as Covariance:</b> The Hessian of the LSE function is the covariance matrix of the softmax probability distribution. Since covariance matrices are always Positive Semidefinite (PSD), the function is convex.</li>
-        </ul>
-      </div>
-
-<div class="solution">
-            <h4>Solution</h4>
-
-            <div class="proof-step">
-              <strong>Step 1: Compute Gradient.</strong>
-              $$ \frac{\partial f}{\partial x_k} = \frac{1}{\sum_j e^{x_j}} \cdot e^{x_k} $$
-              Let $z_k = \frac{e^{x_k}}{\sum_j e^{x_j}}$. Note that $z_k > 0$ and $\sum_k z_k = 1$ (it's a probability distribution).
-              The gradient is $\nabla f(x) = z$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Compute Hessian.</strong>
-              $$ \frac{\partial^2 f}{\partial x_k \partial x_l} = \frac{\partial z_k}{\partial x_l} $$
-              If $k=l$:
-              $$ \frac{\partial z_k}{\partial x_k} = \frac{e^{x_k}(\sum e^{x_j}) - e^{x_k}e^{x_k}}{(\sum e^{x_j})^2} = z_k - z_k^2 = z_k(1-z_k) $$
-              If $k \ne l$:
-              $$ \frac{\partial z_k}{\partial x_l} = \frac{0 - e^{x_k}e^{x_l}}{(\sum e^{x_j})^2} = -z_k z_l $$
-              Thus, the Hessian matrix is $\nabla^2 f(x) = \text{diag}(z) - zz^\top$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Prove PSD.</strong>
-              For any vector $v \in \mathbb{R}^n$:
-              $$ v^\top (\text{diag}(z) - zz^\top) v = \sum_i z_i v_i^2 - (v^\top z)^2 $$
-              Since $z_i > 0$ and $\sum z_i = 1$, we can interpret $z$ as probabilities. Then $\sum z_i v_i^2 = \mathbb{E}[V^2]$ and $(v^\top z)^2 = (\sum z_i v_i)^2 = (\mathbb{E}[V])^2$ where $V$ is a random variable taking value $v_i$ with probability $z_i$.
-              $$ \mathbb{E}[V^2] - (\mathbb{E}[V])^2 = \text{Var}(V) \ge 0 $$
-              Thus $v^\top \nabla^2 f(x) v \ge 0$, so the Hessian is positive semidefinite. Therefore, $f$ is convex.
-            </div>
-          </div>
-        </div>
-
-        <div class="problem">
-          <h3>P3.9 — Concavity of the Geometric Mean</h3>
-          <p>We prove that the geometric mean $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}_{++}^n$.</p>
+<p>We prove that the geometric mean $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}_{++}^n$.</p>
 
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -1936,7 +1623,7 @@
             <li><b>Geometric Mean Concavity:</b> The geometric mean $G(x)$ is concave on the positive orthant. This geometric fact underpins the AM-GM inequality.</li>
             <li><b>Proof via Transformation:</b> Taking the logarithm transforms the geometric mean into the arithmetic mean of logs ($\frac{1}{n}\sum \log x_i$). Since $\log$ is concave and sum preserves concavity, $\log G(x)$ is concave. A log-concave homogeneous function is concave.</li>
         </ul>
-      </div>
+
 
 <div class="proof-box">
             <h4>Solution</h4>
@@ -1946,23 +1633,19 @@
               <p>Consider $f(x) = \log G(x) = \frac{1}{n} \sum_{i=1}^n \log x_i$. Since $\log x_i$ is concave, $f(x)$ is concave (sum of concave functions). Thus $G(x) = e^{f(x)}$ is log-concave.</p>
               <p>Also, $G(x)$ is homogeneous of degree 1: $G(\lambda x) = \lambda G(x)$ for $\lambda > 0$.</p>
               <p><b>Lemma:</b> A positive, log-concave, degree-1 homogeneous function is concave.</p>
-              <p><i>Proof of Lemma:</i> By log-concavity, $f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta}$. Normalize so $f(x)=f(y)=1$ (using homogeneity). Then $f(\text{convex combo}) \ge 1 = \theta(1) + (1-\theta)(1)$. Scaling back gives full concavity.</p>
-            </div>
-
-            <div class="proof-step">
+              <p><i>Proof of Lemma:</i> By log-concavity, $f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta}$. Normalize so $f(x)=f(y)=1$ (using homogeneity). Then $f(\text{convex combo}) \ge 1 = \theta(1) + (1-\theta)(1)$. Scaling back gives full concavity.</p></div><div class="proof-step">
               <strong>Method 2: Hessian Test</strong>
               <p>Let $f(x) = \log G(x)$. Then $\nabla f(x) = \frac{1}{n}(1/x_1, \dots, 1/x_n)$.</p>
               <p>$\nabla^2 f(x) = -\frac{1}{n} \text{diag}(1/x_1^2, \dots, 1/x_n^2)$.</p>
               <p>Since $G(x) = e^{f(x)}$, $\nabla^2 G(x) = G(x)(\nabla f \nabla f^\top + \nabla^2 f)$.</p>
               <p>For any $v$, $v^\top \nabla^2 G(x) v = \frac{G(x)}{n^2} [(\sum v_i/x_i)^2 - n \sum (v_i/x_i)^2]$.</p>
-              <p>By Cauchy-Schwarz, $(\sum a_i \cdot 1)^2 \le n \sum a_i^2$. Letting $a_i = v_i/x_i$, we get $(\sum v_i/x_i)^2 \le n \sum (v_i/x_i)^2$. Thus the quadratic form is $\le 0$, so $\nabla^2 G \preceq 0$.</p>
-            </div>
-          </div>
-        </div>
+              <p>By Cauchy-Schwarz, $(\sum a_i \cdot 1)^2 \le n \sum a_i^2$. Letting $a_i = v_i/x_i$, we get $(\sum v_i/x_i)^2 \le n \sum (v_i/x_i)^2$. Thus the quadratic form is $\le 0$, so $\nabla^2 G \preceq 0$.</p></div></div></div>
 
-        <div class="problem">
-          <h3>P3.10 — Geometric vs Arithmetic Mean Cone</h3>
-          <p>Let $S_\alpha = \{x \in \mathbb{R}^n_+ \mid G(x) \ge \alpha A(x)\}$ for $\alpha \in [0, 1]$, where $A(x) = \frac{1}{n}\sum x_i$.</p>
+</div>
+<div class="problem">
+<h3>P3.10 — Geometric vs Arithmetic Mean Cone</h3>
+
+<p>Let $S_\alpha = \{x \in \mathbb{R}^n_+ \mid G(x) \ge \alpha A(x)\}$ for $\alpha \in [0, 1]$, where $A(x) = \frac{1}{n}\sum x_i$.</p>
 
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -1971,29 +1654,24 @@
             <li><b>Superlevel Sets of Concave Functions:</b> The set $\{x \mid g(x) \ge 0\}$ is convex if $g$ is a concave function (this is a standard convex set definition).</li>
             <li><b>Cone Property via Homogeneity:</b> If the defining functions of a set are homogeneous (scale linearly), the resulting set is a cone (invariant under scaling). The geometric mean cone combines these properties.</li>
         </ul>
-      </div>
+
 
 <div class="proof-box">
             <h4>Solution</h4>
             <div class="proof-step">
               <strong>Convexity:</strong>
               <p>We know $G(x)$ is concave and $A(x)$ is linear (hence concave). Thus $h(x) = G(x) - \alpha A(x)$ is concave (since $\alpha \ge 0$).</p>
-              <p>$S_\alpha = \{x \mid h(x) \ge 0\}$ is the 0-superlevel set of a concave function, which is a convex set.</p>
-            </div>
-            <div class="proof-step">
+              <p>$S_\alpha = \{x \mid h(x) \ge 0\}$ is the 0-superlevel set of a concave function, which is a convex set.</p></div><div class="proof-step">
               <strong>Cone Property:</strong>
               <p>Both $G(x)$ and $A(x)$ are homogeneous of degree 1. $G(\lambda x) = \lambda G(x)$ and $A(\lambda x) = \lambda A(x)$.</p>
-              <p>If $G(x) \ge \alpha A(x)$, then $G(\lambda x) = \lambda G(x) \ge \lambda \alpha A(x) = \alpha A(\lambda x)$ for $\lambda \ge 0$. Thus $S_\alpha$ is a cone.</p>
-            </div>
-            <div class="proof-step">
-              <strong>Interpretation:</strong> This is the set of vectors "not too far" from having equal components. $\alpha=1$ implies $x_1 = \dots = x_n$ (the ray $\mathbf{1}$). $\alpha=0$ is the whole orthant.
-            </div>
-          </div>
-        </div>
+              <p>If $G(x) \ge \alpha A(x)$, then $G(\lambda x) = \lambda G(x) \ge \lambda \alpha A(x) = \alpha A(\lambda x)$ for $\lambda \ge 0$. Thus $S_\alpha$ is a cone.</p></div><div class="proof-step">
+              <strong>Interpretation:</strong> This is the set of vectors "not too far" from having equal components. $\alpha=1$ implies $x_1 = \dots = x_n$ (the ray $\mathbf{1}$). $\alpha=0$ is the whole orthant.</div></div></div>
 
-        <div class="problem">
-          <h3>P3.11 — Matrix Fractional Function</h3>
-          <p>Show that $f(x, Y) = x^\top Y^{-1} x$ is convex on $\mathbb{R}^n \times \mathbb{S}^n_{++}$.</p>
+</div>
+<div class="problem">
+<h3>P3.11 — Matrix Fractional Function</h3>
+
+<p>Show that $f(x, Y) = x^\top Y^{-1} x$ is convex on $\mathbb{R}^n \times \mathbb{S}^n_{++}$.</p>
 
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -2002,7 +1680,7 @@
             <li><b>Joint Convexity:</b> The matrix fractional function $x^\top Y^{-1} x$ is convex in the pair $(x, Y)$ jointly, not just individually. This is a crucial property for optimizing over matrix inverses.</li>
             <li><b>Schur Complement Link:</b> The epigraph condition $x^\top Y^{-1} x \le t$ can be rewritten as the LMI $\begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0$ using the Schur complement, proving convexity directly via PSD cone properties.</li>
         </ul>
-      </div>
+
 
 <div class="proof-box">
             <h4>Solution</h4>
@@ -2011,20 +1689,17 @@
               <p>The epigraph condition is $x^\top Y^{-1} x \le t$ with $Y \succ 0$.</p>
               <p>Using the Schur complement lemma, this is equivalent to:</p>
               $$ \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0, \quad Y \succ 0 $$
-              <p>This is a Linear Matrix Inequality (LMI) in variables $(x, Y, t)$, which defines a convex set. Thus the epigraph is convex.</p>
-            </div>
-            <div class="proof-step">
+              <p>This is a Linear Matrix Inequality (LMI) in variables $(x, Y, t)$, which defines a convex set. Thus the epigraph is convex.</p></div><div class="proof-step">
               <strong>Method 2: Supremum of Affine Functions</strong>
               <p>For fixed $Y \succ 0$, maximize $g_z(x) = 2z^\top x - z^\top Y z$ over $z$. The max is at $z = Y^{-1}x$, value $x^\top Y^{-1} x$.</p>
               <p>So $f(x, Y) = \sup_z (2z^\top x - \mathrm{tr}(zz^\top Y))$.</p>
-              <p>Inside the sup is a function linear in $x$ and linear in $Y$. The supremum of affine functions is convex.</p>
-            </div>
-          </div>
-        </div>
+              <p>Inside the sup is a function linear in $x$ and linear in $Y$. The supremum of affine functions is convex.</p></div></div></div>
 
-        <div class="problem">
-          <h3>P3.12 — Definition of Convexity on $\mathbb{R}$</h3>
-          <p>Let $f: \mathbb{R} \to \mathbb{R}$ be convex. Prove the following properties:</p>
+</div>
+<div class="problem">
+<h3>P3.12 — Definition of Convexity on $\mathbb{R}$</h3>
+
+<p>Let $f: \mathbb{R} \to \mathbb{R}$ be convex. Prove the following properties:</p>
           <ol type="a">
             <li><b>Chord Property:</b> $f(x) \le \frac{b-x}{b-a}f(a) + \frac{x-a}{b-a}f(b)$ for $a < x < b$.</li>
             <li><b>Slope Monotonicity:</b> $\frac{f(x)-f(a)}{x-a} \le \frac{f(b)-f(a)}{b-a} \le \frac{f(b)-f(x)}{b-x}$.</li>
@@ -2039,32 +1714,27 @@
             <li><b>Secant Slope Monotonicity:</b> For a convex function, the slope of the secant line connecting $(a, f(a))$ to $(x, f(x))$ is non-decreasing as $x$ increases.</li>
             <li><b>Geometric Meaning:</b> As you move to the right, the function gets steeper (or less steep downwards). This monotonicity of slopes allows defining derivatives almost everywhere and is equivalent to the non-negative second derivative condition $f''(x) \ge 0$.</li>
         </ul>
-      </div>
+
 
 <div class="proof-box">
             <h4>Solution</h4>
             <div class="proof-step">
               <strong>(a) Chord Property:</strong>
               <p>Write $x$ as a convex combination: $x = \lambda a + (1-\lambda)b$ where $\lambda = \frac{b-x}{b-a}$.</p>
-              <p>By convexity: $f(x) \le \lambda f(a) + (1-\lambda) f(b)$, which matches the formula.</p>
-            </div>
-            <div class="proof-step">
+              <p>By convexity: $f(x) \le \lambda f(a) + (1-\lambda) f(b)$, which matches the formula.</p></div><div class="proof-step">
               <strong>(b) Slope Monotonicity:</strong>
               <p>Rearrange (a): multiply by $b-a$, subtract $(b-a)f(a)$:</p>
               $$ (b-a)(f(x)-f(a)) \le (x-a)(f(b)-f(a)) \implies \frac{f(x)-f(a)}{x-a} \le \frac{f(b)-f(a)}{b-a} $$
-              <p>The second inequality follows by symmetry or applying the first to the interval $[x, b]$ with point $x$.</p>
-            </div>
-            <div class="proof-step">
+              <p>The second inequality follows by symmetry or applying the first to the interval $[x, b]$ with point $x$.</p></div><div class="proof-step">
               <strong>(c) & (d) Derivatives:</strong>
               <p>Taking limit $x \to a$ in (b) gives $f'(a) \le \frac{f(b)-f(a)}{b-a}$. Taking limit $x \to b$ gives the other side.</p>
-              <p>This implies $f'$ is non-decreasing ($f'(a) \le f'(b)$). A differentiable function with non-decreasing derivative has $f'' \ge 0$.</p>
-            </div>
-          </div>
-        </div>
+              <p>This implies $f'$ is non-decreasing ($f'(a) \le f'(b)$). A differentiable function with non-decreasing derivative has $f'' \ge 0$.</p></div></div></div>
 
-        <div class="problem">
-          <h3>P3.13 — Integral Characterization</h3>
-          <p>Show $f$ is convex iff $\int_0^1 f(x + \lambda(y-x)) d\lambda \le \frac{f(x)+f(y)}{2}$.</p>
+</div>
+<div class="problem">
+<h3>P3.13 — Integral Characterization</h3>
+
+<p>Show $f$ is convex iff $\int_0^1 f(x + \lambda(y-x)) d\lambda \le \frac{f(x)+f(y)}{2}$.</p>
 
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -2073,7 +1743,7 @@
             <li><b>Hermite-Hadamard Context:</b> This integral inequality is one side of the famous Hermite-Hadamard inequality, stating that the average value of a convex function over an interval is less than the average of the function values at the endpoints.</li>
             <li><b>Midpoint Convexity:</b> The integral condition essentially averages the midpoint convexity property over the domain. Midpoint convexity, combined with continuity (implied by integrability here), guarantees full convexity.</li>
         </ul>
-      </div>
+
 
 <div class="proof-box">
             <h4>Solution</h4>
@@ -2081,19 +1751,16 @@
               <strong>($\Rightarrow$) Convex implies Inequality:</strong>
               <p>Let $\phi(\lambda) = f(x + \lambda(y-x))$. If $f$ is convex, $\phi$ is convex on $[0,1]$.</p>
               <p>Thus $\phi(\lambda) \le (1-\lambda)\phi(0) + \lambda\phi(1)$.</p>
-              <p>Integrate: $\int_0^1 \phi(\lambda) d\lambda \le \phi(0)\int(1-\lambda) + \phi(1)\int \lambda = \frac{1}{2}\phi(0) + \frac{1}{2}\phi(1)$.</p>
-            </div>
-            <div class="proof-step">
+              <p>Integrate: $\int_0^1 \phi(\lambda) d\lambda \le \phi(0)\int(1-\lambda) + \phi(1)\int \lambda = \frac{1}{2}\phi(0) + \frac{1}{2}\phi(1)$.</p></div><div class="proof-step">
               <strong>($\Leftarrow$) Inequality implies Convex:</strong>
               <p>Applying the inequality to any sub-segment implies the <b>midpoint convexity</b> property: $\int_a^b \phi \le \frac{b-a}{2}(\phi(a)+\phi(b))$ implies $\phi(\frac{a+b}{2}) \le \frac{\phi(a)+\phi(b)}{2}$ (by considering limits of integrals near midpoint).</p>
-              <p>Midpoint convexity + continuity implies convexity.</p>
-            </div>
-          </div>
-        </div>
+              <p>Midpoint convexity + continuity implies convexity.</p></div></div></div>
 
-        <div class="problem">
-          <h3>P3.14 — Running Average</h3>
-          <p>If $f: \mathbb{R} \to \mathbb{R}$ is convex with $f(0) \le 0$, show $F(x) = \frac{1}{x} \int_0^x f(t) dt$ is convex for $x > 0$.</p>
+</div>
+<div class="problem">
+<h3>P3.14 — Running Average</h3>
+
+<p>If $f: \mathbb{R} \to \mathbb{R}$ is convex with $f(0) \le 0$, show $F(x) = \frac{1}{x} \int_0^x f(t) dt$ is convex for $x > 0$.</p>
 
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -2102,26 +1769,21 @@
             <li><b>Convexity of Integral Transforms:</b> The running average $F(x)$ transforms a convex function $f$ into another convex function. This is a specific instance of an integral operator preserving convexity.</li>
             <li><b>Proof Strategy:</b> By changing variables ($t=sx$), we express $F(x)$ as an integral of scaled functions $f(sx)$. Since $f(sx)$ is convex in $x$ for fixed $s$, and the integral (sum) preserves convexity, the result follows.</li>
         </ul>
-      </div>
+
 
 <div class="proof-box">
             <h4>Solution</h4>
             <div class="proof-step">
               <strong>Change of Variables:</strong>
               <p>Let $t = sx$, so $dt = x ds$. Range $0 \to x$ becomes $0 \to 1$.</p>
-              $$ F(x) = \frac{1}{x} \int_0^1 f(sx) x ds = \int_0^1 f(sx) ds $$
-            </div>
-            <div class="proof-step">
+              $$ F(x) = \frac{1}{x} \int_0^1 f(sx) x ds = \int_0^1 f(sx) ds $$</div><div class="proof-step">
               <strong>Convexity Check:</strong>
               <p>For fixed $s \in [0, 1]$, the function $g_s(x) = f(sx)$ is convex in $x$ (composition of convex $f$ with linear map).</p>
-              <p>$F(x)$ is a non-negative weighted sum (integral) of convex functions $g_s(x)$, so $F(x)$ is convex.</p>
-            </div>
-            <div class="proof-step">
-              <strong>Interpretation:</strong> This is an expectation: $F(x) = \mathbb{E}[f(Sx)]$ where $S \sim U[0,1]$. Expectation preserves convexity.
-            </div>
-          </div>
-        </div>
-      </section>
+              <p>$F(x)$ is a non-negative weighted sum (integral) of convex functions $g_s(x)$, so $F(x)$ is convex.</p></div><div class="proof-step">
+              <strong>Interpretation:</strong> This is an expectation: $F(x) = \mathbb{E}[f(Sx)]$ where $S \sim U[0,1]$. Expectation preserves convexity.</div></div></div>
+
+</div>
+</section>
 
     </article>
 
