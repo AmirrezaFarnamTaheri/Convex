@@ -833,10 +833,22 @@
         $$ S := A - B D^{-1} C $$
 
         <h4>2. Constructing the Elimination Matrix</h4>
-        <p>To analyze $M$, we perform block Gaussian elimination. Define the elimination matrix $E$:</p>
-        $$ E = \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} $$
-        <p>This matrix is block lower-triangular with unit diagonal blocks, so $\det(E) = 1$. Multiplying $M$ by $E$ on the right yields:</p>
-        $$ ME = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} = \begin{bmatrix} A - BD^{-1}C & B \\ 0 & D \end{bmatrix} = \begin{bmatrix} S & B \\ 0 & D \end{bmatrix} $$
+        <p>To analyze $M$, we perform block Gaussian elimination. Define the elimination matrix $R$ (often denoted as $E$ in elimination contexts):</p>
+        $$ R = \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} $$
+        <p>This matrix is block lower-triangular with unit diagonal blocks, so $\det(R) = 1$. Multiplying $M$ by $R$ on the right yields the factorization:</p>
+        $$ MR = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} = \begin{bmatrix} A - BD^{-1}C & B \\ 0 & D \end{bmatrix} = \begin{bmatrix} S & B \\ 0 & D \end{bmatrix} $$
+
+        <div class="proof-box">
+          <h4>Line-by-Line Verification of Block Multiplication</h4>
+          <p>Let's verify this multiplication explicitly using the block multiplication rule $\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} E & F \\ G & H \end{bmatrix} = \begin{bmatrix} AE+BG & AF+BH \\ CE+DG & CF+DH \end{bmatrix}$.</p>
+          <p>Here $E=I_p, F=0, G=-D^{-1}C, H=I_q$.</p>
+          <ul>
+            <li><b>Top-left:</b> $A(I_p) + B(-D^{-1}C) = A - BD^{-1}C = S$.</li>
+            <li><b>Top-right:</b> $A(0) + B(I_q) = B$.</li>
+            <li><b>Bottom-left:</b> $C(I_p) + D(-D^{-1}C) = C - C = 0$. (This was the goal!)</li>
+            <li><b>Bottom-right:</b> $C(0) + D(I_q) = D$.</li>
+          </ul>
+        </div>
 
         <div class="insight">
           <h4>💡 Choice of Elimination Matrix</h4>

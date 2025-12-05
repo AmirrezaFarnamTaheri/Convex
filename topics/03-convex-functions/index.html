@@ -773,29 +773,33 @@
           </div>
 
           <div class="proof-box">
-            <h4>Proof of Case 1 (Convex + Non-decreasing)</h4>
+            <h4>Proof Step-by-Step (Convex + Non-decreasing)</h4>
+            <p>Assume $g$ is convex, $h$ is convex, and $h$ is non-decreasing.</p>
+
             <div class="proof-step">
-              <strong>Step 1: Domain Sanity.</strong>
-              Let $x, y \in \mathrm{dom}\, f$. Since $h$ is convex, its domain is convex. Thus, the convex combination of $g(x)$ and $g(y)$ stays in $\mathrm{dom}\, h$.
-            </div>
-            <div class="proof-step">
-              <strong>Step 2: Inner Convexity.</strong>
-              By convexity of $g$:
+              <strong>Step 1: Use convexity of inner function $g$.</strong>
+              Take $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$.
               $$ g(\theta x + (1-\theta)y) \le \theta g(x) + (1-\theta)g(y) $$
-              Let $u = g(\theta x + (1-\theta)y)$ and $v = \theta g(x) + (1-\theta)g(y)$. So $u \le v$.
             </div>
+
             <div class="proof-step">
-              <strong>Step 3: Outer Monotonicity.</strong>
-              Since $h$ is non-decreasing:
-              $$ h(u) \le h(v) \implies h(g(\theta x + (1-\theta)y)) \le h(\theta g(x) + (1-\theta)g(y)) $$
+              <strong>Step 2: Apply monotone outer function $h$.</strong>
+              Since $h$ is non-decreasing, applying it to both sides preserves the inequality:
+              $$ h(g(\theta x + (1-\theta)y)) \le h(\theta g(x) + (1-\theta)g(y)) $$
+              The LHS is exactly $f(\theta x + (1-\theta)y)$.
             </div>
+
             <div class="proof-step">
-              <strong>Step 4: Outer Convexity.</strong>
-              By convexity of $h$:
-              $$ h(\theta g(x) + (1-\theta)g(y)) \le \theta h(g(x)) + (1-\theta)h(g(y)) $$
+              <strong>Step 3: Use convexity of outer function $h$.</strong>
+              Let $u = g(x)$ and $v = g(y)$. By convexity of $h$:
+              $$ h(\theta u + (1-\theta)v) \le \theta h(u) + (1-\theta)h(v) $$
+              Substituting $u, v$ back:
+              $$ h(\theta g(x) + (1-\theta)g(y)) \le \theta h(g(x)) + (1-\theta)h(g(y)) = \theta f(x) + (1-\theta)f(y) $$
             </div>
+
             <div class="proof-step">
-              <strong>Step 5: Chain.</strong>
+              <strong>Step 4: Combine.</strong>
+              Chaining Step 2 and Step 3:
               $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) $$
               Thus $f$ is convex.
             </div>
@@ -882,24 +886,35 @@
         <div class="proof-box">
           <h4>Inequality Proof of Convexity</h4>
           <div class="proof-step">
-            <strong>Step 1: Setup.</strong>
-            Let $(x_1, t_1), (x_2, t_2) \in \text{dom } g$ and $\theta \in [0, 1]$. Let $(\bar{x}, \bar{t}) = \theta(x_1, t_1) + (1-\theta)(x_2, t_2)$.
-            We need to show $g(\bar{x}, \bar{t}) \le \theta g(x_1, t_1) + (1-\theta) g(x_2, t_2)$.
+            <strong>Step 1: Setup and Goal.</strong>
+            Take $(x_1, t_1), (x_2, t_2) \in \mathrm{dom}\, g$ (so $t_1, t_2 > 0$) and $\theta \in [0, 1]$.
+            We want to show:
+            $$ g(\theta x_1 + (1-\theta)x_2, \theta t_1 + (1-\theta)t_2) \le \theta g(x_1, t_1) + (1-\theta)g(x_2, t_2) $$
+            The RHS is $\theta t_1 f(x_1/t_1) + (1-\theta)t_2 f(x_2/t_2)$.
           </div>
+
           <div class="proof-step">
-            <strong>Step 2: Convex combination trick.</strong>
-            Note that $\frac{\bar{x}}{\bar{t}} = \frac{\theta x_1 + (1-\theta)x_2}{\bar{t}} = \frac{\theta t_1}{\bar{t}}\frac{x_1}{t_1} + \frac{(1-\theta)t_2}{\bar{t}}\frac{x_2}{t_2}$.
-            Let $\mu = \frac{\theta t_1}{\bar{t}}$. Then $1-\mu = \frac{(1-\theta)t_2}{\bar{t}}$. Thus $\frac{\bar{x}}{\bar{t}}$ is a convex combination of $\frac{x_1}{t_1}$ and $\frac{x_2}{t_2}$.
+            <strong>Step 2: Factor out the common scalar $T$.</strong>
+            Let $T = \theta t_1 + (1-\theta)t_2$. Since $t_1, t_2 > 0$, $T > 0$.
+            The LHS is $T f\left( \frac{\theta x_1 + (1-\theta)x_2}{T} \right)$.
+            We rewrite the argument of $f$ to identify a convex combination:
+            $$ \frac{\theta x_1 + (1-\theta)x_2}{T} = \frac{\theta t_1}{T} \frac{x_1}{t_1} + \frac{(1-\theta)t_2}{T} \frac{x_2}{t_2} $$
           </div>
+
           <div class="proof-step">
-            <strong>Step 3: Apply convexity of $f$.</strong>
-            $$ f\left(\frac{\bar{x}}{\bar{t}}\right) \le \mu f\left(\frac{x_1}{t_1}\right) + (1-\mu) f\left(\frac{x_2}{t_2}\right) $$
+            <strong>Step 3: Define weights and apply convexity.</strong>
+            Define $\mu = \frac{\theta t_1}{T}$. Then $1 - \mu = \frac{(1-\theta)t_2}{T}$. Note that $\mu \in [0, 1]$.
+            By convexity of $f$:
+            $$ f\left( \mu \frac{x_1}{t_1} + (1-\mu) \frac{x_2}{t_2} \right) \le \mu f(x_1/t_1) + (1-\mu) f(x_2/t_2) $$
           </div>
+
           <div class="proof-step">
-            <strong>Step 4: Scale back.</strong>
-            Multiply by $\bar{t}$:
-            $$ \bar{t} f\left(\frac{\bar{x}}{\bar{t}}\right) \le \bar{t}\mu f\left(\frac{x_1}{t_1}\right) + \bar{t}(1-\mu) f\left(\frac{x_2}{t_2}\right) $$
-            $$ g(\bar{x}, \bar{t}) \le \theta t_1 f\left(\frac{x_1}{t_1}\right) + (1-\theta)t_2 f\left(\frac{x_2}{t_2}\right) = \theta g(x_1, t_1) + (1-\theta) g(x_2, t_2) $$
+            <strong>Step 4: Scale by $T$ to finish.</strong>
+            Multiply the inequality by $T > 0$:
+            $$ T f\left( \frac{\theta x_1 + (1-\theta)x_2}{T} \right) \le T \mu f(x_1/t_1) + T(1-\mu) f(x_2/t_2) $$
+            Substitute back $T\mu = \theta t_1$ and $T(1-\mu) = (1-\theta)t_2$:
+            $$ g(\theta x_1 + (1-\theta)x_2, T) \le \theta t_1 f(x_1/t_1) + (1-\theta) t_2 f(x_2/t_2) $$
+            This matches the definition of convexity for $g$.
           </div>
         </div>
 
@@ -1338,26 +1353,67 @@
 
         <div class="example">
           <h4>Example 6: Distance Ratio</h4>
-          <p>The function $f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ on $\{x \mid \|x-a\|_2 \le \|x-b\|_2\}$ is quasiconvex.</p>
+          <p>The function $f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ on the domain $\{x \mid \|x-a\|_2 \le \|x-b\|_2\}$ (closer to $a$ than $b$) is quasiconvex.</p>
           <div class="proof-box">
-            <h4>Check</h4>
-            <p>Condition: $\frac{\|x-a\|_2}{\|x-b\|_2} \le \alpha$. Squaring gives $\|x-a\|_2^2 \le \alpha^2 \|x-b\|_2^2$.
-            $$ x^\top x - 2a^\top x + a^\top a \le \alpha^2(x^\top x - 2b^\top x + b^\top b) $$
-            $$ (1-\alpha^2)x^\top x - 2(a - \alpha^2 b)^\top x + (a^\top a - \alpha^2 b^\top b) \le 0 $$
-            For $\alpha \le 1$ (consistent with domain), $1-\alpha^2 \ge 0$, so this is a convex quadratic constraint. Thus the sublevel set is convex.</p>
+            <h4>Detailed Verification via Sublevel Sets</h4>
+            <div class="proof-step">
+              <strong>Step 1: Set up the inequality.</strong>
+              Fix $\alpha \ge 0$. The sublevel set $S_\alpha$ is defined by $f(x) \le \alpha$.
+              $$ \frac{\|x-a\|_2}{\|x-b\|_2} \le \alpha \iff \|x-a\|_2 \le \alpha \|x-b\|_2 $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Square both sides.</strong>
+              Since both sides are non-negative:
+              $$ \|x-a\|_2^2 \le \alpha^2 \|x-b\|_2^2 $$
+              Expanding the norms as inner products:
+              $$ x^\top x - 2a^\top x + a^\top a \le \alpha^2 (x^\top x - 2b^\top x + b^\top b) $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Group terms.</strong>
+              Bring everything to the left side:
+              $$ (1 - \alpha^2) x^\top x - 2(a - \alpha^2 b)^\top x + (a^\top a - \alpha^2 b^\top b) \le 0 $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 4: Check convexity.</strong>
+              This inequality defines the set.
+              <ul>
+                <li>If $\alpha < 1$, the coefficient $(1-\alpha^2)$ is positive. The function is a convex quadratic (an ellipsoid). Its sublevel set is convex.</li>
+                <li>If $\alpha = 1$, the quadratic term vanishes, leaving a linear inequality (halfspace), which is convex.</li>
+                <li>If $\alpha > 1$, the domain restriction $\|x-a\| \le \|x-b\|$ (equivalent to $\alpha \le 1$ region) typically dominates, or we must be careful. However, for the standard definition on the "Voronoi region" of $a$, we consider $\alpha \le 1$.</li>
+              </ul>
+              Thus, on the domain where $a$ is closer than $b$, the function is quasiconvex.
+            </div>
           </div>
         </div>
 
         <div class="example">
           <h4>Example 7: Internal Rate of Return (IRR)</h4>
-          <p>Consider a cash flow $x = (x_0, \dots, x_n)$ with $x_0 < 0$ and $\sum x_i > 0$. The <b>Internal Rate of Return</b> $\text{IRR}(x)$ is the smallest $r \ge 0$ such that $\sum x_i (1+r)^{-i} = 0$.</p>
-          <p>We claim $\text{IRR}(x)$ is a <b>quasiconcave</b> function of the cash flow vector $x$.</p>
+          <p>Consider a cash flow $x = (x_0, \dots, x_n)$ where $x_0 < 0$ (investment) and $\sum x_i > 0$ (profitability). The <b>Internal Rate of Return</b>, $\text{IRR}(x)$, is the unique interest rate $r^* \ge 0$ such that the Net Present Value (NPV) is zero:</p>
+          $$ \text{NPV}(x, r) = \sum_{i=0}^n (1+r)^{-i} x_i = 0 $$
+          <p>We claim that $\text{IRR}(x)$ is a <b>quasiconcave</b> function of $x$. This means "better" cash flows (higher IRR) form a convex set.</p>
+
           <div class="proof-box">
-            <h4>Proof</h4>
-            <p>We want to show the superlevel set $S_R = \{x \mid \text{IRR}(x) \ge R\}$ is convex.
-            <br>By definition, IRR is the root. Since the Present Value $PV(r) = \sum x_i (1+r)^{-i}$ is decreasing in $r$ (for typical cash flows), having a root at $r^* \ge R$ implies $PV(r) \ge 0$ for all $r \in [0, R]$.
-            $$ \text{IRR}(x) \ge R \iff \sum_{i=0}^n x_i (1+r)^{-i} \ge 0 \quad \forall r \in [0, R) $$
-            This is an intersection of infinitely many linear inequalities (halfspaces) indexed by $r$. Since an intersection of convex sets is convex, $S_R$ is convex. Thus IRR is quasiconcave.</p>
+            <h4>Proof: Superlevel Sets are Convex</h4>
+            <div class="proof-step">
+              <strong>Step 1: Characterize the superlevel set.</strong>
+              We need to show $S_R = \{x \mid \text{IRR}(x) \ge R\}$ is convex.
+              Since $\text{NPV}(x, r)$ is typically a decreasing function of $r$ (for simple cash flows), having a root at $r^* \ge R$ implies that the NPV must be non-negative for all interest rates smaller than $R$.
+              $$ \text{IRR}(x) \ge R \iff \text{NPV}(x, r) \ge 0 \quad \text{for all } 0 \le r < R $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Linearity of NPV.</strong>
+              For a fixed rate $r$, the condition $\text{NPV}(x, r) \ge 0$ is a linear inequality in $x$:
+              $$ \sum_{i=0}^n w_i x_i \ge 0, \quad \text{where } w_i = (1+r)^{-i} $$
+              This defines a halfspace in $\mathbb{R}^{n+1}$, which is a convex set.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Intersection.</strong>
+              The set $S_R$ is the intersection of these halfspaces over all $r \in [0, R)$:
+              $$ S_R = \bigcap_{0 \le r < R} \{x \mid \text{NPV}(x, r) \ge 0\} $$
+              Since the intersection of any number of convex sets is convex, $S_R$ is convex. Thus, $\text{IRR}(x)$ is quasiconcave.
+            </div>
           </div>
         </div>
 
