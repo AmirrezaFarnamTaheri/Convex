@@ -1473,6 +1473,14 @@
             <div class="proof-step">
               <strong>Conclusion:</strong> The combined point is a valid convex combination of $\{x_i\}$, so it lies in $C$.
             </div>
+
+            <div class="proof-step">
+              <strong>Alternative Proof: Intersection of Convex Sets.</strong>
+              Define $\mathrm{conv}(S) = \bigcap \{D \mid S \subseteq D, D \text{ is convex}\}$.
+              The intersection of any collection of convex sets is convex (see Section 3.1).
+              Thus, this intersection is convex by construction.
+              (One can show this definition is equivalent to the set of convex combinations, but this perspective makes convexity immediate.)
+            </div>
           </div>
         </div>
         <div class="problem">
@@ -1500,6 +1508,14 @@
               For $\lambda \in [0,1]$:
               $$ \lambda u + (1-\lambda)v = \lambda(x_1+y_1) + (1-\lambda)(x_2+y_2) = (\lambda x_1 + (1-\lambda)x_2) + (\lambda y_1 + (1-\lambda)y_2) $$
               By convexity of $X$ and $Y$, the terms in parentheses are in $X$ and $Y$ respectively. Thus the sum is in $X+Y$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Alternative Proof: Image under Linear Map.</strong>
+              Consider the Cartesian product $X \times Y \subseteq \mathbb{R}^{2n}$, which is convex (Problem 2.15).
+              Define the linear map $f: \mathbb{R}^{2n} \to \mathbb{R}^n$ by $f(x,y) = x+y$.
+              The Minkowski sum is exactly the image of the product set under this map: $X+Y = f(X \times Y)$.
+              Since linear maps preserve convexity, $X+Y$ is convex.
             </div>
 
             <p><b>(b) Counter-intuitive Example</b></p>
@@ -1571,6 +1587,16 @@
             <div class="proof-step">
               Thus, $\lambda a + (1-\lambda)b$ is the limit of a sequence in $C$, so it belongs to $\mathrm{cl}(C)$.
             </div>
+
+            <div class="proof-step">
+              <strong>Alternative Proof: Open Balls.</strong>
+              Let $a, b \in \mathrm{cl}(C)$. For any $\lambda \in [0,1]$, let $c = \lambda a + (1-\lambda)b$.
+              We want to show $c \in \mathrm{cl}(C)$, i.e., every open ball $B(c, \varepsilon)$ intersects $C$.
+              Pick $x \in C \cap B(a, \varepsilon)$ and $y \in C \cap B(b, \varepsilon)$.
+              Then $z = \lambda x + (1-\lambda)y \in C$.
+              Check distance: $\|z - c\| = \|\lambda(x-a) + (1-\lambda)(y-b)\| \le \lambda \varepsilon + (1-\lambda)\varepsilon = \varepsilon$.
+              Thus $z \in B(c, \varepsilon) \cap C$, so $C$ intersects the ball.
+            </div>
           </div>
         </div>
         <div class="problem">
@@ -1596,6 +1622,14 @@
               Let $u_1 = (x_1, y_1), u_2 = (x_2, y_2) \in X \times Y$.
               $$ \lambda u_1 + (1-\lambda)u_2 = (\lambda x_1 + (1-\lambda)x_2, \lambda y_1 + (1-\lambda)y_2) $$
               Since $X$ is convex, the first component is in $X$. Since $Y$ is convex, the second is in $Y$. Thus the pair is in $X \times Y$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Alternative Proof: Preimage of Linear Maps.</strong>
+              Let $P_X(x,y) = x$ and $P_Y(x,y) = y$ be the projection maps (linear).
+              Then $X \times Y = P_X^{-1}(X) \cap P_Y^{-1}(Y)$.
+              Since $X$ and $Y$ are convex, their preimages under linear maps are convex.
+              The intersection of these two convex preimages is convex.
             </div>
 
             <p><b>(b) Non-convex Factor</b></p>
