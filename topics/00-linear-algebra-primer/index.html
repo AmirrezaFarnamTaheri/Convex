@@ -2073,7 +2073,12 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
             <p>Assume for contradiction that $AB - BA = I_n$. Take the trace of both sides:</p>
             $$ \mathrm{tr}(AB - BA) = \mathrm{tr}(I_n) $$
             <p>Using linearity and part (a): $\mathrm{tr}(AB) - \mathrm{tr}(BA) = n \implies 0 = n$. This is a contradiction.</p>
-            <p><i>Structure:</i> Define $T(X) = AX - XA$. We showed $\mathrm{tr}(T(X)) = 0$, so the image of the commutator map lies in the subspace of traceless matrices, which does not contain $I_n$.</p>
+            <div class="proof-step">
+              <strong>Alternative Proof (Structural View):</strong> Define the linear map $T: M_n(\mathbb{R}) \to M_n(\mathbb{R})$ by $T(X) = AX - XA$.
+              We proved in part (a) that for any $X$, $\mathrm{tr}(T(X)) = \mathrm{tr}(AX - XA) = 0$.
+              Thus, the image of $T$ ($\mathrm{im}(T)$) is contained in the subspace of traceless matrices.
+              Since $\mathrm{tr}(I_n) = n \neq 0$, the identity matrix does not lie in the image of $T$. Therefore, there is no $B$ such that $T(B) = AB - BA = I_n$.
+            </div>
           </div>
         </div>
       </div>
@@ -2161,7 +2166,14 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
           <div class="proof-step">
             <strong>(b) Spectral Characterization:</strong>
-            <p>$\|A\|^2 = \sup_{x \ne 0} \frac{x^\top A^\top A x}{x^\top x}$. The RHS is the Rayleigh quotient for the symmetric matrix $A^\top A$. Its maximum value is $\lambda_{\max}(A^\top A)$. Thus $\|A\| = \sqrt{\lambda_{\max}(A^\top A)}$.</p>
+            <p>We show $\|A\| = \sqrt{\lambda_{\max}(A^\top A)}$.</p>
+            <p><b>Step 1: Upper Bound.</b> For any $x \neq 0$:
+            $$ \frac{\|Ax\|_2^2}{\|x\|_2^2} = \frac{x^\top A^\top A x}{x^\top x} \le \lambda_{\max}(A^\top A) $$
+            (by the Rayleigh quotient bound). Thus $\|A\| \le \sqrt{\lambda_{\max}(A^\top A)}$.</p>
+            <p><b>Step 2: Lower Bound.</b> Let $v$ be a unit eigenvector of $A^\top A$ corresponding to $\lambda_{\max}$. Then:
+            $$ \|Av\|_2^2 = v^\top A^\top A v = v^\top (\lambda_{\max} v) = \lambda_{\max} \|v\|_2^2 = \lambda_{\max} $$
+            Since the supremum is at least the value at this specific $v$, $\|A\| \ge \sqrt{\lambda_{\max}(A^\top A)}$.
+            <br>Combining bounds gives equality.</p>
           </div>
 
           <div class="proof-step">
@@ -2206,10 +2218,14 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
           <div class="proof-step">
             <strong>(b) Comparison:</strong>
-            <p>In terms of singular values $\sigma_i$:
-            $$ \|A\| = \sigma_1, \quad \|A\|_{HS} = \sqrt{\sum \sigma_i^2} $$
-            Clearly $\sigma_1 \le \sqrt{\sum \sigma_i^2} \le \sqrt{n \sigma_1^2} = \sqrt{n} \sigma_1$.
-            Thus $\|A\| \le \|A\|_{HS} \le \sqrt{n} \|A\|$.</p>
+            <p>We prove $\|A\| \le \|A\|_{HS} \le \sqrt{n} \|A\|$ using algebraic properties.</p>
+            <p><b>Lower Bound ($C_1=1$):</b> Recall that $\|A\|^2 = \lambda_{\max}(A^\top A)$. Also $\|A\|_{HS}^2 = \mathrm{tr}(A^\top A) = \sum_{i=1}^n \lambda_i(A^\top A)$.
+            Since eigenvalues of $A^\top A$ are non-negative, $\lambda_{\max} \le \sum \lambda_i$. Thus:
+            $$ \|A\|^2 \le \|A\|_{HS}^2 \implies \|A\| \le \|A\|_{HS} $$</p>
+            <p><b>Upper Bound ($C_2=\sqrt{n}$):</b> Write $A$ in terms of its columns $A = [v_1 \ \dots \ v_n]$. Then $\|A\|_{HS}^2 = \sum_{j=1}^n \|v_j\|_2^2$.
+            Note that $\|v_j\|_2 = \|A e_j\|_2 \le \|A\| \|e_j\|_2 = \|A\|$. Summing these bounds:
+            $$ \|A\|_{HS}^2 = \sum_{j=1}^n \|v_j\|_2^2 \le \sum_{j=1}^n \|A\|^2 = n \|A\|^2 $$
+            Taking square roots gives $\|A\|_{HS} \le \sqrt{n} \|A\|$.</p>
           </div>
 
           <div class="proof-step">
@@ -2308,7 +2324,14 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
           <div class="proof-step">
             <strong>(b) Cauchy-Schwarz:</strong>
-            <p><b>Method: Factorization.</b> Let $A = T^\top T$. Then $\langle x, y \rangle_A = (Tx)^\top (Ty) = \langle Tx, Ty \rangle_2$.
+            <p>We prove $(x^\top A y)^2 \le (x^\top A x)(y^\top A y)$.</p>
+            <p><b>Method 1: Quadratic Nonnegativity.</b> Consider the function $\phi(t) = \langle x - ty, x - ty \rangle_A$ for $t \in \mathbb{R}$.
+            Since it is a squared norm, $\phi(t) \ge 0$ for all $t$. Expanding:
+            $$ \phi(t) = \langle x, x \rangle_A - 2t \langle x, y \rangle_A + t^2 \langle y, y \rangle_A $$
+            This is a quadratic $at^2 + bt + c \ge 0$. The discriminant must be non-positive:
+            $$ b^2 - 4ac \le 0 \implies 4\langle x, y \rangle_A^2 - 4\langle x, x \rangle_A \langle y, y \rangle_A \le 0 $$
+            Simplifying gives the inequality.</p>
+            <p><b>Method 2: Factorization.</b> Let $A = T^\top T$. Then $\langle x, y \rangle_A = (Tx)^\top (Ty) = \langle Tx, Ty \rangle_2$.
             By standard Euclidean C-S: $|\langle Tx, Ty \rangle_2|^2 \le \|Tx\|_2^2 \|Ty\|_2^2$.
             Substituting back: $(x^\top A y)^2 \le (x^\top A x)(y^\top A y)$.</p>
           </div>
