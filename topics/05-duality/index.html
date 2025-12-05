@@ -281,7 +281,7 @@
         <p>We can visualize the primal and dual problems using a <b>hyperplane lifting</b> argument in the space of (constraint value, objective value). Let $\mathcal{G} = \{(f_1(x), \dots, f_m(x), f_0(x)) \mid x \in \mathcal{D}\}$.</p>
         <ul>
           <li>The primal problem is finding the point in $\mathcal{G}$ that intersects the vertical axis ($u=0$) at the lowest height.</li>
-          <li>The dual problem corresponds to finding a non-vertical supporting hyperplane to the set $\mathcal{A} = \mathcal{G} + \mathbb{R}^m_+ \times \mathbb{R}_+$ that passes below the set.</li>
+          <li>The dual problem corresponds to finding a non-vertical supporting hyperplane to the set $\mathcal{A} = \mathcal{G} + \mathbb{R}^m_+ \times \mathbb{R}_+$ that passes below the set. This relies directly on the <b>Separating Hyperplane Theorem</b> from <a href="../02-convex-sets/index.html">Lecture 02</a>.</li>
           <li>The intercept of this hyperplane with the vertical axis is the dual value $g(\lambda)$.</li>
           <li><b>Strong Duality</b> holds if the supporting hyperplane at the optimal point is non-vertical. This non-verticality is exactly what Slater's condition ensures!</li>
         </ul>
@@ -390,6 +390,11 @@
       <div class="proof-box">
         <h4>Theorem: KKT Conditions for Convex Problems</h4>
         <p><strong>Statement:</strong> For a convex problem with differentiable $f_0, f_i, h_j$, if strong duality holds and $x^*, (\lambda^*, \nu^*)$ are primal and dual optimal, then they satisfy the KKT conditions. Conversely, if the KKT conditions hold for some $(x^*, \lambda^*, \nu^*)$, then $x^*$ and $(\lambda^*, \nu^*)$ are primal and dual optimal.</p>
+
+        <div class="insight">
+          <h4>Geometric Connection</h4>
+          <p>The <b>stationarity</b> condition $\nabla f_0(x^*) + \sum \lambda_i \nabla f_i(x^*) = 0$ is exactly the "Supporting Hyperplane" concept from <a href="../02-convex-sets/index.html">Lecture 02</a>: the negative gradient of the objective lies in the normal cone of the feasible set. It also matches the "First-Order Optimality Condition" variational inequality $\nabla f_0(x^*)^\top (y - x^*) \ge 0$ discussed in <a href="../03-convex-functions/index.html">Lecture 03</a>.</p>
+        </div>
 
         <div class="proof-step">
           <strong>Necessity (⇒):</strong> Suppose $x^*$ is primal optimal and strong duality holds. Then $x^*$ minimizes $L(x, \lambda^*, \nu^*)$, so $\nabla_x L(x^*, \lambda^*, \nu^*) = 0$ (stationarity). Primal and dual feasibility follow by definition. Complementary slackness follows from $g(\lambda^*, \nu^*) = f_0(x^*)$ at optimality.
