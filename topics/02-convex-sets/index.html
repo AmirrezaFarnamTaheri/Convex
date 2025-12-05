@@ -1544,12 +1544,19 @@
 
           <div class="solution-enhanced">
             <h4>Solution</h4>
+            <p><b>Method 1: Minkowski Sum</b></p>
             <div class="proof-step">
-              <strong>Method 1: Minkowski Sum.</strong>
-              Let $\overline{B}_\varepsilon(0) = \{z \mid \|z\| \le \varepsilon\}$. We show $C_\varepsilon = C + \overline{B}_\varepsilon(0)$.
-              <br><b>($\subseteq$)</b> Take $y \in C_\varepsilon$. By definition, $d(y, C) \le \varepsilon$. Since $C$ is closed and convex, the projection $x^\star = \Pi_C(y)$ exists and satisfies $\|y - x^\star\| = d(y, C) \le \varepsilon$. Let $z = y - x^\star$. Then $\|z\| \le \varepsilon$ implies $z \in \overline{B}_\varepsilon(0)$, and $y = x^\star + z \in C + \overline{B}_\varepsilon(0)$.
-              <br><b>($\supseteq$)</b> Take $y \in C + \overline{B}_\varepsilon(0)$. Then $y = x + z$ for some $x \in C, z \in \overline{B}_\varepsilon(0)$. The distance to $C$ satisfies $d(y, C) \le \|y - x\| = \|z\| \le \varepsilon$. Thus $y \in C_\varepsilon$.
-              <br>Since $C$ and $\overline{B}_\varepsilon(0)$ are convex, their Minkowski sum is convex (Problem 2.12).
+              <strong>Step 1: Show Equality.</strong> Let $\overline{B}_\varepsilon(0) = \{z \mid \|z\| \le \varepsilon\}$. We claim $C_\varepsilon = C + \overline{B}_\varepsilon(0)$.
+              <ul>
+                <li><b>($\subseteq$):</b> Take $y \in C_\varepsilon$. By definition, $d(y, C) = \inf_{x \in C} \|y-x\| \le \varepsilon$. Since $C$ is closed and the norm is continuous, the infimum is attained by a projection $x^\star \in C$. Thus $\|y - x^\star\| \le \varepsilon$. Let $z = y - x^\star$. Then $z \in \overline{B}_\varepsilon(0)$ and $y = x^\star + z \in C + \overline{B}_\varepsilon(0)$.</li>
+                <li><b>($\supseteq$):</b> Take $y \in C + \overline{B}_\varepsilon(0)$. Then $y = x + z$ for some $x \in C$ and $\|z\| \le \varepsilon$. The distance to $C$ satisfies $d(y, C) \le \|y - x\| = \|z\| \le \varepsilon$. Thus $y \in C_\varepsilon$.</li>
+              </ul>
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Use Convexity.</strong>
+              We know that $C$ is convex (by assumption) and the ball $\overline{B}_\varepsilon(0)$ is convex (norm ball).
+              By Problem 2.12, the Minkowski sum of two convex sets is convex.
+              Thus $C_\varepsilon = C + \overline{B}_\varepsilon(0)$ is convex.
             </div>
 
             <div class="proof-step">
@@ -1594,12 +1601,19 @@
 
             <div class="proof-step">
               <strong>Alternative Proof: Open Balls.</strong>
-              Let $a, b \in \mathrm{cl}(C)$. For any $\lambda \in [0,1]$, let $c = \lambda a + (1-\lambda)b$.
-              We want to show $c \in \mathrm{cl}(C)$, i.e., every open ball $B(c, \varepsilon)$ intersects $C$.
-              Pick $x \in C \cap B(a, \varepsilon)$ and $y \in C \cap B(b, \varepsilon)$.
-              Then $z = \lambda x + (1-\lambda)y \in C$.
-              Check distance: $\|z - c\| = \|\lambda(x-a) + (1-\lambda)(y-b)\| \le \lambda \varepsilon + (1-\lambda)\varepsilon = \varepsilon$.
-              Thus $z \in B(c, \varepsilon) \cap C$, so $C$ intersects the ball.
+              Let $a, b \in \mathrm{cl}(C)$ and $\lambda \in [0,1]$. Define $c = \lambda a + (1-\lambda)b$.
+              To prove $c \in \mathrm{cl}(C)$, we must show that every open ball around $c$ intersects $C$.
+              Let $B(c, r)$ be an arbitrary ball of radius $r > 0$.
+              Since $a, b \in \mathrm{cl}(C)$, any neighborhood of them hits $C$. Specifically:
+              <ul>
+                <li>There exists $x \in C \cap B(a, r)$. (So $\|x - a\| < r$)</li>
+                <li>There exists $y \in C \cap B(b, r)$. (So $\|y - b\| < r$)</li>
+              </ul>
+              By convexity of $C$, the point $z := \lambda x + (1-\lambda)y$ is in $C$.
+              Now check the distance from $z$ to $c$:
+              $$ \|z - c\| = \|\lambda(x-a) + (1-\lambda)(y-b)\| \le \lambda\|x-a\| + (1-\lambda)\|y-b\| < \lambda r + (1-\lambda)r = r $$
+              Thus $\|z - c\| < r$, meaning $z \in B(c, r)$.
+              We found a point $z \in C \cap B(c, r)$, so every ball around $c$ intersects $C$. Thus $c \in \mathrm{cl}(C)$.
             </div>
           </div>
         </div>
