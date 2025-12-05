@@ -65,11 +65,6 @@
       <h2>0. Notation and Basic Objects</h2>
 
 
-      <h3>Preliminaries: Topology on $\mathbb{Z}$ (A Warm-up)</h3>
-      <p>Consider a function $f: \mathbb{Z} \to \mathbb{R}$. We ask: are sets of the form $\{n \in \mathbb{Z} : f(n) > r\}$ open in $\mathbb{Z}$?</p>
-      <p>Using the subspace topology from $\mathbb{R}$, <b>every subset of $\mathbb{Z}$ is open</b>.
-      <br><i>Reasoning:</i> For each integer $k$, the interval $(k - 1/2, k + 1/2)$ is open in $\mathbb{R}$. Its intersection with $\mathbb{Z}$ is the singleton $\{k\}$. Since every singleton is open, and any subset is a union of singletons, every subset is open. Consequently, <b>every function $f: \mathbb{Z} \to \mathbb{R}$ is continuous</b> in this topology.</p>
-
       <h3>Preliminaries: Lines and Line Segments</h3>
       <p>We work in $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum x_i y_i$ and Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are fundamental to defining convexity.</p>
 
@@ -1050,6 +1045,19 @@
         </p>
       </div>
 
+      <h3>7.4 Variants: Weighted and Constrained Least Squares</h3>
+
+
+      <h3>(a) Weighted Least Squares (WLS)</h3>
+      <p>Given SPD weight $W \in \mathbb{R}^{m \times m}$:
+      $$ \min_x \|Ax - b\|_W^2 := (Ax - b)^\top W(Ax - b) $$
+      Let $C$ satisfy $W = C^\top C$ (e.g., Cholesky). Then the problem is ordinary least squares in the <b>whitened</b> system $(CA)x \approx Cb$. Normal equations: $A^\top W A x = A^\top W b$.</p>
+
+      <h3>(b) Constrained to an Affine Set</h3>
+      <p>Solve:
+      $$ \min_x \|Ax - b\|_2^2 \quad \text{s.t.} \quad Fx = g $$
+      One method: parametrize $x = x_0 + Zy$, where $Fx_0 = g$ and columns of $Z$ form a basis for $\mathcal{N}(F)$. Then minimize $\|A(x_0 + Zy) - b\|_2^2$ over $y$ (an unconstrained LS). QR on $AZ$ is typically best.</p>
+
     </section>
 
     <!-- SECTION 7: QR, SVD, PSEUDOINVERSE (COMPREHENSIVE) -->
@@ -1673,53 +1681,48 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
     </section>
 
-    <!-- SECTION 8: VARIANTS -->
     <section class="section-card" id="section-9">
-      <h2>9. Variants You Will Need</h2>
-
-      <h3>(a) Weighted Least Squares (WLS)</h3>
-      <p>Given SPD weight $W \in \mathbb{R}^{m \times m}$:
-      $$ \min_x \|Ax - b\|_W^2 := (Ax - b)^\top W(Ax - b) $$
-      Let $C$ satisfy $W = C^\top C$ (e.g., Cholesky). Then the problem is ordinary least squares in the <b>whitened</b> system $(CA)x \approx Cb$. Normal equations: $A^\top W A x = A^\top W b$.</p>
-
-      <h3>(b) Constrained to an Affine Set</h3>
-      <p>Solve:
-      $$ \min_x \|Ax - b\|_2^2 \quad \text{s.t.} \quad Fx = g $$
-      One method: parametrize $x = x_0 + Zy$, where $Fx_0 = g$ and columns of $Z$ form a basis for $\mathcal{N}(F)$. Then minimize $\|A(x_0 + Zy) - b\|_2^2$ over $y$ (an unconstrained LS). QR on $AZ$ is typically best.</p>
-
-    </section>
+      <h2>9. Review & Implementation Guide</h2>
 
 
-    <!-- SECTION 9: IMPLEMENTATION GUIDE -->
-    <section class="section-card" id="section-10">
-      <h2>10. Implementation Mini-Guide (What to Actually Do in Code)</h2>
+      <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical background necessary for optimization theory.</p>
 
-      <ul>
-        <li>For standard, well-conditioned problems, <b>QR decomposition</b> is the recommended method. It is numerically stable and computationally efficient.</li>
-        <li>For problems that are ill-conditioned or rank-deficient, the <b>SVD method</b> is the most robust choice. It is also necessary when the minimum-norm solution is required.</li>
-        <li>Avoid explicitly forming the product $A^\top A$ and solving the normal equations, as this squares the condition number and can lead to a loss of numerical precision.</li>
-        <li>Before solving, it is often a good practice to <b>preprocess data</b> by centering and scaling features. This can significantly improve the condition number.</li>
-        <li>Always <b>verify the solution</b> by checking that the residual is orthogonal to the column space: $A^\top(b - Ax^*) \approx 0$.</li>
-      </ul>
-    </section>
+      <h3>Method Comparison: When to Use What</h3>
+      <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+        <thead>
+          <tr style="background: var(--panel); border-bottom: 2px solid var(--border);">
+            <th style="padding: 8px; text-align: left;">Method</th>
+            <th style="padding: 8px; text-align: left;">When to Use</th>
+            <th style="padding: 8px; text-align: left;">Complexity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;"><strong>Normal Equations</strong></td>
+            <td style="padding: 8px;">Small, well-conditioned problems; theoretical derivations</td>
+            <td style="padding: 8px;">$O(mn^2 + n^3)$</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;"><strong>QR Decomposition</strong></td>
+            <td style="padding: 8px;">Standard least squares; numerically stable; full rank</td>
+            <td style="padding: 8px;">$O(mn^2)$</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px;"><strong>SVD</strong></td>
+            <td style="padding: 8px;">Rank-deficient, ill-conditioned; minimum-norm solution; analysis</td>
+            <td style="padding: 8px;">$O(mn^2)$</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px;"><strong>Randomized SVD</strong></td>
+            <td style="padding: 8px;">Large-scale, low-rank approximation; big data</td>
+            <td style="padding: 8px;">$O(mn \log k)$</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <!-- SECTION 10: SANITY CHECKLIST -->
-    <section class="section-card" id="section-11">
-      <h2>11. Sanity Checklist (What to Remember in Practice)</h2>
+      <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
+      <h3>Key Formulas</h3>
 
-      <ul>
-        <li>Always check the <b>dimensions</b> of your matrices and vectors.</li>
-        <li>For least squares, check if your matrix has <b>full column rank</b> to determine if the solution is unique.</li>
-        <li>Prefer <b>QR</b> or <b>SVD</b> over the normal equations for better numerical stability.</li>
-        <li>If your results are unstable, check the <b>condition number</b> of your matrix and consider preprocessing your data.</li>
-        <li>Remember the geometric interpretation: the least squares solution is a <b>projection</b>.</li>
-      </ul>
-
-    </section>
-
-    <!-- SECTION 11: QUICK REFERENCE -->
-    <section class="section-card" id="section-12">
-      <h2>12. Key Formulas</h2>
 
       <ul>
         <li><b>Normal Equations:</b> $A^\top A x^\star = A^\top b$</li>
@@ -1728,11 +1731,44 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <li><b>Pseudoinverse:</b> $A^+ = V\Sigma^+ U^\top$</li>
         <li><b>Condition Number:</b> $\kappa(A) = \sigma_{\max} / \sigma_{\min}$</li>
       </ul>
+      <h3>Implementation Mini-Guide</h3>
+
+
+      <ul>
+        <li>For standard, well-conditioned problems, <b>QR decomposition</b> is the recommended method. It is numerically stable and computationally efficient.</li>
+        <li>For problems that are ill-conditioned or rank-deficient, the <b>SVD method</b> is the most robust choice. It is also necessary when the minimum-norm solution is required.</li>
+        <li>Avoid explicitly forming the product $A^\top A$ and solving the normal equations, as this squares the condition number and can lead to a loss of numerical precision.</li>
+        <li>Before solving, it is often a good practice to <b>preprocess data</b> by centering and scaling features. This can significantly improve the condition number.</li>
+        <li>Always <b>verify the solution</b> by checking that the residual is orthogonal to the column space: $A^\top(b - Ax^*) \approx 0$.</li>
+      </ul>
+      <h3>Sanity Checklist</h3>
+
+
+      <ul>
+        <li>Always check the <b>dimensions</b> of your matrices and vectors.</li>
+        <li>For least squares, check if your matrix has <b>full column rank</b> to determine if the solution is unique.</li>
+        <li>Prefer <b>QR</b> or <b>SVD</b> over the normal equations for better numerical stability.</li>
+        <li>If your results are unstable, check the <b>condition number</b> of your matrix and consider preprocessing your data.</li>
+        <li>Remember the geometric interpretation: the least squares solution is a <b>projection</b>.</li>
+      </ul>
     </section>
 
+    <!-- SECTION 8: VARIANTS -->
+
+
+
+    <!-- SECTION 9: IMPLEMENTATION GUIDE -->
+
+
+    <!-- SECTION 10: SANITY CHECKLIST -->
+
+
+    <!-- SECTION 11: QUICK REFERENCE -->
+
+
     <!-- SECTION 12: EXERCISES -->
-    <section class="section-card" id="section-13">
-      <h2><i data-feather="edit-3"></i> 13. Exercises</h2>
+    <section class="section-card" id="section-10">
+      <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
 
 <div class="problem">
       <h3>P0.1 — Dual of $\ell_p$ Norm</h3>
@@ -2384,50 +2420,11 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 </section>
 
     <!-- SECTION 13: SUMMARY -->
-    <section class="section-card" id="section-14">
-      <h2>14. Summary</h2>
 
-      <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical background necessary for optimization theory.</p>
-
-      <h3>Method Comparison: When to Use What</h3>
-      <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
-        <thead>
-          <tr style="background: var(--panel); border-bottom: 2px solid var(--border);">
-            <th style="padding: 8px; text-align: left;">Method</th>
-            <th style="padding: 8px; text-align: left;">When to Use</th>
-            <th style="padding: 8px; text-align: left;">Complexity</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="border-bottom: 1px solid var(--border);">
-            <td style="padding: 8px;"><strong>Normal Equations</strong></td>
-            <td style="padding: 8px;">Small, well-conditioned problems; theoretical derivations</td>
-            <td style="padding: 8px;">$O(mn^2 + n^3)$</td>
-          </tr>
-          <tr style="border-bottom: 1px solid var(--border);">
-            <td style="padding: 8px;"><strong>QR Decomposition</strong></td>
-            <td style="padding: 8px;">Standard least squares; numerically stable; full rank</td>
-            <td style="padding: 8px;">$O(mn^2)$</td>
-          </tr>
-          <tr style="border-bottom: 1px solid var(--border);">
-            <td style="padding: 8px;"><strong>SVD</strong></td>
-            <td style="padding: 8px;">Rank-deficient, ill-conditioned; minimum-norm solution; analysis</td>
-            <td style="padding: 8px;">$O(mn^2)$</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px;"><strong>Randomized SVD</strong></td>
-            <td style="padding: 8px;">Large-scale, low-rank approximation; big data</td>
-            <td style="padding: 8px;">$O(mn \log k)$</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
-    </section>
 
     <!-- READINGS -->
-    <section class="section-card" id="section-15">
-      <h2>15. Readings & Resources</h2>
+    <section class="section-card" id="section-11">
+      <h2>11. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, <em>Convex Optimization</em>, Appendix A.</li>
         <li><strong>Video Resource:</strong> Gilbert Strang's "The Fundamental Theorem of Linear Algebra" (MIT OpenCourseWare)</li>

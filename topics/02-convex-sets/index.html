@@ -991,9 +991,52 @@
         </ul>
       </section>
 
-      <!-- SECTION 7: EXERCISES -->
-      <section class="section-card" id="section-7">
-        <h2><i data-feather="edit-3"></i> 7. Exercises</h2>
+
+    <section class="section-card" id="section-8">
+      <h2>8. Review & Cheat Sheet</h2>
+
+        <p><strong>Overview:</strong> This lecture presents the geometric foundations of convex optimization through the study of convex sets. We define convexity for sets, examine canonical examples such as hyperplanes, polyhedra, and cones, and establish operations that preserve convexity. The lecture concludes with the Separating and Supporting Hyperplane Theorems, which form the geometric basis for duality theory and optimality conditions.</p>
+
+      <h3>Quick Reference Glossary</h3>
+
+
+        <p>Essential terms from this lecture for quick lookup:</p>
+
+        <ul style="column-count: 2; column-gap: 2rem;">
+          <li><b>Affine combination:</b> $\sum_i \theta_i x_i$ with $\sum_i \theta_i = 1$</li>
+          <li><b>Affine set:</b> Contains all affine combinations of its points</li>
+          <li><b>Boundary ($\partial C$):</b> $\mathrm{cl}(C) \setminus \mathrm{int}(C)$</li>
+          <li><b>Closure ($\mathrm{cl}(C)$):</b> All limit points of sequences in $C$</li>
+          <li><b>Cone:</b> $x \in K, \theta \ge 0 \implies \theta x \in K$</li>
+          <li><b>Conic combination:</b> $\sum_i \theta_i x_i$ with $\theta_i \ge 0$</li>
+          <li><b>Convex combination:</b> $\sum_i \theta_i x_i$ with $\theta_i \ge 0, \sum_i \theta_i = 1$</li>
+          <li><b>Convex cone:</b> Cone that is also convex</li>
+          <li><b>Convex hull ($\mathrm{conv}(S)$):</b> All convex combinations of points in $S$</li>
+          <li><b>Convex set:</b> Contains all line segments between its points</li>
+          <li><b>Dual cone ($K^*$):</b> $\{y \mid y^\top x \ge 0 \ \forall x \in K\}$</li>
+          <li><b>Ellipsoid:</b> $\{x \mid (x-x_c)^\top P^{-1}(x-x_c) \le 1\}$</li>
+          <li><b>Generalized inequality:</b> $x \preceq_K y$ iff $y - x \in K$</li>
+          <li><b>Halfspace:</b> $\{x \mid a^\top x \le b\}$</li>
+          <li><b>Hyperplane:</b> $\{x \mid a^\top x = b\}$</li>
+          <li><b>Interior ($\mathrm{int}(C)$):</b> Points with open ball fully in $C$</li>
+          <li><b>Norm ball:</b> $\{x \mid \|x - x_c\| \le r\}$</li>
+          <li><b>Polyhedron:</b> $\{x \mid Ax \le b, Cx = d\}$</li>
+          <li><b>Polytope:</b> Bounded polyhedron</li>
+          <li><b>Proper cone:</b> Convex, closed, pointed, solid</li>
+          <li><b>PSD cone ($\mathbb{S}^n_+$):</b> $\{X \succeq 0\}$</li>
+          <li><b>Relative interior ($\mathrm{ri}(C)$):</b> Interior relative to $\mathrm{aff}(C)$</li>
+          <li><b>Second-order cone ($\mathcal{Q}$):</b> $\{(x,t) \mid \|x\|_2 \le t\}$</li>
+          <li><b>Separating hyperplane:</b> Divides two disjoint convex sets</li>
+          <li><b>Simplex ($\Delta^n$):</b> $\{x \ge 0 \mid \mathbf{1}^\top x = 1\}$</li>
+          <li><b>Supporting hyperplane:</b> Touches boundary, set on one side</li>
+        </ul>
+    </section>
+
+
+
+    <section class="section-card" id="section-9">
+      <h2><i data-feather="edit-3"></i> 9. Exercises</h2>
+
 
         <p>These problems consolidate all exercises from throughout the lecture and add additional practice.</p>
 
@@ -1718,54 +1761,21 @@
             </div>
   </div>
 </div>
+    </section>
 
-</section>
 
-      <!-- SECTION 8: SUMMARY -->
-      <section class="section-card" id="summary">
-        <h2>8. Summary</h2>
-        <p><strong>Overview:</strong> This lecture presents the geometric foundations of convex optimization through the study of convex sets. We define convexity for sets, examine canonical examples such as hyperplanes, polyhedra, and cones, and establish operations that preserve convexity. The lecture concludes with the Separating and Supporting Hyperplane Theorems, which form the geometric basis for duality theory and optimality conditions.</p>
-      </section>
 
-      <!-- SECTION 9: GLOSSARY -->
-      <section class="section-card" id="section-9">
-        <h2>9. Quick Reference Glossary</h2>
+    <section class="section-card" id="section-10">
+      <h2>10. Readings & Resources</h2>
+      <ul class="link-list">
+        <li><strong>Required Reading:</strong> Boyd & Vandenberghe, Chapter 2 (Convex Sets).</li>
+        <li><strong>Supplementary:</strong> Rockafellar, <em>Convex Analysis</em>, Sections 1-6 (for rigorous topology and relative interior).</li>
+        <li><strong>Interactive:</strong> Explore the <a href="#widget-convex-geometry-lab">Convex Geometry Lab</a> to build intuition for set operations.</li>
+      </ul>
+    </section>
 
-        <p>Essential terms from this lecture for quick lookup:</p>
 
-        <ul style="column-count: 2; column-gap: 2rem;">
-          <li><b>Affine combination:</b> $\sum_i \theta_i x_i$ with $\sum_i \theta_i = 1$</li>
-          <li><b>Affine set:</b> Contains all affine combinations of its points</li>
-          <li><b>Boundary ($\partial C$):</b> $\mathrm{cl}(C) \setminus \mathrm{int}(C)$</li>
-          <li><b>Closure ($\mathrm{cl}(C)$):</b> All limit points of sequences in $C$</li>
-          <li><b>Cone:</b> $x \in K, \theta \ge 0 \implies \theta x \in K$</li>
-          <li><b>Conic combination:</b> $\sum_i \theta_i x_i$ with $\theta_i \ge 0$</li>
-          <li><b>Convex combination:</b> $\sum_i \theta_i x_i$ with $\theta_i \ge 0, \sum_i \theta_i = 1$</li>
-          <li><b>Convex cone:</b> Cone that is also convex</li>
-          <li><b>Convex hull ($\mathrm{conv}(S)$):</b> All convex combinations of points in $S$</li>
-          <li><b>Convex set:</b> Contains all line segments between its points</li>
-          <li><b>Dual cone ($K^*$):</b> $\{y \mid y^\top x \ge 0 \ \forall x \in K\}$</li>
-          <li><b>Ellipsoid:</b> $\{x \mid (x-x_c)^\top P^{-1}(x-x_c) \le 1\}$</li>
-          <li><b>Generalized inequality:</b> $x \preceq_K y$ iff $y - x \in K$</li>
-          <li><b>Halfspace:</b> $\{x \mid a^\top x \le b\}$</li>
-          <li><b>Hyperplane:</b> $\{x \mid a^\top x = b\}$</li>
-          <li><b>Interior ($\mathrm{int}(C)$):</b> Points with open ball fully in $C$</li>
-          <li><b>Norm ball:</b> $\{x \mid \|x - x_c\| \le r\}$</li>
-          <li><b>Polyhedron:</b> $\{x \mid Ax \le b, Cx = d\}$</li>
-          <li><b>Polytope:</b> Bounded polyhedron</li>
-          <li><b>Proper cone:</b> Convex, closed, pointed, solid</li>
-          <li><b>PSD cone ($\mathbb{S}^n_+$):</b> $\{X \succeq 0\}$</li>
-          <li><b>Relative interior ($\mathrm{ri}(C)$):</b> Interior relative to $\mathrm{aff}(C)$</li>
-          <li><b>Second-order cone ($\mathcal{Q}$):</b> $\{(x,t) \mid \|x\|_2 \le t\}$</li>
-          <li><b>Separating hyperplane:</b> Divides two disjoint convex sets</li>
-          <li><b>Simplex ($\Delta^n$):</b> $\{x \ge 0 \mid \mathbf{1}^\top x = 1\}$</li>
-          <li><b>Supporting hyperplane:</b> Touches boundary, set on one side</li>
-        </ul>
-      </section>
-
-    </article>
-
-    <footer class="site-footer">
+<footer class="site-footer">
       <div class="container">
         <p>© <span id="year"></a> Convex Optimization Course</p>
       </div>

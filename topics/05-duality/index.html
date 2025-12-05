@@ -467,16 +467,30 @@
       <div class="proof-box">
         <h4>Theorem: Sensitivity via Dual Variables</h4>
         <p><strong>Statement:</strong> If strong duality holds and $(\lambda^*, \nu^*)$ is dual optimal, then:</p>
-        <p style="text-align: center;">
-          $
-          \lambda_i^* = -\frac{\partial p^*}{\partial u_i}\bigg|_{u=0}, \quad \nu_j^* = -\frac{\partial p^*}{\partial v_j}\bigg|_{v=0}
-          $
-        </p>
-        <p>(assuming differentiability)</p>
+        <div class="proof-step">
+          <strong>Proof (Heuristic):</strong>
+          Let $p^*(u, v)$ be the optimal value of the perturbed problem. Assuming strong duality holds for the perturbed problem with the <i>same</i> optimal dual variables $(\lambda^*, \nu^*)$ (locally):
+          $$
+          \begin{aligned}
+          p^*(u, v) &= \inf_x \left( f_0(x) + \sum \lambda_i^* (f_i(x) - u_i) + \sum \nu_j^* (h_j(x) - v_j)
+ight) \
+          &= \inf_x L(x, \lambda^*, \nu^*) - \sum \lambda_i^* u_i - \sum \nu_j^* v_j \
+          &= g(\lambda^*, \nu^*) - \lambda^{*\top} u - \nu^{*\top} v \
+          &= p^*(0, 0) - \lambda^{*\top} u - \nu^{*\top} v
+          \end{aligned}
+          $$
+          Thus, $p^*(u, v)$ is locally linear with gradients $\nabla_u p^*(0,0) = -\lambda^*$ and $\nabla_v p^*(0,0) = -\nu^*$.
+          (A rigorous proof uses subgradients of the perturbation function).
+        </div>
 
         <div class="proof-step">
           <strong>Interpretation:</strong> The dual variable $\lambda_i^*$ measures the rate of change of the optimal value with respect to constraint $i$. This is the <strong>shadow price</strong> of constraint $i$.
         </div>
+
+        <div class="proof-step">
+          <strong>Economic Interpretation:</strong> In resource allocation, $\lambda_i^*$ is the marginal value of relaxing constraint $i$ by one unit. A large $\lambda_i^*$ indicates that constraint $i$ is "expensive" (tightly binding).
+        </div>
+    </div>
 
         <div class="proof-step">
           <strong>Economic Interpretation:</strong> In resource allocation, $\lambda_i^*$ is the marginal value of relaxing constraint $i$ by one unit. A large $\lambda_i^*$ indicates that constraint $i$ is "expensive" (tightly binding).
@@ -608,20 +622,32 @@
       <p>The max-flow min-cut theorem is a consequence of LP duality applied to network flow problems.</p>
     </section>
 
-    <!-- Readings -->
-    <section class="section-card" id="readings" style="margin-bottom: 32px;">
-      <h2>9. Readings & Resources</h2>
-      <ul class="link-list">
-        <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 5 — Duality</li>
-        <li><strong>Bertsekas, Convex Optimization Theory:</strong> Chapter 4 — Lagrange Multiplier Theory</li>
-        <li><strong>Rockafellar, Convex Analysis:</strong> Section 28 — Saddle-Functions and Minimax Theory</li>
-        <li><strong>Nocedal & Wright, Numerical Optimization:</strong> Chapter 12 — Theory of Constrained Optimization</li>
+
+    <section class="section-card" id="section-8">
+      <h2>8. Review & Cheat Sheet</h2>
+
+      <h3>Key Concepts</h3>
+      <ul>
+        <li><strong>Lagrangian:</strong> $L(x, \lambda, \nu) = f_0(x) + \sum \lambda_i f_i(x) + \sum \nu_j h_j(x)$ (penalized objective).</li>
+        <li><strong>Dual Function:</strong> $g(\lambda, \nu) = \inf_x L(x, \lambda, \nu)$ (concave lower bound).</li>
+        <li><strong>Weak Duality:</strong> $d^* \le p^*$ (Always true).</li>
+        <li><strong>Strong Duality:</strong> $d^* = p^*$ (True if convex + Slater's condition).</li>
+        <li><strong>Slater's Condition:</strong> Strict feasibility guarantees strong duality.</li>
       </ul>
+
+      <h3>KKT Conditions (Optimality Certificate)</h3>
+      <p>For convex problems with strong duality, $x^*$ and $(\lambda^*, \nu^*)$ are optimal $\iff$:</p>
+      <ol>
+        <li><strong>Stationarity:</strong> $\nabla_x L(x^*, \lambda^*, \nu^*) = 0$</li>
+        <li><strong>Primal Feasibility:</strong> $f_i(x^*) \le 0, h_j(x^*) = 0$</li>
+        <li><strong>Dual Feasibility:</strong> $\lambda^* \succeq 0$</li>
+        <li><strong>Complementary Slackness:</strong> $\lambda_i^* f_i(x^*) = 0$</li>
+      </ol>
     </section>
 
-    <!-- SECTION 10: PROBLEM SET -->
-    <section class="section-card" id="section-10">
-      <h2>10. Problem Set & Solutions</h2>
+
+<section class="section-card" id="section-9">
+      <h2><i data-feather="edit-3"></i> 9. Exercises</h2>
       <p>These problems consolidate the duality theory and provide practice in deriving duals, verifying KKT conditions, and applying sensitivity analysis.</p>
 
       <!-- Problem 5.1 -->
@@ -1191,6 +1217,22 @@
 </div>
 
     </section>
+
+<section class="section-card" id="section-10" style="margin-bottom: 32px;">
+      <h2>10. Readings & Resources</h2>
+      <ul class="link-list">
+        <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 5 — Duality</li>
+        <li><strong>Bertsekas, Convex Optimization Theory:</strong> Chapter 4 — Lagrange Multiplier Theory</li>
+        <li><strong>Rockafellar, Convex Analysis:</strong> Section 28 — Saddle-Functions and Minimax Theory</li>
+        <li><strong>Nocedal & Wright, Numerical Optimization:</strong> Chapter 12 — Theory of Constrained Optimization</li>
+      </ul>
+    </section>
+
+    <!-- Readings -->
+
+
+    <!-- SECTION 10: PROBLEM SET -->
+
   </main>
 
   <!-- Footer -->
