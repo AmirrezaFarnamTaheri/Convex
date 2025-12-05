@@ -1432,9 +1432,13 @@
               <strong>Conclusion:</strong> The convex combination satisfies the condition $\|x\| \le t$, so $S$ is convex.
             </div>
 
-            <p><b>Method 2: Epigraph of Convex Function</b></p>
+            <p><b>Method 2: Epigraph of Convex Function (Geometric View)</b></p>
             <div class="proof-step">
-              Define $f(x) = \|x\|$. Since every norm is a convex function (by triangle inequality), its epigraph $\mathrm{epi}(f) = \{(x,t) \mid f(x) \le t\}$ is a convex set. Since $S = \mathrm{epi}(\|\cdot\|)$, $S$ is convex.
+              Define the function $f(x) = \|x\|$. Since every norm satisfies the triangle inequality ($f(\lambda x + (1-\lambda)y) \le \lambda f(x) + (1-\lambda)f(y)$), it is a convex function.
+              The set $S$ is exactly the <b>epigraph</b> of this function:
+              $$ S = \mathrm{epi}(f) := \{(x,t) \in \mathbb{R}^n \times \mathbb{R} \mid t \ge f(x)\} $$
+              A fundamental property in convex analysis is that a function is convex if and only if its epigraph is a convex set. Thus, convexity of the norm implies convexity of $S$.
+              <br><i>Intuition:</i> Think of this as the "ice cream cone" shape in $\mathbb{R}^3$ (for $x \in \mathbb{R}^2$), which is the region "above" the graph of the cone function.
             </div>
           </div>
         </div>
@@ -1542,10 +1546,10 @@
             <h4>Solution</h4>
             <div class="proof-step">
               <strong>Method 1: Minkowski Sum.</strong>
-              We claim $C_\varepsilon = C + \overline{B}(0, \varepsilon)$.
-              <br>($\subseteq$) If $\mathrm{dist}(y, C) \le \varepsilon$, let $x^*$ be the projection of $y$ onto $C$ (exists since $C$ closed). Then $\|y - x^*\| \le \varepsilon$. Let $z = y - x^*$, so $z \in \overline{B}(0, \varepsilon)$. Then $y = x^* + z \in C + \overline{B}(0, \varepsilon)$.
-              <br>($\supseteq$) If $y = x + z$ with $x \in C, \|z\| \le \varepsilon$, then $\mathrm{dist}(y, C) \le \|y-x\| = \|z\| \le \varepsilon$.
-              <br>Since $C$ and $\overline{B}(0, \varepsilon)$ are convex, their sum is convex.
+              Let $\overline{B}_\varepsilon(0) = \{z \mid \|z\| \le \varepsilon\}$. We show $C_\varepsilon = C + \overline{B}_\varepsilon(0)$.
+              <br><b>($\subseteq$)</b> Take $y \in C_\varepsilon$. By definition, $d(y, C) \le \varepsilon$. Since $C$ is closed and convex, the projection $x^\star = \Pi_C(y)$ exists and satisfies $\|y - x^\star\| = d(y, C) \le \varepsilon$. Let $z = y - x^\star$. Then $\|z\| \le \varepsilon$ implies $z \in \overline{B}_\varepsilon(0)$, and $y = x^\star + z \in C + \overline{B}_\varepsilon(0)$.
+              <br><b>($\supseteq$)</b> Take $y \in C + \overline{B}_\varepsilon(0)$. Then $y = x + z$ for some $x \in C, z \in \overline{B}_\varepsilon(0)$. The distance to $C$ satisfies $d(y, C) \le \|y - x\| = \|z\| \le \varepsilon$. Thus $y \in C_\varepsilon$.
+              <br>Since $C$ and $\overline{B}_\varepsilon(0)$ are convex, their Minkowski sum is convex (Problem 2.12).
             </div>
 
             <div class="proof-step">
@@ -1634,9 +1638,13 @@
 
             <p><b>(b) Non-convex Factor</b></p>
             <div class="proof-step">
-              <b>No.</b> If $X \times Y$ is convex and $Y$ is nonempty (contains some $y_0$), then the "slice" $\{ (x, y_0) \mid x \in X \}$ must be convex. This slice is essentially $X$.
-              <br>Formally: If $x_1, x_2 \in X$, then $(x_1, y_0), (x_2, y_0) \in X \times Y$. By convexity, $(\lambda x_1 + (1-\lambda)x_2, y_0) \in X \times Y$, which implies $\lambda x_1 + (1-\lambda)x_2 \in X$.
-              Thus, if the product is convex, both factors must be convex.
+              <b>No.</b> Unlike the Minkowski sum (where sum of non-convex sets can be convex), the Cartesian product <i>requires</i> both factors to be convex.
+              <br><i>Proof:</i> Assume $X \times Y$ is convex and $Y$ is nonempty (contains $y_0$). We show $X$ must be convex.
+              Take any $x_1, x_2 \in X$. Then $(x_1, y_0), (x_2, y_0) \in X \times Y$.
+              By convexity of the product, for any $\lambda \in [0,1]$:
+              $$ \lambda(x_1, y_0) + (1-\lambda)(x_2, y_0) = (\lambda x_1 + (1-\lambda)x_2, y_0) \in X \times Y $$
+              This implies the first component $\lambda x_1 + (1-\lambda)x_2$ is in $X$. Thus $X$ is convex.
+              (Similarly for $Y$).
             </div>
           </div>
         </div>
