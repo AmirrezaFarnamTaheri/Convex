@@ -25,7 +25,7 @@
   </header>
 
   <!-- Main content -->
-  <main class="container" style="padding: 32px 0 60px;">
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <!-- Lecture header -->
     <article class="section-card" style="margin-bottom: 32px;">
       <h1 style="margin-top: 0;">04. Convex Optimization Problems: Standard Forms</h1>
@@ -342,33 +342,45 @@
       </p>
 
       <div class="proof-box">
-        <h4>Derivation (Unstructured Uncertainty)</h4>
+        <h4>Derivation of Robust Least Squares SOCP (Unstructured Uncertainty)</h4>
+
         <div class="proof-step">
-          <strong>Step 1: Define the uncertainty set.</strong>
-          Assume the matrix $A$ is uncertain but bounded: $A = A_0 + \Delta$, where $\|\Delta\|_2 \le \rho$. We want to minimize the worst-case residual:
-          $$ \min_x \max_{\|\Delta\|_2 \le \rho} \|(A_0 + \Delta)x - b\|_2 $$
+          <strong>Step 1: Formulate the Worst-Case Objective.</strong>
+          We assume $A$ is uncertain: $A = A_0 + \Delta$, with $\|\Delta\|_2 \le \rho$.
+          We want to solve $\min_x \max_{\|\Delta\|_2 \le \rho} \|(A_0 + \Delta)x - b\|_2$.
+          Let $r = A_0 x - b$. The objective is $\max_{\|\Delta\|_2 \le \rho} \|r + \Delta x\|_2$.
         </div>
+
         <div class="proof-step">
-          <strong>Step 2: Expand the inner maximization.</strong>
-          Let $r_0 = A_0 x - b$. The term inside the max is $\|r_0 + \Delta x\|_2$.
-          By the triangle inequality:
-          $$ \|r_0 + \Delta x\|_2 \le \|r_0\|_2 + \|\Delta x\|_2 \le \|r_0\|_2 + \|\Delta\|_2 \|x\|_2 \le \|r_0\|_2 + \rho \|x\|_2 $$
+          <strong>Step 2: Triangle Inequality Upper Bound.</strong>
+          Using the triangle inequality and the definition of the spectral norm ($\|\Delta x\|_2 \le \|\Delta\|_2 \|x\|_2$):
+          $$ \|r + \Delta x\|_2 \le \|r\|_2 + \|\Delta x\|_2 \le \|r\|_2 + \|\Delta\|_2 \|x\|_2 \le \|A_0 x - b\|_2 + \rho \|x\|_2 $$
         </div>
+
         <div class="proof-step">
-          <strong>Step 3: Show the bound is tight.</strong>
-          We need to show there exists a $\Delta^*$ with $\|\Delta^*\|_2 \le \rho$ that achieves this bound.
-          Choose $\Delta^* = \rho \frac{r_0}{\|r_0\|_2} \frac{x^\top}{\|x\|_2}$ (a rank-1 matrix).
-          Then $\|\Delta^*\|_2 = \rho$, and $\Delta^* x = \rho \frac{r_0}{\|r_0\|_2} \|x\|_2$.
-          The vector $\Delta^* x$ is parallel to $r_0$, so $\|r_0 + \Delta^* x\|_2 = \|r_0\|_2 + \|\Delta^* x\|_2 = \|r_0\|_2 + \rho \|x\|_2$.
+          <strong>Step 3: Construct Worst-Case Perturbation.</strong>
+          We need to show this bound is achievable. Let $u = A_0 x - b$.
+          If $u=0$ or $x=0$, the bound holds trivially.
+          Assume $u \ne 0$ and $x \ne 0$. We construct a rank-1 perturbation $\Delta$ that aligns $\Delta x$ with $u$.
+          Set $\Delta = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2}$.
+          Check norm: $\|\Delta\|_2 = \rho \cdot 1 \cdot 1 = \rho$.
+          Check alignment: $\Delta x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2 = \left( \rho \frac{\|x\|_2}{\|u\|_2} \right) u$.
+          Since $\Delta x$ is a positive scalar multiple of $u$, the norms add:
+          $$ \|u + \Delta x\|_2 = \|u\|_2 + \|\Delta x\|_2 = \|A_0 x - b\|_2 + \rho \|x\|_2 $$
         </div>
+
         <div class="proof-step">
           <strong>Step 4: Formulate as SOCP.</strong>
-          The problem becomes $\min_x (\|A_0 x - b\|_2 + \rho \|x\|_2)$.
-          We introduce slack variables $t_1, t_2$:
-          $$ \min_{x, t_1, t_2} \quad t_1 + \rho t_2 $$
-          $$ \text{s.t.} \quad \|A_0 x - b\|_2 \le t_1 $$
-          $$ \quad \quad \|x\|_2 \le t_2 $$
-          These are standard second-order cone constraints.
+          The problem minimizes the sum of two Euclidean norms: $\|A_0 x - b\|_2 + \rho \|x\|_2$.
+          We introduce epigraph variables $t_1, t_2$ to move the norms to the constraints:
+          $$
+          \begin{aligned}
+          \text{minimize} \quad & t_1 + \rho t_2 \\
+          \text{subject to} \quad & \|A_0 x - b\|_2 \le t_1 \\
+          & \|x\|_2 \le t_2
+          \end{aligned}
+          $$
+          These are standard Second-Order Cone (SOC) constraints. Thus, Robust Least Squares is an SOCP.
         </div>
       </div>
 
@@ -1312,9 +1324,6 @@
 
     <!-- SECTION 10: PROBLEM SET -->
 
-  </main>
-
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
       <p style="margin: 0;">
@@ -1323,6 +1332,7 @@
       </p>
     </div>
   </footer>
+  </main></div>
 
   <!-- Load Pyodide for Python widgets (optional) -->
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>

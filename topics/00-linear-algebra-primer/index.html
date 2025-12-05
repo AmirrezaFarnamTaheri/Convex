@@ -313,29 +313,40 @@
         <h4>Proof of the Rank-Nullity Theorem</h4>
 
         <div class="proof-step">
-          <strong>Step 1: Construct a basis.</strong> Let $\dim(\mathcal{N}(A)) = k$ and let $\{v_1, \dots, v_k\}$ be a basis for $\mathcal{N}(A)$. Extend this to a basis for $\mathbb{R}^n$: $\{v_1, \dots, v_k, w_1, \dots, w_{n-k}\}$.
+          <strong>Step 1: Construct a basis for the Nullspace.</strong> Let $k = \dim(\mathcal{N}(A))$ be the nullity. Let $\{v_1, \dots, v_k\}$ be a basis for the nullspace $\mathcal{N}(A)$. These are $k$ linearly independent vectors in $\mathbb{R}^n$ such that $Av_i = 0$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Express arbitrary vectors.</strong> Any $x \in \mathbb{R}^n$ can be written as $x = \sum_{i=1}^k c_i v_i + \sum_{j=1}^{n-k} d_j w_j$.
+          <strong>Step 2: Extend to a basis for $\mathbb{R}^n$.</strong> By the Basis Extension Theorem, we can extend this set to form a basis for the entire space $\mathbb{R}^n$: $\{v_1, \dots, v_k, w_1, \dots, w_{n-k}\}$. Here, $r = n-k$ is the number of added vectors.
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Apply the matrix.</strong> Then
-          $$ Ax = \sum_{i=1}^k c_i A v_i + \sum_{j=1}^{n-k} d_j A w_j = \sum_{j=1}^{n-k} d_j A w_j $$
-          since $v_i \in \mathcal{N}(A)$ implies $Av_i = 0$.
+          <strong>Step 3: Analyze the image of the basis vectors.</strong> Consider the image of an arbitrary vector $x \in \mathbb{R}^n$. We can write $x$ as a linear combination of basis elements:
+          $$ x = \sum_{i=1}^k c_i v_i + \sum_{j=1}^{r} d_j w_j $$
+          Applying the linear map $A$:
+          $$ Ax = \sum_{i=1}^k c_i \underbrace{A v_i}_{0} + \sum_{j=1}^{r} d_j A w_j = \sum_{j=1}^{r} d_j A w_j $$
+          This shows that the vectors $\{Aw_1, \dots, Aw_r\}$ span the column space $\mathcal{R}(A)$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 4: Show spanning property.</strong> The calculation above shows that the vectors $\{Aw_1, \dots, Aw_{n-k}\}$ span $\mathcal{R}(A)$.
+          <strong>Step 4: Prove Linear Independence in the Range.</strong> We must show that $\{Aw_1, \dots, Aw_r\}$ are linearly independent. Suppose we have a linear combination summing to zero:
+          $$ \sum_{j=1}^{r} \alpha_j A w_j = 0 $$
+          By linearity, this implies $A \left( \sum_{j=1}^{r} \alpha_j w_j \right) = 0$.
+          Let $u = \sum_{j=1}^{r} \alpha_j w_j$. Since $Au = 0$, the vector $u$ must lie in the nullspace $\mathcal{N}(A)$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 5: Verify linear independence.</strong> Suppose $\sum_{j=1}^{n-k} d_j A w_j = 0$. Then $A(\sum_{j=1}^{n-k} d_j w_j) = 0$, so $\sum_{j=1}^{n-k} d_j w_j \in \mathcal{N}(A)$. This means it can be written as a linear combination of $\{v_i\}$, which contradicts the linear independence of our basis for $\mathbb{R}^n$ unless all $d_j=0$.
+          <strong>Step 5: Contradiction via Basis Uniqueness.</strong> Since $u \in \mathcal{N}(A)$, it can be written as a linear combination of the nullspace basis $\{v_i\}$:
+          $$ u = \sum_{i=1}^k \beta_i v_i $$
+          Equating the two expressions for $u$:
+          $$ \sum_{j=1}^{r} \alpha_j w_j = \sum_{i=1}^k \beta_i v_i \quad \implies \quad \sum_{j=1}^{r} \alpha_j w_j - \sum_{i=1}^k \beta_i v_i = 0 $$
+          Since the combined set $\{v_1, \dots, v_k, w_1, \dots, w_r\}$ is a basis for $\mathbb{R}^n$, all coefficients must be zero. Specifically, $\alpha_j = 0$ for all $j$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 6: Conclude.</strong> The set $\{Aw_1, \dots, Aw_{n-k}\}$ is a basis for $\mathcal{R}(A)$, so $\mathrm{rank}(A) = \dim(\mathcal{R}(A)) = n-k = n - \dim(\mathcal{N}(A))$.
+          <strong>Step 6: Count Dimensions.</strong> Since $\{Aw_1, \dots, Aw_r\}$ is a linearly independent spanning set for $\mathcal{R}(A)$, it is a basis.
+          Thus, $\dim(\mathcal{R}(A)) = r = n - k$.
+          Rearranging gives the theorem: $\dim(\mathcal{R}(A)) + \dim(\mathcal{N}(A)) = n$.
         </div>
       </div>
 

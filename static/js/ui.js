@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCollapsibleEnvironments();
     initHierarchicalSections();
     initPageSettings();
+    initHeaderFontSize();
     initSidebarToggle();
     initThemeSwitcher();
     feather.replace();
@@ -184,6 +185,67 @@ function groupSubsections(container) {
 /* =========================================
    3. PAGE SETTINGS (Font Size, Global Toggles)
    ========================================= */
+function initHeaderFontSize() {
+    const nav = document.querySelector('.site-header .nav');
+    if (!nav) return;
+    if (document.getElementById('header-font-controls')) return;
+
+    const container = document.createElement('div');
+    container.id = 'header-font-controls';
+    container.className = 'header-font-controls';
+    container.style.display = 'flex';
+    container.style.alignItems = 'center';
+    container.style.marginLeft = '16px';
+    container.style.gap = '8px';
+
+    const btnDec = document.createElement('button');
+    btnDec.className = 'btn btn-ghost btn-sm';
+    btnDec.innerHTML = '<i data-feather="minus"></i>';
+    btnDec.title = 'Decrease Font Size';
+    btnDec.style.padding = '4px 8px';
+
+    const btnInc = document.createElement('button');
+    btnInc.className = 'btn btn-ghost btn-sm';
+    btnInc.innerHTML = '<i data-feather="plus"></i>';
+    btnInc.title = 'Increase Font Size';
+    btnInc.style.padding = '4px 8px';
+
+    // Logic
+    const root = document.documentElement;
+    const sizes = ['0.875rem', '0.9375rem', '1rem', '1.125rem', '1.25rem', '1.375rem', '1.5rem'];
+    let currentIndex = 2; // Default 1rem
+
+    // Sync with existing settings if any
+    const saved = localStorage.getItem('font-size-index');
+    if (saved !== null) {
+        currentIndex = parseInt(saved, 10);
+        root.style.setProperty('--font-size-base', sizes[currentIndex]);
+    }
+
+    const update = () => {
+        root.style.setProperty('--font-size-base', sizes[currentIndex]);
+        localStorage.setItem('font-size-index', currentIndex);
+    };
+
+    btnDec.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            update();
+        }
+    });
+
+    btnInc.addEventListener('click', () => {
+        if (currentIndex < sizes.length - 1) {
+            currentIndex++;
+            update();
+        }
+    });
+
+    container.appendChild(btnDec);
+    container.appendChild(btnInc);
+    nav.appendChild(container);
+}
+
 function initPageSettings() {
     if (document.getElementById('page-settings-panel')) return;
 

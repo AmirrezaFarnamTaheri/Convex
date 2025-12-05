@@ -25,7 +25,7 @@
   </header>
 
   <!-- Main content -->
-  <main class="container" style="padding: 32px 0 60px;">
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <!-- Lecture header -->
     <article class="section-card" style="margin-bottom: 32px;">
       <h1 style="margin-top: 0;">05. Duality: Lagrangian, KKT, Strong Duality</h1>
@@ -318,13 +318,18 @@
 
         <div class="proof-step">
           <strong>Step 3: Analyze Dual Variables.</strong>
-          From the second inequality, $\mu \ge 0$. Also $\lambda \ge 0$ (otherwise we could send $u_i \to \infty$ in $\mathcal{A}$).
-          If $\mu > 0$, we can divide by $\mu$ to recover the standard Lagrangian multiplier $\tilde{\lambda} = \lambda/\mu$. Then $\inf L(x, \tilde{\lambda}) \ge \alpha/\mu \approx p^*$, implying $d^* \ge p^*$, so $d^* = p^*$.
+          From the second inequality ($0 < \alpha - \mu t$ for $t < p^*$), we deduce $\mu \ge 0$. Also $\lambda \ge 0$ (if any $\lambda_i < 0$, we could take $u_i \to \infty$ in $\mathcal{A}$, violating the upper bound $\alpha$).
+          <br><b>Case 1: Non-vertical hyperplane ($\mu > 0$).</b> Divide by $\mu$ to define $\tilde{\lambda} = \lambda/\mu$. The inequality becomes:
+          $$ \tilde{\lambda}^\top u + t \ge \alpha/\mu \quad \forall (u, t) \in \mathcal{A} $$
+          This implies $\inf_{(u, t) \in \mathcal{A}} (t + \tilde{\lambda}^\top u) \ge \alpha/\mu$.
+          Since $\inf_x L(x, \tilde{\lambda}) = \inf \{ t + \tilde{\lambda}^\top u \mid (u, t) \in \mathcal{A} \}$, we have $g(\tilde{\lambda}) \ge \alpha/\mu$.
+          Also, as $t \nearrow p^*$, $\mu t \le \alpha$, so $\mu p^* \le \alpha$, i.e., $p^* \le \alpha/\mu$.
+          Combining: $d^* \ge g(\tilde{\lambda}) \ge p^*$. Since weak duality gives $d^* \le p^*$, we must have $d^* = p^*$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 4: Use Slater's Point to ensure $\mu > 0$.</strong>
-          Suppose for contradiction that $\mu = 0$. Then the separation inequality becomes $\lambda^\top u \ge 0$ for all $u \in \mathcal{A}$.
+          <strong>Step 4: Use Slater's Point to prove $\mu > 0$.</strong>
+          Suppose for contradiction that $\mu = 0$. Then the separation inequality becomes $\lambda^\top u \ge \alpha \ge 0$ for all $u \in \mathcal{A}$.
           Applying this to the Slater point $\tilde{x}$: let $\tilde{u}_i = f_i(\tilde{x})$ and $\tilde{t} = f_0(\tilde{x})$. Then $(\tilde{u}, \tilde{t}) \in \mathcal{A}$.
           The inequality implies $\sum_{i=1}^m \lambda_i f_i(\tilde{x}) \ge 0$.
           <br>However, we know:
@@ -335,7 +340,7 @@
           Since $\lambda$ has at least one positive component $\lambda_k > 0$, and $f_k(\tilde{x}) < 0$, the term $\lambda_k f_k(\tilde{x})$ is strictly negative. All other terms are non-positive.
           Thus, $\sum \lambda_i f_i(\tilde{x}) < 0$.
           <br>This contradicts $\sum \lambda_i f_i(\tilde{x}) \ge 0$. Therefore, the assumption $\mu=0$ must be false.
-          <br>Conclusion: $\mu > 0$, which allows us to normalize the dual variables and prove $p^* = d^*$.
+          <br>Conclusion: $\mu > 0$ holds, so Strong Duality holds.
         </div>
 
         <div class="insight">
@@ -1237,9 +1242,6 @@ ight) \
 
     <!-- SECTION 10: PROBLEM SET -->
 
-  </main>
-
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
       <p style="margin: 0;">
@@ -1248,6 +1250,7 @@ ight) \
       </p>
     </div>
   </footer>
+  </main></div>
 
   <!-- Load Pyodide for Python widgets (optional) -->
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
