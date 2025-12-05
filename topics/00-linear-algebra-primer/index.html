@@ -22,10 +22,7 @@
   <header class="site-header sticky">
     <div class="container">
       <div class="brand">
-        <a href="../../index.html">
-          <img src="../../static/images/logo.svg" alt="Logo" />
-          <span>Convex Optimization</a>
-        </a>
+        <a href="../../index.html">Convex Optimization</a>
       </div>
       <nav class="nav">
         <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
@@ -35,7 +32,7 @@
   </header>
 
   <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
-    <header class="lecture-header card-v2">
+    <header class="lecture-header section-card">
       <h1>00. A Primer on Linear Algebra</h1>
       <div class="lecture-meta">
         <span>Date: 2025-10-14</a>
@@ -49,7 +46,7 @@
       </div>
     </header>
 
-    <section class="card-v2">
+    <section class="section-card">
       <h2><i data-feather="target"></i> Learning Objectives</h2>
       <p>After this lecture, you will be able to work with:</p>
       <ul>
@@ -64,7 +61,7 @@
 
 
     <!-- SECTION 0: NOTATION -->
-    <section class="card-v2" id="section-0">
+    <section class="section-card" id="section-0">
       <h2>0. Notation and Basic Objects</h2>
 
 
@@ -184,7 +181,7 @@
         <br><i>Note:</i> This corresponds to $\frac{d}{dx}(ax^2) = 2ax$.</li>
         <li><b>Rule 3: Log Determinant:</b> $\nabla_X \log \det X = X^{-\top}$. If $X \in \mathbb{S}^n_{++}$ (symmetric positive definite), then $\nabla_X \log \det X = X^{-1}$.
         <br>
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Derivation: Gradient of Log Determinant</h4>
           <p>We use the first-order Taylor expansion $\log \det(X + \Delta) \approx \log \det X + \langle \nabla f(X), \Delta \rangle$.</p>
           <div class="proof-step">
@@ -217,7 +214,7 @@
         </ol>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Detailed Derivation: Hessian of Least Squares</h4>
         <p>Let $f(x) = \|Ax - b\|_2^2$. We show $\nabla^2 f(x) = 2A^\top A$ and prove its convexity.</p>
 
@@ -254,7 +251,7 @@
     </section>
 
     <!-- SECTION 1: FOUR FUNDAMENTAL SUBSPACES -->
-    <section class="card-v2" id="section-1">
+    <section class="section-card" id="section-1">
       <h2>1. Subspaces and the Four Fundamental Spaces</h2>
 
       <p>A <a href="#" class="definition-link">linear subspace</a> is a set of vectors that is closed under addition and scalar multiplication. Given a matrix $A \in \mathbb{R}^{m \times n}$, we can define four fundamental subspaces that characterize the behavior of the linear map $T(x) = Ax$.</p>
@@ -278,7 +275,7 @@
         <figcaption><i>Figure 1.1:</i> Three planes in 3D space—the intersection represents solution sets of linear equations.</figcaption>
       </figure>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof: $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$</h4>
 
         <div class="proof-step">
@@ -300,7 +297,7 @@
       $$ \dim \mathcal{N}(A) + \mathrm{rank}(A) = n $$
       This fundamental result relates the dimensions of the domain's subspaces to the rank of the mapping.</p>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof of the Rank-Nullity Theorem</h4>
 
         <div class="proof-step">
@@ -341,7 +338,7 @@
     <!-- SECTION 2: INNER PRODUCTS AND NORMS -->
 
     <!-- SECTION 2: ALGEBRAIC INVARIANTS -->
-    <section class="card-v2" id="section-2">
+    <section class="section-card" id="section-2">
       <h2>2. Algebraic Invariants: Determinant, Trace, and Eigenvalues</h2>
 
       <p>While a matrix $A$ represents a linear map in a specific basis, we are often interested in properties that are intrinsic to the map itself, independent of the basis. These are called <b>invariants</b>.</p>
@@ -369,7 +366,7 @@
         <h4>Lemma: Scalar Matrices</h4>
         <p>If every non-zero vector $x \in \mathbb{R}^n$ is an eigenvector of $A$ (i.e., $Ax = \lambda(x)x$), then $A$ must be a scalar multiple of the identity: $A = \lambda I$.</p>
       </div>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof</h4>
         <p>Let $u, v$ be linearly independent vectors. By assumption, $Au = \lambda_u u$ and $Av = \lambda_v v$.
         Consider their sum $w = u+v$. We must have $A(u+v) = \lambda_w (u+v)$.
@@ -386,7 +383,7 @@
       <p>The trace is a linear functional:
       $$ \mathrm{tr}(A + B) = \mathrm{tr}(A) + \mathrm{tr}(B) \quad \text{and} \quad \mathrm{tr}(cA) = c\,\mathrm{tr}(A). $$
       </p>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof</h4>
         <p>By definition, $\mathrm{tr}(A) = \sum_{i=1}^n a_{ii}$. Then:</p>
         $$ \mathrm{tr}(A+B) = \sum_{i=1}^n (a_{ii} + b_{ii}) = \sum_{i=1}^n a_{ii} + \sum_{i=1}^n b_{ii} = \mathrm{tr}(A) + \mathrm{tr}(B) $$
@@ -404,7 +401,7 @@
       More generally, $\mathrm{tr}(ABC) = \mathrm{tr}(BCA) = \mathrm{tr}(CAB)$. This property is crucial for deriving matrix gradients.
       </p>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof: $\mathrm{tr}(AB) = \mathrm{tr}(BA)$</h4>
         <div class="proof-step">
           <strong>Coordinate Definition:</strong> Let $A \in \mathbb{R}^{m \times n}$ and $B \in \mathbb{R}^{n \times m}$. The diagonal elements of the product $AB$ are:
@@ -461,7 +458,7 @@
     </section>
 
 
-    <section class="card-v2" id="section-3">
+    <section class="section-card" id="section-3">
       <h2>3. Inner Products, Norms, and Angles</h2>
 
       <h3>Inner Product</h3>
@@ -520,7 +517,7 @@
 
       <h3>Cauchy–Schwarz and Triangle Inequality</h3>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof of Cauchy–Schwarz: $|x^\top y| \le \|x\|_2 \|y\|_2$</h4>
 
         <div class="proof-step">
@@ -540,7 +537,7 @@
         </div>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof of the Triangle Inequality: $\|x+y\|_2 \le \|x\|_2 + \|y\|_2$</h4>
 
         <div class="proof-step">
@@ -578,7 +575,7 @@
         </ul>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof: $(\|\cdot\|_2)^* = \|\cdot\|_2$ (Self-Duality of Euclidean Norm)</h4>
         <div class="proof-step">
           <strong>Step 1: Upper bound.</strong> By Cauchy-Schwarz, for $\|x\|_2 \le 1$:
@@ -595,7 +592,7 @@
         </div>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof: $(\|\cdot\|_1)^* = \|\cdot\|_\infty$</h4>
         <div class="proof-step">
           <strong>Step 1: Upper bound.</strong> For $\|x\|_1 \le 1$:
@@ -613,7 +610,7 @@
       <h3>Hölder's Inequality (Dual-Norm Cauchy–Schwarz)</h3>
       <p>For all $x, y \in \mathbb{R}^n$ and any norm $\|\cdot\|$:</p>
       $$ x^\top y \le \|x\| \cdot \|y\|_* $$
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof of Hölder's Inequality</h4>
         <div class="proof-step">
           <strong>Case 1: $x = 0$.</strong> The inequality is trivially true: $0 \le 0$.
@@ -637,7 +634,7 @@
       $$ \|X\|_2 = \sigma_{\max}(X) = \sqrt{\lambda_{\max}(X^\top X)} $$
       Since $X^\top X$ is always Positive Semidefinite ($v^\top X^\top X v = \|Xv\|_2^2 \ge 0$), its eigenvalues are non-negative.</p>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof: $\|X\|_2 = \sqrt{\lambda_{\max}(X^\top X)}$</h4>
         <div class="proof-step">
           <strong>Step 1: Squared Norm.</strong>
@@ -663,7 +660,7 @@
     </section>
 
     <!-- SECTION 3: ORTHOGONALITY AND QR -->
-    <section class="card-v2" id="section-4">
+    <section class="section-card" id="section-4">
       <h2>4. Orthogonality and Orthonormal Bases</h2>
 
       <h3>Orthonormal Sets</h3>
@@ -714,7 +711,7 @@
     </section>
 
     <!-- SECTION 4: PSD MATRICES -->
-    <section class="card-v2" id="section-5">
+    <section class="section-card" id="section-5">
       <h2>5. Positive Semidefinite Matrices</h2>
 
       <h3>5.1 The Space of Symmetric Matrices ($\mathbb{S}^n$)</h3>
@@ -730,7 +727,7 @@
 
       <h4>Why are Eigenvectors of Symmetric Matrices Orthogonal?</h4>
       <p>The Spectral Theorem guarantees orthogonal eigenvectors for symmetric matrices. The proof relies on the adjoint property.</p>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof of Orthogonality</h4>
         <p>Let $A$ be symmetric ($A^\top = A$). Let $v_1, v_2$ be eigenvectors with distinct eigenvalues $\lambda_1 \neq \lambda_2$.
         $$ A v_1 = \lambda_1 v_1, \quad A v_2 = \lambda_2 v_2 $$
@@ -763,7 +760,7 @@
       </p>
 
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Proof: Equivalence of Definitions</h4>
         <p>We prove that $(x^\top A x \ge 0) \iff (\lambda_i \ge 0)$.</p>
 
@@ -799,7 +796,7 @@
         <figcaption><i>Figure 5.3:</i> Visualization of the Schur complement process. Left: Original block matrix. Center: Elimination matrix. Right: Resulting block upper-triangular matrix where the top-left block has been transformed into the Schur complement.</figcaption>
       </figure>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>1. Block Matrix Setup and Dimensions</h4>
         <p>Consider a block matrix $M$ partitioned as follows:</p>
         $$ M = \begin{bmatrix} A & B \\ C & D \end{bmatrix} $$
@@ -911,7 +908,7 @@
       v^\top (X - Y) v \ge 0 \quad \text{for all } v \in \mathbb{R}^n
       $$
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Microfacts About the Loewner Order</h4>
         <ul>
           <li><b>Eigenvalue characterization:</b> $X \succeq 0$ if and only if all eigenvalues of $X$ are nonnegative.</li>
@@ -932,7 +929,7 @@
     </section>
 
     <!-- SECTION 5: PROJECTIONS -->
-    <section class="card-v2" id="section-6">
+    <section class="section-card" id="section-6">
       <h2>6. Projections onto Subspaces and Affine Sets</h2>
 
       <h3>Orthogonal Projection onto a Subspace</h3>
@@ -966,7 +963,7 @@
       \Pi_{\mathcal{A}}(y) = x_0 + Z(Z^\top Z)^{-1} Z^\top (y - x_0)
       $$
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Geometric Interpretation and Derivation</h4>
         <p>This formula says: "Project $(y - x_0)$ onto the nullspace $\mathcal{N}(F)$, then shift back by $x_0$."</p>
 
@@ -991,7 +988,7 @@
         </div>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h3>Example 1: Projection onto a Line</h3>
         <p>Let's find the projection of the vector $b = (2, 3)^\top$ onto the line spanned by the vector $u = (1, 1)^\top$. The projection $p$ is given by the formula:
         $$ p = \frac{u^\top b}{u^\top u} u = \frac{(1)(2) + (1)(3)}{(1)(1) + (1)(1)} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \frac{5}{2} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 2.5 \\ 2.5 \end{pmatrix} $$
@@ -1002,7 +999,7 @@
     </section>
 
     <!-- SECTION 6: LEAST SQUARES -->
-    <section class="card-v2" id="section-7">
+    <section class="section-card" id="section-7">
       <h2>7. The Method of Least Squares</h2>
 
       <h3>The Problem: Overdetermined Systems</h3>
@@ -1033,7 +1030,7 @@
         <li>If $A$ is rank-deficient ($\mathrm{rank}(A) < n$), there are infinitely many solutions. In this case, the pseudoinverse is used to find the solution with the minimum norm.</li>
       </ul>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h3>Example 2: Solving Least Squares with Normal Equations</h3>
         <p>Let's solve the least squares problem for the system $Ax=b$ with:
         $$ A = \begin{pmatrix} 1 & 1 \\ 1 & -1 \\ 1 & 1 \end{pmatrix}, \quad b = \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix} $$
@@ -1045,7 +1042,7 @@
         </p>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h3>Example 3: Rank-Deficient Case</h3>
         <p>Consider the system with:
         $$ A = \begin{pmatrix} 1 & 1 \\ 2 & 2 \end{pmatrix}, \quad b = \begin{pmatrix} 3 \\ 6 \end{pmatrix} $$
@@ -1056,7 +1053,7 @@
     </section>
 
     <!-- SECTION 7: QR, SVD, PSEUDOINVERSE (COMPREHENSIVE) -->
-    <section class="card-v2" id="section-8">
+    <section class="section-card" id="section-8">
       <h2>8. Advanced Factorizations: QR, SVD, Pseudoinverse, and Applications</h2>
 
       <p><strong>Motivation:</strong> While Gaussian elimination and normal equations work in theory, numerical stability and efficiency demand better methods. The QR decomposition and Singular Value Decomposition (SVD) are standard tools in modern numerical linear algebra—providing robust, stable solutions to least squares, revealing matrix structure, and enabling dimensionality reduction and data compression.</p>
@@ -1065,7 +1062,7 @@
       <h3>8.1 QR Decomposition (Orthogonal-Triangular Factorization)</h3>
 
       <h4>Theorem: Existence of QR Decomposition</h4>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <p><strong>Statement:</strong> Every matrix $A \in \mathbb{R}^{m \times n}$ with $m \ge n$ and linearly independent columns can be factored as:
         $$ A = QR $$
         where $Q \in \mathbb{R}^{m \times n}$ has orthonormal columns ($Q^\top Q = I_n$) and $R \in \mathbb{R}^{n \times n}$ is upper triangular with positive diagonal entries.</p>
@@ -1108,7 +1105,7 @@
       <h3>8.2 Singular Value Decomposition (SVD)</h3>
 
       <h4>8.2.1 Definition and Existence</h4>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <p><strong>Theorem (<a href="#" class="definition-link">SVD</a>):</strong> Every matrix $A \in \mathbb{R}^{m \times n}$ admits a factorization:
         $$ A = U \Sigma V^\top $$
         where:</p>
@@ -1151,7 +1148,7 @@
       </ol>
       <p>Thus, $A$ transforms the unit sphere in $\mathbb{R}^n$ into an ellipsoid in $\mathbb{R}^m$ with semi-axes of lengths $\sigma_1, \dots, \sigma_r$.</p>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Detailed Walkthrough: The Geometry of SVD in 2D</h4>
         <p>Let's visualize exactly how $A = U \Sigma V^\top$ transforms a vector $x$. Consider the matrix:</p>
         $$ A = \begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix} $$
@@ -1188,7 +1185,7 @@
       </p>
 
       <h4>8.2.5 The Eckart-Young-Mirsky Theorem</h4>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <p><strong>Theorem (Optimal Low-Rank Approximation):</strong> Let $A = U \Sigma V^\top$ be the SVD of $A \in \mathbb{R}^{m \times n}$ with rank $r$. For any $k < r$, the best rank-$k$ approximation to $A$ in the Frobenius norm is:
         $$ A_k = \sum_{i=1}^k \sigma_i u_i v_i^\top = U_k \Sigma_k V_k^\top $$
         and the approximation error is:
@@ -1305,7 +1302,7 @@
       </ul>
 
       <h4>8.5.3 Perturbation Bound</h4>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <p><strong>Theorem (Relative Error Bound):</strong> Let $Ax = b$ and $A(x + \Delta x) = b + \Delta b$. If $\|\Delta b\|_2 / \|b\|_2$ is small, then:
         $$ \frac{\|\Delta x\|_2}{\|x\|_2} \le \kappa(A) \frac{\|\Delta b\|_2}{\|b\|_2} $$</p>
 
@@ -1374,7 +1371,7 @@
       <h3>8.8 Worked Examples</h3>
 
       <h4>Example 8.1: Computing SVD by Hand (2×2 Matrix)</h4>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <p><strong>Problem:</strong> Compute the SVD of $A = \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix}$.</p>
 
         <div class="proof-step">
@@ -1425,7 +1422,7 @@
       </div>
 
       <h4>Example 8.2: Low-Rank Approximation for Data Compression</h4>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <p><strong>Problem:</strong> Given data matrix $X \in \mathbb{R}^{100 \times 50}$ (100 samples, 50 features) with $\text{rank}(X) = 50$, compute a rank-10 approximation that retains 90% of the "energy" (Frobenius norm squared).</p>
 
         <div class="proof-step">
@@ -1469,7 +1466,7 @@
       </div>
 
       <h4>Example 8.3: Solving Rank-Deficient Least Squares</h4>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <p><strong>Problem:</strong> Solve $\min \|Ax - b\|_2$ where $A = \begin{bmatrix} 1 & 2 & 3 \\ 2 & 4 & 6 \end{bmatrix}$ (rank 1) and $b = \begin{bmatrix} 1 \\ 2 \end{bmatrix}$.</p>
 
         <div class="proof-step">
@@ -1512,7 +1509,7 @@
       </div>
 
       <h4>Example 8.4: Condition Number Analysis</h4>
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <p><strong>Problem:</strong> Compare the condition numbers of $A$ and $A^\top A$ for $A = \begin{bmatrix} 1 & 0 \\ 0 & 0.01 \\ 0 & 0 \end{bmatrix}$.</p>
 
         <div class="proof-step">
@@ -1677,7 +1674,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- SECTION 8: VARIANTS -->
-    <section class="card-v2" id="section-9">
+    <section class="section-card" id="section-9">
       <h2>9. Variants You Will Need</h2>
 
       <h3>(a) Weighted Least Squares (WLS)</h3>
@@ -1694,7 +1691,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
 
     <!-- SECTION 9: IMPLEMENTATION GUIDE -->
-    <section class="card-v2" id="section-10">
+    <section class="section-card" id="section-10">
       <h2>10. Implementation Mini-Guide (What to Actually Do in Code)</h2>
 
       <ul>
@@ -1707,7 +1704,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- SECTION 10: SANITY CHECKLIST -->
-    <section class="card-v2" id="section-11">
+    <section class="section-card" id="section-11">
       <h2>11. Sanity Checklist (What to Remember in Practice)</h2>
 
       <ul>
@@ -1721,7 +1718,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- SECTION 11: QUICK REFERENCE -->
-    <section class="card-v2" id="section-12">
+    <section class="section-card" id="section-12">
       <h2>12. Key Formulas</h2>
 
       <ul>
@@ -1734,7 +1731,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- SECTION 12: EXERCISES -->
-    <section class="card-v2" id="section-13">
+    <section class="section-card" id="section-13">
       <h2><i data-feather="edit-3"></i> 13. Exercises</h2>
 
       <h3>P0.1 — Dual of $\ell_p$ Norm</h3>
@@ -1749,7 +1746,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-      <div class="solution-enhanced">
+      <div class="solution-box">
         <h4>Solution</h4>
 
         <div class="proof-step">
@@ -1794,7 +1791,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
         <h4>Solution</h4>
         <p>View matrices as vectors in $\mathbb{R}^{mn}$ by stacking columns. The Frobenius inner product corresponds to the standard Euclidean inner product on $\mathbb{R}^{mn}$, and the Frobenius norm corresponds to the Euclidean norm. Therefore, the standard Cauchy-Schwarz inequality applies directly.</p>
       </div>
@@ -1811,7 +1808,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
         <h4>Solution</h4>
         <p>We have $X - Y \succeq 0$ and $Y - Z \succeq 0$. Therefore:</p>
         $$ X - Z = (X - Y) + (Y - Z) $$
@@ -1834,7 +1831,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
         <h4>Solution</h4>
 
         <div class="proof-step">
@@ -1870,7 +1867,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
         <h4>A1. Prove that the set of all linear combinations of a fixed set of vectors is a subspace.</h4>
         <p><b>Solution:</b> Let $S = \mathrm{span}\{v_1, \dots, v_k\}$.
         <br>1. <b>Closure under addition:</b> Let $u = \sum c_i v_i$ and $w = \sum d_i v_i$ be in $S$. Then $u+w = \sum (c_i+d_i)v_i$, which is also a linear combination, so $u+w \in S$.
@@ -1879,7 +1876,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <br>Since $S$ satisfies these three properties, it is a subspace.</p>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>A2. Show that $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$.</h4>
         <p><b>Solution:</b> Let $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$. By definition, $v = Ax$ for some vector $x$, and $A^\top y = 0$. We want to show their inner product is zero:
         $$ v^\top y = (Ax)^\top y = x^\top A^\top y = x^\top (A^\top y) = x^\top 0 = 0 $$
@@ -1897,7 +1894,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
         <h4>C1. Derive normal equations and prove uniqueness iff $\mathrm{rank}(A) = n$.</h4>
         <p><b>Solution:</b> The objective function is $f(x) = \|Ax-b\|_2^2 = x^\top A^\top A x - 2b^\top A x + b^\top b$. This is a quadratic function of $x$. To find the minimum, we take the gradient with respect to $x$ and set it to zero:
         $$ \nabla_x f(x) = 2A^\top A x - 2A^\top b = 0 \implies A^\top A x = A^\top b $$
@@ -1905,12 +1902,12 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </p>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>C2. Show that the residual at the LS solution is orthogonal to each column of $A$.</h4>
         <p><b>Solution:</b> Columns of $A$ span $\mathcal{R}(A)$. Orthogonality condition $A^\top(b - Ax^\star) = 0$ means $r^\star \perp \mathcal{R}(A)$.</p>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>C3. Solve a small overdetermined system by (i) normal equations, (ii) QR, (iii) SVD, and compare answers.</h4>
         <p><b>Solution:</b> Let's solve the system $Ax = b$ where:
         $$ A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad b = \begin{pmatrix} 2 \\ 2 \\ 1 \end{pmatrix} $$
@@ -1939,7 +1936,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <br><b>Comparison:</b> All three methods agree. The Normal Equations are fastest but least stable ($\kappa^2$). QR is standard and stable ($\kappa$). SVD is most robust but most expensive.</p>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>C4. Show that the projection matrix $P = A(A^\top A)^{-1}A^\top$ is idempotent ($P^2=P$) and symmetric ($P^\top = P$).</h4>
         <p><b>Solution:</b>
         <br><b>Symmetry:</b>
@@ -1960,12 +1957,12 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
         <h4>D1. Prove that every least-squares solution $x^\star$ satisfies $x^\star = A^+b + (I - A^+A)z$ for some $z$.</h4>
         <p><b>Solution:</b> From SVD, the set of minimizers is $A^+b + \mathcal{N}(A)$; note $(I - A^+A)$ projects onto $\mathcal{N}(A)$.</p>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>D2. Show $P = AA^+$ is the projector onto $\mathcal{R}(A)$ and $P^\perp = I - AA^+$ projects onto $\mathcal{N}(A^\top)$.</h4>
         <p><b>Solution:</b> Use SVD or basic projector algebra: $P^2 = P$, $P^\top = P$, range/nullspace relations.</p>
       </div>
@@ -1981,7 +1978,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
         <h4>A3. Show that $Q^\top Q = I$ implies $\|Qx\|_2 = \|x\|_2$.</h4>
         <p><b>Solution:</b> We start with the squared norm:
         $$ \|Qx\|_2^2 = (Qx)^\top(Qx) $$
@@ -1992,17 +1989,17 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         Taking the square root of both sides (and since norms are non-negative), we get $\|Qx\|_2 = \|x\|_2$. This shows that orthogonal transformations preserve the Euclidean norm (length) of vectors.</p>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>B1. Let $S = \mathrm{span}\{u, v\}$ with $u, v$ independent. Derive the projector $P$ onto $S$.</h4>
         <p><b>Solution:</b> Form $A = [u \ v]$. If $A$ has full column rank, $P = A(A^\top A)^{-1}A^\top$.</p>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>B2. Show that if $P$ is symmetric and idempotent, then it is an orthogonal projector.</h4>
         <p><b>Solution:</b> For any $b$, set $p = Pb$ and $r = b - Pb$. Then $Pr = 0$ (because $P^2 = P$); thus $r \in \mathcal{N}(P)$. For any $y = Pw \in \mathcal{R}(P)$, $y^\top r = w^\top P^\top(b - Pb) = w^\top P(b - Pb) = w^\top(Pb - P^2b) = 0$, so $r \perp \mathcal{R}(P)$. Hence $p$ is the orthogonal projection.</p>
       </div>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>B3. Project $b = (1, 2, 3)^\top$ onto the affine set $\{x \mid [1 \ 1 \ 1]x = 3\}$.</h4>
         <p><b>Solution:</b> We want to find the point $p$ in the plane $x_1 + x_2 + x_3 = 3$ that is closest to $b = (1, 2, 3)^\top$.</p>
 
@@ -2050,7 +2047,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-      <div class="solution-enhanced">
+      <div class="solution-box">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -2100,7 +2097,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-      <div class="solution-enhanced">
+      <div class="solution-box">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -2152,7 +2149,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-      <div class="solution-enhanced">
+      <div class="solution-box">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -2207,7 +2204,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-      <div class="solution-enhanced">
+      <div class="solution-box">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -2261,7 +2258,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-      <div class="solution-enhanced">
+      <div class="solution-box">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -2327,7 +2324,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </ul>
       </div>
 
-      <div class="solution-enhanced">
+      <div class="solution-box">
           <h4>Solution</h4>
 
           <div class="proof-step">
@@ -2364,7 +2361,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 </section>
 
     <!-- SECTION 13: SUMMARY -->
-    <section class="card-v2" id="section-14">
+    <section class="section-card" id="section-14">
       <h2>14. Summary</h2>
 
       <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical background necessary for optimization theory.</p>
@@ -2406,7 +2403,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     </section>
 
     <!-- READINGS -->
-    <section class="card-v2" id="section-15">
+    <section class="section-card" id="section-15">
       <h2>15. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, <em>Convex Optimization</em>, Appendix A.</li>
@@ -2425,7 +2422,7 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
   <script src="../../static/js/math-renderer.js"></script>
   <script src="../../static/js/toc.js"></script>
-  <script src="../../static/js/ui-enhancements.js"></script>
+  <script src="../../static/js/ui.js"></script>
   <script src="../../static/js/notes-widget.js"></script>
   <script src="../../static/js/pomodoro.js"></script>
   <script src="../../static/js/progress-tracker.js"></script>
