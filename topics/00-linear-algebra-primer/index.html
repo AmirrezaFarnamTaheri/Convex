@@ -178,21 +178,27 @@
         <br>
         <div class="proof-box">
           <h4>Derivation: Gradient of Log Determinant</h4>
-          <p>We use the first-order Taylor expansion $\log \det(X + \Delta) \approx \log \det X + \langle \nabla f(X), \Delta \rangle$.</p>
+          <p>We derive the gradient by identifying the linear term in the Taylor expansion of $f(X+\Delta)$ around $X$.</p>
           <div class="proof-step">
             <strong>Step 1: Factor out X.</strong>
-            $$ \log \det (X + \Delta) = \log \det (X(I + X^{-1}\Delta)) = \log (\det X \det(I + X^{-1}\Delta)) $$
+            Assuming $X$ is invertible and $\Delta$ is small:
+            $$ \log \det (X + \Delta) = \log \det (X(I + X^{-1}\Delta)) = \log (\det X \cdot \det(I + X^{-1}\Delta)) $$
             $$ = \log \det X + \log \det(I + X^{-1}\Delta) $$
           </div>
           <div class="proof-step">
-            <strong>Step 2: Linearize.</strong>
-            Using the property $\det(I + A) \approx 1 + \mathrm{tr}(A)$ for small $A$:
-            $$ \log \det(I + X^{-1}\Delta) \approx \log(1 + \mathrm{tr}(X^{-1}\Delta)) \approx \mathrm{tr}(X^{-1}\Delta) $$
+            <strong>Step 2: Linearize the Determinant.</strong>
+            Let $\lambda_i$ be the eigenvalues of $X^{-1}\Delta$. The eigenvalues of $I + X^{-1}\Delta$ are $1 + \lambda_i$.
+            $$ \log \det(I + X^{-1}\Delta) = \log \left(\prod_{i=1}^n (1 + \lambda_i)\right) = \sum_{i=1}^n \log(1 + \lambda_i) $$
+            Using the Taylor series $\log(1+z) \approx z$ for small $z$:
+            $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i = \mathrm{tr}(X^{-1}\Delta) $$
           </div>
           <div class="proof-step">
-            <strong>Step 3: Identify Gradient.</strong>
-            The linear term is $\mathrm{tr}(X^{-1}\Delta) = \langle X^{-\top}, \Delta \rangle$.
-            Thus, by definition of the gradient, $\nabla_X \log \det X = X^{-\top}$.
+            <strong>Step 3: Identify the Gradient.</strong>
+            The first-order approximation is:
+            $$ \log \det(X+\Delta) \approx \log \det X + \mathrm{tr}(X^{-1}\Delta) $$
+            Using the trace inner product property $\mathrm{tr}(A^\top B) = \langle A, B \rangle$:
+            $$ \mathrm{tr}(X^{-1}\Delta) = \mathrm{tr}((X^{-\top})^\top \Delta) = \langle X^{-\top}, \Delta \rangle $$
+            Thus, by definition, $\nabla_X \log \det X = X^{-\top}$.
           </div>
         </div>
         </li>
@@ -739,6 +745,11 @@
       <h3>5.2 Positive Semidefinite (PSD) Matrices</h3>
       <p>This definition is central to the course. It provides the matrix equivalent of a "non-negative number" and underpins the definition of <b>Convex Functions</b> (<a href="../03-convex-functions/index.html">Lecture 03</a>) and <b>Semidefinite Programming</b> (<a href="../04-convex-opt-problems/index.html">Lecture 04</a>).</p>
 
+      <div class="insight">
+        <h4>Forward Connection: The PSD Cone</h4>
+        <p>The set of all PSD matrices forms a convex cone, denoted $\mathbb{S}^n_+$. This geometric object is the foundation of <b>Semidefinite Programming (SDP)</b>, a powerful generalization of linear programming that we will study in <a href="../04-convex-opt-problems/index.html">Lecture 04</a>. Just as LP optimizes over the non-negative orthant, SDP optimizes over the PSD cone.</p>
+      </div>
+
       <h4>Definition A: The Variational Definition</h4>
       <p>A symmetric matrix $A \in \mathbb{S}^n$ is <a href="#" class="definition-link" data-term="positive semidefinite">Positive Semidefinite (PSD)</a>, denoted as $A \succeq 0$, if:</p>
       $$ x^\top A x \ge 0 \quad \text{for all } x \in \mathbb{R}^n $$
@@ -1000,6 +1011,11 @@
       <h3>The Problem: Overdetermined Systems</h3>
       <p>Often in practice, we encounter a system of linear equations $Ax=b$ where there is no exact solution because the vector $b$ does not lie in the column space of $A$. This is common when $m > n$ (more equations than unknowns). The goal of least squares is to find the "best" approximate solution by minimizing the squared Euclidean norm of the residual vector $r = Ax-b$. This is the canonical example of an <b>unconstrained optimization problem</b> (<a href="../01-introduction/index.html">Lecture 01</a>):
       $$ \min_{x \in \mathbb{R}^n} \|Ax - b\|_2^2 $$</p>
+
+      <div class="insight">
+        <h4>Forward Connection: Optimization Formulation</h4>
+        <p>This problem is a specific instance of <b>Quadratic Programming</b> (<a href="../04-convex-opt-problems/index.html">Lecture 04</a>). In the notation of L01, the "loss function" is the squared Euclidean norm, and there are no constraints (or the feasible set is $\mathbb{R}^n$). Recognizing least squares as a convex optimization problem allows us to easily add regularizers (like $\ell_1$ in LASSO) or constraints (like $x \ge 0$).</p>
+      </div>
 
       <h3>Geometric Interpretation: Projection</h3>
       <p>The solution to the least squares problem has a clean geometric interpretation. The vector $Ax$ lies in the column space of $A$, denoted $\mathcal{R}(A)$. The problem $\min_x \|Ax - b\|_2$ is therefore equivalent to finding the point $p \in \mathcal{R}(A)$ that is closest to $b$ in Euclidean distance.</p>

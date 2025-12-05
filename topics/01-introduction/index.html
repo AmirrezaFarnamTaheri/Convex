@@ -93,7 +93,7 @@
         <ol>
           <li><b>Convex objective:</b> The objective function $f_0 : \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link" data-term="convex function">convex</a>.</li>
           <li><b>Convex inequality constraints:</b> Each constraint function $f_i : \mathbb{R}^n \to \mathbb{R}$ is convex.</li>
-          <li><b>Affine equality constraints:</b> All equality constraints are <a href="#" class="definition-link">linear (affine)</a>, of the form $Ax = b$.</li>
+          <li><b>Affine equality constraints:</b> All equality constraints are <a href="#" class="definition-link">linear (affine)</a>, of the form $Ax = b$. Recall from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a> that the set of solutions to $Ax=b$ is an affine set (a shifted subspace). If we allowed nonlinear equality constraints (like $x^2=1$), the feasible set would essentially consist of the boundary of a convex set, which is generally not convex.</li>
         </ol>
 
         <div class="insight">
@@ -1123,15 +1123,9 @@
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Summation Preserves Convexity:</b> The objective function is a sum of convex terms (squared Euclidean distances). Since the sum of convex functions is always convex, the overall problem is convex.</li>
-            <li><b>Geometric Interpretation:</b> This problem finds the 'centroid' weighted by squared distance. Unlike the Fermat-Weber problem (sum of distances, which is SOCP), using squared distances makes the objective quadratic, simplifying it to a QP.</li>
-            <li><b>Geometric Interpretation:</b> This is related to the Fermat-Weber problem (minimizing sum of distances), but using squared Euclidean distance makes it a simple Quadratic Program (finding the centroid).</li>
+            <li><b>Geometric Interpretation:</b> This problem finds the 'centroid' weighted by squared distance. It is mathematically distinct from the Fermat-Weber problem (minimizing sum of Euclidean distances, not squared), which is an SOCP. Using squared distances makes the objective a quadratic form, simplifying the problem to a Quadratic Program (QP).</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Sum of convex functions is convex. Squared Euclidean distance is convex. This is a QP.</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>

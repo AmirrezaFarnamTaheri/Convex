@@ -469,7 +469,7 @@
         </div>
         <div class="proof-step">
           <strong>Step 2: Singular Value Characterization.</strong>
-          The spectral norm $\|A\|_2$ is the maximum singular value $\sigma_{\max}(A)$.
+          The spectral norm $\|A\|_2$ is the maximum singular value $\sigma_{\max}(A)$. Recall from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a> that the spectral norm is $\sqrt{\lambda_{\max}(A^\top A)}$.
           The condition $\sigma_{\max}(A) \le t$ (for $t \ge 0$) is equivalent to saying all eigenvalues of $A^\top A$ are $\le t^2$:
           $$ A(x)^\top A(x) \preceq t^2 I $$
         </div>
@@ -509,12 +509,13 @@
       </div>
 
       <h3>5.5 The Hierarchy: LP ⊂ QP ⊂ SOCP ⊂ SDP</h3>
-      <p>This inclusion hierarchy is strict:</p>
+      <p>This inclusion hierarchy is strict and fundamental to choosing the right solver:</p>
       <ul>
-        <li>Every LP is a QP (take $P = 0$)</li>
-        <li>Every QP can be formulated as an SOCP</li>
-        <li>Every SOCP can be formulated as an SDP (the second-order cone can be represented via LMI)</li>
+        <li><b>LP ⊂ QP:</b> A Linear Program is a Quadratic Program with a zero quadratic term ($P=0$).</li>
+        <li><b>QP ⊂ SOCP:</b> A convex Quadratic Program can be cast as an SOCP. The quadratic constraint $x^\top P x + q^\top x + r \le 0$ (with $P = L L^\top$) is equivalent to $\|L^\top x + \frac{1}{2}L^{-1}q\|_2 \le \text{affine}(x)$, which is an SOC constraint.</li>
+        <li><b>SOCP ⊂ SDP:</b> Every SOCP can be formulated as an SDP using the Schur complement lemma (as shown below).</li>
       </ul>
+      <p><b>Why not always use SDP?</b> While SDP is the most general, its solvers ($O(n^6)$ complexity or similar) are significantly slower than dedicated LP/QP solvers ($O(n^3)$). Always use the most specific class possible.</p>
 
       <div class="proof-box">
         <h4>Embedding SOCP into SDP via Schur Complement</h4>
