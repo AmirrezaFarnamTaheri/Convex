@@ -67,7 +67,7 @@
         <h2>1. Definition and Basic Properties</h2>
 
         <h3>1.1 Convex Functions: The Core Definition</h3>
-        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link" data-term="convex function">convex</a> if its domain $\mathrm{dom}\, f$ is a convex set, and for all $x, y \in \mathrm{dom}\, f$ and all $\theta \in [0, 1]$:</p>
+        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link" data-term="convex function">convex</a> if its domain $\mathrm{dom}\, f$ is a convex set (see <a href="../02-convex-sets/index.html">Lecture 02</a>), and for all $x, y \in \mathrm{dom}\, f$ and all $\theta \in [0, 1]$:</p>
         $$
         \boxed{ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) }
         \tag{1}
@@ -405,7 +405,7 @@
           $$
           \nabla^2 f(x) = Q
           $$
-          <p>Therefore, $f$ is convex if and only if $Q \succeq 0$.</p>
+          <p>Therefore, $f$ is convex if and only if $Q \succeq 0$. This links back to the <b>PSD Matrix</b> definition in <a href="../00-linear-algebra-primer/index.html">Lecture 00</a>.</p>
         </div>
 
         <div class="proof-box">
@@ -1513,8 +1513,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Tangent Underestimator:</b> The first-order condition says that the tangent line always lies below the function graph.</li>
-            <li><b>Inequality Source:</b> Many famous inequalities (like $e^x \ge 1+x$) are simply statements that a convex function lies above its tangent.</li>
+            <li><b>Tangent Underestimator:</b> The first-order condition $\nabla f(x)$ defines a global linear underestimator: $f(y) \ge f(x) + \nabla f(x)^\top (y-x)$. Geometrically, the tangent plane lies below the graph.</li>
+            <li><b>Inequality Source:</b> Many famous inequalities (like $e^x \ge 1+x$) are simply statements that a specific convex function lies above its tangent line at a specific point.</li>
         </ul>
       </div>
 
@@ -1522,8 +1522,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Tangent Underestimator:</b> The first-order condition says that the tangent line always lies below the function graph.</li>
-            <li><b>Inequality Source:</b> Many famous inequalities (like $e^x \ge 1+x$) are simply statements that a convex function lies above its tangent.</li>
+            <li><b>Tangent Underestimator:</b> The first-order condition $\nabla f(x)$ defines a global linear underestimator: $f(y) \ge f(x) + \nabla f(x)^\top (y-x)$. Geometrically, the tangent plane lies below the graph.</li>
+            <li><b>Inequality Source:</b> Many famous inequalities (like $e^x \ge 1+x$) are simply statements that a specific convex function lies above its tangent line at a specific point.</li>
         </ul>
       </div>
 
@@ -1570,8 +1570,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Curvature Test:</b> The Hessian matrix $\nabla^2 f(x)$ captures the local curvature. Positive semidefinite curvature everywhere ensures global convexity ("bowl shape").</li>
-            <li><b>Constant Hessian:</b> Quadratic functions have constant curvature. If the curvature is "flat" ($2I$) everywhere, it's convex.</li>
+            <li><b>Curvature Test (Hessian):</b> The Hessian matrix $\nabla^2 f(x)$ captures the local curvature. If the curvature is "non-negative" (Positive Semidefinite) in every direction at every point, the function is globally convex ("bowl shape").</li>
+            <li><b>Quadratic Flatness:</b> Quadratic functions have constant curvature (constant Hessian). If this constant curvature matrix $Q$ is PSD, the entire surface is a convex bowl.</li>
         </ul>
       </div>
 
@@ -1579,8 +1579,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Curvature Test:</b> The Hessian matrix $\nabla^2 f(x)$ captures the local curvature. Positive semidefinite curvature everywhere ensures global convexity ("bowl shape").</li>
-            <li><b>Constant Hessian:</b> Quadratic functions have constant curvature. If the curvature is "flat" ($2I$) everywhere, it's convex.</li>
+            <li><b>Curvature Test (Hessian):</b> The Hessian matrix $\nabla^2 f(x)$ captures the local curvature. If the curvature is "non-negative" (Positive Semidefinite) in every direction at every point, the function is globally convex ("bowl shape").</li>
+            <li><b>Quadratic Flatness:</b> Quadratic functions have constant curvature (constant Hessian). If this constant curvature matrix $Q$ is PSD, the entire surface is a convex bowl.</li>
         </ul>
       </div>
 
@@ -1619,8 +1619,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Composition Rules:</b> The standard rules (Convex + Increasing, etc.) are sufficient but not necessary.</li>
-            <li><b>Direct Check:</b> When rules fail (e.g., Convex + Decreasing), always fall back to the definition or computing derivatives. Here, cancellation made the result linear.</li>
+            <li><b>Composition Rule Limitations:</b> The standard rules (e.g., Convex + Increasing) are sufficient but not necessary. A composition can be convex even if the rules don't apply.</li>
+            <li><b>Direct Verification:</b> When composition rules are inconclusive (e.g., Convex + Decreasing), one must fall back to the definition or derivative tests. In this case, algebraic cancellation reveals a linear (hence convex) structure.</li>
         </ul>
       </div>
 
@@ -1628,8 +1628,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Composition Rules:</b> The standard rules (Convex + Increasing, etc.) are sufficient but not necessary.</li>
-            <li><b>Direct Check:</b> When rules fail (e.g., Convex + Decreasing), always fall back to the definition or computing derivatives. Here, cancellation made the result linear.</li>
+            <li><b>Composition Rule Limitations:</b> The standard rules (e.g., Convex + Increasing) are sufficient but not necessary. A composition can be convex even if the rules don't apply.</li>
+            <li><b>Direct Verification:</b> When composition rules are inconclusive (e.g., Convex + Decreasing), one must fall back to the definition or derivative tests. In this case, algebraic cancellation reveals a linear (hence convex) structure.</li>
         </ul>
       </div>
 
@@ -1665,8 +1665,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Pointwise Maximum:</b> The maximum of any collection of convex functions is convex.</li>
-            <li><b>Epigraph View:</b> The epigraph of the max is the intersection of the epigraphs of the individual functions. Intersection of convex sets is convex.</li>
+            <li><b>Pointwise Maximum Property:</b> The maximum of any collection of convex functions is always convex. This operation preserves the "upward curving" nature.</li>
+            <li><b>Epigraph Intersection:</b> Geometrically, the epigraph of the maximum function $f = \max(f_1, f_2)$ is the intersection of the epigraphs of $f_1$ and $f_2$. Since the intersection of convex sets is convex, the result is convex.</li>
         </ul>
       </div>
 
@@ -1674,8 +1674,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Pointwise Maximum:</b> The maximum of any collection of convex functions is convex.</li>
-            <li><b>Epigraph View:</b> The epigraph of the max is the intersection of the epigraphs of the individual functions. Intersection of convex sets is convex.</li>
+            <li><b>Pointwise Maximum Property:</b> The maximum of any collection of convex functions is always convex. This operation preserves the "upward curving" nature.</li>
+            <li><b>Epigraph Intersection:</b> Geometrically, the epigraph of the maximum function $f = \max(f_1, f_2)$ is the intersection of the epigraphs of $f_1$ and $f_2$. Since the intersection of convex sets is convex, the result is convex.</li>
         </ul>
       </div>
 
@@ -1721,9 +1721,9 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Strong Convexity:</b> Requires a uniform minimum curvature $m > 0$.</li>
-            <li><b>Quadratic Bound:</b> $f(y) \ge f(x) + \nabla f(x)^\top(y-x) + \frac{m}{2}\|y-x\|^2$.</li>
-            <li><b>Matrix Inequality:</b> $Q \succeq mI$ means $\lambda_{\min}(Q) \ge m$.</li>
+            <li><b>Strong Convexity Definition:</b> Requires a uniform minimum curvature $m > 0$. The function must curve upward at least as fast as a quadratic parabola $m x^2$.</li>
+            <li><b>Quadratic Lower Bound:</b> Strong convexity implies $f(y) \ge f(x) + \nabla f(x)^\top(y-x) + \frac{m}{2}\|y-x\|^2$, providing a tighter bound than simple convexity.</li>
+            <li><b>Matrix Inequality:</b> For Hessians, $Q \succeq mI$ means the smallest eigenvalue $\lambda_{\min}(Q)$ is at least $m$.</li>
         </ul>
       </div>
 
@@ -1731,9 +1731,9 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Strong Convexity:</b> Requires a uniform minimum curvature $m > 0$.</li>
-            <li><b>Quadratic Bound:</b> $f(y) \ge f(x) + \nabla f(x)^\top(y-x) + \frac{m}{2}\|y-x\|^2$.</li>
-            <li><b>Matrix Inequality:</b> $Q \succeq mI$ means $\lambda_{\min}(Q) \ge m$.</li>
+            <li><b>Strong Convexity Definition:</b> Requires a uniform minimum curvature $m > 0$. The function must curve upward at least as fast as a quadratic parabola $m x^2$.</li>
+            <li><b>Quadratic Lower Bound:</b> Strong convexity implies $f(y) \ge f(x) + \nabla f(x)^\top(y-x) + \frac{m}{2}\|y-x\|^2$, providing a tighter bound than simple convexity.</li>
+            <li><b>Matrix Inequality:</b> For Hessians, $Q \succeq mI$ means the smallest eigenvalue $\lambda_{\min}(Q)$ is at least $m$.</li>
         </ul>
       </div>
 
@@ -1771,8 +1771,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Legendre Transform:</b> For differentiable strictly convex functions, the conjugate is obtained by solving $\nabla f(x) = y$ for $x$.</li>
-            <li><b>Self-Conjugacy:</b> The quadratic function $\frac{1}{2}\|x\|^2$ is the unique function (up to scaling) that is its own convex conjugate. This mirrors the Fourier transform property of Gaussians.</li>
+            <li><b>Legendre Transform Calculation:</b> For differentiable strictly convex functions, the conjugate $f^*(y)$ is found by maximizing $y^\top x - f(x)$. The maximum occurs where the gradient matches the slope: $\nabla f(x) = y$.</li>
+            <li><b>Self-Conjugacy of Quadratics:</b> The quadratic function $\frac{1}{2}\|x\|^2$ is the unique function (up to scaling) that is its own convex conjugate. This mirrors the Fourier transform property of Gaussians, establishing a deep link between Euclidean geometry and duality.</li>
         </ul>
       </div>
 
@@ -1780,8 +1780,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Legendre Transform:</b> For differentiable strictly convex functions, the conjugate is obtained by solving $\nabla f(x) = y$ for $x$.</li>
-            <li><b>Self-Conjugacy:</b> The quadratic function $\frac{1}{2}\|x\|^2$ is the unique function (up to scaling) that is its own convex conjugate. This mirrors the Fourier transform property of Gaussians.</li>
+            <li><b>Legendre Transform Calculation:</b> For differentiable strictly convex functions, the conjugate $f^*(y)$ is found by maximizing $y^\top x - f(x)$. The maximum occurs where the gradient matches the slope: $\nabla f(x) = y$.</li>
+            <li><b>Self-Conjugacy of Quadratics:</b> The quadratic function $\frac{1}{2}\|x\|^2$ is the unique function (up to scaling) that is its own convex conjugate. This mirrors the Fourier transform property of Gaussians, establishing a deep link between Euclidean geometry and duality.</li>
         </ul>
       </div>
 
@@ -1822,9 +1822,9 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Sublevel Sets:</b> Quasi-convexity requires convex sublevel sets $S_\alpha$.</li>
-            <li><b>Step Functions:</b> Monotonic functions (even discontinuous ones like ceiling) are quasi-convex (and quasi-concave).</li>
-            <li><b>Jensen Failure:</b> Quasi-convexity does not satisfy the average value inequality (Jensen's).</li>
+            <li><b>Quasi-Convexity Definition:</b> A function is quasi-convex if all its sublevel sets $S_\alpha = \{x \mid f(x) \le \alpha\}$ are convex sets. This is a weaker condition than convexity.</li>
+            <li><b>Monotonicity and Steps:</b> Any monotonic function on $\mathbb{R}$ (even discontinuous ones like the ceiling function) is both quasi-convex and quasi-concave (quasilinear).</li>
+            <li><b>Jensen Failure:</b> Quasi-convexity does not satisfy Jensen's inequality ($f(\text{avg}) \le \text{avg}(f)$). It only satisfies the weaker condition $f(\text{avg}) \le \max(f(a), f(b))$.</li>
         </ul>
       </div>
 
@@ -1832,9 +1832,9 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Sublevel Sets:</b> Quasi-convexity requires convex sublevel sets $S_\alpha$.</li>
-            <li><b>Step Functions:</b> Monotonic functions (even discontinuous ones like ceiling) are quasi-convex (and quasi-concave).</li>
-            <li><b>Jensen Failure:</b> Quasi-convexity does not satisfy the average value inequality (Jensen's).</li>
+            <li><b>Quasi-Convexity Definition:</b> A function is quasi-convex if all its sublevel sets $S_\alpha = \{x \mid f(x) \le \alpha\}$ are convex sets. This is a weaker condition than convexity.</li>
+            <li><b>Monotonicity and Steps:</b> Any monotonic function on $\mathbb{R}$ (even discontinuous ones like the ceiling function) is both quasi-convex and quasi-concave (quasilinear).</li>
+            <li><b>Jensen Failure:</b> Quasi-convexity does not satisfy Jensen's inequality ($f(\text{avg}) \le \text{avg}(f)$). It only satisfies the weaker condition $f(\text{avg}) \le \max(f(a), f(b))$.</li>
         </ul>
       </div>
 
@@ -1880,8 +1880,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Log-Sum-Exp:</b> This is a smooth approximation of the max function ($\text{LSE}(x) \approx \max_i x_i$). Since max is convex, LSE is convex.</li>
-            <li><b>Hessian Structure:</b> The Hessian is the covariance matrix of the softmax probability distribution. Covariance matrices are always PSD.</li>
+            <li><b>Log-Sum-Exp (Softmax):</b> This function is a smooth, convex approximation of the max function: $\text{LSE}(x) \approx \max_i x_i$. It is fundamental in logistic regression and geometric programming.</li>
+            <li><b>Hessian as Covariance:</b> The Hessian of the LSE function is the covariance matrix of the softmax probability distribution. Since covariance matrices are always Positive Semidefinite (PSD), the function is convex.</li>
         </ul>
       </div>
 
@@ -1889,8 +1889,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Log-Sum-Exp:</b> This is a smooth approximation of the max function ($\text{LSE}(x) \approx \max_i x_i$). Since max is convex, LSE is convex.</li>
-            <li><b>Hessian Structure:</b> The Hessian is the covariance matrix of the softmax probability distribution. Covariance matrices are always PSD.</li>
+            <li><b>Log-Sum-Exp (Softmax):</b> This function is a smooth, convex approximation of the max function: $\text{LSE}(x) \approx \max_i x_i$. It is fundamental in logistic regression and geometric programming.</li>
+            <li><b>Hessian as Covariance:</b> The Hessian of the LSE function is the covariance matrix of the softmax probability distribution. Since covariance matrices are always Positive Semidefinite (PSD), the function is convex.</li>
         </ul>
       </div>
 
@@ -1933,8 +1933,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Geometric Mean:</b> $G(x)$ is concave on the positive orthant. This is related to the AM-GM inequality.</li>
-            <li><b>Log-Concavity:</b> Logarithm of geometric mean is arithmetic mean of logs (concave). Homogeneity + log-concavity implies concavity.</li>
+            <li><b>Geometric Mean Concavity:</b> The geometric mean $G(x)$ is concave on the positive orthant. This geometric fact underpins the AM-GM inequality.</li>
+            <li><b>Proof via Transformation:</b> Taking the logarithm transforms the geometric mean into the arithmetic mean of logs ($\frac{1}{n}\sum \log x_i$). Since $\log$ is concave and sum preserves concavity, $\log G(x)$ is concave. A log-concave homogeneous function is concave.</li>
         </ul>
       </div>
 
@@ -1968,8 +1968,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Superlevel Set of Concave:</b> The set $\{x \mid g(x) \ge 0\}$ is convex if $g$ is concave.</li>
-            <li><b>Homogeneity implies Cone:</b> If the defining functions are homogeneous, the resulting set is a cone (scale invariant).</li>
+            <li><b>Superlevel Sets of Concave Functions:</b> The set $\{x \mid g(x) \ge 0\}$ is convex if $g$ is a concave function (this is a standard convex set definition).</li>
+            <li><b>Cone Property via Homogeneity:</b> If the defining functions of a set are homogeneous (scale linearly), the resulting set is a cone (invariant under scaling). The geometric mean cone combines these properties.</li>
         </ul>
       </div>
 
@@ -1999,8 +1999,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Joint Convexity:</b> The function is convex in $(x, Y)$ jointly, not just individually.</li>
-            <li><b>Schur Complement:</b> The condition for epigraph convexity ($x^\top Y^{-1} x \le t$) converts directly to an LMI using Schur complements.</li>
+            <li><b>Joint Convexity:</b> The matrix fractional function $x^\top Y^{-1} x$ is convex in the pair $(x, Y)$ jointly, not just individually. This is a crucial property for optimizing over matrix inverses.</li>
+            <li><b>Schur Complement Link:</b> The epigraph condition $x^\top Y^{-1} x \le t$ can be rewritten as the LMI $\begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0$ using the Schur complement, proving convexity directly via PSD cone properties.</li>
         </ul>
       </div>
 
@@ -2036,8 +2036,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Secant Slope:</b> For a convex function, the slope of the secant lines is non-decreasing.</li>
-            <li><b>Geometric Meaning:</b> As you move to the right, the function gets steeper (or less steep downwards). This monotonicity of slopes is equivalent to the non-negative second derivative.</li>
+            <li><b>Secant Slope Monotonicity:</b> For a convex function, the slope of the secant line connecting $(a, f(a))$ to $(x, f(x))$ is non-decreasing as $x$ increases.</li>
+            <li><b>Geometric Meaning:</b> As you move to the right, the function gets steeper (or less steep downwards). This monotonicity of slopes allows defining derivatives almost everywhere and is equivalent to the non-negative second derivative condition $f''(x) \ge 0$.</li>
         </ul>
       </div>
 
@@ -2070,8 +2070,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Hermite-Hadamard Inequality:</b> This is the "right half" of the famous inequality: $f(\frac{a+b}{2}) \le \frac{1}{b-a}\int_a^b f(x)dx \le \frac{f(a)+f(b)}{2}$.</li>
-            <li><b>Midpoint Convexity:</b> Convexity at the midpoint, combined with continuity, implies convexity everywhere.</li>
+            <li><b>Hermite-Hadamard Context:</b> This integral inequality is one side of the famous Hermite-Hadamard inequality, stating that the average value of a convex function over an interval is less than the average of the function values at the endpoints.</li>
+            <li><b>Midpoint Convexity:</b> The integral condition essentially averages the midpoint convexity property over the domain. Midpoint convexity, combined with continuity (implied by integrability here), guarantees full convexity.</li>
         </ul>
       </div>
 
@@ -2099,8 +2099,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Integral Transform:</b> The running average is a linear operator on functions.</li>
-            <li><b>Perspective Argument:</b> The change of variables reveals $F(x)$ is an integral (sum) of perspective functions $f(sx) = f(x \cdot s)/1$, which preserves convexity. Actually, simple scaling $g_s(x)=f(sx)$ is enough.</li>
+            <li><b>Convexity of Integral Transforms:</b> The running average $F(x)$ transforms a convex function $f$ into another convex function. This is a specific instance of an integral operator preserving convexity.</li>
+            <li><b>Proof Strategy:</b> By changing variables ($t=sx$), we express $F(x)$ as an integral of scaled functions $f(sx)$. Since $f(sx)$ is convex in $x$ for fixed $s$, and the integral (sum) preserves convexity, the result follows.</li>
         </ul>
       </div>
 

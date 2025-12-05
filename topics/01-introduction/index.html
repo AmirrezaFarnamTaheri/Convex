@@ -489,7 +489,7 @@
         & X \succeq 0
         \end{aligned}
         $$
-        <p>where $X \in \mathbb{S}^n$ is a symmetric matrix, and $X \succeq 0$ means $X$ is positive semidefinite.</p>
+        <p>where $X \in \mathbb{S}^n$ is a symmetric matrix, and $X \succeq 0$ means $X$ is positive semidefinite (see <a href="../00-linear-algebra-primer/index.html">Lecture 00</a> for PSD properties).</p>
 
         <div class="subsection">
           <h4>Properties and Applications</h4>
@@ -671,7 +671,7 @@
             <li>Convex (sum of two convex functions).</li>
             <li>Produces sparse solutions (automatic feature selection).</li>
             <li>Can be reformulated as a QP.</li>
-            <li>Widely used in high-dimensional statistics and compressed sensing.</li>
+            <li>Widely used in high-dimensional statistics and compressed sensing (covered in <a href="../06-approximation-fitting/index.html">Lecture 06</a>).</li>
           </ul>
         </div>
       </section>
@@ -1084,9 +1084,9 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Convexity Rules:</b> Norms are convex. Affine constraints define convex sets. Maximizing a convex function (or minimizing a concave one) is generally non-convex.</li>
-            <li><b>Integer Constraints:</b> Discrete sets like $\{0, 1\}$ are never convex, making problems NP-hard (Combinatorial Optimization).</li>
-            <li><b>PSD Requirement:</b> Quadratic forms $x^\top Q x$ are only convex if $Q \succeq 0$. Indefinite $Q$ creates saddle points.</li>
+            <li><b>Composition Rules:</b> The key to identifying convexity is to peel back the layers of functions. Norms are convex, affine maps preserve convexity, and sublevel sets of convex functions are convex.</li>
+            <li><b>The PSD Condition:</b> Quadratic forms $x^\top Q x$ are the boundary between easy and hard; if $Q$ has even one negative eigenvalue, the function is nonconvex (has saddle points). This relies on the eigenvalue characterization from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a>.</li>
+            <li><b>Integer Constraints:</b> Discreteness destroys convexity because the domain is no longer a connected set, eliminating local-to-global gradient information.</li>
         </ul>
       </div>
 
@@ -1109,7 +1109,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Sum of Convex Functions:</b> The objective is a sum of squared norms. Since norm squared is convex and sum preserves convexity, the problem is convex.</li>
+            <li><b>Summation Preserves Convexity:</b> The objective function is a sum of convex terms (squared Euclidean distances). Since the sum of convex functions is always convex, the overall problem is convex.</li>
+            <li><b>Geometric Interpretation:</b> This problem finds the 'centroid' weighted by squared distance. Unlike the Fermat-Weber problem (sum of distances, which is SOCP), using squared distances makes the objective quadratic, simplifying it to a QP.</li>
             <li><b>Geometric Interpretation:</b> This is related to the Fermat-Weber problem (minimizing sum of distances), but using squared Euclidean distance makes it a simple Quadratic Program (finding the centroid).</li>
         </ul>
       </div>
@@ -1159,8 +1160,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Epigraph Transformation:</b> Minimizing a norm $\|y\|_1$ is equivalent to minimizing $\sum t_i$ subject to $|y_i| \le t_i$.</li>
-            <li><b>Linearization:</b> Absolute values and infinity norms are piecewise linear convex functions, so they can always be converted to Linear Programs (LPs).</li>
+            <li><b>Epigraph Transformation (The "Minimax" Trick):</b> To minimize a function like $f(x) = \max_i g_i(x)$ or a norm, we introduce a scalar variable $t$ and constrain the function to be below it ($f(x) \le t$). This lifts the problem into a higher dimension where the nonlinearity becomes a set of linear constraints.</li>
+            <li><b>Linearizability of Polyhedral Norms:</b> The $\ell_1$ and $\ell_\infty$ norms have unit balls that are polyhedra (defined by linear inequalities). This means any optimization involving them can be cast as a Linear Program (LP).</li>
         </ul>
       </div>
 
@@ -1248,8 +1249,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Strict Convexity:</b> The chord lies strictly above the function graph.</li>
-            <li><b>Uniqueness:</b> If there were two global minima, the midpoint would have a strictly lower value, which is impossible. Thus, the solution is unique.</li>
+            <li><b>Strict Convexity implies Uniqueness:</b> Geometrically, a strictly convex function curves upward everywhere; it has no flat regions.</li>
+            <li><b>Proof Logic:</b> If there were two distinct global minima, the segment connecting them would lie strictly <i>above</i> the function graph (by definition of strict convexity), but also <i>on</i> the graph (since both endpoints are minimal and values cannot go lower), which is a contradiction. Thus, the solution must be unique.</li>
         </ul>
       </div>
 
@@ -1294,8 +1295,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Concavity of Log-Likelihood:</b> In exponential families, the log-likelihood is concave. Minimizing the negative log-likelihood (NLL) is a convex problem.</li>
-            <li><b>Logistic Loss:</b> The function $f(z) = \log(1+e^z)$ is convex. This ensures that logistic regression has no local minima.</li>
+            <li><b>Log-Concavity in Statistics:</b> Many fundamental probability distributions (Exponential family) have log-concave density functions. This means maximizing the likelihood (product of probabilities) is equivalent to maximizing the log-likelihood (sum of logs), which is a concave maximization problem (hence convex).</li>
+            <li><b>Logistic Regression:</b> The specific loss function $f(z) = \log(1+e^{-z})$ is convex. This ensures that training logistic regression classifiers is a convex optimization problem with unique global optima (for regularized versions).</li>
         </ul>
       </div>
 

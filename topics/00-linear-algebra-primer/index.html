@@ -481,7 +481,7 @@
       <h3>The Adjoint: Moving Matrices Across Inner Products</h3>
       <p>A fundamental property connecting matrices and inner products is the definition of the <b>transpose</b> (or adjoint). For any $A \in \mathbb{R}^{m \times n}$, $x \in \mathbb{R}^n$, and $y \in \mathbb{R}^m$:
       $$ \boxed{\langle Ax, y \rangle = \langle x, A^\top y \rangle} $$
-      or in dot product notation, $(Ax)^\top y = x^\top (A^\top y)$. This identity allows us to "move" the matrix $A$ from one side of the inner product to the other by taking its transpose. It is the workhorse behind gradients of quadratic forms and the definition of orthogonality.
+      or in dot product notation, $(Ax)^\top y = x^\top (A^\top y)$. This identity allows us to "move" the matrix $A$ from one side of the inner product to the other by taking its transpose. It is the workhorse behind gradients of quadratic forms (essential for <a href="../03-convex-functions/index.html">Lecture 03</a>) and the definition of orthogonality.
       </p>
 
       <h3>Norms</h3>
@@ -742,7 +742,7 @@
       <p><b>Why this matters for convexity:</b> The "shape" of a multivariable function (bowl vs. saddle) is entirely determined by the signs of the eigenvalues of its Hessian.</p>
 
       <h3>5.2 Positive Semidefinite (PSD) Matrices</h3>
-      <p>This is the single most important definition in the course. It is the matrix equivalent of a "non-negative number."</p>
+      <p>This is the single most important definition in the course. It is the matrix equivalent of a "non-negative number" and underpins the definition of <b>Convex Functions</b> (<a href="../03-convex-functions/index.html">Lecture 03</a>) and <b>Semidefinite Programming</b> (<a href="../04-convex-opt-problems/index.html">Lecture 04</a>).</p>
 
       <h4>Definition A: The Variational Definition</h4>
       <p>A symmetric matrix $A \in \mathbb{S}^n$ is <a href="#" class="definition-link" data-term="positive semidefinite">Positive Semidefinite (PSD)</a>, denoted as $A \succeq 0$, if:</p>
@@ -947,7 +947,7 @@
       </p>
 
       <h3>Projection onto an Affine Set</h3>
-      <p>Consider an affine set defined by $\mathcal{A} = \{ x \in \mathbb{R}^n \mid Fx = g \}$, where $F \in \mathbb{R}^{p \times n}$ has full row rank and $g \in \mathbb{R}^p$. Projecting onto this set reduces to subspace projection by translating.</p>
+      <p>Consider an affine set defined by $\mathcal{A} = \{ x \in \mathbb{R}^n \mid Fx = g \}$, where $F \in \mathbb{R}^{p \times n}$ has full row rank and $g \in \mathbb{R}^p$. Projecting onto this set reduces to subspace projection by translating. This concept is generalized in <a href="../02-convex-sets/index.html">Lecture 02</a> to <b>projection onto convex sets</b> (POCS).</p>
 
       <h4>Parametric Representation</h4>
       <p>Every point in $\mathcal{A}$ can be written as $x = x_0 + Zt$, where:</p>
@@ -1003,7 +1003,7 @@
       <h2>7. The Method of Least Squares</h2>
 
       <h3>The Problem: Overdetermined Systems</h3>
-      <p>Often in practice, we encounter a system of linear equations $Ax=b$ where there is no exact solution because the vector $b$ does not lie in the column space of $A$. This is common when $m > n$ (more equations than unknowns). The goal of least squares is to find the "best" approximate solution by minimizing the squared Euclidean norm of the residual vector $r = Ax-b$:
+      <p>Often in practice, we encounter a system of linear equations $Ax=b$ where there is no exact solution because the vector $b$ does not lie in the column space of $A$. This is common when $m > n$ (more equations than unknowns). The goal of least squares is to find the "best" approximate solution by minimizing the squared Euclidean norm of the residual vector $r = Ax-b$. This is the canonical example of an <b>unconstrained optimization problem</b> (<a href="../01-introduction/index.html">Lecture 01</a>):
       $$ \min_{x \in \mathbb{R}^n} \|Ax - b\|_2^2 $$</p>
 
       <h3>Geometric Interpretation: Projection</h3>
@@ -1740,9 +1740,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Dual Norm Definition:</b> $\|y\|_* = \sup_{\|x\| \le 1} x^\top y$. <a href="#section-3">[Section 3]</a></li>
+            <li><b>Dual Norms as "Worst-Case" Alignment:</b> The dual norm $\|y\|_* = \sup_{\|x\| \le 1} x^\top y$ measures the maximum possible projection of $y$ onto any vector in the primal unit ball. This concept is not just algebraic; it is the geometric foundation for <b>subgradients</b> (<a href="../03-convex-functions/index.html">Lecture 03</a>) and the definition of <b>dual cones</b> (<a href="../02-convex-sets/index.html">Lecture 02</a>).</li>
             <li><b>Hölder's Inequality:</b> $|x^\top y| \le \|x\|_p \|y\|_q$. <a href="#section-3">[Section 3]</a></li>
-            <li><b>Achievability condition:</b> Equality in Hölder holds when $x$ and $y$ are aligned in a specific way.</li>
+            <li><b>Achievability and Alignment:</b> The inequality is always "tight": for every $y$, there exists a specific unit vector $x$ (aligned with the geometry of the norm) such that $x^\top y = \|y\|_*$. This "alignment" vector is often the subgradient of the norm function.</li>
         </ul>
       </div>
 
@@ -1785,9 +1785,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Vectorization Isomorphism:</b> The space of matrices $M_{m \times n}$ is isomorphic to $\mathbb{R}^{mn}$ via the vectorization operation $\mathrm{vec}(A)$.</li>
-            <li><b>Frobenius Norm Compatibility:</b> Under this isomorphism, the Frobenius inner product $\langle A, B \rangle_F = \mathrm{tr}(A^\top B)$ corresponds exactly to the standard Euclidean dot product in $\mathbb{R}^{mn}$.</li>
-            <li><b>Cauchy-Schwarz:</b> Since it is a valid inner product space, the standard Cauchy-Schwarz inequality applies.</li>
+            <li><b>Vectorization Isomorphism:</b> Matrices in $\mathbb{R}^{m \times n}$ behaves exactly like vectors in $\mathbb{R}^{mn}$ under the operation $\mathrm{vec}(A)$. This allows us to lift all standard Euclidean geometry results—like angles and distances—directly to matrix spaces.</li>
+            <li><b>The Frobenius Inner Product:</b> The definition $\langle A, B \rangle_F = \mathrm{tr}(A^\top B)$ is the natural inner product for matrices. It induces the Frobenius norm, which measures the "energy" or magnitude of a matrix just like the Euclidean norm measures a vector.</li>
+            <li><b>Cauchy-Schwarz Generality:</b> Because the space of matrices equipped with the trace inner product is a valid Hilbert space, the Cauchy-Schwarz inequality $|\langle A, B \rangle| \le \|A\|_F \|B\|_F$ holds automatically. This is used to bound errors in matrix approximations.</li>
         </ul>
       </div>
 
@@ -1803,8 +1803,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Loewner Order:</b> The relation $A \succeq B$ (defined by $A - B \in \mathbb{S}^n_+$) is a partial order.</li>
-            <li><b>Cone Property:</b> The set of PSD matrices forms a convex cone. A fundamental property of convex cones is that they are closed under addition ($X, Y \in K \implies X+Y \in K$). This ensures transitivity.</li>
+            <li><b>The Loewner Partial Order:</b> The relation $A \succeq B$ means that $A - B$ is Positive Semidefinite. This defines a <b>partial order</b> on symmetric matrices, which is fundamental to <b>Semidefinite Programming (SDP)</b> (<a href="../04-convex-opt-problems/index.html">Lecture 04</a>).</li>
+            <li><b>Convex Cone Property:</b> The set of PSD matrices $\mathbb{S}^n_+$ forms a <b>convex cone</b>. A key property of any convex cone is closure under addition: if $X \in \mathbb{S}^n_+$ and $Y \in \mathbb{S}^n_+$, then $X+Y \in \mathbb{S}^n_+$.</li>
+            <li><b>Transitivity from Closure:</b> The transitivity of the order ($X \succeq Y, Y \succeq Z \implies X \succeq Z$) follows directly from the cone's closure under addition: $(X-Y) + (Y-Z) = X-Z$. This allows us to chain matrix inequalities just like scalar inequalities.</li>
         </ul>
       </div>
 
@@ -1825,9 +1826,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Affine vs. Linear:</b> Projection onto an affine set $Ax=b$ is equivalent to projecting onto the subspace $Ax=0$ after shifting the coordinate system.</li>
-            <li><b>Shift-Project-Shift:</b> The general strategy is $x_{proj} = x_0 + \Pi_{\mathcal{N}(A)}(y - x_0)$.</li>
-            <li><b>Explicit Formula:</b> For a hyperplane $a^\top x = b$, the projection is a simple geometric correction along the normal vector $a$.</li>
+            <li><b>Affine vs. Linear Subspaces:</b> An affine set $\mathcal{A} = \{x \mid Ax=b\}$ is just a shifted linear subspace. Geometrically, it's a "flat" surface that doesn't necessarily pass through the origin. Projections onto affine sets are computed by first shifting the problem to the origin (subspace projection) and then shifting back.</li>
+            <li><b>The Structure of Solutions:</b> The general solution to a linear system is the sum of a <b>particular solution</b> $x_0$ and a generic element from the <b>nullspace</b> $\mathcal{N}(A)$. This decomposition is ubiquitous in optimization when dealing with equality constraints (<a href="../10-equality-constrained-minimization/index.html">Lecture 10</a>).</li>
+            <li><b>Explicit Projection Formula:</b> For the specific case of a hyperplane $a^\top x = b$, the projection has a simple geometric form: move from $y$ in the direction of the normal vector $a$ until you hit the plane. This is the simplest instance of a constrained least-squares problem.</li>
         </ul>
       </div>
 
@@ -1862,8 +1863,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Subspace Definition:</b> A subset is a subspace if it is closed under linear combinations (addition and scaling).</li>
-            <li><b>Fundamental Orthogonality:</b> The row space and nullspace are orthogonal complements in $\mathbb{R}^n$. The column space and left nullspace are orthogonal complements in $\mathbb{R}^m$. This is the geometric heart of the Fundamental Theorem of Linear Algebra.</li>
+            <li><b>Subspace Definition:</b> A subspace is a "flat" subset passing through the origin that is closed under linear combinations. In optimization, feasible sets for equality constraints ($Ax=0$) are subspaces.</li>
+            <li><b>Fundamental Theorem of Linear Algebra:</b> The four fundamental subspaces ($\mathcal{R}(A), \mathcal{N}(A), \mathcal{R}(A^\top), \mathcal{N}(A^\top)$) are paired orthogonal complements. For example, $\mathcal{R}(A)^\perp = \mathcal{N}(A^\top)$. This orthogonality allows us to decompose any vector uniquely into a "range component" and a "nullspace component," which is the basis for the <b>Lagrange Multiplier</b> method.</li>
         </ul>
       </div>
 
@@ -1888,9 +1889,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Normal Equations:</b> Arise from the condition $\nabla f(x) = 0$.</li>
-            <li><b>Geometric Orthogonality:</b> The optimal residual $r = b - Ax^*$ is always orthogonal to the range of $A$.</li>
-            <li><b>Numerical Stability:</b> While $A^\top A x = A^\top b$ is the theoretical solution, computing $A^\top A$ squares the condition number $\kappa$, leading to precision loss. QR and SVD are numerically superior.</li>
+            <li><b>The Normal Equations:</b> The condition $A^\top A x = A^\top b$ arises from setting the gradient of the least-squares objective to zero. Geometrically, it expresses that the error vector $b - Ax$ must be orthogonal to every column of $A$.</li>
+            <li><b>Projection as Optimization:</b> The least squares solution $x^*$ yields the orthogonal projection $p = Ax^*$ of $b$ onto the column space $\mathcal{R}(A)$. This connects approximation theory (finding the closest point) with optimization (minimizing a cost function).</li>
+            <li><b>Numerical Stability (Critical):</b> While the normal equations are theoretically correct, solving them directly involves forming $A^\top A$, which squares the condition number $\kappa(A) \to \kappa(A)^2$. In practice, using <b>QR factorization</b> or <b>SVD</b> avoids this squaring and provides a much more stable solution, especially for ill-conditioned data.</li>
         </ul>
       </div>
 
@@ -1951,9 +1952,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>General Solution:</b> When $A$ has a nullspace, solutions are not unique. They form an affine set $x_{p} + \mathcal{N}(A)$.</li>
-            <li><b>Pseudoinverse Role:</b> $A^+ b$ gives the specific solution that has the minimum Euclidean norm. It projects $b$ onto the range, then inverts the restriction of $A$.</li>
-            <li><b>Projector Construction:</b> $P = AA^+$ projects onto the range, $I - AA^+$ projects onto the orthogonal complement (left nullspace).</li>
+            <li><b>Handling Rank Deficiency:</b> When a system $Ax=b$ has infinitely many solutions (non-trivial nullspace), the <b>Moore-Penrose Pseudoinverse</b> $A^+$ selects the unique solution with the <b>minimum Euclidean norm</b>. This acts as a natural "regularizer".</li>
+            <li><b>General Solution Structure:</b> Any least-squares solution can be written as $x = A^+b + (I - A^+A)z$. The term $A^+b$ is the particular solution in the row space, while $(I - A^+A)z$ represents an arbitrary component in the nullspace.</li>
+            <li><b>Projectors via Pseudoinverse:</b> The matrix $P = AA^+$ is the orthogonal projector onto the range $\mathcal{R}(A)$, and $I - AA^+$ projects onto the orthogonal complement. These operators are fundamental in <b>Projected Gradient Descent</b> methods.</li>
         </ul>
       </div>
 
@@ -1972,9 +1973,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Isometry:</b> Orthogonal matrices ($Q^\top Q = I$) preserve lengths and angles ($\|Qx\| = \|x\|$). They represent rotations or reflections.</li>
-            <li><b>Projector Properties:</b> A matrix $P$ is an orthogonal projector if and only if it is symmetric ($P=P^\top$) and idempotent ($P^2=P$).</li>
-            <li><b>Geometric Construction:</b> To project onto a span, form an orthogonal basis (or use the general formula with inverses).</li>
+            <li><b>Isometry and Orthogonality:</b> Orthogonal matrices $Q$ (where $Q^\top Q = I$) are <b>isometries</b>: they preserve lengths ($\|Qx\| = \|x\|$) and angles. They represent rigid rotations or reflections of space and are crucial for stable numerical algorithms (like QR and SVD) because they do not amplify errors.</li>
+            <li><b>Projector Characterization:</b> A matrix $P$ represents an <b>orthogonal projection</b> if and only if it is both <b>symmetric</b> ($P=P^\top$) and <b>idempotent</b> ($P^2=P$). If it is idempotent but not symmetric, it represents a "skew" projection.</li>
+            <li><b>Constructing Projectors:</b> To project onto a subspace spanned by columns of $A$, we use $P = A(A^\top A)^{-1}A^\top$. If the columns are orthonormal ($A=Q$), this simplifies to $P = QQ^\top$, avoiding the matrix inversion.</li>
         </ul>
       </div>
 
@@ -2042,8 +2043,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Cyclic Property:</b> The trace is invariant under cyclic permutations: $\mathrm{tr}(ABC) = \mathrm{tr}(BCA)$. This is critical for matrix calculus.</li>
-            <li><b>Commutators:</b> The trace of a commutator $[A, B] = AB - BA$ is always zero. This distinguishes matrix algebra from scalar algebra.</li>
+            <li><b>Cyclic Property of Trace:</b> The identity $\mathrm{tr}(ABC) = \mathrm{tr}(BCA) = \mathrm{tr}(CAB)$ allows us to "rotate" matrices inside the trace. This is the key trick for deriving matrix gradients, such as $\nabla_X \mathrm{tr}(A X B) = A^\top B^\top$.</li>
+            <li><b>Commutators and Quantum Mechanics:</b> The commutator $[A, B] = AB - BA$ captures the extent to which two matrices fail to commute. The fact that $\mathrm{tr}([A,B]) = 0$ implies that no two finite-dimensional matrices can satisfy the canonical commutation relation $AB - BA = I$ (a fundamental result in quantum mechanics).</li>
         </ul>
       </div>
 
@@ -2092,8 +2093,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Matrix Space Geometry:</b> We can treat $m \times n$ matrices as vectors in $\mathbb{R}^{mn}$.</li>
-            <li><b>Frobenius Norm:</b> Also known as the Hilbert-Schmidt norm. It corresponds to the Euclidean norm of the flattened vector.</li>
+            <li><b>Geometry of Matrix Space:</b> By equipping the vector space of matrices with the inner product $\langle A, B \rangle = \mathrm{tr}(A^\top B)$, we gain access to geometric tools like angles and projections for matrices. This space is isomorphic to $\mathbb{R}^{mn}$.</li>
+            <li><b>Frobenius Norm:</b> The induced norm $\|A\|_F = \sqrt{\mathrm{tr}(A^\top A)}$ is simply the Euclidean norm of the matrix elements. It is the most common "entry-wise" measure of matrix size and is easier to work with than the operator norm for calculus purposes.</li>
+            <li><b>Submultiplicativity:</b> The property $\|AB\|_F \le \|A\|_F \|B\|_F$ ensures that matrix multiplication is compatible with the norm topology, guaranteeing that the product of matrices is a continuous operation.</li>
         </ul>
       </div>
 
@@ -2144,8 +2146,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Operator Norm:</b> Measures the maximum amplification of a vector by the matrix.</li>
-            <li><b>SVD Connection:</b> $\|A\|_2 = \sigma_1(A)$.</li>
+            <li><b>Operator Norm as "Maximum Gain":</b> The operator norm $\|A\|_2 = \sup_{\|x\|=1} \|Ax\|_2$ measures the maximum factor by which the matrix stretches a vector. Unlike the Frobenius norm (which measures average energy), this measures the <b>worst-case</b> amplification.</li>
+            <li><b>Spectral Connection:</b> For the Euclidean norm, the operator norm is exactly the largest singular value, $\|A\|_2 = \sigma_{\max}(A)$. This links the geometric stretching property directly to the SVD.</li>
+            <li><b>Determinant Bound:</b> The inequality $|\det A| \le \|A\|^n$ essentially says that the volume of the image of the unit cube (the determinant) cannot exceed the volume of a cube with side length equal to the maximum stretch factor.</li>
         </ul>
       </div>
 
@@ -2199,8 +2202,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Unitary Invariance:</b> Rotations do not change the "size" of a matrix.</li>
-            <li><b>Norm Equivalence:</b> In finite dimensions, all norms are equivalent (define the same topology).</li>
+            <li><b>Unitary Invariance:</b> A norm is unitary invariant if $\|UAV\| = \|A\|$ for all orthogonal $U, V$. Both the Frobenius and Operator norms satisfy this, meaning they depend only on the <b>singular values</b> of $A$. This makes them "natural" norms for coordinate-independent analysis.</li>
+            <li><b>Equivalence of Norms:</b> In finite-dimensional spaces, all norms are equivalent: they define the same open sets and convergence sequences. However, the constants relating them (e.g., $\|A\|_{op} \le \|A\|_F \le \sqrt{n}\|A\|_{op}$) matter for tight convergence bounds in numerical linear algebra.</li>
         </ul>
       </div>
 
@@ -2253,8 +2256,10 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Isometry vs. Conformal:</b> Isometries ($A \in O_n$) preserve lengths. Conformal maps ($A = cU$) preserve angles but scale lengths.</li>
-            <li><b>Polarization Identity:</b> The inner product can be recovered from the norm: $\langle x, y \rangle = \frac{1}{2}(\|x\|^2 + \|y\|^2 - \|x-y\|^2)$. Thus preserving norms implies preserving inner products.</li>
+            <li><b>Compactness of $O(n)$:</b> The group of orthogonal matrices is a closed and bounded subset of matrix space. Its compactness is why optimization problems over orthogonal matrices (like finding the best rotation) are guaranteed to have solutions.</li>
+            <li><b>Characterizations of Orthogonality:</b> A matrix is orthogonal iff it preserves inner products ($\langle Ax, Ay \rangle = \langle x, y \rangle$) iff it preserves norms ($\|Ax\| = \|x\|$). This equivalence underscores that preserving geometry (lengths and angles) is the defining feature of orthogonal transformations.</li>
+            <li><b>Rigid Motions:</b> Transformations of the form $Ax + b$ with $A \in O(n)$ are rigid motions. They move objects without shearing or stretching them, preserving the "shape" of convex sets.</li>
+
         </ul>
       </div>
 
@@ -2319,8 +2324,9 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Change of Basis:</b> Since $A \succ 0$, we can write $A = T^\top T$ (Cholesky). Then $\langle x, y \rangle_A = \langle Tx, Ty \rangle_{Euclidean}$.</li>
-            <li><b>Ellipsoids:</b> The unit ball of this norm is an ellipsoid. Since balls of any norm are convex, ellipsoids are convex.</li>
+            <li><b>Mahalanobis Distance:</b> The inner product $\langle x, y \rangle_A = x^\top A y$ (where $A \succ 0$) defines a geometry where distance is measured relative to the "ellipsoid" defined by $A$. This is standard in statistics (covariance) and optimization (Newton's method uses the local Hessian metric).</li>
+            <li><b>Cholesky Factorization:</b> Since $A \succ 0$, we can write $A = L L^\top$. This effectively transforms the generalized inner product back to the standard Euclidean one: $x^\top A y = (L^\top x)^\top (L^\top y)$. This "change of variables" is a powerful proof technique.</li>
+            <li><b>Convexity of Ellipsoids:</b> The unit ball $\{x \mid x^\top A x \le 1\}$ is an ellipsoid. Since it is the sublevel set of a convex quadratic function (or simply a linear transformation of the Euclidean unit ball), it is a convex set.</li>
         </ul>
       </div>
 
