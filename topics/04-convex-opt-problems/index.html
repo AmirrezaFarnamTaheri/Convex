@@ -14,10 +14,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
-        <img src="../../static/assets/branding/logo.svg" class="logo" alt="logo" />
-        <a href="../../index.html" style="text-decoration:none;color:inherit">
-          <strong>Convex Optimization</strong>
-        </a>
+        <a href="../../index.html">Convex Optimization</a>
       </div>
       <nav class="nav">
         <a href="../../index.html">All Lectures</a>
@@ -30,7 +27,7 @@
   <!-- Main content -->
   <main class="container" style="padding: 32px 0 60px;">
     <!-- Lecture header -->
-    <article class="card" style="margin-bottom: 32px;">
+    <article class="section-card" style="margin-bottom: 32px;">
       <h1 style="margin-top: 0;">04. Convex Optimization Problems: Standard Forms</h1>
       <div class="meta">
         Date: 2025-11-11 · Duration: 90 min · Tags: standard-forms, classification, LP, QP, SOCP, SDP
@@ -44,7 +41,7 @@
     </article>
 
     <!-- Learning objectives -->
-    <section class="card" style="margin-bottom: 32px;">
+    <section class="section-card" style="margin-bottom: 32px;">
       <h2>Learning Objectives</h2>
       <p>After this lecture, you will be able to:</p>
       <ul style="line-height: 1.8;">
@@ -59,7 +56,7 @@
     </section>
 
     <!-- Section 1: Standard Form -->
-    <section class="card" id="section-1">
+    <section class="section-card" id="section-1">
       <h2>1. The Standard Form of Convex Optimization</h2>
 
       <h3>1.1 Definition</h3>
@@ -93,7 +90,7 @@
         $
       </p>
 
-      <div class="proof">
+      <div class="proof-box">
         <h4>Theorem: Convexity of Feasible Set</h4>
         <p><strong>Statement:</strong> If $f_i$ are convex and $h_j$ are affine, then $\mathcal{F}$ is a convex set.</p>
 
@@ -110,7 +107,7 @@
         <li>$x$ is <strong>locally optimal</strong> if there exists $R > 0$ such that $f_0(x) = \inf\{f_0(z) \mid z \in \mathcal{F}, \|z - x\|_2 \le R\}$</li>
       </ul>
 
-      <div class="proof">
+      <div class="proof-box">
         <h4>Fundamental Property: Local = Global</h4>
         <p><strong>Statement:</strong> For convex optimization problems, any locally optimal point is globally optimal.</p>
 
@@ -128,7 +125,7 @@
     </section>
 
     <!-- Section 2: Linear Programs (LP) -->
-    <section class="card" id="section-2">
+    <section class="section-card" id="section-2">
       <h2>2. Linear Programs (LP)</h2>
 
       <h3>2.1 Definition</h3>
@@ -204,7 +201,7 @@
     </section>
 
     <!-- Section 3: Quadratic Programs (QP) -->
-    <section class="card" id="section-3">
+    <section class="section-card" id="section-3">
       <h2>3. Quadratic Programs (QP)</h2>
 
       <h3>3.1 Definition</h3>
@@ -224,7 +221,7 @@
 
       <p>where $P \in \mathbb{S}_+^n$ (positive semidefinite), $q \in \mathbb{R}^n$, $r \in \mathbb{R}$.</p>
 
-      <div class="proof">
+      <div class="proof-box">
         <h4>Convexity of QP</h4>
         <div class="proof-step">
           <strong>Objective convexity:</strong> Since $P \succeq 0$, the quadratic form $f_0(x) = \frac{1}{2} x^\top P x + q^\top x + r$ is convex. This follows from the second-order condition: $\nabla^2 f_0(x) = P \succeq 0$.
@@ -277,7 +274,7 @@
     </section>
 
     <!-- Section 4: Second-Order Cone Programs (SOCP) -->
-    <section class="card" id="section-4">
+    <section class="section-card" id="section-4">
       <h2>4. Second-Order Cone Programs (SOCP)</h2>
 
       <h3>4.1 Definition</h3>
@@ -305,7 +302,7 @@
         $
       </p>
 
-      <div class="proof">
+      <div class="proof-box">
         <h4>Convexity of the Second-Order Cone</h4>
         <div class="proof-step">
           <strong>Setup:</strong> Let $(x_1, t_1), (x_2, t_2) \in \mathcal{L}^{n+1}$ and $\theta \in [0, 1]$.
@@ -344,7 +341,7 @@
         $
       </p>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Derivation (Unstructured Uncertainty)</h4>
         <div class="proof-step">
           <strong>Step 1: Define the uncertainty set.</strong>
@@ -396,7 +393,7 @@
     </section>
 
     <!-- Section 5: Semidefinite Programs (SDP) -->
-    <section class="card" id="section-5">
+    <section class="section-card" id="section-5">
       <h2>5. Semidefinite Programs (SDP)</h2>
 
       <h3>5.1 Definition</h3>
@@ -462,7 +459,7 @@
       <h4>Example 5.2: Matrix Norm Minimization (Operator Norm)</h4>
       <p>Minimize the spectral norm (operator norm) of a matrix depending linearly on variables $x$: $\|A(x)\|_2$, where $A(x) = A_0 + \sum_{i=1}^n x_i A_i$.</p>
 
-      <div class="proof-enhanced">
+      <div class="proof-box">
         <h4>Derivation of SDP Form</h4>
         <div class="proof-step">
           <strong>Step 1: Epigraph Form.</strong>
@@ -518,7 +515,7 @@
         <li>Every SOCP can be formulated as an SDP (the second-order cone can be represented via LMI)</li>
       </ul>
 
-      <div class="proof">
+      <div class="proof-box">
         <h4>Embedding SOCP into SDP via Schur Complement</h4>
         <p>We want to show that the second-order cone constraint $\|y\|_2 \le t$ (where $y = Ax+b, t = c^\top x + d$) is equivalent to a Linear Matrix Inequality (LMI).</p>
 
@@ -559,7 +556,7 @@
     </section>
 
     <!-- Section 6: Problem Reformulation and Equivalence -->
-    <section class="card" id="section-6">
+    <section class="section-card" id="section-6">
       <h2>6. Problem Reformulation and Equivalence</h2>
 
       <h3>6.1 Equivalent Problems</h3>
@@ -622,7 +619,7 @@
     </section>
 
     <!-- Section 7: Quasiconvex Optimization -->
-    <section class="card" id="section-7">
+    <section class="section-card" id="section-7">
       <h2>7. Quasiconvex Optimization</h2>
 
       <h3>7.1 Quasiconvex Functions</h3>
@@ -659,7 +656,7 @@
     </section>
 
     <!-- Section 8: Disciplined Convex Programming (DCP) -->
-    <section class="card" id="section-8">
+    <section class="section-card" id="section-8">
       <h2>8. Disciplined Convex Programming (DCP)</h2>
 
       <h3>8.1 Motivation</h3>
@@ -698,13 +695,13 @@
     </section>
 
     <!-- SECTION 11: SUMMARY -->
-    <section class="card" id="summary">
+    <section class="section-card" id="summary">
       <h2>11. Summary</h2>
       <p><strong>Overview:</strong> This lecture covers convex optimization problem classes—LP, QP, SOCP, SDP—and the mathematical foundations for recognizing, classifying, and formulating convex problems. We develop the theoretical underpinnings of standard forms and establish the hierarchy of problem classes that governs modern optimization.</p>
     </section>
 
     <!-- READINGS -->
-    <section class="card" id="readings" style="margin-bottom: 32px;">
+    <section class="section-card" id="readings" style="margin-bottom: 32px;">
       <h2>12. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 4 — Convex Optimization Problems</li>
@@ -715,7 +712,7 @@
     </section>
 
     <!-- SECTION 10: PROBLEM SET -->
-    <section class="card" id="section-10">
+    <section class="section-card" id="section-10">
       <h2>10. Problem Set & Solutions</h2>
       <p>These problems consolidate the lecture material and provide practice in problem classification, formulation, and reformulation.</p>
 
@@ -1270,11 +1267,14 @@
 
   <!-- Global utilities -->
   <script src="../../static/js/math-renderer.js"></script>
-<script src="../../static/js/theme-switcher.js"></script>
+<script src="../../static/js/ui.js"></script>
 <script src="../../static/js/toc.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
   <script src="../../static/js/glossary-loader.js"></script>
+<script src="../../static/js/notes-widget.js"></script>
+<script src="../../static/js/pomodoro.js"></script>
+<script src="../../static/js/progress-tracker.js"></script>
 </body>
 </html>

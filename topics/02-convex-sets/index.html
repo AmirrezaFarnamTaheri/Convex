@@ -15,10 +15,7 @@
   <header class="site-header sticky">
     <div class="container">
       <div class="brand">
-        <a href="../../index.html">
-          <img src="../../static/assets/branding/logo.svg" alt="Logo" />
-          <span>Convex Optimization</a>
-        </a>
+        <a href="../../index.html">Convex Optimization</a>
       </div>
       <nav class="nav">
         <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
@@ -29,7 +26,7 @@
   </header>
 
   <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
-    <header class="lecture-header card-v2">
+    <header class="lecture-header section-card">
       <h1>02. The Geometry of Feasibility: Convex Sets</h1>
       <div class="lecture-meta">
         <span>Date: 2025-10-28</a>
@@ -43,7 +40,7 @@
       </div>
     </header>
 
-    <section class="card-v2">
+    <section class="section-card">
       <h2><i data-feather="target"></i> Learning Objectives</h2>
       <ul>
         <li><b>Define and Interpret Convexity:</b> Provide formal definitions of affine sets, convex sets, convex combinations, and convex hulls with geometric intuition.</li>
@@ -55,22 +52,10 @@
       </ul>
     </section>
 
-    <nav class="card table-of-contents">
-      <h2>Table of Contents</h2>
-      <ol>
-        <li><a href="#section-1">Affine and Convex Sets: Definitions and Basic Properties</a></li>
-        <li><a href="#section-2">Canonical Convex Sets: Building Blocks</a></li>
-        <li><a href="#section-3">Operations that Preserve Convexity</a></li>
-        <li><a href="#section-4">Separating and Supporting Hyperplane Theorems</a></li>
-        <li><a href="#section-5">Cones, Proper Cones, and Dual Cones</a></li>
-        <li><a href="#section-6">Topological Toolkit: Closure, Interior, Relative Interior</a></li>
-        <li><a href="#section-7">Problem Set & Solutions</a></li>
-        <li><a href="#section-8">Quick Reference Glossary</a></li>
-      </ol>
-    </nav>
+
 
     <article>
-      <section class="card-v2" id="section-1">
+      <section class="section-card" id="section-1">
         <h2>1. Affine and Convex Sets: Definitions and Basic Properties</h2>
 
         <p>The geometry of optimization is built on understanding how points combine. Two fundamental operations define the landscape:</p>
@@ -99,7 +84,7 @@
           C = x_0 + V = \{x_0 + v \mid v \in V\}
           $$
           <p>where $x_0$ is any specific point in $C$, and $V$ is a linear subspace of $\mathbb{R}^n$.</p>
-          <div class="proof-enhanced">
+          <div class="proof-box">
             <h4>Proof</h4>
             <div class="proof-step">
               <strong>($\Leftarrow$):</strong> Suppose $C = x_0 + V$. Let $x_1, x_2 \in C$. Then $x_1 = x_0 + v_1$ and $x_2 = x_0 + v_2$ for some $v_1, v_2 \in V$.
@@ -224,7 +209,7 @@
       </section>
 
 
-      <section class="card-v2" id="section-2">
+      <section class="section-card" id="section-2">
         <h2>2. Canonical Convex Sets: Building Blocks</h2>
 
         <p>These fundamental convex sets appear repeatedly in optimization formulations. Recognizing them is essential for problem classification.</p>
@@ -252,7 +237,7 @@
         $$
         <p>This is the region on one side of the hyperplane. The complement halfspace is $H^+ = \{x \mid a^\top x \ge b\}$.</p>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof: Hyperplanes and Halfspaces are Convex</h4>
 
           <div class="proof-step">
@@ -356,7 +341,7 @@
           <figcaption><i>Figure 2.4:</i> A polyhedron (central solid region) is formed by intersecting multiple halfspaces. Each face corresponds to one linear inequality constraint.</figcaption>
         </figure>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Convexity of Polyhedra</h4>
           <p>Since halfspaces and hyperplanes are convex sets, and the intersection of any collection of convex sets is convex (see Section 3), a polyhedron is convex.</p>
         </div>
@@ -389,7 +374,7 @@
           <figcaption><i>Figure 2.5:</i> The cone of $2 \times 2$ PSD matrices visualized in 3D space (axes are the matrix entries $x, y, z$). It is a convex cone with a specific "ice-cream" like shape but with a flat boundary structure.</figcaption>
         </figure>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof: The PSD Cone is Convex</h4>
           <p>We need to show that if $A, B \in \mathbb{S}^n_+$ and $\theta \in [0,1]$, then $\theta A + (1-\theta)B \in \mathbb{S}^n_+$.</p>
           <div class="proof-step">
@@ -419,7 +404,7 @@
       </section>
 
 
-      <section class="card-v2" id="section-3">
+      <section class="section-card" id="section-3">
         <h2>3. Operations that Preserve Convexity</h2>
 
         <p>We can prove that a complex set is convex by building it from simpler convex sets using operations that preserve convexity. This is the "calculus" of convex sets.</p>
@@ -440,7 +425,7 @@
           <figcaption><i>Figure 3.1:</i> The intersection of two convex sets (blue and yellow) is the green region. Note that while the union is not necessarily convex, the intersection always is.</figcaption>
         </figure>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof</h4>
           <div class="proof-step">
             Let $x, y \in C$. By definition, $x \in C_i$ and $y \in C_i$ for all $i \in I$.
@@ -507,7 +492,7 @@
           </ul>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof</h4>
 
           <div class="proof-step">
@@ -614,7 +599,7 @@
           <p>If $C$ and $D$ are convex, then $C+D$ is convex.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof</h4>
           <p>Let $u, v \in C+D$. Then $u = c_1 + d_1$ and $v = c_2 + d_2$ for some $c_i \in C, d_i \in D$.
           For any $\theta \in [0,1]$:</p>
@@ -644,7 +629,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-4">
+      <section class="section-card" id="section-4">
         <h2>4. Separating and Supporting Hyperplane Theorems</h2>
 
         <p>These theorems are the geometric backbone of duality theory, optimality conditions, and many algorithms in convex optimization.</p>
@@ -667,7 +652,7 @@
           <figcaption><i>Figure 4.1:</i> A hyperplane separating two disjoint convex sets $C$ and $D$. For closed sets, we can construct the separator using the projection of 0 onto their difference set $C-D$.</figcaption>
         </figure>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof (Constructive via Projection)</h4>
 
           <div class="proof-step">
@@ -720,7 +705,7 @@
           <figcaption><i>Figure 4.2:</i> A supporting hyperplane to a convex set at a boundary point. It "kisses" the set without cutting into it.</figcaption>
         </figure>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof (via Projection)</h4>
 
           <div class="proof-step">
@@ -775,7 +760,7 @@
       </section>
 
 
-      <section class="card-v2" id="section-5">
+      <section class="section-card" id="section-5">
         <h2>5. Cones, Proper Cones, and Dual Cones</h2>
 
         <h3>5.1 Cones and Convex Cones</h3>
@@ -931,7 +916,7 @@
       </section>
 
 
-      <section class="card-v2" id="section-6">
+      <section class="section-card" id="section-6">
         <h2>6. Topological Toolkit: Closure, Interior, Relative Interior</h2>
 
         <p>To work precisely with convex sets and optimality conditions, we need clear notions of "inside," "edge," and "outside."</p>
@@ -1008,7 +993,7 @@
       </section>
 
       <!-- SECTION 7: EXERCISES -->
-      <section class="card-v2" id="section-7">
+      <section class="section-card" id="section-7">
         <h2><i data-feather="edit-3"></i> 7. Exercises</h2>
 
         <p>These problems consolidate all exercises from throughout the lecture and add additional practice.</p>
@@ -1412,7 +1397,7 @@
             </ul>
           </div>
 
-          <div class="solution-enhanced">
+          <div class="solution-box">
             <h4>Solution</h4>
             <p><b>Method 1: Direct Proof via Triangle Inequality</b></p>
             <div class="proof-step">
@@ -1456,7 +1441,7 @@
             </ul>
           </div>
 
-          <div class="solution-enhanced">
+          <div class="solution-box">
             <h4>Solution</h4>
             <div class="proof-step">
               <strong>Step 1: Pick two points.</strong> Let $u, v \in C$.
@@ -1503,7 +1488,7 @@
             </ul>
           </div>
 
-          <div class="solution-enhanced">
+          <div class="solution-box">
             <h4>Solution</h4>
 
             <p><b>(a) Convexity Proof</b></p>
@@ -1542,7 +1527,7 @@
             </ul>
           </div>
 
-          <div class="solution-enhanced">
+          <div class="solution-box">
             <h4>Solution</h4>
             <p><b>Method 1: Minkowski Sum</b></p>
             <div class="proof-step">
@@ -1582,7 +1567,7 @@
             </ul>
           </div>
 
-          <div class="solution-enhanced">
+          <div class="solution-box">
             <h4>Solution</h4>
             <div class="proof-step">
               Let $a, b \in \mathrm{cl}(C)$. By definition, there exist sequences $\{x_k\} \subset C$ such that $x_k \to a$ and $\{y_k\} \subset C$ such that $y_k \to b$.
@@ -1633,7 +1618,7 @@
             </ul>
           </div>
 
-          <div class="solution-enhanced">
+          <div class="solution-box">
             <h4>Solution</h4>
             <p><b>(a) Convexity of Product</b></p>
             <div class="proof-step">
@@ -1665,13 +1650,13 @@
 </section>
 
       <!-- SECTION 8: SUMMARY -->
-      <section class="card-v2" id="summary">
+      <section class="section-card" id="summary">
         <h2>8. Summary</h2>
         <p><strong>Overview:</strong> This lecture presents the geometric foundations of convex optimization through the study of convex sets. We define convexity for sets, examine canonical examples such as hyperplanes, polyhedra, and cones, and establish operations that preserve convexity. The lecture concludes with the Separating and Supporting Hyperplane Theorems, which form the geometric basis for duality theory and optimality conditions.</p>
       </section>
 
       <!-- SECTION 9: GLOSSARY -->
-      <section class="card-v2" id="section-9">
+      <section class="section-card" id="section-9">
         <h2>9. Quick Reference Glossary</h2>
 
         <p>Essential terms from this lecture for quick lookup:</p>
@@ -1716,7 +1701,7 @@
   </main></div>
 
   <script src="../../static/js/math-renderer.js"></script>
-  <script src="../../static/js/theme-switcher.js"></script>
+  <script src="../../static/js/ui.js"></script>
   <script src="../../static/js/toc.js"></script>
   <script>
     feather.replace();
@@ -1741,5 +1726,8 @@
     initSeparatingHyperplane('widget-separating-hyperplane');
   </script>
   <script src="../../static/js/glossary-loader.js"></script>
+<script src="../../static/js/notes-widget.js"></script>
+<script src="../../static/js/pomodoro.js"></script>
+<script src="../../static/js/progress-tracker.js"></script>
 </body>
 </html>

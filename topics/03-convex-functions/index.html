@@ -15,10 +15,7 @@
   <header class="site-header sticky">
     <div class="container">
       <div class="brand">
-        <a href="../../index.html">
-          <img src="../../static/assets/branding/logo.svg" alt="Logo" />
-          <span>Convex Optimization</a>
-        </a>
+        <a href="../../index.html">Convex Optimization</a>
       </div>
       <nav class="nav">
         <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
@@ -38,7 +35,7 @@
     </aside>
     <main class="lecture-content">
   <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
-    <header class="lecture-header card-v2">
+    <header class="lecture-header section-card">
       <h1>03. Convex Functions: Definitions, Characterizations, and Operations</h1>
       <div class="lecture-meta">
         <span>Date: 2025-11-04</a>
@@ -52,7 +49,7 @@
       </div>
     </header>
 
-    <section class="card-v2">
+    <section class="section-card">
       <h2><i data-feather="target"></i> Learning Objectives</h2>
       <ul>
         <li><b>Understand Multiple Characterizations:</b> State and prove equivalences between Jensen's inequality, epigraph convexity, first-order conditions, and second-order conditions.</li>
@@ -66,7 +63,7 @@
     </section>
 
     <article>
-      <section class="card-v2" id="section-1">
+      <section class="section-card" id="section-1">
         <h2>1. Definition and Basic Properties</h2>
 
         <h3>1.1 Convex Functions: The Core Definition</h3>
@@ -136,7 +133,7 @@
           <h4>Theorem (Restriction to a Line)</h4>
           <p>$f$ is convex if and only if for all $x \in \mathrm{dom}\, f$ and $v \in \mathbb{R}^n$, the function $g(t) = f(x + tv)$ is convex (on its domain $\{t \mid x+tv \in \mathrm{dom}\, f\}$).</p>
         </div>
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof</h4>
           <p><b>($\Rightarrow$)</b> If $f$ is convex, then for any $t_1, t_2$ and $\theta \in [0,1]$:
           $$ g(\theta t_1 + (1-\theta)t_2) = f(x + (\theta t_1 + (1-\theta)t_2)v) = f(\theta(x+t_1 v) + (1-\theta)(x+t_2 v)) $$
@@ -163,7 +160,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-2">
+      <section class="section-card" id="section-2">
         <h2>2. Epigraph Characterization</h2>
 
         <h3>2.1 The Epigraph</h3>
@@ -179,7 +176,7 @@
           <p>A function $f$ is convex <b>if and only if</b> its epigraph $\mathrm{epi}\, f$ is a convex set.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof</h4>
 
           <div class="proof-step">
@@ -234,7 +231,7 @@
 
       </section>
 
-      <section class="card-v2" id="section-3">
+      <section class="section-card" id="section-3">
         <h2>3. First-Order Conditions (Tangent Line Property)</h2>
 
         <h3>3.1 The First-Order Characterization</h3>
@@ -247,7 +244,7 @@
           <p>This states that the <b>tangent line (or tangent hyperplane) at any point is a global underestimator</b> of the function.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof</h4>
 
           <div class="proof-step">
@@ -345,7 +342,7 @@
 
       </section>
 
-      <section class="card-v2" id="section-4">
+      <section class="section-card" id="section-4">
         <h2>4. Second-Order Conditions (Hessian Test)</h2>
 
         <h3>4.1 The Second-Order Characterization</h3>
@@ -358,7 +355,7 @@
           <p>That is, the <b>Hessian matrix is positive semidefinite</b> at every point.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof: Second-Order Condition</h4>
 
           <div class="proof-step">
@@ -411,7 +408,7 @@
           <p>Therefore, $f$ is convex if and only if $Q \succeq 0$.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Example 2: Log-Sum-Exp (Full Derivation)</h4>
           <p>Let $f(x) = \log S(x)$ where $S(x) = \sum_{k=1}^n e^{x_k}$. We prove convexity by showing the Hessian is PSD.</p>
 
@@ -443,7 +440,7 @@
           </div>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Detailed Proof: Concavity of Log-Determinant</h4>
           <p>The function $f(X) = \log \det X$ is <b>concave</b> on $\mathbb{S}^n_{++}$. We use the "restriction to a line" technique to prove this rigorously.</p>
 
@@ -526,7 +523,7 @@
 
         <h4>4.4.2 Hessian Condition</h4>
         <p>Assume $f > 0$ and $f$ is twice differentiable. We derive the condition for log-concavity.</p>
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Derivation</h4>
           <p>Let $g(x) = \log f(x)$. By the chain rule:
           $$ \nabla g(x) = \frac{\nabla f(x)}{f(x)} $$
@@ -562,7 +559,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-5">
+      <section class="section-card" id="section-5">
         <h2>5. Operations Preserving Convexity</h2>
 
         <p>One of the most powerful aspects of convex analysis is that complex convex functions can be built from simpler ones using operations that preserve convexity. This enables sophisticated modeling without sacrificing tractability.</p>
@@ -577,7 +574,7 @@
           <p>is convex. This extends to infinite sums and integrals (provided they converge).</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof</h4>
           <p>For any $x, y$ and $\theta \in [0, 1]$:</p>
           $$
@@ -606,7 +603,7 @@
           <p>Take several convex curves; at each $x$ keep the one that lies highest. The upper envelope still bends "upwards"; you never get a concave dip by taking a max of convex curves. Geometrically, the epigraph is the intersection of epigraphs.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Algebraic Proof</h4>
           <div class="proof-step">
             <strong>Step 1: Definition.</strong>
@@ -631,7 +628,7 @@
           </div>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Geometric Proof (Epigraph)</h4>
           <p>The epigraph of the max is the intersection of the epigraphs:
           $$ \mathrm{epi}\, f = \bigcap_{i=1}^m \mathrm{epi}\, f_i $$
@@ -666,7 +663,7 @@
           <p>Then $g(x)$ is convex.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof</h4>
           <p>Let $x_1, x_2 \in \mathbb{R}^n$ and $\theta \in [0, 1]$.
           $$ g(\theta x_1 + (1-\theta)x_2) = \sup_y f(\theta x_1 + (1-\theta)x_2, y) $$
@@ -708,7 +705,7 @@
           <p>The epigraph of $g$ is the <b>projection</b> of the epigraph of $f$ onto the $(x, t)$ space (projecting out $y$). Since the projection of a convex set is convex, $g$ is convex.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Algebraic Proof</h4>
           <p>Let $x_1, x_2$ and $\theta \in [0, 1]$. We want $g(x_\theta) \le \theta g(x_1) + (1-\theta)g(x_2)$.
           <br>Write the infimum redundantly: $g(x_\theta) = \inf_{y_1, y_2 \in C} f(x_\theta, \theta y_1 + (1-\theta)y_2)$.
@@ -780,7 +777,7 @@
             </figure>
           </div>
 
-          <div class="proof-enhanced">
+          <div class="proof-box">
             <h4>Detailed Proof of Case 1 (Convex + Non-decreasing)</h4>
             <div class="proof-step">
               <strong>Step 1: Domain Sanity.</strong>
@@ -829,7 +826,7 @@
             <li>$g_i$ is <b>affine</b> (monotonicity in $i$-th argument not required).</li>
           </ul>
 
-          <div class="proof-enhanced">
+          <div class="proof-box">
             <h4>Rigorous Proof (Convex + Non-decreasing Case)</h4>
             <p>We prove the case where each $g_i$ is convex and $h$ is convex and non-decreasing in each coordinate.</p>
             <div class="proof-step">
@@ -887,7 +884,7 @@
           <p>The epigraph of the perspective function is related to the conic hull of the epigraph of $f$. Specifically, if we take the cone generated by $\text{epi}(f)$ in $\mathbb{R}^{n+2}$ and slice it at $t$, we recover the epigraph of the scaled function. Since the conic hull of a convex set is convex, and slicing preserves convexity, the perspective function is convex.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Inequality Proof of Convexity</h4>
           <div class="proof-step">
             <strong>Step 1: Setup.</strong>
@@ -988,7 +985,7 @@
           <div id="widget-operations-preserving" style="width: 100%; height: 500px; position: relative;"></div>
         </div>
       </section>
-<section class="card-v2" id="section-6">
+<section class="section-card" id="section-6">
         <h2>6. Strong Convexity and Smoothness</h2>
 
         <h3>6.1 Strong Convexity: Definition and Properties</h3>
@@ -1059,7 +1056,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-7">
+      <section class="section-card" id="section-7">
         <h2>7. The Convex Conjugate (Fenchel Conjugate)</h2>
 
         <h3>7.1 Definition and Geometric Intuition</h3>
@@ -1095,7 +1092,7 @@
         <h3>7.2 Convexity of the Conjugate</h3>
         <p>A remarkable property of the conjugate is that <b>$f^*$ is always convex</b>, regardless of whether $f$ is convex, concave, or neither.</p>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof 1: Supremum of Affine Functions</h4>
           <p>For any fixed $x$, the function $g_x(y) = y^\top x - f(x)$ is affine (linear plus a constant) in $y$.
           The conjugate is the pointwise supremum of this family of affine functions:
@@ -1113,7 +1110,7 @@
           <p>Applying this with $h_i = g_x$ completes the proof.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof 2: Epigraph Intersection</h4>
           <p>The epigraph of $f^*$ is the intersection of a family of halfspaces.
           $$ (y, t) \in \mathrm{epi}\, f^* \iff f^*(y) \le t \iff \sup_x (y^\top x - f(x)) \le t \iff y^\top x - f(x) \le t \ \forall x $$
@@ -1254,7 +1251,7 @@
 
       </section>
 
-      <section class="card-v2" id="section-8">
+      <section class="section-card" id="section-8">
         <h2>8. Quasi-Convex Functions</h2>
 
         <h3>8.1 Definition via Sublevel Sets</h3>
@@ -1264,7 +1261,7 @@
         $$
         <p>is convex for all $\alpha \in \mathbb{R}$.</p>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Theorem: Convex $\implies$ Quasiconvex</h4>
           <p>If $f$ is convex, it is also quasiconvex.</p>
           <p><b>Proof:</b> Let $S_\alpha = \{x \mid f(x) \le \alpha\}$. Take $x, y \in S_\alpha$ and $\theta \in [0, 1]$.
@@ -1347,7 +1344,7 @@
         <div class="example">
           <h4>Example 6: Distance Ratio</h4>
           <p>The function $f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ on $\{x \mid \|x-a\|_2 \le \|x-b\|_2\}$ is quasiconvex.</p>
-          <div class="proof-enhanced">
+          <div class="proof-box">
             <h4>Detailed Check</h4>
             <p>Condition: $\frac{\|x-a\|_2}{\|x-b\|_2} \le \alpha$. Squaring gives $\|x-a\|_2^2 \le \alpha^2 \|x-b\|_2^2$.
             $$ x^\top x - 2a^\top x + a^\top a \le \alpha^2(x^\top x - 2b^\top x + b^\top b) $$
@@ -1360,7 +1357,7 @@
           <h4>Example 7: Internal Rate of Return (IRR)</h4>
           <p>Consider a cash flow $x = (x_0, \dots, x_n)$ with $x_0 < 0$ and $\sum x_i > 0$. The <b>Internal Rate of Return</b> $\text{IRR}(x)$ is the smallest $r \ge 0$ such that $\sum x_i (1+r)^{-i} = 0$.</p>
           <p>We claim $\text{IRR}(x)$ is a <b>quasiconcave</b> function of the cash flow vector $x$.</p>
-          <div class="proof-enhanced">
+          <div class="proof-box">
             <h4>Rigorous Proof</h4>
             <p>We want to show the superlevel set $S_R = \{x \mid \text{IRR}(x) \ge R\}$ is convex.
             <br>By definition, IRR is the root. Since the Present Value $PV(r) = \sum x_i (1+r)^{-i}$ is decreasing in $r$ (for typical cash flows), having a root at $r^* \ge R$ implies $PV(r) \ge 0$ for all $r \in [0, R]$.
@@ -1379,7 +1376,7 @@
 
       </section>
 
-      <section class="card-v2" id="section-9">
+      <section class="section-card" id="section-9">
         <h2>9. Common Convex Functions Reference</h2>
 
         <p>This table provides a quick reference for recognizing convex functions. Memorize these patterns—they appear constantly in optimization.</p>
@@ -1506,7 +1503,7 @@
       </section>
 
       <!-- SECTION 10: EXERCISES -->
-      <section class="card-v2" id="section-10">
+      <section class="section-card" id="section-10">
         <h2><i data-feather="edit-3"></i> 10. Exercises and Detailed Examples</h2>
 
         <div class="problem">
@@ -1941,7 +1938,7 @@
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
             <h4>Solution</h4>
 
             <div class="proof-step">
@@ -1976,7 +1973,7 @@
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
             <h4>Solution</h4>
             <div class="proof-step">
               <strong>Convexity:</strong>
@@ -2007,7 +2004,7 @@
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
             <h4>Solution</h4>
             <div class="proof-step">
               <strong>Method 1: Epigraph via Schur Complement</strong>
@@ -2044,7 +2041,7 @@
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
             <h4>Solution</h4>
             <div class="proof-step">
               <strong>(a) Chord Property:</strong>
@@ -2078,7 +2075,7 @@
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
             <h4>Solution</h4>
             <div class="proof-step">
               <strong>($\Rightarrow$) Convex implies Inequality:</strong>
@@ -2107,7 +2104,7 @@
         </ul>
       </div>
 
-<div class="proof-enhanced">
+<div class="proof-box">
             <h4>Solution</h4>
             <div class="proof-step">
               <strong>Change of Variables:</strong>
@@ -2129,7 +2126,7 @@
     </article>
 
     <!-- SECTION 11: SUMMARY -->
-    <section class="card-v2" id="summary">
+    <section class="section-card" id="summary">
       <h2>11. Summary</h2>
       <p><strong>Overview:</strong> This lecture develops the theory of convex functions, which form the foundation for convex optimization. We present multiple equivalent characterizations (Jensen's inequality, epigraph, first-order conditions, second-order conditions), prove key properties, and establish operations that preserve convexity. The lecture culminates with a toolkit for recognizing and constructing convex functions in practice.</p>
     </section>
@@ -2142,7 +2139,7 @@
   </main></div>
 
   <script src="../../static/js/math-renderer.js"></script>
-<script src="../../static/js/theme-switcher.js"></script>
+<script src="../../static/js/ui.js"></script>
 <script src="../../static/js/toc.js"></script>
   <script>
     feather.replace();
@@ -2163,5 +2160,8 @@
     initOperationsPreserving('widget-operations-preserving');
   </script>
   <script src="../../static/js/glossary-loader.js"></script>
+<script src="../../static/js/notes-widget.js"></script>
+<script src="../../static/js/pomodoro.js"></script>
+<script src="../../static/js/progress-tracker.js"></script>
 </body>
 </html>

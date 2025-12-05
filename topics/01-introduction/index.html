@@ -21,10 +21,7 @@
   <header class="site-header sticky">
     <div class="container">
       <div class="brand">
-        <a href="../../index.html">
-          <img src="../../static/assets/branding/logo.svg" alt="Logo" />
-          <span>Convex Optimization</a>
-        </a>
+        <a href="../../index.html">Convex Optimization</a>
       </div>
       <nav class="nav">
         <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
@@ -35,7 +32,7 @@
   </header>
 
   <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
-    <header class="lecture-header card-v2">
+    <header class="lecture-header section-card">
       <h1>01. Introduction: What Makes a Problem Convex?</h1>
       <div class="lecture-meta">
         <span>Date: 2025-10-21</a>
@@ -49,7 +46,7 @@
       </div>
     </header>
 
-    <section class="card-v2">
+    <section class="section-card">
       <h2><i data-feather="target"></i> Learning Objectives</h2>
       <ul>
         <li><b>Define Convex Optimization Problems:</b> State the precise three-part definition and distinguish convex from nonconvex problems at a glance.</li>
@@ -62,24 +59,10 @@
       </ul>
     </section>
 
-    <nav class="card table-of-contents">
-      <h2>Table of Contents</h2>
-      <ol>
-        <li><a href="#section-1">What is a Convex Optimization Problem?</a></li>
-        <li><a href="#section-2">The Fundamental Theorem: Local = Global</a></li>
-        <li><a href="#section-3">Why Convexity Matters: Practical Implications</a></li>
-        <li><a href="#section-4">The Hierarchy of Convex Problem Families</a></li>
-        <li><a href="#section-5">The Loss + Regularizer Modeling Paradigm</a></li>
-        <li><a href="#section-6">Standard Form Transformations and Rewrites</a></li>
-        <li><a href="#section-7">Disciplined Convex Programming (DCP)</a></li>
-        <li><a href="#section-8">Verifying Convexity: A Practical Checklist</a></li>
-        <li><a href="#section-9">The Convex Optimization Workflow</a></li>
-        <li><a href="#section-10">Problem Set & Solutions</a></li>
-      </ol>
-    </nav>
+
 
     <article>
-      <section class="card-v2" id="section-1">
+      <section class="section-card" id="section-1">
         <h2>1. What is a Convex Optimization Problem?</h2>
 
         <h3>1.1 The Landscape of Optimization</h3>
@@ -151,7 +134,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-2">
+      <section class="section-card" id="section-2">
         <h2>2. The Fundamental Theorem: Local = Global</h2>
 
         <h3>2.1 Global Optimality</h3>
@@ -173,7 +156,7 @@
           <p><b>Formally:</b> If $x^*$ is a local minimum (i.e., there exists $\delta > 0$ such that $f_0(x^*) \le f_0(x)$ for all feasible $x$ with $\|x - x^*\|_2 < \delta$), then $x^*$ is a global minimum.</p>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Proof</h4>
 
           <div class="proof-step">
@@ -272,7 +255,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-3">
+      <section class="section-card" id="section-3">
         <h2>3. Why Convexity Matters: Practical Implications</h2>
 
         <h3>3.1 Computational Complexity</h3>
@@ -353,7 +336,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-4">
+      <section class="section-card" id="section-4">
         <h2>4. The Hierarchy of Convex Problem Families</h2>
 
         <p>Within the broad class of convex optimization problems, there exists a hierarchy of increasingly expressive standard forms. Each has dedicated algorithms and complexity results.</p>
@@ -544,7 +527,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-5">
+      <section class="section-card" id="section-5">
         <h2>5. The Loss + Regularizer Modeling Paradigm</h2>
 
         <h3>5.1 The Fundamental Template</h3>
@@ -661,7 +644,7 @@
           </ul>
         </div>
 
-        <div class="proof-enhanced">
+        <div class="proof-box">
           <h4>Analytical Reason: Subgradients at Zero</h4>
           <p>We can also see this algebraically. Consider minimizing a 1D objective $f(x) = \frac{1}{2}(x - y)^2 + \lambda |x|$.</p>
           <div class="proof-step">
@@ -693,7 +676,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-6">
+      <section class="section-card" id="section-6">
         <h2>6. Standard Form Transformations and Rewrites</h2>
 
         <p>Many problems do not initially appear in standard convex form but can be <b>equivalently transformed</b> into LP, QP, SOCP, or SDP. Mastering these transformations is essential for practical modeling.</p>
@@ -767,7 +750,7 @@
           $$
           <p>We derive the reformulation as follows.</p>
 
-          <div class="proof-enhanced">
+          <div class="proof-box">
             <h4>Derivation of Robust Least Squares SOCP</h4>
 
             <div class="proof-step">
@@ -827,7 +810,7 @@
           \end{aligned}
           $$
 
-          <div class="proof-enhanced">
+          <div class="proof-box">
             <h4>Derivation: Why this works</h4>
             <div class="proof-step">
               <strong>Step 1: Analyze the constraints.</strong> The constraints $f_i(x) \le t$ for all $i=1,\dots,m$ are equivalent to:
@@ -874,7 +857,7 @@
           $$ \min_{x} \frac{c^\top x + d}{e^\top x + f} \quad \text{s.t.} \quad Ax \le b, \ e^\top x + f > 0 $$
           <p>This is <b>quasiconvex</b> but not convex. However, we can transform it into a Linear Program (LP).</p>
 
-          <div class="proof-enhanced">
+          <div class="proof-box">
             <h4>Step-by-Step Reformulation</h4>
             <div class="proof-step">
               <strong>Step 1: Change of variables.</strong>
@@ -954,7 +937,7 @@
         </table>
       </section>
 
-      <section class="card-v2" id="section-7">
+      <section class="section-card" id="section-7">
         <h2>7. Disciplined Convex Programming (DCP)</h2>
 
         <h3>7.1 The DCP Philosophy</h3>
@@ -989,7 +972,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-8">
+      <section class="section-card" id="section-8">
         <h2>8. Verifying Convexity: A Practical Checklist</h2>
 
         <h3>8.1 Pre-Solver Sanity Checks</h3>
@@ -1037,7 +1020,7 @@
         </div>
       </section>
 
-      <section class="card-v2" id="section-9">
+      <section class="section-card" id="section-9">
         <h2>9. The Convex Optimization Workflow</h2>
 
         <h3>9.1 The Five-Step Process</h3>
@@ -1084,7 +1067,7 @@
       </section>
 
     <!-- SECTION 10: EXERCISES -->
-      <section class="card-v2" id="section-10">
+      <section class="section-card" id="section-10">
         <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
 
         <div class="problem">
@@ -1349,7 +1332,7 @@
     </article>
 
     <!-- SECTION 11: SUMMARY -->
-    <section class="card-v2" id="summary">
+    <section class="section-card" id="summary">
       <h2>11. Summary</h2>
       <p><strong>Overview:</strong> This lecture introduces convex optimization by defining what makes a problem "convex" and proving the fundamental theorem that any local minimum is also global. We examine the canonical problem families (LP, QP, SOCP, SDP), present the "loss + regularizer + constraints" modeling framework, and develop practical techniques for reformulating problems into standard convex forms.</p>
     </section>
@@ -1362,10 +1345,12 @@
   </main></div>
 
   <script src="../../static/js/math-renderer.js"></script>
-  <script src="../../static/js/theme-switcher.js"></script>
+  <script src="../../static/js/ui.js"></script>
   <script src="../../static/js/toc.js"></script>
+  <script src="../../static/js/notes-widget.js"></script>
+  <script src="../../static/js/pomodoro.js"></script>
+  <script src="../../static/js/progress-tracker.js"></script>
   <script>
-    feather.replace();
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 
