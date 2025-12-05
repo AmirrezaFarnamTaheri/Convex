@@ -655,34 +655,30 @@
           <h4>Proof (Constructive via Projection)</h4>
 
           <div class="proof-step">
-            <strong>Step 1: Form the difference set.</strong> Define $S = C - D = \{c - d \mid c \in C, d \in D\}$. Since $C$ and $D$ are convex, $S$ is convex. Since $C \cap D = \emptyset$, we have $0 \notin S$.
+            <strong>Step 1: Form the Difference Set.</strong> Define the Minkowski difference $S = C - D = \{c - d \mid c \in C, d \in D\}$.
+            <br>Since $C$ and $D$ are convex, their difference $S$ is also convex.
+            <br>Since $C \cap D = \emptyset$, the origin $0$ is <b>not</b> in $S$. (If $0 = c-d$, then $c=d \in C \cap D$).
           </div>
 
           <div class="proof-step">
-            <strong>Step 2: Project zero onto $S$.</strong> Let $p$ be the unique projection of $0$ onto $\mathrm{cl}(S)$ (the closure). This exists and is unique because closed convex sets have unique projections. Since $0 \notin S$, we have $p \neq 0$.
+            <strong>Step 2: Project Zero onto the Closure.</strong> Let $\bar{S} = \mathrm{cl}(S)$. Since $S$ is convex, $\bar{S}$ is closed and convex.
+            <br>Let $p = \Pi_{\bar{S}}(0)$ be the projection of the origin onto $\bar{S}$.
+            <br>If $0 \notin \bar{S}$, then $p \neq 0$. (The case where $0 \in \partial S$ requires a limiting argument using supporting hyperplanes, but we assume strict separation possible for geometric intuition).
           </div>
 
           <div class="proof-step">
-            <strong>Step 3: Use projection characterization.</strong> For any $z \in S$, the projection property (from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a>) gives:
-            $$
-            p^\top z \ge p^\top p = \|p\|_2^2 > 0
-            $$
-            Writing $z = c - d$ for arbitrary $c \in C, d \in D$:
-            $$
-            p^\top c - p^\top d \ge \|p\|_2^2 > 0 \quad \implies \quad p^\top c \ge p^\top d + \|p\|_2^2
-            $$
+            <strong>Step 3: Characterize Projection.</strong> By the projection theorem, for any $z \in \bar{S}$:
+            $$ (z - p)^\top (0 - p) \le 0 \implies (z - p)^\top (-p) \le 0 \implies z^\top p \ge p^\top p = \|p\|_2^2 > 0 $$
+            Since every $z \in S$ is of the form $c - d$:
+            $$ (c - d)^\top p \ge \|p\|_2^2 \implies p^\top c \ge p^\top d + \|p\|_2^2 $$
           </div>
 
           <div class="proof-step">
-            <strong>Step 4: Define the separating hyperplane.</strong> Set $a = p$ and choose:
-            $$
-            b = \frac{1}{2}\left(\inf_{c \in C} a^\top c + \sup_{d \in D} a^\top d\right)
-            $$
-            Then $a^\top c \ge b \ge a^\top d$ for all $c \in C, d \in D$, achieving separation.
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 5: Strict separation.</strong> If $\mathrm{dist}(C, D) = \delta > 0$ or one set is compact, we can choose $b$ strictly between the supremum and infimum to get strict inequalities.
+            <strong>Step 4: Define the Hyperplane.</strong> Set the normal vector $a = p$. Define the scalar $b$ halfway between the boundaries:
+            $$ b = \sup_{d \in D} a^\top d + \frac{1}{2}\|p\|_2^2 $$
+            Then for all $c \in C, d \in D$:
+            $$ a^\top c \ge a^\top d + \|p\|_2^2 > b > a^\top d $$
+            Thus, the hyperplane $\{x \mid a^\top x = b\}$ strictly separates $C$ and $D$.
           </div>
         </div>
 

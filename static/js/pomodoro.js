@@ -45,22 +45,29 @@ class PomodoroWidget {
             <div class="pomodoro-header">
                 <div class="pomodoro-status">
                     <i data-feather="${this.mode === 'work' ? 'briefcase' : 'coffee'}"></i>
-                    <span>${this.mode === 'work' ? 'Focus' : 'Break'}</span>
+                    <span class="status-text">${this.mode === 'work' ? 'Focus' : 'Break'}</span>
                 </div>
-                <button class="btn btn-ghost btn-xs" id="pomo-settings-btn" title="Settings">
-                    <i data-feather="settings"></i>
-                </button>
+                <div class="pomodoro-actions">
+                    <button class="btn btn-ghost btn-xs" id="pomo-minimize-btn" title="Minimize">
+                        <i data-feather="minus"></i>
+                    </button>
+                    <button class="btn btn-ghost btn-xs" id="pomo-settings-btn" title="Settings">
+                        <i data-feather="settings"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="pomodoro-time">${this.formatTime(this.timeLeft)}</div>
+            <div class="pomodoro-body">
+                <div class="pomodoro-time">${this.formatTime(this.timeLeft)}</div>
 
-            <div class="pomodoro-controls">
-                <button class="btn btn-primary btn-sm" id="pomo-toggle">
-                    <i data-feather="play"></i> Start
-                </button>
-                <button class="btn btn-ghost btn-sm" id="pomo-reset" title="Reset">
-                    <i data-feather="rotate-ccw"></i>
-                </button>
+                <div class="pomodoro-controls">
+                    <button class="btn btn-primary btn-sm" id="pomo-toggle">
+                        <i data-feather="play"></i> Start
+                    </button>
+                    <button class="btn btn-ghost btn-sm" id="pomo-reset" title="Reset">
+                        <i data-feather="rotate-ccw"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Settings Panel (Hidden) -->
@@ -83,16 +90,41 @@ class PomodoroWidget {
         this.display = container.querySelector('.pomodoro-time');
         this.toggleBtn = container.querySelector('#pomo-toggle');
         this.statusIcon = container.querySelector('.pomodoro-status i');
-        this.statusText = container.querySelector('.pomodoro-status span');
+        this.statusText = container.querySelector('.pomodoro-status .status-text');
         this.settingsPanel = container.querySelector('.pomodoro-settings');
+        this.body = container.querySelector('.pomodoro-body');
+        this.minimizeBtn = container.querySelector('#pomo-minimize-btn');
 
         // Event Listeners
         this.toggleBtn.onclick = () => this.toggle();
         container.querySelector('#pomo-reset').onclick = () => this.reset();
         container.querySelector('#pomo-settings-btn').onclick = () => this.toggleSettings();
         container.querySelector('#pomo-save-settings').onclick = () => this.saveSettings();
+        this.minimizeBtn.onclick = () => this.toggleMinimize();
+
+        // Load minimized state
+        if (localStorage.getItem('pomodoro-minimized') === 'true') {
+            this.toggleMinimize(false);
+        }
 
         // Render Icons
+        if (typeof feather !== 'undefined') feather.replace();
+    }
+
+    toggleMinimize(save = true) {
+        const isMinimized = this.body.classList.toggle('hidden');
+        this.minimizeBtn.innerHTML = isMinimized ? '<i data-feather="maximize-2"></i>' : '<i data-feather="minus"></i>';
+
+        // Compact header when minimized
+        if (isMinimized) {
+            this.statusText.textContent = this.formatTime(this.timeLeft);
+        } else {
+            this.statusText.textContent = this.mode === 'work' ? 'Focus' : 'Break';
+        }
+
+        if (save) {
+            localStorage.setItem('pomodoro-minimized', isMinimized);
+        }
         if (typeof feather !== 'undefined') feather.replace();
     }
 
@@ -118,10 +150,16 @@ class PomodoroWidget {
 
         this.timerId = setInterval(() => {
             this.timeLeft--;
-            this.display.textContent = this.formatTime(this.timeLeft);
+            const timeStr = this.formatTime(this.timeLeft);
+            this.display.textContent = timeStr;
 
             // Update title
-            document.title = `(${this.formatTime(this.timeLeft)}) Convex Opt`;
+            document.title = `(${timeStr}) Convex Opt`;
+
+            // Update minimized status text if needed
+            if (this.body.classList.contains('hidden')) {
+                this.statusText.textContent = timeStr;
+            }
 
             if (this.timeLeft <= 0) {
                 this.complete();

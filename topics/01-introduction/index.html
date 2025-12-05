@@ -1385,7 +1385,9 @@
               <strong>Step 1: Write the likelihood function.</strong> Assuming independent samples, the likelihood is:
               $$ L(w) = \prod_{i=1}^m P(y_i \mid x_i; w) $$
               We can unify the probability expression. Notice that $P(y_i \mid x_i; w) = \frac{1}{1 + e^{-y_i w^\top x_i}}$.
-              <br>Check: If $y_i=1$, $\frac{1}{1+e^{-w^\top x_i}}$. If $y_i=-1$, $\frac{1}{1+e^{w^\top x_i}}$. Correct.
+              <br>Check: If $y_i=1$, $\frac{1}{1+e^{-w^\top x_i}}$. If $y_i=-1$, $\frac{1}{1+e^{w^\top x_i}} = \frac{e^{-w^\top x_i}}{1+e^{-w^\top x_i}} = 1 - \frac{1}{1+e^{-w^\top x_i}}$. Wait, the unified formula uses the identity $1 - \sigma(z) = \sigma(-z)$.
+              $$ P(y=-1) = \frac{1}{1+e^{w^\top x}} = \frac{1}{1+e^{-(-1)w^\top x}} $$
+              So generally, $P(y \mid x; w) = \sigma(y w^\top x) = \frac{1}{1 + e^{-y w^\top x}}$.
             </div>
 
             <div class="proof-step">
@@ -1395,7 +1397,10 @@
             </div>
 
             <div class="proof-step">
-              <strong>Step 3: Verify convexity.</strong> The function $f(z) = \log(1+e^z)$ (softplus) is convex. Its second derivative is $f''(z) = \frac{e^z}{(1+e^z)^2} > 0$.
+              <strong>Step 3: Verify convexity.</strong> The function $f(z) = \log(1+e^z)$ (softplus) is convex.
+              We compute the gradient and Hessian to be rigorous:
+              $$ f'(z) = \frac{e^z}{1+e^z} = \frac{1}{1+e^{-z}} \quad (\text{sigmoid function}) $$
+              $$ f''(z) = \frac{e^z(1+e^z) - e^z(e^z)}{(1+e^z)^2} = \frac{e^z}{(1+e^z)^2} > 0 $$
               Our objective is a sum of terms $f(-y_i w^\top x_i)$. Since $f$ is convex and the argument $-y_i w^\top x_i$ is affine in $w$, the composition is convex.
               The sum of convex functions is convex.
             </div>

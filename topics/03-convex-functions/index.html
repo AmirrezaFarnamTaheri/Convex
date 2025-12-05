@@ -26,14 +26,6 @@
   </header>
 
   <!-- Main content -->
-  <div class="lecture-container">
-    <aside class="sidebar">
-      <div id="toc-container">
-        <h2>Table of Contents</h2>
-        <nav id="toc"></nav>
-      </div>
-    </aside>
-    <main class="lecture-content">
   <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
     <header class="lecture-header section-card">
       <h1>03. Convex Functions: Definitions, Characterizations, and Operations</h1>
@@ -410,33 +402,36 @@
 
         <div class="proof-box">
           <h4>Example 2: Log-Sum-Exp (Full Derivation)</h4>
-          <p>Let $f(x) = \log S(x)$ where $S(x) = \sum_{k=1}^n e^{x_k}$. We prove convexity by showing the Hessian is PSD.</p>
+          <p>Let $f(x) = \log \left(\sum_{k=1}^n e^{x_k}\right)$. We prove convexity by showing the Hessian is Positive Semidefinite (PSD).</p>
 
           <div class="proof-step">
-            <strong>Step 1: Gradient.</strong>
-            Using the chain rule: $\frac{\partial f}{\partial x_i} = \frac{1}{S} \frac{\partial S}{\partial x_i} = \frac{e^{x_i}}{S}$.
-            Define the probability vector $z$ where $z_i = e^{x_i}/S$. Note $z_i > 0$ and $\sum z_i = 1$.
-            Then $\nabla f(x) = z$.
+            <strong>Step 1: Gradient Computation.</strong>
+            Let $S(x) = \sum_{k=1}^n e^{x_k}$. The partial derivative is:
+            $$ \frac{\partial f}{\partial x_i} = \frac{1}{S(x)} \frac{\partial S}{\partial x_i} = \frac{e^{x_i}}{S(x)} $$
+            Let $z_i = \frac{e^{x_i}}{S(x)}$. Note that $z_i > 0$ and $\sum_{i=1}^n z_i = 1$, so $z$ is a probability vector (the "softmax" output).
+            Thus $\nabla f(x) = z$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 2: Hessian.</strong>
-            Differentiate $\frac{\partial f}{\partial x_i} = z_i$ with respect to $x_j$:
-            $$ \frac{\partial^2 f}{\partial x_i \partial x_j} = \frac{\partial}{\partial x_j} \left(\frac{e^{x_i}}{S}\right) = \frac{S \cdot \delta_{ij} e^{x_i} - e^{x_i} e^{x_j}}{S^2} = \frac{e^{x_i}}{S}\delta_{ij} - \frac{e^{x_i}}{S}\frac{e^{x_j}}{S} $$
-            $$ (\nabla^2 f(x))_{ij} = z_i \delta_{ij} - z_i z_j $$
-            In matrix form: $\nabla^2 f(x) = \text{diag}(z) - zz^\top$.
+            <strong>Step 2: Hessian Computation.</strong>
+            We differentiate $z_i$ with respect to $x_j$:
+            $$ \frac{\partial^2 f}{\partial x_i \partial x_j} = \frac{\partial z_i}{\partial x_j} = \frac{S(x) \frac{\partial e^{x_i}}{\partial x_j} - e^{x_i} \frac{\partial S}{\partial x_j}}{S(x)^2} $$
+            If $i=j$, the first term is $S(x) e^{x_i}$. If $i \neq j$, it is 0. The second term involves $\frac{\partial S}{\partial x_j} = e^{x_j}$.
+            $$ \frac{\partial z_i}{\partial x_j} = \frac{S(x) \delta_{ij} e^{x_i} - e^{x_i} e^{x_j}}{S(x)^2} = \frac{e^{x_i}}{S(x)}\delta_{ij} - \frac{e^{x_i}}{S(x)}\frac{e^{x_j}}{S(x)} $$
+            In terms of $z$: $(\nabla^2 f(x))_{ij} = z_i \delta_{ij} - z_i z_j$.
+            In matrix notation: $\nabla^2 f(x) = \text{diag}(z) - zz^\top$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 3: PSD Check via Cauchy-Schwarz.</strong>
-            For any $v \in \mathbb{R}^n$:
-            $$ v^\top \nabla^2 f(x) v = \sum_i z_i v_i^2 - (z^\top v)^2 = \sum_i z_i v_i^2 - \left(\sum_i z_i v_i\right)^2 $$
-            Let $a_i = \sqrt{z_i} v_i$ and $b_i = \sqrt{z_i}$.
-            Then $\sum a_i^2 = \sum z_i v_i^2$, $\sum b_i^2 = \sum z_i = 1$, and $\sum a_i b_i = \sum z_i v_i$.
-            By Cauchy-Schwarz $(\sum a_i b_i)^2 \le (\sum a_i^2)(\sum b_i^2)$:
-            $$ \left(\sum z_i v_i\right)^2 \le \left(\sum z_i v_i^2\right) \cdot 1 $$
-            Rearranging gives $\sum z_i v_i^2 - (\sum z_i v_i)^2 \ge 0$.
-            Thus $v^\top \nabla^2 f(x) v \ge 0$, so $f$ is convex.
+            <strong>Step 3: PSD Verification.</strong>
+            For any vector $v \in \mathbb{R}^n$, we compute the quadratic form:
+            $$ v^\top \nabla^2 f(x) v = v^\top (\text{diag}(z) - zz^\top) v = \sum_{i=1}^n z_i v_i^2 - (z^\top v)^2 $$
+            We interpret this probabilisticly. Let $V$ be a random variable taking value $v_i$ with probability $z_i$.
+            Then $\sum z_i v_i^2 = \mathbb{E}[V^2]$ and $z^\top v = \mathbb{E}[V]$.
+            The expression is:
+            $$ \mathbb{E}[V^2] - (\mathbb{E}[V])^2 = \text{Var}(V) $$
+            Since variance is always non-negative, $v^\top \nabla^2 f(x) v \ge 0$.
+            Thus the Hessian is PSD, and $f$ is convex.
           </div>
         </div>
 
