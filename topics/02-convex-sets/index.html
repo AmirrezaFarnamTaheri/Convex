@@ -361,7 +361,7 @@
 
         <h3>2.4 The Positive Semidefinite (PSD) Cone</h3>
 
-        <p>The set of symmetric positive semidefinite matrices is a central object in modern convex optimization (SDP):</p>
+        <p>The set of symmetric positive semidefinite matrices is a central object in modern convex optimization, forming the domain for <b>Semidefinite Programming (SDP)</b> (<a href="../04-convex-opt-problems/index.html">Lecture 04</a>). Its properties rely on the eigenvalue characterizations from <a href="../00-linear-algebra-primer/index.html">Lecture 00</a>.</p>
         $$
         \mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}
         $$
@@ -731,7 +731,7 @@
         <div class="insight">
           <h4>🔑 Why These Theorems Matter</h4>
           <ul>
-            <li><b>Duality:</b> The separating hyperplane theorem is the geometric foundation of Lagrangian duality (Lecture 05)</li>
+            <li><b>Duality:</b> The separating hyperplane theorem is the geometric foundation of <b>Lagrangian duality</b> (<a href="../05-duality/index.html">Lecture 05</a>)</li>
             <li><b>Optimality:</b> The supporting hyperplane theorem leads to first-order optimality conditions (KKT conditions)</li>
             <li><b>Algorithms:</b> Cutting-plane methods and bundle methods rely on separating hyperplanes</li>
             <li><b>Subgradients:</b> Supporting hyperplanes define subgradients for non-smooth convex functions</li>
@@ -1010,7 +1010,7 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Bisector Geometry:</b> The set of points closer to $x_0$ than $y_0$ is a halfspace. The boundary is the perpendicular bisector of the segment $[x_0, y_0]$.</li>
+            <li><b>Geometric Bisector:</b> The set of points closer to $x_0$ than $y_0$ is the halfspace defined by the perpendicular bisector of the segment $[x_0, y_0]$. Since halfspaces are convex, this set is convex.</li>
             <li><b>Algebraic Verification:</b> Expanding $\|x - x_0\|^2 \le \|x - y_0\|^2$ always cancels the quadratic term $x^\top x$, leaving a linear inequality.</li>
         </ul>
       </div>
@@ -1062,8 +1062,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Linear vs. Conic Dual:</b> For a subspace, the dual cone is the orthogonal complement. The "non-negative" requirement of the dual cone forces equality because subspaces are closed under negation.</li>
-            <li><b>Geometric Intuition:</b> A subspace is "flat". The only vectors making a non-negative angle with <i>every</i> direction in a plane are those perpendicular to it.</li>
+            <li><b>Subspace Duality:</b> For a linear subspace $V$, the dual cone $V^*$ coincides with the orthogonal complement $V^\perp$. This is because a subspace contains both $x$ and $-x$, forcing the angle condition $y^\top x \ge 0$ to become the orthogonality condition $y^\top x = 0$.</li>
+            <li><b>Geometric Intuition:</b> A subspace is "flat" and extends infinitely in both directions. The only vectors that can make a non-obtuse angle with <i>every</i> vector in this flat plane are those strictly perpendicular to it (the normal vectors).</li>
         </ul>
       </div>
 
@@ -1104,7 +1104,7 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Sublevel Sets:</b> The sublevel set $\{x \mid f(x) \le 0\}$ of a convex function $f$ is always a convex set.</li>
+            <li><b>Sublevel Sets of Convex Functions:</b> A fundamental property of convex functions is that their sublevel sets $\{x \mid f(x) \le lpha\}$ are always convex sets (though the converse is not true).</li>
             <li><b>Hessian Condition:</b> For a quadratic $f(x) = x^\top Q x + c^\top x + d$, convexity is determined solely by $Q \succeq 0$.</li>
         </ul>
       </div>
@@ -1145,8 +1145,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Relative Interior Definition:</b> Points in the set that are not on the "edge" relative to the affine hull.</li>
-            <li><b>Simplex Geometry:</b> The standard simplex lies in the hyperplane $\sum x_i = 1$. Its relative interior consists of strictly positive probability distributions.</li>
+            <li><b>Relative Interior Definition:</b> The relative interior $\mathrm{ri}(C)$ consists of points that are in the "interior" of $C$ when viewed within its affine hull. It excludes "edges" that lie on the relative boundary.</li>
+            <li><b>Simplex Geometry:</b> The standard simplex $\Delta^n$ lives in the affine hyperplane $\sum x_i = 1$. Its topological interior is empty (it has no volume in $\mathbb{R}^n$), but its relative interior is the set of strictly positive probability distributions ($x > 0$).</li>
         </ul>
       </div>
 
@@ -1187,8 +1187,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Constructive Separation:</b> The projection theorem provides an explicit construction for the separating hyperplane between a point and a closed convex set.</li>
-            <li><b>Normal Vector:</b> The separating normal is simply the error vector $y - \Pi_C(y)$.</li>
+            <li><b>Constructive Separation Proof:</b> The Separating Hyperplane Theorem for a closed convex set $C$ and an external point $y$ can be proven constructively using the projection theorem. The closest point $p = \Pi_C(y)$ serves as the anchor.</li>
+            <li><b>The Normal Vector:</b> The vector $a = y - p$ is normal to the separating hyperplane. The hyperplane passes through $p$ and is perpendicular to the line segment connecting $y$ and its projection, placing $C$ entirely on one side.</li>
         </ul>
       </div>
 
@@ -1227,8 +1227,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Self-Duality:</b> The Lorentz cone $\mathcal{Q}$ is its own dual. This is a special property shared by the non-negative orthant and the PSD cone.</li>
-            <li><b>Proof Strategy:</b> Show $\mathcal{Q} \subseteq \mathcal{Q}^*$ using Cauchy-Schwarz, then show $\mathcal{Q}^* \subseteq \mathcal{Q}$ by contradiction or by choosing specific test vectors.</li>
+            <li><b>Self-Duality of the Lorentz Cone:</b> The Second-Order Cone (or Ice-Cream Cone) $\mathcal{Q}$ is self-dual, meaning $\mathcal{Q}^* = \mathcal{Q}$. This property is shared by the non-negative orthant and the PSD cone, making it a symmetric cone.</li>
+            <li><b>Proof Logic:</b> The proof relies on the Cauchy-Schwarz inequality $u^\top v \ge -\|u\|\|v\|$ to show $\mathcal{Q} \subseteq \mathcal{Q}^*$, and a specific counter-example construction to show the reverse inclusion.</li>
         </ul>
       </div>
 
@@ -1272,8 +1272,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Sum and Intersection Duality:</b> The dual of a sum is the intersection of duals: $(K_1 + K_2)^* = K_1^* \cap K_2^*$.</li>
-            <li><b>Analogy:</b> This is analogous to De Morgan's laws in logic or the fact that the support function of a sum is the sum of support functions.</li>
+            <li><b>Duality of Operations:</b> There is a deep duality between addition and intersection for convex cones: $(K_1 + K_2)^* = K_1^* \cap K_2^*$. Taking the dual swaps "sum" with "intersection".</li>
+            <li><b>Constraint Logic:</b> A vector is in the dual of the sum if it has a non-negative dot product with <i>all</i> sums. This is a stricter requirement than being in the dual of just one, hence the intersection.</li>
         </ul>
       </div>
 
@@ -1311,8 +1311,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Cone-Induced Ordering:</b> Every proper cone defines a partial order.</li>
-            <li><b>Antisymmetry requires Pointedness:</b> If the cone contained a line (e.g., a half-plane), we could have $x \preceq y$ and $y \preceq x$ without $x=y$. Pointedness prevents this.</li>
+            <li><b>Cone-Induced Partial Orders:</b> Any proper cone $K$ defines a generalized inequality $\preceq_K$ that behaves like the standard scalar inequality.</li>
+            <li><b>Role of Pointedness:</b> The "pointed" property (cone contains no lines) is strictly required for the antisymmetry property ($x \preceq y \land y \preceq x \implies x=y$). Without it, we would only have a preorder, not a partial order.</li>
         </ul>
       </div>
 
@@ -1347,8 +1347,8 @@
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Voronoi Decomposition:</b> Space is partitioned into polyhedral regions based on the nearest neighbor rule.</li>
-            <li><b>Intersection of Halfspaces:</b> The region closest to point $x_i$ is the intersection of all halfspaces defined by perpendicular bisectors between $x_i$ and neighbors $x_j$.</li>
+            <li><b>Voronoi Regions as Polyhedra:</b> The region of space closest to a seed point $x_i$ is defined by the intersection of halfspaces. Each halfspace is bounded by the perpendicular bisector between $x_i$ and a neighbor $x_j$.</li>
+            <li><b>Convexity via Intersection:</b> Since halfspaces are convex sets, and the intersection of any collection of convex sets is convex, the resulting Voronoi region (a polyhedron) is necessarily convex.</li>
         </ul>
       </div>
 
@@ -1392,8 +1392,8 @@
           <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Epigraphs:</b> The epigraph of a convex function $f$ (set of points lying above the graph) is always a convex set.</li>
-                <li><b>Triangle Inequality:</b> The defining property of a norm $\|x+y\| \le \|x\| + \|y\|$ is directly responsible for the convexity of norm balls and cones.</li>
+                <li><b>Epigraphs of Convex Functions:</b> The set $S$ is the epigraph of the norm function $f(x) = \|x\|$. Since the epigraph of a function is a convex set if and only if the function is convex, the convexity of $S$ follows directly from the convexity of norms.</li>
+                <li><b>Triangle Inequality as Convexity:</b> The core reason norms are convex is the triangle inequality $\|x+y\| \le \|x\| + \|y\|$, which geometrically ensures that the "bowl" of the norm function never dips downwards.</li>
             </ul>
           </div>
 
@@ -1436,8 +1436,8 @@
           <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Convex Hull Definition:</b> Can be defined constructively (all convex combinations) or intersectionally (smallest convex set containing points).</li>
-                <li><b>Coefficients:</b> The key is to show that a convex combination of convex combinations is still a convex combination (weights remain non-negative and sum to 1).</li>
+                <li><b>Convex Hull as Intersection:</b> The convex hull can be rigorously defined as the intersection of <i>all</i> convex sets containing the points. Since intersections preserve convexity, the hull is automatically convex.</li>
+                <li><b>Constructive View:</b> Alternatively, the set of all convex combinations is convex because a "convex combination of convex combinations" can be flattened into a single convex combination of the original points.</li>
             </ul>
           </div>
 
@@ -1484,7 +1484,7 @@
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Linear Maps:</b> $X+Y$ is the image of $X \times Y$ under the linear map $f(x,y)=x+y$. Linear maps preserve convexity.</li>
-                <li><b>Filling Holes:</b> Adding a "fat" set to a "holey" set can fill in the holes (e.g., convolution smoothing).</li>
+                <li><b>convex + non-convex = convex?:</b> Surprisingly, adding a "large enough" convex set to a non-convex set can result in a convex set (e.g., $\mathbb{Z} + [0,1] = \mathbb{R}$). The sum operation "fills in the gaps".</li>
             </ul>
           </div>
 
@@ -1522,8 +1522,8 @@
           <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Distance Function:</b> $d_C(x) = \inf_{y \in C} \|x-y\|$ is a convex function if $C$ is convex.</li>
-                <li><b>Minkowski Sum Equivalent:</b> $C_\varepsilon = C + B(0, \varepsilon)$. Since sum of convex sets is convex, this is immediate.</li>
+                <li><b>Minkowski Sum Interpretation:</b> The thickened set $C_arepsilon$ is exactly the Minkowski sum of the original set $C$ and the ball of radius $arepsilon$, i.e., $C_arepsilon = C + B(0, arepsilon)$.</li>
+                <li><b>Convexity Preservation:</b> Since $C$ is convex and the ball $B(0, \varepsilon)$ is convex, their Minkowski sum must be convex. This provides a clean, geometric proof without needing to analyze the distance function directly.</li>
             </ul>
           </div>
 
@@ -1563,7 +1563,7 @@
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Sequences:</b> Limit points preserve non-strict inequalities like $\theta x + (1-\theta)y \in \dots$</li>
-                <li><b>Topological Intuition:</b> You cannot "bend" the boundary of a convex set inwards without creating a non-convex interior.</li>
+                <li><b>Intuition:</b> You cannot "bend" the boundary of a convex shape inwards (making it non-convex) without affecting the interior points. The limit points simply "seal" the convex shape.</li>
             </ul>
           </div>
 
@@ -1613,8 +1613,8 @@
           <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Cartesian Product:</b> Geometry works component-wise. A convex combination in the product space is just a convex combination of the components.</li>
-                <li><b>Projection Property:</b> If a product is convex, its projections (the factors $X$ and $Y$) must be convex.</li>
+                <li><b>Convexity of Products:</b> The Cartesian product $X \times Y$ essentially stacks the convexity conditions. A line segment in the product space projects to line segments in $X$ and $Y$. If the components are convex, the product is convex.</li>
+                <li><b>Necessity of Factors:</b> Unlike the Minkowski sum, for a Cartesian product to be convex, <i>both</i> factors must be convex (assuming they are non-empty). A hole in either factor creates a hole in the product "cylinder".</li>
             </ul>
           </div>
 
