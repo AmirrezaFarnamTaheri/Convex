@@ -178,27 +178,33 @@
         <br>
         <div class="proof-box">
           <h4>Derivation: Gradient of Log Determinant</h4>
-          <p>We derive the gradient by identifying the linear term in the Taylor expansion of $f(X+\Delta)$ around $X$.</p>
+        <p>We derive the gradient by identifying the linear term in the Taylor expansion of $f(X+\Delta)$ around $X$. This derivation relies on the connection between determinant, trace, and eigenvalues.</p>
           <div class="proof-step">
             <strong>Step 1: Factor out X.</strong>
             Assuming $X$ is invertible and $\Delta$ is small:
             $$ \log \det (X + \Delta) = \log \det (X(I + X^{-1}\Delta)) = \log (\det X \cdot \det(I + X^{-1}\Delta)) $$
+          Using the property $\log(ab) = \log a + \log b$:
             $$ = \log \det X + \log \det(I + X^{-1}\Delta) $$
           </div>
           <div class="proof-step">
-            <strong>Step 2: Linearize the Determinant.</strong>
-            Let $\lambda_i$ be the eigenvalues of $X^{-1}\Delta$. The eigenvalues of $I + X^{-1}\Delta$ are $1 + \lambda_i$.
-            $$ \log \det(I + X^{-1}\Delta) = \log \left(\prod_{i=1}^n (1 + \lambda_i)\right) = \sum_{i=1}^n \log(1 + \lambda_i) $$
-            Using the Taylor series $\log(1+z) \approx z$ for small $z$:
-            $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i = \mathrm{tr}(X^{-1}\Delta) $$
+          <strong>Step 2: Relate Determinant to Trace.</strong>
+          Let $\lambda_i$ be the eigenvalues of the matrix $E = X^{-1}\Delta$. Since the eigenvalues of $I+E$ are $1+\lambda_i$, we have:
+          $$ \det(I + E) = \prod_{i=1}^n (1 + \lambda_i) $$
+          Taking the log:
+          $$ \log \det(I + E) = \sum_{i=1}^n \log(1 + \lambda_i) $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Linearize via Taylor Series.</strong>
+          For small $\lambda_i$, we use the Taylor expansion $\log(1+z) \approx z$.
+          $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i = \mathrm{tr}(E) = \mathrm{tr}(X^{-1}\Delta) $$
           </div>
           <div class="proof-step">
-            <strong>Step 3: Identify the Gradient.</strong>
+          <strong>Step 4: Identify the Gradient.</strong>
             The first-order approximation is:
             $$ \log \det(X+\Delta) \approx \log \det X + \mathrm{tr}(X^{-1}\Delta) $$
-            Using the trace inner product property $\mathrm{tr}(A^\top B) = \langle A, B \rangle$:
+          To extract the gradient, we write the trace term as an inner product $\langle G, \Delta \rangle = \mathrm{tr}(G^\top \Delta)$.
             $$ \mathrm{tr}(X^{-1}\Delta) = \mathrm{tr}((X^{-\top})^\top \Delta) = \langle X^{-\top}, \Delta \rangle $$
-            Thus, by definition, $\nabla_X \log \det X = X^{-\top}$.
+          Thus, by the definition of the gradient, $\nabla_X \log \det X = X^{-\top}$.
           </div>
         </div>
         </li>
@@ -280,16 +286,21 @@
         <h4>Proof: $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$</h4>
 
         <div class="proof-step">
-          <strong>Setup:</strong> Take any $y \in \mathcal{N}(A^\top)$ and any $x \in \mathbb{R}^n$. By definition, $A^\top y = 0$ and $Ax \in \mathcal{R}(A)$.
+          <strong>Setup:</strong> Let $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$. By definition, $v = Ax$ for some $x \in \mathbb{R}^n$, and $A^\top y = 0$.
         </div>
 
         <div class="proof-step">
-          <strong>Compute inner product:</strong> The inner product between $Ax$ and $y$ is:
-          $$ y^\top (Ax) = (A^\top y)^\top x = 0^\top x = 0 $$
+          <strong>Compute inner product:</strong> We compute the dot product $\langle v, y \rangle$:
+          $$ v^\top y = (Ax)^\top y = x^\top A^\top y = x^\top (A^\top y) $$
         </div>
 
         <div class="proof-step">
-          <strong>Conclusion:</strong> Since this holds for all $x \in \mathbb{R}^n$, every vector in $\mathcal{R}(A)$ is orthogonal to every vector in $\mathcal{N}(A^\top)$.
+          <strong>Substitute Nullspace Condition:</strong> Since $y \in \mathcal{N}(A^\top)$, we have $A^\top y = 0$.
+          $$ x^\top (0) = 0 $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Conclusion:</strong> The inner product is zero for any $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$. Thus, the subspaces are orthogonal.
         </div>
       </div>
 
@@ -1178,13 +1189,13 @@
         $$ A = \begin{bmatrix} 2 & 0 \\ 0 & 1 \end{bmatrix} $$
         <p>This simple matrix just stretches. But let's look at a general $A$. The transformation $Ax = U (\Sigma (V^\top x))$ happens in three steps:</p>
         <ol>
-          <li><b>Rotate (Input Space):</b> First, multiplication by the orthogonal matrix $V^\top$ performs a rotation (or reflection) of the vector $x$. It aligns the standard basis vectors with the "right singular vectors" $v_1, v_2$.
+          <li><b>Step 1: Rotate (Input Space).</b> First, multiplication by the orthogonal matrix $V^\top$ performs a rotation (or reflection) of the vector $x$. It changes the basis from the standard coordinates to the eigenbasis of $A^\top A$.
             <br><i>Effect:</i> The unit circle remains a circle, just rotated.
           </li>
-          <li><b>Stretch:</b> Next, multiplication by the diagonal matrix $\Sigma$ stretches the rotated vector along the coordinate axes. The first coordinate is scaled by $\sigma_1$, the second by $\sigma_2$.
-            <br><i>Effect:</i> The circle becomes an ellipse aligned with the axes.
+          <li><b>Step 2: Stretch.</b> Next, multiplication by the diagonal matrix $\Sigma$ stretches the rotated vector along the coordinate axes. The $i$-th coordinate is scaled by the singular value $\sigma_i$.
+            <br><i>Effect:</i> The circle becomes an axis-aligned ellipse.
           </li>
-          <li><b>Rotate (Output Space):</b> Finally, multiplication by $U$ rotates the ellipse to its final orientation. The axes of the ellipse align with the "left singular vectors" $u_1, u_2$.
+          <li><b>Step 3: Rotate (Output Space).</b> Finally, multiplication by $U$ rotates the ellipse to its final orientation in the output space. The major axes of the ellipse align with the columns of $U$ (left singular vectors).
           </li>
         </ol>
         <p><b>Summary:</b> Every linear map is just a rotation, followed by a stretch, followed by another rotation. SVD gives you the coordinate systems ($V$ and $U$) in which the map is purely diagonal (a simple stretch).</p>
@@ -1700,9 +1711,6 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
     <section class="section-card" id="section-9">
       <h2>9. Review & Implementation Guide</h2>
 
-
-      <p><strong>Overview:</strong> This lecture establishes the linear algebra foundation required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, and projections, building the mathematical background necessary for optimization theory.</p>
-
       <h3>Method Comparison: When to Use What</h3>
       <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
         <thead>
@@ -1737,19 +1745,19 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
       </table>
 
       <p><strong>Key Takeaway:</strong> <em>Prefer QR or SVD over normal equations for numerical stability. Use SVD when rank-deficiency, condition number analysis, or low-rank approximation is needed.</em></p>
+
       <h3>Key Formulas</h3>
-
-
       <ul>
         <li><b>Normal Equations:</b> $A^\top A x^\star = A^\top b$</li>
         <li><b>Projection onto $\mathcal{R}(A)$:</b> $P = A(A^\top A)^{-1}A^\top$</li>
         <li><b>QR Solution:</b> $Rx^\star = Q^\top b$</li>
         <li><b>Pseudoinverse:</b> $A^+ = V\Sigma^+ U^\top$</li>
         <li><b>Condition Number:</b> $\kappa(A) = \sigma_{\max} / \sigma_{\min}$</li>
+        <li><b>Spectral Norm:</b> $\|A\|_2 = \sigma_{\max}(A) = \sqrt{\lambda_{\max}(A^\top A)}$</li>
+        <li><b>Frobenius Norm:</b> $\|A\|_F = \sqrt{\sum \sigma_i^2} = \sqrt{\mathrm{tr}(A^\top A)}$</li>
       </ul>
+
       <h3>Implementation Mini-Guide</h3>
-
-
       <ul>
         <li>For standard, well-conditioned problems, <b>QR decomposition</b> is the recommended method. It is numerically stable and computationally efficient.</li>
         <li>For problems that are ill-conditioned or rank-deficient, the <b>SVD method</b> is the most robust choice. It is also necessary when the minimum-norm solution is required.</li>
@@ -1757,9 +1765,8 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <li>Before solving, it is often a good practice to <b>preprocess data</b> by centering and scaling features. This can significantly improve the condition number.</li>
         <li>Always <b>verify the solution</b> by checking that the residual is orthogonal to the column space: $A^\top(b - Ax^*) \approx 0$.</li>
       </ul>
+
       <h3>Sanity Checklist</h3>
-
-
       <ul>
         <li>Always check the <b>dimensions</b> of your matrices and vectors.</li>
         <li>For least squares, check if your matrix has <b>full column rank</b> to determine if the solution is unique.</li>
@@ -1768,18 +1775,6 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         <li>Remember the geometric interpretation: the least squares solution is a <b>projection</b>.</li>
       </ul>
     </section>
-
-    <!-- SECTION 8: VARIANTS -->
-
-
-
-    <!-- SECTION 9: IMPLEMENTATION GUIDE -->
-
-
-    <!-- SECTION 10: SANITY CHECKLIST -->
-
-
-    <!-- SECTION 11: QUICK REFERENCE -->
 
 
     <!-- SECTION 12: EXERCISES -->

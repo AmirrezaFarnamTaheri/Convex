@@ -633,20 +633,19 @@ ight) \
 
       <h3>Key Concepts</h3>
       <ul>
-        <li><strong>Lagrangian:</strong> $L(x, \lambda, \nu) = f_0(x) + \sum \lambda_i f_i(x) + \sum \nu_j h_j(x)$ (penalized objective).</li>
-        <li><strong>Dual Function:</strong> $g(\lambda, \nu) = \inf_x L(x, \lambda, \nu)$ (concave lower bound).</li>
-        <li><strong>Weak Duality:</strong> $d^* \le p^*$ (Always true).</li>
-        <li><strong>Strong Duality:</strong> $d^* = p^*$ (True if convex + Slater's condition).</li>
-        <li><strong>Slater's Condition:</strong> Strict feasibility guarantees strong duality.</li>
+        <li><strong>Lagrangian:</strong> $L(x, \lambda, \nu) = f_0(x) + \sum \lambda_i f_i(x) + \sum \nu_j h_j(x)$. This converts a constrained problem into an unconstrained one by pricing the constraints.</li>
+        <li><strong>Dual Function:</strong> $g(\lambda, \nu) = \inf_x L(x, \lambda, \nu)$. This function is always concave, regardless of the convexity of the primal.</li>
+        <li><strong>Weak Duality:</strong> $d^* \le p^*$. The best lower bound from the dual is always less than or equal to the primal optimal value.</li>
+        <li><strong>Strong Duality:</strong> $d^* = p^*$. This holds for convex problems under Slater's condition (strict feasibility).</li>
       </ul>
 
       <h3>KKT Conditions (Optimality Certificate)</h3>
-      <p>For convex problems with strong duality, $x^*$ and $(\lambda^*, \nu^*)$ are optimal $\iff$:</p>
+      <p>For convex problems where strong duality holds, the vectors $x^*, \lambda^*, \nu^*$ are optimal if and only if they satisfy:</p>
       <ol>
-        <li><strong>Stationarity:</strong> $\nabla_x L(x^*, \lambda^*, \nu^*) = 0$</li>
-        <li><strong>Primal Feasibility:</strong> $f_i(x^*) \le 0, h_j(x^*) = 0$</li>
-        <li><strong>Dual Feasibility:</strong> $\lambda^* \succeq 0$</li>
-        <li><strong>Complementary Slackness:</strong> $\lambda_i^* f_i(x^*) = 0$</li>
+        <li><strong>Stationarity:</strong> $\nabla f_0(x^*) + \sum \lambda_i^* \nabla f_i(x^*) + \sum \nu_j^* \nabla h_j(x^*) = 0$ (Forces balance).</li>
+        <li><strong>Primal Feasibility:</strong> Constraints are satisfied.</li>
+        <li><strong>Dual Feasibility:</strong> $\lambda^* \succeq 0$ (Prices are non-negative).</li>
+        <li><strong>Complementary Slackness:</strong> $\lambda_i^* f_i(x^*) = 0$ (Inactive constraints have zero price).</li>
       </ol>
     </section>
 
