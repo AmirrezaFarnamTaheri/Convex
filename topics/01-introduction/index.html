@@ -1066,14 +1066,65 @@
         </ol>
       </section>
 
-    <!-- SECTION 10: EXERCISES -->
-      <section class="section-card" id="section-10">
+    <!-- SECTION 10: REVIEW -->
+    <section class="section-card" id="section-10">
       <h2>10. Review & Cheat Sheet</h2>
-      <p><strong>Overview:</strong> This lecture introduces convex optimization by defining what makes a problem "convex" and proving the fundamental theorem that any local minimum is also global. We examine the canonical problem families (LP, QP, SOCP, SDP), present the "loss + regularizer + constraints" modeling framework, and develop practical techniques for reformulating problems into standard convex forms.</p>
+
+      <h3>Convex vs. Non-Convex: The Litmus Test</h3>
+      <table class="data-table" style="width: 100%; margin-bottom: 24px;">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Convex Problem</th>
+            <th>Non-Convex Problem</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Local Optima</b></td>
+            <td>Any local optimum is global.</td>
+            <td>Can get stuck in local traps.</td>
+          </tr>
+          <tr>
+            <td><b>Objective</b></td>
+            <td>Convex function (bowl-shaped).</td>
+            <td>Any function (wavy, multimodal).</td>
+          </tr>
+          <tr>
+            <td><b>Constraints</b></td>
+            <td>$f_i(x) \le 0$ (convex), $Ax=b$ (affine).</td>
+            <td>Non-convex sets, integer constraints.</td>
+          </tr>
+          <tr>
+            <td><b>Solvability</b></td>
+            <td>Polynomial time (reliable).</td>
+            <td>NP-Hard (generally heuristics).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Standard Problem Forms</h3>
+      <ul>
+        <li><b>LP (Linear Program):</b> Linear objective, linear constraints.
+          <br>$\min c^\top x$ s.t. $Ax \le b$.</li>
+        <li><b>QP (Quadratic Program):</b> Convex quadratic objective, linear constraints.
+          <br>$\min \frac{1}{2}x^\top Px + q^\top x$ s.t. $Ax \le b$ ($P \succeq 0$).</li>
+        <li><b>SOCP (Second-Order Cone Program):</b> Linear objective, norm constraints.
+          <br>$\min c^\top x$ s.t. $\|A_i x + b_i\|_2 \le c_i^\top x + d_i$.</li>
+        <li><b>SDP (Semidefinite Program):</b> Linear objective, LMI constraints.
+          <br>$\min \mathrm{tr}(CX)$ s.t. $\sum x_i A_i \succeq B$.</li>
+      </ul>
+
+      <h3>Common Reformulation Tricks</h3>
+      <ul>
+        <li><b>Maximize Convex?</b> No! Minimize the negative (concave).</li>
+        <li><b>$|x|$ or $\|x\|_1$:</b> Split into variables $-t \le x \le t$.</li>
+        <li><b>$\max_i f_i(x)$:</b> Introduce epigraph variable $t$: $f_i(x) \le t$.</li>
+        <li><b>Linear-Fractional:</b> Homogenize variables (Charnes-Cooper transformation).</li>
+      </ul>
     </section>
 
-
-    <!-- SECTION 11: SUMMARY -->
+    <!-- SECTION 11: EXERCISES -->
     <section class="section-card" id="section-11">
         <h2><i data-feather="edit-3"></i> 11. Exercises</h2>
 

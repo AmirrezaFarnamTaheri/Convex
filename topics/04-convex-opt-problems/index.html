@@ -698,7 +698,54 @@
 
 <section class="section-card" id="section-9">
       <h2>9. Review & Cheat Sheet</h2>
-      <p><strong>Overview:</strong> This lecture covers convex optimization problem classes—LP, QP, SOCP, SDP—and the mathematical foundations for recognizing, classifying, and formulating convex problems. We develop the theoretical underpinnings of standard forms and establish the hierarchy of problem classes that governs modern optimization.</p>
+
+      <h3>Problem Classes Reference</h3>
+      <table class="data-table" style="width: 100%; margin-bottom: 24px;">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Objective</th>
+            <th>Constraints</th>
+            <th>Key Property</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>LP</b></td>
+            <td>Linear</td>
+            <td>Linear inequalities ($Ax \le b$)</td>
+            <td>Solution at vertex; simplex method.</td>
+          </tr>
+          <tr>
+            <td><b>QP</b></td>
+            <td>Convex Quadratic</td>
+            <td>Linear inequalities</td>
+            <td>Unique solution if $P \succ 0$.</td>
+          </tr>
+          <tr>
+            <td><b>SOCP</b></td>
+            <td>Linear</td>
+            <td>Norm constraints ($\|Ax+b\|_2 \le c^\top x + d$)</td>
+            <td>Robust optimization; Euclidean geometry.</td>
+          </tr>
+          <tr>
+            <td><b>SDP</b></td>
+            <td>Linear</td>
+            <td>LMI ($F_0 + \sum x_i F_i \succeq 0$)</td>
+            <td>Optimizes over matrices; relaxation power.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Hierarchy</h3>
+      <p style="text-align: center; font-size: 1.2em;">
+        <strong>LP ⊂ QP ⊂ SOCP ⊂ SDP</strong>
+      </p>
+      <ul>
+        <li>Every LP is a QP (with $P=0$).</li>
+        <li>Every QP is an SOCP (via Cholesky factorization of constraints).</li>
+        <li>Every SOCP is an SDP (via Schur complement).</li>
+      </ul>
     </section>
 
 <section class="section-card" id="section-10">
