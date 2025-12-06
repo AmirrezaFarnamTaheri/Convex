@@ -1058,738 +1058,375 @@
 
 
 
-    <section class="section-card" id="section-9">
-      <h2><i data-feather="edit-3"></i> 9. Exercises</h2>
-
-
-        <p>These problems consolidate all exercises from throughout the lecture and add additional practice.</p>
-
+      <section class="section-card" id="section-9">
+    <h2><i data-feather="edit-3"></i> 9. Exercises</h2>
+    <p>These problems consolidate all exercises from throughout the lecture and add additional practice.</p>
 
 <div class="problem">
   <h3>P2.1 — Convexity of Distance Set</h3>
-  <p>Show that the set of points closer to a given point $x_0$ than to another point $y_0$, defined as:</p>
-          $$
-          C = \{x \in \mathbb{R}^n \mid \|x - x_0\|_2 \le \|x - y_0\|_2\}
-          $$
-          <p>is a convex set.</p>
-
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Geometric Bisector:</b> The set of points closer to $x_0$ than $y_0$ is the halfspace defined by the perpendicular bisector of the segment $[x_0, y_0]$. Since halfspaces are convex, this set is convex.</li>
-            <li><b>Algebraic Verification:</b> Expanding $\|x - x_0\|^2 \le \|x - y_0\|^2$ always cancels the quadratic term $x^\top x$, leaving a linear inequality.</li>
-        </ul>
-      </div>
-
+  <p>Show that the set of points closer to a given point $x_0$ than to another point $y_0$, defined as:</p>$$C = \{x \in \mathbb{R}^n \mid \|x - x_0\|_2 \le \|x - y_0\|_2\}$$<p>is a convex set.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Geometric Bisector: The set of points closer to $x_0$ than $y_0$ is a halfspace defined by the perpendicular bisector.</p>
+    <ul><li><b>Geometric Bisector:</b> The set is the halfspace defined by the perpendicular bisector of the segment $[x_0, y_0]$.</li><li><b>Algebraic Verification:</b> Expanding norms cancels the quadratic term $x^\top x$, leaving a linear inequality.</li></ul>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Step 1: Square both sides.</strong> Since both sides are non-negative, squaring preserves the inequality:
-              $$
-              \|x - x_0\|_2^2 \le \|x - y_0\|_2^2
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Expand.</strong>
-              $$
-              (x - x_0)^\top (x - x_0) \le (x - y_0)^\top (x - y_0)
-              $$
-              $$
-              x^\top x - 2x_0^\top x + x_0^\top x_0 \le x^\top x - 2y_0^\top x + y_0^\top y_0
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Simplify.</strong> The $x^\top x$ terms cancel:
-              $$
-              -2x_0^\top x + \|x_0\|_2^2 \le -2y_0^\top x + \|y_0\|_2^2
-              $$
-              $$
-              2(y_0 - x_0)^\top x \le \|y_0\|_2^2 - \|x_0\|_2^2
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 4: Recognize as halfspace.</strong> This is a linear inequality $a^\top x \le b$ where $a = 2(y_0 - x_0)$ and $b = \|y_0\|_2^2 - \|x_0\|_2^2$. A halfspace is convex, therefore $C$ is convex.
-            </div>
+    <div class="proof-step"><strong>Step 1: Square both sides.</strong> Since norms are non-negative: $ \|x - x_0\|_2^2 \le \|x - y_0\|_2^2 $.</div>
+       <div class="proof-step"><strong>Step 2: Expand.</strong> $ (x - x_0)^\top (x - x_0) \le (x - y_0)^\top (x - y_0) \implies x^\top x - 2x_0^\top x + \|x_0\|^2 \le x^\top x - 2y_0^\top x + \|y_0\|^2 $.</div>
+       <div class="proof-step"><strong>Step 3: Simplify.</strong> $ 2(y_0 - x_0)^\top x \le \|y_0\|^2 - \|x_0\|^2 $.</div>
+       <div class="proof-step"><strong>Conclusion:</strong> This is a linear inequality $a^\top x \le b$, defining a halfspace, which is convex.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.2 — Dual of a Subspace</h3>
-  <p>Let $V \subseteq \mathbb{R}^n$ be a linear subspace. Prove that its dual cone is the orthogonal complement:</p>
-          $$
-          V^* = V^\perp = \{y \in \mathbb{R}^n \mid y^\top x = 0 \ \forall x \in V\}
-          $$
-
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Subspace Duality:</b> For a linear subspace $V$, the dual cone $V^*$ coincides with the orthogonal complement $V^\perp$. This is because a subspace contains both $x$ and $-x$, forcing the angle condition $y^\top x \ge 0$ to become the orthogonality condition $y^\top x = 0$.</li>
-            <li><b>Geometric Intuition:</b> A subspace is "flat" and extends infinitely in both directions. The only vectors that can make a non-obtuse angle with <i>every</i> vector in this flat plane are those strictly perpendicular to it (the normal vectors).</li>
-        </ul>
-      </div>
-
+  <p>Let $V \subseteq \mathbb{R}^n$ be a linear subspace. Prove that its dual cone is the orthogonal complement: $V^* = V^\perp$.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Subspace Duality: For a linear subspace $V$, the dual cone $V^*$ coincides with the orthogonal complement $V^\perp$.</p>
+    <p><b>Subspace Duality:</b> Since a subspace contains lines through the origin (both $x$ and $-x$), the condition $y^\top x \ge 0$ forces $y^\top x = 0$.</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Step 1: Recall definition.</strong> $V^* = \{y \mid y^\top x \ge 0 \ \forall x \in V\}$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Show $V^\perp \subseteq V^*$.</strong> If $y \in V^\perp$, then $y^\top x = 0$ for all $x \in V$. Since $0 \ge 0$, we have $y \in V^*$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Show $V^* \subseteq V^\perp$.</strong> Suppose $y \in V^*$, so $y^\top x \ge 0$ for all $x \in V$. Since $V$ is a subspace, if $x \in V$, then $-x \in V$ as well. Therefore:
-              $$
-              y^\top (-x) \ge 0 \quad \implies \quad y^\top x \le 0
-              $$
-              The only way for both $y^\top x \ge 0$ and $y^\top x \le 0$ to hold is if $y^\top x = 0$ for all $x \in V$. Thus $y \in V^\perp$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> $V^* = V^\perp$.
-            </div>
+    <div class="proof-step"><strong>($V^\perp \subseteq V^*$):</strong> If $y \in V^\perp$, $y^\top x = 0 \ge 0$ for all $x \in V$. So $y \in V^*$.</div>
+       <div class="proof-step"><strong>($V^* \subseteq V^\perp$):</strong> If $y \in V^*$, then $y^\top x \ge 0$ for all $x \in V$. Since $-x \in V$, $y^\top (-x) \ge 0 \implies y^\top x \le 0$. Thus $y^\top x = 0$, so $y \in V^\perp$.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.3 — Convexity of Quadratic Sublevel Set</h3>
-  <p>Show that the set:</p>
-          $$
-          C = \{x \in \mathbb{R}^n \mid x^\top Q x + c^\top x + d \le 0\}
-          $$
-          <p>is convex when $Q \in \mathbb{S}^n_+$ (positive semidefinite).</p>
-
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Sublevel Sets of Convex Functions:</b> A fundamental property of convex functions is that their sublevel sets $\{x \mid f(x) \le lpha\}$ are always convex sets (though the converse is not true).</li>
-            <li><b>Hessian Condition:</b> For a quadratic $f(x) = x^\top Q x + c^\top x + d$, convexity is determined solely by $Q \succeq 0$.</li>
-        </ul>
-      </div>
-
+  <p>Let $f(x) = x^\top A x + b^\top x + c$ where $A \in \mathbb{S}^n$ is symmetric, $b \in \mathbb{R}^n, c \in \mathbb{R}$. Define the set $C = \{x \in \mathbb{R}^n \mid f(x) \le 0\}$.</p>
+       <p><b>(a)</b> Prove that if $A \succeq 0$, then $C$ is convex.</p>
+       <p><b>(b)</b> Let $H = \{x \mid g^\top x + h = 0\}$ be a hyperplane. Show that if $A + \lambda g g^\top \succeq 0$ for some $\lambda$, then $C \cap H$ is convex.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Sublevel Sets: Sublevel sets of convex functions are convex. For quadratics, convexity depends on the Hessian being PSD.</p>
+    <ul><li><b>Convexity of Quadratics:</b> A quadratic function is convex iff its Hessian $2A$ is PSD. Sublevel sets of convex functions are convex.</li>
+       <li><b>Restriction to Subspace:</b> Even if $A$ is not PSD, the function might be convex <i>when restricted</i> to the feasible set (e.g., the hyperplane).</li></ul>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Step 1: Identify as sublevel set.</strong> Define $f(x) = x^\top Q x + c^\top x + d$. The Hessian is $\nabla^2 f(x) = 2Q \succeq 0$ (PSD), so $f$ is convex.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Setup convexity proof.</strong> Take $x, y \in C$ and $\theta \in [0,1]$. This means $f(x) \le 0$ and $f(y) \le 0$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Apply convexity of $f$.</strong>
-              $$
-              f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \le \theta \cdot 0 + (1-\theta) \cdot 0 = 0
-              $$
-              Therefore, $\theta x + (1-\theta)y \in C$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> $C$ is convex (sublevel sets of convex functions are convex).
-            </div>
+    <div class="proof-step"><strong>(a) Convexity when $A \succeq 0$.</strong> Let $x, y \in C$ and $z = \theta x + (1-\theta)y$ for $\theta \in [0,1]$.
+       <br>Expand $f(z)$:
+       $$ f(z) = \theta f(x) + (1-\theta)f(y) - \theta(1-\theta)(x-y)^\top A (x-y) $$
+       Since $A \succeq 0$, $(x-y)^\top A (x-y) \ge 0$. Also $\theta(1-\theta) \ge 0$.
+       Thus $f(z) \le \theta f(x) + (1-\theta)f(y)$. Since $f(x), f(y) \le 0$, we have $f(z) \le 0$. So $z \in C$.</div>
+       <div class="proof-step"><strong>(b) Convexity on Hyperplane.</strong> Define $\tilde f(x) = f(x) + \lambda (g^\top x + h)^2$.
+       The term $(g^\top x + h)^2$ is zero for all $x \in H$, so $\tilde f(x) = f(x)$ on $H$.
+       $$ \tilde f(x) = x^\top (A + \lambda g g^\top) x + (b + 2\lambda h g)^\top x + (c + \lambda h^2) $$
+       The Hessian of $\tilde f$ is $2(A + \lambda g g^\top) \succeq 0$, so $\tilde f$ is convex.
+       Thus $S = \{x \mid \tilde f(x) \le 0\}$ is convex.
+       Since $C \cap H = S \cap H$ (because $f = \tilde f$ on $H$), and the intersection of convex sets $S$ and $H$ is convex, $C \cap H$ is convex.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.4 — Relative Interior of the Simplex</h3>
-  <p>Let $\Delta^n = \{x \in \mathbb{R}^n \mid x \ge 0, \mathbf{1}^\top x = 1\}$ be the standard simplex. Show that:</p>
-          $$
-          \mathrm{ri}(\Delta^n) = \{x \in \mathbb{R}^n \mid x > 0, \mathbf{1}^\top x = 1\}
-          $$
-
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Relative Interior Definition:</b> The relative interior $\mathrm{ri}(C)$ consists of points that are in the "interior" of $C$ when viewed within its affine hull. It excludes "edges" that lie on the relative boundary.</li>
-            <li><b>Simplex Geometry:</b> The standard simplex $\Delta^n$ lives in the affine hyperplane $\sum x_i = 1$. Its topological interior is empty (it has no volume in $\mathbb{R}^n$), but its relative interior is the set of strictly positive probability distributions ($x > 0$).</li>
-        </ul>
-      </div>
-
+  <p>Show that $\mathrm{ri}(\Delta^n) = \{x \in \mathbb{R}^n \mid x > 0, \mathbf{1}^\top x = 1\}$.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Relative Interior: The relative interior of the simplex consists of probability vectors with strictly positive entries.</p>
+    <p><b>Relative Interior:</b> Points strictly inside the set relative to its affine hull. For the simplex, this means probability distributions with full support (no zero entries).</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Step 1: Identify affine hull.</strong> $\mathrm{aff}(\Delta^n) = \{x \in \mathbb{R}^n \mid \mathbf{1}^\top x = 1\}$ (the hyperplane, without requiring $x \ge 0$).
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Interior relative to affine hull.</strong> A point $x \in \Delta^n$ is in $\mathrm{ri}(\Delta^n)$ if there exists $\varepsilon > 0$ such that the ball $B(x, \varepsilon) \cap \mathrm{aff}(\Delta^n)$ is contained in $\Delta^n$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Necessity ($\Rightarrow$).</strong> If $x_i = 0$ for some $i$, then any ball around $x$ in the hyperplane contains points with $x_i < 0$, which violates $\Delta^n \subseteq \{x \ge 0\}$. Thus, all coordinates must be strictly positive.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 4: Sufficiency ($\Leftarrow$).</strong> If $x > 0$ with $\mathbf{1}^\top x = 1$, let $\varepsilon = \min_i x_i > 0$. For any $y \in B(x, \varepsilon/2) \cap \mathrm{aff}(\Delta^n)$:
-              $$
-              y_i \ge x_i - \|y - x\|_\infty \ge x_i - \varepsilon/2 > 0
-              $$
-              Thus $y \in \Delta^n$, so $x \in \mathrm{ri}(\Delta^n)$.
-            </div>
+    <div class="proof-step">The affine hull is $\{x \mid \mathbf{1}^\top x = 1\}$. A point $x$ is in the relative interior if there is a ball in this plane around $x$ contained in $\Delta^n$. If any $x_i = 0$, we can move slightly negative in that direction while staying in the plane, violating $x \ge 0$. Thus all $x_i > 0$ is required.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.5 — Separation by Projection</h3>
-  <p>Let $C$ be a nonempty closed convex set and $y \notin C$. Prove that the vector $a = y - \Pi_C(y)$ (where $\Pi_C$ denotes projection onto $C$) defines a strictly separating hyperplane:</p>
-          $$
-          a^\top x \le a^\top p < a^\top y \quad \forall x \in C
-          $$
-          <p>where $p = \Pi_C(y)$.</p>
-
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Constructive Separation Proof:</b> The Separating Hyperplane Theorem for a closed convex set $C$ and an external point $y$ can be proven constructively using the projection theorem. The closest point $p = \Pi_C(y)$ serves as the anchor.</li>
-            <li><b>The Normal Vector:</b> The vector $a = y - p$ is normal to the separating hyperplane. The hyperplane passes through $p$ and is perpendicular to the line segment connecting $y$ and its projection, placing $C$ entirely on one side.</li>
-        </ul>
-      </div>
-
+  <p>Let $C$ be closed convex, $y \notin C$. Prove $a = y - \Pi_C(y)$ defines a strictly separating hyperplane.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Separation by Projection: The projection theorem constructs a separating hyperplane for any closed convex set and an external point.</p>
+    <p><b>Projection Theorem:</b> The projection $p = \Pi_C(y)$ satisfies $(y-p)^\top (x-p) \le 0$ for all $x \in C$.</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Step 1: Projection characterization.</strong> By the projection theorem (Lecture 00), for all $x \in C$:
-              $$
-              (y - p)^\top (x - p) \le 0
-              $$
-              Expanding with $a = y - p$:
-              $$
-              a^\top x - a^\top p \le 0 \quad \implies \quad a^\top x \le a^\top p
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Strict inequality at $y$.</strong> Since $p \neq y$ (because $y \notin C$), we have $a = y - p \neq 0$, so $\|a\|_2 > 0$. Then:
-              $$
-              a^\top y = a^\top p + a^\top (y - p) = a^\top p + \|a\|_2^2 > a^\top p
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> Combining both inequalities: $a^\top x \le a^\top p < a^\top y$ for all $x \in C$, giving strict separation.
-            </div>
+    <div class="proof-step">Let $p = \Pi_C(y)$ and $a = y - p$. By the projection property: $a^\top (x - p) \le 0 \implies a^\top x \le a^\top p$.</div>
+       <div class="proof-step">Since $y \notin C$, $a \neq 0$. $a^\top y = a^\top (p + a) = a^\top p + \|a\|^2 > a^\top p$.</div>
+       <div class="proof-step">Thus $a^\top x \le a^\top p < a^\top y$.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.6 — Self-Duality of Second-Order Cone</h3>
-  <p>Prove that the second-order cone $\mathcal{Q} = \{(x, t) \in \mathbb{R}^{n+1} \mid \|x\|_2 \le t\}$ is self-dual: $\mathcal{Q}^* = \mathcal{Q}$.</p>
-
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Self-Duality of the Lorentz Cone:</b> The Second-Order Cone (or Ice-Cream Cone) $\mathcal{Q}$ is self-dual, meaning $\mathcal{Q}^* = \mathcal{Q}$. This property is shared by the non-negative orthant and the PSD cone, making it a symmetric cone.</li>
-            <li><b>Proof Logic:</b> The proof relies on the Cauchy-Schwarz inequality $u^\top v \ge -\|u\|\|v\|$ to show $\mathcal{Q} \subseteq \mathcal{Q}^*$, and a specific counter-example construction to show the reverse inclusion.</li>
-        </ul>
-      </div>
-
+  <p>Prove $\mathcal{Q} = \{(x,t) \mid \|x\|_2 \le t\}$ is self-dual.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Self-Duality: The second-order cone is self-dual ($\mathcal{Q} = \mathcal{Q}^*$), a key property for SOCP.</p>
+    <p><b>Cauchy-Schwarz:</b> The proof hinges on $u^\top v \ge -\|u\|\|v\|$.</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <p>We prove both inclusions.</p>
-
-            <div class="proof-step">
-              <strong>($\subseteq$): $\mathcal{Q} \subseteq \mathcal{Q}^*$.</strong> Let $(y, s) \in \mathcal{Q}$, so $\|y\|_2 \le s$. For any $(x, t) \in \mathcal{Q}$ (so $\|x\|_2 \le t$):
-              $$
-              y^\top x + st \ge -|y^\top x| + st \ge -\|y\|_2 \|x\|_2 + st \ge -st + st = 0
-              $$
-              (using Cauchy-Schwarz and the cone constraints). Thus $(y, s) \in \mathcal{Q}^*$.
-            </div>
-
-            <div class="proof-step">
-              <strong>($\supseteq$): $\mathcal{Q}^* \subseteq \mathcal{Q}$.</strong> Let $(y, s) \in \mathcal{Q}^*$. We must show $\|y\|_2 \le s$.
-              Assume for contradiction that $\|y\|_2 > s$.
-              <ul>
-                <li><b>Case 1:</b> If $s < 0$, take $(x, t) = (0, 1) \in \mathcal{Q}$. Then $y^\top x + st = s < 0$, contradicting $(y, s) \in \mathcal{Q}^*$.</li>
-                <li><b>Case 2:</b> If $s \ge 0$ but $\|y\|_2 > s$, take $(x, t) = (-y/\|y\|_2, 1) \in \mathcal{Q}$ (since $\|x\|_2 = 1 = t$). Then:
-                  $$
-                  y^\top x + st = y^\top(-y/\|y\|_2) + s = -\|y\|_2 + s < 0
-                  $$
-                  contradicting $(y, s) \in \mathcal{Q}^*$.
-                </li>
-              </ul>
-              Therefore, $\|y\|_2 \le s$, so $(y, s) \in \mathcal{Q}$.
-            </div>
+    <div class="proof-step"><strong>($\subseteq$):</strong> If $(y,s), (x,t) \in \mathcal{Q}$, then $y^\top x + st \ge -\|y\|\|x\| + st \ge -st + st = 0$. So $\mathcal{Q} \subseteq \mathcal{Q}^*$.</div>
+       <div class="proof-step"><strong>($\supseteq$):</strong> If $(y,s) \in \mathcal{Q}^*$, assume $\|y\| > s$.
+       If $s < 0$, test against $(0,1) \in \mathcal{Q} \implies s \ge 0$ (contradiction).
+       If $s \ge 0$, test against $(-y/\|y\|, 1) \in \mathcal{Q} \implies -\|y\| + s \ge 0 \implies s \ge \|y\|$ (contradiction).
+       Thus $\|y\| \le s$, so $(y,s) \in \mathcal{Q}$.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.7 — Dual Cone Identities</h3>
-  <p>For closed convex cones $K_1, K_2 \subseteq \mathbb{R}^n$, prove:</p>
-          $$
-          (K_1 + K_2)^* = K_1^* \cap K_2^*
-          $$
-
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Duality of Operations:</b> There is a duality between addition and intersection for convex cones: $(K_1 + K_2)^* = K_1^* \cap K_2^*$. Taking the dual swaps "sum" with "intersection".</li>
-            <li><b>Constraint Logic:</b> A vector is in the dual of the sum if it has a non-negative dot product with <i>all</i> sums. This is a stricter requirement than being in the dual of just one, hence the intersection.</li>
-        </ul>
-      </div>
-
+  <p>Prove $(K_1 + K_2)^* = K_1^* \cap K_2^*$.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Dual Operations: The dual of a sum is the intersection of duals ($ (K_1 + K_2)^* = K_1^* \cap K_2^* $).</p>
+    <p><b>Sum vs Intersection:</b> A linear functional is non-negative on a sum iff it is non-negative on each part.</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>($\supseteq$):</strong> Let $y \in K_1^* \cap K_2^*$. For any $x \in K_1 + K_2$, we can write $x = x_1 + x_2$ where $x_1 \in K_1, x_2 \in K_2$. Then:
-              $$
-              y^\top x = y^\top(x_1 + x_2) = y^\top x_1 + y^\top x_2 \ge 0 + 0 = 0
-              $$
-              (since $y \in K_1^*$ and $y \in K_2^*$). Thus $y \in (K_1 + K_2)^*$.
-            </div>
-
-            <div class="proof-step">
-              <strong>($\subseteq$):</strong> Let $y \in (K_1 + K_2)^*$. Then $y^\top(x_1 + x_2) \ge 0$ for all $x_1 \in K_1, x_2 \in K_2$. Taking $x_2 = 0$:
-              $$
-              y^\top x_1 \ge 0 \quad \forall x_1 \in K_1 \quad \implies \quad y \in K_1^*
-              $$
-              Similarly, taking $x_1 = 0$ gives $y \in K_2^*$. Thus $y \in K_1^* \cap K_2^*$.
-            </div>
+    <div class="proof-step"><strong>($\supseteq$):</strong> If $y \in K_1^* \cap K_2^*$, then $y^\top(x_1+x_2) = y^\top x_1 + y^\top x_2 \ge 0$.</div>
+       <div class="proof-step"><strong>($\subseteq$):</strong> If $y \in (K_1+K_2)^*$, taking $x_2=0$ implies $y \in K_1^*$; taking $x_1=0$ implies $y \in K_2^*$.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.8 — Generalized Inequality Properties</h3>
-  <p>Let $K$ be a proper cone defining a generalized inequality $\preceq_K$. Prove that $\preceq_K$ is:</p>
-          <ol type="a">
-            <li>Reflexive: $x \preceq_K x$</li>
-            <li>Antisymmetric: $x \preceq_K y$ and $y \preceq_K x \implies x = y$</li>
-            <li>Transitive: $x \preceq_K y \preceq_K z \implies x \preceq_K z$</li>
-          </ol>
-
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Cone-Induced Partial Orders:</b> Any proper cone $K$ defines a generalized inequality $\preceq_K$ that behaves like the standard scalar inequality.</li>
-            <li><b>Role of Pointedness:</b> The "pointed" property (cone contains no lines) is strictly required for the antisymmetry property ($x \preceq y \land y \preceq x \implies x=y$). Without it, we would only have a preorder, not a partial order.</li>
-        </ul>
-      </div>
-
+  <p>Prove reflexivity, antisymmetry, and transitivity of $\preceq_K$ for a proper cone $K$.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Generalized Inequalities: Proper cones induce partial orders with reflexivity, antisymmetry, and transitivity.</p>
+    <p><b>Pointedness:</b> Antisymmetry relies on the cone being pointed ($K \cap -K = \{0\}$).</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>(a) Reflexive:</strong> $x \preceq_K x$ means $x - x = 0 \in K$. Since every cone contains the origin, this is true.
-            </div>
-
-            <div class="proof-step">
-              <strong>(b) Antisymmetric:</strong> If $x \preceq_K y$ and $y \preceq_K x$, then $y - x \in K$ and $x - y \in K$. Thus $(y - x) \in K \cap (-K)$. By pointedness (property of proper cones), $K \cap (-K) = \{0\}$, so $y - x = 0$, i.e., $x = y$.
-            </div>
-
-            <div class="proof-step">
-              <strong>(c) Transitive:</strong> If $x \preceq_K y$ and $y \preceq_K z$, then $y - x \in K$ and $z - y \in K$. Since $K$ is a convex cone (closed under addition):
-              $$
-              (z - y) + (y - x) = z - x \in K
-              $$
-              Thus $x \preceq_K z$.
-            </div>
+    <div class="proof-step">Reflexive: $0 \in K$. Transitive: $K+K \subseteq K$. Antisymmetric: $y-x \in K$ and $x-y \in K \implies y-x \in K \cap -K = \{0\} \implies x=y$.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.9 — Voronoi Regions</h3>
-  <p>Let $x_1, \ldots, x_k \in \mathbb{R}^n$ be a set of points. The Voronoi region associated with $x_i$ is defined as the set of points in $\mathbb{R}^n$ that are closer to $x_i$ than to any other point $x_j$:
-          $$ V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2 \ \forall j \neq i\} $$
-          Prove that $V_i$ is a polyhedron (and thus a convex set).</p>
-
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Voronoi Regions as Polyhedra:</b> The region of space closest to a seed point $x_i$ is defined by the intersection of halfspaces. Each halfspace is bounded by the perpendicular bisector between $x_i$ and a neighbor $x_j$.</li>
-            <li><b>Convexity via Intersection:</b> Since halfspaces are convex sets, and the intersection of any collection of convex sets is convex, the resulting Voronoi region (a polyhedron) is necessarily convex.</li>
-        </ul>
-      </div>
-
+  <p>Show $V_i = \{x \mid \|x - x_i\|_2 \le \|x - x_j\|_2 \forall j \neq i\}$ is a polyhedron.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Voronoi Regions: The region closest to a seed point is the intersection of halfspaces (polyhedra), hence convex.</p>
+    <p><b>Intersection of Halfspaces:</b> The region is the intersection of halfspaces defined by perpendicular bisectors.</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Step 1: Analyze pairwise condition.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ is equivalent to $\|x - x_i\|_2^2 \le \|x - x_j\|_2^2$ because both sides are nonnegative.
-              Expanding the squared norms:
-              $$ \|x - x_i\|_2^2 = (x - x_i)^\top (x - x_i) = x^\top x - 2x_i^\top x + x_i^\top x_i $$
-              $$ \|x - x_j\|_2^2 = (x - x_j)^\top (x - x_j) = x^\top x - 2x_j^\top x + x_j^\top x_j $$
-              Substituting these into the inequality:
-              $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Simplify to linear inequality.</strong> The quadratic terms $x^\top x$ cancel out from both sides:
-              $$ -2x_i^\top x + \|x_i\|_2^2 \le -2x_j^\top x + \|x_j\|_2^2 $$
-              Rearranging terms to put $x$ on the left side:
-              $$ 2x_j^\top x - 2x_i^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
-              $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
-              This is a linear inequality of the form $a_{ij}^\top x \le b_{ij}$ where $a_{ij} = 2(x_j - x_i)$ and $b_{ij} = \|x_j\|_2^2 - \|x_i\|_2^2$. Geometrically, this defines a halfspace bounded by the perpendicular bisector of the segment connecting $x_i$ and $x_j$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Intersection of halfspaces.</strong> The Voronoi region $V_i$ is the set of points that satisfy this linear inequality for all $j \neq i$:
-              $$ V_i = \bigcap_{j \neq i} \{x \mid 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2\} $$
-              Since each set in the intersection is a halfspace, $V_i$ is an intersection of $k-1$ halfspaces.
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> By definition, the intersection of finitely many halfspaces is a polyhedron. Since every polyhedron is a convex set, the Voronoi region $V_i$ is a convex set.
-            </div>
+    <div class="proof-step">Expand $\|x-x_i\|^2 \le \|x-x_j\|^2$ to get $2(x_j - x_i)^\top x \le \|x_j\|^2 - \|x_i\|^2$. This is a linear inequality. $V_i$ is the intersection of $k-1$ such halfspaces, hence a polyhedron.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.10 — Convexity of Norm Cone</h3>
-  <p>Let $S = \{(x,t) \in \mathbb{R}^n \times \mathbb{R} \mid \|x\| \le t\}$. Show that $S$ is convex.</p>
-
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Epigraphs of Convex Functions:</b> The set $S$ is the epigraph of the norm function $f(x) = \|x\|$. Since the epigraph of a function is a convex set if and only if the function is convex, the convexity of $S$ follows directly from the convexity of norms.</li>
-                <li><b>Triangle Inequality as Convexity:</b> The core reason norms are convex is the triangle inequality $\|x+y\| \le \|x\| + \|y\|$, which geometrically ensures that the "bowl" of the norm function never dips downwards.</li>
-            </ul>
-          </div>
-
+  <p>Show $S = \{(x,t) \mid \|x\| \le t\}$ is convex.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Norm Cone: The set $\{(x,t) \mid \|x\| \le t\}$ is the epigraph of a norm, hence convex.</p>
+    <p><b>Epigraph:</b> $S$ is the epigraph of the norm function $f(x)=\|x\|$, which is convex (triangle inequality).</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <p><b>Method 1: Direct Proof via Triangle Inequality</b></p>
-            <div class="proof-step">
-              <strong>Step 1: Unpack membership.</strong> Let $(x_1, t_1) \in S$ and $(x_2, t_2) \in S$. This means $\|x_1\| \le t_1$ and $\|x_2\| \le t_2$. Note that $t_1, t_2 \ge 0$.
-            </div>
-            <div class="proof-step">
-              <strong>Step 2: Convex combination.</strong> Let $\lambda \in [0,1]$. We examine the point $(\lambda x_1 + (1-\lambda)x_2, \lambda t_1 + (1-\lambda)t_2)$.
-            </div>
-            <div class="proof-step">
-              <strong>Step 3: Apply inequalities.</strong>
-              $$ \|\lambda x_1 + (1-\lambda)x_2\| \le \lambda \|x_1\| + (1-\lambda) \|x_2\| $$
-              (by triangle inequality and homogeneity).
-              $$ \le \lambda t_1 + (1-\lambda) t_2 $$
-              (by membership in $S$).
-            </div>
-            <div class="proof-step">
-              <strong>Conclusion:</strong> The convex combination satisfies the condition $\|x\| \le t$, so $S$ is convex.
-            </div>
-
-            <p><b>Method 2: Epigraph of Convex Function (Geometric View)</b></p>
-            <div class="proof-step">
-              Define the function $f(x) = \|x\|$. Since every norm satisfies the triangle inequality ($f(\lambda x + (1-\lambda)y) \le \lambda f(x) + (1-\lambda)f(y)$), it is a convex function.
-              The set $S$ is exactly the <b>epigraph</b> of this function:
-              $$ S = \mathrm{epi}(f) := \{(x,t) \in \mathbb{R}^n \times \mathbb{R} \mid t \ge f(x)\} $$
-              A fundamental property in convex analysis is that a function is convex if and only if its epigraph is a convex set. Thus, convexity of the norm implies convexity of $S$.
-              <br><i>Intuition:</i> Think of this as the "ice cream cone" shape in $\mathbb{R}^3$ (for $x \in \mathbb{R}^2$), which is the region "above" the graph of the cone function.
-            </div>
+    <div class="proof-step">Let $u_1, u_2 \in S$. $\lambda u_1 + (1-\lambda)u_2 = (\lambda x_1 + (1-\lambda)x_2, \lambda t_1 + (1-\lambda)t_2)$.
+       $\|\lambda x_1 + (1-\lambda)x_2\| \le \lambda\|x_1\| + (1-\lambda)\|x_2\| \le \lambda t_1 + (1-\lambda)t_2$. Thus the combination is in $S$.</div>
   </div>
 </div>
 
 <div class="problem">
-  <h3>P2.11 — Convex Hull of Finite Points</h3>
-  <p>Given points $x_1, \dots, x_k \in \mathbb{R}^n$, show that the set of all convex combinations:
-          $$ C = \left\{ \sum_{i=1}^k \theta_i x_i \ \middle|\ \theta_i \ge 0, \sum \theta_i = 1 \right\} $$
-          is convex.</p>
-
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Convex Hull as Intersection:</b> The convex hull is defined as the intersection of <i>all</i> convex sets containing the points. Since intersections preserve convexity, the hull is automatically convex.</li>
-                <li><b>Constructive View:</b> Alternatively, the set of all convex combinations is convex because a "convex combination of convex combinations" can be flattened into a single convex combination of the original points.</li>
-            </ul>
-          </div>
-
+  <h3>P2.11 — Convex Hull Properties</h3>
+  <p><b>(a)</b> Prove by induction that if $C$ is convex, any convex combination $\sum_{i=1}^k \theta_i x_i$ of points in $C$ lies in $C$ for all $k \ge 2$.</p>
+       <p><b>(b)</b> Prove that $\mathrm{conv}(S) = \bigcap \{D \mid S \subseteq D, D \text{ is convex}\}$.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Convex Hull: The set of all convex combinations is the smallest convex set containing the points.</p>
+    <ul><li><b>Induction on $k$:</b> Reduce a $k$-point combination to a 2-point combination of $x_k$ and a $(k-1)$-point average.</li>
+       <li><b>Hull as Intersection:</b> The convex hull is the "smallest" convex set containing $S$.</li></ul>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Step 1: Pick two points.</strong> Let $u, v \in C$.
-              $$ u = \sum \alpha_i x_i, \quad v = \sum \beta_i x_i $$
-              where $\sum \alpha_i = 1, \alpha \ge 0$ and $\sum \beta_i = 1, \beta \ge 0$.
-            </div>
-            <div class="proof-step">
-              <strong>Step 2: Combine them.</strong> Let $\lambda \in [0,1]$.
-              $$ \lambda u + (1-\lambda)v = \lambda \sum \alpha_i x_i + (1-\lambda) \sum \beta_i x_i = \sum (\lambda \alpha_i + (1-\lambda)\beta_i) x_i $$
-            </div>
-            <div class="proof-step">
-              <strong>Step 3: Verify weights.</strong> Let $\gamma_i = \lambda \alpha_i + (1-\lambda)\beta_i$.
-              <ul>
-                <li>Non-negativity: Since $\lambda, \alpha, \beta \ge 0$, $\gamma_i \ge 0$.</li>
-                <li>Sum to 1: $\sum \gamma_i = \lambda \sum \alpha_i + (1-\lambda) \sum \beta_i = \lambda(1) + (1-\lambda)(1) = 1$.</li>
-              </ul>
-            </div>
-            <div class="proof-step">
-              <strong>Conclusion:</strong> The combined point is a valid convex combination of $\{x_i\}$, so it lies in $C$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Alternative Proof: Intersection of Convex Sets.</strong>
-              Define $\mathrm{conv}(S) = \bigcap \{D \mid S \subseteq D, D \text{ is convex}\}$.
-              The intersection of any collection of convex sets is convex (see Section 3.1).
-              Thus, this intersection is convex by construction.
-              (One can show this definition is equivalent to the set of convex combinations, but this perspective makes convexity immediate.)
-            </div>
+    <div class="proof-step"><strong>(a) Base Case ($k=2$):</strong> True by definition of convexity.</div>
+       <div class="proof-step"><strong>Inductive Step:</strong> Assume true for $k$. Consider $x^* = \sum_{i=1}^{k+1} \theta_i x_i$. If $\theta_{k+1}=1$, $x^*=x_{k+1} \in C$. If $\theta_{k+1} < 1$, let $\alpha = 1-\theta_{k+1} = \sum_{i=1}^k \theta_i$.
+       Define $y = \sum_{i=1}^k (\theta_i/\alpha) x_i$. The weights sum to 1, so $y \in C$ by hypothesis.
+       Then $x^* = \alpha y + \theta_{k+1} x_{k+1}$. Since $\alpha + \theta_{k+1} = 1$, this is a convex combination of two points in $C$, so $x^* \in C$.</div>
+       <div class="proof-step"><strong>(b) Inclusion 1 ($\subseteq$):</strong> Let $D$ be any convex superset of $S$. Since $D$ is convex, it contains all convex combinations of $S$. Thus $\mathrm{conv}(S) \subseteq D$. So $\mathrm{conv}(S) \subseteq \bigcap D$.</div>
+       <div class="proof-step"><strong>(b) Inclusion 2 ($\supseteq$):</strong> $\mathrm{conv}(S)$ is itself a convex set containing $S$. Thus it is one of the sets in the intersection. So $\bigcap D \subseteq \mathrm{conv}(S)$.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.12 — Minkowski Sum of Sets</h3>
-  <p>The Minkowski sum is $X + Y = \{x+y \mid x \in X, y \in Y\}$.</p>
-          <ol type="a">
-            <li>Show that if $X, Y$ are convex, $X+Y$ is convex.</li>
-            <li>Give an example where $X$ is not convex but $X+Y$ is convex.</li>
-          </ol>
-
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Linear Maps:</b> $X+Y$ is the image of $X \times Y$ under the linear map $f(x,y)=x+y$. Linear maps preserve convexity.</li>
-                <li><b>convex + non-convex = convex?:</b> Surprisingly, adding a "large enough" convex set to a non-convex set can result in a convex set (e.g., $\mathbb{Z} + [0,1] = \mathbb{R}$). The sum operation "fills in the gaps".</li>
-            </ul>
-          </div>
-
+  <p>Show that if $X, Y$ are convex, $X+Y$ is convex. Give an example where $X$ is not convex but $X+Y$ is.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Minkowski Sum: The sum of convex sets is convex. It is the image of the product under a linear map.</p>
+    <p><b>Linear Map:</b> Sum is image of product under addition map.</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <p><b>(a) Convexity Proof</b></p>
-            <div class="proof-step">
-              Let $u, v \in X+Y$. Then $u = x_1+y_1$ and $v = x_2+y_2$ with $x_i \in X, y_i \in Y$.
-              For $\lambda \in [0,1]$:
-              $$ \lambda u + (1-\lambda)v = \lambda(x_1+y_1) + (1-\lambda)(x_2+y_2) = (\lambda x_1 + (1-\lambda)x_2) + (\lambda y_1 + (1-\lambda)y_2) $$
-              By convexity of $X$ and $Y$, the terms in parentheses are in $X$ and $Y$ respectively. Thus the sum is in $X+Y$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Alternative Proof: Image under Linear Map.</strong>
-              Consider the Cartesian product $X \times Y \subseteq \mathbb{R}^{2n}$, which is convex (Problem 2.15).
-              Define the linear map $f: \mathbb{R}^{2n} \to \mathbb{R}^n$ by $f(x,y) = x+y$.
-              The Minkowski sum is exactly the image of the product set under this map: $X+Y = f(X \times Y)$.
-              Since linear maps preserve convexity, $X+Y$ is convex.
-            </div>
-
-            <p><b>(b) Counter-intuitive Example</b></p>
-            <div class="proof-step">
-              Let $X = \mathbb{Z}$ (integers, clearly not convex) and $Y = [0, 1]$.
-              $$ X + Y = \{k + t \mid k \in \mathbb{Z}, t \in [0,1]\} = \bigcup_{k \in \mathbb{Z}} [k, k+1] = \mathbb{R} $$
-              Since $\mathbb{R}$ is convex, $X+Y$ is convex even though $X$ is not.
-            </div>
+    <div class="proof-step">Let $u, v \in X+Y$. $\lambda u + (1-\lambda)v = \lambda(x_1+y_1) + (1-\lambda)(x_2+y_2) = (\lambda x_1+(1-\lambda)x_2) + (\lambda y_1+(1-\lambda)y_2) \in X+Y$.</div>
+       <div class="proof-step">Example: $X=\mathbb{Z}$ (integers), $Y=[0,1]$. $X+Y = \mathbb{R}$ (convex).</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.13 — Convexity of Thickened Sets</h3>
-  <p>Let $C \subseteq \mathbb{R}^n$ be a closed convex set. Define the thickened set $C_\varepsilon = \{y \mid \mathrm{dist}(y, C) \le \varepsilon\}$. Show that $C_\varepsilon$ is convex.</p>
-
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Minkowski Sum Interpretation:</b> The thickened set $C_arepsilon$ is exactly the Minkowski sum of the original set $C$ and the ball of radius $arepsilon$, i.e., $C_arepsilon = C + B(0, arepsilon)$.</li>
-                <li><b>Convexity Preservation:</b> Since $C$ is convex and the ball $B(0, \varepsilon)$ is convex, their Minkowski sum must be convex. This provides a clean, geometric proof without needing to analyze the distance function directly.</li>
-            </ul>
-          </div>
-
+  <p>Show $C_\varepsilon = \{y \mid \mathrm{dist}(y, C) \le \varepsilon\}$ is convex if $C$ is convex.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Thickened Set: $C_arepsilon = C + B(0, arepsilon)$ is convex because it is the Minkowski sum of two convex sets.</p>
+    <p><b>Minkowski Sum:</b> $C_\varepsilon = C + B(0, \varepsilon)$.</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <p><b>Method 1: Minkowski Sum</b></p>
-            <div class="proof-step">
-              <strong>Step 1: Show Equality.</strong> Let $\overline{B}_\varepsilon(0) = \{z \mid \|z\| \le \varepsilon\}$. We claim $C_\varepsilon = C + \overline{B}_\varepsilon(0)$.
-              <ul>
-                <li><b>($\subseteq$):</b> Take $y \in C_\varepsilon$. By definition, $d(y, C) = \inf_{x \in C} \|y-x\| \le \varepsilon$. Since $C$ is closed and the norm is continuous, the infimum is attained by a projection $x^\star \in C$. Thus $\|y - x^\star\| \le \varepsilon$. Let $z = y - x^\star$. Then $z \in \overline{B}_\varepsilon(0)$ and $y = x^\star + z \in C + \overline{B}_\varepsilon(0)$.</li>
-                <li><b>($\supseteq$):</b> Take $y \in C + \overline{B}_\varepsilon(0)$. Then $y = x + z$ for some $x \in C$ and $\|z\| \le \varepsilon$. The distance to $C$ satisfies $d(y, C) \le \|y - x\| = \|z\| \le \varepsilon$. Thus $y \in C_\varepsilon$.</li>
-              </ul>
-            </div>
-            <div class="proof-step">
-              <strong>Step 2: Use Convexity.</strong>
-              We know that $C$ is convex (by assumption) and the ball $\overline{B}_\varepsilon(0)$ is convex (norm ball).
-              By Problem 2.12, the Minkowski sum of two convex sets is convex.
-              Thus $C_\varepsilon = C + \overline{B}_\varepsilon(0)$ is convex.
-            </div>
-
-            <div class="proof-step">
-              <strong>Method 2: Convexity of Distance Function.</strong>
-              Let $f(y) = \mathrm{dist}(y, C)$.
-              $$ f(\lambda y_1 + (1-\lambda)y_2) = \inf_{x \in C} \|\lambda y_1 + (1-\lambda)y_2 - x\| $$
-              Let $x = \lambda x_1 + (1-\lambda)x_2$ for any $x_1, x_2 \in C$.
-              $$ \le \|\lambda(y_1-x_1) + (1-\lambda)(y_2-x_2)\| \le \lambda \|y_1-x_1\| + (1-\lambda)\|y_2-x_2\| $$
-              Taking infimum over $x_1, x_2$ yields $f(\lambda y_1 + (1-\lambda)y_2) \le \lambda f(y_1) + (1-\lambda)f(y_2)$.
-              Thus $f$ is convex, and its sublevel set $C_\varepsilon$ is convex.
-            </div>
+    <div class="proof-step">$C_\varepsilon$ is the Minkowski sum of $C$ and the ball $B(0, \varepsilon)$. Since both are convex, their sum is convex.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.14 — Closure of a Convex Set</h3>
-  <p>Show that if $C$ is convex, its closure $\mathrm{cl}(C)$ is convex.</p>
-
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Sequences:</b> Limit points preserve non-strict inequalities like $\theta x + (1-\theta)y \in \dots$</li>
-                <li><b>Intuition:</b> You cannot "bend" the boundary of a convex shape inwards (making it non-convex) without affecting the interior points. The limit points simply "seal" the convex shape.</li>
-            </ul>
-          </div>
-
+  <p>Show that $\mathrm{cl}(C)$ is convex if $C$ is convex.</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Closure: The closure of a convex set is convex. Limits preserve convexity inequalities.</p>
+    <p><b>Limits:</b> Convexity inequalities are preserved under limits.</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              Let $a, b \in \mathrm{cl}(C)$. By definition, there exist sequences $\{x_k\} \subset C$ such that $x_k \to a$ and $\{y_k\} \subset C$ such that $y_k \to b$.
-            </div>
-            <div class="proof-step">
-              Let $\lambda \in [0,1]$. Since $C$ is convex:
-              $$ z_k := \lambda x_k + (1-\lambda)y_k \in C \quad \forall k $$
-            </div>
-            <div class="proof-step">
-              By continuity of vector addition and scalar multiplication:
-              $$ \lim_{k \to \infty} z_k = \lambda a + (1-\lambda)b $$
-            </div>
-            <div class="proof-step">
-              Thus, $\lambda a + (1-\lambda)b$ is the limit of a sequence in $C$, so it belongs to $\mathrm{cl}(C)$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Alternative Proof: Open Balls.</strong>
-              Let $a, b \in \mathrm{cl}(C)$ and $\lambda \in [0,1]$. Define $c = \lambda a + (1-\lambda)b$.
-              To prove $c \in \mathrm{cl}(C)$, we must show that every open ball around $c$ intersects $C$.
-              Let $B(c, r)$ be an arbitrary ball of radius $r > 0$.
-              Since $a, b \in \mathrm{cl}(C)$, any neighborhood of them hits $C$. Specifically:
-              <ul>
-                <li>There exists $x \in C \cap B(a, r)$. (So $\|x - a\| < r$)</li>
-                <li>There exists $y \in C \cap B(b, r)$. (So $\|y - b\| < r$)</li>
-              </ul>
-              By convexity of $C$, the point $z := \lambda x + (1-\lambda)y$ is in $C$.
-              Now check the distance from $z$ to $c$:
-              $$ \|z - c\| = \|\lambda(x-a) + (1-\lambda)(y-b)\| \le \lambda\|x-a\| + (1-\lambda)\|y-b\| < \lambda r + (1-\lambda)r = r $$
-              Thus $\|z - c\| < r$, meaning $z \in B(c, r)$.
-              We found a point $z \in C \cap B(c, r)$, so every ball around $c$ intersects $C$. Thus $c \in \mathrm{cl}(C)$.
-            </div>
+    <div class="proof-step">Let $a, b \in \mathrm{cl}(C)$. There exist sequences $a_k \to a, b_k \to b$ in $C$.
+       $z_k = \lambda a_k + (1-\lambda)b_k \in C$.
+       $\lim z_k = \lambda a + (1-\lambda)b$. Since limits of points in $C$ are in $\mathrm{cl}(C)$, the combination is in $\mathrm{cl}(C)$.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.15 — Product of Convex Sets</h3>
-  <p>Let $X \subseteq \mathbb{R}^n, Y \subseteq \mathbb{R}^m$.</p>
-          <ol type="a">
-            <li>Show that if $X, Y$ are convex, then $X \times Y$ is convex in $\mathbb{R}^{n+m}$.</li>
-            <li>If $X$ is not convex (and $Y$ nonempty), can $X \times Y$ be convex?</li>
-          </ol>
-
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Convexity of Products:</b> The Cartesian product $X \times Y$ essentially stacks the convexity conditions. A line segment in the product space projects to line segments in $X$ and $Y$. If the components are convex, the product is convex.</li>
-                <li><b>Necessity of Factors:</b> Unlike the Minkowski sum, for a Cartesian product to be convex, <i>both</i> factors must be convex (assuming they are non-empty). A hole in either factor creates a hole in the product "cylinder".</li>
-            </ul>
-          </div>
-
+  <p>Show $X \times Y$ is convex iff $X$ and $Y$ are convex (assuming non-empty).</p>
   <div class="recap-box">
     <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Cartesian Product: The product of convex sets is convex. Both components must be convex.</p>
+    <p><b>Componentwise:</b> A line in the product projects to lines in components.</p>
   </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
-    <p><b>(a) Convexity of Product</b></p>
-            <div class="proof-step">
-              Let $u_1 = (x_1, y_1), u_2 = (x_2, y_2) \in X \times Y$.
-              $$ \lambda u_1 + (1-\lambda)u_2 = (\lambda x_1 + (1-\lambda)x_2, \lambda y_1 + (1-\lambda)y_2) $$
-              Since $X$ is convex, the first component is in $X$. Since $Y$ is convex, the second is in $Y$. Thus the pair is in $X \times Y$.
-            </div>
+    <div class="proof-step">If $X, Y$ convex, $\lambda(x_1, y_1) + (1-\lambda)(x_2, y_2) = (\lambda x_1 + (1-\lambda)x_2, \dots) \in X \times Y$.</div>
+       <div class="proof-step">If $X \times Y$ convex, taking $y_1=y_2$ shows $X$ must be convex.</div>
+  </div>
+</div>
 
-            <div class="proof-step">
-              <strong>Alternative Proof: Preimage of Linear Maps.</strong>
-              Let $P_X(x,y) = x$ and $P_Y(x,y) = y$ be the projection maps (linear).
-              Then $X \times Y = P_X^{-1}(X) \cap P_Y^{-1}(Y)$.
-              Since $X$ and $Y$ are convex, their preimages under linear maps are convex.
-              The intersection of these two convex preimages is convex.
-            </div>
+<div class="problem">
+  <h3>P2.16 — Convexity via Line Intersections</h3>
+  <p>Prove that a set $C \subseteq \mathbb{R}^n$ is convex if and only if its intersection with every line is convex.</p>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p><b>Reduction to 1D:</b> Convexity is fundamentally a property of line segments. If every 1D slice is valid, the whole set is valid.</p>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>($\Rightarrow$):</strong> Intersection of convex sets ($C$ and a line $L$) is convex.</div>
+       <div class="proof-step"><strong>($\Leftarrow$):</strong> Take $x, y \in C$. The line $L$ passing through $x$ and $y$ intersects $C$ in a convex set (by assumption). Thus the segment $[x,y] \subseteq C \cap L \subseteq C$.</div>
+  </div>
+</div>
 
-            <p><b>(b) Non-convex Factor</b></p>
-            <div class="proof-step">
-              <b>No.</b> Unlike the Minkowski sum (where sum of non-convex sets can be convex), the Cartesian product <i>requires</i> both factors to be convex.
-              <br><i>Proof:</i> Assume $X \times Y$ is convex and $Y$ is nonempty (contains $y_0$). We show $X$ must be convex.
-              Take any $x_1, x_2 \in X$. Then $(x_1, y_0), (x_2, y_0) \in X \times Y$.
-              By convexity of the product, for any $\lambda \in [0,1]$:
-              $$ \lambda(x_1, y_0) + (1-\lambda)(x_2, y_0) = (\lambda x_1 + (1-\lambda)x_2, y_0) \in X \times Y $$
-              This implies the first component $\lambda x_1 + (1-\lambda)x_2$ is in $X$. Thus $X$ is convex.
-              (Similarly for $Y$).
-            </div>
+<div class="problem">
+  <h3>P2.17 — Midpoint Convexity</h3>
+  <p>A set $C$ is <b>midpoint convex</b> if $(a+b)/2 \in C$ for all $a,b \in C$. Show that if $C$ is closed and midpoint convex, it is convex.</p>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p><b>Dyadic Rationals:</b> Midpoints allow generating any dyadic fraction $k/2^n$. Closure fills the gaps for all real $\theta$.</p>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Dyadics.</strong> By induction, any combination $\lambda a + (1-\lambda)b$ where $\lambda = k/2^n$ is in $C$.</div>
+       <div class="proof-step"><strong>Step 2: Density.</strong> Dyadic rationals are dense in $[0,1]$. For any $\theta$, take $\lambda_i \to \theta$ (dyadics).</div>
+       <div class="proof-step"><strong>Step 3: Closure.</strong> Since $z_i = \lambda_i a + (1-\lambda_i)b \in C$ and $z_i \to z = \theta a + (1-\theta)b$, and $C$ is closed, $z \in C$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.18 — Hyperbolic Sets</h3>
+  <p>Show that the set $C = \{x \in \mathbb{R}^n_{++} \mid \prod x_i \ge 1\}$ is convex.</p>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p><b>AM-GM Inequality:</b> The geometric mean is concave. Alternatively, $\sum \log x_i \ge 0$ defines a superlevel set of a concave function.</p>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">Let $x, y \in C$ and $z = \theta x + (1-\theta)y$.
+       By weighted AM-GM on each coordinate: $z_i \ge x_i^\theta y_i^{1-\theta}$.</div>
+       <div class="proof-step">Multiply over $i$: $\prod z_i \ge \prod (x_i^\theta y_i^{1-\theta}) = (\prod x_i)^\theta (\prod y_i)^{1-\theta} \ge 1^\theta \cdot 1^{1-\theta} = 1$.</div>
+       <div class="proof-step">Thus $z \in C$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.19 — Set Classification Challenge</h3>
+  <p>Determine which of the following are convex:</p><ol type="a"><li>Slab: $\alpha \le a^\top x \le \beta$</li><li>Wedge: $a_1^\top x \le b_1, a_2^\top x \le b_2$</li><li>Closest to set: $\{x \mid d(x,S) \le d(x,T)\}$</li><li>Translates: $\{x \mid x + S_2 \subseteq S_1\}$ ($S_1$ convex)</li></ol>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p><b>Building Blocks:</b> Decompose sets into intersections of halfspaces or use defining properties.</p>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>(a) Convex:</strong> Intersection of two halfspaces ($a^\top x \ge \alpha$ and $a^\top x \le \beta$).</div>
+       <div class="proof-step"><strong>(b) Convex:</strong> Intersection of two halfspaces.</div>
+       <div class="proof-step"><strong>(c) Not Convex:</strong> Example in $\mathbb{R}$: Closer to $\{-1, 1\}$ than $\{0\}$ is $(-\infty, -0.5] \cup [0.5, \infty)$, which is disconnected.</div>
+       <div class="proof-step"><strong>(d) Convex:</strong> $x \in C \iff x + s \in S_1 \ \forall s \in S_2$. For fixed $s$, $\{x \mid x+s \in S_1\}$ is a translate of $S_1$ (convex). $C$ is the intersection of these over all $s \in S_2$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.20 — Partial Sum of Convex Sets</h3>
+  <p>Let $S_1, S_2 \subseteq \mathbb{R}^{m+n}$. Define the partial sum $S = \{(x, y_1+y_2) \mid (x,y_1) \in S_1, (x,y_2) \in S_2\}$. Show $S$ is convex.</p>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p><b>Fiberwise Sum:</b> For each $x$, the slice $S_x$ is the Minkowski sum of slices $(S_1)_x$ and $(S_2)_x$.</p>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">Let $z^a = (x^a, y^a), z^b = (x^b, y^b) \in S$.
+       $y^a = y_1^a + y_2^a$ with $(x^a, y_i^a) \in S_i$.
+       Let $z = \theta z^a + (1-\theta)z^b = (x^\theta, y^\theta)$.
+       $x^\theta = \theta x^a + (1-\theta)x^b$.
+       $y^\theta = (\theta y_1^a + (1-\theta)y_1^b) + (\theta y_2^a + (1-\theta)y_2^b) =: \tilde y_1 + \tilde y_2$.
+       Since $S_i$ are convex, $(x^\theta, \tilde y_i) \in S_i$.
+       Thus $z = (x^\theta, \tilde y_1 + \tilde y_2) \in S$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.21 — Perspective of Polyhedra</h3>
+  <p>Let $P: \mathbb{R}^{n+1} \to \mathbb{R}^n$ be the perspective map $P(v,t) = v/t$ for $t>0$. Determine $P(C)$ for:</p><ol type="a"><li>$C = \{(v,t) \mid f^\top v + gt = h\}$</li><li>$C = \{(v,t) \mid f^\top v + gt \le h\}$</li></ol>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p><b>Projective Geometry:</b> Perspective maps hyperplanes to hyperplanes or halfspaces, depending on whether they pass through the origin.</p>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>(a)</strong> $f^\top (ty) + gt = h \implies t(f^\top y + g) = h$.
+       If $h=0$, $f^\top y + g = 0$ (Hyperplane).
+       If $h \neq 0$, $t = h/(f^\top y + g) > 0 \implies h(f^\top y + g) > 0$ (Open Halfspace).</div>
+       <div class="proof-step"><strong>(b)</strong> $t(f^\top y + g) \le h$.
+       If $h>0$, always feasible (whole space).
+       If $h=0$, $f^\top y + g \le 0$ (Halfspace).
+       If $h<0$, $f^\top y + g < 0$ (Open Halfspace).</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.22 — Invertible Linear-Fractional Functions</h3>
+  <p>Let $f(x) = (Ax+b)/(c^\top x+d)$ with $\mathrm{dom}(f) = \{x \mid c^\top x+d > 0\}$. Show that if $\begin{bmatrix} A & b \\ c^\top & d \end{bmatrix}$ is nonsingular, then $f$ is invertible and $f^{-1}$ is linear-fractional.</p>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p><b>Homogeneous Coordinates:</b> $y = f(x) \iff (y,1) \sim Q(x,1)$ projectively. Inverting $Q$ inverts the map.</p>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">Let $Q = \begin{bmatrix} A & b \\ c^\top & d \end{bmatrix}$ and $y = u/t$ where $\begin{bmatrix} u \\ t \end{bmatrix} = Q \begin{bmatrix} x \\ 1 \end{bmatrix}$.
+       Then $Q \begin{bmatrix} x \\ 1 \end{bmatrix} = t \begin{bmatrix} y \\ 1 \end{bmatrix}$.
+       Invert: $\begin{bmatrix} x \\ 1 \end{bmatrix} = t Q^{-1} \begin{bmatrix} y \\ 1 \end{bmatrix}$.
+       Let $Q^{-1} = \begin{bmatrix} E & f \\ g^\top & h \end{bmatrix}$.
+       Then $x = t(Ey+f)$ and $1 = t(g^\top y+h)$.
+       Thus $x = (Ey+f)/(g^\top y+h)$. This is linear-fractional.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.23 — Preimages of Sets under LF Maps</h3>
+  <p>Let $f(x) = (Ax+b)/(c^\top x+d)$. Find the preimage $f^{-1}(C)$ for:</p><ol type="a"><li>Halfspace: $C = \{y \mid g^\top y \le h\}$</li><li>Ellipsoid: $C = \{y \mid y^\top P y \le 1\}$</li></ol>
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p><b>Substitution:</b> Substitute $y = f(x)$ and clear the denominator $c^\top x + d > 0$.</p>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>(a)</strong> $g^\top \frac{Ax+b}{c^\top x+d} \le h \iff g^\top(Ax+b) \le h(c^\top x+d) \iff (A^\top g - h c)^\top x \le hd - g^\top b$. (Halfspace).</div>
+       <div class="proof-step"><strong>(b)</strong> $\frac{(Ax+b)^\top}{c^\top x+d} P \frac{Ax+b}{c^\top x+d} \le 1 \iff (Ax+b)^\top P (Ax+b) \le (c^\top x+d)^2$. (Quadratic/SOC constraint).</div>
   </div>
 </div>
     </section>
 
 
-
-    <section class="section-card" id="section-10">
+<section class="section-card" id="section-10">
       <h2>10. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, Chapter 2 (Convex Sets).</li>
