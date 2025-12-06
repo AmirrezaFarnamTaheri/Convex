@@ -117,29 +117,44 @@
         <p>Jensen's inequality is a power tool for deriving fundamental inequalities in analysis.</p>
 
         <div class="example">
-          <h4>1. Arithmetic-Geometric Mean (AM-GM) Inequality</h4>
-          <p>We want to prove that for $a, b \ge 0$ and $\theta \in [0, 1]$:</p>
-          $$ \theta a + (1-\theta)b \ge a^\theta b^{1-\theta} $$
-          <p><b>Proof:</b> Consider the function $f(x) = -\ln x$. Its second derivative is $f''(x) = 1/x^2 > 0$ for $x > 0$, so $f$ is convex.
-          Applying Jensen's inequality to the points $a, b$ with weights $\theta, 1-\theta$:</p>
-          $$ -\ln(\theta a + (1-\theta)b) \le -\theta \ln a - (1-\theta)\ln b $$
-          <p>Multiplying by $-1$ reverses the inequality:</p>
-          $$ \ln(\theta a + (1-\theta)b) \ge \theta \ln a + (1-\theta)\ln b = \ln(a^\theta b^{1-\theta}) $$
-          <p>Exponentiating both sides (since $e^x$ is increasing) yields the result.</p>
+          <h4>1. Arithmetic-Geometric Mean (AM-GM)</h4>
+          <p>We derive the weighted AM-GM inequality directly from Jensen's inequality.</p>
+          <div class="proof-step">
+            <strong>Step 1: Convexity of $-\ln x$.</strong>
+            Let $f(x) = -\ln x$ for $x > 0$. Then $f''(x) = 1/x^2 > 0$, so $f$ is convex.
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Apply Jensen.</strong>
+            For any $a, b > 0$ and $\theta \in [0, 1]$:
+            $$ -\ln(\theta a + (1-\theta)b) \le -\theta \ln a - (1-\theta)\ln b $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Rearrange.</strong>
+            Multiply by $-1$ and exponentiate:
+            $$ \ln(\theta a + (1-\theta)b) \ge \ln(a^\theta b^{1-\theta}) \implies \theta a + (1-\theta)b \ge a^\theta b^{1-\theta} $$
+          </div>
         </div>
 
         <div class="example">
-          <h4>2. Hölder's Inequality</h4>
-          <p>For $p, q > 1$ with $1/p + 1/q = 1$, and vectors $x, y \in \mathbb{R}^n$:</p>
-          $$ \sum_{i=1}^n |x_i y_i| \le \|x\|_p \|y\|_q $$
-          <p><b>Proof:</b> First, we prove <b>Young's Inequality</b>: $ab \le \frac{a^p}{p} + \frac{b^q}{q}$ for $a, b \ge 0$.
-          Apply the weighted AM-GM inequality with weights $\theta = 1/p$ and $1-\theta = 1/q$ to the numbers $a^p$ and $b^q$:</p>
-          $$ \frac{1}{p} a^p + \frac{1}{q} b^q \ge (a^p)^{1/p} (b^q)^{1/q} = ab $$
-          <p>Now, to prove Hölder's, normalize the vectors (assuming non-zero): let $\hat{x} = x/\|x\|_p$ and $\hat{y} = y/\|y\|_q$. Apply Young's inequality component-wise:</p>
-          $$ |\hat{x}_i \hat{y}_i| \le \frac{|\hat{x}_i|^p}{p} + \frac{|\hat{y}_i|^q}{q} $$
-          <p>Summing over $i$:</p>
-          $$ \sum |\hat{x}_i \hat{y}_i| \le \frac{1}{p}\underbrace{\sum |\hat{x}_i|^p}_{1} + \frac{1}{q}\underbrace{\sum |\hat{y}_i|^q}_{1} = \frac{1}{p} + \frac{1}{q} = 1 $$
-          <p>Un-normalizing gives $\frac{1}{\|x\|_p \|y\|_q} \sum |x_i y_i| \le 1$, which is Hölder's inequality.</p>
+          <h4>2. From AM-GM to Hölder's Inequality</h4>
+          <p>We build up to Hölder's inequality in two steps.</p>
+
+          <p><b>Step A: Young's Inequality.</b> Let $p, q > 1$ with $1/p + 1/q = 1$. For $a, b \ge 0$:
+          $$ ab \le \frac{a^p}{p} + \frac{b^q}{q} $$
+          <i>Proof:</i> Apply weighted AM-GM with $\theta=1/p$, $u=a^p$, $v=b^q$:
+          $$ \frac{1}{p} u + \frac{1}{q} v \ge u^{1/p} v^{1/q} = a b $$
+          </p>
+
+          <p><b>Step B: Hölder's Inequality.</b> For vectors $x, y$:
+          $$ \sum |x_i y_i| \le \|x\|_p \|y\|_q $$
+          <i>Proof:</i>
+          <ol>
+            <li>Normalize: $\hat{x} = x/\|x\|_p, \hat{y} = y/\|y\|_q$. Note $\sum |\hat{x}_i|^p = 1$.</li>
+            <li>Apply Young's term-wise: $|\hat{x}_i \hat{y}_i| \le \frac{|\hat{x}_i|^p}{p} + \frac{|\hat{y}_i|^q}{q}$.</li>
+            <li>Sum: $\sum |\hat{x}_i \hat{y}_i| \le \frac{1}{p}(1) + \frac{1}{q}(1) = 1$.</li>
+            <li>Scale back: $\frac{1}{\|x\|_p \|y\|_q} \sum |x_i y_i| \le 1$.</li>
+          </ol>
+          </p>
         </div>
 
         <h3>1.4 Strict and Strong Convexity</h3>
@@ -291,45 +306,53 @@
 
           <div class="proof-step">
             <strong>Part 1: Convex $\Rightarrow$ Inequality</strong>
-            <p>We use the principle of restriction to a line. Fix $x, y \in \mathrm{dom}\, f$. Define the direction $v = y-x$ and the 1-D function $g(t) = f(x + tv)$ for $t \in [0, 1]$.</p>
+            <p>We use the idea "convex along every line".</p>
             <ul>
-              <li><b>Step 1 (1D Convexity):</b> Since $f$ is convex, $g(t)$ is convex. For a differentiable 1D convex function, the graph lies above the tangent line:
+              <li><b>Step 1: Restrict to a line.</b> Fix two points $x, y \in \mathrm{dom}\, f$. Define direction $v = y-x$ and the 1-D function:
+                $$ g(t) = f(x + tv), \quad t \in [0, 1] $$
+              </li>
+              <li><b>Step 2: Use 1-D convexity.</b> Since $f$ is convex, $g(t)$ is a convex function of a single variable. For a differentiable convex function $g: \mathbb{R} \to \mathbb{R}$, the graph lies above the tangent line:
                 $$ g(b) \ge g(a) + g'(a)(b-a) $$
               </li>
-              <li><b>Step 2 (Apply at endpoints):</b> Set $a=0$ and $b=1$.
+              <li><b>Step 3: Apply at endpoints.</b> Set $a=0$ and $b=1$.
                 $$ g(1) \ge g(0) + g'(0)(1-0) $$
               </li>
-              <li><b>Step 3 (Chain Rule):</b>
+              <li><b>Step 4: Chain Rule.</b>
                 <ul>
-                  <li>$g(1) = f(x+v) = f(y)$</li>
-                  <li>$g(0) = f(x)$</li>
-                  <li>$g'(t) = \nabla f(x+tv)^\top v \implies g'(0) = \nabla f(x)^\top (y-x)$</li>
+                  <li>$g(1) = f(x+v) = f(y)$.</li>
+                  <li>$g(0) = f(x)$.</li>
+                  <li>$g'(t) = \nabla f(x+tv)^\top v$, so $g'(0) = \nabla f(x)^\top (y-x)$.</li>
                 </ul>
               </li>
-              <li><b>Conclusion:</b> Substituting back gives $f(y) \ge f(x) + \nabla f(x)^\top (y-x)$.</li>
+              <li><b>Conclusion:</b> Substituting these back yields the inequality:
+                $$ f(y) \ge f(x) + \nabla f(x)^\top (y-x) $$
+              </li>
             </ul>
           </div>
 
           <div class="proof-step">
             <strong>Part 2: Inequality $\Rightarrow$ Convex</strong>
-            <p>Assume the inequality holds for all points. Let $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$. Define $z = \theta x + (1-\theta)y$.</p>
+            <p>Assume the inequality holds for all $x, y$. Let $\theta \in [0, 1]$ and define $z = \theta x + (1-\theta)y$.</p>
             <ul>
-              <li><b>Step 1 (Apply at $z$):</b> Apply the first-order condition at base point $z$ targeting $x$ and $y$:
+              <li><b>Step 1: Apply at base point $z$.</b> Apply the inequality twice, once targeting $x$ and once targeting $y$:
                 $$ f(x) \ge f(z) + \nabla f(z)^\top (x-z) \quad (1) $$
                 $$ f(y) \ge f(z) + \nabla f(z)^\top (y-z) \quad (2) $$
               </li>
-              <li><b>Step 2 (Convex Combination):</b> Multiply (1) by $\theta$ and (2) by $(1-\theta)$ and add:
+              <li><b>Step 2: Convex Combination.</b> Multiply (1) by $\theta$ and (2) by $(1-\theta)$ and sum them:
                 $$
                 \theta f(x) + (1-\theta)f(y) \ge \theta f(z) + (1-\theta)f(z) + \nabla f(z)^\top [\theta(x-z) + (1-\theta)(y-z)]
                 $$
               </li>
-              <li><b>Step 3 (Zero Vector):</b> Analyze the vector term:
+              <li><b>Step 3: Vanishing Gradient Term.</b> Analyze the vector term inside the brackets:
                 $$
-                \theta(x-z) + (1-\theta)(y-z) = \theta x + (1-\theta)y - (\theta + 1 - \theta)z = z - z = 0
+                \theta(x-z) + (1-\theta)(y-z) = \theta x + (1-\theta)y - (\theta + 1-\theta)z = z - z = 0
                 $$
-                The gradient term vanishes.
+                Thus, the gradient term disappears.
               </li>
-              <li><b>Conclusion:</b> $\theta f(x) + (1-\theta)f(y) \ge f(z) = f(\theta x + (1-\theta)y)$. Thus $f$ is convex.</li>
+              <li><b>Conclusion:</b> The inequality simplifies to:
+                $$ \theta f(x) + (1-\theta)f(y) \ge f(z) = f(\theta x + (1-\theta)y) $$
+                This is exactly the definition of convexity.
+              </li>
             </ul>
           </div>
         </div>
@@ -384,24 +407,27 @@
 
           <div class="proof-step">
             <strong>Part 1: Convex $\Rightarrow$ PSD</strong>
-            <p>Fix any $x \in \mathrm{dom}\, f$ and direction $v \in \mathbb{R}^n$. Define $g(t) = f(x+tv)$.</p>
+            <p>Fix any point $x \in \mathrm{dom}\, f$ and an arbitrary direction $v \in \mathbb{R}^n$. Define the restriction $g(t) = f(x+tv)$.</p>
             <ul>
-              <li><b>1D Convexity:</b> Since $f$ is convex, the restriction $g(t)$ is convex. Thus its second derivative must be non-negative: $g''(t) \ge 0$.</li>
-              <li><b>Directional Second Derivative:</b> By the chain rule applied twice:
+              <li><b>Step 1: Use convexity of restriction.</b> Since $f$ is convex, $g(t)$ is a convex function of one variable. Thus, its second derivative must be non-negative everywhere: $g''(t) \ge 0$.</li>
+              <li><b>Step 2: Directional Second Derivative.</b> Compute $g''(0)$ using the chain rule:
                 $$ g'(t) = \nabla f(x+tv)^\top v $$
                 $$ g''(t) = v^\top \nabla^2 f(x+tv) v $$
               </li>
-              <li><b>Conclusion:</b> At $t=0$, we have $v^\top \nabla^2 f(x) v \ge 0$. Since this holds for <i>any</i> direction $v$, $\nabla^2 f(x) \succeq 0$.</li>
+              <li><b>Conclusion:</b> At $t=0$, we have $g''(0) = v^\top \nabla^2 f(x) v \ge 0$. Since this holds for <i>any</i> direction $v$, the Hessian $\nabla^2 f(x)$ is positive semidefinite by definition.</li>
             </ul>
           </div>
 
           <div class="proof-step">
             <strong>Part 2: PSD $\Rightarrow$ Convex</strong>
-            <p>Assume $\nabla^2 f(x) \succeq 0$ for all $x$. Fix $x, y$ and let $v = y-x$. Consider $g(t) = f(x+tv)$ on $[0, 1]$.</p>
+            <p>Assume $\nabla^2 f(x) \succeq 0$ for all $x$. Fix any two points $x, y$ and let $v = y-x$. Consider $g(t) = f(x+tv)$ on the interval $[0, 1]$.</p>
             <ul>
-              <li><b>Non-negative Curvature:</b> For any $t$, $g''(t) = v^\top \nabla^2 f(x+tv) v$. Since the Hessian is PSD, $v^\top H v \ge 0$, so $g''(t) \ge 0$.</li>
-              <li><b>1D Implication:</b> A function with non-negative second derivative is convex. Thus $g(t)$ is convex.</li>
-              <li><b>Conclusion:</b> Since the restriction to every line segment is convex, $f$ is convex.</li>
+              <li><b>Step 1: Check curvature along the line.</b> For any $t \in [0, 1]$, the second derivative is:
+                $$ g''(t) = v^\top \nabla^2 f(x+tv) v $$
+              </li>
+              <li><b>Step 2: Apply PSD condition.</b> Since the Hessian is PSD at the point $x+tv$, we know $v^\top \nabla^2 f(x+tv) v \ge 0$. Thus $g''(t) \ge 0$ for all $t$.</li>
+              <li><b>Step 3: 1D Convexity.</b> A twice-differentiable function with a non-negative second derivative is convex. So $g(t)$ is convex.</li>
+              <li><b>Conclusion:</b> Since the restriction of $f$ to <i>every</i> line segment is convex, the function $f$ is convex.</li>
             </ul>
           </div>
         </div>
@@ -443,27 +469,45 @@
 
         <div class="proof-box">
           <h4>Example 2: Log-Sum-Exp (Full Derivation)</h4>
-          <p>Let $f(x) = \log \left(\sum_{k=1}^n e^{x_k}\right)$. We prove convexity by showing the Hessian is Positive Semidefinite (PSD).</p>
+          <p>Let $f(x) = \log \left(\sum_{k=1}^n e^{x_k}\right)$. We perform a detailed derivation to prove its Hessian is PSD.</p>
+          <p>Define $z_k = e^{x_k}$ and $S = \sum_{k=1}^n z_k$. Then $f(x) = \log S$.</p>
 
           <div class="proof-step">
-            <strong>Step 1: Gradient (Softmax).</strong>
-            Let $S = \sum_{k=1}^n e^{x_k}$ and $z_i = e^{x_i}/S$. Then $\nabla f(x) = z$. Note $\sum z_i = 1, z_i > 0$.
+            <strong>Step 1: Gradient.</strong>
+            Using the chain rule: $\frac{\partial f}{\partial x_i} = \frac{1}{S} \frac{\partial S}{\partial x_i} = \frac{1}{S} e^{x_i} = \frac{z_i}{S}$.
+            <br>In vector form: $\nabla f(x) = \frac{1}{S} z$, which is the <b>softmax</b> vector (probability distribution).
           </div>
 
           <div class="proof-step">
-            <strong>Step 2: Hessian.</strong>
-            Differentiating $z_i$: $\frac{\partial z_i}{\partial x_j} = z_i \delta_{ij} - z_i z_j$.
-            Matrix form: $\nabla^2 f(x) = \text{diag}(z) - zz^\top$.
+            <strong>Step 2: Hessian (Element-wise).</strong>
+            We differentiate $\frac{\partial f}{\partial x_i} = \frac{z_i}{S}$ with respect to $x_j$ using the quotient rule:
+            $$
+            \frac{\partial^2 f}{\partial x_j \partial x_i} = \frac{\partial}{\partial x_j} \left( z_i S^{-1} \right)
+            = \frac{\partial z_i}{\partial x_j} S^{-1} + z_i \frac{\partial S^{-1}}{\partial x_j}
+            $$
+            <ul>
+              <li>$\frac{\partial z_i}{\partial x_j} = z_i \delta_{ij}$ (since $x_j$ only affects $z_j$).</li>
+              <li>$\frac{\partial S^{-1}}{\partial x_j} = -S^{-2} \frac{\partial S}{\partial x_j} = -S^{-2} z_j$.</li>
+            </ul>
+            Combining these:
+            $$ \frac{\partial^2 f}{\partial x_j \partial x_i} = \frac{z_i \delta_{ij}}{S} - \frac{z_i z_j}{S^2} $$
+            In matrix form:
+            $$ \nabla^2 f(x) = \frac{1}{S}\mathrm{diag}(z) - \frac{1}{S^2} z z^\top $$
           </div>
 
           <div class="proof-step">
-            <strong>Step 3: PSD Check (Cauchy-Schwarz).</strong>
-            For any vector $v$:
-            $$ v^\top \nabla^2 f(x) v = \sum z_i v_i^2 - \left(\sum z_i v_i\right)^2 $$
-            Let $a_i = \sqrt{z_i} v_i$ and $b_i = \sqrt{z_i}$.
-            $$ \left(\sum z_i v_i\right)^2 = \left(\sum a_i b_i\right)^2 \le \left(\sum a_i^2\right)\left(\sum b_i^2\right) $$
-            $$ = \left(\sum z_i v_i^2\right)\left(\sum z_i\right) = \sum z_i v_i^2 \quad (\text{since } \sum z_i = 1) $$
-            Thus $\sum z_i v_i^2 - (\sum z_i v_i)^2 \ge 0$. The Hessian is PSD.
+            <strong>Step 3: PSD Check via Cauchy-Schwarz.</strong>
+            For any vector $v \in \mathbb{R}^n$, consider the quadratic form:
+            $$
+            v^\top \nabla^2 f(x) v = \frac{1}{S} v^\top \mathrm{diag}(z) v - \frac{1}{S^2} v^\top (z z^\top) v
+            $$
+            $$ = \frac{1}{S} \sum_i z_i v_i^2 - \frac{1}{S^2} \left(\sum_i z_i v_i\right)^2 $$
+            Multiply by $S^2$ (which is positive) to clear denominators:
+            $$ S^2 (v^\top \nabla^2 f(x) v) = S \sum_i z_i v_i^2 - \left(\sum_i z_i v_i\right)^2 $$
+            Recall $S = \sum z_i$. We use Cauchy-Schwarz with vectors $a_i = \sqrt{z_i}v_i$ and $b_i = \sqrt{z_i}$:
+            $$ \left(\sum z_i v_i\right)^2 = \left(\sum (\sqrt{z_i}v_i)(\sqrt{z_i})\right)^2 \le \left(\sum z_i v_i^2\right) \left(\sum z_i\right) = \left(\sum z_i v_i^2\right) S $$
+            Rearranging gives $S \sum z_i v_i^2 - (\sum z_i v_i)^2 \ge 0$.
+            <br>Thus $v^\top \nabla^2 f(x) v \ge 0$ for all $v$, so the Hessian is PSD.
           </div>
         </div>
 
@@ -751,20 +795,12 @@
 
         <div class="example">
           <h4>2. Schur Complement</h4>
-          <p>Let $f(x, y) = x^\top A x + 2x^\top B y + y^\top C y$ with $C \succ 0$ and the block matrix $M = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} \succeq 0$.
-          <br>To find $g(x) = \inf_y f(x, y)$, we minimize the quadratic with respect to $y$. The gradient is $\nabla_y f = 2Cy + 2B^\top x = 0$, yielding the optimizer:
-          $$ y^*(x) = -C^{-1}B^\top x $$
-          Substituting this back into the expression for $f(x, y)$:
-          <ul>
-            <li>Quadratic term: $y^{*\top} C y^* = (-C^{-1}B^\top x)^\top C (-C^{-1}B^\top x) = x^\top B C^{-1} C C^{-1} B^\top x = x^\top B C^{-1} B^\top x$</li>
-            <li>Cross term: $2x^\top B y^* = 2x^\top B (-C^{-1}B^\top x) = -2x^\top B C^{-1} B^\top x$</li>
-            <li>Constant term (w.r.t $y$): $x^\top A x$</li>
-          </ul>
-          Summing these:
-          $$ g(x) = x^\top A x - 2x^\top B C^{-1} B^\top x + x^\top B C^{-1} B^\top x = x^\top (A - B C^{-1} B^\top) x $$
-          Since partial minimization of a convex function preserves convexity, $g(x)$ is convex. Since $g$ is a quadratic form, its Hessian must be PSD, proving the Schur Complement condition:
-          $$ A - B C^{-1} B^\top \succeq 0 $$
-          </p>
+          <p>Let $f(x, y) = x^\top A x + 2x^\top B y + y^\top C y$ with $C \succ 0$.
+          <br>We perform partial minimization to eliminate $y$. The gradient w.r.t $y$ is $\nabla_y f = 2Cy + 2B^\top x$. Setting to zero gives $y^* = -C^{-1}B^\top x$.
+          <br>Substituting back:
+          $$ g(x) = f(x, y^*) = x^\top A x + 2x^\top B (-C^{-1}B^\top x) + (-C^{-1}B^\top x)^\top C (-C^{-1}B^\top x) $$
+          $$ = x^\top A x - 2x^\top B C^{-1} B^\top x + x^\top B C^{-1} B^\top x = x^\top (A - B C^{-1} B^\top) x $$
+          Since partial minimization preserves convexity, if the original block matrix is PSD, then the Schur complement $A - B C^{-1} B^\top$ is also PSD.</p>
         </div>
 
         <h3>5.5 Composition Rules</h3>
