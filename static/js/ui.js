@@ -3,9 +3,9 @@
  * Handles:
  * - Collapsible Environment Boxes (Proofs, Examples, Solutions)
  * - Hierarchical Section/Subsection Toggling
- * - Page Settings (Font Size, Global Toggles)
- * - Sidebar/TOC Toggling
- * - Theme Switching
+ * - Page Settings (Font Size, Global Toggles, Layout)
+ * - Sidebar/TOC Toggling & Resizing
+ * - Theme Switching (via theme-switcher.js)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initPageSettings();
     initHeaderFontSize();
     initSidebarToggle();
-    initThemeSwitcher();
+    // initThemeSwitcher(); // Moved to theme-switcher.js
     feather.replace();
 });
 
@@ -288,6 +288,16 @@ function initPageSettings() {
         </div>
 
         <div class="setting-group">
+            <span class="setting-label">Sidebar Width (<span id="sidebar-width-label">85%</span>)</span>
+            <input type="range" id="toc-width-slider" min="70" max="115" value="85" style="width: 100%">
+        </div>
+
+        <div class="setting-group">
+            <span class="setting-label">View</span>
+            <button class="setting-btn" id="toggle-fullscreen" style="width: 100%; margin-bottom: 8px;"><i data-feather="maximize"></i> Full Screen</button>
+        </div>
+
+        <div class="setting-group">
             <span class="setting-label">Sections</span>
             <div class="setting-controls">
                 <button class="setting-btn" id="sections-expand">Expand All</button>
@@ -347,6 +357,9 @@ function initPageSettings() {
         updateFont();
     });
 
+    // Sidebar Resizer
+    initTocResizer();
+
     // Global Toggles: Sections
     const toggleSections = (expand) => {
         document.querySelectorAll('.hierarchical-section').forEach(sec => {
@@ -391,6 +404,59 @@ function initPageSettings() {
 }
 
 
+function initTocResizer() {
+    const slider = document.getElementById('toc-width-slider');
+    const label = document.getElementById('sidebar-width-label');
+    if (!slider) return;
+
+    // Load saved width
+    const savedWidth = localStorage.getItem('toc-width-percent');
+    if (savedWidth) {
+        slider.value = savedWidth;
+        updateTocWidth(savedWidth);
+    } else {
+        // Default 85%
+        slider.value = 85;
+        updateTocWidth(85);
+    }
+
+    if (label) label.textContent = slider.value + '%';
+
+    slider.addEventListener('input', (e) => {
+        const percent = e.target.value;
+        if (label) label.textContent = percent + '%';
+        updateTocWidth(percent);
+        localStorage.setItem('toc-width-percent', percent);
+    });
+
+    // Fullscreen toggle
+    const fsBtn = document.getElementById('toggle-fullscreen');
+    if (fsBtn) {
+        fsBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                fsBtn.innerHTML = '<i data-feather="minimize"></i> Exit Full Screen';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    fsBtn.innerHTML = '<i data-feather="maximize"></i> Full Screen';
+                }
+            }
+            feather.replace();
+        });
+    }
+}
+
+function updateTocWidth(percent) {
+    // Base width is approx 330px (280px + padding/margins) or we define 100% as 330px
+    // Let's assume 100% = 330px.
+    // Actually, user said "70% of current version to 115%". Current is 280px.
+    const baseWidth = 330; // 280px roughly
+    const newWidth = (percent / 100) * baseWidth;
+    document.documentElement.style.setProperty('--sidebar-width', `${newWidth}px`);
+}
+
+
 /* =========================================
    4. SIDEBAR & THEME (Legacy/Existing)
    ========================================= */
@@ -432,86 +498,4 @@ function initSidebarToggle() {
         localStorage.setItem('sidebar-collapsed', collapsed);
         window.dispatchEvent(new Event('resize'));
     });
-}
-
-function initThemeSwitcher() {
-    const nav = document.querySelector('.nav');
-    if (!nav) return;
-    if (document.getElementById('theme-dropdown-trigger')) return;
-
-    const container = document.createElement('div');
-    container.style.position = 'relative';
-
-    // Trigger Button
-    const btn = document.createElement('button');
-    btn.id = 'theme-dropdown-trigger';
-    btn.className = 'btn btn-ghost';
-    btn.innerHTML = '<i data-feather="droplet"></i> Theme';
-
-    // Dropdown Menu
-    const dropdown = document.createElement('div');
-    dropdown.className = 'theme-dropdown hidden';
-
-    const themes = [
-        { id: 'default', name: 'Ocean', color: '#1890ff' },
-        { id: 'emerald', name: 'Emerald', color: '#10b981' },
-        { id: 'amethyst', name: 'Amethyst', color: '#8b5cf6' },
-        { id: 'sunset', name: 'Sunset', color: '#f97316' }
-    ];
-
-    // Current Theme
-    const currentTheme = localStorage.getItem('theme') || 'default';
-
-    themes.forEach(theme => {
-        const option = document.createElement('button');
-        option.className = `theme-option ${currentTheme === theme.id ? 'active' : ''}`;
-
-        // Color preview dot
-        const dot = document.createElement('span');
-        dot.className = 'theme-color-preview';
-        dot.style.backgroundColor = theme.color;
-
-        const label = document.createElement('span');
-        label.textContent = theme.name;
-
-        option.appendChild(dot);
-        option.appendChild(label);
-
-        option.addEventListener('click', () => {
-            setTheme(theme.id);
-            // Update active state in UI
-            dropdown.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
-            option.classList.add('active');
-            dropdown.classList.add('hidden');
-        });
-
-        dropdown.appendChild(option);
-    });
-
-    // Toggle Logic
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdown.classList.toggle('hidden');
-    });
-
-    // Close on click outside
-    document.addEventListener('click', () => {
-        dropdown.classList.add('hidden');
-    });
-
-    container.appendChild(btn);
-    container.appendChild(dropdown);
-    nav.appendChild(container);
-
-    // Apply initial theme
-    setTheme(currentTheme);
-}
-
-function setTheme(themeId) {
-    if (themeId === 'default') {
-        document.documentElement.removeAttribute('data-theme');
-    } else {
-        document.documentElement.setAttribute('data-theme', themeId);
-    }
-    localStorage.setItem('theme', themeId);
 }
