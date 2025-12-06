@@ -1228,6 +1228,57 @@ ight) \
   </div>
 </div>
 
+<div class="problem">
+  <h3>P5.10 — The Dual via Conjugates</h3>
+  <p>Consider the problem:
+  $$ \text{minimize } f(x) \quad \text{s.t.} \quad Ax \preceq b, \quad Cx = d $$
+  where $f: \mathbb{R}^n \to \mathbb{R}$ is a closed convex function.
+  <ol type="a">
+    <li>Derive the dual problem solely in terms of the convex conjugate $f^*$, the problem data ($A, b, C, d$), and the dual variables $(\lambda, \nu)$.</li>
+    <li>Apply this formula to derive the dual of the <b>Entropy Maximization</b> problem:
+    $$ \text{minimize } \sum_{i=1}^n x_i \log x_i \quad \text{s.t.} \quad Ax \le b, \quad \mathbf{1}^\top x = 1 $$
+    (Assume implicitly $x \ge 0$ via the domain of the entropy function).</li>
+  </ol></p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Conjugates and Duals:</b> The Lagrange dual function $g(\lambda, \nu)$ is intimately related to the convex conjugate $f^*(y)$. Specifically, $g(\lambda, \nu)$ is often of the form $-f^*(-A^\top \lambda - C^\top \nu) - b^\top \lambda - d^\top \nu$. This provides a mechanical recipe for dualizing problems.</li>
+        <li><b>Zero-to-Hero Application:</b> This exercise ties the "Zero to Hero" conjugate derivations in Lecture 03 directly to the duality theory in Lecture 05, showing how abstract tools ($f^*$) simplify complex derivations.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Part (a): General Derivation.</strong>
+      The Lagrangian is:
+      $$ L(x, \lambda, \nu) = f(x) + \lambda^\top (Ax - b) + \nu^\top (Cx - d) $$
+      $$ = f(x) + (A^\top \lambda + C^\top \nu)^\top x - b^\top \lambda - d^\top \nu $$
+      The dual function is $g(\lambda, \nu) = \inf_x L(x, \lambda, \nu)$.
+      $$ \inf_x \left( f(x) + (A^\top \lambda + C^\top \nu)^\top x \right) = - \sup_x \left( -(A^\top \lambda + C^\top \nu)^\top x - f(x) \right) $$
+      Using the definition $f^*(y) = \sup_x (y^\top x - f(x))$, we identify $y = -(A^\top \lambda + C^\top \nu)$.
+      Thus:
+      $$ g(\lambda, \nu) = -f^*(-(A^\top \lambda + C^\top \nu)) - b^\top \lambda - d^\top \nu $$
+      The dual problem is:
+      $$ \text{maximize } -b^\top \lambda - d^\top \nu - f^*(-A^\top \lambda - C^\top \nu) \quad \text{s.t. } \lambda \succeq 0 $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Part (b): Entropy Application.</strong>
+      Here $f(x) = \sum x_i \log x_i$. From Lecture 03, the conjugate is $f^*(y) = \sum e^{y_i - 1}$.
+      The constraints are $Ax \preceq b$ (multiplier $\lambda \succeq 0$) and $\mathbf{1}^\top x = 1$ (multiplier $\nu \in \mathbb{R}$).
+      Applying the formula:
+      $$ y = -(A^\top \lambda + \nu \mathbf{1}) = -A^\top \lambda - \nu \mathbf{1} $$
+      The dual objective is:
+      $$ -b^\top \lambda - \nu - f^*(-A^\top \lambda - \nu \mathbf{1}) $$
+      $$ = -b^\top \lambda - \nu - \sum_{i=1}^n \exp( -(A^\top \lambda)_i - \nu - 1 ) $$
+      $$ = -b^\top \lambda - \nu - e^{-\nu-1} \sum_{i=1}^n e^{-(A^\top \lambda)_i} $$
+      This matches the manual derivation result in P5.8 (after optimizing out $\nu$), but was obtained directly via the general formula.
+    </div>
+  </div>
+</div>
+
     </section>
 
 <section class="section-card" id="section-10" style="margin-bottom: 32px;">
