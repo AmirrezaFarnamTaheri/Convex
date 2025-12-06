@@ -688,19 +688,46 @@
         $$ (A^\top A)_{jj} = \sum_{k=1}^m (A^\top)_{jk} A_{kj} = \sum_{k=1}^m A_{kj} A_{kj} = \sum_{k=1}^m A_{kj}^2 $$
         This is the sum of squares of the $j$-th column.
         <br>The trace is the sum of these diagonal entries:
-        $$ \mathrm{tr}(A^\top A) = \sum_{j=1}^n (A^\top A)_{jj} = \sum_{j=1}^n \sum_{k=1}^m A_{kj}^2 $$
-        This is exactly the sum of squares of all entries.</p>
+        $$ \mathrm{tr}(A^\top A) = \sum_{j=1}^n (A^\top A)_{jj} = \sum_{j=1}^n \left(\sum_{k=1}^m A_{kj}^2\right) $$
+        Since the sums are finite, we can swap the order of summation (flipping sum over columns to sum over rows):
+        $$ \sum_{j=1}^n \sum_{k=1}^m A_{kj}^2 = \sum_{k=1}^m \sum_{j=1}^n A_{kj}^2 = \sum_{i,j} A_{ij}^2 $$
+        This is exactly the sum of squares of all entries. The 'tiny index detail' is simply swapping the order of summation.</p>
       </div>
 
       <h4>Submultiplicativity of the Frobenius Norm</h4>
-      <p>For compatible matrices $A, B$, we have the inequality $\|AB\|_F \le \|A\|_F \|B\|_F$.
-      <br><i>Proof via Cauchy-Schwarz:</i>
-      $$ \|AB\|_F^2 = \sum_{i,j} (AB)_{ij}^2 = \sum_{i,j} \left( \sum_k a_{ik} b_{kj} \right)^2 $$
-      Apply Cauchy-Schwarz to the inner sum:
-      $$ \left( \sum_k a_{ik} b_{kj} \right)^2 \le \left( \sum_k a_{ik}^2 \right) \left( \sum_k b_{kj}^2 \right) $$
-      Summing over $i$ and $j$:
-      $$ \sum_{i,j} (AB)_{ij}^2 \le \sum_{i,j} \left( \sum_k a_{ik}^2 \right) \left( \sum_k b_{kj}^2 \right) = \left( \sum_i \sum_k a_{ik}^2 \right) \left( \sum_j \sum_k b_{kj}^2 \right) = \|A\|_F^2 \|B\|_F^2 $$
-      Taking square roots yields the result.</p>
+      <p>For compatible matrices $A, B$, we have the inequality $\|AB\|_{HS} \le \|A\|_{HS} \|B\|_{HS}$. This property is crucial for analyzing the convergence of matrix iterations.</p>
+
+      <div class="proof-box">
+        <h4>Proof via "Scalar" Cauchy-Schwarz on Entries</h4>
+        <div class="proof-step">
+          <strong>Step 1: Expand the squared norm.</strong>
+          The squared Frobenius norm is the sum of squares of all entries.
+          $$ \|AB\|_{HS}^2 = \sum_{i=1}^m \sum_{j=1}^p (AB)_{ij}^2 $$
+          Substitute the definition of matrix multiplication $(AB)_{ij} = \sum_{k=1}^n a_{ik} b_{kj}$:
+          $$ \|AB\|_{HS}^2 = \sum_{i,j} \left( \sum_{k=1}^n a_{ik} b_{kj} \right)^2 $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Apply Cauchy-Schwarz to the inner sum.</strong>
+          For a fixed pair $(i, j)$, consider the vectors $u = (a_{i1}, \dots, a_{in})$ and $v = (b_{1j}, \dots, b_{nj})$.
+          By the scalar Cauchy-Schwarz inequality, $(\sum_k u_k v_k)^2 \le (\sum_k u_k^2)(\sum_k v_k^2)$.
+          $$ \left( \sum_{k} a_{ik} b_{kj} \right)^2 \le \left( \sum_{k} a_{ik}^2 \right) \left( \sum_{k} b_{kj}^2 \right) $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Sum over all $i, j$.</strong>
+          $$ \|AB\|_{HS}^2 \le \sum_{i=1}^m \sum_{j=1}^p \left[ \left( \sum_{k} a_{ik}^2 \right) \left( \sum_{k} b_{kj}^2 \right) \right] $$
+          The term $(\sum_k a_{ik}^2)$ depends only on $i$, and $(\sum_k b_{kj}^2)$ depends only on $j$. We can separate the sums:
+          $$ = \left( \sum_{i=1}^m \sum_{k=1}^n a_{ik}^2 \right) \left( \sum_{j=1}^p \sum_{k=1}^n b_{kj}^2 \right) $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Identify the norms.</strong>
+          The first factor is exactly $\|A\|_{HS}^2$, and the second is $\|B\|_{HS}^2$.
+          $$ \|AB\|_{HS}^2 \le \|A\|_{HS}^2 \|B\|_{HS}^2 $$
+          Taking square roots yields the result.
+        </div>
+      </div>
     </section>
 
     <!-- SECTION 3: ORTHOGONALITY AND QR -->
