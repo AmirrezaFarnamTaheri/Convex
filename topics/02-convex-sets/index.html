@@ -193,6 +193,7 @@
         <div class="theorem-box">
           <h4>Theorem</h4>
           <p>If $f$ is a convex function, then its sublevel set $C_\alpha$ is a convex set for any $\alpha \in \mathbb{R}$.</p>
+          <p><i>Proof:</i> Let $x, y \in C_\alpha$ and $\theta \in [0,1]$. Then $f(x) \le \alpha$ and $f(y) \le \alpha$. By convexity, $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \le \theta \alpha + (1-\theta)\alpha = \alpha$. Thus the combination is in $C_\alpha$.</p>
           <p><i>Note:</i> The converse is false. Functions whose sublevel sets are convex but who are not themselves convex are called <b>quasiconvex</b>.</p>
         </div>
 
@@ -213,7 +214,7 @@
         <div class="theorem-box">
           <h4>Fundamental Bridge Theorem</h4>
           <p>A function $f$ is <b>convex</b> if and only if its <b>epigraph</b> $\mathrm{epi}(f)$ is a <b>convex set</b>.</p>
-          <p>This allows us to translate operations on functions (like taking a maximum) into operations on sets (like intersection), providing geometric proofs for analytic properties.</p>
+          <p>This equivalence allows us to translate analytic properties of functions into geometric properties of sets. For example, the fact that the pointwise maximum of convex functions is convex follows immediately from the fact that the intersection of convex sets (their epigraphs) is convex.</p>
         </div>
 
         <h3>1.5 Key Properties</h3>
@@ -795,8 +796,13 @@
             <ul>
                 <li><b>Non-negative orthant:</b> $\mathbb{R}^n_+ = \{x \in \mathbb{R}^n \mid x_i \ge 0\}$</li>
                 <li><b>Second-order cone (Lorentz cone):</b> $\mathcal{Q}^{n+1} = \{(x, t) \in \mathbb{R}^{n+1} \mid \|x\|_2 \le t\}$</li>
-                <li><b>Norm Cone (Epigraph of a Norm):</b> For any norm $\|\cdot\|$, the set $C = \{(x, t) \mid \|x\| \le t\}$ is a convex cone.
-                  <br><i>Proof:</i> If $(x, t) \in C$, then $\|\alpha x\| = \alpha \|x\| \le \alpha t$, so $\alpha(x, t) \in C$. If $\|x\| \le t$ and $\|y\| \le s$, then $\|x+y\| \le \|x\| + \|y\| \le t + s$, so $(x+y, t+s) \in C$. This generalizes the Second-Order Cone.
+                <li><b>Norm Cone (Epigraph of a Norm):</b> For any norm $\|\cdot\|$, the set $C = \{(x, t) \in \mathbb{R}^{n+1} \mid \|x\| \le t\}$ is a convex cone. This is the epigraph of the norm function.
+                  <br><i>Proof:</i>
+                  <ul>
+                    <li><b>Cone property:</b> If $(x, t) \in C$, then for $\alpha \ge 0$, $\|\alpha x\| = \alpha \|x\| \le \alpha t$, so $\alpha(x, t) \in C$.</li>
+                    <li><b>Convexity:</b> If $(x, t) \in C$ and $(y, s) \in C$, then $\|x+y\| \le \|x\| + \|y\| \le t + s$, so $(x+y, t+s) \in C$.</li>
+                  </ul>
+                  This generalizes the Second-Order Cone (where the norm is Euclidean).
                 </li>
                 <li><b>PSD Cone:</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$</li>
             </ul>
