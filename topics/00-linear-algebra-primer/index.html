@@ -2453,9 +2453,57 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
           </div>
         </div>
       </div>
-</section>
 
-    <!-- SECTION 13: SUMMARY -->
+
+
+
+<div class="problem">
+      <h3>P0.15 — Explicit Description of PSD Cone</h3>
+      <p>For $n=1, 2, 3$, give explicit inequalities in terms of the matrix entries that describe the positive semidefinite cone $\mathbb{S}^n_+$. Use Sylvester's criterion (non-negativity of all principal minors).</p>
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Sylvester's Criterion for PSD:</b> A symmetric matrix is PSD ($X \succeq 0$) if and only if <i>all</i> its principal minors are non-negative. This includes the $1 \times 1$ diagonal entries, $2 \times 2$ sub-determinants, etc., up to the full determinant.</li>
+            <li><b>Distinction from PD:</b> For Positive Definiteness ($X \succ 0$), checking only the <i>leading</i> principal minors is sufficient. For Semidifiniteness, one must check <i>all</i> principal minors.</li>
+        </ul>
+      </div>
+
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>We apply the condition that all principal minors must be non-negative.</p>
+
+        <div class="proof-step">
+          <strong>Case $n=1$:</strong>
+          $X = [x_1]$. The condition is simply $x_1 \ge 0$.
+          $$ \mathbb{S}^1_+ = \{ [x_1] \mid x_1 \ge 0 \} $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Case $n=2$:</strong>
+          $X = \begin{bmatrix} x_1 & x_2 \\ x_2 & x_3 \end{bmatrix}$.
+          <ul>
+            <li>$1 \times 1$ minors (diagonal): $x_1 \ge 0, x_3 \ge 0$.</li>
+            <li>$2 \times 2$ minor (determinant): $\det(X) = x_1 x_3 - x_2^2 \ge 0$.</li>
+          </ul>
+          $$ \mathbb{S}^2_+ = \left\{ \begin{bmatrix} x_1 & x_2 \\ x_2 & x_3 \end{bmatrix} \middle| x_1 \ge 0, x_3 \ge 0, x_1 x_3 - x_2^2 \ge 0 \right\} $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Case $n=3$:</strong>
+          $X = \begin{bmatrix} x_1 & x_2 & x_3 \\ x_2 & x_4 & x_5 \\ x_3 & x_5 & x_6 \end{bmatrix}$.
+          <ul>
+            <li>$1 \times 1$ minors: $x_1 \ge 0, x_4 \ge 0, x_6 \ge 0$.</li>
+            <li>$2 \times 2$ minors:
+              $$ x_1 x_4 - x_2^2 \ge 0, \quad x_1 x_6 - x_3^2 \ge 0, \quad x_4 x_6 - x_5^2 \ge 0 $$
+            </li>
+            <li>$3 \times 3$ minor:
+              $$ \det(X) = x_1 x_4 x_6 + 2 x_2 x_3 x_5 - x_1 x_5^2 - x_4 x_3^2 - x_6 x_2^2 \ge 0 $$
+            </li>
+          </ul>
+        </div>
+      </div>
+</div>
 
 
     <!-- READINGS -->

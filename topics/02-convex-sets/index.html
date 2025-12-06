@@ -777,7 +777,27 @@
           <p><i>Connection to optimization:</i> This is exactly what happens in SVM classification—finding the maximum-margin separating hyperplane between two classes of data points!</p>
           <div id="widget-separating-hyperplane" style="width: 100%; height: 450px; position: relative;"></div>
         </div>
-      </section>
+
+        <h3>4.3 The Support Function</h3>
+
+        <p>The <b>support function</b> of a set $C \subseteq \mathbb{R}^n$ describes the set by measuring its extent in every direction $y$. It is defined as:</p>
+        $$ S_C(y) = \sup_{x \in C} y^\top x $$
+        <p>The value $S_C(y)$ gives the position of the supporting hyperplane with normal vector $y$. If $C$ is unbounded in direction $y$, then $S_C(y) = +\infty$.</p>
+
+        <div class="theorem-box">
+          <h4>Theorem (Representation of Closed Convex Sets)</h4>
+          <p>A closed convex set $C$ is completely determined by its support function. Specifically, it is the intersection of all halfspaces defined by its support function:</p>
+          $$ C = \bigcap_{y \in \mathbb{R}^n} \{x \mid y^\top x \le S_C(y)\} $$
+          <p>This tells us that the mapping $C \mapsto S_C$ is a one-to-one correspondence between closed convex sets and their support functions.</p>
+        </div>
+
+        <!-- <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/support-function.png"
+               alt="Geometric visualization of support function"
+               style="max-width: 60%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 4.4:</i> The support function $S_C(y)$ measures how far the set $C$ extends in direction $y$. The hyperplane $y^\top x = S_C(y)$ supports the set.</figcaption>
+        </figure> -->
+</section>
 
 
       <section class="section-card" id="section-5">
@@ -1785,7 +1805,127 @@
             </div>
   </div>
 </div>
-    </section>
+
+<div class="problem">
+  <h3>P2.16 — Support Function Determines Set</h3>
+  <p><b>Claim:</b> If $C, D \subseteq \mathbb{R}^n$ are closed convex sets, then $C = D \iff S_C = S_D$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Injectivity:</b> The support function $S_C$ is a "fingerprint" of a closed convex set. No two distinct closed convex sets have the same support function.</li>
+        <li><b>Geometric Reconstruction:</b> Since $C = \bigcap_y \{x \mid y^\top x \le S_C(y)\}$, knowing $S_C$ allows us to perfectly reconstruct $C$ by intersecting halfspaces.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <p><b>Direction 1 ($\Rightarrow$):</b> If $C=D$, then trivially $\sup_{x \in C} y^\top x = \sup_{x \in D} y^\top x$ for all $y$, so $S_C = S_D$.</p>
+    <p><b>Direction 2 ($\Leftarrow$):</b> Assume $S_C = S_D$. We use the representation theorem (Section 4.3):
+    $$ C = \bigcap_y \{x \mid y^\top x \le S_C(y)\} = \bigcap_y \{x \mid y^\top x \le S_D(y)\} = D $$
+    <br><b>Alternative Proof via Separation Theorem:</b>
+    <br>Assume for contradiction $C \neq D$. Without loss of generality, assume there exists $x_0 \in C \setminus D$.
+    Since $D$ is closed and convex, by the Separating Hyperplane Theorem, there exists a hyperplane strictly separating $x_0$ from $D$:
+    $$ y^\top x_0 > \alpha \ge y^\top z \quad \forall z \in D $$
+    This implies $S_D(y) = \sup_{z \in D} y^\top z \le \alpha$.
+    However, since $x_0 \in C$, we have $S_C(y) \ge y^\top x_0 > \alpha$.
+    Thus $S_C(y) > S_D(y)$, contradicting $S_C = S_D$.
+    Therefore $C \subseteq D$. By symmetry, $D \subseteq C$, so $C = D$.
+    </p>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.17 — Converse Supporting Hyperplane Theorem</h3>
+  <p><b>Statement:</b> Suppose $C \subseteq \mathbb{R}^n$ is closed, has nonempty interior, and has a supporting hyperplane at <i>every</i> boundary point. Show that $C$ is convex.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Local to Global:</b> The existence of supporting hyperplanes is usually a consequence of convexity. This theorem shows it is also a <i>sufficient condition</i> (under mild topological assumptions).</li>
+        <li><b>Convex Hull Trick:</b> A powerful strategy for proving convexity is to compare a set $C$ with its closed convex hull $D = \overline{\mathrm{conv}}(C)$. If $C \neq D$, we find a contradiction using the boundary properties.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Compare with Convex Hull.</strong> Let $D = \overline{\mathrm{conv}}(C)$. Then $C \subseteq D$ and $S_C = S_D$ (the support function depends only on the convex hull). Assume for contradiction $C \subsetneq D$.
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 2: Construct line segment.</strong> Pick $x_{in} \in \mathrm{int}(C)$ and $x_{out} \in D \setminus C$. Consider the segment $[x_{in}, x_{out}]$. Since $x_{in} \in C$ and $x_{out} \notin C$, there must be a boundary point $x^* \in \partial C$ on this segment (by connectedness).
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 3: Use Supporting Hyperplane.</strong> By hypothesis, there exists a supporting hyperplane at $x^*$ with normal $y$:
+      $$ y^\top x \le y^\top x^* \quad \forall x \in C $$
+      This implies $S_C(y) = y^\top x^*$.
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 4: Extend to Convex Hull.</strong> Since $S_D = S_C$, we have $y^\top z \le y^\top x^*$ for all $z \in D$. In particular, this holds for $x_{in}$ and $x_{out}$.
+      $$ y^\top x_{in} \le y^\top x^* \quad \text{and} \quad y^\top x_{out} \le y^\top x^* $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 5: Contradiction.</strong> Since $x^*$ lies strictly between $x_{in}$ and $x_{out}$, $x^* = (1-\lambda)x_{in} + \lambda x_{out}$. For the linear functional to reach its maximum at the interior of a segment, it must be constant on the segment.
+      Thus $y^\top x_{in} = y^\top x^*$.
+      But $x_{in} \in \mathrm{int}(C)$. If a linear function achieves its maximum over $C$ at an interior point, it must be constant everywhere (or $y=0$), which contradicts that it's a supporting hyperplane ($y \neq 0$).
+      Thus, $C$ must equal $D$, so $C$ is convex.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.18 — Cones in $\mathbb{R}^2$</h3>
+  <p>Let $K \subseteq \mathbb{R}^2$ be a closed convex cone. Using polar coordinates, $K$ can be represented as an angular interval $[\alpha, \beta]$ (where directions are identified with angles).</p>
+  <ol type="a">
+      <li>Describe the dual cone $K^*$ in terms of $\alpha$ and $\beta$.</li>
+      <li>When is $K$ pointed?</li>
+      <li>When is $K$ proper?</li>
+      <li>Interpret the generalized inequality $x \preceq_K y$ geometrically.</li>
+  </ol>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Geometric Cones:</b> In 2D, a convex cone is just a "wedge" emanating from the origin.</li>
+        <li><b>Polar Duality:</b> The condition $y^\top x \ge 0$ means the angle between $x$ and $y$ is at most $90^\circ$. Thus $K^*$ corresponds to the wedge of angles that are within $\pm 90^\circ$ of <i>every</i> angle in $K$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>(a) Dual Cone:</strong>
+      If $K$ corresponds to angles $[\alpha, \beta]$ (with width $\beta - \alpha \le \pi$), then $y \in K^*$ if its angle $\theta$ satisfies $|\theta - \phi| \le \pi/2$ for all $\phi \in [\alpha, \beta]$.
+      This requires $\theta \le \alpha + \pi/2$ and $\theta \ge \beta - \pi/2$.
+      Thus $K^*$ corresponds to the interval $[\beta - \pi/2, \alpha + \pi/2]$.
+    </div>
+
+    <div class="proof-step">
+      <strong>(b) Pointedness:</strong>
+      $K$ is pointed if it contains no lines. A line corresponds to an angular width of $\pi$. Thus $K$ is pointed iff $\beta - \alpha < \pi$.
+    </div>
+
+    <div class="proof-step">
+      <strong>(c) Properness:</strong>
+      $K$ is proper if it is closed, convex, pointed, and solid (nonempty interior).
+      <ul>
+        <li>Pointed: $\beta - \alpha < \pi$.</li>
+        <li>Solid: $\beta - \alpha > 0$.</li>
+      </ul>
+      Thus $K$ is proper iff $0 < \beta - \alpha < \pi$.
+    </div>
+
+    <div class="proof-step">
+      <strong>(d) Generalized Inequality:</strong>
+      $x \preceq_K y \iff y - x \in K$. Geometrically, this means the vector $y-x$ points in a direction within the angular sector $[\alpha, \beta]$. Or, $y$ lies in the "cone shadow" cast by $K$ starting at $x$.
+    </div>
+  </div>
+</div>
+</section>
 
 
 
