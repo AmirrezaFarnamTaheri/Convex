@@ -956,8 +956,13 @@
           <li><b>Block Matrix:</b> LMI form, useful for SDPs.</li>
           <li><b>Rank-1 Update:</b> $tY \succeq xx^\top$. Derived by setting $\alpha=1$ in the quadratic form argument above: $(x^\top v)^2 \le t v^\top Y v \iff v^\top (tY - xx^\top) v \ge 0$.</li>
         </ul>
-        <p><b>Determinant Identity:</b> By block Gaussian elimination:
-        $$ \det \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} = \det(Y) \cdot (t - x^\top Y^{-1} x) $$
+        <p><b>Determinant Identity:</b> We can derive this using a specific block elimination matrix. Define:
+        $$ P = \begin{bmatrix} I & -Y^{-1}x \\ 0 & 1 \end{bmatrix} $$
+        Multiplying the block matrix $M$ by $P$:
+        $$ M P = \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \begin{bmatrix} I & -Y^{-1}x \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} Y & -x + x \\ x^\top & -x^\top Y^{-1}x + t \end{bmatrix} = \begin{bmatrix} Y & 0 \\ x^\top & t - x^\top Y^{-1} x \end{bmatrix} $$
+        Since $MP$ is block lower-triangular, its determinant is the product of diagonal blocks: $\det(MP) = \det(Y)(t - x^\top Y^{-1}x)$.
+        Since $\det(P) = 1$, we have:
+        $$ \det(M) = \det(Y) \cdot (t - x^\top Y^{-1} x) $$
         </p>
       </div>
 
@@ -1549,7 +1554,15 @@
         <h3>8.6 Examples</h3>
 
         <div class="example">
-          <h4>1. Length of a Vector (Support Size)</h4>
+          <h4>1. Simple 1D Examples</h4>
+          <ul>
+            <li><b>Logarithm:</b> $f(x) = \log x$ on $(0, \infty)$. Sublevel set $S_\alpha = \{x \mid \log x \le \alpha\} = (0, e^\alpha]$. This is a convex set (interval), so $\log x$ is quasi-convex. (Since it is monotonic, it is also quasi-concave).</li>
+            <li><b>Ceiling:</b> $f(x) = \lceil x \rceil$. Sublevel set $S_\alpha = \{x \mid \lceil x \rceil \le \alpha\} = (-\infty, \lfloor \alpha \rfloor]$. This is an interval, so the ceiling function is quasi-convex.</li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h4>2. Length of a Vector (Support Size)</h4>
           <p>Define $f(x) = \max \{i \mid x_i \ne 0\}$ (index of last nonzero element).
           <br>Sublevel set $S_k = \{x \mid x_{k+1} = \dots = x_n = 0\}$. This is a linear subspace, hence convex. Thus $f$ is quasi-convex.</p>
         </div>
@@ -1992,7 +2005,9 @@
       <br>Assuming $f$ is continuous, $g(u)$ must be strictly positive on some sub-interval. Thus, the integral of the difference is strictly positive:
       $$ \int_{x_0}^{y_0} g(u) du > 0 \implies \int_{x_0}^{y_0} f(u) du > \int_{x_0}^{y_0} \ell(u) du $$
       The integral of the line $\ell$ is the area of the trapezoid: $(y_0 - x_0) \frac{f(x_0) + f(y_0)}{2}$.
-      <br>Dividing by the length $(y_0 - x_0)$ (or changing variables to $t \in [0, 1]$) gives:
+      <br>Perform change of variables $u = tx_0 + (1-t)y_0$ (Jacobian is $|y_0-x_0|$):
+      $$ |y_0-x_0| \int_0^1 f(tx_0 + (1-t)y_0) dt > |y_0-x_0| \frac{f(x_0)+f(y_0)}{2} $$
+      Dividing by the length gives:
       $$ \int_0^1 f(tx_0 + (1-t)y_0) dt > \frac{f(x_0) + f(y_0)}{2} $$
       This violates the integral condition. Thus, the condition implies convexity.</p>
     </div>

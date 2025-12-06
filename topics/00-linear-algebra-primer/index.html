@@ -2354,11 +2354,16 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
 
           <div class="proof-step">
             <strong>(c) Submultiplicativity:</strong>
-            <p>We want to show $\|AB\|_{HS} \le \|A\|_{HS} \|B\|_{HS}$.
-            $$ \|AB\|_{HS}^2 = \sum_{i,j} \left(\sum_k a_{ik} b_{kj}\right)^2 $$
-            By Cauchy-Schwarz on vectors (row $i$ of A, col $j$ of B): $(\sum_k a_{ik} b_{kj})^2 \le (\sum_k a_{ik}^2)(\sum_k b_{kj}^2)$.
-            $$ \|AB\|_{HS}^2 \le \sum_{i,j} \left(\sum_k a_{ik}^2\right)\left(\sum_p b_{pj}^2\right) = \left(\sum_{i,k} a_{ik}^2\right)\left(\sum_{j,p} b_{pj}^2\right) = \|A\|_{HS}^2 \|B\|_{HS}^2 $$
-            </p>
+            <p>We want to show $\|AB\|_{HS} \le \|A\|_{HS} \|B\|_{HS}$ using a step-by-step expansion.</p>
+            <p><b>Step 1: Expand the squared norm.</b> The $(i,j)$ entry of $AB$ is $(AB)_{ij} = \sum_k a_{ik} b_{kj}$. Thus:
+            $$ \|AB\|_{HS}^2 = \sum_{i,j} (AB)_{ij}^2 = \sum_{i,j} \left(\sum_k a_{ik} b_{kj}\right)^2 $$</p>
+            <p><b>Step 2: Scalar Cauchy-Schwarz.</b> Fix indices $i, j$. Let $\alpha_k = a_{ik}$ and $\beta_k = b_{kj}$. By the scalar Cauchy-Schwarz inequality $(\sum \alpha_k \beta_k)^2 \le (\sum \alpha_k^2)(\sum \beta_k^2)$:
+            $$ \left(\sum_k a_{ik} b_{kj}\right)^2 \le \left(\sum_k a_{ik}^2\right)\left(\sum_k b_{kj}^2\right) $$</p>
+            <p><b>Step 3: Summing it all up.</b> Substitute the inequality back into the sum over $i, j$:
+            $$ \|AB\|_{HS}^2 \le \sum_{i=1}^m \sum_{j=1}^p \left[\left(\sum_{k=1}^n a_{ik}^2\right)\left(\sum_{k=1}^n b_{kj}^2\right)\right] $$
+            Since the first factor depends only on $i$ and the second only on $j$, we can separate the sums:
+            $$ = \left(\sum_{i=1}^m \sum_{k=1}^n a_{ik}^2\right) \left(\sum_{j=1}^p \sum_{k=1}^n b_{kj}^2\right) $$
+            The first term is exactly $\|A\|_{HS}^2$ and the second is $\|B\|_{HS}^2$. Taking the square root gives $\|AB\|_{HS} \le \|A\|_{HS} \|B\|_{HS}$.</p>
           </div>
         </div>
       </div>
