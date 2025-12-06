@@ -1523,6 +1523,64 @@
       </section>
 
 
+    <section class="section-card" id="section-9">
+      <h2>9. The Convex Function Toolkit: Canonical Examples</h2>
+
+      <p>This section provides a "deep dive" into a few fundamental convex functions. Mastering the properties of these functions (and how to prove them) is essential for recognizing convexity in more complex applications.</p>
+
+      <h3>9.1 Log-Sum-Exp</h3>
+      <p>The function $f(x) = \log\left(\sum_{i=1}^n e^{x_i}\right)$ is the "soft max" function.</p>
+
+      <h4>(a) Soft-Max Bounds</h4>
+      <p>Let $M = \max_i x_i$. We have:
+      $$ \max_i x_i \le f(x) \le \max_i x_i + \log n $$
+      <i>Proof:</i> Factor out $e^M$: $\log(\sum e^{x_i}) = \log(e^M \sum e^{x_i-M}) = M + \log(\sum e^{x_i-M})$. Since $x_i \le M$, $e^{x_i-M} \le 1$. The sum has one term equal to 1, and $n-1$ terms $\le 1$. Thus $1 \le \sum e^{x_i-M} \le n$. Taking logs gives $0 \le \log(\sum) \le \log n$.</p>
+
+      <h4>(b) Gradient and Hessian</h4>
+      <p>The gradient is the softmax vector $p$ where $p_i = e^{x_i} / \sum e^{x_k}$.
+      $$ \nabla f(x) = p, \quad \sum p_i = 1, \ p_i > 0 $$
+      The Hessian is the covariance matrix of a distribution $p$:
+      $$ \nabla^2 f(x) = \mathrm{diag}(p) - pp^\top $$</p>
+
+      <h4>(c) Convexity via Variance</h4>
+      <p>For any vector $v$, the quadratic form is:
+      $$ v^\top \nabla^2 f(x) v = \sum p_i v_i^2 - (\sum p_i v_i)^2 = \mathbb{E}_p[V^2] - (\mathbb{E}_p[V])^2 = \mathrm{Var}_p(V) \ge 0 $$
+      Since variance is always non-negative, the Hessian is PSD.</p>
+
+      <h3>9.2 Geometric Mean</h3>
+      <p>The function $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}^n_{++}$.</p>
+
+      <h4>Proof via Homogeneity + Log-Concavity</h4>
+      <p>This is a powerful general technique. A function $f > 0$ is concave if it is 1-homogeneous ($f(tx)=tf(x)$) and log-concave ($\log f$ is concave).</p>
+      <div class="proof-box">
+        <h4>Lemma: 1-Homogeneous + Log-Concave $\implies$ Concave</h4>
+        <p><b>Step 1: Superadditivity.</b> We show $f(x+y) \ge f(x) + f(y)$.
+        Let $u = x/f(x)$ and $v = y/f(y)$, so $f(u)=f(v)=1$.
+        Consider the convex combination with $\lambda = \frac{f(x)}{f(x)+f(y)}$.
+        $$ \lambda u + (1-\lambda)v = \frac{x+y}{f(x)+f(y)} $$
+        By log-concavity, $f(\lambda u + (1-\lambda)v) \ge f(u)^\lambda f(v)^{1-\lambda} = 1$.
+        By homogeneity, $f(\frac{x+y}{f(x)+f(y)}) = \frac{f(x+y)}{f(x)+f(y)} \ge 1 \implies f(x+y) \ge f(x)+f(y)$.</p>
+        <p><b>Step 2: Concavity.</b>
+        $f(\theta x + (1-\theta)y) \ge f(\theta x) + f((1-\theta)y) = \theta f(x) + (1-\theta)f(y)$.</p>
+      </div>
+      <p>Since $G(x)$ is 1-homogeneous and $\log G(x) = \frac{1}{n}\sum \log x_i$ is concave (sum of concave logs), $G(x)$ is concave.</p>
+
+      <h3>9.3 Log-Determinant</h3>
+      <p>The function $f(X) = \log \det X$ is concave on $\mathbb{S}^n_{++}$.</p>
+      <p><b>Proof via Line Restriction:</b> Restrict to $Z(t) = X + tV$ ($X \succ 0$).
+      $$ g(t) = \log \det (X + tV) = \log \det (X^{1/2}(I + tX^{-1/2}VX^{-1/2})X^{1/2}) $$
+      Let eigenvalues of symmetric $X^{-1/2}VX^{-1/2}$ be $\lambda_i$.
+      $$ g(t) = \log \det X + \sum \log(1 + t\lambda_i) $$
+      $$ g''(t) = -\sum \frac{\lambda_i^2}{(1+t\lambda_i)^2} \le 0 $$
+      Since the second derivative is non-positive along any line, $f$ is concave.</p>
+
+      <h3>9.4 Geometric vs Arithmetic Mean Cone</h3>
+      <p>The set $K_\alpha = \{x \in \mathbb{R}^n_{++} \mid G(x) \ge \alpha A(x)\}$ for $\alpha \in [0, 1]$ is a convex cone.</p>
+      <p><b>Proof:</b> $G(x)$ is concave and $A(x)$ is linear (hence concave). Thus $h(x) = G(x) - \alpha A(x)$ is a concave function.
+      The set is the 0-superlevel set of a concave function $\{x \mid h(x) \ge 0\}$, which is convex.
+      Since both $G$ and $A$ are homogeneous, the set is closed under scaling, making it a cone.</p>
+    </section>
+
     <section class="section-card" id="section-10">
       <h2>10. Review & Cheat Sheet</h2>
 
@@ -1738,14 +1796,43 @@
 </div>
 <div class="problem">
   <h3>P3.8 — Softmax Convexity</h3>
-  <p>The <b>Softmax</b> function, or Log-Sum-Exp function, is defined as $f(x) = \log\left(\sum_{i=1}^n e^{x_i}\right)$. Prove that $f(x)$ is convex on $\mathbb{R}^n$.</p>
+  <p>The <b>Softmax</b> function, or Log-Sum-Exp function, is defined as $f(x) = \log\left(\sum_{i=1}^n e^{x_i}\right)$.
+  <ol type="a">
+    <li>Prove the bounds: $\max_i x_i \le f(x) \le \max_i x_i + \log n$.</li>
+    <li>Prove that $f(x)$ is convex by interpreting the Hessian quadratic form $v^\top \nabla^2 f(x) v$ as a variance.</li>
+  </ol></p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Log-Sum-Exp (Softmax):</b> This function is a smooth, convex approximation of the max function: $\text{LSE}(x) \approx \max_i x_i$. It is fundamental in logistic regression and geometric programming.</li>
-            <li><b>Hessian as Covariance:</b> The Hessian of the LSE function is the covariance matrix of the softmax probability distribution. Since covariance matrices are always Positive Semidefinite (PSD), the function is convex.</li>
+            <li><b>Smooth Max:</b> The bounds show that $f(x)$ approximates the maximum element within a small additive error ($\log n$). This makes it a differentiable surrogate for the non-smooth max function.</li>
+            <li><b>Hessian as Covariance:</b> The Hessian of LSE is $\text{diag}(p) - pp^\top$, where $p$ is the softmax probability vector. The quadratic form $v^\top (\text{diag}(p) - pp^\top) v$ is exactly the variance of a random variable taking values $v_i$ with probabilities $p_i$. Since variance is non-negative, the Hessian is PSD.</li>
         </ul></div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+
+    <div class="proof-step">
+      <strong>(a) Bounds:</strong>
+      Let $M = \max_i x_i$. Then:
+      $$ f(x) = \log\left(\sum e^{x_i}\right) = \log\left(e^M \sum e^{x_i - M}\right) = M + \log\left(\sum e^{x_i - M}\right) $$
+      Since $x_i - M \le 0$, we have $e^{x_i - M} \le 1$. The sum contains one term equal to 1 (for the max) and $n-1$ terms $\le 1$.
+      <br>Lower Bound: $\sum e^{x_i - M} \ge 1 \implies \log(\sum) \ge 0 \implies f(x) \ge M$.
+      <br>Upper Bound: $\sum e^{x_i - M} \le n \implies \log(\sum) \le \log n \implies f(x) \le M + \log n$.
+    </div>
+
+    <div class="proof-step">
+      <strong>(b) Convexity via Variance:</strong>
+      First, compute the gradient $\nabla f(x)_i = \frac{e^{x_i}}{\sum e^{x_k}} = p_i$. Note $\sum p_i = 1, p_i > 0$.
+      <br>The Hessian entries are $H_{ij} = p_i \delta_{ij} - p_i p_j$. Thus $H = \text{diag}(p) - pp^\top$.
+      <br>For any vector $v$:
+      $$ v^\top H v = \sum p_i v_i^2 - (p^\top v)^2 = \sum p_i v_i^2 - (\sum p_i v_i)^2 $$
+      Let $Z$ be a discrete random variable taking value $v_i$ with probability $p_i$.
+      Then $\mathbb{E}[Z] = \sum p_i v_i$ and $\mathbb{E}[Z^2] = \sum p_i v_i^2$.
+      $$ v^\top H v = \mathbb{E}[Z^2] - (\mathbb{E}[Z])^2 = \mathrm{Var}(Z) \ge 0 $$
+      Since the variance is always non-negative, $\nabla^2 f(x) \succeq 0$, so $f$ is convex.
+    </div>
+  </div>
 </div>
 <div class="problem">
   <h3>P3.9 — Concavity of the Geometric Mean</h3>
@@ -1764,11 +1851,16 @@
             <h4>Solution</h4>
 
             <div class="proof-step">
-              <strong>Method 1: Log-Concavity + Homogeneity</strong>
-              <p>Consider $f(x) = \log G(x) = \frac{1}{n} \sum_{i=1}^n \log x_i$. Since $\log x_i$ is concave, $f(x)$ is concave (sum of concave functions). Thus $G(x) = e^{f(x)}$ is log-concave.</p>
-              <p>Also, $G(x)$ is homogeneous of degree 1: $G(\lambda x) = \lambda G(x)$ for $\lambda > 0$.</p>
-              <p><b>Lemma:</b> A positive, log-concave, degree-1 homogeneous function is concave.</p>
-              <p><i>Proof of Lemma:</i> By log-concavity, $f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta}$. Normalize so $f(x)=f(y)=1$ (using homogeneity). Then $f(\text{convex combo}) \ge 1 = \theta(1) + (1-\theta)(1)$. Scaling back gives full concavity.</p></div><div class="proof-step">
+              <strong>Method 1: Log-Concavity + Homogeneity (Rigorous)</strong>
+              <p><b>Step 1: Check Properties.</b> $G(x)$ is homogeneous of degree 1 ($G(tx) = tG(x)$) and log-concave (since $\log G(x) = \frac{1}{n}\sum \log x_i$ is a sum of concave functions).</p>
+              <p><b>Step 2: Superadditivity Lemma.</b> We prove that if $f$ is 1-homogeneous and log-concave, it is superadditive ($f(x+y) \ge f(x)+f(y)$), which implies concavity.
+              <br>Let $u = x/f(x)$ and $v = y/f(y)$ so $f(u)=f(v)=1$.
+              <br>Consider the convex combination with $\lambda = \frac{f(x)}{f(x)+f(y)}$:
+              $$ \lambda u + (1-\lambda)v = \frac{x + y}{f(x)+f(y)} $$
+              By log-concavity: $f(\lambda u + (1-\lambda)v) \ge f(u)^\lambda f(v)^{1-\lambda} = 1^\lambda 1^{1-\lambda} = 1$.
+              <br>By homogeneity: $f(\frac{x+y}{f(x)+f(y)}) = \frac{f(x+y)}{f(x)+f(y)}$.
+              <br>Thus $\frac{f(x+y)}{f(x)+f(y)} \ge 1 \implies f(x+y) \ge f(x) + f(y)$.</p>
+              <p><b>Step 3: Concavity.</b> $f(\theta x + (1-\theta)y) \ge f(\theta x) + f((1-\theta)y) = \theta f(x) + (1-\theta)f(y)$. Thus $G$ is concave.</p></div><div class="proof-step">
               <strong>Method 2: Hessian Test</strong>
               <p>Let $f(x) = \log G(x)$. Then $\nabla f(x) = \frac{1}{n}(1/x_1, \dots, 1/x_n)$.</p>
               <p>$\nabla^2 f(x) = -\frac{1}{n} \text{diag}(1/x_1^2, \dots, 1/x_n^2)$.</p>
