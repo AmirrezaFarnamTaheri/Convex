@@ -100,10 +100,31 @@
         $$
         f\left(\sum_{i=1}^k \theta_i x_i\right) \le \sum_{i=1}^k \theta_i f(x_i)
         $$
-        <p><b>Proof Sketch (Induction):</b>
-        <br>For $k=2$, this is the definition. Assume it holds for $k-1$.
-        <br>Write $\sum_{i=1}^k \theta_i x_i = \theta_k x_k + (1-\theta_k) \sum_{i=1}^{k-1} \frac{\theta_i}{1-\theta_k} x_i$.
-        <br>Apply the 2-point definition to combine $x_k$ and the aggregate term, then use the inductive hypothesis on the sum of $k-1$ terms.</p>
+        <div class="proof-box">
+          <h4>Proof by Induction</h4>
+          <div class="proof-step">
+            <strong>Base Case ($k=2$):</strong> This is the definition of convexity: $f(\theta_1 x_1 + \theta_2 x_2) \le \theta_1 f(x_1) + \theta_2 f(x_2)$ where $\theta_1+\theta_2=1$.
+          </div>
+          <div class="proof-step">
+            <strong>Inductive Step:</strong> Assume the inequality holds for any $k-1$ points. Consider $k$ points with $\sum_{i=1}^k \theta_i = 1$.
+            If $\theta_k = 1$, the result is trivial ($x_k = x_k$). If $\theta_k < 1$, let $\tilde{\theta} = 1 - \theta_k = \sum_{i=1}^{k-1} \theta_i > 0$.
+            <br>We can rewrite the convex combination as:
+            $$ \sum_{i=1}^k \theta_i x_i = \theta_k x_k + \tilde{\theta} \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i = \theta_k x_k + \tilde{\theta} \bar{x} $$
+            where $\bar{x} = \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i$.
+            <br>Note that the weights $\frac{\theta_i}{\tilde{\theta}}$ for $i=1 \dots k-1$ sum to 1, so $\bar{x}$ is a convex combination of $k-1$ points.
+          </div>
+          <div class="proof-step">
+            <strong>Apply Convexity:</strong>
+            First, apply the 2-point definition to $x_k$ and $\bar{x}$:
+            $$ f(\theta_k x_k + \tilde{\theta} \bar{x}) \le \theta_k f(x_k) + \tilde{\theta} f(\bar{x}) $$
+            Next, apply the inductive hypothesis to $f(\bar{x})$:
+            $$ f(\bar{x}) = f\left(\sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i\right) \le \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i) $$
+          </div>
+          <div class="proof-step">
+            <strong>Combine:</strong>
+            $$ f\left(\sum_{i=1}^k \theta_i x_i\right) \le \theta_k f(x_k) + \tilde{\theta} \left( \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i) \right) = \theta_k f(x_k) + \sum_{i=1}^{k-1} \theta_i f(x_i) = \sum_{i=1}^k \theta_i f(x_i) $$
+          </div>
+        </div>
 
         <h4>Expectation Form</h4>
         <p>This generalizes to random variables. If $Z$ is a random variable taking values in $\mathrm{dom}\, f$, and $f$ is convex, then:</p>
@@ -1105,7 +1126,7 @@
         <p>A common pitfall is to assume the <b>minimum</b> of convex functions is convex. It is generally <b>not</b>.</p>
         <div class="insight">
           <h4>Counterexample</h4>
-          <p>Let $f_1(x) = (x-1)^2$ and $f_2(x) = (x+1)^2$. Both are convex. Their minimum $g(x) = \min((x-1)^2, (x+1)^2)$ is "W"-shaped, with a local maximum at $x=0$, clearly nonconvex.</p>
+          <p>Let $f_1(x) = (x-1)^2$ and $f_2(x) = (x+1)^2$. Both are convex. Their minimum $g(x) = \min((x-1)^2, (x+1)^2)$ is "W"-shaped. At $x=0$, $g(0)=1$. However, at $x=1$ and $x=-1$, $g(\pm 1)=0$. The convex combination of minimal points gives $0 \cdot \frac{1}{2} + 0 \cdot \frac{1}{2} = 0$, but $g(0)=1 > 0$, violating the convexity inequality.</p>
         </div>
         <p>Similarly, minimizing over a <b>nonconvex</b> set usually breaks convexity. For example, the distance to a nonconvex set is generally nonconvex.</p>
 

@@ -1374,11 +1374,6 @@
         </ul>
       </div>
 
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Logistic regression minimizes the negative log-likelihood. The log-sum-exp function is convex, ensuring global optimality.</p>
-  </div>
-
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
@@ -1410,6 +1405,62 @@
               $$ \min_{w \in \mathbb{R}^n} \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$
               This is an unconstrained convex optimization problem.
             </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P1.7 — Proving Convexity from First Principles</h3>
+  <p><b>Problem:</b> Prove that $f(x) = \|Ax - b\|_2^2$ is a convex function using only the definition of convexity:
+  $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \quad \forall \theta \in [0,1] $$
+  Do not use the Hessian condition or the composition rule.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Definition is King:</b> While Hessians and composition rules are convenient shortcuts, the inequality definition is the "ground truth" of convexity. Being able to prove convexity directly from the definition is a crucial skill for understanding <i>why</i> a function is convex.</li>
+            <li><b>Quadratic Behavior:</b> The function $\|Ax-b\|^2$ is a "quadratic bowl". Along any line, its values trace a parabola opening upward. The condition $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ simply says that the chord connecting two points on the parabola lies above the curve.</li>
+        </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Simplify using affine composition.</strong>
+      Let $g(u) = \|u\|_2^2 = u^\top u$. We know $f(x) = g(Ax-b)$.
+      It is sufficient to prove that $g(u)$ is convex, because if $g$ is convex, then $f(x) = g(Ax-b)$ is convex (affine composition).
+      Let's prove $g(u) = \|u\|_2^2$ is convex.
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 2: Expand the convex combination.</strong>
+      Let $u, v \in \mathbb{R}^n$ and $\theta \in [0,1]$. Let $z = \theta u + (1-\theta)v$.
+      $$ g(z) = \|\theta u + (1-\theta)v\|_2^2 = (\theta u + (1-\theta)v)^\top (\theta u + (1-\theta)v) $$
+      $$ = \theta^2 u^\top u + 2\theta(1-\theta) u^\top v + (1-\theta)^2 v^\top v $$
+      $$ = \theta^2 \|u\|^2 + 2\theta(1-\theta) u^\top v + (1-\theta)^2 \|v\|^2 $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 3: Analyze the RHS of the definition.</strong>
+      The target is $\theta g(u) + (1-\theta)g(v) = \theta \|u\|^2 + (1-\theta)\|v\|^2$.
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 4: Compute the difference (RHS - LHS).</strong>
+      $$ \Delta = [\theta \|u\|^2 + (1-\theta)\|v\|^2] - [\theta^2 \|u\|^2 + 2\theta(1-\theta) u^\top v + (1-\theta)^2 \|v\|^2] $$
+      Group terms by $\|u\|^2$ and $\|v\|^2$:
+      $$ \theta(1-\theta)\|u\|^2 + (1-\theta)(1-(1-\theta))\|v\|^2 - 2\theta(1-\theta)u^\top v $$
+      $$ = \theta(1-\theta)\|u\|^2 + \theta(1-\theta)\|v\|^2 - 2\theta(1-\theta)u^\top v $$
+      $$ = \theta(1-\theta) [ \|u\|^2 - 2u^\top v + \|v\|^2 ] $$
+      $$ = \theta(1-\theta) \|u - v\|_2^2 $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 5: Conclusion.</strong>
+      Since $\theta \in [0,1]$, both $\theta$ and $(1-\theta)$ are non-negative. Also, the squared norm $\|u-v\|_2^2$ is always non-negative.
+      Thus, $\Delta \ge 0$, which implies:
+      $$ \theta g(u) + (1-\theta)g(v) \ge g(\theta u + (1-\theta)v) $$
+      So $g(u)$ is convex, and consequently $f(x) = \|Ax-b\|_2^2$ is convex.
+    </div>
   </div>
 </div>
 
