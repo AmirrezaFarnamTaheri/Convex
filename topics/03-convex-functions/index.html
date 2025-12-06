@@ -650,6 +650,26 @@
           </ul>
         </div>
 
+        <h4>Example: Geometric Mean (Concavity via Log-Concavity)</h4>
+      <p>The function $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}^n_{++}$.</p>
+
+      <h4>Proof via Homogeneity + Log-Concavity</h4>
+      <p>This is a powerful general technique. A function $f > 0$ is concave if it is 1-homogeneous ($f(tx)=tf(x)$) and log-concave ($\log f$ is concave).</p>
+      <div class="proof-box">
+        <h4>Lemma: 1-Homogeneous + Log-Concave $\implies$ Concave</h4>
+        <p><b>Step 1: Superadditivity.</b> We show $f(x+y) \ge f(x) + f(y)$.
+        Let $u = x/f(x)$ and $v = y/f(y)$, so $f(u)=f(v)=1$.
+        Consider the convex combination with $\lambda = \frac{f(x)}{f(x)+f(y)}$.
+        $$ \lambda u + (1-\lambda)v = \frac{x+y}{f(x)+f(y)} $$
+        By log-concavity, $f(\lambda u + (1-\lambda)v) \ge f(u)^\lambda f(v)^{1-\lambda} = 1$.
+        By homogeneity, $f(\frac{x+y}{f(x)+f(y)}) = \frac{f(x+y)}{f(x)+f(y)} \ge 1 \implies f(x+y) \ge f(x)+f(y)$.</p>
+        <p><b>Step 2: Concavity.</b>
+        $f(\theta x + (1-\theta)y) \ge f(\theta x) + f((1-\theta)y) = \theta f(x) + (1-\theta)f(y)$.</p>
+      </div>
+      <p>Since $G(x)$ is 1-homogeneous and $\log G(x) = \frac{1}{n}\sum \log x_i$ is concave (sum of concave logs), $G(x)$ is concave.</p>
+
+
+
         <h4>(a) Uniform on a Convex Set</h4>
         <p>Let $C \subseteq \mathbb{R}^n$ be a convex set. The uniform density function:
         $$ f(x) = \begin{cases} 1/\alpha & x \in C \\ 0 & x \notin C \end{cases} $$
@@ -892,6 +912,65 @@
           $$ = x^\top A x - 2x^\top B C^{-1} B^\top x + x^\top B C^{-1} B^\top x = x^\top (A - B C^{-1} B^\top) x $$
           Since partial minimization preserves convexity, if the original block matrix is PSD, then the Schur complement $A - B C^{-1} B^\top$ is also PSD.</p>
         </div>
+
+        <h4>Deep Dive: The Matrix-Fractional Function</h4>
+      <p>The function $f(x, Y) = x^\top Y^{-1} x$ is defined for $x \in \mathbb{R}^n$ and $Y \in \mathbb{S}^n_{++}$. It is <b>jointly convex</b> in $x$ and $Y$.</p>
+
+      <h4>Derivation: Epigraph via Schur Complement</h4>
+      <p>The epigraph condition is $t \ge x^\top Y^{-1} x$ with $Y \succ 0$.
+      <br>Using the <a href="../00-linear-algebra-primer/index.html#section-5">Schur Complement Lemma</a>, this is equivalent to the Linear Matrix Inequality (LMI):
+      $$ M = \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0 $$
+      Since the PSD cone is convex, and $M$ depends linearly on $(x, Y, t)$, the epigraph is convex.</p>
+
+      <div class="proof-box">
+        <h4>Rigorous Check via Quadratic Forms</h4>
+        <p>Let's verify $M \succeq 0 \iff t \ge x^\top Y^{-1} x$.
+        <br>Take an arbitrary vector $z = [v^\top, \alpha]^\top$. $M \succeq 0$ means $z^\top M z \ge 0$ for all $z$.
+        $$ z^\top M z = v^\top Y v + 2\alpha x^\top v + \alpha^2 t $$
+        View this as a quadratic in $\alpha$: $q(\alpha) = t\alpha^2 + 2(x^\top v)\alpha + (v^\top Y v)$.
+        <br>For $q(\alpha) \ge 0$ for all $\alpha$, we need $t \ge 0$ and discriminant $\le 0$:
+        $$ 4(x^\top v)^2 - 4t(v^\top Y v) \le 0 \implies (x^\top v)^2 \le t (v^\top Y v) $$
+        Let $w = Y^{1/2}v$. Then $v^\top Y v = \|w\|^2$ and $x^\top v = x^\top Y^{-1/2} w$.
+        $$ (x^\top Y^{-1/2} w)^2 \le t \|w\|^2 $$
+        By Cauchy-Schwarz, the maximum of the LHS over $\|w\|=1$ is $\|Y^{-1/2}x\|^2 = x^\top Y^{-1} x$.
+        <br>Thus, the condition holds for all $w$ (and hence all $v$) if and only if $t \ge x^\top Y^{-1} x$.</p>
+      </div>
+
+      <div class="insight">
+        <h4>Triangle of Equivalence</h4>
+        <p>The matrix fractional function connects three concepts via the Schur Complement:</p>
+        $$
+        \boxed{
+        t\ge x^\top Y^{-1}x
+        \iff
+        \begin{bmatrix}
+        Y & x\\
+        x^\top & t
+        \end{bmatrix}\succeq 0
+        \iff
+        tY - xx^\top \succeq 0
+        }
+        $$
+        <ul>
+          <li><b>Scalar:</b> Quadratic-over-linear inequality.</li>
+          <li><b>Block Matrix:</b> LMI form, useful for SDPs.</li>
+          <li><b>Rank-1 Update:</b> $tY \succeq xx^\top$. Derived by setting $\alpha=1$ in the quadratic form argument above: $(x^\top v)^2 \le t v^\top Y v \iff v^\top (tY - xx^\top) v \ge 0$.</li>
+        </ul>
+        <p><b>Determinant Identity:</b> By block Gaussian elimination:
+        $$ \det \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} = \det(Y) \cdot (t - x^\top Y^{-1} x) $$
+        </p>
+      </div>
+
+      <div class="insight">
+        <h4>Alternative View: Variational Form</h4>
+        <p>We can also express $f$ as a supremum of linear functions. For fixed $Y \succ 0$:
+        $$ \sup_{z \in \mathbb{R}^n} (2z^\top x - z^\top Y z) = x^\top Y^{-1} x $$
+        (The optimal $z$ is $Y^{-1}x$).
+        <br>Thus $f(x, Y) = \sup_z (2z^\top x - \mathrm{tr}(zz^\top Y))$.
+        <br>The term inside the supremum is linear in $x$ and linear in $Y$. The pointwise supremum of linear functions is convex.</p>
+      </div>
+
+
 
         <h3>5.5 Composition Rules</h3>
 
@@ -1507,124 +1586,10 @@
       </section>
 
 
+
+
     <section class="section-card" id="section-9">
-      <h2>9. The Convex Function Toolkit: Canonical Examples</h2>
-
-      <p>This section provides a "deep dive" into a few fundamental convex functions. Mastering the properties of these functions (and how to prove them) is essential for recognizing convexity in more complex applications.</p>
-
-      <h3>9.1 Log-Sum-Exp</h3>
-      <p>The function $f(x) = \log\left(\sum_{i=1}^n e^{x_i}\right)$ is the "soft max" function.</p>
-
-      <h4>(a) Soft-Max Bounds</h4>
-      <p>Let $M = \max_i x_i$. We have:
-      $$ \max_i x_i \le f(x) \le \max_i x_i + \log n $$
-      <i>Proof:</i> Factor out $e^M$: $\log(\sum e^{x_i}) = \log(e^M \sum e^{x_i-M}) = M + \log(\sum e^{x_i-M})$. Since $x_i \le M$, $e^{x_i-M} \le 1$. The sum has one term equal to 1, and $n-1$ terms $\le 1$. Thus $1 \le \sum e^{x_i-M} \le n$. Taking logs gives $0 \le \log(\sum) \le \log n$.</p>
-
-      <h4>(b) Gradient and Hessian</h4>
-      <p>The gradient is the softmax vector $p$ where $p_i = e^{x_i} / \sum e^{x_k}$.
-      $$ \nabla f(x) = p, \quad \sum p_i = 1, \ p_i > 0 $$
-      The Hessian is the covariance matrix of a distribution $p$:
-      $$ \nabla^2 f(x) = \mathrm{diag}(p) - pp^\top $$</p>
-
-      <h4>(c) Convexity via Variance</h4>
-      <p>For any vector $v$, the quadratic form is:
-      $$ v^\top \nabla^2 f(x) v = \sum p_i v_i^2 - (\sum p_i v_i)^2 = \mathbb{E}_p[V^2] - (\mathbb{E}_p[V])^2 = \mathrm{Var}_p(V) \ge 0 $$
-      Since variance is always non-negative, the Hessian is PSD.</p>
-
-      <h3>9.2 Geometric Mean</h3>
-      <p>The function $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}^n_{++}$.</p>
-
-      <h4>Proof via Homogeneity + Log-Concavity</h4>
-      <p>This is a powerful general technique. A function $f > 0$ is concave if it is 1-homogeneous ($f(tx)=tf(x)$) and log-concave ($\log f$ is concave).</p>
-      <div class="proof-box">
-        <h4>Lemma: 1-Homogeneous + Log-Concave $\implies$ Concave</h4>
-        <p><b>Step 1: Superadditivity.</b> We show $f(x+y) \ge f(x) + f(y)$.
-        Let $u = x/f(x)$ and $v = y/f(y)$, so $f(u)=f(v)=1$.
-        Consider the convex combination with $\lambda = \frac{f(x)}{f(x)+f(y)}$.
-        $$ \lambda u + (1-\lambda)v = \frac{x+y}{f(x)+f(y)} $$
-        By log-concavity, $f(\lambda u + (1-\lambda)v) \ge f(u)^\lambda f(v)^{1-\lambda} = 1$.
-        By homogeneity, $f(\frac{x+y}{f(x)+f(y)}) = \frac{f(x+y)}{f(x)+f(y)} \ge 1 \implies f(x+y) \ge f(x)+f(y)$.</p>
-        <p><b>Step 2: Concavity.</b>
-        $f(\theta x + (1-\theta)y) \ge f(\theta x) + f((1-\theta)y) = \theta f(x) + (1-\theta)f(y)$.</p>
-      </div>
-      <p>Since $G(x)$ is 1-homogeneous and $\log G(x) = \frac{1}{n}\sum \log x_i$ is concave (sum of concave logs), $G(x)$ is concave.</p>
-
-      <h3>9.3 Log-Determinant</h3>
-      <p>The function $f(X) = \log \det X$ is concave on $\mathbb{S}^n_{++}$.</p>
-      <p><b>Proof via Line Restriction:</b> Restrict to $Z(t) = X + tV$ ($X \succ 0$).
-      $$ g(t) = \log \det (X + tV) = \log \det (X^{1/2}(I + tX^{-1/2}VX^{-1/2})X^{1/2}) $$
-      Let eigenvalues of symmetric $X^{-1/2}VX^{-1/2}$ be $\lambda_i$.
-      $$ g(t) = \log \det X + \sum \log(1 + t\lambda_i) $$
-      $$ g''(t) = -\sum \frac{\lambda_i^2}{(1+t\lambda_i)^2} \le 0 $$
-      Since the second derivative is non-positive along any line, $f$ is concave.</p>
-
-      <h3>9.4 Geometric vs Arithmetic Mean Cone</h3>
-      <p>The set $K_\alpha = \{x \in \mathbb{R}^n_{++} \mid G(x) \ge \alpha A(x)\}$ for $\alpha \in [0, 1]$ is a convex cone.</p>
-      <p><b>Proof:</b> $G(x)$ is concave and $A(x)$ is linear (hence concave). Thus $h(x) = G(x) - \alpha A(x)$ is a concave function.
-      The set is the 0-superlevel set of a concave function $\{x \mid h(x) \ge 0\}$, which is convex.
-      Since both $G$ and $A$ are homogeneous, the set is closed under scaling, making it a cone.</p>
-
-      <h3>9.5 Matrix-Fractional Function</h3>
-      <p>The function $f(x, Y) = x^\top Y^{-1} x$ is defined for $x \in \mathbb{R}^n$ and $Y \in \mathbb{S}^n_{++}$. It is <b>jointly convex</b> in $x$ and $Y$.</p>
-
-      <h4>Derivation: Epigraph via Schur Complement</h4>
-      <p>The epigraph condition is $t \ge x^\top Y^{-1} x$ with $Y \succ 0$.
-      <br>Using the <a href="../00-linear-algebra-primer/index.html#section-5">Schur Complement Lemma</a>, this is equivalent to the Linear Matrix Inequality (LMI):
-      $$ M = \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0 $$
-      Since the PSD cone is convex, and $M$ depends linearly on $(x, Y, t)$, the epigraph is convex.</p>
-
-      <div class="proof-box">
-        <h4>Rigorous Check via Quadratic Forms</h4>
-        <p>Let's verify $M \succeq 0 \iff t \ge x^\top Y^{-1} x$.
-        <br>Take an arbitrary vector $z = [v^\top, \alpha]^\top$. $M \succeq 0$ means $z^\top M z \ge 0$ for all $z$.
-        $$ z^\top M z = v^\top Y v + 2\alpha x^\top v + \alpha^2 t $$
-        View this as a quadratic in $\alpha$: $q(\alpha) = t\alpha^2 + 2(x^\top v)\alpha + (v^\top Y v)$.
-        <br>For $q(\alpha) \ge 0$ for all $\alpha$, we need $t \ge 0$ and discriminant $\le 0$:
-        $$ 4(x^\top v)^2 - 4t(v^\top Y v) \le 0 \implies (x^\top v)^2 \le t (v^\top Y v) $$
-        Let $w = Y^{1/2}v$. Then $v^\top Y v = \|w\|^2$ and $x^\top v = x^\top Y^{-1/2} w$.
-        $$ (x^\top Y^{-1/2} w)^2 \le t \|w\|^2 $$
-        By Cauchy-Schwarz, the maximum of the LHS over $\|w\|=1$ is $\|Y^{-1/2}x\|^2 = x^\top Y^{-1} x$.
-        <br>Thus, the condition holds for all $w$ (and hence all $v$) if and only if $t \ge x^\top Y^{-1} x$.</p>
-      </div>
-
-      <div class="insight">
-        <h4>Triangle of Equivalence</h4>
-        <p>The matrix fractional function connects three concepts via the Schur Complement:</p>
-        $$
-        \boxed{
-        t\ge x^\top Y^{-1}x
-        \iff
-        \begin{bmatrix}
-        Y & x\\
-        x^\top & t
-        \end{bmatrix}\succeq 0
-        \iff
-        tY - xx^\top \succeq 0
-        }
-        $$
-        <ul>
-          <li><b>Scalar:</b> Quadratic-over-linear inequality.</li>
-          <li><b>Block Matrix:</b> LMI form, useful for SDPs.</li>
-          <li><b>Rank-1 Update:</b> $tY \succeq xx^\top$. Derived by setting $\alpha=1$ in the quadratic form argument above: $(x^\top v)^2 \le t v^\top Y v \iff v^\top (tY - xx^\top) v \ge 0$.</li>
-        </ul>
-        <p><b>Determinant Identity:</b> By block Gaussian elimination:
-        $$ \det \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} = \det(Y) \cdot (t - x^\top Y^{-1} x) $$
-        </p>
-      </div>
-
-      <div class="insight">
-        <h4>Alternative View: Variational Form</h4>
-        <p>We can also express $f$ as a supremum of linear functions. For fixed $Y \succ 0$:
-        $$ \sup_{z \in \mathbb{R}^n} (2z^\top x - z^\top Y z) = x^\top Y^{-1} x $$
-        (The optimal $z$ is $Y^{-1}x$).
-        <br>Thus $f(x, Y) = \sup_z (2z^\top x - \mathrm{tr}(zz^\top Y))$.
-        <br>The term inside the supremum is linear in $x$ and linear in $Y$. The pointwise supremum of linear functions is convex.</p>
-      </div>
-
-    </section>
-
-    <section class="section-card" id="section-10">
-      <h2>10. Review & Cheat Sheet</h2>
+      <h2>9. Review & Cheat Sheet</h2>
 
       <h3>Common Convex Functions Reference</h3>
 
@@ -1754,8 +1719,8 @@
 
 
 
-    <section class="section-card" id="section-11">
-      <h2><i data-feather="edit-3"></i> 11. Exercises</h2>
+    <section class="section-card" id="section-10">
+      <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
 
 <div class="problem">
   <h3>P3.1 — Verify Convexity Using First-Order Conditions</h3>
@@ -2172,8 +2137,8 @@
 
 
 
-    <section class="section-card" id="section-12">
-      <h2>12. Readings & Resources</h2>
+    <section class="section-card" id="section-11">
+      <h2>11. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, Chapter 3 (Convex Functions).</li>
         <li><strong>Supplementary:</strong> Rockafellar, <em>Convex Analysis</em>, Part II.</li>

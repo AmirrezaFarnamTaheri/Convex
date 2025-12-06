@@ -476,36 +476,40 @@
 
       <div class="proof-box">
         <h4>Theorem: Sensitivity via Dual Variables</h4>
-        <p><strong>Statement:</strong> If strong duality holds and $(\lambda^*, \nu^*)$ is dual optimal, then:</p>
+        <p><strong>Statement:</strong> Let $p^*(u, v)$ be the optimal value of the perturbed problem with constraints $f_i(x) \le u_i$ and $h_j(x) = v_j$. If $p^*(u, v)$ is differentiable at $(0,0)$ and strong duality holds, then:</p>
+        $$ \nabla_u p^*(0,0) = -\lambda^* \quad \text{and} \quad \nabla_v p^*(0,0) = -\nu^* $$
+
         <div class="proof-step">
           <strong>Proof (Heuristic):</strong>
-          Let $p^*(u, v)$ be the optimal value of the perturbed problem. Assuming strong duality holds for the perturbed problem with the <i>same</i> optimal dual variables $(\lambda^*, \nu^*)$ (locally):
+          Assume strong duality holds for the perturbed problem and that the optimal dual variables $(\lambda^*, \nu^*)$ for the unperturbed problem remain optimal for small perturbations (this is a strong assumption).
           $$
           \begin{aligned}
-          p^*(u, v) &= \inf_x \left( f_0(x) + \sum \lambda_i^* (f_i(x) - u_i) + \sum \nu_j^* (h_j(x) - v_j)
-ight) \
-          &= \inf_x L(x, \lambda^*, \nu^*) - \sum \lambda_i^* u_i - \sum \nu_j^* v_j \
-          &= g(\lambda^*, \nu^*) - \lambda^{*\top} u - \nu^{*\top} v \
+          p^*(u, v) &= \inf_x \left( f_0(x) + \sum \lambda_i^* (f_i(x) - u_i) + \sum \nu_j^* (h_j(x) - v_j) \right) \\
+          &= \inf_x \left( L(x, \lambda^*, \nu^*) - \sum \lambda_i^* u_i - \sum \nu_j^* v_j \right) \\
+          &= g(\lambda^*, \nu^*) - \lambda^{*\top} u - \nu^{*\top} v \\
           &= p^*(0, 0) - \lambda^{*\top} u - \nu^{*\top} v
           \end{aligned}
           $$
-          Thus, $p^*(u, v)$ is locally linear with gradients $\nabla_u p^*(0,0) = -\lambda^*$ and $\nabla_v p^*(0,0) = -\nu^*$.
-          (A rigorous proof uses subgradients of the perturbation function).
+          This suggests that $p^*(u, v)$ is locally linear with gradients $-\lambda^*$ and $-\nu^*$.
         </div>
 
         <div class="proof-step">
-          <strong>Interpretation:</strong> The dual variable $\lambda_i^*$ measures the rate of change of the optimal value with respect to constraint $i$. This is the <strong>shadow price</strong> of constraint $i$.
+          <strong> rigorous View (Global Sensitivity):</strong>
+          Without assuming differentiability, we can prove a global lower bound using weak duality. For any feasible perturbation $(u,v)$ and any dual optimal $(\lambda^*, \nu^*)$:
+          $$ p^*(u, v) \ge p^*(0,0) - \lambda^{*\top} u - \nu^{*\top} v $$
+          This means that $(-\lambda^*, -\nu^*)$ is a <b>subgradient</b> of the function $p^*(u, v)$ at $(0,0)$.
         </div>
 
         <div class="proof-step">
-          <strong>Economic Interpretation:</strong> In resource allocation, $\lambda_i^*$ is the marginal value of relaxing constraint $i$ by one unit. A large $\lambda_i^*$ indicates that constraint $i$ is "expensive" (tightly binding).
+          <strong>Interpretation:</strong> The dual variable $\lambda_i^*$ measures the rate of change of the optimal value with respect to relaxing constraint $i$. This is the <strong>shadow price</strong>. If $\lambda_i^*$ is large, the constraint is expensive; relaxing it (increasing $u_i$) yields significant savings.
         </div>
+
         <div class="insight">
           <h4>💡 Connection to Conjugates (Profit Maximization)</h4>
           <p>Recall from <a href="../03-convex-functions/index.html#section-7">Lecture 03</a> that the conjugate function $f^*(y)$ represents the maximum profit at price vector $y$. In duality, the dual variables $\lambda$ play the role of "shadow prices" or internal prices for the constraints.
           <br>Just as the conjugate maps prices to profit, the dual function $g(\lambda)$ maps these shadow prices to a bound on the optimal value.</p>
         </div>
-    </div>
+      </div>
 
 
       </div>
@@ -555,21 +559,54 @@ ight) \
       </ul>
 
       <h3>6.2 Quadratic Programming Duality</h3>
+      <p>We derive the dual of a QP with inequality constraints. Assume $P \succ 0$ (positive definite).</p>
+
       <p><strong>Primal QP:</strong></p>
       <p style="text-align: center;">
         $
-        \text{minimize} \quad \frac{1}{2} x^\top P x + q^\top x \quad \text{s.t.} \quad Ax = b, \; x \ge 0
+        \text{minimize} \quad \frac{1}{2} x^\top P x + q^\top x \quad \text{s.t.} \quad Ax \le b
         $
       </p>
-      <p>where $P \succeq 0$.</p>
 
-      <p><strong>Dual QP:</strong></p>
-      <p style="text-align: center;">
-        $
-        \text{maximize} \quad -\frac{1}{2} \nu^\top A P^{-1} A^\top \nu - (q + P^{-1} A^\top \nu)^\top x^* + b^\top \nu
-        $
-      </p>
-      <p>(more complex; derived via Lagrangian).</p>
+      <div class="proof-box">
+        <h4>Derivation of the Dual QP</h4>
+
+        <div class="proof-step">
+          <strong>Step 1: Form the Lagrangian.</strong>
+          Introduce dual variable $\lambda \in \mathbb{R}^m$ for the inequality constraint $Ax \le b$.
+          $$ L(x, \lambda) = \frac{1}{2} x^\top P x + q^\top x + \lambda^\top (Ax - b) $$
+          $$ = \frac{1}{2} x^\top P x + (q + A^\top \lambda)^\top x - b^\top \lambda $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Minimize Lagrangian w.r.t $x$.</strong>
+          Since $P \succ 0$, $L(x, \lambda)$ is strictly convex in $x$. The minimum occurs where the gradient vanishes.
+          $$ \nabla_x L(x, \lambda) = Px + q + A^\top \lambda = 0 $$
+          Solving for $x$:
+          $$ x^* = -P^{-1}(q + A^\top \lambda) $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Evaluate the Dual Function $g(\lambda)$.</strong>
+          Substitute $x^*$ back into the Lagrangian:
+          $$ g(\lambda) = \frac{1}{2} (x^*)^\top P x^* + (q + A^\top \lambda)^\top x^* - b^\top \lambda $$
+          $$ = \frac{1}{2} [-(q+A^\top \lambda)^\top P^{-1}] P [-P^{-1}(q+A^\top \lambda)] + (q+A^\top \lambda)^\top [-P^{-1}(q+A^\top \lambda)] - b^\top \lambda $$
+          $$ = \frac{1}{2} (q+A^\top \lambda)^\top P^{-1} (q+A^\top \lambda) - (q+A^\top \lambda)^\top P^{-1} (q+A^\top \lambda) - b^\top \lambda $$
+          $$ = -\frac{1}{2} (q + A^\top \lambda)^\top P^{-1} (q + A^\top \lambda) - b^\top \lambda $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: State the Dual Problem.</strong>
+          The dual problem is to maximize $g(\lambda)$ subject to $\lambda \ge 0$.
+          $$
+          \begin{aligned}
+          \text{maximize} \quad & -\frac{1}{2} (q + A^\top \lambda)^\top P^{-1} (q + A^\top \lambda) - b^\top \lambda \\
+          \text{subject to} \quad & \lambda \ge 0
+          \end{aligned}
+          $$
+          This is itself a Quadratic Program (concave maximization) in the variable $\lambda$.
+        </div>
+      </div>
 
       <h3>6.3 Semidefinite Programming Duality</h3>
       <p><strong>Primal SDP:</strong></p>

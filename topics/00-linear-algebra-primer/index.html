@@ -2653,47 +2653,6 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
         </div>
       </div>
 
-      <div class="problem">
-        <h3>P0.19 — The Geometry of the Trace Inner Product</h3>
-        <p>For matrices $A, B \in \mathbb{R}^{m \times n}$, we use the <b>Hilbert-Schmidt (or Frobenius) inner product</b> $\langle A, B \rangle = \mathrm{tr}(A^\top B)$.
-        <ol type="a">
-          <li><b>Sum of Squares:</b> Prove explicitly that $\mathrm{tr}(A^\top A) = \sum_{i,j} A_{ij}^2$ by expanding the matrix product (the "index gymnastics").</li>
-          <li><b>Submultiplicativity:</b> Prove that $\|AB\|_{HS} \le \|A\|_{HS} \|B\|_{HS}$. (Hint: Use the Cauchy-Schwarz inequality on the vector of entries).</li>
-        </ol></p>
-
-        <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-          <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-          <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-              <li><b>Isomorphism to Vector Space:</b> The space of matrices $\mathbb{R}^{m \times n}$ with the trace inner product is isometric to the vector space $\mathbb{R}^{mn}$ with the standard dot product. This allows us to lift geometric intuition (angles, lengths, projections) to matrices.</li>
-              <li><b>Submultiplicativity:</b> This property is crucial for analyzing the convergence of iterative algorithms involving matrix multiplication (like power iteration or gradient descent on matrix manifolds). It ensures the norm behaves "nicely" under composition.</li>
-          </ul>
-        </div>
-
-        <div class="solution-box">
-          <h4>Solution</h4>
-          <div class="proof-step">
-            <strong>Part (a): Index Gymnastics.</strong>
-            Let $A \in \mathbb{R}^{m \times n}$. The diagonal entry $(A^\top A)_{kk}$ corresponds to the dot product of the $k$-th column of $A$ with itself:
-            $$ (A^\top A)_{kk} = \sum_{i=1}^m (A^\top)_{ki} A_{ik} = \sum_{i=1}^m A_{ik} A_{ik} = \sum_{i=1}^m A_{ik}^2 $$
-            The trace is the sum of these diagonal entries:
-            $$ \mathrm{tr}(A^\top A) = \sum_{k=1}^n (A^\top A)_{kk} = \sum_{k=1}^n \sum_{i=1}^m A_{ik}^2 $$
-            This is precisely the sum of squares of all entries.
-          </div>
-
-          <div class="proof-step">
-            <strong>Part (b): Submultiplicativity.</strong>
-            Let $C = AB$. Its entry $C_{ij} = \sum_k A_{ik} B_{kj}$.
-            $$ \|AB\|_{HS}^2 = \sum_{i,j} C_{ij}^2 = \sum_{i,j} \left(\sum_k A_{ik} B_{kj}\right)^2 $$
-            By the standard scalar Cauchy-Schwarz inequality $(\sum u_k v_k)^2 \le (\sum u_k^2)(\sum v_k^2)$:
-            $$ \left(\sum_k A_{ik} B_{kj}\right)^2 \le \left(\sum_k A_{ik}^2\right) \left(\sum_k B_{kj}^2\right) $$
-            Summing over $i$ and $j$:
-            $$ \|AB\|_{HS}^2 \le \sum_{i,j} \left(\sum_k A_{ik}^2\right) \left(\sum_p B_{pj}^2\right) $$
-            The terms separate:
-            $$ = \left(\sum_{i,k} A_{ik}^2\right) \left(\sum_{j,p} B_{pj}^2\right) = \|A\|_{HS}^2 \|B\|_{HS}^2 $$
-            Taking the square root gives $\|AB\|_{HS} \le \|A\|_{HS} \|B\|_{HS}$.
-          </div>
-        </div>
-      </div>
 </section>
 
     <!-- SECTION 13: SUMMARY -->
