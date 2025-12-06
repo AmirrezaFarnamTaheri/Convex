@@ -157,7 +157,40 @@
           </p>
         </div>
 
-        <h3>1.4 Strict and Strong Convexity</h3>
+        <h3>1.4 Integral Characterization of Convexity</h3>
+        <p>A powerful alternative definition of convexity involves integrals. This mirrors the "average value" property of harmonic functions but with an inequality.</p>
+
+        <div class="theorem-box">
+          <h4>Theorem</h4>
+          <p>A continuous function $f: \mathbb{R} \to \mathbb{R}$ is convex <b>if and only if</b> for all $x, y \in \mathbb{R}$:</p>
+          $$ \int_0^1 f(x + t(y-x)) dt \le \frac{f(x) + f(y)}{2} $$
+          <p>This states that the <b>average value</b> of the function along a segment is less than or equal to the <b>average of the values</b> at the endpoints.</p>
+        </div>
+
+        <div class="proof-box">
+          <h4>Proof</h4>
+          <div class="proof-step">
+            <strong>($\Rightarrow$) Convex implies Inequality:</strong>
+            <p>Let $g(t) = f(x + t(y-x))$ for $t \in [0, 1]$. Since $f$ is convex, $g$ is convex.
+            By the definition of convexity, the graph of $g$ lies below the chord connecting $(0, g(0))$ and $(1, g(1))$:
+            $$ g(t) \le (1-t)g(0) + t g(1) $$
+            Integrating both sides from 0 to 1:
+            $$ \int_0^1 g(t) dt \le g(0)\int_0^1 (1-t)dt + g(1)\int_0^1 t dt = \frac{1}{2}g(0) + \frac{1}{2}g(1) $$
+            This proves the inequality.</p>
+          </div>
+          <div class="proof-step">
+            <strong>($\Leftarrow$) Inequality implies Convex (Contrapositive):</strong>
+            <p>Suppose $f$ is <b>not</b> convex. Then there exists a chord that lies <b>below</b> the graph at some point.
+            <br>Specifically, there exist $x, y$ and the affine function $\ell(z)$ passing through $(x, f(x))$ and $(y, f(y))$ such that $f(z) > \ell(z)$ for some $z \in (x, y)$.
+            <br>Let $h(z) = f(z) - \ell(z)$. Then $h(x)=h(y)=0$ but $h(z) > 0$ somewhere.
+            <br>If $f$ is "strictly bumpy", the integral of the difference will be positive:
+            $$ \int_0^1 f(x+t(y-x)) dt > \int_0^1 \ell(x+t(y-x)) dt $$
+            The average value of the line $\ell$ is exactly the midpoint $\frac{\ell(x)+\ell(y)}{2} = \frac{f(x)+f(y)}{2}$.
+            <br>Thus $\int_0^1 f(\cdot) > \frac{f(x)+f(y)}{2}$, violating the condition.</p>
+          </div>
+        </div>
+
+        <h3>1.5 Strict and Strong Convexity</h3>
 
         <div class="subsection">
           <h4>Strictly Convex</h4>
@@ -589,10 +622,28 @@
             <li><b>Powers:</b> $x^a$ on $\mathbb{R}_{++}$ is log-convex if $a \le 0$, and log-concave if $a \ge 0$.</li>
             <li><b>Gaussian Density:</b> $f(x) \propto e^{-\frac{1}{2}(x-\mu)^\top \Sigma^{-1}(x-\mu)}$ is log-concave.</li>
             <li><b>Determinant:</b> $\det(X)$ is log-concave on $\mathbb{S}^n_{++}$ (since $\log \det$ is concave).</li>
-            <li><b>Uniform on Convex Set:</b> The uniform density $f(x) = 1/\text{vol}(C)$ for $x \in C$ (and 0 otherwise) is log-concave. ($\log f$ is constant on $C$ and $-\infty$ outside).</li>
-            <li><b>Wishart Distribution:</b> $f(X) \propto (\det X)^{(p-n-1)/2} e^{-\frac{1}{2}\mathrm{tr}(\Sigma^{-1}X)}$ on $\mathbb{S}^n_{++}$ is log-concave (sum of concave $\log \det$ and linear trace).</li>
           </ul>
         </div>
+
+        <h4>(a) Uniform on a Convex Set</h4>
+        <p>Let $C \subseteq \mathbb{R}^n$ be a convex set. The uniform density function:
+        $$ f(x) = \begin{cases} 1/\alpha & x \in C \\ 0 & x \notin C \end{cases} $$
+        is log-concave.
+        <br><i>Proof:</i> $\log f(x)$ takes value $-\log \alpha$ on $C$ and $-\infty$ outside.
+        For $x, y \in C$ and $\theta \in [0, 1]$, the point $z = \theta x + (1-\theta)y \in C$ (by convexity of $C$).
+        Thus $\log f(z) = -\log \alpha = \theta (-\log \alpha) + (1-\theta) (-\log \alpha) = \theta \log f(x) + (1-\theta) \log f(y)$.
+        If either point is outside $C$, the condition holds trivially ($-\infty \le \dots$).</p>
+
+        <h4>(b) Wishart Distribution</h4>
+        <p>The Wishart density on positive definite matrices $X \in \mathbb{S}^n_{++}$ is (up to normalization):
+        $$ f(X) \propto (\det X)^{(p-n-1)/2} \exp\left(-\frac{1}{2} \mathrm{tr}(\Sigma^{-1}X)\right) $$
+        Taking the log:
+        $$ \log f(X) = c + \frac{p-n-1}{2} \log \det X - \frac{1}{2} \mathrm{tr}(\Sigma^{-1}X) $$
+        <ul>
+            <li>The term $\log \det X$ is <b>concave</b> (as proven in Section 4.3).</li>
+            <li>The term $-\mathrm{tr}(\Sigma^{-1}X)$ is <b>linear</b> (hence concave).</li>
+        </ul>
+        Since the sum of concave functions is concave, $\log f$ is concave, so the Wishart distribution is log-concave.</p>
 
         <h4>4.4.2 Hessian Condition</h4>
         <p>Assume $f > 0$ and $f$ is twice differentiable. We derive the condition for log-concavity.</p>
@@ -613,8 +664,14 @@
         <p>A powerful property of log-concave functions is that they are closed under integration.</p>
 
         <div class="theorem-box">
-          <h4>Theorem (Marginals)</h4>
-          <p>If $f(x, y)$ is log-concave jointly in $(x, y)$, then the marginal function $g(x) = \int f(x, y) dy$ is log-concave.</p>
+          <h4>Theorem (Integration Preserves Log-Convexity)</h4>
+          <p>If $f(x, y)$ is <b>log-convex</b> in $x$ for each fixed $y$, then $g(x) = \int f(x, y) dy$ is log-convex.</p>
+          <p><i>Example:</i> The Laplace transform $P(z) = \int p(x) e^{-z^\top x} dx$ is log-convex in $z$, because the integrand $e^{-z^\top x}$ is log-linear (hence log-convex) in $z$.</p>
+        </div>
+
+        <div class="theorem-box">
+          <h4>Theorem (Marginals Preserves Log-Concavity)</h4>
+          <p>If $f(x, y)$ is <b>log-concave jointly</b> in $(x, y)$, then the marginal function $g(x) = \int f(x, y) dy$ is log-concave.</p>
           <p>This implies that marginals of log-concave distributions (like the multivariate normal) are log-concave.</p>
         </div>
 
@@ -1282,6 +1339,14 @@
           Conjugate of a norm is the indicator of the dual unit ball.</p>
         </div>
 
+        <div class="example">
+          <h4>4. Indicator of a Set: $f(x) = I_S(x)$</h4>
+          <p>Let $I_S(x) = 0$ if $x \in S$, and $+\infty$ otherwise.
+          $$ f^*(y) = \sup_x (y^\top x - I_S(x)) = \sup_{x \in S} (y^\top x) $$
+          This is exactly the <b>support function</b> $\sigma_S(y)$ of the set $S$.
+          <br><i>Connection:</i> Since $f^{**}$ is the closed convex hull of $f$, the biconjugate of the indicator $I_S$ is the indicator of the closed convex hull of $S$. This proves that the support function encodes the convex hull of a set.</p>
+        </div>
+
         <h3>7.7 Calculus Rules</h3>
         <p>Knowing how conjugates transform allows us to derive duals for complex problems.</p>
         <table class="data-table">
@@ -1344,7 +1409,32 @@
           <p><i>Note:</i> This is weaker than convexity ($\nabla^2 f \succeq 0$). We only need PSD curvature on the subspace orthogonal to the gradient. We allow negative curvature in the "uphill/downhill" direction (e.g., bell curve tails).</p>
         </div>
 
-        <h3>8.5 Examples</h3>
+        <h3>8.5 Operations Preserving Quasi-Convexity</h3>
+        <p>Just like convex functions, we can build quasi-convex functions from simpler components. The calculus of quasi-convexity is simpler but less powerful.</p>
+
+        <div class="theorem-box">
+          <h4>1. Pointwise Maximum</h4>
+          <p>If $f_1, \ldots, f_m$ are quasi-convex, then $f(x) = \max_i f_i(x)$ is quasi-convex.</p>
+          <p><b>Proof:</b> The sublevel set of the maximum is the intersection of the sublevel sets:
+          $$ \{x \mid \max_i f_i(x) \le \alpha\} = \bigcap_i \{x \mid f_i(x) \le \alpha\} $$
+          Since the intersection of convex sets is convex, the resulting sublevel set is convex.</p>
+        </div>
+
+        <div class="theorem-box">
+          <h4>2. Composition</h4>
+          <p>If $g: \mathbb{R}^n \to \mathbb{R}$ is quasi-convex and $h: \mathbb{R} \to \mathbb{R}$ is <b>non-decreasing</b>, then $f(x) = h(g(x))$ is quasi-convex.</p>
+          <p><b>Proof:</b>
+          $$ \{x \mid h(g(x)) \le \alpha\} = \{x \mid g(x) \le \sup\{t \mid h(t) \le \alpha\}\} $$
+          This is just a sublevel set of $g$ (for some level $\beta$), which is convex.</p>
+          <p><i>Example:</i> If $g(x)$ is convex (hence quasi-convex), then $\sqrt{g(x)}$ (for $g \ge 0$) is quasi-convex.</p>
+        </div>
+
+        <div class="theorem-box">
+          <h4>3. Minimization?</h4>
+          <p>Unlike convex functions, the partial minimization of a quasi-convex function is <b>not</b> generally quasi-convex. However, minimizing a quasi-convex function over a convex set preserves quasi-convexity in the remaining parameters under specific conditions (e.g., if $f(x, y)$ is joint quasi-convex in $y$ for fixed $x$? No, this is tricky. Stick to the basics: Max and Composition are the reliable rules).</p>
+        </div>
+
+        <h3>8.6 Examples</h3>
 
         <div class="example">
           <h4>1. Length of a Vector (Support Size)</h4>
@@ -1440,6 +1530,24 @@
       <p><b>Proof:</b> $G(x)$ is concave and $A(x)$ is linear (hence concave). Thus $h(x) = G(x) - \alpha A(x)$ is a concave function.
       The set is the 0-superlevel set of a concave function $\{x \mid h(x) \ge 0\}$, which is convex.
       Since both $G$ and $A$ are homogeneous, the set is closed under scaling, making it a cone.</p>
+
+      <h3>9.5 Matrix-Fractional Function</h3>
+      <p>The function $f(x, Y) = x^\top Y^{-1} x$ is defined for $x \in \mathbb{R}^n$ and $Y \in \mathbb{S}^n_{++}$. It is <b>jointly convex</b> in $x$ and $Y$.</p>
+
+      <h4>Derivation: Epigraph via Schur Complement</h4>
+      <p>The epigraph condition is $t \ge x^\top Y^{-1} x$ with $Y \succ 0$.
+      <br>Using the <a href="../00-linear-algebra-primer/index.html#section-5">Schur Complement Lemma</a> (from Lecture 00), this scalar inequality is equivalent to the Linear Matrix Inequality (LMI):
+      $$ \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0, \quad Y \succ 0 $$
+      Since the set of PSD matrices is convex, the epigraph of $f$ is the intersection of the PSD cone with a linear subspace (of block matrices). Thus, the epigraph is convex, so $f$ is convex.</p>
+
+      <div class="insight">
+        <h4>Alternative View: Variational Form</h4>
+        <p>We can also express $f$ as a supremum of linear functions. For fixed $Y \succ 0$:
+        $$ \sup_{z \in \mathbb{R}^n} (2z^\top x - z^\top Y z) = x^\top Y^{-1} x $$
+        (The optimal $z$ is $Y^{-1}x$).
+        <br>Thus $f(x, Y) = \sup_z (2z^\top x - \mathrm{tr}(zz^\top Y))$.
+        <br>The term inside the supremum is linear in $x$ and linear in $Y$. The pointwise supremum of linear functions is convex.</p>
+      </div>
     </section>
 
     <section class="section-card" id="section-10">
