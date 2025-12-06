@@ -170,23 +170,27 @@
         <div class="proof-box">
           <h4>Proof</h4>
           <div class="proof-step">
-            <strong>($\Rightarrow$) Convex implies Inequality:</strong>
-            <p>Let $g(t) = f(x + t(y-x))$ for $t \in [0, 1]$. Since $f$ is convex, $g$ is convex.
-            By the definition of convexity, the graph of $g$ lies below the chord connecting $(0, g(0))$ and $(1, g(1))$:
-            $$ g(t) \le (1-t)g(0) + t g(1) $$
-            Integrating both sides from 0 to 1:
-            $$ \int_0^1 g(t) dt \le g(0)\int_0^1 (1-t)dt + g(1)\int_0^1 t dt = \frac{1}{2}g(0) + \frac{1}{2}g(1) $$
-            This proves the inequality.</p>
+            <strong>($\Rightarrow$) Convex implies Integral Inequality:</strong>
+            <p>Let $x, y \in \mathbb{R}$. We want to show the upper bound in the integral characterization.
+            <br>By convexity, for any $t \in [0, 1]$, we have $f(tx + (1-t)y) \le t f(x) + (1-t)f(y)$.
+            <br>Integrating both sides with respect to $t$ from 0 to 1:
+            $$ \int_0^1 f(tx + (1-t)y) dt \le f(x)\int_0^1 t dt + f(y)\int_0^1 (1-t) dt $$
+            Since $\int_0^1 t dt = \frac{1}{2}$ and $\int_0^1 (1-t) dt = \frac{1}{2}$, we obtain:
+            $$ \int_0^1 f(tx + (1-t)y) dt \le \frac{f(x) + f(y)}{2} $$
+            (Note: The reverse direction involving $f(\frac{x+y}{2})$ corresponds to the other side of the Hermite-Hadamard inequality).
+            </p>
           </div>
           <div class="proof-step">
-            <strong>($\Leftarrow$) Inequality implies Convex (Contrapositive):</strong>
-            <p>Suppose $f$ is <b>not</b> convex. Then there exists a chord that lies <b>below</b> the graph at some point.
-            <br>Specifically, there exist $x, y$ and the affine function $\ell(z)$ passing through $(x, f(x))$ and $(y, f(y))$ such that $f(z) > \ell(z)$ for some $z \in (x, y)$.
-            <br>Let $h(z) = f(z) - \ell(z)$. Then $h(x)=h(y)=0$ but $h(z) > 0$ somewhere.
-            <br>If $f$ is "strictly bumpy", the integral of the difference will be positive:
-            $$ \int_0^1 f(x+t(y-x)) dt > \int_0^1 \ell(x+t(y-x)) dt $$
-            The average value of the line $\ell$ is exactly the midpoint $\frac{\ell(x)+\ell(y)}{2} = \frac{f(x)+f(y)}{2}$.
-            <br>Thus $\int_0^1 f(\cdot) > \frac{f(x)+f(y)}{2}$, violating the condition.</p>
+            <strong>($\Leftarrow$) Integral Inequality implies Convex (Contrapositive):</strong>
+            <p>Suppose $f$ is <b>not</b> convex. Then there exist points $x_0, y_0$ and some $\theta \in (0, 1)$ such that $f$ lies strictly above the chord at $z_0 = \theta x_0 + (1-\theta)y_0$.
+            <br>Let $\ell(u)$ be the affine function through $(x_0, f(x_0))$ and $(y_0, f(y_0))$.
+            <br>Define $g(u) = f(u) - \ell(u)$. Then $g(x_0)=g(y_0)=0$ and $g(z_0) > 0$.
+            <br>Assuming continuity, $g(u) > 0$ on some interval inside $[x_0, y_0]$. Thus $\int_{x_0}^{y_0} g(u) du > 0$.
+            $$ \int_{x_0}^{y_0} f(u) du > \int_{x_0}^{y_0} \ell(u) du $$
+            The integral of the line $\ell$ over $[x_0, y_0]$ is just length $\times$ midpoint value: $(y_0-x_0) \frac{f(x_0)+f(y_0)}{2}$.
+            <br>Perform change of variables $u = tx_0 + (1-t)y_0$ (Jacobian is $|y_0-x_0|$):
+            $$ |y_0-x_0| \int_0^1 f(tx_0 + (1-t)y_0) dt > |y_0-x_0| \frac{f(x_0)+f(y_0)}{2} $$
+            Dividing by length gives $\int_0^1 f(\cdot) > \frac{f(x_0)+f(y_0)}{2}$, violating the condition.</p>
           </div>
         </div>
 
@@ -1208,174 +1212,182 @@
         </div>
       </section>
 
-            <section class="section-card" id="section-7">
-        <h2>7. The Convex Conjugate (Fenchel Conjugate)</h2>
 
-        <h3>7.1 Definition and Geometric Intuition</h3>
-        <p>The <a href="#" class="definition-link" data-term="convex conjugate">convex conjugate</a> (or <b>Fenchel-Legendre transform</b>) of a function $f: \mathbb{R}^n \to \mathbb{R} \cup \{+\infty\}$ is defined as:</p>
-        $$
-        \boxed{f^*(y) = \sup_{x \in \mathrm{dom}\, f} \left( y^\top x - f(x) \right)}
-        $$
-        <p>Here, $y \in \mathbb{R}^n$ acts as a "slope" vector. The value $f^*(y)$ answers the question: <b>"What is the maximum gap between the linear function $y^\top x$ and $f(x)$?"</b></p>
+    <section class="section-card" id="section-7">
+      <h2>7. The Convex Conjugate (Fenchel Conjugate)</h2>
 
-        <div class="insight">
-          <h4>💡 Geometric Interpretation: The Supporting Hyperplane</h4>
-          <p>Consider the affine function $h(x) = y^\top x - c$. We want to find the smallest vertical shift $c$ such that the hyperplane lies entirely below the graph of $f$, i.e., $y^\top x - c \le f(x)$ for all $x$.
-          <br>Rearranging, we need $c \ge y^\top x - f(x)$. The smallest valid $c$ is $\sup_x (y^\top x - f(x))$, which is exactly $f^*(y)$.
-          <br>Thus, $-f^*(y)$ is the intercept of the supporting hyperplane with slope $y$.</p>
-        </div>
+      <div class="insight">
+        <h4>Core Idea</h4>
+        <p>Given a function $f$, the conjugate $f^*$ is <b>"the best linear lower bound"</b> to $f$, written as a function of the slope $y$.</p>
+      </div>
 
-        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin: 20px 0;">
-          <figure style="flex: 1; min-width: 300px; text-align: center;">
-            <img src="assets/conjugate_definition_gap.png"
-                 alt="Conjugate as maximum vertical gap between line yx and function f(x)"
-                 style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
-            <figcaption><i>Figure 7.1:</i> <b>The Maximum Gap View.</b> For a fixed slope $y$, we look for the point $x^*$ that maximizes the distance $yx - f(x)$. The value of this maximum distance is $f^*(y)$.</figcaption>
-          </figure>
-          <figure style="flex: 1; min-width: 300px; text-align: center;">
-            <img src="assets/conjugate_supporting_line.png"
-                 alt="Conjugate determines the intercept of the supporting line"
-                 style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: white;" />
-            <figcaption><i>Figure 7.2:</i> <b>The Supporting Line View.</b> The line $y^\top x - f^*(y)$ supports the epigraph of $f$. $f^*(y)$ encodes the vertical offset required.</figcaption>
-          </figure>
-        </div>
+      <h3>7.1 Definition and Geometry</h3>
+      <p>Let $f : \mathbb{R}^n \to \mathbb{R} \cup \{+\infty\}$ be an extended-real function. Its <a href="#" class="definition-link" data-term="convex conjugate">Fenchel conjugate</a> is defined as:</p>
+      $$
+      \boxed{f^*(y) = \sup_{x \in \mathrm{dom}\, f} \left( y^\top x - f(x) \right)}
+      $$
+      <p>The domain of the conjugate is $\mathrm{dom}\, f^* = \{ y \in \mathbb{R}^n \mid \sup_x (y^\top x - f(x)) < +\infty \}$.</p>
 
-        <h3>7.2 Convexity of the Conjugate</h3>
-        <p><b>Theorem:</b> $f^*$ is convex, <i>even if $f$ is not</i>.</p>
-        <div class="proof-box">
-          <h4>Proof</h4>
-          <p>For each fixed $x$, the function $g_x(y) = y^\top x - f(x)$ is affine in $y$ (a plane).
-          The conjugate is the pointwise supremum of these affine functions:
-          $$ f^*(y) = \sup_{x} g_x(y) $$
-          Since the supremum of any collection of convex functions is convex, $f^*$ is convex.</p>
-        </div>
+      <h4>Geometric Interpretation: Best Affine Lower Bound</h4>
+      <p>Fix a slope vector $y$. Consider the family of affine functions with slope $y$: $\ell_{y,t}(x) = y^\top x - t$. We want to find the smallest vertical shift $t$ such that the affine function lies everywhere below $f$.
+      <br>The condition $\ell_{y,t}(x) \le f(x)$ for all $x$ is equivalent to $t \ge y^\top x - f(x)$ for all $x$.
+      <br>The smallest valid shift is $t_{\min} = \sup_x (y^\top x - f(x))$, which is exactly $f^*(y)$.
+      <br>Thus, the affine function $h(x) = y^\top x - f^*(y)$ is the <b>best affine lower bound</b> to $f$ with slope $y$. It supports the epigraph of $f$.</p>
 
-        <h3>7.3 Fenchel's Inequality</h3>
-        <p>From the definition, for any $x$ and $y$:</p>
-        $$ f^*(y) \ge y^\top x - f(x) \implies \boxed{ f(x) + f^*(y) \ge y^\top x } $$
-        <p>This is the <b>Fenchel-Young inequality</b>. Equality holds if and only if $y \in \partial f(x)$ (i.e., $y$ is a subgradient of $f$ at $x$). Ideally, $y = \nabla f(x)$.</p>
+      <h3>7.2 Basic Properties</h3>
+      <ul>
+        <li><b>Convexity:</b> $f^*$ is always convex, regardless of whether $f$ is convex. This is because $f^*$ is the pointwise supremum of a family of affine functions (indexed by $x$): $y \mapsto x^\top y - f(x)$.</li>
+        <li><b>Fenchel's Inequality:</b> Directly from the definition, $f^*(y) \ge y^\top x - f(x)$, which rearranges to:
+        $$ \boxed{f(x) + f^*(y) \ge x^\top y} $$
+        This inequality holds for all $x, y$. Equality holds if and only if $y \in \partial f(x)$ (i.e., $y$ is a subgradient of $f$ at $x$).</li>
+      </ul>
 
-        <h3>7.4 Legendre Transform (Differentiable Case)</h3>
-        <p>If $f$ is convex and differentiable, we can find the supremum by setting the gradient to zero.</p>
-        <p>Let $\phi_y(x) = y^\top x - f(x)$. To maximize, set $\nabla_x \phi_y(x) = y - \nabla f(x) = 0$.
-        Thus, the optimizer $x^*$ satisfies $\nabla f(x^*) = y$.
-        $$ \boxed{ f^*(y) = y^\top x^* - f(x^*) \quad \text{where } y = \nabla f(x^*) } $$
-        This is the classical <b>Legendre Transform</b>. It pairs the variable $x$ with its dual variable (gradient) $y$.
-        <br><i>Identity:</i> If $f$ is strictly convex, $\nabla f^*$ is the inverse of $\nabla f$, i.e., $\nabla f^*(y) = (\nabla f)^{-1}(y) = x^*$.</p>
+      <h3>7.3 Differentiable Case: Legendre Transform</h3>
+      <p>If $f$ is convex, differentiable, and strictly convex (so $\nabla f$ is one-to-one), we can find the supremum by setting the gradient of $\phi_y(x) = y^\top x - f(x)$ to zero.
+      $$ \nabla_x \phi_y(x) = y - \nabla f(x) = 0 \implies \nabla f(x^*) = y $$
+      If we can solve for $x^*$ in terms of $y$ (i.e., invert the gradient map), we get:
+      $$ f^*(y) = y^\top x^*(y) - f(x^*(y)) $$
+      This specific case is known as the <b>Legendre transform</b>. A useful identity is $\nabla f^*(y) = x^*(y) = (\nabla f)^{-1}(y)$.</p>
 
-        <h3>7.5 1D Examples: Zero to Hero</h3>
-        <p>Let's compute the conjugates of fundamental 1D functions. These building blocks appear everywhere.</p>
+      <h3>7.4 1D Examples: Zero to Hero</h3>
+      <p>We rigorously derive the conjugates for fundamental 1D functions, paying close attention to domains and boundary cases.</p>
 
-        <div class="example">
-          <h4>1. Affine Function: $f(x) = ax + b$</h4>
-          <p>$$ f^*(y) = \sup_x (yx - (ax+b)) = \sup_x ((y-a)x - b) $$
-          <ul>
-            <li>If $y \ne a$: The term $(y-a)x$ can go to $+\infty$ (choose $x \to \pm \infty$ depending on sign). So $f^*(y) = \infty$.</li>
-            <li>If $y = a$: The expression is constant $-b$.</li>
-          </ul>
-          $$ f^*(y) = \begin{cases} -b & y=a \\ \infty & y \ne a \end{cases} $$
-          This is the indicator function of the singleton set $\{a\}$ shifted by $-b$.</p>
-        </div>
+      <div class="example">
+        <h4>1. Affine Function: $f(x) = ax + b$</h4>
+        <p>$$ f^*(y) = \sup_{x \in \mathbb{R}} (yx - (ax+b)) = \sup_x ((y-a)x - b) $$</p>
+        <ul>
+          <li><b>Case $y \ne a$:</b> The term $(y-a)x$ is linear with non-zero slope. As $x \to \pm \infty$, the supremum goes to $+\infty$.</li>
+          <li><b>Case $y = a$:</b> The slope vanishes. The expression is constant $-b$. The supremum is $-b$.</li>
+        </ul>
+        <p>Thus, the domain is the singleton $\{a\}$:
+        $$ f^*(y) = \begin{cases} -b & y=a \\ \infty & y \ne a \end{cases} $$
+        This corresponds to the indicator function of $\{a\}$ minus $b$: $f^*(y) = -b + I_{\{a\}}(y)$.</p>
+      </div>
 
-        <div class="example">
-          <h4>2. Negative Log: $f(x) = -\log x$ on $(0, \infty)$</h4>
-          <p>Maximize $g(x) = yx - (-\log x) = yx + \log x$.
-          <br>Derivative: $g'(x) = y + 1/x = 0 \implies x^* = -1/y$.
-          <br>For $x^* > 0$, we need $y < 0$. If $y \ge 0$, $yx + \log x \to \infty$ as $x \to \infty$.
-          <br>Substitute $x^* = -1/y$:
-          $$ f^*(y) = y(-1/y) + \log(-1/y) = -1 - \log(-y) \quad \text{for } y < 0 $$</p>
-        </div>
+      <div class="example">
+        <h4>2. Negative Log: $f(x) = -\log x$ on $(0, \infty)$</h4>
+        <p>$$ f^*(y) = \sup_{x > 0} (yx + \log x) $$
+        Let $\phi(x) = yx + \log x$. Then $\phi'(x) = y + 1/x$.</p>
+        <ul>
+          <li><b>Case $y \ge 0$:</b> Since $x > 0$, $\phi'(x) = y + 1/x > 0$. The function is strictly increasing. As $x \to \infty$, $\phi(x) \to \infty$. So $f^*(y) = \infty$.</li>
+          <li><b>Case $y < 0$:</b> $\phi'(x) = 0 \implies x^* = -1/y > 0$. Since $\phi''(x) = -1/x^2 < 0$, this is a unique global maximum.
+          <br>Value: $y(-1/y) + \log(-1/y) = -1 - \log(-y)$.</li>
+        </ul>
+        $$ f^*(y) = \begin{cases} -1 - \log(-y) & y < 0 \\ \infty & y \ge 0 \end{cases} $$
+      </div>
 
-        <div class="example">
-          <h4>3. Exponential: $f(x) = e^x$</h4>
-          <p>Maximize $g(x) = yx - e^x$.
-          <br>Derivative: $g'(x) = y - e^x = 0 \implies e^x = y \implies x^* = \log y$.
-          <br>Valid only for $y > 0$.
-          <br>Substitute $x^*$: $f^*(y) = y \log y - e^{\log y} = y \log y - y$.
-          <br><i>Boundary cases:</i>
-          <ul>
-            <li>$y=0$: $\sup_x (0 - e^x) = 0$. (Consistent with limit $y \log y \to 0$).</li>
-            <li>$y < 0$: $yx - e^x \to \infty$ as $x \to -\infty$.</li>
-          </ul>
-          Result: $f^*(y) = y \log y - y$ for $y \ge 0$ (with $0 \log 0 = 0$).</p>
-        </div>
+      <div class="example">
+        <h4>3. Exponential: $f(x) = e^x$</h4>
+        <p>$$ f^*(y) = \sup_{x \in \mathbb{R}} (yx - e^x) $$
+        Let $\phi(x) = yx - e^x$. Then $\phi'(x) = y - e^x$.</p>
+        <ul>
+          <li><b>Case $y > 0$:</b> $\phi'(x) = 0 \implies e^x = y \implies x^* = \log y$. Second derivative $\phi''(x) = -e^x < 0$, so strictly concave.
+          <br>Value: $y \log y - e^{\log y} = y \log y - y$.</li>
+          <li><b>Case $y = 0$:</b> $\phi(x) = -e^x$. Strictly decreasing. As $x \to -\infty$, $-e^x \to 0$. As $x \to \infty$, $-e^x \to -\infty$. The supremum is $0$.</li>
+          <li><b>Case $y < 0$:</b> $\phi'(x) = y - e^x < 0$ everywhere. Strictly decreasing. As $x \to -\infty$, $e^x \to 0$ but $yx \to +\infty$ (product of two negatives). Thus $f^*(y) = \infty$.</li>
+        </ul>
+        <p>Combining $y=0$ (where $0 \log 0 = 0$) and $y>0$:
+        $$ f^*(y) = \begin{cases} y \log y - y & y \ge 0 \\ \infty & y < 0 \end{cases} $$
+        </p>
+      </div>
 
-        <div class="example">
-          <h4>4. Reciprocal: $f(x) = 1/x$ on $(0, \infty)$</h4>
-          <p>Maximize $g(x) = yx - 1/x$.
-          <br>Derivative: $y + 1/x^2 = 0 \implies x^2 = -1/y$.
-          <br>Requires $y < 0$. Then $x^* = \sqrt{-1/y}$.
-          <br>Substitute:
-          $$ f^*(y) = y\sqrt{-1/y} - \sqrt{-y} = -\sqrt{-y} - \sqrt{-y} = -2\sqrt{-y} \quad \text{for } y \le 0 $$</p>
-        </div>
+      <div class="example">
+        <h4>4. Reciprocal: $f(x) = 1/x$ on $(0, \infty)$</h4>
+        <p>$$ f^*(y) = \sup_{x > 0} (yx - 1/x) $$
+        Let $\phi(x) = yx - 1/x$. Then $\phi'(x) = y + 1/x^2$.</p>
+        <ul>
+          <li><b>Case $y > 0$:</b> $\phi'(x) > 0$. Strictly increasing. As $x \to \infty$, $yx \to \infty$. So $f^*(y) = \infty$.</li>
+          <li><b>Case $y = 0$:</b> $\phi(x) = -1/x$. Increasing from $-\infty$ to $0$. The supremum is $0$.</li>
+          <li><b>Case $y < 0$:</b> $\phi'(x) = 0 \implies x^2 = -1/y \implies x^* = \sqrt{-1/y}$. Concave since $\phi''(x) = -2/x^3 < 0$.
+          <br>Value: $y \sqrt{-1/y} - \sqrt{-1/y}^{-1} = -\sqrt{-y} - \sqrt{-y} = -2\sqrt{-y}$.</li>
+        </ul>
+        $$ f^*(y) = \begin{cases} -2\sqrt{-y} & y \le 0 \\ \infty & y > 0 \end{cases} $$
+      </div>
 
-        <h3>7.6 Matrix and Vector Examples</h3>
+      <h3>7.5 Matrix and Vector Examples</h3>
 
-        <div class="example">
-          <h4>1. Quadratic: $f(x) = \frac{1}{2} x^\top Q x$ ($Q \succ 0$)</h4>
-          <p>Maximize $y^\top x - \frac{1}{2} x^\top Q x$.
-          <br>Gradient: $y - Qx = 0 \implies x^* = Q^{-1}y$.
-          <br>Substitute:
-          $$ f^*(y) = y^\top Q^{-1} y - \frac{1}{2} (Q^{-1}y)^\top Q (Q^{-1}y) = y^\top Q^{-1} y - \frac{1}{2} y^\top Q^{-1} y = \frac{1}{2} y^\top Q^{-1} y $$
-          A quadratic conjugates to a quadratic with the inverse matrix.</p>
-        </div>
+      <div class="example">
+        <h4>1. Quadratic: $f(x) = \frac{1}{2} x^\top Q x$ ($Q \in \mathbb{S}^n_{++}$)</h4>
+        <p>Maximize $\phi(x) = y^\top x - \frac{1}{2} x^\top Q x$.
+        <br>Gradient: $\nabla \phi(x) = y - Qx$. Set to 0: $x^* = Q^{-1}y$.
+        <br>Hessian: $\nabla^2 \phi(x) = -Q \prec 0$, so strictly concave.
+        <br>Value:
+        $$ f^*(y) = y^\top (Q^{-1}y) - \frac{1}{2} (Q^{-1}y)^\top Q (Q^{-1}y) = y^\top Q^{-1} y - \frac{1}{2} y^\top Q^{-1} y = \frac{1}{2} y^\top Q^{-1} y $$
+        Result: $f^*(y) = \frac{1}{2} y^\top Q^{-1} y$. The conjugate of a quadratic form is a quadratic form with the inverse matrix.</p>
+      </div>
 
-        <div class="example">
-          <h4>2. Log-Determinant: $f(X) = -\log \det X$ on $\mathbb{S}^n_{++}$</h4>
-          <p>Maximize $\mathrm{tr}(Y X) + \log \det X$.
-          <br>Gradient: $Y + X^{-1} = 0 \implies X^* = -Y^{-1}$.
-          <br>Requires $Y \prec 0$ (negative definite).
-          <br>Substitute:
-          $$ f^*(Y) = \mathrm{tr}(Y(-Y^{-1})) + \log \det (-Y^{-1}) = \mathrm{tr}(-I) - \log \det(-Y) = -n - \log \det(-Y) $$
-          Domain is $\mathbb{S}^n_{--}$.</p>
-        </div>
+      <div class="example">
+        <h4>2. Log-Determinant: $f(X) = -\log \det X$ on $\mathbb{S}^n_{++}$</h4>
+        <p>$$ f^*(Y) = \sup_{X \succ 0} (\mathrm{tr}(YX) + \log \det X) $$
+        Define $\Phi(X) = \mathrm{tr}(YX) + \log \det X$.
+        <br>Gradient w.r.t $X$: $\nabla \Phi(X) = Y + X^{-1}$. Set to 0: $X = -Y^{-1}$.
+        <br>For $X$ to be in the domain ($X \succ 0$), we must have $-Y^{-1} \succ 0$, which implies $Y \prec 0$.
+        <br>Value at optimum:
+        $$ \mathrm{tr}(Y(-Y^{-1})) + \log \det (-Y^{-1}) = \mathrm{tr}(-I) + \log((\det(-Y))^{-1}) = -n - \log \det (-Y) $$
+        Thus:
+        $$ f^*(Y) = \begin{cases} -n - \log\det(-Y) & Y \prec 0 \\ \infty & \text{otherwise} \end{cases} $$
+        This is exactly "another log-det" with opposite sign and domain flipped to negative definite.</p>
+      </div>
 
-        <div class="example">
-          <h4>3. Norm: $f(x) = \|x\|$</h4>
-          <p>$$ f^*(y) = \sup_x (y^\top x - \|x\|) $$
-          If $\|y\|_* > 1$ (dual norm), align $x$ with $y$ and scale to infinity: supremum is $\infty$.
-          If $\|y\|_* \le 1$, then $y^\top x \le \|x\|\|y\|_* \le \|x\|$, so $y^\top x - \|x\| \le 0$. Max is 0 (at $x=0$).
-          $$ f^*(y) = I_{B_*}(y) = \begin{cases} 0 & \|y\|_* \le 1 \\ \infty & \text{otherwise} \end{cases} $$
-          Conjugate of a norm is the indicator of the dual unit ball.</p>
-        </div>
+      <div class="example">
+        <h4>3. Norm Squared: $f(x) = \frac{1}{2}\|x\|^2$</h4>
+        <p>We compute the conjugate of one-half the squared norm for an arbitrary norm $\|\cdot\|$.
+        $$ f^*(y) = \sup_x \left( y^\top x - \frac{1}{2}\|x\|^2 \right) $$
+        <b>Step 1: Dual Norm Bound.</b> By definition of dual norm, $y^\top x \le \|y\|_* \|x\|$.
+        $$ y^\top x - \frac{1}{2}\|x\|^2 \le \|y\|_* \|x\| - \frac{1}{2}\|x\|^2 $$
+        <b>Step 2: Scalar Young's Inequality.</b> For scalars $a, b$, $ab \le \frac{1}{2}a^2 + \frac{1}{2}b^2$. Let $a=\|x\|, b=\|y\|_*$.
+        $$ \|y\|_* \|x\| \le \frac{1}{2}\|x\|^2 + \frac{1}{2}\|y\|_*^2 $$
+        Substituting this back:
+        $$ \left( y^\top x - \frac{1}{2}\|x\|^2 \right) \le \left(\frac{1}{2}\|x\|^2 + \frac{1}{2}\|y\|_*^2\right) - \frac{1}{2}\|x\|^2 = \frac{1}{2}\|y\|_*^2 $$
+        So $f^*(y) \le \frac{1}{2}\|y\|_*^2$.
+        <br><b>Step 3: Tightness.</b> We can choose $x$ aligned with $y$ such that $y^\top x = \|y\|_* \|x\|$ and $\|x\| = \|y\|_*$. Then the bound is achieved. Thus:
+        $$ \boxed{f^*(y) = \frac{1}{2}\|y\|_*^2} $$
+        In the Euclidean case ($\|y\|_* = \|y\|_2$), we recover the quadratic result with $Q=I$.</p>
+      </div>
 
-        <div class="example">
-          <h4>4. Indicator of a Set: $f(x) = I_S(x)$</h4>
-          <p>Let $I_S(x) = 0$ if $x \in S$, and $+\infty$ otherwise.
-          $$ f^*(y) = \sup_x (y^\top x - I_S(x)) = \sup_{x \in S} (y^\top x) $$
-          This is exactly the <b>support function</b> $\sigma_S(y)$ of the set $S$.
-          <br><i>Connection:</i> Since $f^{**}$ is the closed convex hull of $f$, the biconjugate of the indicator $I_S$ is the indicator of the closed convex hull of $S$. This proves that the support function encodes the convex hull of a set.</p>
-        </div>
+      <div class="example">
+        <h4>4. Indicator and Support Functions</h4>
+        <p>Let $S \subseteq \mathbb{R}^n$ be a set. The indicator function is $I_S(x) = 0$ if $x \in S$, and $+\infty$ otherwise.
+        $$ f^*(y) = \sup_x (y^\top x - I_S(x)) = \sup_{x \in S} (y^\top x) $$
+        This is exactly the <b>support function</b> $h_S(y)$ of the set $S$.
+        <br><i>Connection:</i> Since $f^{**}$ is the closed convex hull of $f$, the biconjugate of the indicator $I_S$ is the indicator of the closed convex hull of $S$:
+        $$ I_S^* = h_S, \quad h_S^* = I_{\operatorname{cl}\operatorname{conv}S} $$
+        </p>
+      </div>
 
-        <h3>7.7 Calculus Rules</h3>
-        <p>Knowing how conjugates transform allows us to derive duals for complex problems.</p>
-        <table class="data-table">
-          <thead>
-            <tr><th>Function $g(x)$</th><th>Conjugate $g^*(y)$</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>$a f(x)$ ($a>0$)</td><td>$a f^*(y/a)$</td></tr>
-            <tr><td>$f(Ax)$ ($A$ invertible)</td><td>$f^*(A^{-\top}y)$</td></tr>
-            <tr><td>$f(x) + b$</td><td>$f^*(y) - b$</td></tr>
-            <tr><td>$f(x - b)$</td><td>$f^*(y) + b^\top y$</td></tr>
-            <tr><td>$f_1(x_1) + f_2(x_2)$</td><td>$f_1^*(y_1) + f_2^*(y_2)$ (Separable sum)</td></tr>
-          </tbody>
-        </table>
+      <h3>7.6 Transformation Rules</h3>
+      <table class="data-table">
+        <thead>
+          <tr><th>Function $g(x)$</th><th>Conjugate $g^*(y)$</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>$a f(x) + b$ ($a>0$)</td><td>$a f^*(y/a) - b$</td><td>Scale and shift</td></tr>
+          <tr><td>$f(Ax + b)$ ($A$ invertible)</td><td>$f^*(A^{-\top}y) - b^\top A^{-\top}y$</td><td>Affine change of variables</td></tr>
+          <tr><td>$f_1(u) + f_2(v)$</td><td>$f_1^*(y_1) + f_2^*(y_2)$</td><td>Sum of independent functions</td></tr>
+        </tbody>
+      </table>
 
-        <h3>7.8 Economic Interpretation</h3>
-        <p>Let $f(x)$ be the <b>cost</b> to produce $x$ units of a good.
-        Let $y$ be the market <b>price</b> per unit.
-        <br>The <b>profit</b> maximizing producer solves:
-        $$ \max_x (\text{Revenue} - \text{Cost}) = \max_x (y^\top x - f(x)) $$
-        This maximum profit is exactly the conjugate $f^*(y)$.
-        <br>Thus, the conjugate function maps prices to optimal profit.</p>
+      <h3>7.7 Economic Interpretation: Revenue and Profit</h3>
+      <p>The conjugate relationship is central to duality in economics.</p>
+      <ul>
+        <li>Let $r \in \mathbb{R}^n$ be a resource/quantity vector.</li>
+        <li>Let $p \in \mathbb{R}^n$ be the price vector.</li>
+        <li>Let $S(r)$ be the <b>sales revenue</b> (or negative cost).</li>
+      </ul>
+      <p>The <b>maximum profit</b> at prices $p$ is:
+      $$ M(p) = \sup_r (S(r) - p^\top r) $$
+      If we define a "negative revenue" or cost-like function $f(r) = -S(r)$, then:
+      $$ M(p) = \sup_r (-p^\top r - f(r)) = f^*(-p) $$
+      Thus, <b>profit as a function of prices</b> is the conjugate of <b>(negative) revenue as a function of quantities</b>.
+      <br><i>Hotelling's Lemma:</i> The gradient of the profit function with respect to prices gives the optimal supply: $\nabla M(p) = -r^*$.</p>
 
-        <h3>7.9 The Biconjugate and Convex Hull</h3>
-        <p>The <b>biconjugate</b> $f^{**} = (f^*)^*$ is the convex conjugate of the conjugate.
-        <br><b>Theorem:</b> $f^{**}$ is the <b>closed convex hull</b> of $f$ (the largest closed convex function below $f$).
-        <br>If $f$ is already closed and convex, then $f^{**} = f$. This duality is the foundation of the primal-dual relationship in optimization.</p>
-      </section>
-
+      <h3>7.8 The Biconjugate Theorem</h3>
+      <p>The <b>biconjugate</b> $f^{**} = (f^*)^*$ is the conjugate of the conjugate.
+      <br>By Fenchel's inequality on $f^*$, we always have $f^{**}(x) \le f(x)$.
+      <br><b>Theorem:</b> If $f$ is proper, convex, and lower semicontinuous (closed), then:
+      $$ \boxed{f^{**} = f} $$
+      Generally, $f^{**}$ is the <b>closed convex hull</b> (or lower semicontinuous convex envelope) of $f$. This theorem underpins strong duality: $f=f^{**}$ means we can represent $f$ as the supremum of affine functions.</p>
+    </section>
 
           <section class="section-card" id="section-8">
         <h2>8. Quasi-Convex Functions</h2>
@@ -1536,9 +1548,48 @@
 
       <h4>Derivation: Epigraph via Schur Complement</h4>
       <p>The epigraph condition is $t \ge x^\top Y^{-1} x$ with $Y \succ 0$.
-      <br>Using the <a href="../00-linear-algebra-primer/index.html#section-5">Schur Complement Lemma</a> (from Lecture 00), this scalar inequality is equivalent to the Linear Matrix Inequality (LMI):
-      $$ \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0, \quad Y \succ 0 $$
-      Since the set of PSD matrices is convex, the epigraph of $f$ is the intersection of the PSD cone with a linear subspace (of block matrices). Thus, the epigraph is convex, so $f$ is convex.</p>
+      <br>Using the <a href="../00-linear-algebra-primer/index.html#section-5">Schur Complement Lemma</a>, this is equivalent to the Linear Matrix Inequality (LMI):
+      $$ M = \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0 $$
+      Since the PSD cone is convex, and $M$ depends linearly on $(x, Y, t)$, the epigraph is convex.</p>
+
+      <div class="proof-box">
+        <h4>Rigorous Check via Quadratic Forms</h4>
+        <p>Let's verify $M \succeq 0 \iff t \ge x^\top Y^{-1} x$.
+        <br>Take an arbitrary vector $z = [v^\top, \alpha]^\top$. $M \succeq 0$ means $z^\top M z \ge 0$ for all $z$.
+        $$ z^\top M z = v^\top Y v + 2\alpha x^\top v + \alpha^2 t $$
+        View this as a quadratic in $\alpha$: $q(\alpha) = t\alpha^2 + 2(x^\top v)\alpha + (v^\top Y v)$.
+        <br>For $q(\alpha) \ge 0$ for all $\alpha$, we need $t \ge 0$ and discriminant $\le 0$:
+        $$ 4(x^\top v)^2 - 4t(v^\top Y v) \le 0 \implies (x^\top v)^2 \le t (v^\top Y v) $$
+        Let $w = Y^{1/2}v$. Then $v^\top Y v = \|w\|^2$ and $x^\top v = x^\top Y^{-1/2} w$.
+        $$ (x^\top Y^{-1/2} w)^2 \le t \|w\|^2 $$
+        By Cauchy-Schwarz, the maximum of the LHS over $\|w\|=1$ is $\|Y^{-1/2}x\|^2 = x^\top Y^{-1} x$.
+        <br>Thus, the condition holds for all $w$ (and hence all $v$) if and only if $t \ge x^\top Y^{-1} x$.</p>
+      </div>
+
+      <div class="insight">
+        <h4>Triangle of Equivalence</h4>
+        <p>The matrix fractional function connects three concepts via the Schur Complement:</p>
+        $$
+        \boxed{
+        t\ge x^\top Y^{-1}x
+        \iff
+        \begin{bmatrix}
+        Y & x\\
+        x^\top & t
+        \end{bmatrix}\succeq 0
+        \iff
+        tY - xx^\top \succeq 0
+        }
+        $$
+        <ul>
+          <li><b>Scalar:</b> Quadratic-over-linear inequality.</li>
+          <li><b>Block Matrix:</b> LMI form, useful for SDPs.</li>
+          <li><b>Rank-1 Update:</b> $tY \succeq xx^\top$. Derived by setting $\alpha=1$ in the quadratic form argument above: $(x^\top v)^2 \le t v^\top Y v \iff v^\top (tY - xx^\top) v \ge 0$.</li>
+        </ul>
+        <p><b>Determinant Identity:</b> By block Gaussian elimination:
+        $$ \det \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} = \det(Y) \cdot (t - x^\top Y^{-1} x) $$
+        </p>
+      </div>
 
       <div class="insight">
         <h4>Alternative View: Variational Form</h4>
@@ -1548,6 +1599,7 @@
         <br>Thus $f(x, Y) = \sup_z (2z^\top x - \mathrm{tr}(zz^\top Y))$.
         <br>The term inside the supremum is linear in $x$ and linear in $Y$. The pointwise supremum of linear functions is convex.</p>
       </div>
+
     </section>
 
     <section class="section-card" id="section-10">
