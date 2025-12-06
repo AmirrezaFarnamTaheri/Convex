@@ -748,6 +748,21 @@
           </div>
         </div>
 
+        <h3>4.3 The Support Function</h3>
+
+        <p>The concept of supporting hyperplanes leads naturally to the <b>support function</b>, which provides an alternative, dual description of a convex set.</p>
+
+        <div class="theorem-box">
+          <h4>Definition (Support Function)</h4>
+          <p>For a set $C \subseteq \mathbb{R}^n$, the support function $S_C: \mathbb{R}^n \to \mathbb{R} \cup \{+\infty\}$ is defined as:</p>
+          $$ S_C(y) := \sup_{x \in C} y^\top x $$
+          <p><b>Geometric Meaning:</b> For a direction $y$, $S_C(y)$ tells you "how far" the set $C$ extends in that direction. If $C$ is bounded, this value is finite. If $C$ is unbounded in direction $y$, $S_C(y) = +\infty$.
+          <br>The hyperplane $\{x \mid y^\top x = S_C(y)\}$ is a supporting hyperplane to $C$ with normal vector $y$.</p>
+        </div>
+
+        <p>A fundamental result (Exercise P2.25) states that a closed convex set is completely determined by its support function. Specifically, $C$ is the intersection of all its supporting halfspaces:</p>
+        $$ C = \bigcap_{y \in \mathbb{R}^n} \{x \mid y^\top x \le S_C(y)\} $$
+
         <div class="insight">
           <h4>🔑 Why These Theorems Matter</h4>
           <ul>
@@ -2185,6 +2200,365 @@
       This is a linear matrix inequality in $x$, so the preimage is an LMI set (spectrahedron).
     </div>
 
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.25 — Support Function Determines Set</h3>
+  <p><b>Claim:</b> If $C, D \subseteq \mathbb{R}^n$ are closed convex sets, then $C = D$ if and only if their support functions are equal, i.e., $S_C(y) = S_D(y)$ for all $y$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Injectivity of Support Map:</b> The map $C \mapsto S_C$ is injective on the space of closed convex sets. This means the support function encodes <i>all</i> the geometric information of the set.</li>
+        <li><b>Intersection Representation:</b> This result is a direct consequence of the representation $C = \bigcap_y \{x \mid y^\top x \le S_C(y)\}$. If two sets have the same halfspace representation, they are the same set.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+
+    <p><b>Direction 1: $C=D \implies S_C = S_D$.</b> Trivial by definition.</p>
+
+    <p><b>Direction 2: $S_C = S_D \implies C = D$.</b>
+    We show $C \subseteq D$. By symmetry, $D \subseteq C$ will follow, implying $C=D$.</p>
+
+    <div class="proof-step">
+      <strong>Proof by Contradiction:</strong> Assume $C \not\subseteq D$. Then there exists $x_0 \in C \setminus D$.
+      Since $D$ is closed and convex and $x_0 \notin D$, by the Separating Hyperplane Theorem, there exists a hyperplane strictly separating $x_0$ from $D$.
+      There exist $y \neq 0$ and $\alpha$ such that:
+      $$ y^\top x_0 > \alpha \ge y^\top z \quad \forall z \in D $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Analyze Support Functions:</strong>
+      From the separation inequality:
+      <ol>
+        <li>$S_D(y) = \sup_{z \in D} y^\top z \le \alpha$.</li>
+        <li>Since $x_0 \in C$, $S_C(y) = \sup_{x \in C} y^\top x \ge y^\top x_0 > \alpha$.</li>
+      </ol>
+      Combining these: $S_C(y) > \alpha \ge S_D(y)$, so $S_C(y) > S_D(y)$.
+    </div>
+
+    <div class="proof-step">
+      <strong>Contradiction:</strong>
+      This contradicts the assumption that $S_C(y) = S_D(y)$ for all $y$.
+      Therefore, no such $x_0$ exists, so $C \subseteq D$.
+      By the same logic, $D \subseteq C$. Thus $C = D$.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.26 — Converse Supporting Hyperplane Theorem</h3>
+  <p><b>Statement:</b> Suppose $C \subseteq \mathbb{R}^n$ is a set that satisfies three conditions:
+  <ol>
+    <li>$C$ is closed.</li>
+    <li>$C$ has nonempty interior ($\mathrm{int}(C) \neq \emptyset$).</li>
+    <li>At <b>every</b> boundary point $x^* \in \partial C$, there exists a supporting hyperplane.</li>
+  </ol>
+  Prove that $C$ is convex.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Geometric Characterization:</b> We typically define convex sets first, then prove they have supporting hyperplanes. This converse theorem shows that the existence of local supports everywhere is actually a <i>sufficient</i> condition for global convexity (under mild topological assumptions).</li>
+        <li><b>Proof Strategy:</b> Compare $C$ with its closed convex hull $D = \overline{\mathrm{conv}}(C)$. If $C$ is non-convex, there is a "gap" between $C$ and $D$. We use the support property to find a contradiction in this gap.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+
+    <p>Let $D = \overline{\mathrm{conv}}(C)$. We know $C \subseteq D$ and $D$ is convex. We want to show $C=D$.
+    A key lemma is that $S_C(y) = S_D(y)$ for all $y$ (the support function depends only on the convex hull).</p>
+
+    <div class="proof-step">
+      <strong>Step 1: Assume for contradiction $C \subsetneq D$.</strong>
+      There exists $x_0 \in D \setminus C$. Let $x_{int} \in \mathrm{int}(C)$.
+      Consider the segment connecting $x_{int}$ to $x_0$. Since $x_{int} \in C$ and $x_0 \notin C$, there must be a point $x^*$ on the segment that lies on the boundary $\partial C$.
+      $$ x^* = (1-\lambda) x_{int} + \lambda x_0, \quad \lambda \in (0, 1) $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 2: Use Supporting Hyperplane.</strong>
+      By assumption, there exists a supporting hyperplane to $C$ at $x^*$. Let $y$ be the normal vector.
+      $$ y^\top x \le y^\top x^* \quad \forall x \in C $$
+      This implies $S_C(y) = y^\top x^*$.
+      Since $S_D(y) = S_C(y)$, we also have $y^\top z \le y^\top x^*$ for all $z \in D$.
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 3: Analyze points on the line.</strong>
+      Both $x_{int}$ and $x_0$ are in $D$, so:
+      $$ y^\top x_{int} \le y^\top x^* \quad \text{and} \quad y^\top x_0 \le y^\top x^* $$
+      However, $x^*$ is a strict convex combination of these two points.
+      $$ y^\top x^* = (1-\lambda) y^\top x_{int} + \lambda y^\top x_0 $$
+      For the weighted average of two numbers ($\le K$) to equal $K$, both numbers must equal $K$.
+      Thus $y^\top x_{int} = y^\top x^*$.
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 4: Contradiction via Interior Point.</strong>
+      Since $x_{int}$ is an interior point, there is a ball $B(x_{int}, \varepsilon) \subset C$.
+      We can move from $x_{int}$ in the direction $y$ by a small amount $\delta$. Let $z = x_{int} + \delta y \in C$.
+      $$ y^\top z = y^\top x_{int} + \delta \|y\|^2 = y^\top x^* + \delta \|y\|^2 > y^\top x^* $$
+      This contradicts the fact that $y^\top x \le y^\top x^*$ for all $x \in C$.
+      Thus, no such $x_0$ exists, and $C=D$, so $C$ is convex.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.27 — Cones in $\mathbb{R}^2$</h3>
+  <p>Let $K \subseteq \mathbb{R}^2$ be a closed convex cone. We can describe $K$ using polar coordinates $(r, \phi)$ as a set of angles $I \subseteq [0, 2\pi)$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Angular Intervals:</b> In 2D, a closed convex cone is simply a wedge defined by an angular interval $[\alpha, \beta]$. Convexity requires the "opening angle" $\beta - \alpha$ to be at most $\pi$ (180 degrees).</li>
+        <li><b>Geometric Duality:</b> The dual cone $K^*$ corresponds to another angular interval. Since the condition is $y^\top x \ge 0$ (angle $\le 90^\circ$), the dual interval is obtained by rotating the primal interval by $90^\circ$ and taking the intersection of "allowed" normals.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+
+    <p><b>(a) Polar Representation of $K$</b></p>
+    <div class="proof-step">
+      Since $K$ is a closed convex cone, it is determined by the set of directions it contains.
+      $K$ corresponds to an angular interval $[\alpha, \beta]$.
+      $$ K = \{ (r \cos \phi, r \sin \phi) \mid r \ge 0, \phi \in [\alpha, \beta] \} $$
+      Convexity implies the angular width $\beta - \alpha \le \pi$.
+    </div>
+
+    <p><b>(b) Dual Cone $K^*$</b></p>
+    <div class="proof-step">
+      $y \in K^*$ iff $y^\top x \ge 0$ for all $x \in K$. In terms of angles, if $x$ has angle $\phi$ and $y$ has angle $\theta$, then $\cos(\theta - \phi) \ge 0$.
+      This requires $|\theta - \phi| \le \pi/2$ (modulo $2\pi$).
+      So $\theta$ must be within $\pi/2$ of <i>every</i> $\phi \in [\alpha, \beta]$.
+      This forces $\theta \in [\beta - \pi/2, \alpha + \pi/2]$.
+      $$ K^* = \{ (r \cos \theta, r \sin \theta) \mid r \ge 0, \theta \in [\beta - \pi/2, \alpha + \pi/2] \} $$
+    </div>
+
+    <p><b>(c) Pointedness and Properness</b></p>
+    <div class="proof-step">
+      <ul>
+        <li><b>Pointed:</b> $K$ contains no lines. This means we cannot have both $\phi$ and $\phi+\pi$ in the interval.
+          Condition: Width $\beta - \alpha < \pi$.
+        </li>
+        <li><b>Solid (Non-empty interior):</b> The wedge must have positive width.
+          Condition: $\beta > \alpha$.
+        </li>
+        <li><b>Proper Cone:</b> $0 < \beta - \alpha < \pi$.</li>
+      </ul>
+    </div>
+
+    <p><b>(d) Geometric Order $x \preceq_K y$</b></p>
+    <div class="proof-step">
+      $x \preceq_K y \iff y - x \in K$.
+      Geometrically, this means $y$ lies in the "wedge" $K$ translated to originate at $x$.
+      If $K$ is proper, this defines a partial order where "bigger" means "further along the cone's average direction".
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.28 — Properties of Dual Cones</h3>
+  <p>Let $K \subseteq \mathbb{R}^n$ be a cone (not necessarily convex or closed). The dual cone is defined as $K^* = \{y \mid y^\top x \ge 0 \ \forall x \in K\}$. Prove the following properties:</p>
+  <ol type="a">
+    <li>$K^*$ is always a convex cone.</li>
+    <li>$K_1 \subseteq K_2 \implies K_2^* \subseteq K_1^*$ (Inclusion Reversal).</li>
+    <li>$K^*$ is always closed.</li>
+    <li>$\mathrm{int}(K^*) = \{y \mid y^\top x > 0 \ \forall x \in \mathrm{cl}(K) \setminus \{0\}\}$.</li>
+    <li>If $\mathrm{int}(K) \neq \emptyset$, then $K^*$ is pointed.</li>
+    <li>$K^{**} = \mathrm{cl}(\mathrm{conv}(K))$. (Double Dual).</li>
+    <li>If $\mathrm{cl}(K)$ is pointed, then $\mathrm{int}(K^*) \neq \emptyset$.</li>
+  </ol>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Geometric Duality:</b> The dual cone $K^*$ is the intersection of all halfspaces supporting the cone at the origin. Since halfspaces are closed and convex, their intersection is always closed and convex, regardless of the original set's geometry.</li>
+        <li><b>Bipolar Theorem:</b> The relation $K^{**} = \mathrm{cl}(\mathrm{conv}(K))$ (often called the Bipolar Theorem for cones) is the cone analogue of taking the convex hull. It means duality "smooths out" non-convexity and "fills in" holes.</li>
+        <li><b>Interior-Pointed Duality:</b> There is a deep duality between "sharpness" (pointedness) and "fatness" (interior). A cone that is too sharp (pointed) has a dual that is fat (has interior). A cone that is too fat (has interior) has a dual that is sharp (pointed).</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+
+    <div class="proof-step">
+      <strong>(a) Convex Cone:</strong>
+      $K^* = \bigcap_{x \in K} \{y \mid x^\top y \ge 0\}$. Each set $\{y \mid x^\top y \ge 0\}$ is a closed halfspace (passing through 0). The intersection of convex cones (halfspaces) is a convex cone.
+    </div>
+
+    <div class="proof-step">
+      <strong>(b) Inclusion Reversal:</strong>
+      If $K_1 \subseteq K_2$, then any $y \in K_2^*$ satisfies $y^\top x \ge 0$ for all $x \in K_2$. Since $K_1 \subset K_2$, $y^\top x \ge 0$ for all $x \in K_1$, so $y \in K_1^*$.
+    </div>
+
+    <div class="proof-step">
+      <strong>(c) Closedness:</strong>
+      $K^*$ is an intersection of closed sets (halfspaces), so it is closed.
+    </div>
+
+    <div class="proof-step">
+      <strong>(d) Interior Characterization:</strong>
+      Let $U = \{y \mid y^\top x > 0 \ \forall x \in \mathrm{cl}(K) \setminus \{0\}\}$.
+      <br><b>($\subseteq$):</b> If $y \in U$, then $\min_{x \in K, \|x\|=1} y^\top x = \epsilon > 0$ (min over compact set). Any $z \in B(y, \epsilon/2)$ satisfies $z^\top x > 0$, so $B(y, \epsilon/2) \subset K^*$, implying $y \in \mathrm{int}(K^*)$.
+      <br><b>($\supseteq$):</b> If $y \in \mathrm{int}(K^*)$, suppose for contradiction $\exists x \neq 0 \in \mathrm{cl}(K)$ with $y^\top x = 0$. Then $y - \epsilon x \notin K^*$ for any $\epsilon > 0$, contradicting interior.
+    </div>
+
+    <div class="proof-step">
+      <strong>(e) Pointedness:</strong>
+      Assume $\mathrm{int}(K) \neq \emptyset$. If $y \in K^* \cap -K^*$, then $y^\top x = 0$ for all $x \in K$. Since $K$ contains a basis (due to nonempty interior), $y$ must be orthogonal to $\mathbb{R}^n$, so $y=0$. Thus $K^*$ is pointed.
+    </div>
+
+    <div class="proof-step">
+      <strong>(f) Double Dual:</strong>
+      $K^{**} = \{x \mid y^\top x \ge 0 \ \forall y \in K^*\}$. This is exactly the set of supporting hyperplanes to $K^*$. By the Separating Hyperplane Theorem, this recovers the closed convex hull of $K$.
+    </div>
+
+    <div class="proof-step">
+      <strong>(g) Pointed Primal $\implies$ Solid Dual:</strong>
+      If $\mathrm{cl}(K)$ is pointed, then $\mathrm{cl}(K) \cap -\mathrm{cl}(K) = \{0\}$.
+      Consider the compact set $S = \mathrm{cl}(K) \cap \{x \mid \|x\|=1\}$. Since $K$ is pointed, the convex hull of $S$ does not contain 0.
+      By strict separation, there exists a hyperplane separating $S$ from 0: $\exists y$ such that $y^\top x \ge \epsilon > 0$ for all $x \in S$.
+      This $y$ is in the interior of $K^*$.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.29 — Dual Cone of Generated Cone</h3>
+  <p>Let $A \in \mathbb{R}^{m \times n}$. Define the cone generated by the columns of $A$ as $K = \{Ax \mid x \ge 0\}$. Find its dual cone $K^*$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Polyhedral Cones:</b> A cone generated by a finite set of vectors (columns of $A$) is a <b>finitely generated cone</b> (or V-polyhedral cone).</li>
+        <li><b>Adjoint Property:</b> The duality calculation relies on moving the linear map across the inner product: $\langle y, Ax \rangle = \langle A^\top y, x \rangle$. This transforms a condition on the image space ($\mathbb{R}^m$) to a condition on the domain space ($\mathbb{R}^n$).</li>
+        <li><b>Result:</b> The dual is $\{y \mid A^\top y \ge 0\}$, which is an intersection of halfspaces (an H-polyhedral cone). This is a manifestation of the Minkowski-Weyl Theorem: V-cones dualize to H-cones.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      The dual cone is defined as:
+      $$ K^* = \{y \in \mathbb{R}^m \mid y^\top z \ge 0 \ \forall z \in K\} $$
+    </div>
+    <div class="proof-step">
+      Substitute $z = Ax$ with $x \ge 0$:
+      $$ K^* = \{y \in \mathbb{R}^m \mid y^\top (Ax) \ge 0 \ \forall x \ge 0\} $$
+    </div>
+    <div class="proof-step">
+      Use the adjoint property:
+      $$ y^\top A x = (A^\top y)^\top x $$
+      So we require $(A^\top y)^\top x \ge 0$ for all $x \ge 0$.
+    </div>
+    <div class="proof-step">
+      This condition holds if and only if the vector $A^\top y$ is component-wise non-negative. (If $(A^\top y)_i < 0$, choose $x=e_i$ to get a contradiction).
+      $$ K^* = \{y \in \mathbb{R}^m \mid A^\top y \ge 0\} $$
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.30 — The Monotone Nonnegative Cone</h3>
+  <p>Let $K_{m+} = \{x \in \mathbb{R}^n \mid x_1 \ge x_2 \ge \dots \ge x_n \ge 0\}$.
+  <ol type="a">
+    <li>Prove that $K_{m+}$ is a proper cone.</li>
+    <li>Find its dual cone $K_{m+}^*$.</li>
+  </ol></p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Summation by Parts:</b> Finding the dual of a cone often involves rewriting the inner product $\sum x_i y_i$ to isolate the constraints defining the primal cone. For the monotone cone, the differences $x_i - x_{i+1}$ are non-negative, so we rewrite the sum in terms of these differences. This is the discrete analogue of integration by parts.</li>
+        <li><b>Dual Structure:</b> The dual condition turns out to be about <b>partial sums</b>. This duality between "monotone sequences" and "sequences with non-negative partial sums" appears frequently in probability and majorization theory.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+
+    <div class="proof-step">
+      <strong>(a) Proper Cone:</strong>
+      <ul>
+        <li><b>Convex Cone:</b> It is defined by linear inequalities ($x_i - x_{i+1} \ge 0, x_n \ge 0$), so it is a polyhedral cone.</li>
+        <li><b>Closed:</b> Defined by non-strict inequalities.</li>
+        <li><b>Pointed:</b> If $x \in K$ and $-x \in K$, then $x_1 \ge \dots \ge 0$ and $-x_1 \ge \dots \ge 0 \implies x_1 \le \dots \le 0$. Thus $x=0$.</li>
+        <li><b>Solid:</b> The point $x = (n, n-1, \dots, 1)^\top$ is strictly inside.</li>
+      </ul>
+    </div>
+
+    <div class="proof-step">
+      <strong>(b) Dual Cone:</strong>
+      We want $y$ such that $\sum x_i y_i \ge 0$ for all monotone non-negative $x$.
+      <br>Use <b>Abel's summation formula (summation by parts)</b>:
+      $$ \sum_{i=1}^n x_i y_i = \sum_{i=1}^{n-1} (x_i - x_{i+1}) S_i + x_n S_n $$
+      where $S_k = \sum_{j=1}^k y_j$ are the partial sums of $y$.
+    </div>
+
+    <div class="proof-step">
+      Since $x \in K_{m+}$, the coefficients $(x_i - x_{i+1})$ and $x_n$ are arbitrary non-negative numbers.
+      For the total sum to be non-negative for <i>any</i> choice of these coefficients, the multipliers $S_k$ must all be non-negative.
+      <br>(e.g., to show $S_k \ge 0$, choose $x$ such that $x_k - x_{k+1}=1$ and all other differences are 0).
+    </div>
+
+    <div class="proof-step">
+      <strong>Result:</strong>
+      $$ K_{m+}^* = \left\{ y \in \mathbb{R}^n \ \middle|\ \sum_{j=1}^k y_j \ge 0 \ \forall k=1,\dots,n \right\} $$
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.31 — The Lexicographic Cone</h3>
+  <p>Let $K_{\text{lex}} = \{0\} \cup \{x \in \mathbb{R}^n \mid \text{the first nonzero component of } x \text{ is positive}\}$.
+  <ol type="a">
+    <li>Show that $K_{\text{lex}}$ is a convex cone but is <b>not</b> closed and has empty interior.</li>
+    <li>Show that the lexicographic order $\preceq_{\text{lex}}$ is a total ordering.</li>
+    <li>Find the dual cone $K_{\text{lex}}^*$.</li>
+  </ol></p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>"Weird" Cones:</b> The lexicographic cone is a classic counterexample in convex geometry. It satisfies most cone properties but fails topological ones (closedness, interior). It shows that "convex cone" does not imply "nice geometry" like polyhedral or proper.</li>
+        <li><b>Total Ordering:</b> Unlike the standard component-wise order (which is partial), the lexicographic order allows comparing <i>any</i> two vectors.</li>
+        <li><b>Dual Collapse:</b> Because $K_{\text{lex}}$ is so "large" (contains almost half the space), its dual cone is extremely "thin" (just a single ray). This illustrates the trade-off in duality: larger primal $\implies$ smaller dual.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+
+    <div class="proof-step">
+      <strong>(a) Properties:</strong>
+      <ul>
+        <li><b>Convex:</b> Let $x, y \in K_{\text{lex}}$. Let $k = \min(\text{first nonzero of } x, \text{first nonzero of } y)$. For any convex combination $z = \theta x + (1-\theta)y$, the components $z_i$ for $i < k$ are $0$. At index $k$, $z_k$ is a sum of non-negative terms (at least one positive). Thus $z \in K_{\text{lex}}$.</li>
+        <li><b>Not Closed:</b> Consider sequence in $\mathbb{R}^2$: $x_k = (1/k, -1)$. Each $x_k \in K_{\text{lex}}$ (first nonzero is positive). But $\lim x_k = (0, -1)$, which is NOT in $K_{\text{lex}}$.</li>
+        <li><b>Empty Interior:</b> For any $x \in K_{\text{lex}}$ (e.g., $x=(1, 0)$), any ball around it contains points like $(1, -\epsilon)$. If we go further down the coordinates, we can always find a perturbation that makes an earlier zero component negative.</li>
+      </ul>
+    </div>
+
+    <div class="proof-step">
+      <strong>(b) Total Ordering:</strong>
+      For any distinct $x, y$, consider $z = y - x$. Let $k$ be the first nonzero index of $z$. Either $z_k > 0$ (so $y \succ_{\text{lex}} x$) or $z_k < 0$ (so $x \succ_{\text{lex}} y$). Thus every pair is comparable.
+    </div>
+
+    <div class="proof-step">
+      <strong>(c) Dual Cone:</strong>
+      We need $y^\top x \ge 0$ for all $x \in K_{\text{lex}}$.
+      <br>Consider $x = (\epsilon, -M, 0, \dots)$ for small $\epsilon > 0$ and large $M$. This is in $K_{\text{lex}}$.
+      <br>$y^\top x = \epsilon y_1 - M y_2$. If $y_2 \neq 0$, we can choose $M$ large enough (or sign appropriately) to make the dot product negative.
+      <br>Thus we must have $y_2 = 0$. Similarly $y_3 = \dots = y_n = 0$.
+      <br>We are left with $y_1$. We need $y_1 x_1 \ge 0$. Since $x_1$ can be any positive number (for $x \in K_{\text{lex}}$), we need $y_1 \ge 0$.
+      <br><b>Result:</b> $K_{\text{lex}}^* = \{ (t, 0, \dots, 0) \mid t \ge 0 \} = \text{ray generated by } e_1$.
+    </div>
   </div>
 </div>
     </section>

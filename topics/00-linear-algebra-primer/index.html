@@ -2453,6 +2453,64 @@ U, sigma, Vt = np.linalg.svd(A, full_matrices=False)  # uses bidiagonalization</
           </div>
         </div>
       </div>
+
+      <div class="problem">
+        <h3>P0.15 — Explicit Description of PSD Cone</h3>
+        <p><b>Problem:</b> We work in the space of real symmetric $n \times n$ matrices $\mathbb{S}^n$. The <b>positive semidefinite (PSD) cone</b> is defined as $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid z^\top X z \ge 0 \ \forall z \in \mathbb{R}^n\}$.
+        Derive explicit inequalities in terms of the matrix entries for $X \in \mathbb{S}^n_+$ for the cases $n=1$, $n=2$, and $n=3$.</p>
+
+        <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+          <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+              <li><b>Sylvester's Criterion (General):</b> A symmetric matrix is Positive Definite ($X \succ 0$) if and only if all <b>leading</b> principal minors are positive. However, for Positive Semidefinite ($X \succeq 0$) matrices, we require <b>all</b> principal minors (not just the leading ones) to be non-negative.</li>
+              <li><b>Principal Minors:</b> A principal minor is the determinant of a submatrix formed by selecting the same set of row and column indices. This includes the diagonal entries ($1 \times 1$ principal minors) and the full determinant.</li>
+              <li><b>Geometric Intuition:</b> These algebraic conditions define the "walls" of the PSD cone. For $n=2$, it forms a specific rotated cone in 3D space.</li>
+          </ul>
+        </div>
+
+        <div class="solution-box">
+          <h4>Solution</h4>
+
+          <div class="proof-step">
+            <strong>Case $n=1$:</strong>
+            Let $X = [x_1]$. The quadratic form is $z^\top X z = x_1 z^2$.
+            For this to be non-negative for all $z \in \mathbb{R}$, we simply need:
+            $$ x_1 \ge 0 $$
+            Thus $\mathbb{S}^1_+ = \{ [x_1] \mid x_1 \ge 0 \}$, which is the non-negative ray.
+          </div>
+
+          <div class="proof-step">
+            <strong>Case $n=2$:</strong>
+            Let $X = \begin{bmatrix} x_1 & x_2 \\ x_2 & x_3 \end{bmatrix}$. The conditions are that all principal minors must be non-negative.
+            <ul>
+              <li><b>$1 \times 1$ minors (diagonal):</b> $x_1 \ge 0$ and $x_3 \ge 0$.</li>
+              <li><b>$2 \times 2$ minor (determinant):</b> $\det(X) = x_1 x_3 - x_2^2 \ge 0$.</li>
+            </ul>
+            <p><b>Necessity:</b> Testing $z=e_1$ gives $x_1 \ge 0$. Testing $z=e_2$ gives $x_3 \ge 0$. Since $\det(X)$ is the product of eigenvalues $\lambda_1 \lambda_2$, and trace $x_1+x_3$ is the sum $\lambda_1+\lambda_2$, non-negative trace and determinant imply non-negative eigenvalues.</p>
+            $$ \mathbb{S}^2_+ = \left\{ \begin{bmatrix} x_1 & x_2 \\ x_2 & x_3 \end{bmatrix} \bigg| x_1 \ge 0, \ x_3 \ge 0, \ x_1 x_3 - x_2^2 \ge 0 \right\} $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Case $n=3$:</strong>
+            Let $X = \begin{bmatrix} x_1 & x_2 & x_3 \\ x_2 & x_4 & x_5 \\ x_3 & x_5 & x_6 \end{bmatrix}$.
+            We require non-negativity of all principal minors:
+            <ul>
+              <li><b>$1 \times 1$ (Diagonal entries):</b>
+              $$ x_1 \ge 0, \quad x_4 \ge 0, \quad x_6 \ge 0 $$
+              </li>
+              <li><b>$2 \times 2$ (Principal submatrices):</b>
+              $$ x_1 x_4 - x_2^2 \ge 0 \quad (\text{indices } \{1,2\}) $$
+              $$ x_1 x_6 - x_3^2 \ge 0 \quad (\text{indices } \{1,3\}) $$
+              $$ x_4 x_6 - x_5^2 \ge 0 \quad (\text{indices } \{2,3\}) $$
+              </li>
+              <li><b>$3 \times 3$ (Full Determinant):</b>
+              $$ \det(X) = x_1 x_4 x_6 + 2 x_2 x_3 x_5 - x_1 x_5^2 - x_4 x_3^2 - x_6 x_2^2 \ge 0 $$
+              </li>
+            </ul>
+            These 7 inequalities fully characterize the PSD cone in 6 dimensions (since a $3 \times 3$ symmetric matrix has 6 degrees of freedom).
+          </div>
+        </div>
+      </div>
 </section>
 
     <!-- SECTION 13: SUMMARY -->
