@@ -97,6 +97,16 @@
         </ol>
 
         <div class="insight">
+          <h4>Geometric Insight: Linearity vs. Convexity</h4>
+          <p>It is crucial to distinguish between "flat" and "curved" geometry:</p>
+          <ul>
+            <li><b>Linearity (Affine):</b> Represents "flat" structures—lines, planes, hyperplanes. These are sets that extend infinitely in all directions within a subspace. They are both convex and concave. In optimization, we use them for equality constraints because the intersection of hyperplanes is a stable, convex object (a smaller affine set).</li>
+            <li><b>Convexity:</b> Represents "bulging" or "bowl-like" structures—balls, ellipsoids, halfspaces. These sets have an "inside" and an "outside". In optimization, we use them for inequality constraints ("stay inside the bowl") or objectives ("find the bottom of the bowl").</li>
+          </ul>
+          <p><b>Rule of Thumb:</b> If you force a "curved" function to be zero ($x^2=1$), you get a curved shell, which is not a solid convex set. If you force a "flat" function to be zero ($ax=b$), you get a flat slice, which is convex.</p>
+        </div>
+
+        <div class="insight">
           <h4>💡 Why These Conditions Matter</h4>
           <p>These three conditions guarantee that:</p>
           <ul>

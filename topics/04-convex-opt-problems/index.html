@@ -384,18 +384,23 @@
         </div>
       </div>
 
-      <h4>Example 4.2: $\ell_1$ Norm Minimization via SOCP</h4>
-      <p>The problem $\min \|x\|_1$ subject to $Ax = b$ can be written as:</p>
+      <h4>Example 4.2: Sum of Euclidean Norms (Fermat-Weber Problem)</h4>
+      <p>Consider the problem of finding a point $x$ that minimizes the sum of Euclidean distances to a set of fixed points $p_1, \dots, p_k$:</p>
+      <p style="text-align: center;">
+        $
+        \text{minimize} \quad \sum_{i=1}^k \|x - p_i\|_2
+        $
+      </p>
+      <p>This arises in facility location (finding the optimal warehouse location). It is <strong>not</strong> an LP because the Euclidean norm is not polyhedral. We formulate it as an SOCP by introducing auxiliary variables $t_1, \dots, t_k$:</p>
       <p style="text-align: center;">
         $
         \begin{aligned}
-        \text{minimize} \quad & \mathbf{1}^\top y \\
-        \text{subject to} \quad & -y \preceq x \preceq y \\
-        & Ax = b
+        \text{minimize} \quad & \sum_{i=1}^k t_i \\
+        \text{subject to} \quad & \|x - p_i\|_2 \le t_i, \quad i = 1, \dots, k
         \end{aligned}
         $
       </p>
-      <p>which is an LP. However, for more complex norms, SOCP reformulations are essential.</p>
+      <p>The constraints $\|x - p_i\|_2 \le t_i$ are standard second-order cone constraints $(x - p_i, t_i) \in \mathcal{L}^{n+1}$.</p>
 
       <h3>4.5 Hierarchy: LP ⊂ QP ⊂ SOCP</h3>
       <p>The problem classes form a nested hierarchy of expressiveness:</p>
