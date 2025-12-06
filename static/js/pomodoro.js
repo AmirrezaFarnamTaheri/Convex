@@ -1,6 +1,6 @@
 /**
  * Pomodoro Timer Widget
- * A focus timer with customizable duration and visual/audio feedback.
+ * A focus timer with customizable duration, visual/audio feedback, and draggable UI.
  */
 
 class PomodoroWidget {
@@ -14,6 +14,9 @@ class PomodoroWidget {
         const saved = JSON.parse(localStorage.getItem('pomodoro-prefs') || '{}');
         this.workDuration = saved.workDuration || this.defaults.workDuration;
         this.breakDuration = saved.breakDuration || this.defaults.breakDuration;
+
+        // Load position
+        this.position = saved.position || { bottom: '20px', left: '20px' };
 
         this.timeLeft = this.workDuration * 60;
         this.timerId = null;
@@ -38,11 +41,16 @@ class PomodoroWidget {
 
         const container = document.createElement('div');
         container.className = 'pomodoro-widget glass';
-        // Styling handled in CSS, but inline for now to ensure visibility if CSS not fully updated
-        // Moving styles to class in convex-unified.css is better, but ensuring self-contained structure here.
+        // Set initial position
+        Object.assign(container.style, {
+            bottom: this.position.bottom,
+            left: this.position.left,
+            right: 'auto', // Ensure left/bottom positioning
+            top: 'auto'
+        });
 
         container.innerHTML = `
-            <div class="pomodoro-header">
+            <div class="pomodoro-header" style="cursor: grab;">
                 <div class="pomodoro-status">
                     <i data-feather="${this.mode === 'work' ? 'briefcase' : 'coffee'}"></i>
                     <span class="status-text">${this.mode === 'work' ? 'Focus' : 'Break'}</span>
@@ -87,6 +95,8 @@ class PomodoroWidget {
         document.body.appendChild(container);
 
         // Bind Elements
+        this.container = container;
+        this.header = container.querySelector('.pomodoro-header');
         this.display = container.querySelector('.pomodoro-time');
         this.toggleBtn = container.querySelector('#pomo-toggle');
         this.statusIcon = container.querySelector('.pomodoro-status i');
@@ -102,6 +112,9 @@ class PomodoroWidget {
         container.querySelector('#pomo-save-settings').onclick = () => this.saveSettings();
         this.minimizeBtn.onclick = () => this.toggleMinimize();
 
+        // Dragging Logic
+        this.initDragging();
+
         // Load minimized state
         if (localStorage.getItem('pomodoro-minimized') === 'true') {
             this.toggleMinimize(false);
@@ -109,6 +122,73 @@ class PomodoroWidget {
 
         // Render Icons
         if (typeof feather !== 'undefined') feather.replace();
+    }
+
+    initDragging() {
+        let isDragging = false;
+        let startX, startY, initialLeft, initialBottom;
+
+        this.header.addEventListener('mousedown', (e) => {
+            // Prevent drag if clicking buttons
+            if (e.target.closest('button')) return;
+
+            isDragging = true;
+            this.header.style.cursor = 'grabbing';
+
+            // Get current computed position
+            const rect = this.container.getBoundingClientRect();
+            // We use bottom/left for positioning
+            // Calculate offsets relative to bottom-left
+            startX = e.clientX;
+            startY = e.clientY;
+
+            // Convert current style to pixels if possible, or use computed style
+            const style = window.getComputedStyle(this.container);
+            initialLeft = parseInt(style.left, 10);
+            initialBottom = parseInt(style.bottom, 10);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            // Update Left (easy)
+            let newLeft = initialLeft + dx;
+
+            // Update Bottom (dy is positive downwards, so bottom decreases as mouse goes down)
+            // wait, if mouse goes down (y increases), bottom should decrease.
+            // dy > 0 -> y increased -> moved down. newBottom = initial - dy.
+            let newBottom = initialBottom - dy;
+
+            // Boundaries (keep somewhat on screen)
+            const maxLeft = window.innerWidth - this.container.offsetWidth;
+            const maxBottom = window.innerHeight - this.container.offsetHeight;
+
+            newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+            newBottom = Math.max(0, Math.min(newBottom, maxBottom));
+
+            this.container.style.left = `${newLeft}px`;
+            this.container.style.bottom = `${newBottom}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            this.header.style.cursor = 'grab';
+            this.savePosition();
+        });
+    }
+
+    savePosition() {
+        this.position = {
+            left: this.container.style.left,
+            bottom: this.container.style.bottom
+        };
+        const prefs = JSON.parse(localStorage.getItem('pomodoro-prefs') || '{}');
+        prefs.position = this.position;
+        localStorage.setItem('pomodoro-prefs', JSON.stringify(prefs));
     }
 
     toggleMinimize(save = true) {
@@ -220,10 +300,11 @@ class PomodoroWidget {
             this.workDuration = work;
             this.breakDuration = brk;
 
-            localStorage.setItem('pomodoro-prefs', JSON.stringify({
-                workDuration: work,
-                breakDuration: brk
-            }));
+            const prefs = JSON.parse(localStorage.getItem('pomodoro-prefs') || '{}');
+            prefs.workDuration = work;
+            prefs.breakDuration = brk;
+
+            localStorage.setItem('pomodoro-prefs', JSON.stringify(prefs));
 
             this.reset();
             this.toggleSettings();
