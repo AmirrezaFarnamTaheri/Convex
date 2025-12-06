@@ -758,7 +758,9 @@
           $$ S_C(y) := \sup_{x \in C} y^\top x $$
           <p><b>Geometric Meaning:</b> For a direction $y$, $S_C(y)$ tells you "how far" the set $C$ extends in that direction. If $C$ is bounded, this value is finite. If $C$ is unbounded in direction $y$, $S_C(y) = +\infty$.
           <br>The hyperplane $\{x \mid y^\top x = S_C(y)\}$ is a supporting hyperplane to $C$ with normal vector $y$.</p>
-          <p><b>Forward Connection:</b> The support function $S_C(y)$ is exactly the <b>convex conjugate</b> of the indicator function $\delta_C(x)$. (See <a href="../03-convex-functions/index.html#section-7">Lecture 03</a>).</p>
+          <p><b>Forward Connection:</b> The support function $S_C(y)$ is exactly the <b>convex conjugate</b> of the indicator function $I_C(x)$ (which is 0 on $C$ and $\infty$ outside).
+          $$ S_C(y) = \sup_x (y^\top x - I_C(x)) = I_C^*(y) $$
+          (See <a href="../03-convex-functions/index.html#section-7">Lecture 03</a>).</p>
         </div>
 
         <p>A fundamental result (Exercise P2.25) states that a closed convex set is completely determined by its support function. Specifically, $C$ is the intersection of all its supporting halfspaces:</p>

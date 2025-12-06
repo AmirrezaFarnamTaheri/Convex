@@ -677,9 +677,30 @@
       Since $f(X) = u^\top X v$ is a <b>linear function</b> of $X$, and $\|X\|_2$ is the supremum of these linear functions, $\|X\|_2$ is a <b>convex function</b>.</p>
 
       <h3>Matrix Inner Product and Frobenius Norm</h3>
-      <p>For matrices $X, Y \in \mathbb{R}^{m \times n}$, the <b>trace inner product</b> is:
-      $$ \langle X, Y \rangle = \mathrm{tr}(X^\top Y) = \sum_{ij} X_{ij} Y_{ij} $$
-      The <b>Frobenius norm</b> is $\|X\|_F = \sqrt{\langle X, X \rangle} = \sqrt{\sum_{ij} X_{ij}^2}$.</p>
+      <p>For matrices $X, Y \in \mathbb{R}^{m \times n}$, the <b>trace inner product</b> (also called the Hilbert-Schmidt inner product) is:
+      $$ \langle X, Y \rangle = \mathrm{tr}(X^\top Y) = \sum_{i=1}^m \sum_{j=1}^n X_{ij} Y_{ij} $$
+      The <b>Frobenius norm</b> (or Hilbert-Schmidt norm) is $\|X\|_F = \sqrt{\langle X, X \rangle}$.</p>
+
+      <div class="proof-box">
+        <h4>Why does $\mathrm{tr}(A^\top A) = \sum a_{ij}^2$? (Index Gymnastics)</h4>
+        <p>Let $A \in \mathbb{R}^{m \times n}$. The diagonal entries of the product $A^\top A$ are formed by dotting the columns of $A$ with themselves.
+        <br>Specifically, the $(j,j)$ entry of $A^\top A$ is:
+        $$ (A^\top A)_{jj} = \sum_{k=1}^m (A^\top)_{jk} A_{kj} = \sum_{k=1}^m A_{kj} A_{kj} = \sum_{k=1}^m A_{kj}^2 $$
+        This is the sum of squares of the $j$-th column.
+        <br>The trace is the sum of these diagonal entries:
+        $$ \mathrm{tr}(A^\top A) = \sum_{j=1}^n (A^\top A)_{jj} = \sum_{j=1}^n \sum_{k=1}^m A_{kj}^2 $$
+        This is exactly the sum of squares of all entries.</p>
+      </div>
+
+      <h4>Submultiplicativity of the Frobenius Norm</h4>
+      <p>For compatible matrices $A, B$, we have the inequality $\|AB\|_F \le \|A\|_F \|B\|_F$.
+      <br><i>Proof via Cauchy-Schwarz:</i>
+      $$ \|AB\|_F^2 = \sum_{i,j} (AB)_{ij}^2 = \sum_{i,j} \left( \sum_k a_{ik} b_{kj} \right)^2 $$
+      Apply Cauchy-Schwarz to the inner sum:
+      $$ \left( \sum_k a_{ik} b_{kj} \right)^2 \le \left( \sum_k a_{ik}^2 \right) \left( \sum_k b_{kj}^2 \right) $$
+      Summing over $i$ and $j$:
+      $$ \sum_{i,j} (AB)_{ij}^2 \le \sum_{i,j} \left( \sum_k a_{ik}^2 \right) \left( \sum_k b_{kj}^2 \right) = \left( \sum_i \sum_k a_{ik}^2 \right) \left( \sum_j \sum_k b_{kj}^2 \right) = \|A\|_F^2 \|B\|_F^2 $$
+      Taking square roots yields the result.</p>
     </section>
 
     <!-- SECTION 3: ORTHOGONALITY AND QR -->
@@ -896,6 +917,28 @@
       </div>
 
       <p><b>Forward Connection:</b> This result can also be viewed as minimizing the quadratic form $f(x, y) = [x^\top \ y^\top] M [x^\top \ y^\top]^\top$ with respect to $y$ (partial minimization), yielding a new quadratic form in $x$ defined by the Schur complement matrix. This perspective is explored in <a href="../03-convex-functions/index.html">Lecture 03</a>.</p>
+
+        <div class="insight">
+          <h4>The Triangle of Equivalence</h4>
+          <p>For a positive definite matrix $Y \succ 0$, the following three conditions are equivalent. They represent three different "faces" of the same object:</p>
+          $$
+          \boxed{
+          \begin{matrix}
+          \textbf{Scalar Inequality} & & \textbf{Block Matrix LMI} \\
+          t \ge x^\top Y^{-1} x & \iff & \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0 \\
+          & \Updownarrow & \\
+          & \textbf{Rank-1 Update} & \\
+          & tY - xx^\top \succeq 0 &
+          \end{matrix}
+          }
+          $$
+          <ul>
+            <li><b>Scalar:</b> Useful for epigraphs of quadratic-over-linear functions.</li>
+            <li><b>Block Matrix:</b> Useful for Semidefinite Programming (SDP) constraints.</li>
+            <li><b>Rank-1 Update:</b> Useful for algebraic manipulation ($tY \succeq xx^\top$).</li>
+          </ul>
+          <p><i>Proof of $tY - xx^\top$:</i> Consider the quadratic form $v^\top(tY - xx^\top)v = t v^\top Y v - (x^\top v)^2$. This is non-negative for all $v$ if and only if $(x^\top v)^2 \le t (v^\top Y v)$. By Cauchy-Schwarz (specifically with inner product $\langle u, w \rangle_Y = u^\top Y w$), the maximum value of $\frac{(x^\top v)^2}{v^\top Y v}$ is $x^\top Y^{-1} x$. Thus we need $t \ge x^\top Y^{-1} x$.</p>
+        </div>
 
       <p><b>Application:</b> This lemma turns the nonlinear constraint $\|Bx\|_2^2 \le c$ (equivalent to $x^\top B^\top B x \le c$) into an LMI:
       $$ \begin{bmatrix} I & Bx \\ (Bx)^\top & c \end{bmatrix} \succeq 0 $$
