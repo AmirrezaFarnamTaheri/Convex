@@ -1973,28 +1973,44 @@
               <p>This implies $f'$ is non-decreasing ($f'(a) \le f'(b)$). A differentiable function with non-decreasing derivative has $f'' \ge 0$.</p></div></div></div>
 </div>
 <div class="problem">
-  <h3>P3.13 — Integral Characterization</h3>
-  <p>Show $f$ is convex iff $\int_0^1 f(x + \lambda(y-x)) d\lambda \le \frac{f(x)+f(y)}{2}$.</p>
+  <h3>P3.13 — Integral Characterization (Jensen ⇔ Convex)</h3>
+  <p>Show that a continuous function $f: \mathbb{R} \to \mathbb{R}$ is convex if and only if for all $x, y$, the average value along the segment is bounded by the average of the endpoints:</p>
+  $$ \int_0^1 f(tx + (1-t)y) dt \le \frac{f(x)+f(y)}{2} $$
 
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Jensen for Uniform Distribution:</b> The forward direction is simply Jensen's inequality $\mathbb{E}[f(Z)] \ge f(\mathbb{E}[Z])$ applied to a uniform random variable on the segment $[x, y]$. The inequality here is $\int f \le \text{avg}$, which corresponds to the chord lying <i>above</i> the function, so the area under the function is less than the area under the chord (trapezoid).</li>
+        <li><b>"Bump" Detection:</b> The reverse direction is best proved by contrapositive. If a function is non-convex, it must have a "bump" where the graph rises above a chord. The integral over this region will strictly exceed the trapezoidal area, detecting the non-convexity.</li>
+    </ul>
+  </div>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Hermite-Hadamard Context:</b> This integral inequality is one side of the famous Hermite-Hadamard inequality, stating that the average value of a convex function over an interval is less than the average of the function values at the endpoints.</li>
-            <li><b>Midpoint Convexity:</b> The integral condition essentially averages the midpoint convexity property over the domain. Midpoint convexity, combined with continuity (implied by integrability here), guarantees full convexity.</li>
-        </ul>
-
-
-<div class="solution-box">
-            <h4>Solution</h4>
-            <div class="proof-step">
-              <strong>($\Rightarrow$) Convex implies Inequality:</strong>
-              <p>Let $\phi(\lambda) = f(x + \lambda(y-x))$. If $f$ is convex, $\phi$ is convex on $[0,1]$.</p>
-              <p>Thus $\phi(\lambda) \le (1-\lambda)\phi(0) + \lambda\phi(1)$.</p>
-              <p>Integrate: $\int_0^1 \phi(\lambda) d\lambda \le \phi(0)\int(1-\lambda) + \phi(1)\int \lambda = \frac{1}{2}\phi(0) + \frac{1}{2}\phi(1)$.</p></div><div class="proof-step">
-              <strong>($\Leftarrow$) Inequality implies Convex:</strong>
-              <p>Applying the inequality to any sub-segment implies the <b>midpoint convexity</b> property: $\int_a^b \phi \le \frac{b-a}{2}(\phi(a)+\phi(b))$ implies $\phi(\frac{a+b}{2}) \le \frac{\phi(a)+\phi(b)}{2}$ (by considering limits of integrals near midpoint).</p>
-              <p>Midpoint convexity + continuity implies convexity.</p></div></div></div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>($\Rightarrow$) Convex implies Inequality:</strong>
+      <p>Let $x, y \in \mathbb{R}$. Define the random variable $Z \sim \text{Uniform}([0,1])$. Then $U = Zx + (1-Z)y$ is uniform on the segment between $y$ and $x$.
+      <br>However, a simpler geometric proof uses the chord definition directly.
+      <br>By convexity: $f(tx + (1-t)y) \le t f(x) + (1-t) f(y)$ for all $t \in [0, 1]$.
+      <br>Integrate both sides with respect to $t$ from 0 to 1:
+      $$ \int_0^1 f(tx + (1-t)y) dt \le f(x) \int_0^1 t dt + f(y) \int_0^1 (1-t) dt $$
+      Since $\int_0^1 t dt = 1/2$, we get $\frac{1}{2}f(x) + \frac{1}{2}f(y)$.</p>
+    </div>
+    <div class="proof-step">
+      <strong>($\Leftarrow$) Inequality implies Convex (Contrapositive):</strong>
+      <p>Suppose $f$ is <b>not</b> convex. Then there exist points $x_0, y_0$ and $\theta \in (0, 1)$ such that the point on the graph lies strictly <b>above</b> the chord:
+      $$ f(z_0) > \theta f(x_0) + (1-\theta) f(y_0), \quad \text{where } z_0 = \theta x_0 + (1-\theta)y_0 $$
+      Define the affine function (line) $\ell(u)$ connecting $(x_0, f(x_0))$ and $(y_0, f(y_0))$.
+      <br>Define the difference function $g(u) = f(u) - \ell(u)$.
+      <br>We have $g(x_0) = 0$, $g(y_0) = 0$, and $g(z_0) > 0$.
+      <br>Assuming $f$ is continuous, $g(u)$ must be strictly positive on some sub-interval. Thus, the integral of the difference is strictly positive:
+      $$ \int_{x_0}^{y_0} g(u) du > 0 \implies \int_{x_0}^{y_0} f(u) du > \int_{x_0}^{y_0} \ell(u) du $$
+      The integral of the line $\ell$ is the area of the trapezoid: $(y_0 - x_0) \frac{f(x_0) + f(y_0)}{2}$.
+      <br>Dividing by the length $(y_0 - x_0)$ (or changing variables to $t \in [0, 1]$) gives:
+      $$ \int_0^1 f(tx_0 + (1-t)y_0) dt > \frac{f(x_0) + f(y_0)}{2} $$
+      This violates the integral condition. Thus, the condition implies convexity.</p>
+    </div>
+  </div>
 </div>
 <div class="problem">
   <h3>P3.14 — Running Average</h3>
@@ -2056,6 +2072,78 @@
       Using the formula for quadratic conjugate (inverse of the matrix):
       matrix is $(Q^{-1})^{-1} = Q$.
       Thus $f^{**}(x) = \frac{1}{2}x^\top Q x = f(x)$.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P3.16 — Quasiconvexity of the Distance Ratio</h3>
+  <p>Consider the function $f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ defined for $x \neq b$. Show that for any $\theta \in [0, 1]$, the sublevel set $S_\theta = \{x \mid f(x) \le \theta\}$ is convex. What is the geometric shape of this set?</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Apollonius Circle:</b> The locus of points with a constant ratio of distances to two fixed points is a circle (in 2D) or a sphere (in nD). The sublevel set (interior) is a ball.</li>
+        <li><b>Quadratic Reduction:</b> Many distance-based inequalities can be squared to yield quadratic inequalities. If the coefficient of the quadratic term $x^\top x$ is positive, the set is convex.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Square the condition.</strong>
+      $f(x) \le \theta \iff \|x-a\| \le \theta \|x-b\|$. Since both sides are non-negative, we can square:
+      $$ \|x-a\|^2 \le \theta^2 \|x-b\|^2 $$
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Expand.</strong>
+      $$ x^\top x - 2a^\top x + a^\top a \le \theta^2 (x^\top x - 2b^\top x + b^\top b) $$
+      Rearranging terms to group by $x$:
+      $$ (1-\theta^2) x^\top x - 2(a - \theta^2 b)^\top x + (\|a\|^2 - \theta^2 \|b\|^2) \le 0 $$
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Analyze Convexity.</strong>
+      This is a quadratic inequality of the form $x^\top P x + q^\top x + r \le 0$, where $P = (1-\theta^2)I$.
+      Since $\theta \in [0, 1]$, we have $1-\theta^2 \ge 0$, so $P \succeq 0$ (positive semidefinite).
+      The sublevel set of a convex quadratic function is a convex set.
+      <br>Specifically, if $\theta < 1$, $P \succ 0$, so it's a Euclidean ball. If $\theta = 1$, it's a halfspace. If $\theta=0$, it's the point $a$.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P3.17 — Log-Concavity of Probability Measures</h3>
+  <p>Let $C \subseteq \mathbb{R}^n$ be a convex set and let $w$ be a random variable with a log-concave probability density function $p(w)$. Consider the function $f(x) = \mathbb{P}(x + w \in C)$. Show that $f$ is log-concave.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Convolution Property:</b> The probability $\mathbb{P}(x+w \in C)$ can be written as the convolution of the density $p$ with the indicator function of the set $-C$.</li>
+        <li><b>Closure under Convolution:</b> The convolution of two log-concave functions is log-concave. Since the indicator of a convex set is log-concave (0 on set, $-\infty$ outside), the result follows. This is a key result for robust optimization.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Integral Representation.</strong>
+      $$ f(x) = \int_{\mathbb{R}^n} \mathbb{I}_C(x+w) p(w) dw $$
+      Let $u = x+w$, so $w = u-x$.
+      $$ f(x) = \int_{\mathbb{R}^n} \mathbb{I}_C(u) p(u-x) du $$
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Log-Concavity of Integrand.</strong>
+      The integrand is $g(x, u) = \mathbb{I}_C(u) p(u-x)$.
+      <ul>
+        <li>$\mathbb{I}_C(u)$ is the indicator function (1 inside, 0 outside). Its log is 0 inside, $-\infty$ outside. This is a concave function (extended value). Thus $\mathbb{I}_C$ is log-concave.</li>
+        <li>$p(z)$ is log-concave by assumption. The composition with the affine map $(x, u) \mapsto u-x$ preserves log-concavity.</li>
+      </ul>
+      The product of log-concave functions is log-concave. Thus $g(x, u)$ is jointly log-concave in $(x, u)$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Marginalization.</strong>
+      The function $f(x)$ is the marginal of a jointly log-concave function: $f(x) = \int g(x, u) du$.
+      By the Prekopa-Leindler inequality (or the marginalization property of log-concave functions), $f$ is log-concave.
     </div>
   </div>
 </div>

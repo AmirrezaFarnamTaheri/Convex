@@ -1304,6 +1304,68 @@
   </div>
 </div>
 
+<div class="problem">
+  <h3>P4.12 — Matrix Fractional Minimization</h3>
+  <p>Consider the problem of minimizing the matrix fractional function $f(x, Y) = x^\top Y^{-1} x$ subject to linear constraints:</p>
+  <p style="text-align: center;">
+    $
+    \begin{aligned}
+    \text{minimize} \quad & x^\top Y^{-1} x \\
+    \text{subject to} \quad & Ax = b \\
+    & L \preceq Y \preceq U
+    \end{aligned}
+    $
+  </p>
+  <p>where $x \in \mathbb{R}^n$, $Y \in \mathbb{S}^n_{++}$, and $L, U \in \mathbb{S}^n$. Formulate this as a Semidefinite Program (SDP).</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Schur Complement Epigraph:</b> The condition $t \ge x^\top Y^{-1} x$ is equivalent to the LMI $\begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0$. This is the standard "trick" for handling quadratic-over-linear terms in SDPs.</li>
+        <li><b>Triangle of Equivalence:</b> This transformation connects the scalar inequality (objective) to a block matrix inequality (SDP constraint), completing the "Triangle of Equivalence" introduced in Lecture 00.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Epigraph Form.</strong>
+      Introduce a scalar variable $t$. The problem is equivalent to:
+      $$
+      \begin{aligned}
+      \text{minimize} \quad & t \\
+      \text{subject to} \quad & x^\top Y^{-1} x \le t \\
+      & Ax = b \\
+      & L \preceq Y \preceq U
+      \end{aligned}
+      $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 2: Schur Complement.</strong>
+      The nonlinear constraint $x^\top Y^{-1} x \le t$ (where implicitly $Y \succ 0$) can be rewritten using the Schur complement as the Linear Matrix Inequality:
+      $$
+      \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0
+      $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 3: SDP Formulation.</strong>
+      The final problem is an SDP in variables $x \in \mathbb{R}^n, Y \in \mathbb{S}^n, t \in \mathbb{R}$:
+      $$
+      \begin{aligned}
+      \text{minimize} \quad & t \\
+      \text{subject to} \quad & \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0 \\
+      & Ax = b \\
+      & Y - L \succeq 0 \\
+      & U - Y \succeq 0
+      \end{aligned}
+      $$
+      Note that the LMI implies $Y \succeq 0$ (actually $Y \succ 0$ if $t$ is tight, but non-strict LMI allows boundary). The constraints $L \preceq Y$ typically enforce strict definiteness if $L \succ 0$.
+    </div>
+  </div>
+</div>
+
     </section>
 
 <section class="section-card" id="section-11" style="margin-bottom: 32px;">
