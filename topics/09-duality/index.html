@@ -609,25 +609,63 @@
       </div>
 
       <h3>6.3 Semidefinite Programming Duality</h3>
+      <p>Semidefinite programming (SDP) generalizes linear programming to the cone of positive semidefinite matrices. We derive the dual explicitly to show the symmetry between the primal and dual forms.</p>
+
       <p><strong>Primal SDP:</strong></p>
       <p style="text-align: center;">
         $
-        \text{minimize} \quad \text{tr}(C X) \quad \text{s.t.} \quad \text{tr}(A_i X) = b_i, \; X \succeq 0
+        \text{minimize} \quad \text{tr}(C X) \quad \text{s.t.} \quad \text{tr}(A_i X) = b_i, \quad i=1,\dots,m; \quad X \succeq 0
         $
       </p>
 
-      <p><strong>Dual SDP:</strong></p>
-      <p style="text-align: center;">
-        $
-        \text{maximize} \quad b^\top y \quad \text{s.t.} \quad \sum_{i=1}^p y_i A_i + S = C, \; S \succeq 0
-        $
-      </p>
+      <div class="proof-box">
+        <h4>Derivation of the Dual SDP</h4>
+
+        <div class="proof-step">
+          <strong>Step 1: Form the Lagrangian.</strong>
+          We associate dual variables $y \in \mathbb{R}^m$ with the equality constraints $\text{tr}(A_i X) = b_i$.
+          We associate a dual matrix variable $S \in \mathbb{S}^n$ with the inequality constraint $X \succeq 0$ (represented as $-X \preceq 0$). The Lagrangian term for a generalized inequality $G(x) \preceq_K 0$ is $\text{tr}(\Lambda^\top G(x))$ with $\Lambda \in K^*$. Here $K = \mathbb{S}^n_+$, so $S \in \mathbb{S}^n_+$.
+          $$ L(X, y, S) = \text{tr}(CX) + \sum_{i=1}^m y_i (b_i - \text{tr}(A_i X)) - \text{tr}(SX) $$
+          where $S \succeq 0$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Group terms by X.</strong>
+          We use the linearity of the trace operator $\text{tr}(A+B) = \text{tr}(A) + \text{tr}(B)$ and $\text{tr}(cA) = c\text{tr}(A)$.
+          $$ L(X, y, S) = \sum_{i=1}^m y_i b_i + \text{tr}(CX) - \sum_{i=1}^m \text{tr}(y_i A_i X) - \text{tr}(SX) $$
+          $$ = b^\top y + \text{tr}\left( \left( C - \sum_{i=1}^m y_i A_i - S \right) X \right) $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Minimize over X.</strong>
+          The dual function is $g(y, S) = \inf_X L(X, y, S)$.
+          The term involving $X$ is a linear function of $X$: $\text{tr}(M X)$ where $M = C - \sum y_i A_i - S$.
+          If $M \neq 0$, the infimum is $-\infty$ (we can choose $X = -k M$ with $k \to \infty$ effectively, or project onto a direction where trace is negative).
+          For the infimum to be bounded, we must have $M = 0$.
+          $$ C - \sum_{i=1}^m y_i A_i - S = 0 $$
+          In this case, $g(y, S) = b^\top y$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: State the Dual Problem.</strong>
+          Maximize the dual function subject to the domain constraints ($S \succeq 0$ and the stationarity condition):
+          $$
+          \begin{aligned}
+          \text{maximize} \quad & b^\top y \\
+          \text{subject to} \quad & \sum_{i=1}^m y_i A_i + S = C \\
+          & S \succeq 0
+          \end{aligned}
+          $$
+          Eliminating the slack variable $S$, we get the standard LMI form:
+          $$ \sum_{i=1}^m y_i A_i \preceq C $$
+        </div>
+      </div>
 
       <p><strong>Properties:</strong></p>
       <ul>
-        <li>Weak duality always holds</li>
-        <li>Strong duality holds under Slater's condition</li>
-        <li>Complementary slackness: $X^* S^* = 0$ (matrix product)</li>
+        <li><b>Weak Duality:</b> $\text{tr}(CX) - b^\top y = \text{tr}(SX) \ge 0$ since $X, S \succeq 0$.</li>
+        <li><b>Strong Duality:</b> Holds if Slater's condition is satisfied (strictly feasible primal or dual).</li>
+        <li><b>Complementary Slackness:</b> $X^* S^* = 0$ (matrix product is zero). This implies optimal matrices commute and share eigenvectors.</li>
       </ul>
 
       <h3>6.4 Conic Duality</h3>
@@ -1183,85 +1221,53 @@
 </div>
 
 <div class="problem">
-  <h3>P5.9 — Derivation of SDP Duality</h3>
-  <p>Semidefinite programming (SDP) is a powerful generalization of linear programming. In this problem, you will derive the dual of a standard form SDP.</p>
-        <p>Consider the primal SDP:</p>
-        $$
-        \begin{aligned}
-        \text{minimize} \quad & \text{tr}(CX) \\
-        \text{subject to} \quad & \text{tr}(A_i X) = b_i, \quad i = 1, \dots, m \\
-        & X \succeq 0
-        \end{aligned}
-        $$
-        <p>where $C, A_1, \dots, A_m \in \mathbb{S}^n$ are symmetric matrices, and $X \in \mathbb{S}^n$ is the variable.</p>
-        <p><strong>(a)</strong> Form the Lagrangian $L(X, y, S)$ using the trace inner product.</p>
-        <p><strong>(b)</strong> Derive the dual function $g(y, S) = \inf_X L(X, y, S)$.</p>
-        <p><strong>(c)</strong> State the full dual problem.</p>
+  <h3>P5.9 — Farkas' Lemma for SDP</h3>
+  <p>Prove the following theorem of alternatives for semidefinite systems (a generalization of Farkas' Lemma):</p>
+  <p>Exactly one of the following two systems has a solution:</p>
+  <ol>
+    <li>Strict primal feasibility: $\exists X \succ 0$ such that $\text{tr}(A_i X) = b_i$ for $i=1,\dots,m$.</li>
+    <li>Dual infeasibility certificate: $\exists y \in \mathbb{R}^m$ such that $\sum_{i=1}^m y_i A_i \preceq 0$ and $b^\top y > 0$.</li>
+  </ol>
+  <p>(Assume linear independence of $A_i$ to ensure regularity).</p>
 
-
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Matrix Lagrange Multipliers:</b> For a matrix inequality constraint $X \succeq 0$, the Lagrange multiplier is a matrix $S$ in the dual cone (which is also the PSD cone). The inner product is the trace $\mathrm{tr}(SX)$.</li>
-            <li><b>SDP Duality Structure:</b> The standard primal SDP optimizes a linear function of a matrix variable subject to affine constraints. Its dual optimizes a vector variable subject to a Linear Matrix Inequality (LMI). This asymmetry is characteristic of conic duality.</li>
-        </ul>
-      </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>SDP duality generalizes LP duality. The trace inner product $\text{tr}(CX)$ replaces the dot product $c^\top x$.</p>
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Theorems of Alternatives:</b> These theorems (like Farkas, Gordan, Stiemke) state that exactly one of two systems is feasible. They are the algebraic equivalent of the geometric Separating Hyperplane Theorem.</li>
+        <li><b>SDP Farkas:</b> This generalizes the linear Farkas lemma ($Ax=b, x \ge 0$ vs $A^\top y \ge 0, b^\top y < 0$) to the cone of positive definite matrices. It is used to prove strong duality and detect infeasibility in SDP solvers.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
-            <strong>Part (a): The Lagrangian.</strong>
-            We associate dual variables $y \in \mathbb{R}^m$ with the equality constraints $\text{tr}(A_i X) = b_i$.
-            We associate a dual matrix variable $S \in \mathbb{S}^n$ with the inequality constraint $X \succeq 0$.
-            Note that $X \succeq 0$ is equivalent to $-X \preceq 0$. The generalized Lagrangian term for inequality $G(x) \preceq 0$ with dual variable $\Lambda \succeq 0$ is $\text{tr}(\Lambda^\top G(x))$.
-            Here, we use the convention of adding weighted constraints. Since we require $X \succeq 0$, we can view this as a constraint $-X \in \mathbb{S}^n_-$. The term in the Lagrangian is typically subtracted: $-\text{tr}(SX)$ with $S \succeq 0$.
-            Alternatively, write the constraints as $b_i - \text{tr}(A_i X) = 0$ and $X \succeq 0$.
-            $$ L(X, y, S) = \text{tr}(CX) + \sum_{i=1}^m y_i (b_i - \text{tr}(A_i X)) - \text{tr}(SX) $$
-            where $S \succeq 0$.
-            Rearranging terms to group by $X$:
-            $$ L(X, y, S) = \text{tr}(CX) - \sum_{i=1}^m y_i \text{tr}(A_i X) - \text{tr}(SX) + \sum_{i=1}^m y_i b_i $$
-            Using linearity of trace:
-            $$ L(X, y, S) = \text{tr}\left( \left( C - \sum_{i=1}^m y_i A_i - S \right) X \right) + b^\top y $$
-          </div>
+      <strong>Step 1: Mutually Exclusive (Easy Direction).</strong>
+      Suppose both systems have solutions $X$ and $y$.
+      Compute the inner product:
+      $$ \text{tr}\left( \left(\sum y_i A_i\right) X \right) = \sum y_i \text{tr}(A_i X) = \sum y_i b_i = b^\top y $$
+      From (2), we know $b^\top y > 0$. Let $S = \sum y_i A_i \preceq 0$.
+      We examine the trace term $\text{tr}(SX)$. Since $X \succ 0$, we can write $X = L L^\top$.
+      Then $\text{tr}(SX) = \text{tr}(S L L^\top) = \text{tr}(L^\top S L)$.
+      Let $Y = L^\top S L$. For any vector $v$, $v^\top Y v = (Lv)^\top S (Lv) \le 0$ because $S \preceq 0$. Thus $Y$ is negative semidefinite, so its trace (sum of eigenvalues) is non-positive.
+      This implies $b^\top y = \text{tr}(SX) \le 0$.
+      We have reached a contradiction: $0 < b^\top y \le 0$. Thus, both systems cannot have solutions simultaneously.
+    </div>
 
-          <div class="proof-step">
-            <strong>Part (b): The Dual Function.</strong>
-            The dual function is $g(y, S) = \inf_X L(X, y, S)$.
-            The Lagrangian is an affine function of $X$.
-            $$ L(X, y, S) = \text{tr}(M X) + b^\top y \quad \text{where } M = C - \sum_{i=1}^m y_i A_i - S $$
-            We need to minimize $\text{tr}(MX)$ over $X \in \mathbb{S}^n$.
-            If $M \neq 0$, we can choose $X = -k M$. Then $\text{tr}(MX) = -k \text{tr}(M^2) = -k \|M\|_F^2$. As $k \to \infty$, this goes to $-\infty$.
-            Thus, the infimum is finite only if $M = 0$.
-            $$ g(y, S) = \begin{cases} b^\top y & \text{if } C - \sum_{i=1}^m y_i A_i - S = 0 \\ -\infty & \text{otherwise} \end{cases} $$
-          </div>
-
-          <div class="proof-step">
-            <strong>Part (c): The Dual Problem.</strong>
-            We maximize the dual function subject to dual feasibility ($S \succeq 0$).
-            $$
-            \begin{aligned}
-            \text{maximize} \quad & b^\top y \\
-            \text{subject to} \quad & C - \sum_{i=1}^m y_i A_i - S = 0 \\
-            & S \succeq 0
-            \end{aligned}
-            $$
-            We can eliminate the slack matrix $S$ by writing the equality as an inequality:
-            $$ S = C - \sum_{i=1}^m y_i A_i $$
-            The constraint $S \succeq 0$ becomes:
-            $$ C - \sum_{i=1}^m y_i A_i \succeq 0 \iff \sum_{i=1}^m y_i A_i \preceq C $$
-            So the standard dual SDP is:
-            $$
-            \begin{aligned}
-            \text{maximize} \quad & b^\top y \\
-            \text{subject to} \quad & \sum_{i=1}^m y_i A_i \preceq C
-            \end{aligned}
-            $$
-          </div>
+    <div class="proof-step">
+      <strong>Step 2: Exhaustive (Hard Direction).</strong>
+      We use the Separating Hyperplane Theorem.
+      Let $\mathcal{K} = \{ (\text{tr}(A_1 X), \dots, \text{tr}(A_m X)) \mid X \succ 0 \} \subseteq \mathbb{R}^m$.
+      This set is the image of the open convex cone $\mathbb{S}^n_{++}$ under the linear map $\mathcal{A}(X)$. Since linear maps preserve convexity, $\mathcal{K}$ is a convex set (specifically, a convex cone).
+      <br>System 1 states that $b \in \mathcal{K}$.
+      <br>If System 1 has no solution, then $b \notin \mathcal{K}$. Since $\mathcal{K}$ is a convex cone, we can strictly separate the point $b$ from $\mathcal{K}$ using a hyperplane passing through the origin.
+      There exists a vector $y \in \mathbb{R}^m$ such that:
+      $$ y^\top z \le 0 \quad \forall z \in \mathcal{K} \quad \text{and} \quad y^\top b > 0 $$
+      Substituting the definition of $\mathcal{K}$:
+      $$ y^\top \mathcal{A}(X) \le 0 \implies \sum_{i=1}^m y_i \text{tr}(A_i X) \le 0 \implies \text{tr}\left( \left(\sum_{i=1}^m y_i A_i\right) X \right) \le 0 \quad \forall X \succ 0 $$
+      The condition $\text{tr}(SX) \le 0$ for all $X \succ 0$ implies that $S \preceq 0$.
+      Thus $\sum y_i A_i \preceq 0$.
+      Combined with $y^\top b > 0$, this vector $y$ is a solution to System 2.
+    </div>
   </div>
 </div>
 
