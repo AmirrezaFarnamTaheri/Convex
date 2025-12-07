@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>07. Convex Optimization Problems: Standard Forms — Convex Optimization</title>
+  <link rel="stylesheet" href="../../static/css/lecture-styles.css" />
+  <link rel="stylesheet" href="../../static/css/convex-unified.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+  <!-- Header with navigation -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="../../index.html">Convex Optimization</a>
+      </div>
+      <nav class="nav">
+        <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
+        <a href="../06-convex-functions-advanced/index.html"><i data-feather="arrow-left"></i> Previous</a>
+        <a href="../08-convex-problems-conic/index.html">Next <i data-feather="arrow-right"></i></a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+    <header class="lecture-header section-card">
+      <h1>07. Convex Optimization Problems: Standard Forms</h1>
+      <div class="lecture-meta">
+        <span>Date: 2025-11-11</span>
+        <span>Duration: 90 min</span>
+        <span>Tags: standard-forms, classification, LP, QP</span>
+      </div>
+      <div class="lecture-summary">
+        <p><strong>Overview:</strong> This lecture covers the standard form of convex optimization problems and the fundamental problem classes: Linear Programs (LP) and Quadratic Programs (QP). We develop techniques for recognizing and formulating convex problems, and introduce problem reformulation methods.</p>
+        <p><strong>Prerequisites:</strong> <a href="../06-convex-functions-advanced/index.html">Lecture 06: Convex Functions Advanced</a> (convex functions, first- and second-order conditions).</p>
+        <p><strong>Forward Connections:</strong> Conic programming (SOCP, SDP) is covered in <a href="../08-convex-problems-conic/index.html">Lecture 08</a>. Duality theory (<a href="../09-duality/index.html">Lecture 09</a>) provides optimality conditions for these problem classes.</p>
+      </div>
+    </header>
+
+    <section class="section-card">
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
+      <p>After this lecture, you will be able to:</p>
+      <ul>
+        <li>Define and recognize the standard form of a convex optimization problem</li>
+        <li>Classify problems into LP and QP categories with precise criteria</li>
+        <li>Formulate real-world problems using standard forms</li>
+        <li>Apply problem reformulation techniques to convert non-standard forms</li>
+        <li>Make informed decisions about solver selection based on problem structure</li>
+      </ul>
+    </section>
+
+    <article>
+      <section class="section-card" id="section-1">
+      <h2>1. The Standard Form of Convex Optimization</h2>
+
+      <h3>1.1 Definition</h3>
+      <p>A <strong>convex optimization problem</strong> in <a href="#" class="definition-link">standard form</a> is:</p>
+
+      <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
+        <p style="margin: 0;">
+          $
+          \begin{aligned}
+          \text{minimize} \quad & f_0(x) \\
+          \text{subject to} \quad & f_i(x) \le 0, \quad i = 1, \dots, m \\
+          & h_j(x) = 0, \quad j = 1, \dots, p
+          \end{aligned}
+          $
+        </p>
+      </div>
+
+      <p>where:</p>
+      <ul>
+        <li>The variable is $x \in \mathbb{R}^n$</li>
+        <li>$f_0: \mathbb{R}^n \to \mathbb{R}$ is the <strong>objective function</strong> (<a href="#" class="definition-link" data-term="convex function">convex</a>)</li>
+        <li>$f_i: \mathbb{R}^n \to \mathbb{R}$, $i = 1, \dots, m$ are <strong>inequality constraint functions</strong> (all convex)</li>
+        <li>$h_j: \mathbb{R}^n \to \mathbb{R}$, $j = 1, \dots, p$ are <strong>equality constraint functions</strong> (all affine, i.e., $h_j(x) = a_j^\top x - b_j$)</li>
+      </ul>
+
+      <h3>1.2 The Feasible Set</h3>
+      <p>The <strong>feasible set</strong> (or constraint set) is:</p>
+      <p style="text-align: center;">
+        $
+        \mathcal{F} = \{x \in \mathbb{R}^n \mid f_i(x) \le 0, \; i = 1, \dots, m; \; h_j(x) = 0, \; j = 1, \dots, p\}
+        $
+      </p>
+
+      <div class="proof-box">
+        <h4>Theorem: Convexity of Feasible Set</h4>
+        <p><strong>Statement:</strong> If $f_i$ are convex and $h_j$ are affine, then $\mathcal{F}$ is a convex set.</p>
+
+        <div class="proof-step">
+          <strong>Proof:</strong> The feasible set $\mathcal{F}$ is the intersection of sublevel sets $\{x \mid f_i(x) \le 0\}$ (convex by <a href="../05-convex-functions-basics/index.html">Lecture 05</a>) and affine sets $\{x \mid h_j(x) = 0\}$ (convex by definition). Since the intersection of convex sets is convex (see <a href="../03-convex-sets-geometry/index.html">Lecture 03</a>), $\mathcal{F}$ is convex.
+        </div>
+      </div>
+
+      <h3>1.3 Optimal Value and Optimal Points</h3>
+      <ul>
+        <li>The <strong>optimal value</strong> is $p^* = \inf\{f_0(x) \mid x \in \mathcal{F}\}$</li>
+        <li>$x^*$ is <strong>optimal</strong> (or a <strong>minimizer</strong>) if $x^* \in \mathcal{F}$ and $f_0(x^*) = p^*$</li>
+        <li>$x$ is <strong>$\epsilon$-suboptimal</strong> if $x \in \mathcal{F}$ and $f_0(x) \le p^* + \epsilon$</li>
+        <li>$x$ is <strong>locally optimal</strong> if there exists $R > 0$ such that $f_0(x) = \inf\{f_0(z) \mid z \in \mathcal{F}, \|z - x\|_2 \le R\}$</li>
+      </ul>
+
+      <div class="proof-box">
+        <h4>Fundamental Property: Local = Global</h4>
+        <p><strong>Statement:</strong> For convex optimization problems, any locally optimal point is globally optimal.</p>
+
+        <div class="proof-step">
+          <strong>Proof:</strong> This is a consequence of the convexity of $f_0$ and $\mathcal{F}$, as established in <a href="../02-introduction/index.html">Lecture 02</a>. If $x$ is locally optimal but not globally optimal, we can construct a line segment from $x$ to a better point that contradicts local optimality.
+        </div>
+      </div>
+
+      <figure style="margin: 16px 0; text-align: center;">
+        <img src="../../static/assets/topics/07-convex-problems-standard/linear-programming-feasible-region.svg" alt="An example of a feasible region in a Linear Program" style="max-width: 450px; height: auto;" />
+        <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
+          A classic example of a feasible set for a Linear Program (LP). The region is a convex polygon defined by linear inequality constraints. The optimal solution occurs at a vertex of the polyhedron.
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- Section 2: Linear Programs (LP) -->
+    <section class="section-card" id="section-2">
+      <h2>2. Linear Programs (LP)</h2>
+
+      <h3>2.1 Definition</h3>
+      <p>A <strong>Linear Program (<a href="#" class="definition-link">LP</a>)</strong> has the form:</p>
+
+      <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
+        <p style="margin: 0;">
+          $
+          \begin{aligned}
+          \text{minimize} \quad & c^\top x \\
+          \text{subject to} \quad & Gx \preceq h \\
+          & Ax = b
+          \end{aligned}
+          $
+        </p>
+      </div>
+
+      <p>where:</p>
+      <ul>
+        <li>$x \in \mathbb{R}^n$ is the variable</li>
+        <li>$c \in \mathbb{R}^n$ is the cost vector</li>
+        <li>$G \in \mathbb{R}^{m \times n}$, $h \in \mathbb{R}^m$ define the inequality constraints</li>
+        <li>$A \in \mathbb{R}^{p \times n}$, $b \in \mathbb{R}^p$ define the equality constraints</li>
+        <li>$\preceq$ denotes componentwise inequality</li>
+      </ul>
+
+      <h3>2.2 Key Properties</h3>
+      <ul>
+        <li><strong>Feasible set:</strong> A polyhedron (intersection of halfspaces and hyperplanes)</li>
+        <li><strong>Optimal solution:</strong> If it exists and the optimal value is finite, occurs at a vertex of the polyhedron</li>
+        <li><strong>Complexity:</strong> Polynomial-time solvable (simplex method, interior-point methods)</li>
+        <li><strong>Duality:</strong> Strong duality always holds, a property we will prove in <a href="../09-duality/index.html">Lecture 09</a> using the Separating Hyperplane Theorem.</li>
+      </ul>
+
+      <h3>2.3 Standard LP Examples</h3>
+
+      <h4>Example 2.1: Diet Problem</h4>
+      <p>Given $n$ foods with costs $c_i$ and $m$ nutrients, where food $j$ contains $A_{ij}$ units of nutrient $i$, find the cheapest diet meeting minimum nutrient requirements $b_i$:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & \sum_{j=1}^n c_j x_j \\
+        \text{subject to} \quad & \sum_{j=1}^n A_{ij} x_j \ge b_i, \quad i = 1, \dots, m \\
+        & x_j \ge 0, \quad j = 1, \dots, n
+        \end{aligned}
+        $
+      </p>
+      <p>This is an LP: the objective is linear, constraints are linear inequalities.</p>
+
+      <h4>Example 2.2: Chebyshev Approximation</h4>
+      <p>Find $x \in \mathbb{R}^n$ minimizing $\|Ax - b\|_\infty$. This can be reformulated as:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & t \\
+        \text{subject to} \quad & -t \mathbf{1} \preceq Ax - b \preceq t \mathbf{1}
+        \end{aligned}
+        $
+      </p>
+      <p>where $\mathbf{1}$ is the vector of ones. This is an LP in variables $(x, t)$.</p>
+
+      <h3>2.4 Piecewise-Linear Minimization</h3>
+      <p>Minimizing $f(x) = \max_{i=1,\dots,m} (a_i^T x + b_i)$ (a piecewise-linear convex function) can be reformulated as:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & t \\
+        \text{subject to} \quad & a_i^T x + b_i \le t, \quad i = 1, \dots, m
+        \end{aligned}
+        $
+      </p>
+      <p>This transformation is fundamental: many convex problems can be reduced to LPs via epigraph reformulation.</p>
+    </section>
+
+    <!-- Section 3: Quadratic Programs (QP) -->
+    <section class="section-card" id="section-3">
+      <h2>3. Quadratic Programs (QP)</h2>
+
+      <h3>3.1 Definition</h3>
+      <p>A <strong>Quadratic Program (<a href="#" class="definition-link">QP</a>)</strong> has the form:</p>
+
+      <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
+        <p style="margin: 0;">
+          $
+          \begin{aligned}
+          \text{minimize} \quad & \frac{1}{2} x^\top P x + q^\top x + r \\
+          \text{subject to} \quad & Gx \preceq h \\
+          & Ax = b
+          \end{aligned}
+          $
+        </p>
+      </div>
+
+      <p>where $P \in \mathbb{S}_+^n$ (positive semidefinite), $q \in \mathbb{R}^n$, $r \in \mathbb{R}$.</p>
+
+      <div class="proof-box">
+        <h4>Convexity of QP</h4>
+        <div class="proof-step">
+          <strong>Objective convexity:</strong> Since $P \succeq 0$, the quadratic form $f_0(x) = \frac{1}{2} x^\top P x + q^\top x + r$ is convex. This follows from the second-order condition: $\nabla^2 f_0(x) = P \succeq 0$.
+        </div>
+        <div class="proof-step">
+          <strong>Feasible set convexity:</strong> The constraints define a polyhedron, which is convex.
+        </div>
+        <div class="proof-step">
+          <strong>Conclusion:</strong> A QP is a convex optimization problem.
+        </div>
+      </div>
+
+      <h3>3.2 Key Properties</h3>
+      <ul>
+        <li><strong>Optimality:</strong> If $P \succ 0$ (positive definite), the problem is strictly convex and has a unique minimizer (if feasible)</li>
+        <li><strong>KKT conditions:</strong> Necessary and sufficient for optimality (<a href="../09-duality/index.html">Lecture 09</a>). For QPs, these are linear equations, making them very fast to solve.</li>
+        <li><strong>Solvers:</strong> Interior-point methods, active-set methods</li>
+      </ul>
+
+      <h3>3.3 Standard QP Examples</h3>
+
+      <h4>Example 3.1: Least-Squares with Linear Inequality Constraints</h4>
+      <p>Minimize $\|Ax - b\|_2^2$ subject to $Cx \preceq d$:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & x^\top A^\top A x - 2 b^\top A x + b^\top b \\
+        \text{subject to} \quad & Cx \preceq d
+        \end{aligned}
+        $
+      </p>
+      <p>This is a QP with $P = 2A^\top A \succeq 0$ and $q = -2A^\top b$.</p>
+
+      <h4>Example 3.2: Markowitz Portfolio Optimization</h4>
+      <p>Given $n$ assets with expected returns $\mu \in \mathbb{R}^n$ and covariance matrix $\Sigma \in \mathbb{S}_{++}^n$, find a portfolio $x \in \mathbb{R}^n$ (where $x_i$ is the fraction invested in asset $i$) minimizing risk for a target return $r_{\text{target}}$:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & x^\top \Sigma x \\
+        \text{subject to} \quad & \mu^\top x \ge r_{\text{target}} \\
+        & \mathbf{1}^\top x = 1 \\
+        & x \ge 0
+        \end{aligned}
+        $
+      </p>
+      <p>This is a QP with $P = 2\Sigma \succ 0$, capturing the fundamental risk-return tradeoff in finance.</p>
+
+      <h3>3.4 Relationship to LP</h3>
+      <p>Every LP is a QP (set $P = 0$). Thus: <strong>LP ⊂ QP</strong>.</p>
+    </section>
+
+      <section class="section-card" id="section-4">
+      <h2>4. Problem Reformulation and Equivalence</h2>
+
+      <h3>4.1 Equivalent Problems</h3>
+      <p>Two optimization problems are <strong>equivalent</strong> if the solution of one can be readily obtained from the solution of the other, and vice versa.</p>
+
+      <h4>Common Equivalence Transformations:</h4>
+      <ul>
+        <li><strong>Change of variables:</strong> Substitute $x = \phi(y)$ where $\phi$ is one-to-one</li>
+        <li><strong>Slack variables:</strong> Introduce $s$ to turn $f(x) \le t$ into $f(x) + s = t$, $s \ge 0$</li>
+        <li><strong>Epigraph form:</strong> Minimize $t$ subject to $f(x) \le t$ (instead of minimizing $f(x)$)</li>
+        <li><strong>Eliminating equality constraints:</strong> Use $Ax = b$ to eliminate variables</li>
+      </ul>
+
+      <h3>4.2 Epigraph Reformulation</h3>
+      <p>The problem $\min f_0(x)$ s.t. $x \in \mathcal{C}$ is equivalent to:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & t \\
+        \text{subject to} \quad & f_0(x) \le t \\
+        & x \in \mathcal{C}
+        \end{aligned}
+        $
+      </p>
+      <p>This transformation is crucial for reformulating problems with complex objectives into standard forms.</p>
+
+      <h3>4.3 Example: Minimizing $\ell_\infty$ Norm</h3>
+      <p>Minimize $\|Ax - b\|_\infty$ can be reformulated as an LP:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & t \\
+        \text{subject to} \quad & -t \mathbf{1} \preceq Ax - b \preceq t \mathbf{1}
+        \end{aligned}
+        $
+      </p>
+
+      <h3>4.4 Eliminating Linear Equality Constraints</h3>
+      <p>Given $\min f_0(x)$ s.t. $Ax = b$ and other constraints, if $\text{range}(A) = \mathbb{R}^p$, we can parameterize the solution space as:</p>
+      <p style="text-align: center;">
+        $
+        x = A^\dagger b + (I - A^\dagger A) z
+        $
+      </p>
+      <p>where $A^\dagger$ is the pseudoinverse and $z \in \mathbb{R}^n$ is a new variable. This reduces the problem dimension.</p>
+
+      <!-- Widget 6: Problem Reformulation Tool -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: Problem Reformulation Tool</h3>
+        <p><strong>Purpose:</strong> Learn how to reformulate non-standard problems into LP, QP, SOCP, or SDP forms.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Select a non-standard problem (e.g., $\ell_1$, $\ell_\infty$ minimization)</li>
+          <li>See reformulation to standard form</li>
+          <li>Understand epigraph and slack variable techniques</li>
+        </ul>
+        <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+    </section>
+    </article>
+  </main></div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p style="margin: 0;">
+        © <span id="year"></a> Convex Optimization Course ·
+        <a href="../../README.md" style="color: var(--brand);">About</a>
+      </p>
+    </div>
+  </footer>
+  </main></div>
+
+  <!-- Load Pyodide for Python widgets (optional) -->
+  <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+
+  <!-- Widget loaders -->
+  <script type="module">
+    import { initProblemRecognizer } from './widgets/js/problem-form-recognizer.js';
+    initProblemRecognizer('widget-1');
+  </script>
+  <script type="module">
+    import { initLPVisualizer } from './widgets/js/lp-visualizer.js';
+    initLPVisualizer('widget-2');
+  </script>
+  <script type="module">
+    import { initQPSandbox } from './widgets/js/qp-sandbox.js';
+    initQPSandbox('widget-4');
+  </script>
+  <script type="module">
+    import { initSDPVisualizer } from './widgets/js/sdp-visualizer.js';
+    initSDPVisualizer('widget-5');
+  </script>
+  <script type="module">
+    import { initProblemReformulationTool } from './widgets/js/reformulation-tool.js';
+    initProblemReformulationTool('widget-6');
+  </script>
+  <script type="module">
+    import { initSOCPExplorer } from './widgets/js/socp-explorer.js';
+    initSOCPExplorer('widget-7');
+  </script>
+  <script type="module">
+    import { initSolverGuide } from './widgets/js/solver-guide.js';
+    initSolverGuide('widget-8');
+  </script>
+
+  <!-- Global utilities -->
+  <script src="../../static/js/math-renderer.js"></script>
+<script src="../../static/js/ui.js"></script>
+<script src="../../static/js/toc.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  <script src="../../static/js/glossary-loader.js"></script>
+<script src="../../static/js/notes-widget.js"></script>
+<script src="../../static/js/pomodoro.js"></script>
+<script src="../../static/js/progress-tracker.js"></script>
+</body>
+</html>

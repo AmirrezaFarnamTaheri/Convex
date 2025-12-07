@@ -1,0 +1,54 @@
+[
+  {
+    "filename": "convex_composition_case1.png",
+    "description": "A step-by-step graphical composition. Panel 1 (Inner): Graph of a convex function g(x) = x^2. Two points x_1, x_2 and their chord are shown, illustrating the convexity inequality g(avg) <= avg(g). Panel 2 (Outer): Graph of a convex, increasing function h(u) = e^u. The output range of g maps to the input domain of h. Panel 3 (Composite): Graph of f(x) = e^{x^2}. The convexity is preserved and amplified. The visual logic shows how the 'smile' of g is stretched upwards by h, making the resulting curve even more convex."
+  },
+  {
+    "filename": "convex_composition_case2.png",
+    "description": "A similar 3-panel composition. Panel 1: Graph of a concave function g(x) = sqrt(x). The chord lies below the curve. Panel 2: Graph of a convex, decreasing function h(u) = 1/u. Panel 3: Graph of f(x) = 1/sqrt(x). The 'frown' of g is flipped by the decreasing nature of h into a 'smile', and the convexity of h reinforces it, resulting in a convex composite function."
+  },
+  {
+    "filename": "quasiconvex_sublevel.png",
+    "description": "A 3D surface plot of a function that is quasiconvex but not convex (e.g., a 'volcano' shape with a monotonic crater, or a bell curve inverted). Horizontal planes cut through the surface at various heights alpha. The resulting cross-sections (sublevel sets S_alpha) are projected onto the xy-plane. All these projected sets are convex shapes (circles, ellipses), satisfying the definition. A chord connecting two points on the surface is shown passing *above* the function surface in the middle (violating convexity), but the 'no overshoot' condition holds relative to the max endpoint."
+  },
+  {
+    "filename": "quasiconvex_gradient.png",
+    "description": "A contour plot of a quasiconvex function. A point x is marked on a contour line f(x) = c. The gradient vector nabla f(x) is drawn perpendicular to the contour, pointing towards higher values (outwards). A region of 'lower or equal values' (f(y) <= f(x)) is shaded. Several vectors y-x are drawn from x into this shaded region. The angle between nabla f(x) and any vector y-x is shown to be >= 90 degrees (obtuse), visually confirming nabla f(x)^T(y-x) <= 0."
+  },
+  {
+    "filename": "log_concave_gaussian.png",
+    "description": "A visual comparison. Top: A standard Gaussian bell curve f(x). It has an inflection point and is bell-shaped (not concave). Bottom: The graph of log f(x). This transforms the bell curve into a perfect, downward-opening parabola (concave quadratic). This visually proves that the Gaussian is log-concave."
+  },
+  {
+    "filename": "conjugate_definition_gap.png",
+    "description": "Image 1: Conjugate Function as Maximum Gap. A 2D plot showing a convex function curve f(x) = x^2/2 + 1 (blue curve). A linear function h(x) = yx (for a fixed slope y=1.5) is drawn as a straight red line passing through the origin. The vertical gap yx - f(x) is highlighted at several x points. The maximum gap occurs at a specific point x^*. A vertical arrow labeled 'Supremum Value = f^*(y)' connects the line yx down to the curve f(x) at this optimal x^*. This visualizes the definition f^*(y) = sup_x (yx - f(x))."
+  },
+  {
+    "filename": "conjugate_supporting_line.png",
+    "description": "Image 2: Supporting Line Interpretation. A geometric construction for a 1D convex function. A convex curve f(x) is plotted. A tangent line with slope y touches the curve at point x^*. The equation of this tangent line is L(x) = yx - f^*(y). The line intersects the vertical y-axis at the value -f^*(y). This visually demonstrates that f^*(y) determines the vertical intercept (negative) of the supporting hyperplane with slope y."
+  },
+  {
+    "filename": "conjugate_convexity_affine.png",
+    "description": "Image 3: Conjugate as Supremum of Affine Functions. A plot in the dual variable space y. Several affine lines g_x(y) = x.y - f(x) are drawn for different fixed values of x. The function f^*(y) is the upper envelope (pointwise supremum) of all these lines. The resulting upper envelope forms a convex 'V' shape or curve, visually proving that the conjugate f^* is always convex."
+  },
+  {
+    "filename": "conjugate_epigraph_intersection.png",
+    "description": "Image 4: Epigraph Intersection. A 3D visualization of the epigraph of f^*. The space represents (y, alpha). Multiple half-spaces H_x = {(y, alpha) | y^T x - f(x) <= alpha} are shown as flat planes with 'below' regions shaded. The intersection of all these half-spaces forms a convex polyhedral-like solid, which is the epigraph of f^*. This corresponds to the intersection of halfspaces proof of convexity."
+  },
+  {
+    "filename": "conjugate_fenchel_young.png",
+    "description": "Image 5: Fenchel-Young Geometry. A diagram illustrating the inequality f(x) + f^*(y) >= xy. A convex function f(x) and a line with slope y passing through the origin are shown. The tangent line with slope y has equation L(z) = yz - f^*(y). At any point x, the function value f(x) is visibly above the tangent line value: f(x) >= yx - f^*(y), which rearranges to the Fenchel-Young inequality."
+  },
+  {
+    "filename": "conjugate_dual_norm_ball.png",
+    "description": "Image 6: Conjugate of Absolute Value (Dual Norm Indicator). A side-by-side plot. Left: The absolute value function f(x) = |x|. Right: The conjugate function f^*(y). It is the indicator function of the interval [-1, 1]. For y in (-1, 1), the value is 0. At y = -1 and y = 1, vertical walls shoot up to infinity. Outside [-1, 1], the function is undefined or +infinity. This visualizes the conjugate of a norm being the indicator of the dual unit ball."
+  },
+  {
+    "filename": "conjugate_indicator_support.png",
+    "description": "Image 7: Conjugate of Indicator Function (Support Function). A geometric illustration in 2D space. A convex set C (e.g., a pentagon) is shown. A direction vector y is drawn from the origin. A supporting hyperplane (line) perpendicular to y touches the boundary of C at the furthest point in direction y. The distance from the origin to this supporting line (projected onto y) is labeled sigma_C(y) = delta_C^*(y). This visualizes the conjugate of the indicator function as the support function."
+  },
+  {
+    "filename": "conjugate_biconjugate.png",
+    "description": "Image 8: Biconjugate as Convex Hull. A comparison of a non-convex function and its biconjugate. Function: A smooth 'W' shaped curve f(x) (non-convex, with two local minima). Biconjugate: A dashed line connects the two bottom tips of the 'W', bridging the gap. This new function f^{**}(x) follows the original curve on the outer wings but is flat in the middle. This visually represents the closed convex envelope."
+  }
+]

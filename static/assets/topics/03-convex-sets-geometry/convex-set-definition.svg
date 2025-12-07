@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200">
+  <defs>
+    <style>
+      .set { fill: #e0f0ff; stroke: #00f; stroke-width: 2; }
+      .line { stroke: #f00; stroke-width: 2; }
+      .text { font-family: sans-serif; font-size: 14px; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Convex Set -->
+  <ellipse cx="100" cy="100" rx="80" ry="60" class="set"/>
+  <line x1="60" y1="80" x2="140" y2="120" class="line"/>
+  <text x="100" y="180" class="text">Convex</text>
+
+  <!-- Non-Convex Set -->
+  <path d="M 300 100 C 250 50, 350 150, 300 100 Z" class="set"/>
+  <line x1="280" y1="80" x2="320" y2="120" class="line" stroke-dasharray="4"/>
+  <text x="300" y="180" class="text">Non-Convex</text>
+</svg>

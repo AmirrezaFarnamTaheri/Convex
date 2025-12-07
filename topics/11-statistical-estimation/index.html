@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>07. Applications II: Statistical Estimation & Machine Learning — Convex Optimization</title>
+  <link rel="stylesheet" href="../../static/css/convex-unified.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+</head>
+<body>
+  <!-- Header with navigation -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="../../index.html">Convex Optimization</a>
+      </div>
+      <nav class="nav">
+        <a href="../../index.html">All Lectures</a>
+        <a href="#widgets">Interactive</a>
+        <a href="#readings">Readings</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="container" style="padding: 32px 0 60px;">
+    <!-- Lecture header -->
+    <article class="section-card" style="margin-bottom: 32px;">
+      <h1 style="margin-top: 0;">07. Applications II: Statistical Estimation & Machine Learning</h1>
+      <div class="meta">
+        Date: 2025-12-02 · Duration: 90 min · Tags: applications, ml, statistics
+      </div>
+
+      <!-- Brief introduction -->
+      <section style="margin-top: 16px;">
+        <p><strong>Overview:</strong> MLE, logistic regression, SVM, classification—convex optimization at the heart of ML.</p>
+        <p><strong>Prerequisites:</strong> <a href="../10-approximation-fitting/index.html">Lecture 14</a></p>
+      </section>
+    </article>
+
+    <!-- Learning objectives -->
+    <section class="section-card" style="margin-bottom: 32px;">
+      <h2>Learning Objectives</h2>
+      <p>After this lecture, you should understand:</p>
+      <ul style="line-height: 1.8;">
+        <li>How to formulate maximum likelihood estimation (MLE) problems as convex optimization problems.</li>
+        <li>The formulation of logistic regression and support vector machines (SVMs).</li>
+        <li>The role of convex optimization in modern machine learning.</li>
+      </ul>
+    </section>
+
+    <!-- Main lecture content -->
+    <section class="section-card" style="margin-bottom: 32px;">
+      <h2>Key Concepts</h2>
+
+      <h3>1. Maximum Likelihood Estimation (MLE)</h3>
+      <p>MLE finds parameters $\theta$ that maximize the likelihood $p(y_1, \ldots, y_n \mid \theta)$ of observed data. Equivalently, we minimize the negative log-likelihood, which is often a convex function for exponential family distributions (Gaussian, Poisson, exponential, etc.).</p>
+
+      <!-- Include images as needed -->
+      <figure style="margin: 16px 0; text-align: center;">
+        <img src="../../static/assets/topics/11-statistical-estimation/mle-illustration.svg" alt="An illustration of maximum likelihood estimation" style="max-width: 100%; height: auto;" />
+        <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
+          The MLE is the point in the parameter space that maximizes the likelihood function.
+        </figcaption>
+      </figure>
+
+      <h3>2. Logistic Regression</h3>
+      <p>Binary classification via logistic model: $p(y=1 \mid x) = \sigma(w^\top x + b)$ where $\sigma(z) = 1/(1+e^{-z})$. The negative log-likelihood $\sum_i \log(1 + e^{-y_i(w^\top x_i + b)})$ is convex in $(w,b)$, enabling efficient gradient-based optimization.</p>
+
+      <h3>3. Support Vector Machines (SVMs)</h3>
+      <p>SVMs maximize margin between classes by solving $\min_{w,b} \frac{1}{2}\|w\|_2^2$ subject to $y_i(w^\top x_i + b) \geq 1$ for all $i$. The soft-margin version adds slack variables and hinge loss, yielding the convex problem $\min \frac{1}{2}\|w\|_2^2 + C\sum_i \max(0, 1-y_i(w^\top x_i + b))$.</p>
+
+      <h3>4. Regularized Maximum Likelihood</h3>
+      <p>To prevent overfitting, regularization adds a penalty: $\min_\theta -\ell(\theta) + \lambda R(\theta)$ where $\ell$ is log-likelihood and $R$ is a regularizer (e.g., $\|w\|_2^2$ for Ridge, $\|w\|_1$ for LASSO). This yields sparse or smooth estimators depending on $R$.</p>
+
+      <h3>5. Exponential Family and GLMs</h3>
+      <p>Generalized Linear Models (GLMs) extend linear regression to exponential family distributions. The log-likelihood is concave, so MLE is a convex optimization problem. Examples include Poisson regression (count data) and Gamma regression (positive continuous data).</p>
+
+      <h3>6. Multi-Class Classification</h3>
+      <p>Softmax regression extends logistic regression to $K$ classes via $p(y=k \mid x) = e^{w_k^\top x}/\sum_j e^{w_j^\top x}$. The negative log-likelihood is convex, and the problem can be solved via gradient descent or Newton's method.</p>
+
+      <h3>7. Robust Estimation</h3>
+      <p>Robust statistics use loss functions less sensitive to outliers than squared error. Huber loss and $\ell_1$ penalty create convex problems that downweight extreme observations, improving estimator reliability in contaminated data.</p>
+
+      <h3>8. Empirical Risk Minimization (ERM)</h3>
+      <p>ERM minimizes average loss over training data: $\min_\theta \frac{1}{n}\sum_{i=1}^n \text{loss}(f_\theta(x_i), y_i)$. For convex losses (hinge, logistic, squared), this is a convex problem, forming the basis of supervised learning theory.</p>
+
+      <h3>9. Regularization Paths and Model Selection</h3>
+      <p>The regularization parameter $\lambda$ controls bias-variance tradeoff. Computing the full solution path (all $\lambda$ values) via LARS or proximal gradient methods enables cross-validation for optimal $\lambda$ selection.</p>
+    </section>
+
+    <!-- Interactive widgets -->
+    <section class="section-card" id="widgets" style="margin-bottom: 32px;">
+      <h2>Interactive Widgets</h2>
+      <p>Below are tools to explore the concepts interactively. Try tweaking parameters to build intuition.</p>
+
+      <!-- Widget 1 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Classification Boundary</h3>
+        <p>Visualize the decision boundary of a logistic regression or SVM classifier.</p>
+        <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 2 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">SVM Margin Visualizer</h3>
+        <p>Explore the effect of the C parameter on the margin of an SVM.</p>
+        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 3 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Logistic Regression Solver</h3>
+        <p>An interactive solver for logistic regression.</p>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="section-card" id="readings" style="margin-bottom: 32px;">
+      <h2>Readings & Resources</h2>
+      <ul class="link-list">
+        <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 7 — Statistical Estimation</li>
+        <li><strong>Course slides:</strong> [Link if available]</li>
+      </ul>
+    </section>
+
+    <!-- Example problems -->
+    <section class="section-card" style="margin-bottom: 32px;">
+      <h2>Example Problems</h2>
+
+      <h3>Example 7.1: MLE for Gaussian Distribution</h3>
+      <p><strong>Problem:</strong> Given $n$ i.i.d. samples from $\mathcal{N}(\mu, \sigma^2)$, derive the MLE for $\mu$ and $\sigma^2$ by minimizing the negative log-likelihood.</p>
+      <p><em>[Detailed worked solution to be added: Shows $\hat{\mu} = \frac{1}{n}\sum_i x_i$, $\hat{\sigma}^2 = \frac{1}{n}\sum_i (x_i - \hat{\mu})^2$, proves convexity]</em></p>
+
+      <h3>Example 7.2: Logistic Regression for Binary Classification</h3>
+      <p><strong>Problem:</strong> For spam detection with features (word counts), formulate the logistic regression problem and derive the gradient for gradient descent.</p>
+      <p><em>[Detailed worked solution to be added: Constructs feature matrix, writes negative log-likelihood, derives gradient $\nabla_w \ell = \sum_i (\sigma(w^\top x_i) - y_i)x_i$]</em></p>
+
+      <h3>Example 7.3: Hard-Margin SVM</h3>
+      <p><strong>Problem:</strong> For linearly separable data, derive the dual of the hard-margin SVM and show that only support vectors have nonzero dual variables.</p>
+      <p><em>[Detailed worked solution to be added: Forms Lagrangian, derives dual $\max_\alpha \sum_i \alpha_i - \frac{1}{2}\sum_{ij} \alpha_i\alpha_j y_i y_j x_i^\top x_j$, shows KKT conditions]</em></p>
+
+      <h3>Example 7.4: Soft-Margin SVM with Hinge Loss</h3>
+      <p><strong>Problem:</strong> Formulate the soft-margin SVM as an unconstrained problem using hinge loss and explain the role of parameter $C$.</p>
+      <p><em>[Detailed worked solution to be added: Shows equivalence of constrained and unconstrained forms, explains $C$ as regularization weight]</em></p>
+
+      <h3>Example 7.5: Poisson Regression for Count Data</h3>
+      <p><strong>Problem:</strong> Model website traffic (counts) as Poisson with rate $\lambda(x) = e^{w^\top x}$, formulate MLE as convex problem.</p>
+      <p><em>[Detailed worked solution to be added: Writes log-likelihood for Poisson GLM, shows convexity via Hessian analysis]</em></p>
+
+      <h3>Example 7.6: Softmax Regression for Multi-Class Classification</h3>
+      <p><strong>Problem:</strong> Extend logistic regression to 3-class problem (iris dataset), derive the gradient of the cross-entropy loss.</p>
+      <p><em>[Detailed worked solution to be added: Defines softmax probabilities, writes cross-entropy, computes $\nabla_{w_k} \ell = \sum_i (p_{ik} - \mathbb{1}_{y_i=k})x_i$]</em></p>
+
+      <h3>Example 7.7: Regularized Logistic Regression</h3>
+      <p><strong>Problem:</strong> Add $\ell_1$ penalty to logistic regression for feature selection, solve using proximal gradient descent.</p>
+      <p><em>[Detailed worked solution to be added: Formulates $\min \ell(w) + \lambda\|w\|_1$, applies soft-thresholding in proximal step]</em></p>
+
+      <h3>Example 7.8: Robust MLE with Huber Loss</h3>
+      <p><strong>Problem:</strong> For regression with outliers, replace squared loss with Huber loss and formulate as QP or smooth optimization problem.</p>
+      <p><em>[Detailed worked solution to be added: Defines Huber function, shows SOCP reformulation or uses smooth approximation for gradient methods]</em></p>
+    </section>
+
+    <!-- Exercises (optional) -->
+    <section class="section-card" style="margin-bottom: 32px;">
+      <h2>Exercises</h2>
+      <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
+      <ol style="line-height: 2;">
+        <li>Derive the dual of the soft-margin SVM problem $\min_{w,b,\xi} \frac{1}{2}\|w\|_2^2 + C\sum_i \xi_i$ subject to $y_i(w^\top x_i + b) \geq 1 - \xi_i$ and $\xi_i \geq 0$. Show that the dual is a QP with box constraints.</li>
+        <li>Compare logistic regression and linear SVM: both are linear classifiers, but logistic regression uses log loss $\log(1+e^{-yf})$ while SVM uses hinge loss $\max(0, 1-yf)$. What are the implications for outliers and probabilistic interpretation?</li>
+        <li>Prove that the negative log-likelihood for logistic regression $\ell(w) = \sum_i \log(1 + e^{-y_i w^\top x_i})$ is convex by computing the Hessian and showing it is positive semidefinite.</li>
+        <li>Show that MLE for the exponential distribution with rate $\lambda$ yields $\hat{\lambda} = n/\sum_i x_i$. Is this a convex optimization problem? Why or why not?</li>
+        <li>For Poisson regression with $\log \lambda_i = w^\top x_i$, derive the gradient and Hessian of the negative log-likelihood. Show that the Hessian is positive definite.</li>
+        <li>Implement Newton's method for logistic regression and compare convergence speed to gradient descent. Explain why Newton is faster (hint: second-order information).</li>
+        <li>For softmax regression with $K$ classes, show that the Hessian of the negative log-likelihood is block diagonal. How does this structure help computational efficiency?</li>
+        <li>Prove that adding $\ell_2$ regularization to logistic regression ensures strong convexity, guaranteeing a unique solution even when data is linearly separable.</li>
+        <li>Show that the kernel trick can be applied to SVMs: the solution depends only on inner products $x_i^\top x_j$, which can be replaced by $k(x_i, x_j)$ for a kernel function $k$.</li>
+        <li>For $\ell_1$-regularized logistic regression, prove that the proximal operator of $\lambda\|w\|_1$ is the soft-thresholding operator: $\text{prox}_{\lambda\|\cdot\|_1}(w) = \text{sign}(w) \odot \max(|w| - \lambda, 0)$.</li>
+      </ol>
+    </section>
+  </main></div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p style="margin: 0;">
+        © <span id="year"></a> Convex Optimization Course ·
+        <a href="../../README.md" style="color: var(--brand);">About</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Load Pyodide for Python widgets (optional) -->
+  <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+
+  <!-- Widget loaders -->
+  <script type="module">
+    import { initClassificationBoundaryVisualizer } from './widgets/js/classification-boundary.js';
+    initClassificationBoundaryVisualizer('widget-1');
+  </script>
+  <script type="module">
+    import { initSVMMargin } from './widgets/js/svm-margin.js';
+    initSVMMargin('widget-2');
+  </script>
+  <script type="module">
+    import { initLogisticRegression } from './widgets/js/logistic-regression.js';
+    initLogisticRegression('widget-3');
+  </script>
+
+  <!-- Global utilities -->
+  <script src="../../static/js/math-renderer.js"></script>
+<script src="../../static/js/ui.js"></script>
+<script src="../../static/js/toc.js"></script>
+<script src="../../static/js/ui.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  <script src="../../static/js/glossary-loader.js"></script>
+<script src="../../static/js/notes-widget.js"></script>
+<script src="../../static/js/pomodoro.js"></script>
+<script src="../../static/js/progress-tracker.js"></script>
+</body>
+</html>

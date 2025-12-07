@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constraint Qualification Checker</title>
+    <link rel="stylesheet" href="../../../../shared/styles/widget-theme.css">
+    <style>
+        #constraint-qualification-container {
+            padding: 1rem;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            background-color: var(--color-background);
+            color: var(--color-text-main);
+            border: 1px solid var(--color-surface-1);
+        }
+        #qualification-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: var(--color-surface-1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="constraint-qualification-container">
+        <h2>Constraint Qualification Checker</h2>
+        <textarea id="constraints-input" placeholder="Enter constraints, e.g., x + y <= 1"></textarea>
+        <button id="check-button">Check</button>
+        <div id="qualification-result">
+            <!-- Result will be shown here -->
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js"></script>
+    <script type="module" src="js/constraint-qualification.js"></script>
+<script src="../../static/js/ui.js"></script>
+<script src="../../static/js/notes-widget.js"></script>
+<script src="../../static/js/pomodoro.js"></script>
+<script src="../../static/js/progress-tracker.js"></script>
+</body>
+</html>

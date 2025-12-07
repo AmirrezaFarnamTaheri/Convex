@@ -1,0 +1,1232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>08. Convex Optimization Problems: Conic Programming — Convex Optimization</title>
+  <link rel="stylesheet" href="../../static/css/lecture-styles.css" />
+  <link rel="stylesheet" href="../../static/css/convex-unified.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+  <!-- Header with navigation -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="../../index.html">Convex Optimization</a>
+      </div>
+      <nav class="nav">
+        <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
+        <a href="../07-convex-problems-standard/index.html"><i data-feather="arrow-left"></i> Previous</a>
+        <a href="../09-duality/index.html">Next <i data-feather="arrow-right"></i></a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+    <header class="lecture-header section-card">
+      <h1>08. Convex Optimization Problems: Conic Programming</h1>
+      <div class="lecture-meta">
+        <span>Date: 2025-11-18</span>
+        <span>Duration: 90 min</span>
+        <span>Tags: standard-forms, classification, SOCP, SDP, conic</span>
+      </div>
+      <div class="lecture-summary">
+        <p><strong>Overview:</strong> This lecture covers advanced convex optimization problem classes: Second-Order Cone Programs (SOCP) and Semidefinite Programs (SDP). We also explore quasiconvex optimization and Disciplined Convex Programming (DCP) frameworks.</p>
+        <p><strong>Prerequisites:</strong> <a href="../07-convex-problems-standard/index.html">Lecture 07: Convex Problems Standard</a> (standard form, LP, QP) and <a href="../04-convex-sets-cones/index.html">Lecture 04: Convex Sets Cones</a> (cones, dual cones).</p>
+        <p><strong>Forward Connections:</strong> Duality theory (<a href="../09-duality/index.html">Lecture 09</a>) provides optimality conditions for conic programs. These problem classes appear throughout applications (Lectures 10-12).</p>
+      </div>
+    </header>
+
+    <section class="section-card">
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
+      <p>After this lecture, you will be able to:</p>
+      <ul>
+        <li>Define and recognize SOCP and SDP problems</li>
+        <li>Understand the containment hierarchy: LP ⊂ QP ⊂ SOCP ⊂ SDP</li>
+        <li>Formulate problems using conic constraints</li>
+        <li>Understand quasiconvex optimization and its relationship to convex optimization</li>
+        <li>Apply DCP rules to construct convex optimization problems</li>
+      </ul>
+    </section>
+
+    <article>
+      <section class="section-card" id="section-1">
+      <h2>1. Second-Order Cone Programs (SOCP)</h2>
+
+      <h3>1.1 Definition</h3>
+      <p>A <strong>Second-Order Cone Program (<a href="#" class="definition-link" data-term="socp">SOCP</a>)</strong> has the form:</p>
+
+      <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
+        <p style="margin: 0;">
+          $
+          \begin{aligned}
+          \text{minimize} \quad & f^\top x \\
+          \text{subject to} \quad & \|A_i x + b_i\|_2 \le c_i^\top x + d_i, \quad i = 1, \dots, m \\
+          & Fx = g
+          \end{aligned}
+          $
+        </p>
+      </div>
+
+      <p>where $x \in \mathbb{R}^n$ is the variable. Each constraint $\|A_i x + b_i\|_2 \le c_i^T x + d_i$ is called a <strong>second-order cone constraint</strong>.</p>
+
+      <h3>1.2 The Second-Order Cone (Lorentz Cone)</h3>
+      <p>The <strong>second-order cone</strong> (or <strong>Lorentz cone</strong>) in $\mathbb{R}^{n+1}$ is:</p>
+      <p style="text-align: center;">
+        $
+        \mathcal{L}^{n+1} = \{(x, t) \in \mathbb{R}^n \times \mathbb{R} \mid \|x\|_2 \le t\}
+        $
+      </p>
+
+      <div class="proof-box">
+        <h4>Convexity of the Second-Order Cone</h4>
+        <div class="proof-step">
+          <strong>Setup:</strong> Let $(x_1, t_1), (x_2, t_2) \in \mathcal{L}^{n+1}$ and $\theta \in [0, 1]$.
+        </div>
+        <div class="proof-step">
+          <strong>Convex combination:</strong> We have $\|x_1\|_2 \le t_1$ and $\|x_2\|_2 \le t_2$. Consider:
+          $
+          \|\theta x_1 + (1-\theta) x_2\|_2 \le \theta \|x_1\|_2 + (1-\theta) \|x_2\|_2 \quad \text{(triangle inequality)}
+          $
+        </div>
+        <div class="proof-step">
+          <strong>Apply constraints:</strong>
+          $
+          \le \theta t_1 + (1-\theta) t_2
+          $
+        </div>
+        <div class="proof-step">
+          <strong>Conclusion:</strong> Thus $(\theta x_1 + (1-\theta) x_2, \theta t_1 + (1-\theta) t_2) \in \mathcal{L}^{n+1}$, so $\mathcal{L}^{n+1}$ is convex.
+        </div>
+      </div>
+
+      <h3>1.3 Key Properties</h3>
+      <ul>
+        <li><strong>Generality:</strong> SOCP subsumes LP and QP</li>
+        <li><strong>Solvers:</strong> Efficiently solved by interior-point methods</li>
+        <li><strong>Applications:</strong> Robust optimization, robust least squares, $\ell_1$ and $\ell_\infty$ norm minimization</li>
+      </ul>
+
+      <h3>1.4 Standard SOCP Examples</h3>
+
+      <h4>Example 4.1: Robust Least Squares</h4>
+      <p>Consider the least-squares problem $\min \|Ax - b\|_2$ where $A$ is uncertain: $A \in \{A_0 + \sum_{i=1}^p u_i A_i \mid \|u\|_2 \le 1\}$. The <strong>robust</strong> version minimizes the worst-case residual:</p>
+      <p style="text-align: center;">
+        $
+        \min_x \max_{\|u\|_2 \le 1} \left\| \left(A_0 + \sum_{i=1}^p u_i A_i\right) x - b \right\|_2
+        $
+      </p>
+
+      <div class="proof-box">
+        <h4>Derivation of Robust Least Squares SOCP (Unstructured Uncertainty)</h4>
+
+        <div class="proof-step">
+          <strong>Step 1: Formulate the Worst-Case Objective.</strong>
+          We assume $A$ is uncertain: $A = A_0 + \Delta$, with $\|\Delta\|_2 \le \rho$.
+          We want to solve $\min_x \max_{\|\Delta\|_2 \le \rho} \|(A_0 + \Delta)x - b\|_2$.
+          Let $r = A_0 x - b$. The objective is $\max_{\|\Delta\|_2 \le \rho} \|r + \Delta x\|_2$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Triangle Inequality Upper Bound.</strong>
+          Using the triangle inequality and the definition of the spectral norm ($\|\Delta x\|_2 \le \|\Delta\|_2 \|x\|_2$):
+          $$ \|r + \Delta x\|_2 \le \|r\|_2 + \|\Delta x\|_2 \le \|r\|_2 + \|\Delta\|_2 \|x\|_2 \le \|A_0 x - b\|_2 + \rho \|x\|_2 $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Construct Worst-Case Perturbation.</strong>
+          We need to show this bound is achievable. Let $u = A_0 x - b$.
+          If $u=0$ or $x=0$, the bound holds trivially.
+          Assume $u \ne 0$ and $x \ne 0$. We construct a rank-1 perturbation $\Delta$ that aligns $\Delta x$ with $u$.
+          Set $\Delta = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2}$.
+          Check norm: $\|\Delta\|_2 = \rho \cdot 1 \cdot 1 = \rho$.
+          Check alignment: $\Delta x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2 = \left( \rho \frac{\|x\|_2}{\|u\|_2} \right) u$.
+          Since $\Delta x$ is a positive scalar multiple of $u$, the norms add:
+          $$ \|u + \Delta x\|_2 = \|u\|_2 + \|\Delta x\|_2 = \|A_0 x - b\|_2 + \rho \|x\|_2 $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Formulate as SOCP.</strong>
+          The problem minimizes the sum of two Euclidean norms: $\|A_0 x - b\|_2 + \rho \|x\|_2$.
+          We introduce epigraph variables $t_1, t_2$ to move the norms to the constraints:
+          $$
+          \begin{aligned}
+          \text{minimize} \quad & t_1 + \rho t_2 \\
+          \text{subject to} \quad & \|A_0 x - b\|_2 \le t_1 \\
+          & \|x\|_2 \le t_2
+          \end{aligned}
+          $$
+          These are standard Second-Order Cone (SOC) constraints. Thus, Robust Least Squares is an SOCP.
+        </div>
+      </div>
+
+      <h4>Example 4.2: Sum of Euclidean Norms (Fermat-Weber Problem)</h4>
+      <p>Consider the problem of finding a point $x$ that minimizes the sum of Euclidean distances to a set of fixed points $p_1, \dots, p_k$:</p>
+      <p style="text-align: center;">
+        $
+        \text{minimize} \quad \sum_{i=1}^k \|x - p_i\|_2
+        $
+      </p>
+      <p>This arises in facility location (finding the optimal warehouse location). It is <strong>not</strong> an LP because the Euclidean norm is not polyhedral. We formulate it as an SOCP by introducing auxiliary variables $t_1, \dots, t_k$:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & \sum_{i=1}^k t_i \\
+        \text{subject to} \quad & \|x - p_i\|_2 \le t_i, \quad i = 1, \dots, k
+        \end{aligned}
+        $
+      </p>
+      <p>The constraints $\|x - p_i\|_2 \le t_i$ are standard second-order cone constraints $(x - p_i, t_i) \in \mathcal{L}^{n+1}$.</p>
+
+      <h3>1.5 Hierarchy: LP ⊂ QP ⊂ SOCP</h3>
+      <p>The problem classes form a nested hierarchy of expressiveness:</p>
+      <ul>
+        <li><b>LP ⊂ QP:</b> A Linear Program is a Quadratic Program with a zero quadratic term ($P=0$).</li>
+        <li><b>QP ⊂ SOCP:</b> A convex Quadratic Program can be cast as an SOCP. The quadratic constraint $x^\top P x + q^\top x + r \le 0$ (with $P = L L^\top$) is equivalent to $\|L^\top x + \frac{1}{2}L^{-1}q\|_2 \le \text{affine}(x)$, which is an SOC constraint.</li>
+      </ul>
+    </section>
+
+    <!-- Section 5: Semidefinite Programs (SDP) -->
+    <section class="section-card" id="section-2">
+      <h2>2. Semidefinite Programs (SDP)</h2>
+
+      <h3>2.1 Definition</h3>
+      <p>A <strong>Semidefinite Program (<a href="#" class="definition-link" data-term="sdp">SDP</a>)</strong> has the form:</p>
+
+      <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
+        <p style="margin: 0;">
+          $
+          \begin{aligned}
+          \text{minimize} \quad & c^\top x \\
+          \text{subject to} \quad & F(x) = F_0 + \sum_{i=1}^n x_i F_i \succeq 0 \\
+          & Ax = b
+          \end{aligned}
+          $
+        </p>
+      </div>
+
+      <p>where:</p>
+      <ul>
+        <li>$x \in \mathbb{R}^n$ is the variable</li>
+        <li>$F_i \in \mathbb{S}^m$ (symmetric matrices) for $i = 0, \dots, n$</li>
+        <li>$F(x) \succeq 0$ means $F(x)$ is positive semidefinite</li>
+        <li>$A \in \mathbb{R}^{p \times n}$, $b \in \mathbb{R}^p$ define additional affine constraints</li>
+      </ul>
+
+      <h3>2.2 The PSD Cone</h3>
+      <p>The constraint $F(x) \succeq 0$ means $F(x)$ lies in the cone of positive semidefinite matrices:</p>
+      <p style="text-align: center;">
+        $
+        \mathbb{S}_+^m = \{X \in \mathbb{S}^m \mid X \succeq 0\}
+        $
+      </p>
+      <p>Recall from Lecture 04 that $\mathbb{S}_+^m$ is a proper cone (convex, closed, pointed, solid).</p>
+
+      <h3>2.3 Key Properties</h3>
+      <ul>
+        <li><strong>Generality:</strong> SDP subsumes LP, QP, and SOCP</li>
+        <li><strong>Complexity:</strong> Polynomial-time solvable using interior-point methods</li>
+        <li><strong>Duality:</strong> Strong duality typically holds; dual problem is also an SDP</li>
+        <li><strong>Applications:</strong> Combinatorial optimization relaxations, control theory (LMI), matrix completion</li>
+      </ul>
+
+      <h3>2.4 Standard SDP Examples</h3>
+
+      <h4>Example 5.1: Eigenvalue Minimization</h4>
+      <p>Minimize the maximum eigenvalue of $A(x) = A_0 + \sum_{i=1}^n x_i A_i$:</p>
+      <p style="text-align: center;">
+        $
+        \min_x \lambda_{\max}(A(x))
+        $
+      </p>
+      <p>This is equivalent to the SDP:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & t \\
+        \text{subject to} \quad & A(x) \preceq t I
+        \end{aligned}
+        $
+      </p>
+      <p>The constraint $A(x) \preceq tI$ is equivalent to $tI - A(x) \succeq 0$, which is an LMI (linear matrix inequality).</p>
+
+      <h4>Example 5.2: Matrix Norm Minimization (Operator Norm)</h4>
+      <p>Minimize the spectral norm (operator norm) of a matrix depending linearly on variables $x$: $\|A(x)\|_2$, where $A(x) = A_0 + \sum_{i=1}^n x_i A_i$.</p>
+
+      <div class="proof-box">
+        <h4>Derivation of SDP Form</h4>
+        <div class="proof-step">
+          <strong>Step 1: Epigraph Form.</strong>
+          The problem is equivalent to:
+          $$ \text{minimize } t \quad \text{subject to } \|A(x)\|_2 \le t $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Singular Value Characterization.</strong>
+          The spectral norm $\|A\|_2$ is the maximum singular value $\sigma_{\max}(A)$. Recall from <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a> that the spectral norm is $\sqrt{\lambda_{\max}(A^\top A)}$.
+          The condition $\sigma_{\max}(A) \le t$ (for $t \ge 0$) is equivalent to saying all eigenvalues of $A^\top A$ are $\le t^2$:
+          $$ A(x)^\top A(x) \preceq t^2 I $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Schur Complement.</strong>
+          We can rewrite the quadratic matrix inequality $t^2 I - A(x)^\top A(x) \succeq 0$ using the Schur complement.
+          Recall that $\begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} \succeq 0$ iff $C \succeq 0$ and $A - B C^{-1} B^\top \succeq 0$.
+          We want to match $tI - A(x)^\top (tI)^{-1} A(x) \succeq 0$.
+          Set $A_{block} = tI$, $B_{block} = A(x)^\top$, $C_{block} = tI$.
+          Then the LMI is:
+          $$ \begin{bmatrix} tI & A(x)^\top \\ A(x) & tI \end{bmatrix} \succeq 0 $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 4: Final SDP Formulation.</strong>
+          $$
+          \begin{aligned}
+          \text{minimize} \quad & t \\
+          \text{subject to} \quad & \begin{bmatrix} tI & A(x)^\top \\ A(x) & tI \end{bmatrix} \succeq 0
+          \end{aligned}
+          $$
+          This is a standard SDP in variables $(x, t)$.
+        </div>
+      </div>
+
+      <!-- Widget 5: SDP Visualizer -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: SDP Visualizer</h3>
+        <p><strong>Purpose:</strong> 3D visualization of the positive semidefinite cone for $2 \times 2$ matrices.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Explore the geometry of $\mathbb{S}_+^2$ (a 3D cone in the space of symmetric matrices)</li>
+          <li>Understand how SDP constraints restrict feasible matrices</li>
+          <li>Connect eigenvalues to cone membership</li>
+        </ul>
+        <div id="widget-5" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <h3>2.5 The Hierarchy: LP ⊂ QP ⊂ SOCP ⊂ SDP</h3>
+      <p>This inclusion hierarchy is strict and fundamental to choosing the right solver:</p>
+      <ul>
+        <li><b>LP ⊂ QP:</b> A Linear Program is a Quadratic Program with a zero quadratic term ($P=0$).</li>
+        <li><b>QP ⊂ SOCP:</b> A convex Quadratic Program can be cast as an SOCP. The quadratic constraint $x^\top P x + q^\top x + r \le 0$ (with $P = L L^\top$) is equivalent to $\|L^\top x + \frac{1}{2}L^{-1}q\|_2 \le \text{affine}(x)$, which is an SOC constraint.</li>
+        <li><b>SOCP ⊂ SDP:</b> Every SOCP can be formulated as an SDP using the Schur complement lemma (as shown below).</li>
+      </ul>
+      <p><b>Why not always use SDP?</b> While SDP is the most general, its solvers ($O(n^6)$ complexity or similar) are significantly slower than dedicated LP/QP solvers ($O(n^3)$). Always use the most specific class possible.</p>
+
+      <div class="proof-box">
+        <h4>Embedding SOCP into SDP via Schur Complement</h4>
+        <p>We want to show that the second-order cone constraint $\|y\|_2 \le t$ (where $y = Ax+b, t = c^\top x + d$) is equivalent to a Linear Matrix Inequality (LMI).</p>
+
+        <div class="proof-step">
+          <strong>Step 1: Schur Complement Lemma.</strong>
+          Recall that for a block matrix $M = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix}$ with $A \succ 0$, we have $M \succeq 0 \iff C - B^\top A^{-1} B \succeq 0$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 2: Construct the matrix.</strong>
+          Consider the matrix:
+          $$
+          M = \begin{bmatrix} tI & y \\ y^\top & t \end{bmatrix}
+          $$
+          Assume $t > 0$ (if $t=0$, we need $y=0$, which is handled by the limit or closure). Then $tI \succ 0$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 3: Apply the Lemma.</strong>
+          Identifying blocks: $A = tI$, $B = y$, $C = t$.
+          The condition $M \succeq 0$ is equivalent to:
+          $$ t - y^\top (tI)^{-1} y \ge 0 $$
+          $$ t - \frac{1}{t} y^\top y \ge 0 $$
+          Multiplying by $t$ (since $t > 0$):
+          $$ t^2 - y^\top y \ge 0 \implies \|y\|_2^2 \le t^2 $$
+          Since $t > 0$, this is equivalent to $\|y\|_2 \le t$.
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Conclusion.</strong>
+          The SOC constraint $\|Ax+b\|_2 \le c^\top x + d$ is equivalent to the LMI:
+          $$
+          \begin{bmatrix} (c^\top x + d) I & Ax + b \\ (Ax + b)^\top & c^\top x + d \end{bmatrix} \succeq 0
+          $$
+          Since this constraint is linear in the matrix variable (which depends linearly on $x$), an SOCP is a special case of an SDP.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Problem Reformulation and Equivalence -->
+    <section class="section-card" id="section-4">
+      <h2>3. Problem Reformulation and Equivalence</h2>
+
+      <h3>3.1 Equivalent Problems</h3>
+      <p>Two optimization problems are <strong>equivalent</strong> if the solution of one can be readily obtained from the solution of the other, and vice versa.</p>
+
+      <h4>Common Equivalence Transformations:</h4>
+      <ul>
+        <li><strong>Change of variables:</strong> Substitute $x = \phi(y)$ where $\phi$ is one-to-one</li>
+        <li><strong>Slack variables:</strong> Introduce $s$ to turn $f(x) \le t$ into $f(x) + s = t$, $s \ge 0$</li>
+        <li><strong>Epigraph form:</strong> Minimize $t$ subject to $f(x) \le t$ (instead of minimizing $f(x)$)</li>
+        <li><strong>Eliminating equality constraints:</strong> Use $Ax = b$ to eliminate variables</li>
+      </ul>
+
+      <h3>3.2 Epigraph Reformulation</h3>
+      <p>The problem $\min f_0(x)$ s.t. $x \in \mathcal{C}$ is equivalent to:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & t \\
+        \text{subject to} \quad & f_0(x) \le t \\
+        & x \in \mathcal{C}
+        \end{aligned}
+        $
+      </p>
+      <p>This transformation is crucial for reformulating problems with complex objectives into standard forms.</p>
+
+      <h3>3.3 Example: Minimizing $\ell_\infty$ Norm</h3>
+      <p>Minimize $\|Ax - b\|_\infty$ can be reformulated as an LP:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & t \\
+        \text{subject to} \quad & -t \mathbf{1} \preceq Ax - b \preceq t \mathbf{1}
+        \end{aligned}
+        $
+      </p>
+
+      <h3>3.4 Eliminating Linear Equality Constraints</h3>
+      <p>Given $\min f_0(x)$ s.t. $Ax = b$ and other constraints, if $\text{range}(A) = \mathbb{R}^p$, we can parameterize the solution space as:</p>
+      <p style="text-align: center;">
+        $
+        x = A^\dagger b + (I - A^\dagger A) z
+        $
+      </p>
+      <p>where $A^\dagger$ is the pseudoinverse and $z \in \mathbb{R}^n$ is a new variable. This reduces the problem dimension.</p>
+
+      <!-- Widget 6: Problem Reformulation Tool -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: Problem Reformulation Tool</h3>
+        <p><strong>Purpose:</strong> Learn how to reformulate non-standard problems into LP, QP, SOCP, or SDP forms.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Select a non-standard problem (e.g., $\ell_1$, $\ell_\infty$ minimization)</li>
+          <li>See reformulation to standard form</li>
+          <li>Understand epigraph and slack variable techniques</li>
+        </ul>
+        <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+    </section>
+
+      <section class="section-card" id="section-4">
+      <h2>4. Quasiconvex Optimization</h2>
+
+      <h3>4.1 Quasiconvex Functions</h3>
+      <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <strong>quasiconvex</strong> if its domain and all sublevel sets $\{x \mid f(x) \le \alpha\}$ are convex.</p>
+
+      <p><strong>Examples:</strong></p>
+      <ul>
+        <li>$\log x$ on $\mathbb{R}_{++}$ (quasilinear: both quasiconvex and quasiconcave)</li>
+        <li>$\lceil x \rceil$ (ceiling function)</li>
+        <li>$x^3$ on $\mathbb{R}$ (not quasiconvex; sublevel sets are not convex)</li>
+      </ul>
+
+      <h3>4.2 Quasiconvex Optimization Problems</h3>
+      <p>A problem is <strong>quasiconvex</strong> if the objective is quasiconvex and the feasible set is convex:</p>
+      <p style="text-align: center;">
+        $
+        \begin{aligned}
+        \text{minimize} \quad & f_0(x) \quad \text{(quasiconvex)} \\
+        \text{subject to} \quad & f_i(x) \le 0 \quad \text{($f_i$ convex)} \\
+        & Ax = b
+        \end{aligned}
+        $
+      </p>
+
+      <h3>4.3 Solution via Bisection (Convex Feasibility)</h3>
+      <p>Quasiconvex optimization can be solved by solving a sequence of convex feasibility problems:</p>
+      <ol>
+        <li>Find interval $[l, u]$ containing $p^*$ (the optimal value)</li>
+        <li>At each iteration, test if the sublevel set $\{x \in \mathcal{F} \mid f_0(x) \le t\}$ is nonempty (for $t = (l+u)/2$)</li>
+        <li>Update $[l, u]$ based on feasibility</li>
+        <li>Repeat until $u - l < \epsilon$</li>
+      </ol>
+      <p>Each feasibility check is a convex problem, so quasiconvex optimization reduces to convex optimization.</p>
+    </section>
+
+    <!-- Section 8: Disciplined Convex Programming (DCP) -->
+    <section class="section-card" id="section-6">
+      <h2>5. Disciplined Convex Programming (DCP)</h2>
+
+      <h3>5.1 Motivation</h3>
+      <p>While we can recognize many convex problems, it's often unclear whether a complex formulation is convex. <strong>Disciplined Convex Programming</strong> is a system of rules for constructing convex optimization problems from basic atoms.</p>
+
+      <h3>5.2 DCP Rules</h3>
+      <ul>
+        <li><strong>Atoms:</strong> A set of basic convex/concave/affine functions with known curvature</li>
+        <li><strong>Composition rules:</strong>
+          <ul>
+            <li>A convex function of a convex function is convex</li>
+            <li>A convex function of a concave function is NOT necessarily convex</li>
+            <li>A concave function of an affine function is concave</li>
+          </ul>
+        </li>
+        <li><strong>Objective:</strong> Minimize a convex function or maximize a concave function</li>
+        <li><strong>Constraints:</strong> Convex constraints of the form $f(x) \le 0$ where $f$ is convex</li>
+      </ul>
+
+      <h3>5.3 DCP in Practice: CVXPY</h3>
+      <p>Tools like CVXPY verify DCP compliance and automatically transform problems to standard solver forms (LP, SOCP, SDP).</p>
+
+      <!-- Widget 8: Solver Selection Guide -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Interactive: Solver Selection Guide</h3>
+        <p><strong>Purpose:</strong> Decision tree tool for selecting the most appropriate solver (GLPK, CVXOPT, MOSEK, SeDuMi, etc.) based on problem structure and scale.</p>
+        <ul style="font-size: 14px; line-height: 1.6;">
+          <li>Input problem characteristics (size, sparsity, cone type)</li>
+          <li>Receive solver recommendations with rationale</li>
+          <li>Learn performance tradeoffs between solvers</li>
+        </ul>
+        <div id="widget-8" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+    </section>
+
+<section class="section-card" id="section-5">
+      <h2>6. Review & Cheat Sheet</h2>
+
+      <h3>Problem Classes Reference</h3>
+      <table class="data-table" style="width: 100%; margin-bottom: 24px;">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Objective</th>
+            <th>Constraints</th>
+            <th>Key Property</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>LP</b></td>
+            <td>Linear</td>
+            <td>Linear inequalities ($Ax \le b$)</td>
+            <td>Solution at vertex; simplex method.</td>
+          </tr>
+          <tr>
+            <td><b>QP</b></td>
+            <td>Convex Quadratic</td>
+            <td>Linear inequalities</td>
+            <td>Unique solution if $P \succ 0$.</td>
+          </tr>
+          <tr>
+            <td><b>SOCP</b></td>
+            <td>Linear</td>
+            <td>Norm constraints ($\|Ax+b\|_2 \le c^\top x + d$)</td>
+            <td>Robust optimization; Euclidean geometry.</td>
+          </tr>
+          <tr>
+            <td><b>SDP</b></td>
+            <td>Linear</td>
+            <td>LMI ($F_0 + \sum x_i F_i \succeq 0$)</td>
+            <td>Optimizes over matrices; relaxation power.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Hierarchy</h3>
+      <p style="text-align: center; font-size: 1.2em;">
+        <strong>LP ⊂ QP ⊂ SOCP ⊂ SDP</strong>
+      </p>
+      <ul>
+        <li>Every LP is a QP (with $P=0$).</li>
+        <li>Every QP is an SOCP (via Cholesky factorization of constraints).</li>
+        <li>Every SOCP is an SDP (via Schur complement).</li>
+      </ul>
+    </section>
+
+<section class="section-card" id="section-3">
+      <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
+      <p>These problems consolidate the lecture material and provide practice in problem classification, formulation, and reformulation.</p>
+
+      <!-- Problem 4.1 -->
+
+<div class="problem">
+  <h3>P4.1 — Classify and Reformulate: Minimizing Maximum Absolute Deviation</h3>
+  <p>Consider the problem:</p>
+        <p style="text-align: center;">
+          $
+          \begin{aligned}
+          \text{minimize} \quad & \max_{i=1,\dots,m} |a_i^\top x - b_i|
+          \end{aligned}
+          $
+        </p>
+        <p>where $a_i \in \mathbb{R}^n$ and $b_i \in \mathbb{R}$.</p>
+        <p><strong>(a)</strong> Is this a convex optimization problem? Justify your answer.</p>
+        <p><strong>(b)</strong> Reformulate it as a standard LP.</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Composition of Convex Functions:</b> The objective function $\max_i |a_i^\top x - b_i|$ is built from simple convex atoms: affine functions, the absolute value (convex), and the maximum (convex and non-decreasing). This structure guarantees convexity by DCP rules.</li>
+            <li><b>Epigraph Transformation:</b> Minimizing a maximum is equivalent to minimizing a scalar $t$ subject to $f_i(x) \le t$. This standard technique "lifts" the non-smooth max function into smooth linear constraints.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Minimizing a maximum (minimax) is a canonical convex problem. We use the epigraph trick: minimize $t$ subject to the max function $\le t$, which unfolds into multiple linear constraints.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Part (a): Convexity.</strong> The function $f(x) = \max_{i=1,\dots,m} |a_i^\top x - b_i|$ is the pointwise maximum of functions $|a_i^\top x - b_i|$. Since $|a_i^\top x - b_i|$ is convex (it's the composition of the absolute value function with an affine function), and the pointwise maximum of convex functions is convex, $f(x)$ is convex. Thus, this is a convex optimization problem.
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): LP reformulation.</strong> We reformulate using epigraph form and absolute value splitting:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & t \\
+            \text{subject to} \quad & -t \le a_i^\top x - b_i \le t, \quad i = 1, \dots, m
+            \end{aligned}
+            $
+            This is equivalent to:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & t \\
+            \text{subject to} \quad & a_i^\top x - b_i \le t, \quad i = 1, \dots, m \\
+            & -a_i^\top x + b_i \le t, \quad i = 1, \dots, m
+            \end{aligned}
+            $
+            This is an LP in variables $(x, t) \in \mathbb{R}^{n+1}$.
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.2 — QP Formulation: Constrained Least Squares</h3>
+  <p>Consider the problem of finding $x \in \mathbb{R}^n$ that minimizes $\|Ax - b\|_2^2$ subject to $l \preceq x \preceq u$ (box constraints).</p>
+        <p><strong>(a)</strong> Write this problem in standard QP form.</p>
+        <p><strong>(b)</strong> Under what conditions on $A$ is the problem strictly convex (thus having a unique solution)?</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Quadratic Programs (QP):</b> QPs are defined by a quadratic objective and linear constraints. They occupy a sweet spot in optimization: more expressive than LPs but still efficiently solvable.</li>
+            <li><b>Uniqueness Condition:</b> A strictly convex objective implies a unique global minimizer. For least squares $x^\top A^\top A x$, the curvature is determined by $A^\top A$. If $A$ has independent columns, $A^\top A$ is positive definite, ensuring uniqueness.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Box-constrained least squares is a QP. The Hessian $A^\top A$ determines convexity; strict convexity requires full column rank.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Part (a): QP formulation.</strong> Expand the objective:
+            $
+            \|Ax - b\|_2^2 = (Ax - b)^\top (Ax - b) = x^\top A^\top A x - 2 b^\top A x + b^\top b
+            $
+            The constant $b^\top b$ doesn't affect the minimizer, so we can write:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & x^\top (A^\top A) x - 2 (A^\top b)^\top x \\
+            \text{subject to} \quad & x \succeq l \\
+            & -x \succeq -u
+            \end{aligned}
+            $
+            In standard QP form with $P = 2 A^\top A$, $q = -2 A^\top b$, and inequality constraints $x \ge l$, $x \le u$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Strict convexity.</strong> The Hessian is $\nabla^2 f(x) = 2 A^\top A$. The problem is strictly convex if and only if $A^\top A \succ 0$, which occurs when $A$ has full column rank (i.e., $\text{rank}(A) = n$).
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.3 — SOCP Reformulation: $\ell_2$ Regularized Least Squares</h3>
+  <p>Consider the problem:</p>
+        <p style="text-align: center;">
+          $
+          \text{minimize} \quad \|Ax - b\|_2 + \lambda \|x\|_2
+          $
+        </p>
+        <p>where $\lambda > 0$.</p>
+        <p><strong>(a)</strong> Show that this is an SOCP by reformulating it in standard SOCP form.</p>
+        <p><strong>(b)</strong> Compare this to Tikhonov regularization $\|Ax - b\|_2^2 + \lambda \|x\|_2^2$, which is a QP.</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>SOCP Modeling:</b> Second-Order Cone Programming generalizes LPs and QPs by allowing Euclidean norm constraints. This is essential for robust optimization and problems involving geometric distances.</li>
+            <li><b>Splitting Norms:</b> The objective $\sum \|v_i\|$ is handled by introducing a slack variable for each norm term, $t_i \ge \|v_i\|$, and minimizing their sum. Each slack constraint is a second-order cone.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Sum of norms is SOCP. Tikhonov (sum of squares) is QP. SOCP is more general but QP is faster. The transformation requires introducing slack variables for each norm.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Part (a): SOCP reformulation.</strong> Introduce auxiliary variables $t_1, t_2$ for the two norms:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & t_1 + \lambda t_2 \\
+            \text{subject to} \quad & \|Ax - b\|_2 \le t_1 \\
+            & \|x\|_2 \le t_2
+            \end{aligned}
+            $
+            Both constraints are second-order cone constraints, so this is an SOCP in variables $(x, t_1, t_2)$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Comparison to QP.</strong> Tikhonov regularization $\|Ax - b\|_2^2 + \lambda \|x\|_2^2$ is a QP (quadratic objective). The $\ell_2$ regularized version $\|Ax - b\|_2 + \lambda \|x\|_2$ is not a QP but an SOCP. Both are convex; the choice depends on application requirements (e.g., sparsity-promoting properties differ).
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.4 — SDP Example: Largest Eigenvalue Minimization</h3>
+  <p>Consider the problem of minimizing $\lambda_{\max}(A_0 + x_1 A_1 + x_2 A_2)$ where $A_0, A_1, A_2 \in \mathbb{S}^n$ are given symmetric matrices.</p>
+        <p><strong>(a)</strong> Formulate this as an SDP.</p>
+        <p><strong>(b)</strong> Write the dual problem (you may use the general SDP duality results).</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Eigenvalue Optimization:</b> The maximum eigenvalue is a convex function of a symmetric matrix. The condition $\lambda_{\max}(A) \le t$ transforms into the Linear Matrix Inequality (LMI) $tI - A \succeq 0$.</li>
+            <li><b>Semidefinite Duality:</b> The dual of this problem reveals a fundamental connection to quantum mechanics: finding a density matrix (PSD, trace 1) that minimizes the expected energy (trace inner product) against the Hamiltonian $A$.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Eigenvalues are roots of characteristic polynomials, but $\lambda_{\max}$ has a variational definition (Rayleigh quotient) that proves convexity. Its epigraph is defined by a Linear Matrix Inequality (LMI).</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Part (a): SDP formulation.</strong> We use the characterization $\lambda_{\max}(M) \le t \iff M \preceq tI$:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & t \\
+            \text{subject to} \quad & A_0 + x_1 A_1 + x_2 A_2 \preceq t I
+            \end{aligned}
+            $
+            Equivalently:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & t \\
+            \text{subject to} \quad & t I - (A_0 + x_1 A_1 + x_2 A_2) \succeq 0
+            \end{aligned}
+            $
+            This is an SDP in variables $(x_1, x_2, t)$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Dual SDP.</strong> Using standard SDP duality (<a href="../09-duality/index.html">Lecture 09</a>), the dual problem is:
+            $
+            \begin{aligned}
+            \text{maximize} \quad & -\text{tr}(A_0 Z) \\
+            \text{subject to} \quad & \text{tr}(A_i Z) = 0, \quad i = 1, 2 \\
+            & \text{tr}(Z) = 1 \\
+            & Z \succeq 0
+            \end{aligned}
+            $
+            where $Z \in \mathbb{S}^n$ is the dual variable. This is also an SDP.
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.5 — Problem Classification: Portfolio Optimization with Risk Constraint</h3>
+  <p>Consider a portfolio optimization problem with $n$ assets, expected returns $\mu \in \mathbb{R}^n$, and covariance matrix $\Sigma \in \mathbb{S}_{++}^n$:</p>
+        <p style="text-align: center;">
+          $
+          \begin{aligned}
+          \text{maximize} \quad & \mu^\top x \\
+          \text{subject to} \quad & x^\top \Sigma x \le \sigma_{\max}^2 \\
+          & \mathbf{1}^\top x = 1 \\
+          & x \ge 0
+          \end{aligned}
+          $
+        </p>
+        <p><strong>(a)</strong> Classify this problem (LP, QP, SOCP, or SDP).</p>
+        <p><strong>(b)</strong> Reformulate it to fit your classification.</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Quadratically Constrained Quadratic Programming (QCQP):</b> This class involves quadratic objectives and quadratic inequality constraints. Convexity requires all quadratic matrices to be PSD.</li>
+            <li><b>Factorization Trick:</b> A convex quadratic constraint $x^\top \Sigma x \le c$ can be converted to an SOC constraint $\|L^\top x\|_2 \le \sqrt{c}$ using the Cholesky factorization $\Sigma = LL^\top$. This places QCQP inside the SOCP class.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Quadratic constraints define ellipsoids. Maximizing a linear function over an ellipsoid is a classic convex problem (QCQP/SOCP).</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Part (a): Classification.</strong> The objective is linear (easy). The constraint $x^\top \Sigma x \le \sigma_{\max}^2$ is a quadratic constraint. Since we're maximizing a linear function (equivalent to minimizing $-\mu^\top x$), and we have a quadratic constraint, this is a <strong>Quadratically Constrained Quadratic Program (QCQP)</strong>, which is a subclass of SOCP (since $\Sigma \succ 0$).
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): SOCP reformulation.</strong> Since $\Sigma \succ 0$, we can write $\Sigma = L L^\top$ (Cholesky factorization). Then $x^\top \Sigma x = \|L^\top x\|_2^2$, so the constraint becomes:
+            $
+            \|L^\top x\|_2 \le \sigma_{\max}
+            $
+            The problem in standard SOCP form is:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & -\mu^\top x \\
+            \text{subject to} \quad & \|L^\top x\|_2 \le \sigma_{\max} \\
+            & \mathbf{1}^\top x = 1 \\
+            & x \ge 0
+            \end{aligned}
+            $
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.6 — Equivalence: $\ell_1$ Minimization and LP</h3>
+  <p>Show that the problem $\min \|x\|_1$ subject to $Ax = b$ is equivalent to an LP.</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>L1 Norm Linearization:</b> The condition $\|x\|_1 \le t$ describes a cross-polytope, which is an intersection of $2^n$ halfspaces. However, by introducing a slack variable for <i>each</i> component ($|x_i| \le t_i$), we only need $2n$ linear constraints.</li>
+            <li><b>Sparsity Geometry:</b> The LP formulation works because the $\ell_1$ ball has "pointy" vertices on the axes. Optimizing a linear function over this shape tends to land on these sparse vertices.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>The $\ell_1$ norm encourages sparsity. Its unit ball is a polytope, allowing reformulation as an LP by splitting variables or using slack variables.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Reformulation.</strong> Recall $\|x\|_1 = \sum_{i=1}^n |x_i|$. We introduce auxiliary variables $t \in \mathbb{R}^n$ and enforce $|x_i| \le t_i$ for all $i$:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & \mathbf{1}^\top t \\
+            \text{subject to} \quad & -t \preceq x \preceq t \\
+            & Ax = b
+            \end{aligned}
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Verification.</strong> The constraints $-t \preceq x \preceq t$ are equivalent to $-t_i \le x_i \le t_i$ for all $i$, which means $|x_i| \le t_i$. At optimality, we have $t_i = |x_i|$ (if $t_i > |x_i|$, we can decrease $t_i$ to reduce the objective). Thus $\mathbf{1}^\top t = \sum_i t_i = \sum_i |x_i| = \|x\|_1$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Conclusion.</strong> This is an LP in variables $(x, t) \in \mathbb{R}^{2n}$ with linear objective $\mathbf{1}^\top t$ and linear constraints.
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.7 — Quasiconvex Optimization: Bisection Algorithm</h3>
+  <p>Consider minimizing $f(x) = \frac{x_1}{x_2}$ subject to $x_1 + x_2 \le 1$, $x_1, x_2 > 0$.</p>
+        <p><strong>(a)</strong> Show that $f$ is quasiconvex (but not convex) on $\mathbb{R}_{++}^2$.</p>
+        <p><strong>(b)</strong> Describe how to solve this problem using bisection over $t$ and convex feasibility problems.</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Quasiconvexity via Sublevel Sets:</b> A function is quasiconvex if its sublevel sets are convex. For a ratio $N(x)/D(x)$, the condition $\frac{N(x)}{D(x)} \le t$ rearranges to the linear inequality $N(x) - t D(x) \le 0$ (assuming $D(x) > 0$), verifying quasiconvexity.</li>
+            <li><b>Bisection Algorithm:</b> Since we can efficiently test if the optimal value is below $t$ (by solving a convex feasibility problem), we can perform a binary search on the optimal value $p^*$. This is the standard method for solving Quasiconvex problems.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Linear-fractional functions have convex sublevel sets (halfspaces) but are not convex functions. Bisection allows solving quasiconvex problems using a sequence of convex feasibility checks.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Part (a): Quasiconvexity.</strong> The sublevel set is:
+            $
+            S_\alpha = \left\{(x_1, x_2) \in \mathbb{R}_{++}^2 \mid \frac{x_1}{x_2} \le \alpha\right\} = \{(x_1, x_2) \mid x_1 \le \alpha x_2, \; x_1, x_2 > 0\}
+            $
+            This defines a convex cone for each $\alpha$ (it's a halfplane in $\mathbb{R}_{++}^2$). Thus $f$ is quasiconvex. To see it's not convex, note that $f$ is linear along rays from the origin, but its Hessian is not positive semidefinite everywhere (check by computing $\nabla^2 f$).
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Bisection algorithm.</strong> We solve:
+            $
+            \min \frac{x_1}{x_2} \quad \text{s.t.} \quad x_1 + x_2 \le 1, \; x_1, x_2 > 0
+            $
+            using bisection over $t$. At each iteration, check feasibility of:
+            $
+            \begin{aligned}
+            & \frac{x_1}{x_2} \le t \\
+            & x_1 + x_2 \le 1 \\
+            & x_1, x_2 > 0
+            \end{aligned}
+            $
+            The first constraint is equivalent to $x_1 \le t x_2$ (a linear constraint!). So the feasibility problem is:
+            $
+            \begin{aligned}
+            \text{find} \quad & x_1, x_2 \\
+            \text{s.t.} \quad & x_1 - t x_2 \le 0 \\
+            & x_1 + x_2 \le 1 \\
+            & x_1, x_2 > 0
+            \end{aligned}
+            $
+            This is an LP feasibility problem. We bisect on $t \in [l, u]$ until convergence.
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.8 — Minimum Enclosing Ellipsoid as SDP</h3>
+  <p>Given points $x_1, \dots, x_m \in \mathbb{R}^n$, find the minimum-volume ellipsoid $\mathcal{E} = \{x \mid \|Ax - b\|_2 \le 1\}$ containing all points.</p>
+        <p><strong>(a)</strong> Show that the volume of $\mathcal{E}$ is proportional to $\det(A^{-1})$.</p>
+        <p><strong>(b)</strong> Formulate the problem as an SDP by using the objective $\log \det(A)$ (which is concave in $A$ for $A \succ 0$).</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Ellipsoid Volume:</b> The volume of an ellipsoid parameterized by matrix $A$ is proportional to $\det(A^{-1})$. Thus, minimizing volume is equivalent to maximizing $\det(A)$ or minimizing $-\log\det(A)$.</li>
+            <li><b>Barrier Function:</b> The function $-\log\det(X)$ is strictly convex on the set of positive definite matrices. It acts as a "barrier" that blows up as the matrix approaches singularity (boundary of the cone), ensuring the solution is robust and full-rank.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>The volume of an ellipsoid is related to the determinant. $\log \det$ is a concave barrier function for the PSD cone, essential for interior point methods.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Part (a): Volume formula.</strong> An ellipsoid $\mathcal{E} = \{Bz + c \mid \|z\|_2 \le 1\}$ has volume $V = \alpha_n \det(B)$, where $\alpha_n$ is the volume of the unit ball in $\mathbb{R}^n$. For $\mathcal{E} = \{x \mid \|Ax - b\|_2 \le 1\}$, we have $x = A^{-1} z + A^{-1} b$ where $\|z\|_2 \le 1$. Thus $B = A^{-1}$ and $V \propto \det(A^{-1})$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): SDP formulation.</strong> Minimizing $\det(A^{-1})$ is equivalent to maximizing $\det(A)$, or minimizing $-\log \det(A)$. The constraints are $\|Ax_i - b\|_2 \le 1$ for all $i$, which are second-order cone constraints. The problem is:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & -\log \det(A) \\
+            \text{subject to} \quad & \|Ax_i - b\|_2 \le 1, \quad i = 1, \dots, m \\
+            & A \succ 0
+            \end{aligned}
+            $
+            The objective $-\log \det(A)$ is convex (since $\log \det$ is concave). Using the fact that $-\log \det(A) = \text{tr}(\log(A^{-1}))$ and epigraph formulations, this can be written as an SDP.
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.9 — Resource Allocation Formulation</h3>
+  <p>Consider a resource allocation problem where we want to distribute a total budget $B$ among $n$ projects to maximize total utility. The utility of project $i$ is given by $U_i(x_i) = \alpha_i \log(1 + x_i)$, where $x_i \ge 0$ is the investment in project $i$ and $\alpha_i > 0$. There are also linear constraints $Ax \le b$ representing resource limits.</p>
+        <p><strong>(a)</strong> Formulate this as a convex optimization problem.</p>
+        <p><strong>(b)</strong> Verify that the objective is concave (so minimizing negative utility is convex).</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Diminishing Returns:</b> Standard utility functions like $\log(x)$ are concave, reflecting the economic principle that each additional unit of resource provides less value than the previous one.</li>
+            <li><b>Separability:</b> The objective function is a sum of independent terms $\sum U_i(x_i)$. This "separable" structure allows for efficient decomposition algorithms (like Dual Decomposition), making it ideal for large-scale network problems.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Logarithmic utility (diminishing returns) makes the objective concave (minimization convex). Separable structure simplifies optimization.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Part (a): Formulation.</strong>
+            We want to maximize $\sum_{i=1}^n \alpha_i \log(1 + x_i)$ subject to $\sum x_i \le B$, $Ax \le b$, and $x \ge 0$.
+            Standard convex form minimizes a convex function. Thus:
+            $
+            \begin{aligned}
+            \text{minimize} \quad & -\sum_{i=1}^n \alpha_i \log(1 + x_i) \\
+            \text{subject to} \quad & \mathbf{1}^\top x \le B \\
+            & Ax \le b \\
+            & -x \le 0
+            \end{aligned}
+            $
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Convexity Verification.</strong>
+            Consider $f_i(x_i) = -\alpha_i \log(1 + x_i)$.
+            First derivative: $f_i'(x_i) = -\frac{\alpha_i}{1 + x_i}$.
+            Second derivative: $f_i''(x_i) = \frac{\alpha_i}{(1 + x_i)^2}$.
+            Since $\alpha_i > 0$ and $(1+x_i)^2 > 0$ for $x_i \ge 0$, we have $f_i''(x_i) > 0$.
+            Thus, each term is convex. The sum of convex functions is convex.
+            The constraints are all linear inequalities, which define a convex set.
+            Therefore, this is a convex optimization problem.
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.10 — Standard Form Transformation: Linear-Fractional Programming</h3>
+  <p>Consider the linear-fractional optimization problem:</p>
+        $$
+        \begin{aligned}
+        \text{minimize} \quad & \frac{c^\top x + d}{e^\top x + f} \\
+        \text{subject to} \quad & Ax \le b \\
+        & e^\top x + f > 0
+        \end{aligned}
+        $$
+        <p>This problem is quasiconvex but not convex. However, it can be transformed into a standard LP.</p>
+        <p><strong>(a)</strong> Perform the Charnes-Cooper transformation by introducing variables $y = \frac{x}{e^\top x + f}$ and $z = \frac{1}{e^\top x + f}$.</p>
+        <p><strong>(b)</strong> Write the resulting equivalent problem and verify it is an LP.</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Charnes-Cooper Transformation:</b> This specific change of variables ($y = \frac{x}{e^\top x + f}, z = \frac{1}{e^\top x + f}$) is a powerful trick to convert a linear-fractional programming problem into a pure Linear Program (LP).</li>
+            <li><b>Constraint Linearity:</b> Under this projective transformation, linear constraints on $x$ become homogeneous linear constraints on $(y, z)$, preserving the LP structure.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Projective transformation (homogenization) linearizes the fractional objective, converting the problem to an LP. This is the Charnes-Cooper transformation.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Part (a): Variable Transformation.</strong>
+            Let $z = \frac{1}{e^\top x + f}$. Since $e^\top x + f > 0$, we have $z > 0$.
+            Let $y = zx$. Then $x = y/z$.
+            Substitute into the objective:
+            $$ \frac{c^\top x + d}{e^\top x + f} = \frac{c^\top (y/z) + d}{1/z} = c^\top y + d z $$
+            Substitute into the definition of $z$:
+            $$ e^\top x + f = \frac{1}{z} \implies e^\top (y/z) + f = \frac{1}{z} \implies e^\top y + f z = 1 $$
+            Substitute into the constraints $Ax \le b$:
+            $$ A(y/z) \le b \implies Ay \le bz \implies Ay - bz \le 0 $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Part (b): Equivalent LP.</strong>
+            The transformed problem is:
+            $$
+            \begin{aligned}
+            \text{minimize} \quad & c^\top y + d z \\
+            \text{subject to} \quad & Ay - bz \le 0 \\
+            & e^\top y + f z = 1 \\
+            & z \ge 0
+            \end{aligned}
+            $$
+            The constraint $z > 0$ is relaxed to $z \ge 0$ for standard LP form (usually handled by the fact that $z=0$ would imply unboundedness or infeasibility in the original problem context, or by $e^\top y = 1$ if $z=0$ which corresponds to "points at infinity").
+            This is a Linear Program in variables $(y, z) \in \mathbb{R}^{n+1}$.
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.11 — Vector Optimization (Pareto Optimality)</h3>
+  <p>A point $x^\star$ is <b>Pareto optimal</b> for the vector objective $f(x) = (f_1(x), \dots, f_k(x))$ if there is no feasible $y$ such that $f_i(y) \le f_i(x^\star)$ for all $i$ and $f_j(y) < f_j(x^\star)$ for at least one $j$.
+        Prove that minimizing the weighted sum $\sum w_i f_i(x)$ with weights $w > 0$ yields a Pareto optimal point.</p>
+
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Scalarization Method:</b> To find Pareto optimal points for a vector objective, we minimize a weighted sum of the components. The weights represent the relative importance or "prices" of the different objectives.</li>
+            <li><b>Pareto Optimality Condition:</b> If a point minimizes a weighted sum with strictly positive weights, it is guaranteed to be Pareto optimal. For convex problems, the converse is also true: any Pareto point can be found by some choice of weights.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Scalarization (weighted sum) converts a vector optimization problem into a standard scalar convex problem. Positive weights guarantee Pareto optimality.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+            <strong>Setup:</strong> Let $x^\star$ minimize $S(x) = \sum_{i=1}^k w_i f_i(x)$ over the feasible set $\mathcal{F}$. Assume for contradiction that $x^\star$ is not Pareto optimal.
+          </div>
+          <div class="proof-step">
+            <strong>Contradiction:</strong> If $x^\star$ is not Pareto optimal, there exists a $y \in \mathcal{F}$ such that $f_i(y) \le f_i(x^\star)$ for all $i$ and $f_j(y) < f_j(x^\star)$ for some $j$.
+          </div>
+          <div class="proof-step">
+            <strong>Weighted Sum:</strong> Since $w_i > 0$:
+            $$ \sum_{i=1}^k w_i f_i(y) < \sum_{i=1}^k w_i f_i(x^\star) $$
+            (Strict inequality holds because at least one term is strictly smaller and none are larger).
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion:</strong> This implies $S(y) < S(x^\star)$, contradicting the fact that $x^\star$ minimizes $S(x)$. Therefore, $x^\star$ must be Pareto optimal.
+          </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.12 — Matrix Fractional Minimization</h3>
+  <p>Consider the problem of minimizing the matrix fractional function $f(x, Y) = x^\top Y^{-1} x$ subject to linear constraints:</p>
+  <p style="text-align: center;">
+    $
+    \begin{aligned}
+    \text{minimize} \quad & x^\top Y^{-1} x \\
+    \text{subject to} \quad & Ax = b \\
+    & L \preceq Y \preceq U
+    \end{aligned}
+    $
+  </p>
+  <p>where $x \in \mathbb{R}^n$, $Y \in \mathbb{S}^n_{++}$, and $L, U \in \mathbb{S}^n$. Formulate this as a Semidefinite Program (SDP).</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Schur Complement Epigraph:</b> The condition $t \ge x^\top Y^{-1} x$ is equivalent to the LMI $\begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0$. This is the standard "trick" for handling quadratic-over-linear terms in SDPs.</li>
+        <li><b>Triangle of Equivalence:</b> This transformation connects the scalar inequality (objective) to a block matrix inequality (SDP constraint), completing the "Triangle of Equivalence" introduced in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Epigraph Form.</strong>
+      Introduce a scalar variable $t$. The problem is equivalent to:
+      $$
+      \begin{aligned}
+      \text{minimize} \quad & t \\
+      \text{subject to} \quad & x^\top Y^{-1} x \le t \\
+      & Ax = b \\
+      & L \preceq Y \preceq U
+      \end{aligned}
+      $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 2: Schur Complement.</strong>
+      The nonlinear constraint $x^\top Y^{-1} x \le t$ (where implicitly $Y \succ 0$) can be rewritten using the Schur complement as the Linear Matrix Inequality:
+      $$
+      \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0
+      $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 3: SDP Formulation.</strong>
+      The final problem is an SDP in variables $x \in \mathbb{R}^n, Y \in \mathbb{S}^n, t \in \mathbb{R}$:
+      $$
+      \begin{aligned}
+      \text{minimize} \quad & t \\
+      \text{subject to} \quad & \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0 \\
+      & Ax = b \\
+      & Y - L \succeq 0 \\
+      & U - Y \succeq 0
+      \end{aligned}
+      $$
+      Note that the LMI implies $Y \succeq 0$ (actually $Y \succ 0$ if $t$ is tight, but non-strict LMI allows boundary). The constraints $L \preceq Y$ typically enforce strict definiteness if $L \succ 0$.
+    </div>
+  </div>
+</div>
+
+    </section>
+
+<section class="section-card" id="section-7" style="margin-bottom: 32px;">
+      <h2>7. Readings & Resources</h2>
+      <ul class="link-list">
+        <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 4 — Convex Optimization Problems</li>
+        <li><strong>Nesterov, Introductory Lectures on Convex Optimization:</strong> Chapter 1 — Linear and Conic Programming</li>
+        <li><strong>Ben-Tal & Nemirovski, Lectures on Modern Convex Optimization:</strong> Part I — Conic Programming</li>
+        <li><strong>CVXPY Documentation:</strong> <a href="https://www.cvxpy.org/" target="_blank">https://www.cvxpy.org/</a> — DCP rules and examples</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 11: SUMMARY -->
+
+
+    <!-- READINGS -->
+
+
+    <!-- SECTION 10: PROBLEM SET -->
+
+  
+    </article>
+  </main></div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p style="margin: 0;">
+        © <span id="year"></a> Convex Optimization Course ·
+        <a href="../../README.md" style="color: var(--brand);">About</a>
+      </p>
+    </div>
+  </footer>
+  </main></div>
+
+  <!-- Load Pyodide for Python widgets (optional) -->
+  <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+
+  <!-- Widget loaders -->
+  <script type="module">
+    import { initProblemRecognizer } from './widgets/js/problem-form-recognizer.js';
+    initProblemRecognizer('widget-1');
+  </script>
+  <script type="module">
+    import { initLPVisualizer } from './widgets/js/lp-visualizer.js';
+    initLPVisualizer('widget-2');
+  </script>
+  <script type="module">
+    import { initQPSandbox } from './widgets/js/qp-sandbox.js';
+    initQPSandbox('widget-4');
+  </script>
+  <script type="module">
+    import { initSDPVisualizer } from './widgets/js/sdp-visualizer.js';
+    initSDPVisualizer('widget-5');
+  </script>
+  <script type="module">
+    import { initProblemReformulationTool } from './widgets/js/reformulation-tool.js';
+    initProblemReformulationTool('widget-6');
+  </script>
+  <script type="module">
+    import { initSOCPExplorer } from './widgets/js/socp-explorer.js';
+    initSOCPExplorer('widget-7');
+  </script>
+  <script type="module">
+    import { initSolverGuide } from './widgets/js/solver-guide.js';
+    initSolverGuide('widget-8');
+  </script>
+
+  <!-- Global utilities -->
+  <script src="../../static/js/math-renderer.js"></script>
+<script src="../../static/js/ui.js"></script>
+<script src="../../static/js/toc.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  <script src="../../static/js/glossary-loader.js"></script>
+<script src="../../static/js/notes-widget.js"></script>
+<script src="../../static/js/pomodoro.js"></script>
+<script src="../../static/js/progress-tracker.js"></script>
+</body>
+</html>

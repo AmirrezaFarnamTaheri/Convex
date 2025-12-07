@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hessian Eigenvalue Heatmap</title>
+    <link rel="stylesheet" href="../../../shared/styles/widget-theme.css">
+    <style>
+        #heatmap-container {
+            width: 500px;
+            height: 500px;
+            border: 1px solid var(--color-surface-1);
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <label for="function-select">Choose a function:</label>
+        <select id="function-select">
+            <option value="x**2 + y**2">f(x, y) = x² + y²</option>
+            <option value="x**3 + y**3 - 3*x - 3*y">f(x, y) = x³ + y³ - 3x - 3y</option>
+            <option value="-exp(-(x**2 + y**2))">f(x, y) = -exp(-(x² + y²))</option>
+        </select>
+        <div id="heatmap-container"></div>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="module" src="js/hessian-heatmap.js"></script>
+<script src="../../static/js/ui.js"></script>
+<script src="../../static/js/notes-widget.js"></script>
+<script src="../../static/js/pomodoro.js"></script>
+<script src="../../static/js/progress-tracker.js"></script>
+</body>
+</html>

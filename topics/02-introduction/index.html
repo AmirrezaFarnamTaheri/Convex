@@ -1,0 +1,1527 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>01. Introduction to Convex Optimization — Convex Optimization</title>
+  <link rel="stylesheet" href="../../static/css/convex-unified.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.128/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="site-header sticky">
+    <div class="container">
+      <div class="brand">
+        <a href="../../index.html">Convex Optimization</a>
+      </div>
+      <nav class="nav">
+        <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
+        <a href="../01-linear-algebra-advanced/index.html"><i data-feather="arrow-left"></i> Previous</a>
+        <a href="../03-convex-sets-geometry/index.html">Next <i data-feather="arrow-right"></i></a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+    <header class="lecture-header section-card">
+      <h1>02. Introduction: What Makes a Problem Convex?</h1>
+      <div class="lecture-meta">
+        <span>Date: 2025-10-21</a>
+        <span>Duration: 90 min</a>
+        <span>Tags: intro, motivation, overview, modeling, fundamentals</a>
+      </div>
+      <div class="lecture-summary">
+        <p><strong>Overview:</strong> This lecture introduces convex optimization by defining what makes a problem "convex" and proving the fundamental theorem that any local minimum is also global. We examine the canonical problem families (LP, QP, SOCP, SDP), present the "loss + regularizer + constraints" modeling framework, and develop practical techniques for reformulating problems into standard convex forms.</p>
+        <p><strong>Prerequisites:</strong> <a href="../00-linear-algebra-basics/index.html">Lecture 00: Linear Algebra Basics</a> and <a href="../01-linear-algebra-advanced/index.html">Lecture 01: Linear Algebra Advanced</a> are recommended, particularly projections, PSD matrices, norms, and the fundamental subspaces.</p>
+        <p><strong>Forward Connections:</strong> The definition of convex problems relies on convex functions and sets (Lectures 03-06). The modeling techniques introduced here are used throughout the course. Duality theory (Lecture 13) generalizes the optimality conditions proven here.</p>
+      </div>
+    </header>
+
+    <section class="section-card">
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
+      <ul>
+        <li><b>Define Convex Optimization Problems:</b> State the precise three-part definition and distinguish convex from nonconvex problems at a glance.</li>
+        <li><b>Prove the Fundamental Theorem:</b> Show that every local minimum of a convex problem is a global minimum, and understand why this property is essential.</li>
+        <li><b>Understand the Problem Hierarchy:</b> Identify LP, QP, SOCP, and SDP by their structure and know which solvers and complexity classes apply to each.</li>
+        <li><b>Apply the Loss + Regularizer Paradigm:</b> Formulate machine learning and statistical problems using the "loss + regularizer + constraints" template.</li>
+        <li><b>Transform to Standard Forms:</b> Use safe rewrites to convert norms, absolute values, and max functions into equivalent standard convex forms.</li>
+        <li><b>Verify Problem Convexity:</b> Check feasibility, recognize unboundedness, and apply sanity checks before invoking solvers.</li>
+        <li><b>Understand Solver Architecture:</b> Grasp the "model → transform → canonicalize → solve → verify" pipeline used by CVX, CVXPY, and JuMP.</li>
+      </ul>
+    </section>
+
+
+
+    <article>
+      <section class="section-card" id="section-1">
+        <h2>1. What is a Convex Optimization Problem?</h2>
+
+        <h3>1.1 The Landscape of Optimization</h3>
+        <p>Optimization is the mathematical discipline of finding the "best" solution from a set of alternatives. In the vast landscape of optimization problems, there exists a fundamental divide between two classes:</p>
+        <ul>
+          <li><b>Convex problems:</b> Solvable efficiently with guaranteed global optimality.</li>
+          <li><b>Nonconvex problems:</b> Generally NP-hard, prone to local minima, no polynomial-time guarantees.</li>
+        </ul>
+        <p>This distinction is not merely academic—it determines whether a real-world problem can be solved reliably at scale.</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="../../static/assets/topics/02-introduction/convex_vs_nonconvex_schematic.svg"
+               alt="Schematic overview of the optimization problem landscape"
+               style="max-width: 100%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 1.1:</i> The optimization landscape—convex vs. nonconvex problems represent fundamentally different computational complexity classes.</figcaption>
+        </figure>
+
+        <h3>1.2 Formal Definition</h3>
+        <p>A mathematical optimization problem is <a href="#" class="definition-link" data-term="convex function">convex</a> if it can be written in the standard form:</p>
+        $$
+        \begin{aligned}
+        \min_{x \in \mathbb{R}^n} \quad & f_0(x) && \text{(Objective function)} \\
+        \text{subject to} \quad & f_i(x) \le 0, && i=1,\dots,m \quad \text{(Inequality constraints)}\\
+        & Ax = b && \text{(Equality constraints)}
+        \end{aligned}
+        $$
+        <p>where <b>three critical structural conditions</b> must be satisfied:</p>
+        <ol>
+          <li><b>Convex objective:</b> The objective function $f_0 : \mathbb{R}^n \to \mathbb{R}$ is convex (see <a href="../05-convex-functions-basics/index.html">Lecture 05</a> for the formal definition).</li>
+          <li><b>Convex inequality constraints:</b> Each constraint function $f_i : \mathbb{R}^n \to \mathbb{R}$ is convex (see <a href="../05-convex-functions-basics/index.html">Lecture 05</a>).</li>
+          <li><b>Affine equality constraints:</b> All equality constraints are <a href="#" class="definition-link">linear (affine)</a>, of the form $Ax = b$. Recall from <a href="../00-linear-algebra-basics/index.html">Lecture 00</a> that the set of solutions to $Ax=b$ is an affine set (a shifted subspace). If we allowed nonlinear equality constraints (like $x^2=1$), the feasible set would essentially consist of the boundary of a convex set, which is generally not convex.</li>
+        </ol>
+
+        <div class="insight">
+          <h4>Geometric Insight: Linearity vs. Convexity</h4>
+          <p>It is crucial to distinguish between "flat" and "curved" geometry:</p>
+          <ul>
+            <li><b>Linearity (Affine):</b> Represents "flat" structures—lines, planes, hyperplanes. These are sets that extend infinitely in all directions within a subspace. They are both convex and concave. In optimization, we use them for equality constraints because the intersection of hyperplanes is a stable, convex object (a smaller affine set).</li>
+            <li><b>Convexity:</b> Represents "bulging" or "bowl-like" structures—balls, ellipsoids, halfspaces. These sets have an "inside" and an "outside". In optimization, we use them for inequality constraints ("stay inside the bowl") or objectives ("find the bottom of the bowl").</li>
+          </ul>
+          <p><b>Rule of Thumb:</b> If you force a "curved" function to be zero ($x^2=1$), you get a curved shell, which is not a solid convex set. If you force a "flat" function to be zero ($ax=b$), you get a flat slice, which is convex.</p>
+        </div>
+
+        <div class="insight">
+          <h4>💡 Why These Conditions Matter</h4>
+          <p>These three conditions guarantee that:</p>
+          <ul>
+            <li>The <b>feasible set</b> $\mathcal{F} = \{x \mid f_i(x) \le 0, Ax = b\}$ is a convex set.</li>
+            <li>Every local minimum is guaranteed to be a <b>global minimum</b>.</li>
+            <li>Efficient algorithms (interior-point, first-order methods) converge with <b>provable guarantees</b>.</li>
+          </ul>
+          <p>Violating even one condition (e.g., a non-affine equality constraint like $x^2=1$) can make the problem NP-hard.</p>
+        </div>
+
+        <h3>1.3 The Feasible Set</h3>
+        <p>The <a href="#" class="definition-link">feasible set</a> (also called feasible region or constraint set) is:</p>
+        $$
+        \mathcal{F} = \{x \in \mathbb{R}^n \mid f_i(x) \le 0 \ \forall i, \ Ax = b\}
+        $$
+        <p>This is the set of all points satisfying all constraints. For a convex problem, $\mathcal{F}$ is convex—a property we'll prove in <a href="../03-convex-sets-geometry/index.html">Lecture 03</a> using operations preserving convexity.</p>
+
+        <h3>1.4 Optimal Value and Optimal Points</h3>
+        <ul>
+          <li><b>Optimal value:</b> $p^* = \inf\{f_0(x) \mid x \in \mathcal{F}\}$ (can be $-\infty$ if unbounded, $+\infty$ if infeasible).</li>
+          <li><b>Optimal point (solution):</b> $x^* \in \mathcal{F}$ is optimal if $f_0(x^*) = p^*$.</li>
+          <li><b>$\varepsilon$-suboptimal:</b> $x$ is $\varepsilon$-suboptimal if $f_0(x) \le p^* + \varepsilon$.</li>
+        </ul>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Visualizer: Convex Hull Explorer</h3>
+          <p><b>Understand the Building Block of Convexity:</b> A convex combination is the foundation of all convex geometry. This widget demonstrates how mixing points creates the convex hull:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Drag the vertices ($v_1, v_2, v_3$):</b> Shape the triangle (convex hull).</li>
+            <li><b>Drag the target point ($x$):</b> See if it can be formed as a convex combination of vertices.</li>
+            <li><b>Barycentric Coordinates:</b> Observe the weights $\theta_i$. Inside the hull, all $\theta_i \ge 0$. Outside, at least one is negative.</li>
+          </ul>
+          <p><i>Geometric intuition:</i> A set is convex if it contains all convex combinations of its points. This prevents "holes" or "dents" that could trap optimization algorithms.</p>
+          <div id="widget-convex-combination" style="width: 100%; height: 450px; position: relative;"></div>
+        </div>
+      </section>
+
+      <section class="section-card" id="section-2">
+        <h2>2. The Fundamental Theorem: Local = Global</h2>
+
+        <h3>2.1 Global Optimality</h3>
+        <p>In general (nonconvex) optimization, algorithms can get stuck in <b>local minima</b>—points that are optimal within a small neighborhood but not globally. For convex problems, this pathology cannot occur:</p>
+
+        <div class="insight">
+          <h4>⚠️ Common Misconception: Unimodal vs. Convex</h4>
+          <p>It is often thought that any function with a single global minimum ("unimodal") is easy to optimize. This is <b>false</b>.</p>
+          <ul>
+            <li><b>Quasiconvexity:</b> A function can have a single minimum but still be non-convex (e.g., "bowl" shape with flat spots or weird kinks). While quasiconvex problems are solvable, they require specialized methods (bisection).</li>
+            <li><b>Stationary Points:</b> A non-convex function can have a single global minimum but many saddle points or local maxima, which can trap gradient-based algorithms (vanishing gradients).</li>
+            <li><b>Convexity is stronger:</b> Convexity guarantees not just uniqueness (under strict convexity) but also that <b>every</b> direction of descent points towards the optimum. This geometric structure allows for polynomial-time guarantees that mere unimodality does not.</li>
+          </ul>
+        </div>
+
+        <div class="theorem-box">
+          <h4>Theorem (Fundamental Property of Convex Optimization)</h4>
+          <p>For a convex optimization problem, any local minimum is also a global minimum.</p>
+          <p><b>Formally:</b> If $x^*$ is a local minimum (i.e., there exists $\delta > 0$ such that $f_0(x^*) \le f_0(x)$ for all feasible $x$ with $\|x - x^*\|_2 < \delta$), then $x^*$ is a global minimum.</p>
+        </div>
+
+        <div class="proof-box">
+          <h4>Proof</h4>
+
+          <div class="proof-step">
+            <strong>Setup (proof by contradiction):</strong> Assume $x^*$ is a local minimum but not a global minimum. Then there exists a feasible point $y \in \mathcal{F}$ with $f_0(y) < f_0(x^*)$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 1: Convexity of feasible set.</strong> Since the problem is convex, the feasible set $\mathcal{F}$ is convex. Therefore, for any $\theta \in [0,1]$, the point:
+            $$
+            z(\theta) = \theta y + (1-\theta)x^*
+            $$
+            is also feasible, i.e., $z(\theta) \in \mathcal{F}$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Apply convexity of objective.</strong> By convexity of $f_0$:
+            $$
+            f_0(z(\theta)) = f_0(\theta y + (1-\theta)x^*) \le \theta f_0(y) + (1-\theta)f_0(x^*)
+            $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 3: Use the assumption $f_0(y) < f_0(x^*)$.</strong> Rearranging the convexity inequality:
+            $$
+            f_0(z(\theta)) \le \theta f_0(y) + (1-\theta)f_0(x^*) < \theta f_0(x^*) + (1-\theta)f_0(x^*) = f_0(x^*)
+            $$
+            Therefore, $f_0(z(\theta)) < f_0(x^*)$ for all $\theta \in (0, 1)$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 4: Construct a contradiction.</strong> As $\theta \to 0^+$, the point $z(\theta)$ approaches $x^*$. Specifically:
+            $$
+            \|z(\theta) - x^*\|_2 = \|\theta(y - x^*)\|_2 = \theta \|y - x^*\|_2
+            $$
+            Since $x^*$ is a local minimum, there exists a radius $\delta > 0$ such that $f_0(x^*) \le f_0(x)$ for all feasible $x$ with $\|x - x^*\|_2 < \delta$.
+            <br>We can choose a sufficiently small $\theta \in (0, 1)$ such that $\theta \|y - x^*\|_2 < \delta$.
+            <br>For this choice of $\theta$, the point $z(\theta)$ lies within the local neighborhood ($\|z(\theta) - x^*\|_2 < \delta$).
+            <br>However, we established in Step 3 that $f_0(z(\theta)) < f_0(x^*)$. This contradicts the definition of $x^*$ as a local minimum.
+          </div>
+
+          <div class="proof-step">
+            <strong>Conclusion:</strong> The assumption that $x^*$ is a local minimum but not a global minimum leads to a contradiction. Therefore, any local minimum must be a global minimum.
+          </div>
+        </div>
+
+        <h3>2.2 Practical Implications</h3>
+        <div class="insight">
+          <h4>Why This Matters</h4>
+          <ul>
+            <li><b>No need for global search:</b> Local search methods (gradient descent, Newton's method) are guaranteed to find the global optimum.</li>
+            <li><b>No dependence on initialization:</b> Any reasonable starting point will converge to the global solution.</li>
+            <li><b>Certificates of optimality:</b> First-order conditions provide verifiable certificates that a solution is globally optimal.</li>
+            <li><b>Polynomial-time solvability:</b> Interior-point methods solve convex problems to arbitrary precision in polynomial time.</li>
+          </ul>
+        </div>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="../../static/assets/topics/02-introduction/convex_function_illustration.svg"
+               alt="Visualization of the chord property for convex functions"
+               style="max-width: 100%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 2.1:</i> The chord between any two points on a convex function's graph lies above the function—this geometric property ensures no local minima can exist.</figcaption>
+        </figure>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Laboratory: Convexity & Landscapes</h3>
+          <p><b>From Definition to Global Optimality:</b> This unified tool connects the mathematical definition of convexity with its powerful consequences for optimization. Toggle between the two tabs below:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>The Definition (1D):</b> Interactively verify <b>Jensen's Inequality</b>. Click two points to draw a chord. If the chord stays <i>above</i> the curve everywhere, the function is convex. This geometric "bowl shape" prevents hidden valleys.</li>
+            <li><b>The Consequence (3D):</b> See what this means for optimization. Drop a marble on a <b>Convex Bowl</b> and it always finds the bottom (Global Minimum). Drop it on a <b>Non-Convex Landscape</b> and it gets stuck in local dips.</li>
+          </ul>
+          <p><i>Key Insight:</i> The simple 1D geometric property (chord above curve) guarantees that in ANY dimension, there are no local traps. Local optimality implies global optimality.</p>
+          <div id="widget-optimization-landscape" style="width: 100%; position: relative;"></div>
+        </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Demo: Convergence Rate Comparison</h3>
+          <p><b>Compare Algorithm Performance:</b> Watch different optimization algorithms race to the solution on both convex and non-convex problems:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Algorithms compared:</b>
+              <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
+                <li><b>Gradient Descent:</b> The standard method—follows the negative gradient.</li>
+                <li><b>Momentum:</b> Accelerated variants (Nesterov, Heavy Ball) to cross flat regions.</li>
+                <li><b>Newton's Method:</b> Uses second-order (Hessian) information for quadratic convergence.</li>
+              </ul>
+            </li>
+            <li><b>Metrics tracked:</b> Objective value, gradient norm, distance to optimum, iteration count.</li>
+            <li><b>Key observations:</b>
+              <ul style="margin-left: 1.5rem; margin-top: 0.25rem;">
+                <li>On convex problems: All methods converge to the same optimum (only speed differs).</li>
+                <li>On non-convex problems: Different methods find different local minima.</li>
+              </ul>
+            </li>
+          </ul>
+          <p><i>Convergence guarantees:</i> For strongly convex problems, gradient descent achieves linear convergence: $f(x_k) - f(x^*) \le (1-\mu/L)^k (f(x_0) - f(x^*))$ where $\mu$ is the strong convexity parameter and $L$ is the Lipschitz constant.</p>
+          <div id="widget-convergence-comparison" style="width: 100%; height: 450px; position: relative;"></div>
+        </div>
+      </section>
+
+      <section class="section-card" id="section-3">
+        <h2>3. Why Convexity Matters: Practical Implications</h2>
+
+        <h3>3.1 Computational Complexity</h3>
+        <p>The distinction between convex and nonconvex problems is not merely about ease of solution—it reflects fundamental differences in computational complexity:</p>
+
+        <table class="data-table" style="width: 100%; margin-top: 16px;">
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Convex Problems</th>
+              <th>Nonconvex Problems</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Complexity class</b></td>
+              <td>Polynomial time (P)</td>
+              <td>Generally NP-hard</td>
+            </tr>
+            <tr>
+              <td><b>Local vs. global</b></td>
+              <td>Local = Global (proven)</td>
+              <td>Local ≠ Global (local minima exist)</td>
+            </tr>
+            <tr>
+              <td><b>Solver guarantees</b></td>
+              <td>Provably converge to global optimum</td>
+              <td>May get stuck in local minima</td>
+            </tr>
+            <tr>
+              <td><b>Initialization</b></td>
+              <td>Any feasible point works</td>
+              <td>Critical—affects final solution</td>
+            </tr>
+            <tr>
+              <td><b>Duality gap</b></td>
+              <td>Zero at optimum (strong duality)</td>
+              <td>May have duality gap</td>
+            </tr>
+            <tr>
+              <td><b>Scalability</b></td>
+              <td>Millions of variables routine</td>
+              <td>Limited to smaller instances</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>3.2 Real-World Impact</h3>
+        <div class="example">
+          <h4>Example: Large-Scale Machine Learning</h4>
+          <p>Modern machine learning relies heavily on convex optimization:</p>
+          <ul>
+            <li><b>Support Vector Machines (SVM):</b> Formulated as a convex QP, SVMs are solved reliably for millions of training examples.</li>
+            <li><b>Logistic Regression:</b> Convex likelihood maximization ensures unique global optimum.</li>
+            <li><b>LASSO Regression:</b> $\ell_1$-regularized least squares is convex, enabling sparse feature selection at scale.</li>
+            <li><b>Deep Learning (first-order phase):</b> Even though neural networks are nonconvex, the convex optimization techniques (SGD, Adam) dominate the field.</li>
+          </ul>
+        </div>
+
+        <h3>3.3 When Convexity is Lost</h3>
+        <p>Certain problem features immediately destroy convexity:</p>
+        <ul>
+          <li><b>Integer constraints:</b> $x_i \in \{0,1\}$ makes the feasible set non-convex.</li>
+          <li><b>Equality constraints with convex functions:</b> $f(x) = c$ where $f$ is convex (not affine).</li>
+          <li><b>Maximizing a convex function:</b> Equivalent to minimizing a concave function.</li>
+          <li><b>Products of variables:</b> Bilinear or quadratic terms with indefinite Hessian.</li>
+          <li><b>Non-monotone compositions:</b> $f(g(x))$ where $g$ is convex but $f$ is non-monotone.</li>
+        </ul>
+
+        <div class="insight">
+          <h4>⚠️ Convex Relaxations</h4>
+          <p>When faced with a nonconvex problem, a common strategy is <b>convex relaxation</b>—replacing non-convex constraints with convex approximations. The solution to the relaxed problem provides:</p>
+          <ul>
+            <li>A <b>lower bound</b> on the optimal value (for minimization).</li>
+            <li>Often a <b>high-quality approximate solution</b>.</li>
+            <li>A starting point for local refinement methods.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section-card" id="section-4">
+        <h2>4. The Hierarchy of Convex Problem Families</h2>
+
+        <p>Within the broad class of convex optimization problems, there exists a hierarchy of increasingly expressive standard forms. Each has dedicated algorithms and complexity results.</p>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="../../static/assets/topics/02-introduction/hierarchy-of-convex-optimization-problems-dark.svg"
+               alt="Hierarchy diagram showing relationships between LP, QP, SOCP, and SDP"
+               style="max-width: 100%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 4.1:</i> The hierarchy of convex optimization: each class contains the previous ones as special cases. LP ⊂ QP ⊂ SOCP ⊂ SDP ⊂ General Convex.</figcaption>
+        </figure>
+
+        <h3>4.1 Linear Programming (LP)</h3>
+        <p>The simplest convex problem has both a linear objective and linear constraints. A <a href="#" class="definition-link" data-term="linear program">Linear Program (LP)</a> is defined as:</p>
+        $$
+        \begin{aligned}
+        \min_{x} \quad & c^\top x \\
+        \text{s.t.} \quad & Ax \le b \\
+        & Fx = g
+        \end{aligned}
+        $$
+
+        <div class="subsection">
+          <h4>Properties and Characteristics</h4>
+          <ul>
+            <li><b>Feasible set:</b> A <a href="#" class="definition-link">polyhedron</a> (intersection of finitely many halfspaces and hyperplanes).</li>
+            <li><b>Optimal solution:</b> Always at a vertex (extreme point) if it exists.</li>
+            <li><b>Algorithms:</b> Simplex method (exponential worst-case, fast in practice), Interior-point methods (polynomial-time).</li>
+            <li><b>Complexity:</b> Polynomial time via interior-point methods.</li>
+            <li><b>Duality:</b> Strong duality always holds (primal-dual relationship).</li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h4>Example 1: Resource Allocation (Production Planning)</h4>
+          <p>A factory produces $n$ products using $m$ types of raw materials.</p>
+          <ul>
+            <li><b>Decision variables:</b> $x_j$ = units of product $j$ to produce.</li>
+            <li><b>Objective:</b> Maximize profit $\max \sum_{j=1}^n p_j x_j$ where $p_j$ is profit per unit.</li>
+            <li><b>Constraints:</b>
+              <ul>
+                <li>Material limits: $\sum_{j=1}^n A_{ij} x_j \le S_i$ (amount of material $i$ used ≤ supply).</li>
+                <li>Non-negativity: $x_j \ge 0$.</li>
+              </ul>
+            </li>
+          </ul>
+          <p><b>Standard form:</b> $\min -p^\top x$ subject to $Ax \le S$, $x \ge 0$.</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 2: Network Flow</h4>
+          <p>Find minimum-cost flow through a network from sources to sinks.</p>
+          <ul>
+            <li><b>Variables:</b> $f_{ij}$ = flow on edge $(i,j)$.</li>
+            <li><b>Objective:</b> $\min \sum_{(i,j)} c_{ij} f_{ij}$ (minimize total cost).</li>
+            <li><b>Constraints:</b>
+              <ul>
+                <li>Flow conservation: $\sum_j f_{ij} - \sum_k f_{ki} = b_i$ at each node.</li>
+                <li>Capacity: $0 \le f_{ij} \le u_{ij}$.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <h3>4.2 Quadratic Programming (QP)</h3>
+        <p><a href="#" class="definition-link" data-term="quadratic program">Quadratic Programs (QP)</a> have a convex quadratic objective and linear constraints:</p>
+        $$
+        \begin{aligned}
+        \min_{x} \quad & \frac{1}{2}x^\top Q x + c^\top x \\
+        \text{s.t.} \quad & Ax \le b \\
+        & Fx = g
+        \end{aligned}
+        $$
+        <p>where $Q \succeq 0$ (positive semidefinite) to ensure convexity.</p>
+
+        <div class="subsection">
+          <h4>Properties and Characteristics</h4>
+          <ul>
+            <li><b>Level sets:</b> Ellipsoids (when $Q \succ 0$).</li>
+            <li><b>Optimality:</b> Characterized by KKT conditions (covered in <a href="../09-duality/index.html">Lecture 13</a>).</li>
+            <li><b>Algorithms:</b> Active-set methods, Interior-point methods.</li>
+            <li><b>Complexity:</b> Polynomial time.</li>
+            <li><b>Special case:</b> When $Q = I$ and no inequality constraints are present, this reduces to unconstrained least squares.</li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h4>Example 1: Markowitz Portfolio Optimization</h4>
+          <p>An investor allocates capital among $n$ assets to minimize risk for a target return.</p>
+          <ul>
+            <li><b>Decision variables:</b> $w_i$ = fraction of wealth in asset $i$.</li>
+            <li><b>Objective:</b> Minimize variance (risk) $\min \frac{1}{2}w^\top \Sigma w$ where $\Sigma$ is the covariance matrix of returns.</li>
+            <li><b>Constraints:</b>
+              <ul>
+                <li>Budget: $\mathbf{1}^\top w = 1$ (weights sum to 1).</li>
+                <li>Target return: $\mu^\top w \ge R_{\text{target}}$ where $\mu$ is expected return vector.</li>
+                <li>Long-only: $w \ge 0$ (no short-selling).</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h4>Example 2: Least Squares with Constraints</h4>
+          <p>Fit a model $y \approx Ax$ minimizing squared error, subject to constraints on $x$:</p>
+          $$
+          \min_{x} \|Ax - y\|_2^2 \quad \text{s.t.} \quad x \ge 0, \ \mathbf{1}^\top x = 1
+          $$
+          <p>This arises in nonnegative matrix factorization, constrained regression, and image denoising.</p>
+        </div>
+
+        <h3>4.3 Second-Order Cone Programming (SOCP)</h3>
+        <p><a href="#" class="definition-link" data-term="socp">SOCPs</a> involve second-order cone constraints (Euclidean norm constraints):</p>
+        $$
+        \begin{aligned}
+        \min_{x} \quad & c^\top x \\
+        \text{s.t.} \quad & \|A_i x + b_i\|_2 \le c_i^\top x + d_i, \quad i=1,\dots,m \\
+        & Fx = g
+        \end{aligned}
+        $$
+
+        <div class="subsection">
+          <h4>The Second-Order Cone (Lorentz Cone)</h4>
+          <p>The constraint $\|y\|_2 \le t$ defines membership in the second-order cone (also called the Lorentz cone or ice-cream cone):</p>
+          $$
+          \mathcal{Q}^{n+1} = \{(y, t) \in \mathbb{R}^{n+1} \mid \|y\|_2 \le t\}
+          $$
+          <p>This cone is convex and self-dual (covered in <a href="../03-convex-sets-geometry/index.html">Lecture 03</a>).</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 1: Robust Least Squares</h4>
+          <p>When the data matrix $A$ is uncertain (known up to some perturbation), robust formulations protect against worst-case errors:</p>
+          $$
+          \min_{x} \max_{\|\Delta A\|_2 \le \rho} \|(A + \Delta A)x - b\|_2^2
+          $$
+          <p>This can be reformulated as an SOCP.</p>
+        </div>
+
+        <div class="example">
+          <h4>Example 2: Antenna Array Weight Design</h4>
+          <p>Design antenna weights to achieve a desired beam pattern while minimizing side lobes—naturally formulated as SOCP.</p>
+        </div>
+
+        <h3>4.4 Semidefinite Programming (SDP)</h3>
+        <p><a href="#" class="definition-link" data-term="sdp">SDPs</a> optimize over positive semidefinite matrix variables:</p>
+        $$
+        \begin{aligned}
+        \min_{X} \quad & \langle C, X \rangle = \mathrm{tr}(C^\top X) \\
+        \text{s.t.} \quad & \langle A_i, X \rangle = b_i, \quad i=1,\dots,m \\
+        & X \succeq 0
+        \end{aligned}
+        $$
+        <p>where $X \in \mathbb{S}^n$ is a symmetric matrix, and $X \succeq 0$ means $X$ is positive semidefinite (see <a href="../00-linear-algebra-basics/index.html">Lecture 00</a> for PSD properties).</p>
+
+        <div class="subsection">
+          <h4>Properties and Applications</h4>
+          <ul>
+            <li><b>Matrix variables:</b> Optimizing over matrix spaces (not just vectors).</li>
+            <li><b>PSD cone:</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$ is a convex cone.</li>
+            <li><b>Applications:</b> Control theory, combinatorial optimization relaxations, robust optimization, polynomial optimization.</li>
+            <li><b>Algorithms:</b> Interior-point methods.</li>
+            <li><b>Complexity:</b> Polynomial time, but more expensive than LP/QP/SOCP.</li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h4>Example: Minimum Volume Enclosing Ellipsoid (MVEE)</h4>
+          <p>Given points $x_1, \ldots, x_N \in \mathbb{R}^n$, find the smallest-volume ellipsoid containing all of them. This can be formulated as an SDP and has applications in outlier detection and robust statistics.</p>
+        </div>
+
+        <div class="widget-container" style="margin: 24px 0;">
+          <h3 style="margin-top: 0;">Interactive Tool: Problem Classification Flowchart</h3>
+          <p><b>Identify Your Problem Type:</b> Not sure whether your problem is LP, QP, SOCP, or SDP? This decision tree guides you:</p>
+          <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <li><b>Step 1:</b> Is the objective linear? → LP (if constraints are linear)</li>
+            <li><b>Step 2:</b> Is the objective quadratic? → QP (if constraints are linear)</li>
+            <li><b>Step 3:</b> Do you have norm constraints? → SOCP</li>
+            <li><b>Step 4:</b> Do you have matrix variables with PSD constraints? → SDP</li>
+          </ul>
+          <p><i>Why classification matters:</i> Different problem families have different solver requirements and computational costs:</p>
+          <ul style="margin-left: 1rem;">
+            <li>LP: Fastest, millions of variables routine</li>
+            <li>QP: Fast, thousands to millions of variables</li>
+            <li>SOCP: Moderate, hundreds of thousands of variables</li>
+            <li>SDP: Slowest (due to matrix size), but still polynomial-time</li>
+          </ul>
+          <div id="widget-problem-flowchart" style="width: 100%; height: 500px; position: relative;"></div>
+        </div>
+      </section>
+
+      <section class="section-card" id="section-5">
+        <h2>5. The Loss + Regularizer Modeling Paradigm</h2>
+
+        <h3>5.1 The Fundamental Template</h3>
+        <p>Many problems in machine learning, statistics, and signal processing follow a unified template:</p>
+        $$
+        \min_{x} \quad \underbrace{\text{loss}(x; \text{data})}_{\text{Data Fidelity}} + \underbrace{\lambda \cdot \text{regularizer}(x)}_{\text{Model Complexity Penalty}}
+        $$
+        <p>This balances two competing objectives:</p>
+        <ul>
+          <li><b>Loss (data fidelity):</b> Measures how well the model fits the observed data.</li>
+          <li><b>Regularizer (complexity penalty):</b> Prevents overfitting by penalizing complex models.</li>
+          <li><b>Trade-off parameter $\lambda \ge 0$:</b> Controls the balance between the two terms.</li>
+        </ul>
+
+        <h3>5.2 Common Loss Functions</h3>
+
+        <table class="data-table" style="width: 100%; margin-top: 16px;">
+          <thead>
+            <tr>
+              <th>Loss Function</th>
+              <th>Formula</th>
+              <th>Application</th>
+              <th>Convex?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Least Squares</b></td>
+              <td>$\|Ax - b\|_2^2$</td>
+              <td>Regression, system identification</td>
+              <td>✅ Yes</td>
+            </tr>
+            <tr>
+              <td><b>Absolute Error</b></td>
+              <td>$\|Ax - b\|_1$</td>
+              <td>Robust regression</td>
+              <td>✅ Yes</td>
+            </tr>
+            <tr>
+              <td><b>Logistic Loss</b></td>
+              <td>$\sum_i \log(1 + e^{-y_i (a_i^\top x)})$</td>
+              <td>Binary classification</td>
+              <td>✅ Yes</td>
+            </tr>
+            <tr>
+              <td><b>Hinge Loss</b></td>
+              <td>$\sum_i \max\{0, 1 - y_i (a_i^\top x)\}$</td>
+              <td>SVM classification</td>
+              <td>✅ Yes</td>
+            </tr>
+            <tr>
+              <td><b>Huber Loss</b></td>
+              <td>Quadratic near 0, linear for large residuals</td>
+              <td>Robust regression</td>
+              <td>✅ Yes</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>5.3 Common Regularizers</h3>
+
+        <table class="data-table" style="width: 100%; margin-top: 16px;">
+          <thead>
+            <tr>
+              <th>Regularizer</th>
+              <th>Formula</th>
+              <th>Effect</th>
+              <th>Convex?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>$\ell_2$ (Ridge)</b></td>
+              <td>$\|x\|_2^2$</td>
+              <td>Shrinks all coefficients smoothly</td>
+              <td>✅ Yes</td>
+            </tr>
+            <tr>
+              <td><b>$\ell_1$ (LASSO)</b></td>
+              <td>$\|x\|_1$</td>
+              <td>Promotes sparsity (many coefficients = 0)</td>
+              <td>✅ Yes</td>
+            </tr>
+            <tr>
+              <td><b>Elastic Net</b></td>
+              <td>$\alpha \|x\|_1 + (1-\alpha)\|x\|_2^2$</td>
+              <td>Combines $\ell_1$ and $\ell_2$ benefits</td>
+              <td>✅ Yes</td>
+            </tr>
+            <tr>
+              <td><b>Nuclear Norm</b></td>
+              <td>$\|X\|_* = \sum_i \sigma_i(X)$</td>
+              <td>Low-rank matrix recovery</td>
+              <td>✅ Yes</td>
+            </tr>
+            <tr>
+              <td><b>Total Variation</b></td>
+              <td>$\sum_i |x_{i+1} - x_i|$</td>
+              <td>Piecewise-constant solutions (imaging)</td>
+              <td>✅ Yes</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>5.4 Why LASSO Promotes Sparsity</h3>
+        <div class="insight">
+          <h4>⚡ Geometric Intuition</h4>
+          <p>The $\ell_1$ regularizer promotes sparsity due to the geometry of its unit ball:</p>
+          <ul>
+            <li>The $\ell_1$ ball $\{x \mid \|x\|_1 \le 1\}$ is a <b>cross-polytope</b> (diamond in 2D) with sharp corners at the coordinate axes.</li>
+            <li>When the loss function's level sets (ellipsoids for least squares) expand outward, they tend to first touch the $\ell_1$ constraint set at a corner.</li>
+            <li>At these corners, many coordinates are exactly zero.</li>
+            <li>In contrast, the $\ell_2$ ball is round—contact points typically have no zero coordinates.</li>
+          </ul>
+        </div>
+
+        <div class="proof-box">
+          <h4>Analytical Reason: Subgradients at Zero</h4>
+          <p>We can also see this algebraically. Consider minimizing a 1D objective $f(x) = \frac{1}{2}(x - y)^2 + \lambda |x|$.</p>
+          <div class="proof-step">
+            <strong>Smooth case ($\ell_2$):</strong> If we used $\lambda x^2$, the derivative is $(x-y) + 2\lambda x = 0$, giving $x = y / (1+2\lambda)$. This simply shrinks $y$ towards 0, but never hits exactly 0 unless $y=0$.
+          </div>
+          <div class="proof-step">
+            <strong>Sparse case ($\ell_1$):</strong> The subdifferential of $|x|$ at $x=0$ is the interval $[-1, 1]$. The optimality condition is:
+            $$ 0 \in \partial f(x) \iff 0 \in (x - y) + \lambda \partial |x| $$
+            If we test $x=0$, the condition becomes $0 \in -y + [-\lambda, \lambda]$, which is true if $|y| \le \lambda$.
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion:</strong> If the data evidence ($y$) is small (specifically $|y| \le \lambda$), the optimal solution is <b>exactly zero</b>. The "kink" in the absolute value function at zero creates a "force field" that traps small values at zero. This generalizes to high dimensions.
+          </div>
+        </div>
+
+        <div class="example">
+          <h4>Example: LASSO Regression</h4>
+          <p>The LASSO (Least Absolute Shrinkage and Selection Operator) combines least squares loss with $\ell_1$ regularization:</p>
+          $$
+          \min_{x} \quad \frac{1}{2}\|Ax - b\|_2^2 + \lambda \|x\|_1
+          $$
+          <p><b>Properties:</b></p>
+          <ul>
+            <li>Convex (sum of two convex functions).</li>
+            <li>Produces sparse solutions (automatic feature selection).</li>
+            <li>Can be reformulated as a QP.</li>
+            <li>Widely used in high-dimensional statistics and compressed sensing (covered in <a href="../10-approximation-fitting/index.html">Lecture 14</a>).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section-card" id="section-6">
+        <h2>6. Standard Form Transformations and Rewrites</h2>
+
+        <p>Many problems do not initially appear in standard convex form but can be <b>equivalently transformed</b> into LP, QP, SOCP, or SDP. Mastering these transformations is essential for practical modeling.</p>
+
+        <h3>6.1 Absolute Value Elimination</h3>
+
+        <div class="subsection">
+          <h4>Pattern 1: Absolute Value in Constraints</h4>
+          <p><b>Original:</b> $|x_i| \le t_i$</p>
+          <p><b>Equivalent (LP-representable):</b> $-t_i \le x_i \le t_i$ (two linear inequalities).</p>
+        </div>
+
+        <div class="subsection">
+          <h4>Pattern 2: $\ell_1$ Norm in Objective</h4>
+          <p><b>Original:</b> $\min \|x\|_1 = \min \sum_{i=1}^n |x_i|$</p>
+          <p><b>Reformulation:</b> Introduce slack variables $t_i \ge 0$:</p>
+          $$
+          \min \sum_{i=1}^n t_i \quad \text{s.t.} \quad -t_i \le x_i \le t_i
+          $$
+          <p>Now it's an LP with $2n$ variables and $2n$ inequality constraints.</p>
+        </div>
+
+        <div class="example">
+          <h4>Example: $\ell_1$-Norm Minimization</h4>
+          <p>The problem $\min \|Ax - b\|_1$ can be written as:</p>
+          $$
+          \begin{aligned}
+          \min_{x, t} \quad & \mathbf{1}^\top t \\
+          \text{s.t.} \quad & -t \le Ax - b \le t, \quad t \ge 0
+          \end{aligned}
+          $$
+          <p>This is an LP with $n + m$ variables.</p>
+        </div>
+
+        <h3>6.2 Infinity Norm Transformations</h3>
+
+        <div class="subsection">
+          <h4>Pattern: $\ell_\infty$ Norm</h4>
+          <p><b>Original:</b> $\|x\|_\infty = \max_i |x_i| \le t$</p>
+          <p><b>Equivalent (LP-representable):</b> $-t \mathbf{1} \le x \le t \mathbf{1}$ (componentwise: $-t \le x_i \le t$ for all $i$).</p>
+        </div>
+
+        <div class="example">
+          <h4>Example: Chebyshev Approximation</h4>
+          <p>Minimize the maximum absolute error: $\min \|Ax - b\|_\infty$</p>
+          <p><b>Reformulation as LP:</b></p>
+          $$
+          \begin{aligned}
+          \min_{x, t} \quad & t \\
+          \text{s.t.} \quad & -t \mathbf{1} \le Ax - b \le t \mathbf{1}
+          \end{aligned}
+          $$
+        </div>
+
+        <h3>6.3 Euclidean Norm (SOCP Form)</h3>
+
+        <div class="subsection">
+          <h4>Pattern: $\ell_2$ Norm Constraint</h4>
+          <p><b>Form:</b> $\|Ax - b\|_2 \le t$ is already in <b>second-order cone (SOC)</b> form:</p>
+          $$
+          (Ax - b, t) \in \mathcal{Q}^{m+1} = \{(y, s) \in \mathbb{R}^{m+1} \mid \|y\|_2 \le s\}
+          $$
+        </div>
+
+        <div class="example">
+          <h4>Example: Robust Least Squares</h4>
+          <p>Minimize worst-case residual norm subject to ellipsoidal uncertainty. Suppose the matrix $A$ is uncertain, modeled as $A + U$ where the uncertainty matrix $U$ has bounded spectral norm $\|U\|_2 \le \varepsilon$. A simplified but common version considers row-wise uncertainty or a structured uncertainty.</p>
+          <p>Let's consider the specific form where the uncertainty is in the matrix $A$, bounded by a norm. A standard formulation is:</p>
+          $$
+          \min_{x} \max_{\|\Delta\|_2 \le \rho} \|(A + \Delta)x - b\|_2
+          $$
+          <p>We derive the reformulation as follows.</p>
+
+          <div class="proof-box">
+            <h4>Derivation of Robust Least Squares SOCP</h4>
+
+            <div class="proof-step">
+              <strong>Step 1: Expand the term.</strong>
+              The objective is to minimize the worst-case error. Let $r(x) = \max_{\|\Delta\|_2 \le \rho} \|(A + \Delta)x - b\|_2$.
+              Notice that $(A + \Delta)x - b = (Ax - b) + \Delta x$.
+              So we want to maximize $\|(Ax - b) + \Delta x\|_2$ over $\|\Delta\|_2 \le \rho$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Apply Triangle Inequality.</strong>
+              By the triangle inequality:
+              $$ \|(Ax - b) + \Delta x\|_2 \le \|Ax - b\|_2 + \|\Delta x\|_2 $$
+              Also, $\|\Delta x\|_2 \le \|\Delta\|_2 \|x\|_2 \le \rho \|x\|_2$.
+              Thus, $\|(A + \Delta)x - b\|_2 \le \|Ax - b\|_2 + \rho \|x\|_2$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Show the bound is tight.</strong>
+              We need to find a $\Delta$ with $\|\Delta\|_2 \le \rho$ that achieves this upper bound.
+              Let $u = Ax - b$. If $x=0$, the term is $\|b\|_2$, which matches the formula.
+              If $x \ne 0$, choose $\Delta$ to be a rank-1 matrix: $\Delta = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2}$.
+              Then $\|\Delta\|_2 = \rho \cdot 1 \cdot 1 = \rho$.
+              And $\Delta x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2 = \frac{\rho \|x\|_2}{\|Ax - b\|_2} (Ax - b)$.
+              This vector is a positive scalar multiple of $Ax - b$, so they align perfectly.
+              Thus, $\max_{\|\Delta\|_2 \le \rho} \|(A + \Delta)x - b\|_2 = \|Ax - b\|_2 + \rho \|x\|_2$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 4: Formulate as Optimization.</strong>
+              The problem becomes:
+              $$ \min_x \left( \|Ax - b\|_2 + \rho \|x\|_2 \right) $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 5: Convert to SOCP Standard Form.</strong>
+              Introduce auxiliary variables $t_1, t_2$:
+              $$ \min_{x, t_1, t_2} \quad t_1 + \rho t_2 $$
+              Subject to:
+              $$ \|Ax - b\|_2 \le t_1 $$
+              $$ \|x\|_2 \le t_2 $$
+              These are two second-order cone constraints. Thus, Robust Least Squares is an SOCP.
+            </div>
+          </div>
+        </div>
+
+        <h3>6.4 Maximum Function (Epigraph Form)</h3>
+
+        <div class="subsection">
+          <h4>Pattern: Max in Objective</h4>
+          <p><b>Original:</b> $\min_x \max\{f_1(x), f_2(x), \ldots, f_m(x)\}$ where each $f_i$ is convex.</p>
+          <p><b>Epigraph reformulation:</b></p>
+          $$
+          \begin{aligned}
+          \min_{x, t} \quad & t \\
+          \text{s.t.} \quad & f_i(x) \le t, \quad i=1,\ldots,m
+          \end{aligned}
+          $$
+
+          <div class="proof-box">
+            <h4>Derivation: Why this works</h4>
+            <div class="proof-step">
+              <strong>Step 1: Analyze the constraints.</strong> The constraints $f_i(x) \le t$ for all $i=1,\dots,m$ are equivalent to:
+              $$ \max_{i=1,\dots,m} f_i(x) \le t $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Optimize over t.</strong> For a fixed $x$, the smallest possible value of $t$ that satisfies the constraints is $t^*(x) = \max_i f_i(x)$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Joint minimization.</strong> Minimizing $t$ jointly with $x$ subject to these constraints is therefore equivalent to minimizing $t^*(x)$ over $x$:
+              $$ \min_{x, t} \{ t \mid \max_i f_i(x) \le t \} = \min_x \left( \min_{t \ge \max_i f_i(x)} t \right) = \min_x \max_i f_i(x) $$
+            </div>
+          </div>
+        </div>
+
+        <div class="example">
+          <h4>Example: Minimax Linear Program</h4>
+          <p>Minimize the maximum of several linear functions:</p>
+          $$
+          \min_{x} \max\{c_1^\top x, c_2^\top x, \ldots, c_m^\top x\}
+          $$
+          <p><b>LP reformulation:</b></p>
+          $$
+          \begin{aligned}
+          \min_{x, t} \quad & t \\
+          \text{s.t.} \quad & c_i^\top x \le t, \quad i=1,\ldots,m
+          \end{aligned}
+          $$
+        </div>
+
+        <h3>6.5 Quadratic-Over-Linear (Perspective Form)</h3>
+
+        <div class="subsection">
+          <h4>Pattern: Perspective Transformation</h4>
+          <p><b>Key result:</b> The function $f(x,t) = \frac{\|x\|_2^2}{t}$ for $t > 0$ is convex and can be represented as a second-order cone constraint:</p>
+          $$
+          \frac{\|x\|_2^2}{t} \le s \quad \iff \quad \|(2x, s-t)\|_2 \le s + t
+          $$
+        </div>
+
+        <div class="example">
+          <h4>Example: Linear-Fractional Programming</h4>
+          <p>Consider minimizing a ratio of affine functions over a polyhedron:</p>
+          $$ \min_{x} \frac{c^\top x + d}{e^\top x + f} \quad \text{s.t.} \quad Ax \le b, \ e^\top x + f > 0 $$
+          <p>This is <b>quasiconvex</b> but not convex. However, we can transform it into a Linear Program (LP).</p>
+
+          <div class="proof-box">
+            <h4>Step-by-Step Reformulation</h4>
+            <div class="proof-step">
+              <strong>Step 1: Change of variables.</strong>
+              Let $y = \frac{x}{e^\top x + f}$ and $z = \frac{1}{e^\top x + f}$. Note that $z > 0$.
+              Then $x = y/z$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Transform objective.</strong>
+              The objective becomes:
+              $$ \frac{c^\top x + d}{e^\top x + f} = c^\top \left(\frac{x}{e^\top x + f}\right) + d \left(\frac{1}{e^\top x + f}\right) = c^\top y + dz $$
+              This is linear in $y$ and $z$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Transform constraints.</strong>
+              Substituting $x = y/z$ into $Ax \le b$:
+              $$ A(y/z) \le b \iff Ay \le bz \iff Ay - bz \le 0 $$
+              (Since $z > 0$, we can multiply through without flipping inequality).
+              We also need the constraint that defines $z$:
+              $$ e^\top x + f = 1/z \implies e^\top (y/z) + f = 1/z \implies e^\top y + fz = 1 $$
+              And finally $z \ge 0$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 4: Final LP.</strong>
+              $$
+              \begin{aligned}
+              \min_{y, z} \quad & c^\top y + dz \\
+              \text{s.t.} \quad & Ay - bz \le 0 \\
+              & e^\top y + fz = 1 \\
+              & z \ge 0
+              \end{aligned}
+              $$
+              Solving this LP gives $y^*, z^*$, and we recover $x^* = y^*/z^*$.
+            </div>
+          </div>
+        </div>
+
+        <h3>6.6 Quick Reference Table</h3>
+
+        <table class="data-table" style="width: 100%; margin-top: 16px;">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Reformulation</th>
+              <th>Standard Form</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>$\min \|x\|_1$</td>
+              <td>$\min \sum_i t_i$ s.t. $-t \le x \le t$</td>
+              <td>LP</td>
+            </tr>
+            <tr>
+              <td>$\min \|x\|_\infty$</td>
+              <td>$\min t$ s.t. $-t \le x_i \le t$</td>
+              <td>LP</td>
+            </tr>
+            <tr>
+              <td>$\min \max_i f_i(x)$</td>
+              <td>$\min t$ s.t. $f_i(x) \le t$</td>
+              <td>Depends on $f_i$</td>
+            </tr>
+            <tr>
+              <td>$\|Ax-b\|_2 \le c^\top x + d$</td>
+              <td>Direct SOC constraint</td>
+              <td>SOCP</td>
+            </tr>
+            <tr>
+              <td>$\frac{\|x\|_2^2}{t} \le s$</td>
+              <td>$\|(2x, s-t)\|_2 \le s+t$</td>
+              <td>SOCP</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section-card" id="section-7">
+        <h2>7. Disciplined Convex Programming (DCP)</h2>
+
+        <h3>7.1 The DCP Philosophy</h3>
+        <p><b>Disciplined Convex Programming</b> is a methodology for constructing convex optimization problems by combining basic building blocks using a set of rules that preserve convexity. This approach underlies modeling languages like CVX (MATLAB), CVXPY (Python), and Convex.jl (Julia).</p>
+
+        <h3>7.2 DCP Rules</h3>
+
+        <div class="subsection">
+          <h4>Atom Library</h4>
+          <p>Each atomic function has a known convexity property:</p>
+          <ul>
+            <li><b>Convex atoms:</b> $x^2$, $e^x$, $|x|$, $\max\{f_1, f_2\}$, $\|x\|_p$ (for $p \ge 1$).</li>
+            <li><b>Concave atoms:</b> $\sqrt{x}$, $\log(x)$, $\min\{f_1, f_2\}$.</li>
+            <li><b>Affine atoms:</b> $Ax + b$, $\sum_i x_i$.</li>
+          </ul>
+        </div>
+
+        <div class="subsection">
+          <h4>Composition Rules</h4>
+          <ul>
+            <li><b>Sum:</b> Convex + Convex = Convex.</li>
+            <li><b>Nonnegative scaling:</b> $\alpha \cdot \text{Convex} = \text{Convex}$ (for $\alpha \ge 0$).</li>
+            <li><b>Affine composition:</b> $f(Ax + b)$ preserves convexity of $f$.</li>
+            <li><b>Monotone composition:</b>
+              <ul>
+                <li>$h(g(x))$ is convex if $h$ convex increasing and $g$ convex.</li>
+                <li>$h(g(x))$ is convex if $h$ convex decreasing and $g$ concave.</li>
+              </ul>
+            </li>
+            <li><b>Pointwise maximum:</b> $\max\{f_1, \ldots, f_m\}$ is convex if all $f_i$ are convex.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section-card" id="section-8">
+        <h2>8. Verifying Convexity: A Practical Checklist</h2>
+
+        <h3>8.1 Pre-Solver Sanity Checks</h3>
+        <p>Before invoking a solver, verify:</p>
+
+        <ol>
+          <li>
+            <b>Feasibility Check:</b>
+            <ul>
+              <li>Does there exist any $x$ satisfying all constraints?</li>
+              <li>Are equality constraints consistent? (check $\mathrm{rank}([A \ b]) = \mathrm{rank}(A)$).</li>
+            </ul>
+          </li>
+          <li>
+            <b>Unboundedness Check:</b>
+            <ul>
+              <li>Can the objective be made arbitrarily negative?</li>
+              <li>Common cause: missing constraints (e.g., forgot $x \ge 0$ in an LP).</li>
+            </ul>
+          </li>
+          <li>
+            <b>Convexity Verification:</b>
+            <ul>
+              <li>Objective: Is $f_0$ convex? (Check Hessian PSD, or verify DCP).</li>
+              <li>Inequality constraints: Are all $f_i$ convex?</li>
+              <li>Equality constraints: Are they affine?</li>
+            </ul>
+          </li>
+        </ol>
+
+        <h3>8.2 Common Pitfalls</h3>
+
+        <div class="example">
+          <h4>Pitfall 1: Nonconvex Equality Constraints</h4>
+          <p><b>Problem:</b> $\min f_0(x)$ s.t. $f(x) = c$ where $f$ is convex but not affine.</p>
+          <p><b>Issue:</b> The constraint set $\{x \mid f(x) = c\}$ is generally non-convex (only the epigraph is convex).</p>
+          <p><b>Example:</b> $x^2 = 1$ defines $\{-1, +1\}$, a non-convex set.</p>
+        </div>
+
+        <div class="example">
+          <h4>Pitfall 2: Maximizing a Convex Function</h4>
+          <p><b>Problem:</b> $\max f(x)$ where $f$ is convex.</p>
+          <p><b>Issue:</b> This is equivalent to $\min -f(x)$ where $-f$ is concave (non-convex).</p>
+          <p><b>Fix:</b> Either minimize instead, or reformulate.</p>
+        </div>
+      </section>
+
+      <section class="section-card" id="section-9">
+        <h2>9. The Convex Optimization Workflow</h2>
+
+        <h3>9.1 The Five-Step Process</h3>
+
+        <ol>
+          <li>
+            <b>Model:</b> Translate the real-world problem into mathematical form.
+            <ul>
+              <li>Define decision variables.</li>
+              <li>Write objective function.</li>
+              <li>List all constraints.</li>
+            </ul>
+          </li>
+          <li>
+            <b>Transform:</b> Apply standard form rewrites.
+            <ul>
+              <li>Eliminate absolute values, max functions.</li>
+              <li>Convert norms to standard forms.</li>
+              <li>Introduce slack variables as needed.</li>
+            </ul>
+          </li>
+          <li>
+            <b>Canonicalize:</b> Cast into LP/QP/SOCP/SDP.
+            <ul>
+              <li>Identify the problem family.</li>
+              <li>Ensure all constraints fit the standard form.</li>
+            </ul>
+          </li>
+          <li>
+            <b>Solve:</b> Invoke a solver.
+            <ul>
+              <li>Choose appropriate solver (ECOS, OSQP, MOSEK, Gurobi, etc.).</li>
+              <li>Set solver parameters (tolerance, iteration limits).</li>
+            </ul>
+          </li>
+          <li>
+            <b>Verify:</b> Check the solution.
+            <ul>
+              <li>Constraint satisfaction: Are all constraints met?</li>
+              <li>Optimality: Does the solution satisfy KKT conditions?</li>
+            </ul>
+          </li>
+        </ol>
+      </section>
+
+    <!-- SECTION 10: REVIEW -->
+    <section class="section-card" id="section-10">
+      <h2>10. Review & Cheat Sheet</h2>
+
+      <h3>Convex vs. Non-Convex: The Litmus Test</h3>
+      <table class="data-table" style="width: 100%; margin-bottom: 24px;">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Convex Problem</th>
+            <th>Non-Convex Problem</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Local Optima</b></td>
+            <td>Any local optimum is global.</td>
+            <td>Can get stuck in local traps.</td>
+          </tr>
+          <tr>
+            <td><b>Objective</b></td>
+            <td>Convex function (bowl-shaped).</td>
+            <td>Any function (wavy, multimodal).</td>
+          </tr>
+          <tr>
+            <td><b>Constraints</b></td>
+            <td>$f_i(x) \le 0$ (convex), $Ax=b$ (affine).</td>
+            <td>Non-convex sets, integer constraints.</td>
+          </tr>
+          <tr>
+            <td><b>Solvability</b></td>
+            <td>Polynomial time (reliable).</td>
+            <td>NP-Hard (generally heuristics).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Standard Problem Forms</h3>
+      <ul>
+        <li><b>LP (Linear Program):</b> Linear objective, linear constraints.
+          <br>$\min c^\top x$ s.t. $Ax \le b$.</li>
+        <li><b>QP (Quadratic Program):</b> Convex quadratic objective, linear constraints.
+          <br>$\min \frac{1}{2}x^\top Px + q^\top x$ s.t. $Ax \le b$ ($P \succeq 0$).</li>
+        <li><b>SOCP (Second-Order Cone Program):</b> Linear objective, norm constraints.
+          <br>$\min c^\top x$ s.t. $\|A_i x + b_i\|_2 \le c_i^\top x + d_i$.</li>
+        <li><b>SDP (Semidefinite Program):</b> Linear objective, LMI constraints.
+          <br>$\min \mathrm{tr}(CX)$ s.t. $\sum x_i A_i \succeq B$.</li>
+      </ul>
+
+      <h3>Common Reformulation Tricks</h3>
+      <ul>
+        <li><b>Maximize Convex?</b> No! Minimize the negative (concave).</li>
+        <li><b>$|x|$ or $\|x\|_1$:</b> Split into variables $-t \le x \le t$.</li>
+        <li><b>$\max_i f_i(x)$:</b> Introduce epigraph variable $t$: $f_i(x) \le t$.</li>
+        <li><b>Linear-Fractional:</b> Homogenize variables (Charnes-Cooper transformation).</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 11: EXERCISES -->
+    <section class="section-card" id="section-11">
+        <h2><i data-feather="edit-3"></i> 11. Exercises</h2>
+
+
+<div class="problem">
+  <h3>P1.1 — Classify as Convex / Not Convex</h3>
+  <p>For each problem, state if it is convex and provide a one-sentence justification.</p>
+          <ol type="a">
+            <li>$\min \|Ax - b\|_2^2$ subject to $Fx = g$.</li>
+            <li>$\min -\|x\|_2$ subject to $Ax \le b$.</li>
+            <li>$\min \|x\|_1$ subject to $\|Bx - c\|_\infty \le 1$.</li>
+            <li>$\min x^\top Q x$ subject to $Dx \le e$, where $Q$ is not guaranteed to be PSD.</li>
+            <li>$\min \|x\|_2^2$ subject to $x_i \in \{0, 1\}$ for all $i$.</li>
+          </ol>
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Composition Rules:</b> The key to identifying convexity is to peel back the layers of functions. Norms are convex, affine maps preserve convexity, and sublevel sets of convex functions are convex.</li>
+            <li><b>The PSD Condition:</b> Quadratic forms $x^\top Q x$ are the boundary between easy and hard; if $Q$ has even one negative eigenvalue, the function is nonconvex (has saddle points). This relies on the eigenvalue characterization from <a href="../00-linear-algebra-basics/index.html">Lecture 00</a>.</li>
+            <li><b>Integer Constraints:</b> Discreteness destroys convexity because the domain is no longer a connected set, eliminating local-to-global gradient information.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Convexity depends on the structure. Affine maps preserve convexity. The negative of a convex function is concave. Integer constraints destroy convexity.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+            <ol type="a">
+              <li><b>✅ Convex.</b> The objective $\|Ax - b\|_2^2$ is a convex quadratic function (composition of convex $\|\cdot\|_2^2$ with affine $Ax - b$), and the constraint $Fx = g$ is affine.</li>
+              <li><b>❌ Not Convex.</b> The objective function $-\|x\|_2$ is concave (negative of a convex function), making this a concave maximization problem.</li>
+              <li><b>✅ Convex.</b> Both $\|x\|_1$ and $\|Bx - c\|_\infty$ are norms (hence convex), and the constraint $\|Bx - c\|_\infty \le 1$ defines a convex set (sublevel set of a norm).</li>
+              <li><b>❌ Not Convex.</b> The quadratic form $x^\top Q x$ is only guaranteed to be convex if $Q \succeq 0$ (positive semidefinite). Without this assumption, the problem is nonconvex.</li>
+              <li><b>❌ Not Convex.</b> The integer constraint $x_i \in \{0, 1\}$ makes the feasible set non-convex (it's a finite set of points, not a convex set).</li>
+            </ol>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P1.2 — Real-World Modeling: Warehouse Location</h3>
+  <p>You are tasked with optimizing the placement of a distribution warehouse to minimize the sum of squared Euclidean distances to $k$ retail locations $r_1, \ldots, r_k \in \mathbb{R}^2$. The warehouse must be located within a region defined by linear inequalities $C x \le d$. Formulate this as a convex optimization problem.</p>
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Summation Preserves Convexity:</b> The objective function is a sum of convex terms (squared Euclidean distances). Since the sum of convex functions is always convex, the overall problem is convex.</li>
+            <li><b>Geometric Interpretation:</b> This problem finds the 'centroid' weighted by squared distance. It is mathematically distinct from the Fermat-Weber problem (minimizing sum of Euclidean distances, not squared), which is an SOCP. Using squared distances makes the objective a quadratic form, simplifying the problem to a Quadratic Program (QP).</li>
+        </ul>
+      </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+              <strong>Step 1: Define decision variable.</strong> Let $x \in \mathbb{R}^2$ be the warehouse location (coordinates in the plane).
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Write the objective.</strong> The sum of squared distances to the retail locations is:
+              $$
+              f_0(x) = \sum_{i=1}^k \|x - r_i\|_2^2
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Verify convexity of objective.</strong> Each term $\|x - r_i\|_2^2$ is convex (composition of convex $\|\cdot\|_2^2$ with affine $x - r_i$). The sum of convex functions is convex.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 4: State the constraints.</strong> The warehouse must satisfy $Cx \le d$ (linear inequalities).
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 5: Complete formulation.</strong> The convex optimization problem is:
+              $$
+              \begin{aligned}
+              \min_{x \in \mathbb{R}^2} \quad & \sum_{i=1}^k \|x - r_i\|_2^2 \\
+              \text{s.t.} \quad & Cx \le d
+              \end{aligned}
+              $$
+              This is a <b>Quadratic Program (QP)</b> since the objective is quadratic and constraints are linear.
+            </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P1.3 — Reformulation: $\ell_1$ Regression as LP</h3>
+  <p>Show how to reformulate the following problem as a linear program:</p>
+          $$
+          \min_{x \in \mathbb{R}^n} \|Ax - b\|_1 \quad \text{s.t.} \quad \|x\|_\infty \le 1
+          $$
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Epigraph Transformation (The "Minimax" Trick):</b> To minimize a function like $f(x) = \max_i g_i(x)$ or a norm, we introduce a scalar variable $t$ and constrain the function to be below it ($f(x) \le t$). This lifts the problem into a higher dimension where the nonlinearity becomes a set of linear constraints.</li>
+            <li><b>Linearizability of Polyhedral Norms:</b> The $\ell_1$ and $\ell_\infty$ norms have unit balls that are polyhedra (defined by linear inequalities). This means any optimization involving them can be cast as a Linear Program (LP).</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Minimizing L1 norm is equivalent to LP via splitting variables or epigraph form. Infinity norm constraints are box constraints.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+              <strong>Step 1: Introduce slack variables for the objective.</strong> Write $\|Ax - b\|_1 = \sum_{i=1}^m |[Ax - b]_i|$. Introduce variables $t_i \ge 0$ to represent the absolute values:
+              $$
+              |[Ax - b]_i| \le t_i \quad \iff \quad -t_i \le [Ax - b]_i \le t_i
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Rewrite the objective.</strong> Minimizing $\|Ax - b\|_1$ is equivalent to minimizing $\sum_{i=1}^m t_i = \mathbf{1}^\top t$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Convert the infinity norm constraint.</strong> The constraint $\|x\|_\infty \le 1$ is equivalent to:
+              $$
+              -\mathbf{1} \le x \le \mathbf{1} \quad (\text{componentwise})
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 4: Complete LP formulation.</strong> The equivalent linear program is:
+              $$
+              \begin{aligned}
+              \min_{x \in \mathbb{R}^n, t \in \mathbb{R}^m} \quad & \mathbf{1}^\top t \\
+              \text{s.t.} \quad & -t \le Ax - b \le t \\
+              & -\mathbf{1} \le x \le \mathbf{1} \\
+              & t \ge 0
+              \end{aligned}
+              $$
+              This is an LP with $n + m$ variables and $2m + 2n$ inequality constraints (plus nonnegativity on $t$).
+            </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P1.4 — Prove: Feasible Set is Convex</h3>
+  <p>Prove that for a convex optimization problem, the feasible set $\mathcal{F} = \{x \mid f_i(x) \le 0, Ax = b\}$ is convex.</p>
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Definition of Convex Set:</b> Contains the line segment between any two points.</li>
+            <li><b>Intersection Property:</b> The feasible set is the intersection of sublevel sets of convex functions (inequalities) and hyperplanes (equalities). Since intersections of convex sets are convex, $\mathcal{F}$ is convex.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>The feasible set is the intersection of sublevel sets of convex functions. Intersection preserves convexity.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+              <strong>Setup:</strong> Take any $x, y \in \mathcal{F}$ and $\theta \in [0,1]$. We must show $z = \theta x + (1-\theta)y \in \mathcal{F}$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 1: Verify inequality constraints.</strong> Since $x, y \in \mathcal{F}$, we have $f_i(x) \le 0$ and $f_i(y) \le 0$ for all $i$. By convexity of $f_i$:
+              $$
+              f_i(z) = f_i(\theta x + (1-\theta)y) \le \theta f_i(x) + (1-\theta)f_i(y) \le 0
+              $$
+              So $z$ satisfies all inequality constraints.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Verify equality constraints.</strong> Since $Ax = b$ and $Ay = b$:
+              $$
+              Az = A(\theta x + (1-\theta)y) = \theta Ax + (1-\theta)Ay = \theta b + (1-\theta)b = b
+              $$
+              So $z$ satisfies all equality constraints.
+            </div>
+
+            <div class="proof-step">
+              <strong>Conclusion:</strong> Since $z$ satisfies all constraints, $z \in \mathcal{F}$. Therefore, $\mathcal{F}$ is convex.
+            </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P1.5 — Proving Uniqueness</h3>
+  <p>Prove that if $f_0$ is strictly convex, then the optimization problem has at most one global minimizer.</p>
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Strict Convexity implies Uniqueness:</b> Geometrically, a strictly convex function curves upward everywhere; it has no flat regions.</li>
+            <li><b>Proof Logic:</b> If there were two distinct global minima, the segment connecting them would lie strictly <i>above</i> the function graph (by definition of strict convexity), but also <i>on</i> the graph (since both endpoints are minimal and values cannot go lower), which is a contradiction. Thus, the solution must be unique.</li>
+        </ul>
+      </div>
+
+  <div class="recap-box">
+    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
+    <p>Strict convexity implies that the graph lies strictly above the chord. This geometry prevents multiple global minima.</p>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+              <strong>Setup (proof by contradiction):</strong> Assume there are two distinct global minimizers, $x$ and $y$, with $x \neq y$. Let the optimal value be $p^* = f_0(x) = f_0(y)$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 1: Form a convex combination.</strong> Consider the point $z = \frac{1}{2}x + \frac{1}{2}y$. Since the feasible set is convex, $z$ is feasible.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Apply strict convexity.</strong> Since $f_0$ is strictly convex and $x \neq y$:
+              $$
+              f_0(z) = f_0\left(\frac{1}{2}x + \frac{1}{2}y\right) < \frac{1}{2}f_0(x) + \frac{1}{2}f_0(y)
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Substitute optimal values.</strong>
+              $$
+              f_0(z) < \frac{1}{2}p^* + \frac{1}{2}p^* = p^*
+              $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Conclusion:</strong> We found a feasible point $z$ with $f_0(z) < p^*$, which contradicts that $p^*$ is the global minimum. Thus, the assumption that there are two distinct minimizers must be false.
+            </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P1.6 — Modeling: Maximum Likelihood Estimation</h3>
+  <p>Consider a logistic regression model for binary classification. We have data points $(x_i, y_i)$ where $x_i \in \mathbb{R}^n$ are feature vectors and $y_i \in \{-1, 1\}$ are labels. The probability that $y_i = 1$ is modeled as:
+          $$ P(y_i=1 \mid x_i; w) = \frac{1}{1 + e^{-w^\top x_i}} $$
+          Formulate the problem of finding the weight vector $w$ that maximizes the log-likelihood of the data as a convex optimization problem. (Note: $P(y_i=-1 \mid x_i; w) = 1 - P(y_i=1) = \frac{1}{1 + e^{w^\top x_i}}$).
+          </p>
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Log-Concavity in Statistics:</b> Many fundamental probability distributions (Exponential family) have log-concave density functions. This means maximizing the likelihood (product of probabilities) is equivalent to maximizing the log-likelihood (sum of logs), which is a concave maximization problem (hence convex).</li>
+            <li><b>Logistic Regression:</b> The specific loss function $f(z) = \log(1+e^{-z})$ is convex. This ensures that training logistic regression classifiers is a convex optimization problem with unique global optima (for regularized versions).</li>
+        </ul>
+      </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+              <strong>Step 1: Write the likelihood function.</strong> Assuming independent samples, the likelihood is:
+              $$ L(w) = \prod_{i=1}^m P(y_i \mid x_i; w) $$
+              We can unify the probability expression. Notice that $P(y_i \mid x_i; w) = \frac{1}{1 + e^{-y_i w^\top x_i}}$.
+              <br>Check: If $y_i=1$, $\frac{1}{1+e^{-w^\top x_i}}$. If $y_i=-1$, $\frac{1}{1+e^{w^\top x_i}} = \frac{e^{-w^\top x_i}}{1+e^{-w^\top x_i}} = 1 - \frac{1}{1+e^{-w^\top x_i}}$. Wait, the unified formula uses the identity $1 - \sigma(z) = \sigma(-z)$.
+              $$ P(y=-1) = \frac{1}{1+e^{w^\top x}} = \frac{1}{1+e^{-(-1)w^\top x}} $$
+              So generally, $P(y \mid x; w) = \sigma(y w^\top x) = \frac{1}{1 + e^{-y w^\top x}}$.
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 2: Formulate the negative log-likelihood.</strong> Maximizing likelihood is equivalent to minimizing negative log-likelihood:
+              $$ \ell(w) = -\log L(w) = -\sum_{i=1}^m \log\left( \frac{1}{1 + e^{-y_i w^\top x_i}} \right) $$
+              $$ \ell(w) = \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$
+            </div>
+
+            <div class="proof-step">
+              <strong>Step 3: Verify convexity.</strong> The function $f(z) = \log(1+e^z)$ (softplus) is convex.
+              We compute the gradient and Hessian to be rigorous:
+              $$ f'(z) = \frac{e^z}{1+e^z} = \frac{1}{1+e^{-z}} \quad (\text{sigmoid function}) $$
+              $$ f''(z) = \frac{e^z(1+e^z) - e^z(e^z)}{(1+e^z)^2} = \frac{e^z}{(1+e^z)^2} > 0 $$
+              Our objective is a sum of terms $f(-y_i w^\top x_i)$. Since $f$ is convex and the argument $-y_i w^\top x_i$ is affine in $w$, the composition is convex.
+              The sum of convex functions is convex.
+            </div>
+
+            <div class="proof-step">
+              <strong>Conclusion:</strong> The optimization problem is:
+              $$ \min_{w \in \mathbb{R}^n} \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$
+              This is an unconstrained convex optimization problem.
+            </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P1.7 — Proving Convexity from First Principles</h3>
+  <p><b>Problem:</b> Prove that $f(x) = \|Ax - b\|_2^2$ is a convex function using only the definition of convexity:
+  $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \quad \forall \theta \in [0,1] $$
+  Do not use the Hessian condition or the composition rule.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+            <li><b>Definition is King:</b> While Hessians and composition rules are convenient shortcuts, the inequality definition is the "ground truth" of convexity. Being able to prove convexity directly from the definition is a crucial skill for understanding <i>why</i> a function is convex.</li>
+            <li><b>Quadratic Behavior:</b> The function $\|Ax-b\|^2$ is a "quadratic bowl". Along any line, its values trace a parabola opening upward. The condition $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ simply says that the chord connecting two points on the parabola lies above the curve.</li>
+        </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Simplify using affine composition.</strong>
+      Let $g(u) = \|u\|_2^2 = u^\top u$. We know $f(x) = g(Ax-b)$.
+      It is sufficient to prove that $g(u)$ is convex, because if $g$ is convex, then $f(x) = g(Ax-b)$ is convex (affine composition).
+      Let's prove $g(u) = \|u\|_2^2$ is convex.
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 2: Expand the convex combination.</strong>
+      Let $u, v \in \mathbb{R}^n$ and $\theta \in [0,1]$. Let $z = \theta u + (1-\theta)v$.
+      $$ g(z) = \|\theta u + (1-\theta)v\|_2^2 = (\theta u + (1-\theta)v)^\top (\theta u + (1-\theta)v) $$
+      $$ = \theta^2 u^\top u + 2\theta(1-\theta) u^\top v + (1-\theta)^2 v^\top v $$
+      $$ = \theta^2 \|u\|^2 + 2\theta(1-\theta) u^\top v + (1-\theta)^2 \|v\|^2 $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 3: Analyze the RHS of the definition.</strong>
+      The target is $\theta g(u) + (1-\theta)g(v) = \theta \|u\|^2 + (1-\theta)\|v\|^2$.
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 4: Compute the difference (RHS - LHS).</strong>
+      $$ \Delta = [\theta \|u\|^2 + (1-\theta)\|v\|^2] - [\theta^2 \|u\|^2 + 2\theta(1-\theta) u^\top v + (1-\theta)^2 \|v\|^2] $$
+      Group terms by $\|u\|^2$ and $\|v\|^2$:
+      $$ \theta(1-\theta)\|u\|^2 + (1-\theta)(1-(1-\theta))\|v\|^2 - 2\theta(1-\theta)u^\top v $$
+      $$ = \theta(1-\theta)\|u\|^2 + \theta(1-\theta)\|v\|^2 - 2\theta(1-\theta)u^\top v $$
+      $$ = \theta(1-\theta) [ \|u\|^2 - 2u^\top v + \|v\|^2 ] $$
+      $$ = \theta(1-\theta) \|u - v\|_2^2 $$
+    </div>
+
+    <div class="proof-step">
+      <strong>Step 5: Conclusion.</strong>
+      Since $\theta \in [0,1]$, both $\theta$ and $(1-\theta)$ are non-negative. Also, the squared norm $\|u-v\|_2^2$ is always non-negative.
+      Thus, $\Delta \ge 0$, which implies:
+      $$ \theta g(u) + (1-\theta)g(v) \ge g(\theta u + (1-\theta)v) $$
+      So $g(u)$ is convex, and consequently $f(x) = \|Ax-b\|_2^2$ is convex.
+    </div>
+  </div>
+</div>
+
+      </section>
+
+
+    <section class="section-card" id="section-12">
+      <h2>11. Readings & Resources</h2>
+      <ul class="link-list">
+        <li><strong>Required Reading:</strong> Boyd & Vandenberghe, Chapter 1 (Introduction) and Chapter 4 (Convex Optimization Problems).</li>
+        <li><strong>Supplementary:</strong> Rockafellar, <em>Convex Analysis</em> (for rigorous theoretical background).</li>
+        <li><strong>Solver Documentation:</strong> <a href="https://www.cvxpy.org/" target="_blank">CVXPY</a>, <a href="https://cvxr.com/cvx/" target="_blank">CVX</a>, or <a href="https://jump.dev/" target="_blank">JuMP</a>.</li>
+      </ul>
+    </section>
+    </article>
+
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© <span id="year"></a> Convex Optimization Course</p>
+      </div>
+    </footer>
+  </main></div>
+
+  <script src="../../static/js/math-renderer.js"></script>
+  <script src="../../static/js/ui.js"></script>
+  <script src="../../static/js/toc.js"></script>
+  <script src="../../static/js/notes-widget.js"></script>
+  <script src="../../static/js/pomodoro.js"></script>
+  <script src="../../static/js/progress-tracker.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Widget Loaders -->
+  <script type="module">
+    import { initConvexCombination } from './widgets/js/convex-combination.js';
+    initConvexCombination('widget-convex-combination');
+  </script>
+  <script type="module">
+    import { initOptimizationLandscape } from './widgets/js/optimization-landscape.js';
+    initOptimizationLandscape('widget-optimization-landscape');
+  </script>
+  <script type="module">
+    import { initConvergenceComparison } from './widgets/js/convergence-comparison.js';
+    initConvergenceComparison('widget-convergence-comparison');
+  </script>
+  <script type="module">
+    import { initProblemFlowchart } from './widgets/js/problem-flowchart.js';
+    initProblemFlowchart('widget-problem-flowchart');
+  </script>
+  <script src="../../static/js/glossary-loader.js"></script>
+</body>
+</html>

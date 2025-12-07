@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>11. Algorithms III: Interior-Point Methods — Convex Optimization</title>
+  <link rel="stylesheet" href="../../static/css/convex-unified.css" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+</head>
+<body>
+  <!-- Header with navigation -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <a href="../../index.html">Convex Optimization</a>
+      </div>
+      <nav class="nav">
+        <a href="../../index.html">All Lectures</a>
+        <a href="#widgets">Interactive</a>
+        <a href="#readings">Readings</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="container" style="padding: 32px 0 60px;">
+    <!-- Lecture header -->
+    <article class="section-card" style="margin-bottom: 32px;">
+      <h1 style="margin-top: 0;">11. Algorithms III: Interior-Point Methods</h1>
+      <div class="meta">
+        Date: 2026-01-13 · Duration: 90 min · Tags: algorithms, interior-point
+      </div>
+
+      <!-- Brief introduction -->
+      <section style="margin-top: 16px;">
+        <p><strong>Overview:</strong> Barrier methods, central path, polynomial-time complexity, practical implementations.</p>
+        <p><strong>Prerequisites:</strong> <a href="../14-equality-constrained-minimization/index.html">Lecture 14</a></p>
+      </section>
+    </article>
+
+    <!-- Learning objectives -->
+    <section class="section-card" style="margin-bottom: 32px;">
+      <h2>Learning Objectives</h2>
+      <p>After this lecture, you should understand:</p>
+      <ul style="line-height: 1.8;">
+        <li>The barrier method for solving inequality-constrained convex optimization problems.</li>
+        <li>The concept of the central path.</li>
+        <li>The complexity of interior-point methods.</li>
+      </ul>
+    </section>
+
+    <!-- Main lecture content -->
+    <section class="section-card" style="margin-bottom: 32px;">
+      <h2>Key Concepts</h2>
+
+      <h3>1. Logarithmic Barrier Function</h3>
+      <p>For $\min f(x)$ subject to $f_i(x) \leq 0$, the log-barrier approximation is $\min f(x) + \frac{1}{t}\sum_{i=1}^m (-\log(-f_i(x)))$ where $t > 0$ is the barrier parameter. As $t \to \infty$, solutions $x^*(t)$ approach the constrained optimum, tracing the central path.</p>
+
+      <!-- Include images as needed -->
+      <figure style="margin: 16px 0; text-align: center;">
+        <img src="../../static/assets/topics/15-interior-point-methods/interior-point-trajectory.svg" alt="The trajectory of an interior-point method" style="max-width: 100%; height: auto;" />
+        <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
+          Interior-point methods converge to the optimal solution from the interior of the feasible set.
+        </figcaption>
+      </figure>
+
+      <h3>2. Central Path and Optimality</h3>
+      <p>The central path $\{x^*(t) : t > 0\}$ consists of minimizers of barrier problems. At each point, the KKT conditions $\nabla f(x^*(t)) + \sum_i \lambda_i^*(t) \nabla f_i(x^*(t)) = 0$ hold with $\lambda_i^*(t) = -1/(t f_i(x^*(t)))$, giving complementary slackness gap $\sum_i \lambda_i^* f_i(x^*) = -m/t$.</p>
+
+      <h3>3. Barrier Method Algorithm</h3>
+      <p>The barrier method: (1) Initialize with strictly feasible $x_0$ and $t^{(0)} > 0$, (2) For $k=0,1,2,\ldots$: compute $x^*(t^{(k)})$ via Newton's method, update $t^{(k+1)} = \mu t^{(k)}$ for $\mu > 1$, (3) Stop when $m/t < \epsilon$. Each centering step requires $O(\sqrt{m})$ Newton iterations (typically 5-50).</p>
+
+      <h3>4. Self-Concordance and Complexity</h3>
+      <p>For self-concordant barriers (including log-barrier for inequalities), the total iteration count is $O(\sqrt{m}\log(m/\epsilon))$, achieving polynomial-time complexity. This was a breakthrough showing convex optimization is tractable, resolving Khachian vs. Karmarkar debate for LPs.</p>
+
+      <h3>5. Primal-Dual Interior-Point Methods</h3>
+      <p>Primal-dual IPMs solve the KKT system directly: $\begin{bmatrix} \nabla^2 f + \sum \lambda_i \nabla^2 f_i & \nabla f_i \\ \text{diag}(\lambda) \nabla f_i & \text{diag}(f) \end{bmatrix} \begin{bmatrix} \Delta x \\ \Delta \lambda \end{bmatrix} = -\begin{bmatrix} r_{\text{dual}} \\ r_{\text{cent}} \end{bmatrix}$, updating both primal and dual variables simultaneously, often faster than pure barrier methods.</p>
+
+      <h3>6. Path-Following vs. Potential Reduction</h3>
+      <p>Path-following methods (short-step, long-step, predictor-corrector) stay close to the central path. Potential reduction methods minimize a combined objective-barrier potential. Predictor-corrector achieves the best practical performance via affine-scaling predictor + centering corrector steps.</p>
+
+      <h3>7. Homogeneous Self-Dual Embedding</h3>
+      <p>To avoid finding an initial feasible point, homogeneous self-dual methods embed the problem into a larger system with built-in feasibility. This solves primal and dual simultaneously, detecting infeasibility or unboundedness automatically—used in modern solvers like MOSEK and SeDuMi.</p>
+
+      <h3>8. Conic Optimization: LP, SOCP, SDP</h3>
+      <p>Interior-point methods extend to conic programs: LP (nonnegative orthant), SOCP (second-order cones), SDP (positive semidefinite cone). The log-barrier $-\log \det(X)$ for $X \succeq 0$ is self-concordant, enabling polynomial-time SDP solvers (CVX, CVXPY backends).</p>
+
+      <h3>9. Warm-Starting and Practical Considerations</h3>
+      <p>Interior-point methods generally cannot warm-start effectively (small perturbations destroy centrality). Presolve, problem reformulation (eliminating variables/constraints), and exploiting sparsity (sparse Cholesky for KKT system) are critical for large-scale problems. Typical performance: $10^3$-$10^6$ variables in seconds to minutes.</p>
+    </section>
+
+    <!-- Interactive widgets -->
+    <section class="section-card" id="widgets" style="margin-bottom: 32px;">
+      <h2>Interactive Widgets</h2>
+      <p>Below are tools to explore the concepts interactively. Try tweaking parameters to build intuition.</p>
+
+      <!-- Widget 1 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Barrier Method Path Tracer</h3>
+        <p>Visualize the central path for a 2D LP.</p>
+        <div id="widget-1" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 2 -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">LP Simplex vs. Interior-Point</h3>
+        <p>Compare the convergence of the simplex method and an interior-point method for a 2D LP.</p>
+        <div id="widget-2" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Widget 3 (if exists) -->
+      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+        <h3 style="margin-top: 0;">Newton Step in IPM</h3>
+        <p>Shows a single Newton step within an interior-point method.</p>
+        <div id="widget-3" style="width: 100%; height: 400px; position: relative;">
+          <!-- Widget will be rendered here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Readings -->
+    <section class="section-card" id="readings" style="margin-bottom: 32px;">
+      <h2>Readings & Resources</h2>
+      <ul class="link-list">
+        <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 11 — Interior-Point Methods</li>
+        <li><strong>Course slides:</strong> [Link if available]</li>
+      </ul>
+    </section>
+
+    <!-- Example problems -->
+    <section class="section-card" style="margin-bottom: 32px;">
+      <h2>Example Problems</h2>
+
+      <h3>Example 11.1: Log-Barrier for Simple LP</h3>
+      <p><strong>Problem:</strong> For LP $\min c^\top x$ subject to $Ax \leq b$, write the log-barrier problem for parameter $t$ and derive the gradient.</p>
+      <p><em>[Detailed worked solution to be added: Shows barrier $tc^\top x - \sum_i \log(b_i - a_i^\top x)$, derives $\nabla \phi = tc + \sum_i \frac{a_i}{b_i - a_i^\top x}$]</em></p>
+
+      <h3>Example 11.2: Central Path for 2D LP</h3>
+      <p><strong>Problem:</strong> For $\min x_1$ subject to $x_1, x_2 \geq 0$ and $x_1 + x_2 \leq 1$, compute the central path $x^*(t)$ analytically.</p>
+      <p><em>[Detailed worked solution to be added: Solves optimality conditions, finds $x^*(t) = (\frac{2}{2t+1}, \frac{2t-1}{2t+1})$ for $t \geq 1/2$]</em></p>
+
+      <h3>Example 11.3: Barrier Method Iteration</h3>
+      <p><strong>Problem:</strong> Run one outer iteration of barrier method for QP with inequality constraints, showing Newton centering step.</p>
+      <p><em>[Detailed worked solution to be added: Forms barrier Hessian, solves Newton system, updates $t \leftarrow \mu t$ with $\mu=10$]</em></p>
+
+      <h3>Example 11.4: Complementary Slackness Gap</h3>
+      <p><strong>Problem:</strong> For current iterate with dual variables $\lambda_i = -1/(tf_i(x))$, show that the duality gap is exactly $m/t$.</p>
+      <p><em>[Detailed worked solution to be added: Computes $\sum_i \lambda_i f_i(x) = -m/t$, explains stopping criterion $m/t < \epsilon$]</em></p>
+
+      <h3>Example 11.5: Primal-Dual KKT System</h3>
+      <p><strong>Problem:</strong> For LP in standard form, write out the primal-dual KKT system and the search direction equations.</p>
+      <p><em>[Detailed worked solution to be added: Derives $\begin{bmatrix} 0 & A^\top & I \\ A & 0 & 0 \\ S & 0 & Z \end{bmatrix} \begin{bmatrix} \Delta x \\ \Delta y \\ \Delta s \end{bmatrix} = -\begin{bmatrix} r_d \\ r_p \\ XSe - \sigma\mu e \end{bmatrix}$]</em></p>
+
+      <h3>Example 11.6: SDP via Barrier Method</h3>
+      <p><strong>Problem:</strong> Minimize $\langle C, X \rangle$ subject to $\langle A_i, X \rangle = b_i$ and $X \succeq 0$ using log-barrier $-\log \det(X)$.</p>
+      <p><em>[Detailed worked solution to be added: Derives gradient $\nabla_X \phi = C - X^{-1}$, Hessian action, shows Newton system for SDP]</em></p>
+
+      <h3>Example 11.7: Geometric Program Transformation</h3>
+      <p><strong>Problem:</strong> Transform geometric program to convex form and apply barrier method with exponential cone barrier.</p>
+      <p><em>[Detailed worked solution to be added: Uses log-change of variables, converts to conic form, applies IPM]</em></p>
+
+      <h3>Example 11.8: Complexity Analysis</h3>
+      <p><strong>Problem:</strong> For $m=100$ inequality constraints and $\epsilon=10^{-6}$, estimate total Newton iterations needed by barrier method.</p>
+      <p><em>[Detailed worked solution to be added: Uses $\mu=10$, computes outer iterations $\approx \log_{10}(100 \cdot 10^6)/\log(10) \approx 8$, inner $\approx 10$ per outer, total $\approx 80$ iterations]</em></p>
+    </section>
+
+    <!-- Exercises (optional) -->
+    <section class="section-card" style="margin-bottom: 32px;">
+      <h2>Exercises</h2>
+      <p>Try these problems to deepen your understanding. Solutions are provided at the end of the course.</p>
+      <ol style="line-height: 2;">
+        <li>Derive the gradient and Hessian of the log-barrier function $\phi(x) = -\sum_{i=1}^m \log(-f_i(x))$ for inequality constraints $f_i(x) \leq 0$.</li>
+        <li>Prove that the central path $\{x^*(t) : t > 0\}$ is a smooth curve that converges to the optimal solution as $t \to \infty$.</li>
+        <li>Show that at a point on the central path with parameter $t$, the duality gap is exactly $m/t$ where $m$ is the number of inequality constraints.</li>
+        <li>Prove that the barrier method achieves $\epsilon$-optimality in at most $\lceil \frac{\log(m/(\epsilon t^{(0)}))}{\log \mu} \rceil$ outer iterations.</li>
+        <li>For self-concordant barrier, show that the number of Newton iterations required for centering is $O(\sqrt{m})$ independent of problem dimension.</li>
+        <li>Derive the search direction for primal-dual interior-point method applied to LP in standard form: $\min c^\top x$ subject to $Ax=b$, $x \geq 0$.</li>
+        <li>Explain why interior-point methods have polynomial-time complexity while simplex method has exponential worst-case complexity, yet simplex is often faster in practice.</li>
+        <li>For SDP with constraint $X \succeq 0$, show that the log-barrier $-\log \det(X)$ has gradient $-X^{-1}$ and Hessian characterized by $\nabla^2 \phi(X)[H] = X^{-1} H X^{-1}$.</li>
+        <li>Implement predictor-corrector IPM for LP: compute affine-scaling direction, estimate $\mu$, then compute centering-plus-predictor direction.</li>
+        <li>Compare barrier method vs. primal-dual IPM: barrier requires strictly feasible start and solves unconstrained subproblems, while primal-dual handles infeasible start and updates dual variables. Which is better for warm-starting?</li>
+      </ol>
+    </section>
+  </main></div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p style="margin: 0;">
+        © <span id="year"></a> Convex Optimization Course ·
+        <a href="../../README.md" style="color: var(--brand);">About</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Load Pyodide for Python widgets (optional) -->
+  <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+
+  <!-- Widget loaders -->
+  <script type="module">
+    import { initBarrierPathTracer } from './widgets/js/barrier-method-path-tracer.js';
+    initBarrierPathTracer('widget-1');
+  </script>
+  <script type="module">
+    import { initSimplexVsIPM } from './widgets/js/lp-simplex-vs-ip.js';
+    initSimplexVsIPM('widget-2');
+  </script>
+  <script type="module">
+    import { initNewtonStepIPM } from './widgets/js/newton-step-ipm.js';
+    initNewtonStepIPM('widget-3');
+  </script>
+
+  <!-- Global utilities -->
+  <script src="../../static/js/math-renderer.js"></script>
+<script src="../../static/js/ui.js"></script>
+<script src="../../static/js/toc.js"></script>
+<script src="../../static/js/ui.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Widget loaders -->
+  <script type="module">
+    import { initBarrierPathTracer } from './widgets/js/barrier-method-path-tracer.js';
+    initBarrierPathTracer('widget-1');
+  </script>
+  <script type="module">
+    import { initSimplexVsIPM } from './widgets/js/lp-simplex-vs-ip.js';
+    initSimplexVsIPM('widget-2');
+  </script>
+  <script type="module">
+    import { initNewtonStepIPM } from './widgets/js/newton-step-ipm.js';
+    initNewtonStepIPM('widget-3');
+  </script>
+  <script src="../../static/js/glossary-loader.js"></script>
+<script src="../../static/js/notes-widget.js"></script>
+<script src="../../static/js/pomodoro.js"></script>
+<script src="../../static/js/progress-tracker.js"></script>
+</body>
+</html>

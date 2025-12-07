@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penalty Method Path</title>
+    <link rel="stylesheet" href="../../../shared/styles/widget-theme.css">
+    <style>
+        #penalty-plot-container {
+            width: 500px;
+            height: 500px;
+            border: 1px solid var(--color-surface-1);
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <p>Problem: min (x-2)² + (y-2)² subject to x + y = 1</p>
+        <div id="penalty-plot-container"></div>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="module" src="js/penalty-method.js"></script>
+<script src="../../static/js/ui.js"></script>
+<script src="../../static/js/notes-widget.js"></script>
+<script src="../../static/js/pomodoro.js"></script>
+<script src="../../static/js/progress-tracker.js"></script>
+</body>
+</html>
