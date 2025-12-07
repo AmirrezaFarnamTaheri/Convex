@@ -625,11 +625,11 @@
       </section>
 
       <section class="section-card" id="section-4">
-        <h2>6. Topological Toolkit: Closure, Interior, Relative Interior</h2>
+        <h2>4. Topological Toolkit: Closure, Interior, Relative Interior</h2>
 
         <p>To work precisely with convex sets and optimality conditions, we need clear notions of "inside," "edge," and "outside."</p>
 
-        <h3>6.1 Basic Topological Definitions</h3>
+        <h3>4.1 Basic Topological Definitions</h3>
 
         <p>Let $C \subseteq \mathbb{R}^n$ be any set.</p>
 
@@ -671,7 +671,7 @@
           </ul>
         </div>
 
-        <h3>6.2 Key Properties for Convex Sets</h3>
+        <h3>4.2 Key Properties for Convex Sets</h3>
 
         <div class="theorem-box">
           <h4>Facts About Convex Sets</h4>
@@ -690,7 +690,7 @@
           </ol>
         </div>
 
-        <h3>6.3 Why Relative Interior Matters</h3>
+        <h3>4.3 Why Relative Interior Matters</h3>
 
         <p>Relative interior is crucial for:</p>
         <ul>
@@ -698,6 +698,156 @@
           <li><b>Optimality conditions:</b> KKT conditions require regularity at boundary points</li>
           <li><b>Interior-point methods:</b> Algorithms that approach optimality from the relative interior</li>
         </ul>
+      </section>
+
+      <!-- SECTION 5: REVIEW -->
+      <section class="section-card" id="section-5">
+        <h2>5. Review & Cheat Sheet</h2>
+        <h3>Key Definitions</h3>
+        <ul>
+          <li><b>Affine Set:</b> Contains the line through any two points. ($C = x_0 + V$)</li>
+          <li><b>Convex Set:</b> Contains the line segment between any two points.</li>
+          <li><b>Convex Hull:</b> Smallest convex set containing $S$. ($\text{conv}(S)$)</li>
+          <li><b>Cone:</b> Closed under positive scaling ($\theta x \in C$ for $\theta \ge 0$).</li>
+        </ul>
+
+        <h3>Operations Preserving Convexity</h3>
+        <ul>
+          <li>Intersection ($\bigcap C_i$)</li>
+          <li>Affine map ($f(x) = Ax+b$) and inverse map ($f^{-1}(D)$)</li>
+          <li>Perspective function ($P(x,t) = x/t$)</li>
+          <li>Linear-fractional function ($f(x) = \frac{Ax+b}{c^\top x+d}$)</li>
+        </ul>
+      </section>
+
+      <!-- SECTION 6: EXERCISES -->
+      <section class="section-card" id="section-6">
+        <h2><i data-feather="edit-3"></i> 6. Exercises</h2>
+
+        <div class="problem">
+          <h3>P3.1 — Voronoi Regions</h3>
+          <p><b>Problem:</b> Let $x_0, \dots, x_k \in \mathbb{R}^n$. The Voronoi region $V_0$ corresponding to $x_0$ is the set of points closer to $x_0$ than to any other $x_i$:
+          $$ V_0 = \{x \in \mathbb{R}^n \mid \|x - x_0\|_2 \le \|x - x_i\|_2, \ i=1,\dots,k\} $$
+          Show that $V_0$ is a polyhedron (and thus a convex set).</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Halfspaces as Decision Boundaries:</b> The set of points closer to $A$ than $B$ is a halfspace separated by the perpendicular bisector of the segment $AB$.</li>
+                <li><b>Polyhedra as Intersections:</b> Since the Voronoi region is the intersection of these "closer-to-me" conditions (one for each neighbor), it is an intersection of halfspaces, which defines a polyhedron.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Step 1: Analyze the condition.</strong> The condition $\|x - x_0\|_2 \le \|x - x_i\|_2$ is equivalent to squaring both sides:
+              $$ \|x - x_0\|_2^2 \le \|x - x_i\|_2^2 $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Expand.</strong>
+              $$ (x - x_0)^\top (x - x_0) \le (x - x_i)^\top (x - x_i) $$
+              $$ x^\top x - 2x_0^\top x + x_0^\top x_0 \le x^\top x - 2x_i^\top x + x_i^\top x_i $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Simplify to linear inequality.</strong> The quadratic terms $x^\top x$ cancel out. Rearranging:
+              $$ 2(x_i - x_0)^\top x \le \|x_i\|_2^2 - \|x_0\|_2^2 $$
+              This is a linear inequality of the form $a_i^\top x \le b_i$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 4: Intersection.</strong>
+              $V_0$ is the intersection of $k$ such halfspaces (one for each $i \in \{1,\dots,k\}$). Therefore, $V_0$ is a polyhedron.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.2 — Midpoint Convexity</h3>
+          <p><b>Problem:</b> A set $C$ is <b>midpoint convex</b> if $\frac{1}{2}(x+y) \in C$ whenever $x, y \in C$. Prove that if $C$ is closed and midpoint convex, then $C$ is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Dyadic Rationals:</b> By repeatedly taking midpoints, we can reach any point of the form $k/2^n$. These points are dense in the unit interval.</li>
+                <li><b>Role of Closure:</b> Midpoint convexity gets you all dyadic rational combinations. Closure fills in the "gaps" (irrational coefficients) via limits, ensuring full convexity. Without closure, the set of rational numbers $\mathbb{Q}$ is midpoint convex but not convex!</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Step 1: Dyadic Rationals.</strong> By induction, any convex combination $\theta x + (1-\theta)y$ where $\theta = k/2^n$ (a dyadic rational) is in $C$.
+              <br>(Base case $n=1$: midpoint. Inductive step: average of two dyadic rationals is dyadic).
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Density.</strong> The set of dyadic rationals is dense in $[0, 1]$. For any real $\theta \in [0, 1]$, there exists a sequence of dyadic rationals $\theta_k \to \theta$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Closure.</strong> Let $z_k = \theta_k x + (1-\theta_k) y$. Since $C$ is midpoint convex, $z_k \in C$.
+              Since $\theta_k \to \theta$, we have $z_k \to z = \theta x + (1-\theta)y$.
+              Because $C$ is closed, the limit $z$ must be in $C$. Thus $C$ is convex.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.3 — Convex Hull of a Union</h3>
+          <p><b>Problem:</b> Let $C = \mathrm{conv}(S_1 \cup S_2)$, where $S_1, S_2$ are convex sets. Show that $x \in C$ if and only if $x = \theta y + (1-\theta) z$ for some $y \in S_1, z \in S_2, \theta \in [0,1]$.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Join of Sets:</b> The convex hull of two sets is the union of all line segments connecting them.</li>
+                <li><b>Simplifying Carathéodory:</b> While general convex hulls require combinations of many points, if the sets are already convex, we only need to combine <i>one</i> point from each set.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Direction ($\Leftarrow$):</strong> If $x = \theta y + (1-\theta)z$ with $y \in S_1, z \in S_2$, then $y, z \in S_1 \cup S_2$. Thus $x$ is a convex combination of points in the union, so $x \in \mathrm{conv}(S_1 \cup S_2)$.
+            </div>
+            <div class="proof-step">
+              <strong>Direction ($\Rightarrow$):</strong> Let $x \in \mathrm{conv}(S_1 \cup S_2)$. Then $x = \sum \lambda_i u_i$ where $u_i \in S_1 \cup S_2$.
+              Split the sum into terms from $S_1$ and terms from $S_2$:
+              $$ x = \sum_{u_i \in S_1} \lambda_i u_i + \sum_{u_j \in S_2} \lambda_j u_j $$
+              Let $\theta = \sum_{u_i \in S_1} \lambda_i$. Then $\sum_{u_j \in S_2} \lambda_j = 1-\theta$.
+              If $\theta=0$ or $\theta=1$, the result is trivial. Otherwise, define:
+              $$ y = \frac{1}{\theta} \sum_{u_i \in S_1} \lambda_i u_i, \quad z = \frac{1}{1-\theta} \sum_{u_j \in S_2} \lambda_j u_j $$
+              Since $S_1$ is convex, $y \in S_1$ (convex combination of its points). Similarly $z \in S_2$.
+              And $x = \theta y + (1-\theta) z$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.4 — Linear-Fractional Functions</h3>
+          <p><b>Problem:</b> Show that the range of a linear-fractional function $f(x) = \frac{Ax+b}{c^\top x+d}$ on a convex domain $C$ (where $c^\top x + d > 0$) is a convex set.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Perspective Composition:</b> Linear-fractional functions are the composition of an affine map with the perspective function $P(u, v) = u/v$.</li>
+                <li><b>Preservation Rules:</b> Affine maps preserve convexity. The perspective map preserves convexity. Therefore, their composition preserves convexity. This is a purely structural proof avoiding messy algebra.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Step 1: Identify components.</strong>
+              Define the affine map $g(x) = (Ax+b, c^\top x+d) \in \mathbb{R}^{m+1}$.
+              Define the perspective map $P(y, t) = y/t$.
+              Then $f(x) = P(g(x))$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Apply preservation theorems.</strong>
+              Since $C$ is convex, its image under the affine map, $D = g(C)$, is convex.
+              The range of $f$ is $P(D)$. Since the perspective function preserves convexity (Theorem in 3.3), $P(D)$ is convex.
+            </div>
+          </div>
+        </div>
+
       </section>
     </article>
 

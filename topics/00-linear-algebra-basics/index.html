@@ -60,8 +60,8 @@
     </section>
 
 
-    <!-- SECTION 0: NOTATION -->
-    <section class="section-card" id="section-1">
+    <!-- SECTION 1: NOTATION -->
+    <section class="section-card" id="section-notation">
       <h2>1. Notation and Basic Objects</h2>
 
 
@@ -257,8 +257,8 @@
       </div>
     </section>
 
-    <!-- SECTION 1: FOUR FUNDAMENTAL SUBSPACES -->
-    <section class="section-card" id="section-1">
+    <!-- SECTION 2: SUBSPACES -->
+    <section class="section-card" id="section-subspaces">
       <h2>2. Subspaces and the Four Fundamental Spaces</h2>
 
       <p>A <a href="#" class="definition-link">linear subspace</a> is a set of vectors that is closed under addition and scalar multiplication. Given a matrix $A \in \mathbb{R}^{m \times n}$, we can define four fundamental subspaces that characterize the behavior of the linear map $T(x) = Ax$.</p>
@@ -358,10 +358,8 @@
       </div>
     </section>
 
-    <!-- SECTION 2: INNER PRODUCTS AND NORMS -->
-
-    <!-- SECTION 2: ALGEBRAIC INVARIANTS -->
-    <section class="section-card" id="section-2">
+    <!-- SECTION 3: ALGEBRAIC INVARIANTS -->
+    <section class="section-card" id="section-invariants">
       <h2>3. Algebraic Invariants: Determinant, Trace, and Eigenvalues</h2>
 
       <p>While a matrix $A$ represents a linear map in a specific basis, we are often interested in properties that are intrinsic to the map itself, independent of the basis. These are called <b>invariants</b>.</p>
@@ -481,7 +479,7 @@
     </section>
 
 
-    <section class="section-card" id="section-3">
+    <section class="section-card" id="section-norms">
       <h2>4. Inner Products, Norms, and Angles</h2>
 
       <h3>Inner Product</h3>
@@ -556,7 +554,8 @@
         <div class="proof-step">
           <strong>Step 3: Simplify.</strong> Rearranging gives
           $$ 4(x^\top y)^2 \le 4\|x\|_2^2 \|y\|_2^2 $$
-          Taking the square root of both sides yields the Cauchy-Schwarz inequality.
+          Dividing by 4 and taking the square root of both sides (since all quantities are non-negative and $\sqrt{a^2}=|a|$):
+          $$ |x^\top y| \le \|x\|_2 \|y\|_2 $$
         </div>
       </div>
 
@@ -574,7 +573,8 @@
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Take square roots.</strong> Taking the square root of both sides yields the triangle inequality.
+          <strong>Step 3: Take square roots.</strong> Taking the square root of both sides yields the triangle inequality:
+          $$ \|x+y\|_2 \le \|x\|_2 + \|y\|_2 $$
         </div>
       </div>
 
@@ -664,7 +664,7 @@
           $$ \|X\|_2^2 = \sup_{v \neq 0} \frac{\|Xv\|_2^2}{\|v\|_2^2} = \sup_{v \neq 0} \frac{v^\top X^\top X v}{v^\top v} $$
         </div>
         <div class="proof-step">
-          <strong>Step 2: Rayleigh Quotient.</strong> The expression $\frac{v^\top M v}{v^\top v}$ for a symmetric matrix $M$ is the Rayleigh Quotient. Its maximum value is exactly $\lambda_{\max}(M)$.
+          <strong>Step 2: Rayleigh Quotient.</strong> The expression $\frac{v^\top M v}{v^\top v}$ for a symmetric matrix $M$ is the Rayleigh Quotient. By the Spectral Theorem, we can diagonalize $M$ in an orthonormal basis of eigenvectors. The maximum value of the quotient is achieved when $v$ is the eigenvector corresponding to the largest eigenvalue. Thus, the maximum is exactly $\lambda_{\max}(M)$.
         </div>
         <div class="proof-step">
           <strong>Step 3: Conclusion.</strong>
@@ -730,8 +730,8 @@
       </div>
     </section>
 
-    <!-- SECTION 3: ORTHOGONALITY AND QR -->
-    <section class="section-card" id="section-4">
+    <!-- SECTION 5: ORTHOGONALITY -->
+    <section class="section-card" id="section-orthogonality">
       <h2>5. Orthogonality and Orthonormal Bases</h2>
 
       <h3>Orthonormal Sets</h3>
@@ -781,8 +781,8 @@
       </div>
     </section>
 
-    <!-- SECTION 4: PSD MATRICES -->
-    <section class="section-card" id="section-5">
+    <!-- SECTION 6: PSD MATRICES -->
+    <section class="section-card" id="section-psd">
       <h2>6. Positive Semidefinite Matrices</h2>
 
       <h3>5.1 The Space of Symmetric Matrices ($\mathbb{S}^n$)</h3>
@@ -1021,7 +1021,7 @@
       $$
 
       <div class="proof-box">
-        <h4>Microfacts About the Loewner Order</h4>
+        <h4>Key Properties of the Loewner Order</h4>
         <ul>
           <li><b>Eigenvalue characterization:</b> $X \succeq 0$ if and only if all eigenvalues of $X$ are nonnegative.</li>
           <li><b>Inner product property:</b> If $X \succeq 0$ and $Y \succeq 0$, then:
@@ -1040,8 +1040,8 @@
       </ul>
     </section>
 
-    <!-- SECTION 5: PROJECTIONS -->
-    <section class="section-card" id="section-6">
+    <!-- SECTION 7: PROJECTIONS -->
+    <section class="section-card" id="section-projections">
       <h2>7. Projections onto Subspaces and Affine Sets</h2>
 
       <h3>Orthogonal Projection onto a Subspace</h3>
@@ -1110,8 +1110,8 @@
 
     </section>
 
-    <!-- SECTION 6: LEAST SQUARES -->
-    <section class="section-card" id="section-7">
+    <!-- SECTION 8: LEAST SQUARES -->
+    <section class="section-card" id="section-least-squares">
       <h2>8. The Method of Least Squares</h2>
 
       <h3>The Problem: Overdetermined Systems</h3>

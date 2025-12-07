@@ -319,10 +319,10 @@
       <p>where $A^\dagger$ is the pseudoinverse and $z \in \mathbb{R}^n$ is a new variable. This reduces the problem dimension.</p>
 
       <!-- Widget 6: Problem Reformulation Tool -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
+      <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive: Problem Reformulation Tool</h3>
         <p><strong>Purpose:</strong> Learn how to reformulate non-standard problems into LP, QP, SOCP, or SDP forms.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
+        <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
           <li>Select a non-standard problem (e.g., $\ell_1$, $\ell_\infty$ minimization)</li>
           <li>See reformulation to standard form</li>
           <li>Understand epigraph and slack variable techniques</li>
@@ -331,6 +331,157 @@
           <!-- Widget will be rendered here -->
         </div>
       </div>
+    </section>
+
+    <!-- SECTION 6: EXERCISES -->
+    <section class="section-card" id="section-6">
+      <h2><i data-feather="edit-3"></i> 6. Exercises</h2>
+
+<div class="problem">
+  <h3>P7.1 — Diet Problem (LP)</h3>
+  <p>Consider the classic diet problem. There are $n$ foods and $m$ nutrients.
+  <ul>
+    <li>$c_j$: Cost of one unit of food $j$.</li>
+    <li>$a_{ij}$: Amount of nutrient $i$ in one unit of food $j$.</li>
+    <li>$b_i$: Minimum required amount of nutrient $i$.</li>
+  </ul>
+  Formulate the problem of finding the cheapest diet that satisfies all nutritional requirements as a Linear Program. Write down the objective and constraints in matrix notation. Is the feasible set bounded?</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>LP Structure:</b> Linear objective + Linear inequalities + Linear equalities.</li>
+        <li><b>Standard Form:</b> $\min c^\top x$ s.t. $Ax \le b, x \ge 0$ (or similar variations).</li>
+        <li><b>Unboundedness:</b> Feasible sets in LPs are polyhedra. They can be unbounded (e.g., you can eat infinite amounts of food), but the optimal cost is usually bounded below (cost $\ge 0$).</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Variables:</strong> Let $x_j$ be the amount of food $j$ consumed.
+    </div>
+    <div class="proof-step">
+      <strong>Objective:</strong> Minimize total cost $f_0(x) = \sum_{j=1}^n c_j x_j = c^\top x$.
+    </div>
+    <div class="proof-step">
+      <strong>Constraints:</strong>
+      <ul>
+        <li>Nutrient $i$: $\sum_{j=1}^n a_{ij} x_j \ge b_i$ for $i=1,\dots,m$. In matrix form: $Ax \ge b$.</li>
+        <li>Non-negativity: $x_j \ge 0$ for all $j$. In matrix form: $x \ge 0$.</li>
+      </ul>
+    </div>
+    <div class="proof-step">
+      <strong>Matrix Form:</strong>
+      $$
+      \begin{aligned}
+      \min \quad & c^\top x \\
+      \text{s.t.} \quad & Ax \ge b \\
+      & x \ge 0
+      \end{aligned}
+      $$
+    </div>
+    <div class="proof-step">
+      <strong>Boundedness:</strong> The feasible set is generally <b>unbounded</b>. For example, if you double a valid diet, it still satisfies the "at least" nutrient constraints. However, the objective function (cost) is bounded below by 0 (since $c \ge 0, x \ge 0$), so an optimal solution exists.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P7.2 — Transportation Problem (LP)</h3>
+  <p>Supply $s_i$ at $m$ sources is to be shipped to $n$ destinations with demand $d_j$. The cost to ship from $i$ to $j$ is $C_{ij}$. Formulate this as an LP.</p>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <p>Let $x_{ij}$ be the amount shipped from $i$ to $j$.
+    $$ \min \sum_{i,j} C_{ij} x_{ij} $$
+    Subject to:
+    <ul>
+      <li>Supply constraints: $\sum_{j=1}^n x_{ij} \le s_i$ for all $i$.</li>
+      <li>Demand constraints: $\sum_{i=1}^m x_{ij} = d_j$ for all $j$ (assuming exact demand satisfaction).</li>
+      <li>Non-negativity: $x_{ij} \ge 0$.</li>
+    </ul>
+    This is a classic LP on a bipartite graph.</p>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P7.3 — Chebyshev Center (LP)</h3>
+  <p>The Chebyshev center of a polyhedron $\mathcal{P} = \{x \mid a_i^\top x \le b_i, i=1,\dots,m\}$ is the center of the largest Euclidean ball inscribed in $\mathcal{P}$. Formulate this as an LP.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Ball Containment:</b> A ball $B(x_c, r)$ is contained in a halfspace $\{x \mid a^\top x \le b\}$ iff $a^\top x_c + r\|a\|_2 \le b$. This converts a geometric containment condition into a linear algebraic constraint on the center $x_c$ and radius $r$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      Let the ball be $B(x_c, r) = \{x_c + u \mid \|u\|_2 \le r\}$.
+      The condition $B(x_c, r) \subseteq \mathcal{P}$ means for all $i$:
+      $$ \sup_{\|u\|_2 \le r} a_i^\top (x_c + u) \le b_i $$
+    </div>
+    <div class="proof-step">
+      Expand the sup:
+      $$ a_i^\top x_c + \sup_{\|u\|_2 \le r} a_i^\top u \le b_i $$
+      $$ a_i^\top x_c + r \|a_i\|_2 \le b_i $$
+    </div>
+    <div class="proof-step">
+      We maximize the radius $r$. Variables are $r$ and $x_c$.
+      $$
+      \begin{aligned}
+      \max \quad & r \\
+      \text{s.t.} \quad & a_i^\top x_c + r \|a_i\|_2 \le b_i, \quad i=1,\dots,m \\
+      & r \ge 0
+      \end{aligned}
+      $$
+      This is an LP.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P7.4 — Distance between Polyhedra (QP)</h3>
+  <p>Formulate the problem of finding the distance between two polyhedra $\mathcal{P}_1 = \{x \mid A_1 x \le b_1\}$ and $\mathcal{P}_2 = \{x \mid A_2 x \le b_2\}$ as a Quadratic Program.</p>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <p>We minimize the squared Euclidean distance $\|x_1 - x_2\|_2^2$.
+    Variables: $x_1 \in \mathbb{R}^n, x_2 \in \mathbb{R}^n$.
+    $$
+    \begin{aligned}
+    \min_{x_1, x_2} \quad & \|x_1 - x_2\|_2^2 \\
+    \text{s.t.} \quad & A_1 x_1 \le b_1 \\
+    & A_2 x_2 \le b_2
+    \end{aligned}
+    $$
+    The objective $\|x_1 - x_2\|^2 = x_1^\top x_1 - 2x_1^\top x_2 + x_2^\top x_2$ is a convex quadratic form in the joint variable $z = (x_1, x_2)$.
+    Constraints are linear inequalities. Thus, it is a QP.</p>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P7.5 — L1 Reformulation</h3>
+  <p>Reformulate $\min \|Ax - b\|_1$ subject to $\|x\|_\infty \le 1$ as an LP.</p>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <p>Introduce slack variables $t \in \mathbb{R}^m$ for the residual absolute values.
+    $$ |(Ax-b)_i| \le t_i \iff -t_i \le (Ax-b)_i \le t_i $$
+    Constraint $\|x\|_\infty \le 1$ becomes $-\mathbf{1} \le x \le \mathbf{1}$.
+    $$
+    \begin{aligned}
+    \min_{x, t} \quad & \mathbf{1}^\top t \\
+    \text{s.t.} \quad & -t \le Ax - b \le t \\
+    & -\mathbf{1} \le x \le \mathbf{1}
+    \end{aligned}
+    $$
+    </p>
+  </div>
+</div>
+
     </section>
     </article>
   </main></div>
