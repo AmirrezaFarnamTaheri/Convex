@@ -13,7 +13,7 @@
 </head>
 <body>
   <!-- Header with navigation -->
-  <header class="site-header">
+  <header class="site-header sticky">
     <div class="container header-inner">
       <div class="brand">
         <a href="../../index.html">Convex Optimization</a>
@@ -113,13 +113,6 @@
           <strong>Proof:</strong> This is a consequence of the convexity of $f_0$ and $\mathcal{F}$, as established in <a href="../02-introduction/index.html">Lecture 02</a>. If $x$ is locally optimal but not globally optimal, we can construct a line segment from $x$ to a better point that contradicts local optimality.
         </div>
       </div>
-
-      <figure style="margin: 16px 0; text-align: center;">
-        <img src="../../static/assets/topics/07-convex-problems-standard/linear-programming-feasible-region.svg" alt="An example of a feasible region in a Linear Program" style="max-width: 450px; height: auto;" />
-        <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
-          A classic example of a feasible set for a Linear Program (LP). The region is a convex polygon defined by linear inequality constraints. The optimal solution occurs at a vertex of the polyhedron.
-        </figcaption>
-      </figure>
     </section>
 
     <!-- Section 2: Linear Programs (LP) -->
@@ -161,7 +154,18 @@
       <h3>2.3 Standard LP Examples</h3>
 
       <h4>Example 2.1: Diet Problem</h4>
-      <p>Given $n$ foods with costs $c_i$ and $m$ nutrients, where food $j$ contains $A_{ij}$ units of nutrient $i$, find the cheapest diet meeting minimum nutrient requirements $b_i$:</p>
+      <p>The goal is to choose quantities of foods to meet nutrient requirements at minimum cost.</p>
+      <ul>
+          <li><strong>Variables:</strong> $x_j$ is the amount of food $j$ to consume (for $j=1,\dots,n$).</li>
+          <li><strong>Data:</strong>
+            <ul>
+                <li>$c_j$: Cost per unit of food $j$.</li>
+                <li>$A_{ij}$: Amount of nutrient $i$ in one unit of food $j$.</li>
+                <li>$b_i$: Minimum required amount of nutrient $i$ (for $i=1,\dots,m$).</li>
+            </ul>
+          </li>
+      </ul>
+      <p>The problem is formulated as:</p>
       <p style="text-align: center;">
         $
         \begin{aligned}
@@ -171,10 +175,12 @@
         \end{aligned}
         $
       </p>
-      <p>This is an LP: the objective is linear, constraints are linear inequalities.</p>
+      <p>This is a standard LP. The non-negativity constraints $x_j \ge 0$ are essential (we cannot consume negative food).</p>
 
       <h4>Example 2.2: Chebyshev Approximation</h4>
-      <p>Find $x \in \mathbb{R}^n$ minimizing $\|Ax - b\|_\infty$. This can be reformulated as:</p>
+      <p>Given a system of linear equations $Ax=b$ that has no solution (overdetermined), we might want to minimize the maximum absolute error (Chebyshev norm or $\ell_\infty$-norm).</p>
+      <p>Problem: $\min_x \|Ax - b\|_\infty = \min_x \max_i |a_i^\top x - b_i|$.</p>
+      <p>This objective is convex (pointwise max of convex functions) but not linear. We reformulate it as an LP by introducing an epigraph variable $t$:</p>
       <p style="text-align: center;">
         $
         \begin{aligned}
@@ -183,7 +189,7 @@
         \end{aligned}
         $
       </p>
-      <p>where $\mathbf{1}$ is the vector of ones. This is an LP in variables $(x, t)$.</p>
+      <p>The constraints expand to $-t \le a_i^\top x - b_i \le t$ for all $i$. This is an LP in variables $(x, t)$.</p>
 
       <h3>2.4 Piecewise-Linear Minimization</h3>
       <p>Minimizing $f(x) = \max_{i=1,\dots,m} (a_i^T x + b_i)$ (a piecewise-linear convex function) can be reformulated as:</p>
@@ -251,15 +257,21 @@
         \end{aligned}
         $
       </p>
-      <p>This is a QP with $P = 2A^\top A \succeq 0$ and $q = -2A^\top b$.</p>
+      <p>This is a QP with $P = 2A^\top A \succeq 0$ and $q = -2A^\top b$. Common constraints include non-negativity ($x \ge 0$) or box constraints ($l \le x \le u$).</p>
 
       <h4>Example 3.2: Markowitz Portfolio Optimization</h4>
-      <p>Given $n$ assets with expected returns $\mu \in \mathbb{R}^n$ and covariance matrix $\Sigma \in \mathbb{S}_{++}^n$, find a portfolio $x \in \mathbb{R}^n$ (where $x_i$ is the fraction invested in asset $i$) minimizing risk for a target return $r_{\text{target}}$:</p>
+      <p>We want to find an asset allocation $x \in \mathbb{R}^n$ (fractions of budget) to minimize risk while guaranteeing a minimum return.</p>
+      <ul>
+          <li><strong>Data:</strong> Mean returns $\mu$, Covariance $\Sigma \in \mathbb{S}_{++}^n$.</li>
+          <li><strong>Objective:</strong> Minimize variance $x^\top \Sigma x$.</li>
+          <li><strong>Constraint:</strong> Expected return $\mu^\top x \ge r_{\min}$.</li>
+          <li><strong>Constraint:</strong> Full investment $\mathbf{1}^\top x = 1$ and long-only $x \ge 0$.</li>
+      </ul>
       <p style="text-align: center;">
         $
         \begin{aligned}
         \text{minimize} \quad & x^\top \Sigma x \\
-        \text{subject to} \quad & \mu^\top x \ge r_{\text{target}} \\
+        \text{subject to} \quad & \mu^\top x \ge r_{\min} \\
         & \mathbf{1}^\top x = 1 \\
         & x \ge 0
         \end{aligned}
@@ -317,33 +329,128 @@
         $
       </p>
       <p>where $A^\dagger$ is the pseudoinverse and $z \in \mathbb{R}^n$ is a new variable. This reduces the problem dimension.</p>
+    </section>
 
-      <!-- Widget 6: Problem Reformulation Tool -->
-      <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
-        <h3 style="margin-top: 0;">Interactive: Problem Reformulation Tool</h3>
-        <p><strong>Purpose:</strong> Learn how to reformulate non-standard problems into LP, QP, SOCP, or SDP forms.</p>
-        <ul style="font-size: 14px; line-height: 1.6;">
-          <li>Select a non-standard problem (e.g., $\ell_1$, $\ell_\infty$ minimization)</li>
-          <li>See reformulation to standard form</li>
-          <li>Understand epigraph and slack variable techniques</li>
-        </ul>
-        <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
+    <section class="section-card" id="section-5">
+        <h2>5. Review & Cheat Sheet</h2>
+        <h3>Problem Classes Reference</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>Objective</th>
+              <th>Constraints</th>
+              <th>Key Property</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>LP</b></td>
+              <td>Linear $c^\top x$</td>
+              <td>Linear inequalities ($Ax \le b$)</td>
+              <td>Solution at vertex; simplex method.</td>
+            </tr>
+            <tr>
+              <td><b>QP</b></td>
+              <td>Convex Quadratic $\frac{1}{2}x^\top P x + q^\top x$</td>
+              <td>Linear inequalities</td>
+              <td>Unique solution if $P \succ 0$.</td>
+            </tr>
+            <tr>
+              <td><b>QCQP</b></td>
+              <td>Convex Quadratic</td>
+              <td>Quadratic inequalities ($x^\top P_i x + q_i^\top x + r_i \le 0$)</td>
+              <td>More general than QP; often solved as SOCP.</td>
+            </tr>
+          </tbody>
+        </table>
+    </section>
+
+    <section class="section-card" id="section-6">
+      <h2><i data-feather="edit-3"></i> 6. Exercises</h2>
+
+      <div class="problem">
+        <h3>P7.1 — Diet Problem Formulation</h3>
+        <p>Formulate the following problem as a standard Linear Program (LP).</p>
+        <p>You want to buy oranges and apples. Oranges cost $2 each and provide 3 units of Vit C and 1 unit of Fiber. Apples cost $1 each and provide 1 unit of Vit C and 2 units of Fiber. You need at least 10 units of Vit C and 5 units of Fiber. Minimize the total cost.</p>
+        <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>LP Structure:</b> Identify variables (quantities), objective (cost), and constraints (requirements).</li>
+                <li><b>Non-negativity:</b> Physical quantities cannot be negative. This is a standard LP constraint.</li>
+            </ul>
+        </div>
+        <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+                Let $x_1$ be oranges and $x_2$ be apples.
+                Objective: Minimize $2x_1 + 1x_2$.
+                Constraints:
+                <br>1. Vit C: $3x_1 + 1x_2 \ge 10$
+                <br>2. Fiber: $1x_1 + 2x_2 \ge 5$
+                <br>3. Non-negativity: $x_1, x_2 \ge 0$
+            </div>
+        </div>
+      </div>
+
+      <div class="problem">
+        <h3>P7.2 — Chebyshev Approximation</h3>
+        <p>Given the points $(1, 2), (2, 3), (3, 5)$, find the line $y = ax + b$ that minimizes the maximum vertical distance (Chebyshev distance) to the points. Formulate this as an LP.</p>
+        <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+                We want to find $a, b$ to minimize $\max_i | (a x_i + b) - y_i |$.
+                Let the maximum error be $t$.
+                Minimize $t$ subject to:
+                <br>$-t \le (a(1) + b) - 2 \le t$
+                <br>$-t \le (a(2) + b) - 3 \le t$
+                <br>$-t \le (a(3) + b) - 5 \le t$
+                <br>This is an LP in variables $a, b, t$.
+            </div>
+        </div>
+      </div>
+
+      <div class="problem">
+        <h3>P7.3 — Least Squares with Box Constraints</h3>
+        <p>Given $A \in \mathbb{R}^{m \times n}$ and $b \in \mathbb{R}^m$, formulate the problem $\min \|Ax - b\|_2^2$ subject to $-1 \le x_i \le 1$ as a standard QP.</p>
+        <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+                Objective: $x^\top A^\top A x - 2 b^\top A x + b^\top b$. Dropping constant term, minimize $\frac{1}{2} x^\top (2A^\top A) x + (-2A^\top b)^\top x$.
+                <br>Constraints: $x \preceq \mathbf{1}$ and $-x \preceq \mathbf{1}$ (equivalent to $x \succeq -\mathbf{1}$).
+                <br>This matches the QP form with $P = 2A^\top A, q = -2A^\top b, G = [I; -I], h = [\mathbf{1}; \mathbf{1}]$.
+            </div>
+        </div>
+      </div>
+
+      <div class="problem">
+        <h3>P7.4 — Reformulation</h3>
+        <p>Show that minimizing $\|x\|_1$ subject to $Ax=b$ is equivalent to an LP.</p>
+        <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+                We introduce $u \in \mathbb{R}^n$. Replace $|x_i|$ with $u_i$ and add constraints $-u_i \le x_i \le u_i$.
+                <br>Minimize $\sum u_i$ subject to:
+                <br>$Ax = b$
+                <br>$x - u \le 0$
+                <br>$-x - u \le 0$
+                <br>This is an LP in variables $(x, u)$.
+            </div>
         </div>
       </div>
     </section>
+
     </article>
   </main></div>
 
   <footer class="site-footer">
     <div class="container">
       <p style="margin: 0;">
-        © <span id="year"></a> Convex Optimization Course ·
+        © <span id="year"></span> Convex Optimization Course ·
         <a href="../../README.md" style="color: var(--brand);">About</a>
       </p>
     </div>
   </footer>
-  </main></div>
 
   <!-- Load Pyodide for Python widgets (optional) -->
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
@@ -384,6 +491,7 @@
 <script src="../../static/js/toc.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+    feather.replace();
   </script>
   <script src="../../static/js/glossary-loader.js"></script>
 <script src="../../static/js/notes-widget.js"></script>

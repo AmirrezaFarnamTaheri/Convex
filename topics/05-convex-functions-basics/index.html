@@ -20,7 +20,7 @@
       <nav class="nav">
         <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
         <a href="../04-convex-sets-cones/index.html"><i data-feather="arrow-left"></i> Previous</a>
-        <a href="../07-convex-problems-standard/index.html">Next <i data-feather="arrow-right"></i></a>
+        <a href="../06-convex-functions-advanced/index.html">Next <i data-feather="arrow-right"></i></a>
       </nav>
     </div>
   </header>
@@ -596,119 +596,9 @@
           <div id="widget-hessian-heatmap" style="width: 100%; height: 450px; position: relative;"></div>
         </div>
 
-                <h3>4.4 Log-Convex and Log-Concave Functions</h3>
+        <!-- Section 4.4 removed (Log-Concavity content moved to Lecture 06) -->
+        <p><i>Note:</i> For Log-Concave functions, please see <a href="../06-convex-functions-advanced/index.html">Lecture 06: Convex Functions Advanced</a>.</p>
 
-        <figure style="text-align: center;">
-          <img src="assets/log_concave_gaussian.png"
-               alt="Gaussian density vs its log"
-               style="max-width: 60%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
-          <figcaption><i>Figure 4.1:</i> The Gaussian density function (top) is bell-shaped and not concave. However, its logarithm (bottom) is a downward-opening parabola, which is concave. Thus, the Gaussian is log-concave.</figcaption>
-        </figure>
-
-        <h4>4.4.1 Definitions</h4>
-        <p>A function $f: \mathbb{R}^n \to \mathbb{R}_{++}$ is <b>log-convex</b> if $\log f$ is convex. Equivalently:</p>
-        $$ f(\theta x + (1-\theta)y) \le f(x)^\theta f(y)^{1-\theta} $$
-        <p>It is <b>log-concave</b> if $\log f$ is concave. Equivalently:</p>
-        $$ f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta} $$
-
-        <div class="insight">
-          <h4>Key Examples</h4>
-          <ul>
-            <li><b>Affine:</b> $f(x) = a^\top x + b$ is log-concave on $\{x \mid a^\top x + b > 0\}$.</li>
-            <li><b>Powers:</b> $x^a$ on $\mathbb{R}_{++}$ is log-convex if $a \le 0$, and log-concave if $a \ge 0$.</li>
-            <li><b>Gaussian Density:</b> $f(x) \propto e^{-\frac{1}{2}(x-\mu)^\top \Sigma^{-1}(x-\mu)}$ is log-concave.</li>
-            <li><b>Determinant:</b> $\det(X)$ is log-concave on $\mathbb{S}^n_{++}$ (since $\log \det$ is concave).</li>
-          </ul>
-        </div>
-
-        <h4>Example: Geometric Mean (Concavity via Log-Concavity)</h4>
-      <p>The function $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}^n_{++}$.</p>
-
-      <h4>Proof via Homogeneity + Log-Concavity</h4>
-      <p>This is a powerful general technique. A function $f > 0$ is concave if it is 1-homogeneous ($f(tx)=tf(x)$) and log-concave ($\log f$ is concave).</p>
-      <div class="proof-box">
-        <h4>Lemma: 1-Homogeneous + Log-Concave $\implies$ Concave</h4>
-        <p><b>Step 1: Superadditivity.</b> We show $f(x+y) \ge f(x) + f(y)$.
-        Let $u = x/f(x)$ and $v = y/f(y)$, so $f(u)=f(v)=1$.
-        Consider the convex combination with $\lambda = \frac{f(x)}{f(x)+f(y)}$.
-        $$ \lambda u + (1-\lambda)v = \frac{x+y}{f(x)+f(y)} $$
-        By log-concavity, $f(\lambda u + (1-\lambda)v) \ge f(u)^\lambda f(v)^{1-\lambda} = 1$.
-        By homogeneity, $f(\frac{x+y}{f(x)+f(y)}) = \frac{f(x+y)}{f(x)+f(y)} \ge 1 \implies f(x+y) \ge f(x)+f(y)$.</p>
-        <p><b>Step 2: Concavity.</b>
-        $f(\theta x + (1-\theta)y) \ge f(\theta x) + f((1-\theta)y) = \theta f(x) + (1-\theta)f(y)$.</p>
-      </div>
-      <p>Since $G(x)$ is 1-homogeneous and $\log G(x) = \frac{1}{n}\sum \log x_i$ is concave (sum of concave logs), $G(x)$ is concave.</p>
-
-
-
-        <h4>(a) Uniform on a Convex Set</h4>
-        <p>Let $C \subseteq \mathbb{R}^n$ be a convex set. The uniform density function:
-        $$ f(x) = \begin{cases} 1/\alpha & x \in C \\ 0 & x \notin C \end{cases} $$
-        is log-concave.
-        <br><i>Proof:</i> $\log f(x)$ takes value $-\log \alpha$ on $C$ and $-\infty$ outside.
-        For $x, y \in C$ and $\theta \in [0, 1]$, the point $z = \theta x + (1-\theta)y \in C$ (by convexity of $C$).
-        Thus $\log f(z) = -\log \alpha = \theta (-\log \alpha) + (1-\theta) (-\log \alpha) = \theta \log f(x) + (1-\theta) \log f(y)$.
-        If either point is outside $C$, the condition holds trivially ($-\infty \le \dots$).</p>
-
-        <h4>(b) Wishart Distribution</h4>
-        <p>The Wishart density on positive definite matrices $X \in \mathbb{S}^n_{++}$ is (up to normalization):
-        $$ f(X) \propto (\det X)^{(p-n-1)/2} \exp\left(-\frac{1}{2} \mathrm{tr}(\Sigma^{-1}X)\right) $$
-        Taking the log:
-        $$ \log f(X) = c + \frac{p-n-1}{2} \log \det X - \frac{1}{2} \mathrm{tr}(\Sigma^{-1}X) $$
-        <ul>
-            <li>The term $\log \det X$ is <b>concave</b> (as proven in Section 4.3).</li>
-            <li>The term $-\mathrm{tr}(\Sigma^{-1}X)$ is <b>linear</b> (hence concave).</li>
-        </ul>
-        Since the sum of concave functions is concave, $\log f$ is concave, so the Wishart distribution is log-concave.</p>
-
-        <h4>4.4.2 Hessian Condition</h4>
-        <p>Assume $f > 0$ and $f$ is twice differentiable. We derive the condition for log-concavity.</p>
-        <div class="proof-box">
-          <h4>Derivation</h4>
-          <p>Let $g(x) = \log f(x)$. By the chain rule:
-          $$ \nabla g(x) = \frac{\nabla f(x)}{f(x)} $$
-          The Hessian of $g$ is:
-          $$ \nabla^2 g(x) = \frac{f(x)\nabla^2 f(x) - \nabla f(x)\nabla f(x)^\top}{f(x)^2} $$
-          For $f$ to be log-concave, we require $\nabla^2 g(x) \preceq 0$ (negative semidefinite). Since $f(x)^2 > 0$, this is equivalent to the numerator being negative semidefinite:
-          $$ f(x)\nabla^2 f(x) - \nabla f(x)\nabla f(x)^\top \preceq 0 $$
-          Rearranging terms yields the condition:
-          $$ \boxed{ f(x) \nabla^2 f(x) \preceq \nabla f(x) \nabla f(x)^\top } $$
-          For log-convexity, the inequality is reversed.</p>
-        </div>
-
-        <h4>4.4.3 Integration Rules (Prékopa-Leindler)</h4>
-        <p>A powerful property of log-concave functions is that they are closed under integration.</p>
-
-        <div class="theorem-box">
-          <h4>Theorem (Integration Preserves Log-Convexity)</h4>
-          <p>If $f(x, y)$ is <b>log-convex</b> in $x$ for each fixed $y$, then $g(x) = \int f(x, y) dy$ is log-convex.</p>
-          <p><i>Example:</i> The Laplace transform $P(z) = \int p(x) e^{-z^\top x} dx$ is log-convex in $z$, because the integrand $e^{-z^\top x}$ is log-linear (hence log-convex) in $z$.</p>
-        </div>
-
-        <div class="theorem-box">
-          <h4>Theorem (Marginals Preserves Log-Concavity)</h4>
-          <p>If $f(x, y)$ is <b>log-concave jointly</b> in $(x, y)$, then the marginal function $g(x) = \int f(x, y) dy$ is log-concave.</p>
-          <p>This implies that marginals of log-concave distributions (like the multivariate normal) are log-concave.</p>
-        </div>
-
-        <div class="theorem-box">
-          <h4>Theorem (Convolution)</h4>
-          <p>If $f$ and $g$ are log-concave functions on $\mathbb{R}^n$, then their convolution $(f * g)(x) = \int f(x-y)g(y) dy$ is log-concave.</p>
-          <p><i>Probability Implication:</i> The sum of independent log-concave random variables is log-concave.</p>
-        </div>
-
-        <h4>4.4.4 Probability Examples</h4>
-        <div class="example">
-          <h4>1. Hitting a Convex Set</h4>
-          <p>Let $C \subseteq \mathbb{R}^n$ be a convex set and $w$ be a random variable with log-concave density $p(w)$. The probability that $x + w \in C$ is a log-concave function of $x$.</p>
-          <p><i>Proof:</i> $f(x) = \mathbb{P}(x+w \in C) = \int \mathbf{1}_C(x+w) p(w) dw = \int \mathbf{1}_C(u) p(u-x) du$. The integrand is the product of log-concave functions (indicator of convex set and shifted density), so it is jointly log-concave. By the marginalization theorem, $f(x)$ is log-concave.</p>
-        </div>
-
-        <div class="example">
-          <h4>2. Cumulative Distribution Function (CDF)</h4>
-          <p>If a density $p(t)$ is log-concave, its CDF $F(x) = \int_{-\infty}^x p(t) dt$ is log-concave.
-          <br>For multivariate $x$, $F(x) = \mathbb{P}(w \preceq x)$ is log-concave. This relies on the fact that the indicator function of the orthant $\{w \mid w \preceq x\}$ is log-concave.</p>
-        </div>
       </section>
 
       <section class="section-card" id="section-5">
@@ -884,7 +774,7 @@
           Since partial minimization preserves convexity, if the original block matrix is PSD, then the Schur complement $A - B C^{-1} B^\top$ is also PSD.</p>
         </div>
 
-        <h4>Deep Dive: The Matrix-Fractional Function</h4>
+        <h4>In-Depth Analysis: The Matrix-Fractional Function</h4>
       <p>The function $f(x, Y) = x^\top Y^{-1} x$ is defined for $x \in \mathbb{R}^n$ and $Y \in \mathbb{S}^n_{++}$. It is <b>jointly convex</b> in $x$ and $Y$.</p>
 
       <h4>Derivation: Epigraph via Schur Complement</h4>
@@ -894,7 +784,7 @@
       Since the PSD cone is convex, and $M$ depends linearly on $(x, Y, t)$, the epigraph is convex.</p>
 
       <div class="proof-box">
-        <h4>Rigorous Check via Quadratic Forms</h4>
+        <h4>formal Check via Quadratic Forms</h4>
         <p>Let's verify $M \succeq 0 \iff t \ge x^\top Y^{-1} x$.
         <br>Take an arbitrary vector $z = [v^\top, \alpha]^\top$. $M \succeq 0$ means $z^\top M z \ge 0$ for all $z$.
         $$ z^\top M z = v^\top Y v + 2\alpha x^\top v + \alpha^2 t $$
@@ -1048,7 +938,7 @@
           </ul>
 
           <div class="proof-box">
-            <h4>Rigorous Proof (Convex + Non-decreasing Case)</h4>
+            <h4>Proof (Convex + Non-decreasing Case)</h4>
             <p>We prove the case where each $g_i$ is convex and $h$ is convex and non-decreasing in each coordinate.</p>
             <div class="proof-step">
               <strong>Step 1: Vector Jensen Inequality.</strong>

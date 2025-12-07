@@ -1403,7 +1403,7 @@
 
             <div class="proof-step">
               <strong>Step 3: Verify convexity.</strong> The function $f(z) = \log(1+e^z)$ (softplus) is convex.
-              We compute the gradient and Hessian to be rigorous:
+              We compute the gradient and Hessian to be formal:
               $$ f'(z) = \frac{e^z}{1+e^z} = \frac{1}{1+e^{-z}} \quad (\text{sigmoid function}) $$
               $$ f''(z) = \frac{e^z(1+e^z) - e^z(e^z)}{(1+e^z)^2} = \frac{e^z}{(1+e^z)^2} > 0 $$
               Our objective is a sum of terms $f(-y_i w^\top x_i)$. Since $f$ is convex and the argument $-y_i w^\top x_i$ is affine in $w$, the composition is convex.
@@ -1481,7 +1481,7 @@
       <h2>11. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, Chapter 1 (Introduction) and Chapter 4 (Convex Optimization Problems).</li>
-        <li><strong>Supplementary:</strong> Rockafellar, <em>Convex Analysis</em> (for rigorous theoretical background).</li>
+        <li><strong>Supplementary:</strong> Rockafellar, <em>Convex Analysis</em> (for formal theoretical background).</li>
         <li><strong>Solver Documentation:</strong> <a href="https://www.cvxpy.org/" target="_blank">CVXPY</a>, <a href="https://cvxr.com/cvx/" target="_blank">CVX</a>, or <a href="https://jump.dev/" target="_blank">JuMP</a>.</li>
       </ul>
     </section>
