@@ -114,10 +114,10 @@
       <h3>1.4 Standard SOCP Examples</h3>
 
       <h4>Example 4.1: Robust Least Squares</h4>
-      <p>Consider the least-squares problem $\min \|Ax - b\|_2$ where $A$ is uncertain: $A \in \{A_0 + \sum_{i=1}^p u_i A_i \mid \|u\|_2 \le 1\}$. The <strong>robust</strong> version minimizes the worst-case residual:</p>
+      <p>Consider the least-squares problem where the matrix $A$ is subject to unstructured uncertainty bounded by a spectral norm $\|\Delta A\|_2 \le \rho$. The <strong>robust</strong> problem is:</p>
       <p style="text-align: center;">
         $
-        \min_x \max_{\|u\|_2 \le 1} \left\| \left(A_0 + \sum_{i=1}^p u_i A_i\right) x - b \right\|_2
+        \min_x \max_{\|\Delta A\|_2 \le \rho} \|(A + \Delta A)x - b\|_2
         $
       </p>
 
@@ -126,37 +126,39 @@
 
         <div class="proof-step">
           <strong>Step 1: Formulate the Worst-Case Objective.</strong>
-          We assume $A$ is uncertain: $A = A_0 + \Delta$, with $\|\Delta\|_2 \le \rho$.
-          We want to solve $\min_x \max_{\|\Delta\|_2 \le \rho} \|(A_0 + \Delta)x - b\|_2$.
-          Let $r = A_0 x - b$. The objective is $\max_{\|\Delta\|_2 \le \rho} \|r + \Delta x\|_2$.
+          Let $r(x) = \max_{\|\Delta A\|_2 \le \rho} \|(Ax - b) + \Delta A x\|_2$.
+          We want to find the perturbation $\Delta A$ that maximizes the residual norm.
         </div>
 
         <div class="proof-step">
           <strong>Step 2: Triangle Inequality Upper Bound.</strong>
-          Using the triangle inequality and the definition of the spectral norm ($\|\Delta x\|_2 \le \|\Delta\|_2 \|x\|_2$):
-          $$ \|r + \Delta x\|_2 \le \|r\|_2 + \|\Delta x\|_2 \le \|r\|_2 + \|\Delta\|_2 \|x\|_2 \le \|A_0 x - b\|_2 + \rho \|x\|_2 $$
+          Using the triangle inequality:
+          $$ \|(Ax - b) + \Delta A x\|_2 \le \|Ax - b\|_2 + \|\Delta A x\|_2 $$
+          Since $\|\Delta A x\|_2 \le \|\Delta A\|_2 \|x\|_2 \le \rho \|x\|_2$, we have the upper bound:
+          $$ r(x) \le \|Ax - b\|_2 + \rho \|x\|_2 $$
         </div>
 
         <div class="proof-step">
           <strong>Step 3: Construct Worst-Case Perturbation.</strong>
-          We need to show this bound is achievable. Let $u = A_0 x - b$.
-          If $u=0$ or $x=0$, the bound holds trivially.
-          Assume $u \ne 0$ and $x \ne 0$. We construct a rank-1 perturbation $\Delta$ that aligns $\Delta x$ with $u$.
-          Set $\Delta = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2}$.
-          Check norm: $\|\Delta\|_2 = \rho \cdot 1 \cdot 1 = \rho$.
-          Check alignment: $\Delta x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2 = \left( \rho \frac{\|x\|_2}{\|u\|_2} \right) u$.
-          Since $\Delta x$ is a positive scalar multiple of $u$, the norms add:
-          $$ \|u + \Delta x\|_2 = \|u\|_2 + \|\Delta x\|_2 = \|A_0 x - b\|_2 + \rho \|x\|_2 $$
+          We show the bound is tight. Let $u = Ax - b$.
+          If $u=0$ or $x=0$, the bound is trivial. Assume $u \ne 0, x \ne 0$.
+          Choose $\Delta A$ to be a rank-1 matrix that aligns $\Delta A x$ with $u$:
+          $$ \Delta A = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2} $$
+          This matrix has spectral norm $\rho$ (product of unit vectors scaled by $\rho$).
+          Applying it to $x$:
+          $$ \Delta A x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2 $$
+          This vector is a positive scalar multiple of $u$, so the norms add directly:
+          $$ \|u + \Delta A x\|_2 = \|u\|_2 + \|\Delta A x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2 $$
         </div>
 
         <div class="proof-step">
           <strong>Step 4: Formulate as SOCP.</strong>
-          The problem minimizes the sum of two Euclidean norms: $\|A_0 x - b\|_2 + \rho \|x\|_2$.
+          The problem minimizes the sum of two Euclidean norms: $\|Ax - b\|_2 + \rho \|x\|_2$.
           We introduce epigraph variables $t_1, t_2$ to move the norms to the constraints:
           $$
           \begin{aligned}
           \text{minimize} \quad & t_1 + \rho t_2 \\
-          \text{subject to} \quad & \|A_0 x - b\|_2 \le t_1 \\
+          \text{subject to} \quad & \|Ax - b\|_2 \le t_1 \\
           & \|x\|_2 \le t_2
           \end{aligned}
           $$

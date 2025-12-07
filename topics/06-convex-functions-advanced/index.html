@@ -155,15 +155,32 @@
 
       <div class="example">
         <h4>2. Log-Determinant: $f(X) = -\log \det X$ on $\mathbb{S}^n_{++}$</h4>
-        <p>$$ f^*(Y) = \sup_{X \succ 0} (\mathrm{tr}(YX) + \log \det X) $$
-        Define $\Phi(X) = \mathrm{tr}(YX) + \log \det X$.
-        <br>Gradient w.r.t $X$: $\nabla \Phi(X) = Y + X^{-1}$. Set to 0: $X = -Y^{-1}$.
-        <br>For $X$ to be in the domain ($X \succ 0$), we must have $-Y^{-1} \succ 0$, which implies $Y \prec 0$.
-        <br>Value at optimum:
-        $$ \mathrm{tr}(Y(-Y^{-1})) + \log \det (-Y^{-1}) = \mathrm{tr}(-I) + \log((\det(-Y))^{-1}) = -n - \log \det (-Y) $$
-        Thus:
+        <p>We compute the conjugate of the negative log-determinant function.
+        $$ f^*(Y) = \sup_{X \succ 0} (\mathrm{tr}(Y^\top X) - f(X)) = \sup_{X \succ 0} (\mathrm{tr}(YX) + \log \det X) $$
+        (Note: $Y^\top X$ or $YX$ have same trace since $X$ is symmetric, but usually dual variable is symmetric too).</p>
+
+        <p><b>Step 1: Gradient Condition.</b> Define $\Phi(X) = \mathrm{tr}(YX) + \log \det X$.
+        The gradient with respect to $X$ is:
+        $$ \nabla_X \Phi(X) = Y + X^{-1} $$
+        Setting the gradient to zero for a stationary point:
+        $$ Y + X^{-1} = 0 \implies X^{-1} = -Y \implies X = -Y^{-1} $$</p>
+
+        <p><b>Step 2: Domain Feasibility.</b>
+        For the solution $X = -Y^{-1}$ to be feasible (i.e., $X \in \mathrm{dom}(f) = \mathbb{S}^n_{++}$), we must have $-Y^{-1} \succ 0$.
+        Since the inverse of a positive definite matrix is positive definite, this requires $-Y \succ 0$, or equivalently $Y \prec 0$ (negative definite).
+        If $Y$ is not negative definite, the supremum is $+\infty$ (we can choose $X$ to make the trace term dominate).
+        </p>
+
+        <p><b>Step 3: Value at Optimum.</b>
+        Substitute $X^* = -Y^{-1}$ back into the objective function:
+        $$ f^*(Y) = \mathrm{tr}(Y(-Y^{-1})) + \log \det (-Y^{-1}) $$
+        $$ = \mathrm{tr}(-I) + \log ((\det(-Y))^{-1}) $$
+        $$ = -n - \log \det (-Y) $$
+        </p>
+
+        <p><b>Conclusion:</b>
         $$ f^*(Y) = \begin{cases} -n - \log\det(-Y) & Y \prec 0 \\ \infty & \text{otherwise} \end{cases} $$
-        This is exactly "another log-det" with opposite sign and domain flipped to negative definite.</p>
+        </p>
       </div>
 
       <div class="example">
@@ -244,18 +261,20 @@
         $$
         <p>This condition says that the value on a segment never exceeds the larger of the two endpoints.</p>
 
-        <h3>8.3 First-Order Condition</h3>
-        <p>If $f$ is differentiable, it is quasi-convex if and only if:</p>
+        <h3>2.3 First-Order Condition</h3>
+        <p>If $f$ is differentiable, it is quasi-convex if and only if its domain is convex and:</p>
         $$ f(y) \le f(x) \implies \nabla f(x)^\top (y - x) \le 0 $$
-        <p>Geometrically: The gradient at $x$ defines a supporting hyperplane to the sublevel set $S_{f(x)}$. If $y$ has a lower value, it must lie on the "downhill" side of the gradient.</p>
+        <p><b>Geometric Meaning:</b> The gradient $\nabla f(x)$ is the normal vector to the sublevel set $S_{f(x)}$ at $x$. The condition states that this normal vector supports the sublevel set. If $y$ is any point with a lower (or equal) function value, it must lie in the halfspace defined by the negative gradient.</p>
+        <p><i>Contrast with Convexity:</i> Convexity requires $f(y) \ge f(x) + \nabla f(x)^\top (y-x)$ (the tangent lies below). Quasiconvexity only requires that if $f(y) \le f(x)$, the tangent plane separates $y$ from the ascent direction.</p>
 
-        <h3>8.4 Second-Order Condition</h3>
+        <h3>2.4 Second-Order Condition</h3>
         <p>For a twice-differentiable quasi-convex function, the curvature must be non-negative in directions tangent to the level sets.</p>
         <div class="theorem-box">
           <h4>Theorem</h4>
-          <p>If $f$ is quasi-convex, then for all $x$ and vectors $y$ such that $y^\top \nabla f(x) = 0$ (tangent to level set), we must have:</p>
-          $$ y^\top \nabla^2 f(x) y \ge 0 $$
-          <p><i>Note:</i> This is weaker than convexity ($\nabla^2 f \succeq 0$). We only need PSD curvature on the subspace orthogonal to the gradient. We allow negative curvature in the "uphill/downhill" direction (e.g., bell curve tails).</p>
+          <p>If $f$ is quasi-convex, then for all $x$ and vectors $v$ such that $v^\top \nabla f(x) = 0$ (tangent to level set), we must have:</p>
+          $$ v^\top \nabla^2 f(x) v \ge 0 $$
+          <p>If $v^\top \nabla f(x) = 0 \implies v^\top \nabla^2 f(x) v > 0$ for all $v \neq 0$, then $f$ is strictly quasi-convex.</p>
+          <p><i>Note:</i> This condition says that the level surfaces must curve "inward" (like a bowl), even if the function profile along the gradient direction is not convex (e.g., a Gaussian bell curve is quasi-concave, not quasi-convex, but $x^3$ is quasi-convex on $\mathbb{R}$).</p>
         </div>
 
         <h3>8.5 Operations Preserving Quasi-Convexity</h3>
