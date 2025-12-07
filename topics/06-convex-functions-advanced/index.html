@@ -86,8 +86,8 @@
       $$ f^*(y) = y^\top x^*(y) - f(x^*(y)) $$
       This specific case is known as the <b>Legendre transform</b>. A useful identity is $\nabla f^*(y) = x^*(y) = (\nabla f)^{-1}(y)$.</p>
 
-      <h3>1.4 1D Examples: Zero to Hero</h3>
-      <p>We rigorously derive the conjugates for fundamental 1D functions, paying close attention to domains and boundary cases.</p>
+      <h3>1.4 1D Examples: Detailed Derivations</h3>
+      <p>We derive the conjugates for fundamental 1D functions, paying close attention to domains and boundary cases.</p>
 
       <div class="example">
         <h4>1. Affine Function: $f(x) = ax + b$</h4>
@@ -355,7 +355,39 @@
     
 
       <section class="section-card" id="section-3">
-      <h2>3. Review & Cheat Sheet</h2>
+        <h2>3. Log-Concave Functions</h2>
+
+        <h3>3.1 Definition</h3>
+        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link">log-concave</a> if $f(x) > 0$ for all $x \in \mathrm{dom}\, f$ and $\log f(x)$ is concave.</p>
+        <p>Equivalently, the domain of $f$ must be convex, and for all $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$:</p>
+        $$ f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta} $$
+        <p>If $f$ is zero outside its domain, we require the domain to be a convex set.</p>
+
+        <h3>3.2 Properties</h3>
+        <ul>
+            <li><b>Twice Differentiable Case:</b> If $f$ is twice differentiable and strictly positive, log-concavity is equivalent to:
+            $$ \nabla^2 \log f(x) \preceq 0 \iff f(x) \nabla^2 f(x) \preceq \nabla f(x) \nabla f(x)^\top $$
+            </li>
+            <li><b>Product:</b> The product of log-concave functions is log-concave (sum of concave logs is concave).</li>
+            <li><b>Marginals:</b> If $f(x, y)$ is log-concave, then the marginal $g(x) = \int f(x, y) dy$ is log-concave (Prékopa-Leindler inequality).</li>
+            <li><b>Convolution:</b> The convolution of two log-concave functions is log-concave. (Follows from the marginal property applied to $f(x-y)g(y)$).</li>
+        </ul>
+
+        <h3>3.3 Examples</h3>
+        <div class="example">
+            <h4>Common Log-Concave Functions</h4>
+            <ul>
+                <li><b>Affine:</b> $f(x) = a^\top x + b$ is log-concave on $\{x \mid a^\top x + b > 0\}$.</li>
+                <li><b>Exponentials:</b> $f(x) = e^{ax}$ is log-concave (and log-convex). $\log f(x) = ax$ (linear).</li>
+                <li><b>Gaussian:</b> $f(x) = \frac{1}{\sqrt{(2\pi)^n \det \Sigma}} e^{-\frac{1}{2}(x-\mu)^\top \Sigma^{-1} (x-\mu)}$. The log is a concave quadratic, so the PDF is log-concave.</li>
+                <li><b>Indicator of Convex Set:</b> $I_C(x) = 1$ if $x \in C$, $0$ else. $\log I_C$ is $0$ on $C$ and $-\infty$ outside, which is concave. Thus the indicator is log-concave.</li>
+                <li><b>CDF of Gaussian:</b> The cumulative distribution function of a Gaussian is log-concave.</li>
+            </ul>
+        </div>
+      </section>
+
+      <section class="section-card" id="section-4">
+      <h2>4. Review & Cheat Sheet</h2>
 
       <h3>Common Convex Functions Reference</h3>
 
@@ -429,7 +461,7 @@
           </tbody>
         </table>
 
-        <h3>9.1 Operations and Their Effects</h3>
+        <h3>4.1 Operations and Their Effects</h3>
         <table class="data-table" style="width: 100%; margin-top: 16px;">
           <thead>
             <tr>
@@ -485,8 +517,8 @@
 
 
 
-    <section class="section-card" id="section-4">
-      <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
+    <section class="section-card" id="section-5">
+      <h2><i data-feather="edit-3"></i> 5. Exercises</h2>
 
 <div class="problem">
   <h3>P3.1 — Verify Convexity Using First-Order Conditions</h3>
@@ -624,7 +656,7 @@
             <h4>Solution</h4>
 
             <div class="proof-step">
-              <strong>Method 1: Log-Concavity + Homogeneity (Rigorous)</strong>
+              <strong>Method 1: Log-Concavity + Homogeneity</strong>
               <p><b>Step 1: Check Properties.</b> $G(x)$ is homogeneous of degree 1 ($G(tx) = tG(x)$) and log-concave (since $\log G(x) = \frac{1}{n}\sum \log x_i$ is a sum of concave functions).</p>
               <p><b>Step 2: Superadditivity Lemma.</b> We prove that if $f$ is 1-homogeneous and log-concave, it is superadditive ($f(x+y) \ge f(x)+f(y)$), which implies concavity.
               <br>Let $u = x/f(x)$ and $v = y/f(y)$ so $f(u)=f(v)=1$.
@@ -905,8 +937,8 @@
 
 
 
-    <section class="section-card" id="section-4">
-      <h2>4. Readings & Resources</h2>
+    <section class="section-card" id="section-6">
+      <h2>6. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, Chapter 3 (Convex Functions).</li>
         <li><strong>Supplementary:</strong> Rockafellar, <em>Convex Analysis</em>, Part II.</li>
