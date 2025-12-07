@@ -286,6 +286,12 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: var(--line-height-tight);
   margin: var(--space-8) 0 var(--space-6);
+  text-align: left; /* Ensure left alignment */
+}
+
+h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
+  content: none; /* Remove any potential horizontal fillers */
+  display: none;
 }
 
 h1 {
@@ -394,7 +400,7 @@ pre code {
   max-width: 1600px;
   margin: 0 auto;
   padding: var(--space-8);
-  gap: var(--space-10);
+  gap: 2.4rem; /* Reduced to 60% of var(--space-10) */
   transition: all var(--transition-base); /* Smooth resize */
 }
 
@@ -592,7 +598,7 @@ pre code {
 
 #toc ul {
   list-style: none;
-  padding-left: var(--space-4);
+  padding-left: 0.5rem; /* Reduced to ~40% of var(--space-4) */
   margin: 0;
 }
 

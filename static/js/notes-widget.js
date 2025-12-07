@@ -95,6 +95,9 @@ class NotesWidget {
                     <button class="btn btn-ghost btn-sm" id="notes-mode-toggle" title="Toggle Preview" style="padding: 2px 6px; font-size: 10px;">
                         <i data-feather="eye"></i>
                     </button>
+                    <button class="btn btn-ghost btn-sm" id="notes-clear-all" title="Clear All" style="padding: 2px 6px; font-size: 10px;">
+                        <i data-feather="trash-2"></i>
+                    </button>
                 </div>
                 <button class="btn btn-ghost" style="padding: 4px;" onclick="document.querySelector('.notes-panel').classList.add('hidden')">
                     <i data-feather="x"></i>
@@ -118,6 +121,7 @@ class NotesWidget {
         // Bind Events
         this.panel.querySelector('#add-note-btn').onclick = () => this.addNote();
         this.panel.querySelector('#notes-mode-toggle').onclick = () => this.togglePreviewMode();
+        this.panel.querySelector('#notes-clear-all').onclick = () => this.clearAllNotes();
 
         this.autocompletePopup = this.panel.querySelector('#notes-autocomplete-popup');
 
@@ -157,6 +161,15 @@ class NotesWidget {
     deleteNote(id) {
         if(confirm('Delete this note?')) {
             this.notes = this.notes.filter(n => n.id !== id);
+            this.renderNotes();
+            this.saveNotes();
+        }
+    }
+
+    clearAllNotes() {
+        if(this.notes.length === 0) return;
+        if(confirm('Are you sure you want to delete ALL notes for this page? This cannot be undone.')) {
+            this.notes = [];
             this.renderNotes();
             this.saveNotes();
         }

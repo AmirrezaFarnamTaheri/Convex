@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>01. Introduction to Convex Optimization — Convex Optimization</title>
+  <title>02. Introduction to Convex Optimization — Convex Optimization</title>
   <link rel="stylesheet" href="../../static/css/convex-unified.css" />
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
@@ -1140,7 +1140,7 @@
 
 
 <div class="problem">
-  <h3>P1.1 — Classify as Convex / Not Convex</h3>
+  <h3>P2.1 — Classify as Convex / Not Convex</h3>
   <p>For each problem, state if it is convex and provide a one-sentence justification.</p>
           <ol type="a">
             <li>$\min \|Ax - b\|_2^2$ subject to $Fx = g$.</li>
@@ -1177,7 +1177,7 @@
 </div>
 
 <div class="problem">
-  <h3>P1.2 — Real-World Modeling: Warehouse Location</h3>
+  <h3>P2.2 — Real-World Modeling: Warehouse Location</h3>
   <p>You are tasked with optimizing the placement of a distribution warehouse to minimize the sum of squared Euclidean distances to $k$ retail locations $r_1, \ldots, r_k \in \mathbb{R}^2$. The warehouse must be located within a region defined by linear inequalities $C x \le d$. Formulate this as a convex optimization problem.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -1223,7 +1223,7 @@
 </div>
 
 <div class="problem">
-  <h3>P1.3 — Reformulation: $\ell_1$ Regression as LP</h3>
+  <h3>P2.3 — Reformulation: $\ell_1$ Regression as LP</h3>
   <p>Show how to reformulate the following problem as a linear program:</p>
           $$
           \min_{x \in \mathbb{R}^n} \|Ax - b\|_1 \quad \text{s.t.} \quad \|x\|_\infty \le 1
@@ -1278,7 +1278,7 @@
 </div>
 
 <div class="problem">
-  <h3>P1.4 — Prove: Feasible Set is Convex</h3>
+  <h3>P2.4 — Prove: Feasible Set is Convex</h3>
   <p>Prove that for a convex optimization problem, the feasible set $\mathcal{F} = \{x \mid f_i(x) \le 0, Ax = b\}$ is convex.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -1323,7 +1323,7 @@
 </div>
 
 <div class="problem">
-  <h3>P1.5 — Proving Uniqueness</h3>
+  <h3>P2.5 — Proving Uniqueness</h3>
   <p>Prove that if $f_0$ is strictly convex, then the optimization problem has at most one global minimizer.</p>
 
       <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
@@ -1370,7 +1370,7 @@
 </div>
 
 <div class="problem">
-  <h3>P1.6 — Modeling: Maximum Likelihood Estimation</h3>
+  <h3>P2.6 — Modeling: Maximum Likelihood Estimation</h3>
   <p>Consider a logistic regression model for binary classification. We have data points $(x_i, y_i)$ where $x_i \in \mathbb{R}^n$ are feature vectors and $y_i \in \{-1, 1\}$ are labels. The probability that $y_i = 1$ is modeled as:
           $$ P(y_i=1 \mid x_i; w) = \frac{1}{1 + e^{-w^\top x_i}} $$
           Formulate the problem of finding the weight vector $w$ that maximizes the log-likelihood of the data as a convex optimization problem. (Note: $P(y_i=-1 \mid x_i; w) = 1 - P(y_i=1) = \frac{1}{1 + e^{w^\top x_i}}$).
@@ -1419,7 +1419,7 @@
 </div>
 
 <div class="problem">
-  <h3>P1.7 — Proving Convexity from First Principles</h3>
+  <h3>P2.7 — Proving Convexity from First Principles</h3>
   <p><b>Problem:</b> Prove that $f(x) = \|Ax - b\|_2^2$ is a convex function using only the definition of convexity:
   $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \quad \forall \theta \in [0,1] $$
   Do not use the Hessian condition or the composition rule.</p>

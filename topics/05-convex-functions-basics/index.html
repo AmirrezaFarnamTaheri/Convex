@@ -1217,6 +1217,133 @@
           <div id="widget-operations-preserving" style="width: 100%; height: 500px; position: relative;"></div>
         </div>
       </section>
+
+      <section class="section-card" id="section-6">
+        <h2>6. Review & Cheat Sheet</h2>
+        <h3>Definitions</h3>
+        <ul>
+          <li><b>Convex Function:</b> $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$.</li>
+          <li><b>Strictly Convex:</b> Inequality is strict for $x \ne y, \theta \in (0,1)$.</li>
+          <li><b>Strongly Convex:</b> $f(x) - \frac{m}{2}\|x\|^2$ is convex ($m>0$).</li>
+          <li><b>Concave:</b> $-f$ is convex.</li>
+        </ul>
+
+        <h3>Conditions for Differentiable $f$</h3>
+        <ul>
+          <li><b>1st Order:</b> $f(y) \ge f(x) + \nabla f(x)^\top(y-x)$. (Graph above tangent).</li>
+          <li><b>2nd Order:</b> $\nabla^2 f(x) \succeq 0$. (PSD Hessian).</li>
+        </ul>
+
+        <h3>Operations Preserving Convexity</h3>
+        <ul>
+          <li><b>Sum:</b> $w_1 f_1 + w_2 f_2$ ($w_i \ge 0$).</li>
+          <li><b>Affine Composition:</b> $f(Ax+b)$.</li>
+          <li><b>Pointwise Max:</b> $\max_i f_i(x)$ or $\sup_y f(x,y)$.</li>
+          <li><b>Partial Min:</b> $\inf_y f(x,y)$ (if jointly convex).</li>
+          <li><b>Composition:</b> $h(g(x))$ (rules: convex/increasing, etc.).</li>
+          <li><b>Perspective:</b> $tf(x/t)$ ($t>0$).</li>
+        </ul>
+      </section>
+
+      <section class="section-card" id="section-7">
+        <h2><i data-feather="edit-3"></i> 7. Exercises</h2>
+
+        <div class="problem">
+          <h3>P5.1 — Convexity of Basic Functions</h3>
+          <p>Determine whether the following functions are convex, concave, or neither. Justify your answer (e.g., using Hessian, composition rules).</p>
+          <ol type="a">
+            <li>$f(x) = e^{ax}$ on $\mathbb{R}$.</li>
+            <li>$f(x) = x^a$ on $\mathbb{R}_{++}$ for $a \in \mathbb{R}$.</li>
+            <li>$f(x) = |x|^p$ on $\mathbb{R}$ for $p \ge 1$.</li>
+            <li>$f(x) = x \log x$ on $\mathbb{R}_{++}$.</li>
+          </ol>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <ul>
+              <li><b>(a) Convex:</b> $f''(x) = a^2 e^{ax} \ge 0$.</li>
+              <li><b>(b) Depends on $a$:</b> $f''(x) = a(a-1)x^{a-2}$.
+                <ul>
+                  <li>Convex if $a \ge 1$ or $a \le 0$.</li>
+                  <li>Concave if $0 \le a \le 1$.</li>
+                </ul>
+              </li>
+              <li><b>(c) Convex:</b> Composition of convex $g(u)=u^p$ ($p \ge 1$) and convex $h(x)=|x|$. Since $g$ is increasing on $\mathbb{R}_+$, convexity is preserved.</li>
+              <li><b>(d) Convex:</b> $f'(x) = 1 + \log x$, $f''(x) = 1/x > 0$. (Negative entropy).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P5.2 — Arithmetic-Geometric Mean Inequality</h3>
+          <p>Prove the generalized AM-GM inequality using Jensen's inequality:
+          $$ \sum_{i=1}^n \theta_i x_i \ge \prod_{i=1}^n x_i^{\theta_i} $$
+          where $x_i > 0, \theta_i \ge 0, \sum \theta_i = 1$.</p>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              Let $f(u) = -\log u$. Since $f''(u) = 1/u^2 > 0$, $f$ is convex on $\mathbb{R}_{++}$.
+            </div>
+            <div class="proof-step">
+              Apply Jensen's inequality:
+              $$ -\log\left(\sum \theta_i x_i\right) \le \sum \theta_i (-\log x_i) = -\sum \log(x_i^{\theta_i}) = -\log\left(\prod x_i^{\theta_i}\right) $$
+            </div>
+            <div class="proof-step">
+              Multiply by $-1$ (flipping inequality) and exponentiate (monotone):
+              $$ \sum \theta_i x_i \ge \prod x_i^{\theta_i} $$
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P5.3 — Log-Sum-Exp</h3>
+          <p>Show that $f(x) = \log(\sum_{i=1}^n e^{x_i})$ is convex.</p>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <p><b>Method 1: Hessian.</b> (See Lecture derivation). $\nabla^2 f(x) = \text{diag}(p) - pp^\top$ where $p_i = e^{x_i}/\sum e^{x_k}$. By Cauchy-Schwarz, $v^\top \nabla^2 f v = \sum p_i v_i^2 - (\sum p_i v_i)^2 \ge 0$.</p>
+            <p><b>Method 2: Geometric Mean.</b>
+            The epigraph condition $\log(\sum e^{x_i}) \le t$ is equivalent to $\sum e^{x_i} \le e^t$, or $\sum e^{x_i - t} \le 1$.
+            This doesn't immediately look convex.
+            Better: Use Hölder's inequality for the restriction to a line.
+            Or use the fact that it is the conjugate of the negative entropy (Lecture 06).</p>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P5.4 — Quadratic-over-Linear</h3>
+          <p>Show that $f(x, y) = x^2/y$ is convex for $y > 0$. Generalize to vector case $f(x,y) = \|x\|^2/y$.</p>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <b>Scalar case:</b> The Hessian is:
+              $$ \nabla^2 f(x,y) = \begin{bmatrix} 2/y & -2x/y^2 \\ -2x/y^2 & 2x^2/y^3 \end{bmatrix} = \frac{2}{y^3} \begin{bmatrix} y^2 & -xy \\ -xy & x^2 \end{bmatrix} = \frac{2}{y^3} \begin{bmatrix} y \\ -x \end{bmatrix} \begin{bmatrix} y & -x \end{bmatrix} $$
+              This is a rank-1 PSD matrix (since $y^3 > 0$).
+            </div>
+            <div class="proof-step">
+              <b>Vector case:</b> $f(x,y)$ is the perspective of the convex function $h(x) = \|x\|^2$.
+              $f(x,y) = y h(x/y) = y \|x/y\|^2 = y \frac{\|x\|^2}{y^2} = \frac{\|x\|^2}{y}$.
+              Since perspective preserves convexity, $f$ is convex.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P5.5 — Distance to a Set</h3>
+          <p>Let $C \subseteq \mathbb{R}^n$ be a convex set. Show that $d(x) = \inf_{y \in C} \|x - y\|$ is a convex function.</p>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <p>This is a partial minimization.
+            Let $F(x, y) = \|x - y\| + I_C(y)$, where $I_C(y) = 0$ if $y \in C$ else $\infty$.
+            $F$ is jointly convex in $(x, y)$ because $\|x-y\|$ is convex (composition of norm with affine) and $I_C$ is convex (since $C$ is convex).
+            Then $d(x) = \inf_y F(x, y)$. Partial minimization of a jointly convex function yields a convex function.</p>
+          </div>
+        </div>
+
+      </section>
     </article>
 
     <footer class="site-footer">
