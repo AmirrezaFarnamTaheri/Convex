@@ -884,7 +884,7 @@
           Since partial minimization preserves convexity, if the original block matrix is PSD, then the Schur complement $A - B C^{-1} B^\top$ is also PSD.</p>
         </div>
 
-        <h4>Deep Dive: The Matrix-Fractional Function</h4>
+        <h4>The Matrix-Fractional Function</h4>
       <p>The function $f(x, Y) = x^\top Y^{-1} x$ is defined for $x \in \mathbb{R}^n$ and $Y \in \mathbb{S}^n_{++}$. It is <b>jointly convex</b> in $x$ and $Y$.</p>
 
       <h4>Derivation: Epigraph via Schur Complement</h4>
@@ -894,7 +894,7 @@
       Since the PSD cone is convex, and $M$ depends linearly on $(x, Y, t)$, the epigraph is convex.</p>
 
       <div class="proof-box">
-        <h4>Rigorous Check via Quadratic Forms</h4>
+        <h4>Check via Quadratic Forms</h4>
         <p>Let's verify $M \succeq 0 \iff t \ge x^\top Y^{-1} x$.
         <br>Take an arbitrary vector $z = [v^\top, \alpha]^\top$. $M \succeq 0$ means $z^\top M z \ge 0$ for all $z$.
         $$ z^\top M z = v^\top Y v + 2\alpha x^\top v + \alpha^2 t $$
@@ -1048,7 +1048,7 @@
           </ul>
 
           <div class="proof-box">
-            <h4>Rigorous Proof (Convex + Non-decreasing Case)</h4>
+            <h4>Proof (Convex + Non-decreasing Case)</h4>
             <p>We prove the case where each $g_i$ is convex and $h$ is convex and non-decreasing in each coordinate.</p>
             <div class="proof-step">
               <strong>Step 1: Vector Jensen Inequality.</strong>
