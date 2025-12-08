@@ -367,10 +367,19 @@
     <h4>Solution</h4>
     <p>Let $u=(x,t)$ and $v=(y,s)$.</p>
     <div class="proof-step">
-      <strong>($\subseteq$):</strong> Let $v \in \mathcal{Q}$. For any $u \in \mathcal{Q}$, $x^\top y + ts \ge -\|x\|\|y\| + ts \ge -t s + ts = 0$. So $v \in \mathcal{Q}^*$.
+      <strong>($\subseteq$):</strong> Let $v \in \mathcal{Q}$. For any $u \in \mathcal{Q}$, we have $\|x\| \le t$ and $\|y\| \le s$.
+      Using Cauchy-Schwarz $x^\top y \ge -\|x\|\|y\|$:
+      $$ u^\top v = x^\top y + ts \ge -\|x\|\|y\| + ts \ge -ts + ts = 0 $$
+      Thus $u^\top v \ge 0$ for all $u \in \mathcal{Q}$, so $v \in \mathcal{Q}^*$.
     </div>
     <div class="proof-step">
-      <strong>($\supseteq$):</strong> Let $v \in \mathcal{Q}^*$. If $s < 0$, taking $u=(0,1) \in \mathcal{Q}$ gives $s \ge 0$ (contradiction). If $\|y\| > s \ge 0$, take $u=(-y/\|y\|, 1) \in \mathcal{Q}$. Then $u^\top v = -\|y\| + s < 0$ (contradiction). Thus $\|y\| \le s$, so $v \in \mathcal{Q}$.
+      <strong>($\supseteq$):</strong> Let $v \in \mathcal{Q}^*$.
+      First, take $u=(0,1) \in \mathcal{Q}$. Then $u^\top v = s \ge 0$.
+      Next, if $y \ne 0$, take $u = (-y/\|y\|, 1)$. Since $\|-y/\|y\|\| = 1 \le 1$, $u \in \mathcal{Q}$.
+      The condition $u^\top v \ge 0$ implies:
+      $$ - \frac{y^\top y}{\|y\|} + s \ge 0 \implies -\|y\| + s \ge 0 \implies \|y\| \le s $$
+      (If $y=0$, then $\|y\| \le s$ since $s \ge 0$).
+      Thus $v \in \mathcal{Q}$.
     </div>
   </div>
 </div>
