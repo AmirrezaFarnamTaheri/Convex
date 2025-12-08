@@ -393,7 +393,7 @@
         Consider their sum $w = u+v$. We must have $A(u+v) = \lambda_w (u+v)$.
         $$ \lambda_w u + \lambda_w v = \lambda_w(u+v) = A(u+v) = Au + Av = \lambda_u u + \lambda_v v $$
         Rearranging: $(\lambda_w - \lambda_u)u + (\lambda_w - \lambda_v)v = 0$.
-        Since $u$ and $v$ are linearly independent, the only solution to $c_1 u + c_2 v = 0$ is the trivial solution $c_1=c_2=0$.
+        Since $u$ and $v$ are linearly independent, the only solution to $c_1 u + c_2 v = 0$ is the zero solution $c_1=c_2=0$.
         Therefore, the coefficients must vanish: $\lambda_w - \lambda_u = 0$ and $\lambda_w - \lambda_v = 0$, which implies $\lambda_w = \lambda_u$ and $\lambda_w = \lambda_v$.
         Thus $\lambda_u = \lambda_v$ for any independent pair. By transitivity, all vectors share the same eigenvalue $\lambda$. Thus $Ax = \lambda x$ for all $x$, so $A = \lambda I$.</p>
       </div>
@@ -1268,6 +1268,14 @@
         <li>$v_1 = (1, 0, 0)^\top, v_2 = (1, 1, 0)^\top, v_3 = (1, 1, 1)^\top$.</li>
         <li>The columns of an upper triangular matrix with non-zero diagonal entries.</li>
       </ol>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li><b>Dependent.</b> Notice that the vectors are in an arithmetic progression. $v_2 - v_1 = (3, 3, 3)^\top$ and $v_3 - v_2 = (3, 3, 3)^\top$. Thus $v_2 - v_1 = v_3 - v_2$, which rearranges to $v_1 - 2v_2 + v_3 = 0$. This is a non-zero linear combination summing to zero.</li>
+          <li><b>Independent.</b> Form the matrix $A = [v_1, v_2, v_3]$. It is lower triangular with non-zero diagonal entries (all 1s). The determinant is the product of the diagonal entries, which is 1. Since $\det(A) \neq 0$, the columns are linearly independent.</li>
+          <li><b>Independent.</b> An upper triangular matrix $U$ with non-zero diagonal entries has determinant $\prod u_{ii} \neq 0$. Thus, its columns form a basis and are linearly independent.</li>
+        </ol>
+      </div>
 
       <h3>P0.2 — The Rank-Nullity Theorem</h3>
       <p>Let $A$ be a $10 \times 15$ matrix.</p>
@@ -1276,6 +1284,14 @@
         <li>If the rank of $A$ is 8, what is the dimension of the nullspace $\mathcal{N}(A)$?</li>
         <li>If $A x = 0$ has only the solution $x=0$, is this possible? Explain.</li>
       </ol>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li>The rank is bounded by the dimensions: $\mathrm{rank}(A) \le \min(m, n) = \min(10, 15) = 10$.</li>
+          <li>By the Rank-Nullity Theorem, $\dim(\mathcal{N}(A)) + \mathrm{rank}(A) = n$. Here $n=15$ (number of columns). So $\dim(\mathcal{N}(A)) = 15 - 8 = 7$.</li>
+          <li>The condition "only the solution $x=0$" means $\mathcal{N}(A) = \{0\}$, so $\dim(\mathcal{N}(A)) = 0$. By Rank-Nullity, this would imply $\mathrm{rank}(A) = 15 - 0 = 15$. However, we established in (a) that the maximum rank is 10. Thus, this is <b>impossible</b>. An underdetermined system ($m < n$) always has a non-zero nullspace.</li>
+        </ol>
+      </div>
 
       <h3>P0.3 — Trace and Determinant</h3>
       <ol type="a">
@@ -1283,6 +1299,25 @@
         <li>Let $A \in \mathbb{R}^{n \times n}$ be skew-symmetric ($A^\top = -A$). Show that $x^\top A x = 0$ for all $x$.</li>
         <li>Use the result from (b) to prove that if $n$ is odd, $\det(A) = 0$. (Hint: $\det(A^\top) = \det(-A)$).</li>
       </ol>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li><b>Cyclic Property:</b> Let $X = AB$. Then $\mathrm{tr}(XC) = \mathrm{tr}(CX)$ (basic cyclic property). Substituting $X=AB$, we get $\mathrm{tr}((AB)C) = \mathrm{tr}(C(AB)) = \mathrm{tr}(CAB)$. Applying it again gives $\mathrm{tr}(BCA)$.
+          <br><b>Counterexample for Non-Cyclic:</b> Let $A = \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}$, $B = \begin{bmatrix} 0 & 0 \\ 1 & 0 \end{bmatrix}$, $C = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}$.
+          <br>$ABC = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix} \implies \mathrm{tr}=1$.
+          <br>$BAC = \begin{bmatrix} 0 & 0 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 0 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix} = \mathbf{0} \implies \mathrm{tr}=0$.
+          </li>
+          <li><b>Skew-Symmetric Form:</b> The scalar $x^\top A x$ is its own transpose.
+          $$ x^\top A x = (x^\top A x)^\top = x^\top A^\top x $$
+          Since $A^\top = -A$, we have $x^\top A x = x^\top (-A) x = -x^\top A x$.
+          The only number equal to its negative is 0. Thus $x^\top A x = 0$.
+          </li>
+          <li><b>Determinant of Skew-Symmetric:</b>
+          $$ \det(A) = \det(A^\top) = \det(-A) = (-1)^n \det(A) $$
+          If $n$ is odd, $(-1)^n = -1$. So $\det(A) = -\det(A)$, which implies $2\det(A) = 0 \implies \det(A) = 0$.
+          </li>
+        </ol>
+      </div>
 
       <h3>P0.4 — Norm Equivalence</h3>
       <p>In finite dimensions, all norms are equivalent. For $x \in \mathbb{R}^n$, prove the following inequalities:</p>
@@ -1290,7 +1325,18 @@
         <li>$\|x\|_\infty \le \|x\|_2 \le \sqrt{n} \|x\|_\infty$</li>
         <li>$\|x\|_2 \le \|x\|_1 \le \sqrt{n} \|x\|_2$</li>
       </ol>
-      <p><i>Hint: Use Cauchy-Schwarz for the sum-based inequalities.</i></p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li><b>Left inequality:</b> $\|x\|_\infty^2 = \max_i |x_i|^2 \le \sum_i x_i^2 = \|x\|_2^2$. Taking square roots gives $\|x\|_\infty \le \|x\|_2$.
+          <br><b>Right inequality:</b> $\|x\|_2^2 = \sum_i x_i^2 \le \sum_i (\max_j |x_j|)^2 = \sum_i \|x\|_\infty^2 = n \|x\|_\infty^2$. Taking square roots gives $\|x\|_2 \le \sqrt{n}\|x\|_\infty$.
+          </li>
+          <li><b>Left inequality:</b> Square $\|x\|_1$: $\|x\|_1^2 = (\sum |x_i|)^2 = \sum x_i^2 + \sum_{i \ne j} |x_i||x_j| = \|x\|_2^2 + \text{non-negative terms} \ge \|x\|_2^2$. Thus $\|x\|_1 \ge \|x\|_2$.
+          <br><b>Right inequality:</b> Use Cauchy-Schwarz with the vector of ones $\mathbf{1}$ and the vector $|x| = (|x_1|, \dots, |x_n|)$.
+          $$ \|x\|_1 = \sum |x_i| \cdot 1 = |x|^\top \mathbf{1} \le \||x|\|_2 \|\mathbf{1}\|_2 = \|x\|_2 \sqrt{n} $$
+          </li>
+        </ol>
+      </div>
 
       <h3>P0.5 — Least Squares from Scratch</h3>
       <p>Consider the function $f(x) = \frac{1}{2} \|Ax - b\|_2^2$.</p>
@@ -1300,6 +1346,26 @@
         <li>Set the gradient to zero to derive the Normal Equations.</li>
         <li>Show that if $\mathcal{N}(A) = \{0\}$, the Hessian is positive definite, ensuring a unique global minimum.</li>
       </ol>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li>$f(x) = \frac{1}{2}(Ax - b)^\top (Ax - b) = \frac{1}{2}(x^\top A^\top - b^\top)(Ax - b) = \frac{1}{2} x^\top A^\top A x - \frac{1}{2} x^\top A^\top b - \frac{1}{2} b^\top A x + \frac{1}{2} b^\top b$.
+          Since scalar transpose is identity ($x^\top A^\top b = b^\top A x$), we simplify to:
+          $$ f(x) = \frac{1}{2} x^\top A^\top A x - b^\top A x + \frac{1}{2} b^\top b $$
+          </li>
+          <li>$\nabla (\frac{1}{2} x^\top Q x) = Qx$ for symmetric $Q$. Here $Q = A^\top A$.
+          $\nabla (-b^\top A x) = \nabla (-(A^\top b)^\top x) = -A^\top b$.
+          Thus $\nabla f(x) = A^\top A x - A^\top b = A^\top (Ax - b)$.
+          </li>
+          <li>$\nabla f(x) = 0 \implies A^\top A x - A^\top b = 0 \implies A^\top A x = A^\top b$. These are the Normal Equations.
+          </li>
+          <li>$\nabla^2 f(x) = A^\top A$.
+          If $\mathcal{N}(A) = \{0\}$, then for any $v \neq 0$, $Av \neq 0$.
+          $$ v^\top A^\top A v = (Av)^\top (Av) = \|Av\|_2^2 > 0 $$
+          Thus the Hessian is positive definite, which guarantees strict convexity and a unique global minimum.
+          </li>
+        </ol>
+      </div>
 
       <h3>P0.6 — Matrix Calculus Practice</h3>
       <p>Compute the gradient with respect to $X \in \mathbb{R}^{n \times n}$ for the following functions:</p>
@@ -1308,6 +1374,24 @@
         <li>$f(X) = \mathrm{tr}(X^\top X)$.</li>
         <li>$f(X) = a^\top X b$, where $a, b$ are constant vectors.</li>
       </ol>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li>Use the cyclic property: $\mathrm{tr}(AXB) = \mathrm{tr}(BA X)$.
+          The gradient of $\mathrm{tr}(M X)$ is $M^\top$. Here $M = BA$.
+          Thus $\nabla_X f(X) = (BA)^\top = A^\top B^\top$.
+          </li>
+          <li>$f(X) = \|X\|_F^2 = \sum_{ij} X_{ij}^2$.
+          $\frac{\partial f}{\partial X_{ij}} = 2 X_{ij}$.
+          Thus $\nabla_X f(X) = 2X$.
+          </li>
+          <li>$a^\top X b = \mathrm{tr}(a^\top X b) = \mathrm{tr}(b a^\top X)$.
+          Using the rule from (a) with $M = b a^\top$:
+          $\nabla_X f(X) = (b a^\top)^\top = (a^\top)^\top b^\top = a b^\top$.
+          (This is an outer product matrix).
+          </li>
+        </ol>
+      </div>
 
       <h3>P0.7 — Hessian of a Cubic</h3>
       <p>Let $f: \mathbb{R}^2 \to \mathbb{R}$ be defined by $f(x) = x_1^3 + x_2^3 + 2x_1 x_2$.</p>
@@ -1316,6 +1400,26 @@
         <li>Compute the Hessian matrix $\nabla^2 f(x)$.</li>
         <li>For which $x$ is the Hessian Positive Semidefinite? (This identifies the region where the function is locally convex).</li>
       </ol>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li>Gradient:
+          $$ \frac{\partial f}{\partial x_1} = 3x_1^2 + 2x_2, \quad \frac{\partial f}{\partial x_2} = 3x_2^2 + 2x_1 $$
+          $\nabla f(x) = \begin{bmatrix} 3x_1^2 + 2x_2 \\ 3x_2^2 + 2x_1 \end{bmatrix}$.
+          </li>
+          <li>Hessian:
+          $$ \nabla^2 f(x) = \begin{bmatrix} \frac{\partial^2 f}{\partial x_1^2} & \frac{\partial^2 f}{\partial x_1 \partial x_2} \\ \frac{\partial^2 f}{\partial x_2 \partial x_1} & \frac{\partial^2 f}{\partial x_2^2} \end{bmatrix} = \begin{bmatrix} 6x_1 & 2 \\ 2 & 6x_2 \end{bmatrix} $$
+          </li>
+          <li>PSD Condition:
+          A $2 \times 2$ matrix is PSD iff trace $\ge 0$ and determinant $\ge 0$.
+          Trace: $6x_1 + 6x_2 \ge 0 \implies x_1 + x_2 \ge 0$.
+          Determinant: $36x_1 x_2 - 4 \ge 0 \implies 9x_1 x_2 \ge 1$.
+          The condition $x_1 x_2 \ge 1/9$ implies $x_1, x_2$ have the same sign.
+          If both negative, $x_1 + x_2 < 0$, violating the trace condition.
+          Thus, we need $x_1 > 0, x_2 > 0$ and $x_1 x_2 \ge 1/9$. This region (hyperbola in the first quadrant) is where the function is locally convex.
+          </li>
+        </ol>
+      </div>
 
       <h3>P0.8 — Testing Positive Semidefiniteness</h3>
       <p>Determine whether the following matrices are PSD, PD, Indefinite, or Negative Definite/Semidefinite.</p>
@@ -1324,18 +1428,60 @@
         <li>$B = \begin{bmatrix} 1 & 2 \\ 2 & 1 \end{bmatrix}$</li>
         <li>$C = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 3 \end{bmatrix}$</li>
       </ol>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li><b>Positive Definite.</b> Minors: $M_1 = 2 > 0$, $M_2 = 4 - 1 = 3 > 0$. Or Eigenvalues: $\lambda = 1, 3$.</li>
+          <li><b>Indefinite.</b> Determinant $1 - 4 = -3 < 0$. Eigenvalues $\lambda = 3, -1$. Since eigenvalues have mixed signs, it is indefinite.</li>
+          <li><b>Positive Semidefinite.</b> Diagonal matrix with entries $1, 0, 3$. Eigenvalues are non-negative ($0$ is present, so not PD).</li>
+        </ol>
+      </div>
 
       <h3>P0.9 — Schur Complement Application</h3>
       <p>Use the Schur Complement condition (assuming the top-left pivot is positive) to determine the range of $x$ for which the matrix $M(x)$ is Positive Semidefinite:</p>
       $$ M(x) = \begin{bmatrix} x & 1 \\ 1 & x \end{bmatrix} $$
       <p>Verify your answer by computing the eigenvalues directly.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p><b>Schur Complement Method:</b>
+        For $M \succeq 0$, we need the top-left block $A=x > 0$ and the Schur complement $S = D - C A^{-1} B \ge 0$.
+        Here $A=x, B=1, C=1, D=x$.
+        $S = x - 1(1/x)(1) = x - 1/x$.
+        We need $x > 0$ and $x - 1/x \ge 0$.
+        $x - 1/x \ge 0 \implies x^2 \ge 1$ (since $x>0$). Thus $x \ge 1$.
+        So the range is $x \ge 1$.
+        </p>
+        <p><b>Eigenvalue Verification:</b>
+        Characteristic eq: $(x-\lambda)^2 - 1 = 0 \implies x-\lambda = \pm 1 \implies \lambda = x \pm 1$.
+        For PSD, we need $\lambda_{\min} = x-1 \ge 0$ and $\lambda_{\max} = x+1 \ge 0$.
+        $x-1 \ge 0 \implies x \ge 1$. This automatically satisfies $x+1 \ge 2 \ge 0$.
+        Matches.
+        </p>
+      </div>
 
       <h3>P0.10 — Projection onto a Line</h3>
       <p>Let $a = (1, 1, 1)^\top$. Find the projection of $b = (1, 0, 0)^\top$ onto the line spanned by $a$. Verify that the residual $b - p$ is orthogonal to $a$.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>Projection formula: $p = \frac{a^\top b}{a^\top a} a$.
+        $a^\top b = 1 \cdot 1 + 1 \cdot 0 + 1 \cdot 0 = 1$.
+        $a^\top a = 1^2 + 1^2 + 1^2 = 3$.
+        $p = \frac{1}{3} (1, 1, 1)^\top = (1/3, 1/3, 1/3)^\top$.
+        <br>Residual $r = b - p = (1-1/3, 0-1/3, 0-1/3)^\top = (2/3, -1/3, -1/3)^\top$.
+        <br>Check orthogonality: $a^\top r = 1(2/3) + 1(-1/3) + 1(-1/3) = 0$. Verified.</p>
+      </div>
 
       <h3>P0.11 — Projection onto a Hyperplane</h3>
       <p>Find the projection of the point $y = (3, 3)^\top$ onto the line (hyperplane in 2D) defined by $x_1 + x_2 = 2$.</p>
-      <p><i>Hint: Shift the line to pass through the origin, project, then shift back, or use the affine projection formula with $F=[1 \ 1], g=2$.</i></p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>The line is $a^\top x = b$ with $a=(1, 1)^\top, b=2$.
+        The formula for projection onto a hyperplane is $p = y - \frac{a^\top y - b}{\|a\|^2} a$.
+        $a^\top y = 3+3=6$.
+        $\|a\|^2 = 2$.
+        $p = (3, 3)^\top - \frac{6 - 2}{2} (1, 1)^\top = (3, 3)^\top - 2(1, 1)^\top = (3, 3)^\top - (2, 2)^\top = (1, 1)^\top$.
+        <br>Check: $1+1=2$. Point is on the line. Residual $(2, 2)$ is parallel to normal $(1, 1)$. Correct.</p>
+      </div>
 
       <h3>P0.12 — Orthogonal Complements</h3>
       <p>Let $S$ be a subspace of $\mathbb{R}^n$. The orthogonal complement is $S^\perp = \{y \mid y^\top x = 0 \ \forall x \in S\}$.</p>
@@ -1344,10 +1490,45 @@
         <li>Prove that $S \cap S^\perp = \{0\}$.</li>
         <li>If $S = \text{span}((1, 0, 0)^\top, (0, 1, 0)^\top)$, calculate $S^\perp$.</li>
       </ol>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li><b>Subspace:</b> Let $y_1, y_2 \in S^\perp$. Then $y_1^\top x = 0$ and $y_2^\top x = 0$.
+          For any linear combination $\alpha y_1 + \beta y_2$, we have $(\alpha y_1 + \beta y_2)^\top x = \alpha(y_1^\top x) + \beta(y_2^\top x) = 0$.
+          Thus closed under linear combinations. Contains 0 since $0^\top x = 0$.
+          </li>
+          <li><b>Intersection:</b> Let $x \in S \cap S^\perp$. Since $x \in S$ and $x \in S^\perp$, it must be orthogonal to itself: $x^\top x = 0$.
+          $\|x\|^2 = 0 \implies x = 0$. Thus the intersection contains only the zero vector.
+          </li>
+          <li><b>Calculation:</b> $S$ is the $xy$-plane ($z=0$). $S^\perp$ is the set of vectors orthogonal to $(1,0,0)$ and $(0,1,0)$.
+          $y \cdot e_1 = y_1 = 0$. $y \cdot e_2 = y_2 = 0$.
+          Thus $y = (0, 0, y_3)^\top$. $S^\perp$ is the $z$-axis (span of $e_3$).
+          </li>
+        </ol>
+      </div>
 
       <h3>P0.13 — Frobenius Norm Submultiplicativity</h3>
       <p>We proved $\|AB\|_F \le \|A\|_F \|B\|_F$ in the lecture using Cauchy-Schwarz.
       <br>Re-derive this result by writing $\|X\|_F^2 = \mathrm{tr}(X^\top X)$ and using the property $\mathrm{tr}(M) = \sum \lambda_i(M)$ along with the fact that $\lambda_{\max}(A^\top A) \le \mathrm{tr}(A^\top A)$.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <div class="proof-step">
+          We want to bound $\|AB\|_F^2 = \mathrm{tr}(B^\top A^\top A B)$.
+          Using the cyclic property: $\mathrm{tr}(B^\top (A^\top A) B) = \mathrm{tr}((A^\top A) (B B^\top))$.
+        </div>
+        <div class="proof-step">
+          Let $P = A^\top A$ and $Q = B B^\top$. Both are PSD.
+          We use the inequality $\mathrm{tr}(PQ) \le \lambda_{\max}(P) \mathrm{tr}(Q)$ (Von Neumann's trace inequality or simple eigen-bound).
+          <br><i>Proof of mini-lemma:</i> Diagonalize $Q = U \Lambda U^\top$. $\mathrm{tr}(P U \Lambda U^\top) = \mathrm{tr}(U^\top P U \Lambda) = \sum (U^\top P U)_{ii} \lambda_i$.
+          The diagonal elements of $U^\top P U$ are bounded by $\lambda_{\max}(P)$.
+          Thus $\mathrm{tr}(PQ) \le \lambda_{\max}(P) \sum \lambda_i(Q) = \lambda_{\max}(P) \mathrm{tr}(Q)$.
+        </div>
+        <div class="proof-step">
+          Applying this: $\|AB\|_F^2 \le \lambda_{\max}(A^\top A) \mathrm{tr}(B B^\top) = \|A\|_2^2 \|B\|_F^2$.
+          Since the spectral norm $\|A\|_2$ satisfies $\|A\|_2 \le \|A\|_F$, we have $\|A\|_2^2 \le \|A\|_F^2$.
+          <br>Thus $\|AB\|_F^2 \le \|A\|_F^2 \|B\|_F^2$. Taking square roots gives the result.
+        </div>
+      </div>
 
       <h3>P0.14 — Spectral Norm Properties</h3>
       <p>Let $\|A\|_2$ denote the spectral norm (max singular value).</p>
@@ -1355,27 +1536,95 @@
         <li>Show that $\|A\|_2 = 0$ if and only if $A=0$.</li>
         <li>Show that $\|Q A\|_2 = \|A\|_2$ for any orthogonal matrix $Q$. (Orthogonal invariance).</li>
       </ol>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li>$\|A\|_2 = \sigma_{\max}(A)$. Singular values are non-negative. The max is 0 iff all singular values are 0. If $\Sigma=0$ in SVD $A=U\Sigma V^\top$, then $A=0$. Conversely if $A=0$, the maximum stretch is 0.</li>
+          <li>$\|QA\|_2 = \sup_{\|x\|=1} \|QAx\|_2$. Since $Q$ is orthogonal, it preserves Euclidean norms: $\|QAx\|_2 = \|Ax\|_2$.
+          Thus $\sup_{\|x\|=1} \|Ax\|_2 = \|A\|_2$. The spectral norm is invariant under left (and right) orthogonal multiplication.</li>
+        </ol>
+      </div>
 
       <h3>P0.15 — Isometries</h3>
       <p>An isometry is a linear map $f(x) = Qx$ that preserves distances: $\|Qx - Qy\|_2 = \|x - y\|_2$ for all $x, y$.
       <br>Show that this condition implies $Q^\top Q = I$. Thus, isometries are represented by orthogonal matrices.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>Set $y=0$. Then $\|Qx\|_2 = \|x\|_2$ for all $x$.
+        Square both sides: $x^\top Q^\top Q x = x^\top I x$.
+        This implies $x^\top (Q^\top Q - I) x = 0$ for all $x$.
+        For a symmetric matrix $M = Q^\top Q - I$, if the quadratic form is 0 everywhere, the matrix must be zero (by Polarization Identity or eigenvalues).
+        Thus $Q^\top Q - I = 0 \implies Q^\top Q = I$.</p>
+      </div>
 
       <h3>P0.16 — Loewner Order Transitivity</h3>
       <p>The Loewner order is defined as $X \succeq Y \iff X - Y \succeq 0$. Prove that this order is transitive: if $X \succeq Y$ and $Y \succeq Z$, then $X \succeq Z$. Use the variational definition of PSD matrices.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>Let $v \in \mathbb{R}^n$ be any vector.
+        $X \succeq Y \implies v^\top (X-Y) v \ge 0 \implies v^\top X v \ge v^\top Y v$.
+        $Y \succeq Z \implies v^\top (Y-Z) v \ge 0 \implies v^\top Y v \ge v^\top Z v$.
+        combining inequalities: $v^\top X v \ge v^\top Y v \ge v^\top Z v$.
+        Thus $v^\top (X-Z) v \ge 0$.
+        Since this holds for all $v$, $X - Z \succeq 0$, so $X \succeq Z$.</p>
+      </div>
 
       <h3>P0.17 — Weighted Inner Product</h3>
       <p>Let $A \in \mathbb{S}^n_{++}$ be a symmetric positive definite matrix.
       <br>(a) Prove that $\langle x, y \rangle_A = x^\top A y$ satisfies all axioms of an inner product.
       <br>(b) Write down the Cauchy-Schwarz inequality for this inner product.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li><b>Symmetry:</b> $\langle x, y \rangle_A = x^\top A y = (x^\top A y)^\top = y^\top A^\top x = y^\top A x = \langle y, x \rangle_A$ (since $A=A^\top$).
+          <br><b>Linearity:</b> Linear in first arg (matrix multiplication distributes).
+          <br><b>Positive Definiteness:</b> $\langle x, x \rangle_A = x^\top A x$. Since $A \succ 0$, this is $>0$ for all $x \neq 0$.
+          </li>
+          <li><b>Cauchy-Schwarz:</b> $|\langle x, y \rangle_A| \le \sqrt{\langle x, x \rangle_A} \sqrt{\langle y, y \rangle_A}$.
+          Explicitly: $|x^\top A y| \le \sqrt{x^\top A x} \sqrt{y^\top A y}$.
+          </li>
+        </ol>
+      </div>
 
       <h3>P0.18 — Characterization of Projectors</h3>
       <p>A matrix $P$ is an orthogonal projector if and only if it is idempotent ($P^2=P$) and symmetric ($P^\top=P$).
       <br>(a) Prove that if $P$ is an orthogonal projector onto a subspace $S$, it satisfies these conditions.
       <br>(b) Prove the converse.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <ol type="a">
+          <li>Let $P$ be the orthogonal projector onto $S$. Let $x = u + v$ where $u \in S, v \in S^\perp$. Then $Px = u$.
+          <br><b>Idempotent:</b> $P^2 x = P(Px) = Pu$. Since $u \in S$, $Pu = u$. Thus $P^2 x = u = Px$. So $P^2 = P$.
+          <br><b>Symmetric:</b> Check $\langle Px, y \rangle = \langle x, Py \rangle$.
+          Decompose $x=x_S+x_\perp, y=y_S+y_\perp$.
+          $\langle Px, y \rangle = \langle x_S, y_S+y_\perp \rangle = \langle x_S, y_S \rangle$ (since $S \perp S^\perp$).
+          $\langle x, Py \rangle = \langle x_S+x_\perp, y_S \rangle = \langle x_S, y_S \rangle$.
+          They are equal, so $P$ is symmetric.
+          </li>
+          <li>Let $P=P^\top=P^2$. Define $S = \mathcal{R}(P)$.
+          For any $x$, $x = Px + (I-P)x$.
+          $Px \in S$. $(I-P)x$ is in $S^\perp$? Check orthogonality:
+          $(Px)^\top (I-P)x = x^\top P^\top (I-P) x = x^\top (P - P^2) x$.
+          Since $P^2=P$, this is 0.
+          Thus $x$ is decomposed into a component in $S$ and a component orthogonal to $S$. $P$ maps $x$ to the component in $S$. This is the definition of an orthogonal projector.
+          </li>
+        </ol>
+      </div>
 
       <h3>P0.19 — PSD Cone in 2D</h3>
       <p>Consider the space of $2 \times 2$ symmetric matrices, which has dimension 3.
       <br>Write down the explicit inequalities defining the PSD cone $S \succeq 0$ in terms of the matrix entries $x, y, z$ (where $S = \begin{bmatrix} x & y \\ y & z \end{bmatrix}$). Relate this to the trace and determinant conditions.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>A $2 \times 2$ matrix is PSD if and only if:
+        1. Trace $\ge 0$: $x + z \ge 0$.
+        2. Determinant $\ge 0$: $xz - y^2 \ge 0$.
+        <br>Note that $xz \ge y^2 \ge 0$ implies $x$ and $z$ have the same sign.
+        Since their sum is non-negative, both must be non-negative: $x \ge 0, z \ge 0$.
+        <br>Thus the conditions are:
+        $$ x \ge 0, \quad z \ge 0, \quad xz \ge y^2 $$
+        Geometrically, this is a cone in $\mathbb{R}^3$. The boundary $xz=y^2$ is a rotated quadratic cone surface.</p>
+      </div>
     </section>
 
     <!-- SECTION 11: READINGS -->

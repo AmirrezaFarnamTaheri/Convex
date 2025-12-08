@@ -218,102 +218,203 @@
     <section class="section-card" id="section-5">
       <h2><i data-feather="edit-3"></i> 5. Exercises</h2>
 
-      <div class="problem">
-        <h3>P6.1 — Conjugate of Norm Squared</h3>
-        <p>Compute the conjugate of $f(x) = \frac{1}{2}\|x\|^2$ for a general norm $\|\cdot\|$. Show it is $\frac{1}{2}\|y\|_*^2$.</p>
-        <div class="solution-box">
-          <h4>Solution</h4>
-          <p>We want $\sup_x (y^\top x - \frac{1}{2}\|x\|^2)$.
-          <br>By definition of dual norm, $y^\top x \le \|y\|_* \|x\|$.
-          <br>Let $u = \|x\|$. The objective is bounded by $\|y\|_* u - \frac{1}{2}u^2$.
-          <br>This quadratic in $u$ is maximized at $u^* = \|y\|_*$, value $\frac{1}{2}\|y\|_*^2$.
-          <br>This bound is achieved by choosing $x$ aligned with $y$ (dual vector) with magnitude $\|y\|_*$.</p>
-        </div>
-      </div>
-
-      <div class="problem">
-        <h3>P6.2 — Quasi-Convexity of Ceiling</h3>
-        <p>Show that $f(x) = \lceil x \rceil$ is quasi-convex.</p>
-        <div class="solution-box">
-          <h4>Solution</h4>
-          <p>The sublevel set $S_\alpha = \{x \mid \lceil x \rceil \le \alpha\}$ is equivalent to $\{x \mid x \le \lfloor \alpha \rfloor\}$. This is an interval $(-\infty, \lfloor \alpha \rfloor]$, which is a convex set. Thus $f$ is quasi-convex.</p>
-        </div>
-      </div>
-
-      <div class="problem">
-        <h3>P6.3 — Softmax Analysis</h3>
-        <p>For $f(x) = \log(\sum e^{x_i})$:
-        <ol type="a"><li>Show $\max x_i \le f(x) \le \max x_i + \log n$.</li><li>Show $f$ is convex via Hessian $\text{diag}(p) - pp^\top$.</li></ol></p>
-        <div class="solution-box">
-          <h4>Solution</h4>
-          <p>(a) Let $M = \max x_i$. $\sum e^{x_i} = e^M \sum e^{x_i-M}$. Bounds follow from $1 \le \sum e^{x_i-M} \le n$.
-          <br>(b) $\nabla^2 f = \text{diag}(p) - pp^\top$. $v^\top \nabla^2 f v = \sum p_i v_i^2 - (\sum p_i v_i)^2 = \text{Var}(Z) \ge 0$.</p>
-        </div>
-      </div>
-
-      <div class="problem">
-        <h3>P6.4 — Concavity of Geometric Mean</h3>
-        <p>Prove $G(x) = (\prod x_i)^{1/n}$ is concave on $\mathbb{R}^n_{++}$ using log-concavity.</p>
-        <div class="solution-box">
-          <h4>Solution</h4>
-          <p>$\log G(x) = \frac{1}{n} \sum \log x_i$. Since $\log$ is concave, $\log G$ is concave. Thus $G$ is log-concave.
-          <br>Also $G$ is homogeneous of degree 1.
-          <br>A log-concave, 1-homogeneous function is concave. (Proof: $G(x+y) \ge G(x)+G(y)$ using convexity of arguments).</p>
-        </div>
-      </div>
-
-      <div class="problem">
-        <h3>P6.5 — Geometric Mean Cone</h3>
-        <p>Show $K = \{x \in \mathbb{R}^n_+ \mid G(x) \ge \alpha A(x)\}$ is a convex cone for $\alpha \in [0,1]$.</p>
-        <div class="solution-box">
-          <h4>Solution</h4>
-          <p>Rewriting: $G(x) - \alpha A(x) \ge 0$. $G$ is concave, $A$ is linear (concave). Sum is concave. Superlevel set of concave function is convex.
-          <br>Homogeneity implies it is a cone.</p>
-        </div>
-      </div>
-
-      <div class="problem">
-        <h3>P6.6 — Matrix Fractional Function</h3>
-        <p>Prove convexity of $f(x, Y) = x^\top Y^{-1} x$ via epigraph.</p>
-        <div class="solution-box">
-          <h4>Solution</h4>
-          <p>Epigraph $t \ge x^\top Y^{-1} x$ is equivalent to LMI $\begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0$. Since PSD cone is convex, epigraph is convex.</p>
-        </div>
-      </div>
-
-      <div class="problem">
-        <h3>P6.7 — Fenchel's Inequality & Biconjugate</h3>
-        <p>For $f(x) = \frac{1}{2}x^\top Q x$, verify $f(x)+f^*(y) \ge x^\top y$ and $f^{**} = f$.</p>
-        <div class="solution-box">
-          <h4>Solution</h4>
-          <p>Inequality reduces to $\|Q^{1/2}x - Q^{-1/2}y\|^2 \ge 0$.
-          <br>Biconjugate: Conjugate of $\frac{1}{2}y^\top Q^{-1} y$ uses matrix $(Q^{-1})^{-1} = Q$. Returns $f$.</p>
-        </div>
-      </div>
-
-      <div class="problem">
-        <h3>P6.8 — Quasiconvexity of Distance Ratio</h3>
-        <p>Show $\{x \mid \|x-a\| \le \theta \|x-b\|\}$ is convex for $\theta \le 1$.</p>
-        <div class="solution-box">
-          <h4>Solution</h4>
-          <p>Squaring: $\|x-a\|^2 \le \theta^2 \|x-b\|^2$. Expands to $(1-\theta^2)x^\top x + \dots \le 0$. For $\theta \le 1$, quadratic coeff is $\ge 0$, so convex (ball).</p>
-        </div>
-      </div>
-
-      <div class="problem">
-        <h3>P6.9 — Log-Concavity of Probability Measures</h3>
-        <p>If $p(x)$ is log-concave, show $f(x) = \mathbb{P}(x+w \in C)$ is log-concave ($C$ convex).</p>
-        <div class="solution-box">
-          <h4>Solution</h4>
-          <p>$f(x) = \int I_C(u) p(u-x) du$. Convolution of log-concave functions ($I_C$ and $p$) is log-concave.</p>
-        </div>
-      </div>
 <div class="problem">
+  <h3>P6.1 — Conjugate of Norm Squared</h3>
+  <p>Compute the conjugate of $f(x) = \frac{1}{2}\|x\|^2$ for a general norm $\|\cdot\|$. Show it is $\frac{1}{2}\|y\|_*^2$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Definition.</strong>
+    $f^*(y) = \sup_x (y^\top x - \frac{1}{2}\|x\|^2)$.</div>
+    <div class="proof-step"><strong>Step 2: Dual Norm Bound.</strong>
+    By definition of the dual norm, $y^\top x \le \|y\|_* \|x\|$.
+    Let $u = \|x\|$. Then $y^\top x - \frac{1}{2}\|x\|^2 \le \|y\|_* u - \frac{1}{2}u^2$.</div>
+    <div class="proof-step"><strong>Step 3: Optimize Scalar $u$.</strong>
+    The function $g(u) = \|y\|_* u - \frac{1}{2}u^2$ is a concave quadratic.
+    Maximum occurs at $g'(u) = \|y\|_* - u = 0 \implies u^* = \|y\|_*$.
+    Max value: $\|y\|_*^2 - \frac{1}{2}\|y\|_*^2 = \frac{1}{2}\|y\|_*^2$.</div>
+    <div class="proof-step"><strong>Step 4: Tightness.</strong>
+    Can we achieve this bound? By definition of the dual norm, there exists a vector $x_0$ with $\|x_0\|=1$ such that $y^\top x_0 = \|y\|_*$.
+    Choose $x = \|y\|_* x_0$. Then $\|x\| = \|y\|_*$.
+    $y^\top x = \|y\|_* (y^\top x_0) = \|y\|_*^2$.
+    Objective: $\|y\|_*^2 - \frac{1}{2}\|y\|_*^2 = \frac{1}{2}\|y\|_*^2$.
+    Thus the supremum is exactly $\frac{1}{2}\|y\|_*^2$.</div>
+  </div>
+</div>
+\n<div class="problem">
+  <h3>P6.2 — Quasi-Convexity of Ceiling</h3>
+  <p>Show that $f(x) = \lceil x \rceil$ (on $\mathbb{R}$) is quasi-convex.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Definition of Quasi-Convexity.</strong>
+    A function is quasi-convex if its sublevel sets $S_\alpha = \{x \mid f(x) \le \alpha\}$ are convex for all $\alpha \in \mathbb{R}$.</div>
+    <div class="proof-step"><strong>Step 2: Analyze Sublevel Sets.</strong>
+    Condition: $\lceil x \rceil \le \alpha$.
+    Since $\lceil x \rceil$ is an integer, let $k = \lfloor \alpha \rfloor$. The condition is $\lceil x \rceil \le k$.
+    This is equivalent to $x \le k$ (since if $x > k$, $\lceil x \rceil \ge k+1$).
+    So $S_\alpha = (-\infty, \lfloor \alpha \rfloor]$.</div>
+    <div class="proof-step"><strong>Step 3: Conclusion.</strong>
+    The set $(-\infty, k]$ is an interval, which is a convex set in $\mathbb{R}$.
+    Therefore, $f$ is quasi-convex.</div>
+  </div>
+</div>
+\n<div class="problem">
+  <h3>P6.3 — Softmax Analysis</h3>
+  <p>For $f(x) = \log(\sum_{i=1}^n e^{x_i})$: <ol type="a"><li>Show $\max x_i \le f(x) \le \max x_i + \log n$.</li><li>Show $f$ is convex via Hessian analysis.</li></ol></p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Part A: Bounds.</strong>
+    Let $x_{\max} = \max_i x_i$.
+    Lower bound: $\sum e^{x_i} \ge e^{x_{\max}}$.
+    $f(x) \ge \log(e^{x_{\max}}) = x_{\max}$.
+    Upper bound: $\sum e^{x_i} = e^{x_{\max}} \sum e^{x_i - x_{\max}}$.
+    Since $x_i - x_{\max} \le 0$, each term $e^{x_i - x_{\max}} \le 1$.
+    Sum is bounded by $n$.
+    $f(x) = x_{\max} + \log(\sum e^{x_i - x_{\max}}) \le x_{\max} + \log n$.</div>
+    <div class="proof-step"><strong>Part B: Hessian.</strong>
+    Gradient $\nabla f(x) = p$ where $p_i = e^{x_i}/\sum e^{x_k}$. Note $\mathbf{1}^\top p = 1, p > 0$.
+    Hessian $\nabla^2 f(x) = \text{diag}(p) - pp^\top$.
+    Let $v \in \mathbb{R}^n$.
+    $v^\top \nabla^2 f v = \sum p_i v_i^2 - (p^\top v)^2 = \sum p_i v_i^2 - (\sum p_i v_i)^2$.</div>
+    <div class="proof-step"><strong>Part B: Variance Interpretation.</strong>
+    Consider a random variable $Z$ taking value $v_i$ with probability $p_i$.
+    $\mathbb{E}[Z] = \sum p_i v_i$. $\mathbb{E}[Z^2] = \sum p_i v_i^2$.
+    The expression is $\mathbb{E}[Z^2] - (\mathbb{E}[Z])^2 = \text{Var}(Z)$.
+    Since variance is always non-negative, $v^\top \nabla^2 f v \ge 0$. Thus $f$ is convex.</div>
+  </div>
+</div>
+\n<div class="problem">
+  <h3>P6.4 — Concavity of Geometric Mean</h3>
+  <p>Prove $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}^n_{++}$ using log-concavity properties.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Check Log-Concavity.</strong>
+    Consider $\log G(x)$.
+    $$ \log \left( \prod x_i^{1/n} \right) = \frac{1}{n} \sum_{i=1}^n \log x_i $$
+    The function $\log x_i$ is concave. The sum of concave functions is concave.
+    Thus $\log G(x)$ is a concave function.
+    This means $G(x)$ is <b>log-concave</b>.</div>
+    <div class="proof-step"><strong>Step 2: Homogeneity.</strong>
+    $G(\alpha x) = (\prod (\alpha x_i))^{1/n} = (\alpha^n \prod x_i)^{1/n} = \alpha G(x)$.
+    $G$ is homogeneous of degree 1.</div>
+    <div class="proof-step"><strong>Step 3: Theorem.</strong>
+    A function that is log-concave and homogeneous of degree 1 is concave.
+    <i>Proof sketch:</i> $G(x+y) \ge G(x)+G(y)$.
+    $G(x+y) = G(\frac{x+y}{2} \cdot 2) = 2 G(\frac{x}{2} + \frac{y}{2})$.
+    By log-concavity (and thus quasi-concavity? No, stronger):
+    Actually, use direct log-sum inequality or just the known property.
+    Because $\log G$ is concave, $G(\theta x + (1-\theta)y) \ge G(x)^\theta G(y)^{1-\theta}$.
+    If we scale $x, y$ such that $G(x)=G(y)=1$, then $G(\theta x + (1-\theta)y) \ge 1 = \theta G(x) + (1-\theta)G(y)$.
+    By homogeneity, this extends to all $x,y$. Thus $G$ is concave.</div>
+  </div>
+</div>
+\n<div class="problem">
+  <h3>P6.5 — Geometric Mean Cone</h3>
+  <p>Show $K = \{x \in \mathbb{R}^n_+ \mid G(x) \ge \alpha A(x)\}$ is a convex cone for $\alpha \in [0,1]$, where $A(x) = \frac{1}{n}\sum x_i$ is the arithmetic mean.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Rewrite condition.</strong>
+    $G(x) - \alpha A(x) \ge 0$.
+    Let $h(x) = G(x) - \alpha A(x)$.</div>
+    <div class="proof-step"><strong>Step 2: Check Concavity.</strong>
+    $G(x)$ is concave (from P6.4).
+    $A(x)$ is linear, so $-A(x)$ is concave.
+    Since $\alpha \ge 0$, $-\alpha A(x)$ is concave.
+    Thus $h(x)$ is a sum of concave functions, so $h$ is concave.</div>
+    <div class="proof-step"><strong>Step 3: Superlevel Set.</strong>
+    The set $K = \{x \mid h(x) \ge 0\}$ is the 0-superlevel set of a concave function.
+    Superlevel sets of concave functions are convex sets.</div>
+    <div class="proof-step"><strong>Step 4: Cone Property.</strong>
+    $G(kx) = kG(x)$ and $A(kx) = kA(x)$ for $k \ge 0$.
+    $G(kx) \ge \alpha A(kx) \iff kG(x) \ge k\alpha A(x) \iff G(x) \ge \alpha A(x)$ (for $k>0$).
+    Thus $K$ is a cone.</div>
+  </div>
+</div>
+\n<div class="problem">
+  <h3>P6.6 — Matrix Fractional Function</h3>
+  <p>Prove convexity of $f(x, Y) = x^\top Y^{-1} x$ (for $Y \succ 0$) using the epigraph characterization.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Epigraph Definition.</strong>
+    $(x, Y, t) \in \text{epi } f \iff t \ge x^\top Y^{-1} x$ and $Y \succ 0$.</div>
+    <div class="proof-step"><strong>Step 2: Schur Complement.</strong>
+    The inequality $t - x^\top Y^{-1} x \ge 0$ is the Schur complement condition for the block matrix:
+    $$ M = \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0 $$
+    (Assuming $Y \succ 0$. If $Y \succeq 0$ singular, we need $x \in \text{range}(Y)$ etc, but usually defined on open domain).</div>
+    <div class="proof-step"><strong>Step 3: Convexity of LMI.</strong>
+    The set of matrices $\mathcal{S}_+^k$ is a convex cone (PSD cone).
+    The map $(x, Y, t) \to M(x, Y, t)$ is linear.
+    The inverse image of a convex set under a linear map is convex.
+    Thus $\text{epi } f = \{(x, Y, t) \mid M(x, Y, t) \succeq 0\}$ is convex.</div>
+  </div>
+</div>
+\n<div class="problem">
+  <h3>P6.7 — Fenchel's Inequality & Biconjugate</h3>
+  <p>For $f(x) = \frac{1}{2}x^\top Q x$ with $Q \succ 0$: 1. Verify Fenchel's inequality. 2. Verify $f^{**} = f$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Part 1: Fenchel's Inequality.</strong>
+    We need $f(x) + f^*(y) \ge x^\top y$.
+    We found $f^*(y) = \frac{1}{2}y^\top Q^{-1} y$.
+    LHS - RHS = $\frac{1}{2}x^\top Q x + \frac{1}{2}y^\top Q^{-1} y - x^\top y$.
+    Let $u = Q^{1/2}x$ and $v = Q^{-1/2}y$. Then $x = Q^{-1/2}u, y = Q^{1/2}v$.
+    $x^\top y = u^\top v$.
+    Expression: $\frac{1}{2}u^\top u + \frac{1}{2}v^\top v - u^\top v = \frac{1}{2}\|u-v\|^2 \ge 0$.
+    Verified.</div>
+    <div class="proof-step"><strong>Part 2: Biconjugate.</strong>
+    $f^{**}(x) = (f^*)^*(x)$. Let $g(y) = f^*(y) = \frac{1}{2}y^\top P y$ with $P = Q^{-1}$.
+    The conjugate of a quadratic $\frac{1}{2}y^\top P y$ is $\frac{1}{2}x^\top P^{-1} x$.
+    $P^{-1} = (Q^{-1})^{-1} = Q$.
+    So $f^{**}(x) = \frac{1}{2}x^\top Q x = f(x)$. Verified.</div>
+  </div>
+</div>
+\n<div class="problem">
+  <h3>P6.8 — Quasiconvexity of Distance Ratio</h3>
+  <p>Show $S_\theta = \{x \mid \|x-a\|_2 \le \theta \|x-b\|_2\}$ is convex for $\theta \le 1$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Square the condition.</strong>
+    $\|x-a\|^2 \le \theta^2 \|x-b\|^2$.
+    $(x-a)^\top (x-a) \le \theta^2 (x-b)^\top (x-b)$.
+    $x^\top x - 2a^\top x + a^\top a \le \theta^2 (x^\top x - 2b^\top x + b^\top b)$.</div>
+    <div class="proof-step"><strong>Step 2: Group terms.</strong>
+    $(1 - \theta^2) x^\top x - 2(a - \theta^2 b)^\top x + (\|a\|^2 - \theta^2 \|b\|^2) \le 0$.</div>
+    <div class="proof-step"><strong>Step 3: Analyze coefficient.</strong>
+    Let $q(x)$ be this quadratic expression. The quadratic term is $(1-\theta^2)\|x\|^2$.
+    If $\theta \le 1$, then $1-\theta^2 \ge 0$.
+    The sublevel set of a convex quadratic ($P \succeq 0$) is convex (an ellipsoid or halfspace).
+    Thus $S_\theta$ is convex. (If $\theta > 1$, it's the complement of an ellipsoid, which is non-convex).</div>
+  </div>
+</div>
+\n<div class="problem">
+  <h3>P6.9 — Log-Concavity of Probability Measures</h3>
+  <p>If $p(x)$ is a log-concave probability density, show that the function $f(x) = \mathbb{P}(x+W \in C)$ is log-concave, where $W \sim p$ and $C$ is a convex set.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Write as Integral.</strong>
+    $f(x) = \int_{\mathbb{R}^n} I_C(y) p(y-x) dy$.
+    Wait, let's check definition. $x+W \in C \iff W \in C-x$.
+    Prob = $\int_{C-x} p(w) dw = \int_{\mathbb{R}^n} I_{C-x}(w) p(w) dw$.
+    Let $u = w+x$. Then $w = u-x$. Range $w \in C-x \iff u \in C$.
+    $f(x) = \int I_C(u) p(u-x) du$.</div>
+    <div class="proof-step"><strong>Step 2: Identify as Convolution.</strong>
+    This is the convolution of two functions: $g(x) = I_C(x)$ (indicator 1 if in C, 0 else) and $h(x) = p(-x)$.
+    Wait, convolution is $(g * h)(x) = \int g(u) h(x-u) du$.
+    The form $\int g(u) p(u-x) du$ is a correlation or convolution with reflected argument.
+    Let's use the Prékopa-Leindler inequality or the theorem that <b>convolution of log-concave functions is log-concave</b>.</div>
+    <div class="proof-step"><strong>Step 3: Check Log-Concavity of Components.</strong>
+    $p(x)$ is log-concave (given).
+    $I_C(x)$ is the indicator function of a convex set (1 on C, 0 else).
+    Is it log-concave? $\log I_C(x)$ is 0 on C, $-\infty$ else.
+    Since $C$ is convex, this is a concave function (extended value).
+    So $I_C$ is log-concave.</div>
+    <div class="proof-step"><strong>Step 4: Conclusion.</strong>
+    Since $f$ is the convolution of two log-concave functions, $f$ is log-concave.
+    (Note: The integral is essentially measuring the measure of the set $C$ shifted by $-x$. Prekopa-Leindler directly applies to marginals of log-concave functions).</div>
+  </div>
+</div>
+\n<div class="problem">
   <h3>P6.10 — Log-Concavity of Gaussian</h3>
-  <p>Show that the multivariate Gaussian density function $f(x)$ is log-concave.</p>
-  $$ f(x) = \frac{1}{(2\pi)^{n/2} (\det \Sigma)^{1/2}} \exp\left(-\frac{1}{2}(x-\mu)^\top \Sigma^{-1} (x-\mu)\right) $$
-  <p>where $\Sigma \succ 0$.</p>
-
+  <p>Show that the multivariate Gaussian density function $f(x)$ is log-concave. $$ f(x) = \frac{1}{(2\pi)^{n/2} (\det \Sigma)^{1/2}} \exp\left(-\frac{1}{2}(x-\mu)^\top \Sigma^{-1} (x-\mu)\right) $$ where $\Sigma \succ 0$.</p>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
@@ -334,7 +435,7 @@
 </div>
 
 
-    </section>
+</section>
     </article>
 
     <footer class="site-footer">

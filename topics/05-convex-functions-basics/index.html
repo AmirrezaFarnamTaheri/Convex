@@ -1284,12 +1284,124 @@
 
 <div class="problem">
   <h3>P5.9 — Dual of a Strictly Convex Function</h3>
-  <p>Let $f$ be strictly convex. Prove that its conjugate $f^*(y) = \sup_x (y^\top x - f(x))$ is differentiable.</p>
+  <p>Let $f$ be a closed, strictly convex function. Prove that its conjugate $f^*(y) = \sup_x (y^\top x - f(x))$ is differentiable. (Hint: The maximizing $x$ is unique).</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Duality of Regularity:</b> There is a deep symmetry: Strict Convexity $\leftrightarrow$ Differentiability.</li><li><b>Envelope Theorem:</b> The gradient of the value function $\nabla f^*(y)$ is the optimal solution $x^*(y)$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Uniqueness of Maximizer.</strong>
+    Consider the maximization problem defining the conjugate: maximize $h_y(x) = y^\top x - f(x)$.
+    Since $f$ is strictly convex, $h_y(x)$ is strictly concave.
+    A strictly concave function has at most one global maximizer. Let's assume it exists and denote it $x^*(y)$.</div>
+    <div class="proof-step"><strong>Step 2: Danskin's Theorem (simplified).</strong>
+    For a function $g(y) = \max_x \phi(x, y)$, if the maximizer $x^*$ is unique, the gradient is $\nabla g(y) = \nabla_y \phi(x^*, y)$.
+    Here $\phi(x, y) = y^\top x - f(x)$.
+    $\nabla_y \phi = x$.
+    </div>
+    <div class="proof-step"><strong>Conclusion:</strong>
+    Since $x^*(y)$ is unique (due to strict convexity of $f$), the gradient exists and is unique:
+    $$ \nabla f^*(y) = x^*(y) $$
+    Thus $f^*$ is differentiable. This is a fundamental result: smoothness of the dual comes from curvature of the primal.</div>
+  </div>
 </div>
 
 <div class="problem">
   <h3>P5.10 — Dual via Conjugates</h3>
   <p>Using the definition of the convex conjugate, show that the dual of the problem $\min f(x)$ subject to $Ax = b$ is $\max -b^\top \nu - f^*(-A^\top \nu)$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Lagrangian Duality:</b> The dual function $g(\nu) = \inf_x L(x, \nu)$.</li><li><b>Conjugate Link:</b> $\inf_x (\dots)$ can often be rewritten as $-\sup_x (\dots) = -f^*(\cdot)$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Lagrangian.</strong>
+    The Lagrangian is $L(x, \nu) = f(x) + \nu^\top (Ax - b) = f(x) + x^\top A^\top \nu - b^\top \nu$.</div>
+    <div class="proof-step"><strong>Step 2: Dual Function.</strong>
+    $g(\nu) = \inf_x L(x, \nu) = -b^\top \nu + \inf_x (f(x) + (A^\top \nu)^\top x)$.
+    We know $\inf_x h(x) = -\sup_x (-h(x))$.
+    So $\inf_x (f(x) + y^\top x) = -\sup_x (-y^\top x - f(x)) = -\sup_x ((-y)^\top x - f(x))$.
+    Let $y = A^\top \nu$.
+    The term is $-\sup_x ((-A^\top \nu)^\top x - f(x))$.
+    By definition of conjugate, $\sup_x (z^\top x - f(x)) = f^*(z)$.
+    Here $z = -A^\top \nu$.
+    So $\inf_x (\dots) = -f^*(-A^\top \nu)$.</div>
+    <div class="proof-step"><strong>Step 3: Conclusion.</strong>
+    $g(\nu) = -b^\top \nu - f^*(-A^\top \nu)$.
+    The dual problem is to maximize this quantity.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P5.11 — Derivation: Dual of QP</h3>
+  <p>Consider the equality constrained Quadratic Program: $\min \frac{1}{2}x^\top P x + q^\top x$ s.t. $Ax = b$, with $P \succ 0$. Derive the dual problem using the conjugate method from P5.10.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Conjugate of Quadratic:</b> If $f(x) = \frac{1}{2}x^\top P x + q^\top x$, then $f^*(y) = \frac{1}{2}(y-q)^\top P^{-1} (y-q)$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Conjugate of the Objective.</strong>
+    Let $f(x) = \frac{1}{2}x^\top P x + q^\top x$.
+    $f^*(y) = \sup_x (y^\top x - \frac{1}{2}x^\top P x - q^\top x) = \sup_x ((y-q)^\top x - \frac{1}{2}x^\top P x)$.
+    Optimal $x$: $\nabla = (y-q) - Px = 0 \implies x = P^{-1}(y-q)$.
+    Substitute back: $(y-q)^\top P^{-1}(y-q) - \frac{1}{2}(y-q)^\top P^{-1} P P^{-1} (y-q) = \frac{1}{2}(y-q)^\top P^{-1}(y-q)$.</div>
+    <div class="proof-step"><strong>Step 2: Apply P5.10 Formula.</strong>
+    Dual is $\max -b^\top \nu - f^*(-A^\top \nu)$.
+    Substitute $y = -A^\top \nu$:
+    $$ f^*(-A^\top \nu) = \frac{1}{2}(-A^\top \nu - q)^\top P^{-1} (-A^\top \nu - q) $$
+    $$ = \frac{1}{2}(A^\top \nu + q)^\top P^{-1} (A^\top \nu + q) $$
+    (Minus signs cancel in quadratic form).</div>
+    <div class="proof-step"><strong>Step 3: Final Dual Problem.</strong>
+    $$ \max_\nu \ -b^\top \nu - \frac{1}{2}(A^\top \nu + q)^\top P^{-1} (A^\top \nu + q) $$
+    This is an unconstrained concave quadratic maximization in $\nu$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P5.12 — Sensitivity Analysis using Subgradients</h3>
+  <p>Let $p^*(u)$ be the optimal value of the perturbed problem $\min f_0(x)$ s.t. $f_i(x) \le u_i, Ax=b$. Prove that the optimal dual variables $\lambda^*$ provide a lower bound on the perturbed value: $p^*(u) \ge p^*(0) - \lambda^{*\top} u$. This implies $\lambda_i^* \approx -\frac{\partial p^*}{\partial u_i}$ (Shadow Prices).</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Weak Duality:</b> $p^*(u) \ge g(\lambda, \nu)$ for any feasible dual variables.</li><li><b>Global Inequality:</b> Convexity gives us a global linear underestimator, not just a local derivative.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Perturbed Lagrangian.</strong>
+    The primal problem is $\min f_0(x)$ s.t. $f_i(x) \le u_i$.
+    The Lagrangian is $L(x, \lambda) = f_0(x) + \sum \lambda_i (f_i(x) - u_i) = f_0(x) + \lambda^\top f(x) - \lambda^\top u$.
+    (Ignoring equality constraints for brevity, logic is identical).</div>
+    <div class="proof-step"><strong>Step 2: Dual Function.</strong>
+    $g(\lambda) = \inf_x (f_0(x) + \lambda^\top f(x) - \lambda^\top u) = (\inf_x L_0(x, \lambda)) - \lambda^\top u$.
+    Where $L_0$ is the unperturbed Lagrangian. So $g(\lambda) = g_0(\lambda) - \lambda^\top u$.</div>
+    <div class="proof-step"><strong>Step 3: Weak Duality.</strong>
+    For any feasible $x$ of the perturbed problem and any $\lambda \ge 0$:
+    $f_0(x) \ge g(\lambda) = g_0(\lambda) - \lambda^\top u$.
+    Taking inf over $x$: $p^*(u) \ge g_0(\lambda) - \lambda^\top u$.</div>
+    <div class="proof-step"><strong>Step 4: Use Optimal Dual.</strong>
+    Let $\lambda^*$ be the optimal dual for the *unperturbed* problem ($u=0$).
+    Then $g_0(\lambda^*) = p^*(0)$ (Strong Duality assumption).
+    So:
+    $$ p^*(u) \ge p^*(0) - \lambda^{*\top} u $$
+    This shows $-\lambda^*$ is a subgradient of $p^*$ at $u=0$.</div>
+  </div>
 </div>
 
         </div>
