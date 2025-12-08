@@ -398,10 +398,18 @@
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
+      <strong>($\subseteq$):</strong>
       $y \in (K_1 + K_2)^*$ iff $y^\top (x_1+x_2) \ge 0$ for all $x_1 \in K_1, x_2 \in K_2$.
       Choosing $x_2=0$, $y^\top x_1 \ge 0 \implies y \in K_1^*$.
       Choosing $x_1=0$, $y^\top x_2 \ge 0 \implies y \in K_2^*$.
-      Thus $y \in K_1^* \cap K_2^*$. The reverse direction is trivial.
+      Thus $y \in K_1^* \cap K_2^*$.
+    </div>
+    <div class="proof-step">
+      <strong>($\supseteq$):</strong>
+      Let $y \in K_1^* \cap K_2^*$. For any element $z \in K_1 + K_2$, we can write $z = x_1 + x_2$ with $x_1 \in K_1, x_2 \in K_2$.
+      Then $y^\top z = y^\top x_1 + y^\top x_2$.
+      Since $y \in K_1^*$, $y^\top x_1 \ge 0$. Since $y \in K_2^*$, $y^\top x_2 \ge 0$.
+      Therefore $y^\top z \ge 0$ for all $z \in K_1 + K_2$, so $y \in (K_1 + K_2)^*$.
     </div>
   </div>
 </div>
