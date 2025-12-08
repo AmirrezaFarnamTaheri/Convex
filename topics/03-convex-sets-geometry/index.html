@@ -37,7 +37,7 @@
         $$
         \sum_{i=1}^k \theta_i x_i \quad \text{where} \quad \sum_{i=1}^k \theta_i = 1
         $$
-        <p>The coefficients $\theta_i$ may be negative, allowing the combination to extend beyond the region spanned by the points (e.g., the infinite line passing through two points, not just the segment between them).</p>
+        <p>The coefficients $\theta_i$ may be negative, allowing the combination to extend beyond the region spanned by the points (e.g., the infinite line passing through two points, rather than only the segment between them).</p>
 
         <div class="theorem-box">
           <h4>Definition (Affine Set)</h4>
@@ -46,7 +46,7 @@
         </div>
 
         <h4>Affine Sets as Translated Subspaces</h4>
-        <p>Geometrically, every affine set is just a linear subspace that has been shifted (translated) away from the origin.</p>
+        <p>Geometrically, every affine set is a linear subspace that has been shifted (translated) away from the origin.</p>
 
         <div class="theorem-box">
           <h4>Theorem: Affine Set $\iff$ Translated Subspace</h4>
@@ -88,7 +88,7 @@
           <h4>Examples of Affine Sets</h4>
           <ul>
             <li><b>Solution set of linear equations:</b> $C = \{x \mid Ax = b\}$. If $x_0$ is a particular solution ($Ax_0 = b$), then $C = x_0 + \mathcal{N}(A)$, where the nullspace $\mathcal{N}(A)$ is the associated subspace.</li>
-            <li><b>$\mathbb{R}^n$ itself:</b> The entire space is trivially affine ($V = \mathbb{R}^n, x_0 = 0$).</li>
+            <li><b>$\mathbb{R}^n$ itself:</b> The entire space is affine by definition ($V = \mathbb{R}^n, x_0 = 0$).</li>
             <li><b>Single point $\{x_0\}$:</b> Affine ($V = \{0\}$).</li>
           </ul>
         </div>
@@ -148,7 +148,7 @@
               <img src="assets/caratheodory.png"
                    alt="Caratheodory's theorem visualization"
                    style="width: 100%; height: auto; border-radius: 8px;" />
-              <figcaption><i>Figure 1.4:</i> Carathéodory's Theorem: Any point $x$ in the hull of many points (black) can be formed by a convex combination of just $n+1$ of them (red triangle in $\mathbb{R}^2$).</figcaption>
+              <figcaption><i>Figure 1.4:</i> Carathéodory's Theorem: Any point $x$ in the hull of many points (black) can be formed by a convex combination of $n+1$ of them (red triangle in $\mathbb{R}^2$).</figcaption>
             </figure>
         </div>
 
@@ -816,7 +816,7 @@
               Split the sum into terms from $S_1$ and terms from $S_2$:
               $$ x = \sum_{u_i \in S_1} \lambda_i u_i + \sum_{u_j \in S_2} \lambda_j u_j $$
               Let $\theta = \sum_{u_i \in S_1} \lambda_i$. Then $\sum_{u_j \in S_2} \lambda_j = 1-\theta$.
-              If $\theta=0$ or $\theta=1$, the result is trivial. Otherwise, define:
+              If $\theta=0$ or $\theta=1$, the result holds immediately. Otherwise, define:
               $$ y = \frac{1}{\theta} \sum_{u_i \in S_1} \lambda_i u_i, \quad z = \frac{1}{1-\theta} \sum_{u_j \in S_2} \lambda_j u_j $$
               Since $S_1$ is convex, $y \in S_1$ (convex combination of its points). Similarly $z \in S_2$.
               And $x = \theta y + (1-\theta) z$.
@@ -1057,7 +1057,7 @@
               <strong>Base Case ($k=2$):</strong> Definition of convexity.
             </div>
             <div class="proof-step">
-              <strong>Inductive Step:</strong> Assume true for $k$. Consider $x = \sum_{i=1}^{k+1} \theta_i x_i$. Let $\alpha = \sum_{i=1}^k \theta_i$. If $\alpha=0$, trivial. Otherwise, write:
+              <strong>Inductive Step:</strong> Assume true for $k$. Consider $x = \sum_{i=1}^{k+1} \theta_i x_i$. Let $\alpha = \sum_{i=1}^k \theta_i$. If $\alpha=0$, the statement holds. Otherwise, write:
               $$ x = \alpha \sum_{i=1}^k \frac{\theta_i}{\alpha} x_i + \theta_{k+1} x_{k+1} $$
               The sum term is a convex combination of $k$ points (in $C$ by hypothesis). Let's call it $y$.
               Then $x = \alpha y + (1-\alpha)x_{k+1}$, which is a convex combination of 2 points. Thus $x \in C$.
