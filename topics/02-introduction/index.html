@@ -1450,7 +1450,7 @@
     $$ \sum \theta \alpha_i + \sum (1-\theta)\beta_j = \theta(1) + (1-\theta)(1) = 1 $$
     Thus, $z$ is a convex combination of points in $S$, so $z \in \text{conv}(S)$.</div>
     <div class="proof-step"><strong>Step 2: Show $\text{conv}(S)$ contains $S$.</strong>
-    For any $x \in S$, we can write $x = 1 \cdot x$. This is a convex combination (trivial). So $S \subseteq \text{conv}(S)$.</div>
+    For any $x \in S$, we can write $x = 1 \cdot x$. This is a convex combination with coefficient 1. So $S \subseteq \text{conv}(S)$.</div>
     <div class="proof-step"><strong>Step 3: Show minimality.</strong>
     Let $C$ be ANY convex set such that $S \subseteq C$. We must show $\text{conv}(S) \subseteq C$.
     If $x \in \text{conv}(S)$, then $x = \sum_{i=1}^k \theta_i x_i$ with $x_i \in S$.
@@ -1717,12 +1717,12 @@
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Step 1: Linearity.</strong>
-    $S_k(x) = \mathbf{1}_{1:k}^\top x$. This is a linear function $a_k^\top x$.</div>
+    The partial sum $S_k(x) = \sum_{i=1}^k x_i$ can be written as the inner product $a_k^\top x$ where $a_k = (1, \dots, 1, 0, \dots, 0)^\top$ (k ones).</div>
     <div class="proof-step"><strong>Step 2: Halfspaces.</strong>
-    The condition $S_k(x) \ge 0$ defines a closed halfspace passing through the origin.</div>
+    The condition $S_k(x) \ge 0$ is equivalent to $a_k^\top x \ge 0$. This defines a closed halfspace passing through the origin.</div>
     <div class="proof-step"><strong>Step 3: Intersection.</strong>
     $C = \bigcap_{k=1}^n \{ x \mid a_k^\top x \ge 0 \}$.
-    Intersection of halfspaces is a polyhedron. Since RHS is 0, it is a cone.</div>
+    The intersection of any number of convex cones (and halfspaces through the origin are convex cones) is a convex cone. Since it is defined by a finite number of linear inequalities, it is a polyhedral cone.</div>
   </div>
 </div>
 
@@ -1772,8 +1772,7 @@
     <div class="proof-step"><strong>Step 2: Perspective map.</strong>
     The function $f(x)$ is exactly the perspective of $g(x)$: $P(y, t) = y/t$.
     So $f(S) = P(g(S))$.
-    The perspective function preserves convexity of sets. (Proof: Let $u, v \in P(K)$. Then $u=y_1/t_1, v=y_2/t_2$ for $(y,t) \in K$. A convex combination relies on the line segment in $K$ mapping to a line segment in image).
-    Actually, perspective image of a convex set is convex.
+    The perspective function preserves convexity of sets. As proved in P2.22, the inverse image of a convex set under the perspective map is convex. The forward image is also convex (it is the projection of the conic hull of the set lifted to one higher dimension).
     Thus $f(S)$ is convex.</div>
   </div>
 </div>
@@ -1820,7 +1819,7 @@
     <div class="proof-step"><strong>Step 1: Normal vectors.</strong>
     Let $n_u$ be such that $n_u^\perp u$ and $n_u^\top v > 0$.
     Let $n_v$ be such that $n_v^\perp v$ and $n_v^\top u > 0$.
-    Actually, the dual cone is defined by $z^\top x \ge 0$.
+    The dual cone is defined by $z^\top x \ge 0$.
     This requires $z^\top u \ge 0$ and $z^\top v \ge 0$.</div>
     <div class="proof-step"><strong>Step 2: Intersection of Halfspaces.</strong>
     $K^* = \{ z \mid u^\top z \ge 0 \} \cap \{ z \mid v^\top z \ge 0 \}$.
@@ -1878,11 +1877,11 @@
     In matrix form, $x = Ly$, where $L$ is the lower triangular matrix of all ones.
     Thus $K = \{ Ly \mid y \ge 0 \} = L(\mathbb{R}^n_+)$.</div>
     <div class="proof-step"><strong>Step 2: Dual of Image.</strong>
-    $(L K)^*$ where $K$ is self-dual orthant.
-    Actually, $(L \mathbb{R}^n_+)^* = \{ z \mid L^\top z \in \mathbb{R}^n_+ \} = \{ z \mid L^\top z \ge 0 \}$.
-    $L^\top$ is upper triangular ones.
-    $(L^\top z)_i = \sum_{j=i}^n z_j$.
-    So dual cone is $\{ z \mid \sum_{j=i}^n z_j \ge 0, \forall i \}$.
+    We use the property that $(L \mathbb{R}^n_+)^* = \{ z \mid L^\top z \in (\mathbb{R}^n_+)^* \} = \{ z \mid L^\top z \ge 0 \}$.
+    $L^\top$ is the upper triangular matrix of ones.
+    The condition $L^\top z \ge 0$ means that for each $i$:
+    $$ (L^\top z)_i = \sum_{j=i}^n z_j \ge 0 $$
+    So the dual cone is $\{ z \in \mathbb{R}^n \mid \sum_{j=i}^n z_j \ge 0, \forall i = 1, \dots, n \}$.
     This is the set of vectors with non-negative suffix sums.</div>
   </div>
 </div>
