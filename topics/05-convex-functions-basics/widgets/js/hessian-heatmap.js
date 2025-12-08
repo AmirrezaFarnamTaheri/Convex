@@ -72,10 +72,10 @@ export function initHessianHeatmap(containerId) {
                 const e = Math.exp(-(x**2 + y**2));
                 // f = -2e^-r2
                 // fx = 4x e^-r2
-                // fxx = 4 e^-r2 + 4x(-2x) e^-r2 = e^-r2 (4 - 8x^2) * -2?? Wait.
-                // Let's use simple numerical diff or correct formula.
-                // f = -e^-(x^2+y^2) -> fxx = e^-r^2 (2 - 4x^2) roughly.
-                // Let's just implement the formula: f(x) = -exp(-(x^2+y^2))
+                // fxx = 4 e^-r2 + 4x(-2x) e^-r2 = e^-r2 (4 - 8x^2) * -2
+                // Using correct formula:
+                // f = -e^-(x^2+y^2) -> fxx = e^-r^2 (2 - 4x^2).
+                // Implement the formula: f(x) = -exp(-(x^2+y^2))
                 // fx = 2x exp(...)
                 // fxx = 2 exp(...) + 2x(-2x)exp(...) = (2 - 4x^2)exp(...)
                 const val = -2 * e;

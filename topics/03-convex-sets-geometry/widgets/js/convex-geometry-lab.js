@@ -321,12 +321,9 @@ export function initConvexGeometryLab(containerId) {
             }
             msg = "Generated Intersection";
         } else if (op === 'union') {
-            // Union is not convex, just display both?
-            // Or Hull of union? The dropdown says "Union", but strictly that's not convex.
-            // Let's do Hull of Union as that preserves convexity closure.
-            // Or just overlay?
+            // Union is not convex.
             // "Union" usually implies creating a single set. Since we are a Convex Lab,
-            // maybe we highlight that Union is NOT convex unless nested.
+            // we highlight that Union is NOT convex unless nested.
             // Let's do Hull(Union) to be consistent with "Operations Preserving Convexity" theme.
              const allPoints = polys.flat();
              resultPoly = d3.polygonHull(allPoints);
