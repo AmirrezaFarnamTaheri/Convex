@@ -151,10 +151,18 @@
 
         <div class="proof-step">
           <strong>Step 2: Construct $U$.</strong>
-          For $i = 1, \dots, r$, define $u_i = \frac{1}{\sigma_i} A v_i$.
-          We verify orthonormality:
-          $$ u_i^\top u_j = \frac{1}{\sigma_i \sigma_j} v_i^\top A^\top A v_j = \frac{1}{\sigma_i \sigma_j} v_i^\top (\lambda_j v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} \delta_{ij} = \delta_{ij} $$
-          Use the Gram-Schmidt process to extend the orthonormal set $\{u_1, \dots, u_r\}$ to a full orthonormal basis $\{u_1, \dots, u_m\}$ for $\mathbb{R}^m$. Form the matrix $U$ using these basis vectors as columns.
+          For each non-zero singular value index $i = 1, \dots, r$, define the vector $u_i = \frac{1}{\sigma_i} A v_i$.
+          <br><b>Verify Orthonormality:</b> We compute the inner product $u_i^\top u_j$ for any pair $i, j \in \{1, \dots, r\}$:
+          $$ u_i^\top u_j = \left(\frac{1}{\sigma_i} A v_i\right)^\top \left(\frac{1}{\sigma_j} A v_j\right) = \frac{1}{\sigma_i \sigma_j} v_i^\top (A^\top A v_j) $$
+          Substitute the eigenvalue equation $A^\top A v_j = \lambda_j v_j = \sigma_j^2 v_j$:
+          $$ = \frac{1}{\sigma_i \sigma_j} v_i^\top (\sigma_j^2 v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} (v_i^\top v_j) $$
+          Since the eigenvectors $v_i$ are orthonormal, $v_i^\top v_j = \delta_{ij}$ (1 if $i=j$, 0 otherwise).
+          <ul>
+            <li>If $i \ne j$, the result is 0.</li>
+            <li>If $i = j$, the result is $\frac{\sigma_i^2}{\sigma_i^2} \cdot 1 = 1$.</li>
+          </ul>
+          Thus, the vectors $u_1, \dots, u_r$ form an orthonormal set.
+          <br><b>Completion:</b> Use the Gram-Schmidt process to extend this set to a full orthonormal basis $\{u_1, \dots, u_m\}$ for $\mathbb{R}^m$. The matrix $U$ is formed with these basis vectors as columns.
         </div>
 
         <div class="proof-step">
@@ -213,7 +221,17 @@
 
       <p><b>Definition via SVD:</b> If $A = U \Sigma V^\top$, then:
       $$ A^+ = V \Sigma^+ U^\top $$
-      where $\Sigma^+$ is obtained by taking the transpose of $\Sigma$ and replacing every non-zero singular value $\sigma_i$ with $1/\sigma_i$.</p>
+      where $\Sigma^+$ is the $n \times m$ matrix obtained by transposing $\Sigma$ and inverting the non-zero singular values:
+      $$
+      \Sigma^+ = \begin{bmatrix}
+      1/\sigma_1 & & & 0 & \dots \\
+      & \ddots & & \vdots & \\
+      & & 1/\sigma_r & 0 & \dots \\
+      0 & \dots & 0 & 0 & \dots \\
+      \vdots & & \vdots & \vdots & \ddots
+      \end{bmatrix}
+      $$
+      (The non-zero block is diagonal with entries $1/\sigma_i$; all other entries are zero).</p>
 
       <h4>Properties and Applications</h4>
       <ul>
