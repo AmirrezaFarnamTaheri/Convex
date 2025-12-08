@@ -1125,7 +1125,17 @@
             <h4>Solution</h4>
             <ul>
               <li>(a-c) <b>Yes</b>, they are intersections of halfspaces (polyhedra).</li>
-              <li>(d) <b>Yes</b>. Squaring gives $\|x-a\|^2 \le \theta^2 \|x-b\|^2$, which is $x^\top x(1-\theta^2) + \dots \le 0$. If $\theta \le 1$, the quadratic term has coefficient $\ge 0$, defining a convex set (ball or halfspace).</li>
+              <li>(d) <b>Yes, if $\theta \le 1$.</b>
+              <br>Squaring the condition $\|x-a\| \le \theta \|x-b\|$ gives:
+              $$ \|x\|^2 - 2a^\top x + \|a\|^2 \le \theta^2 (\|x\|^2 - 2b^\top x + \|b\|^2) $$
+              Rearranging terms to group quadratics:
+              $$ (1-\theta^2)\|x\|^2 - 2(a - \theta^2 b)^\top x + (\|a\|^2 - \theta^2 \|b\|^2) \le 0 $$
+              <ul>
+                <li>If $\theta = 1$: The quadratic term vanishes. We get a linear inequality (halfspace), which is convex.</li>
+                <li>If $\theta < 1$: The coefficient $(1-\theta^2)$ is positive. This defines a sublevel set of a convex quadratic (a ball), which is convex.</li>
+                <li>If $\theta > 1$: The coefficient is negative. This defines a superlevel set of a convex quadratic (exterior of a ball), which is <b>not convex</b>.</li>
+              </ul>
+              </li>
             </ul>
           </div>
         </div>

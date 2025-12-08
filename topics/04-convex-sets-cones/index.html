@@ -532,6 +532,36 @@
       $K_{lex}^* = \{ \alpha e_1 \mid \alpha \ge 0 \}$ (The ray along the first axis).
     </div>
   </div>
+<div class="problem">
+  <h3>P4.14 — Dual of Intersection</h3>
+  <p>Let $K_1, K_2$ be closed convex cones. Prove that $(K_1 \cap K_2)^* = \mathrm{cl}(K_1^* + K_2^*)$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Duality Symmetry:</b> Since $K^{**} = K$ for closed convex cones, properties of the primal operations map to dual operations. Intersection in primal corresponds to sum in dual (with closure).</li>
+        <li><b>Closure is Crucial:</b> The sum of two closed cones is not always closed. The closure operation is necessary for the equality to hold.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Use P4.4.</strong> From Problem 4.4, we know that for closed convex cones $A, B$, $(A + B)^* = A^* \cap B^*$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Apply to Duals.</strong> Let $A = K_1^*$ and $B = K_2^*$. Then $(K_1^* + K_2^*)^* = K_1^{**} \cap K_2^{**}$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Biconjugate.</strong> Since $K_i$ are closed convex cones, $K_i^{**} = K_i$. Thus $(K_1^* + K_2^*)^* = K_1 \cap K_2$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 4: Take Dual again.</strong> Taking the dual of both sides: $(K_1^* + K_2^*)^{**} = (K_1 \cap K_2)^*$.
+      The biconjugate of a cone is its closure (if it's convex). Thus $\mathrm{cl}(K_1^* + K_2^*) = (K_1 \cap K_2)^*$.
+    </div>
+  </div>
+</div>
+
 </div>
 
     </section>
