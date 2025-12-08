@@ -115,7 +115,7 @@
       </div>
 
       <figure style="margin: 16px 0; text-align: center;">
-        <img src="../../static/assets/topics/07-convex-problems-standard/linear-programming-feasible-region.svg" alt="An example of a feasible region in a Linear Program" style="max-width: 450px; height: auto;" />
+        <img src="assets/linear-programming-feasible-region.svg" alt="An example of a feasible region in a Linear Program" style="max-width: 450px; height: auto;" />
         <figcaption style="font-size: 13px; color: var(--muted); margin-top: 8px;">
           A classic example of a feasible set for a Linear Program (LP). The region is a convex polygon defined by linear inequality constraints. The optimal solution occurs at a vertex of the polyhedron.
         </figcaption>
@@ -327,7 +327,7 @@
           <li>See reformulation to standard form</li>
           <li>Understand epigraph and slack variable techniques</li>
         </ul>
-        <div id="widget-6" style="width: 100%; height: 400px; position: relative;">
+        <div id="widget-reformulation-tool" style="width: 100%; height: 400px; position: relative;">
           <!-- Widget will be rendered here -->
         </div>
       </div>
@@ -501,32 +501,8 @@
 
   <!-- Widget loaders -->
   <script type="module">
-    import { initProblemRecognizer } from './widgets/js/problem-form-recognizer.js';
-    initProblemRecognizer('widget-1');
-  </script>
-  <script type="module">
-    import { initLPVisualizer } from './widgets/js/lp-visualizer.js';
-    initLPVisualizer('widget-2');
-  </script>
-  <script type="module">
-    import { initQPSandbox } from './widgets/js/qp-sandbox.js';
-    initQPSandbox('widget-4');
-  </script>
-  <script type="module">
-    import { initSDPVisualizer } from './widgets/js/sdp-visualizer.js';
-    initSDPVisualizer('widget-5');
-  </script>
-  <script type="module">
     import { initProblemReformulationTool } from './widgets/js/reformulation-tool.js';
-    initProblemReformulationTool('widget-6');
-  </script>
-  <script type="module">
-    import { initSOCPExplorer } from './widgets/js/socp-explorer.js';
-    initSOCPExplorer('widget-7');
-  </script>
-  <script type="module">
-    import { initSolverGuide } from './widgets/js/solver-guide.js';
-    initSolverGuide('widget-8');
+    initProblemReformulationTool('widget-reformulation-tool');
   </script>
 
   <!-- Global utilities -->
