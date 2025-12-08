@@ -1437,9 +1437,9 @@
       <div class="solution-box">
         <h4>Solution</h4>
         <ol type="a">
-          <li><b>Positive Definite.</b> Minors: $M_1 = 2 > 0$, $M_2 = 4 - 1 = 3 > 0$. Or Eigenvalues: $\lambda = 1, 3$.</li>
-          <li><b>Indefinite.</b> Determinant $1 - 4 = -3 < 0$. Eigenvalues $\lambda = 3, -1$. Since eigenvalues have mixed signs, it is indefinite.</li>
-          <li><b>Positive Semidefinite.</b> Diagonal matrix with entries $1, 0, 3$. Eigenvalues are non-negative ($0$ is present, so not PD).</li>
+          <li><b>Positive Definite.</b> Using Sylvester's Criterion (Leading Principal Minors): $D_1 = 2 > 0$, $D_2 = \det(A) = 4 - 1 = 3 > 0$. Since all leading principal minors are positive, $A \succ 0$. Alternatively, eigenvalues are $\lambda = 1, 3$.</li>
+          <li><b>Indefinite.</b> The determinant is $\det(B) = 1 - 4 = -3 < 0$. Since the product of eigenvalues is negative, they must have opposite signs ($\lambda = 3, -1$). Thus, $B$ is indefinite.</li>
+          <li><b>Positive Semidefinite.</b> This is a diagonal matrix with entries $1, 0, 3$, which are the eigenvalues. Since all $\lambda_i \ge 0$ and one is zero, $C \succeq 0$ but is not positive definite.</li>
         </ol>
       </div>
 
@@ -1556,11 +1556,24 @@
       <br>Show that this condition implies $Q^\top Q = I$. Thus, isometries are represented by orthogonal matrices.</p>
       <div class="solution-box">
         <h4>Solution</h4>
-        <p>Set $y=0$. Then $\|Qx\|_2 = \|x\|_2$ for all $x$.
-        Square both sides: $x^\top Q^\top Q x = x^\top I x$.
-        This implies $x^\top (Q^\top Q - I) x = 0$ for all $x$.
-        For a symmetric matrix $M = Q^\top Q - I$, if the quadratic form is 0 everywhere, the matrix must be zero (by Polarization Identity or eigenvalues).
-        Thus $Q^\top Q - I = 0 \implies Q^\top Q = I$.</p>
+        <div class="proof-step">
+          <strong>Step 1: Norm Preservation.</strong>
+          Setting $y=0$, linearity implies $Q(0)=0$, so $\|Qx\|_2 = \|x\|_2$ for all $x$.
+          Squaring both sides:
+          $$ x^\top Q^\top Q x = x^\top I x \implies x^\top (Q^\top Q - I) x = 0 $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Polarization Identity.</strong>
+          Let $M = Q^\top Q - I$. We have $x^\top M x = 0$ for all $x$. Since $M$ is symmetric, we can recover the values of the bilinear form $x^\top M y$ using the polarization identity:
+          $$ x^\top M y = \frac{1}{4} \left( (x+y)^\top M (x+y) - (x-y)^\top M (x-y) \right) $$
+          Since the quadratic form is zero for any vector (including $x+y$ and $x-y$), the right-hand side is zero.
+          Thus, $x^\top M y = 0$ for all $x, y$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Conclusion.</strong>
+          Choosing $x = e_i$ and $y = e_j$ yields $e_i^\top M e_j = M_{ij} = 0$.
+          Since all entries are zero, $M = 0$, so $Q^\top Q = I$.
+        </div>
       </div>
 
       <h3>P0.16 — Loewner Order Transitivity</h3>
