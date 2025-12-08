@@ -1473,6 +1473,31 @@
       So $g(u)$ is convex, and consequently $f(x) = \|Ax-b\|_2^2$ is convex.
     </div>
   </div>
+<div class="problem">
+  <h3>P2.8 — Strict vs. Strong Convexity</h3>
+  <p><b>Problem:</b> Give an example of a function $f: \mathbb{R} \to \mathbb{R}$ that is strictly convex but not strongly convex. Explain why.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Strict Convexity:</b> The graph lies strictly above the tangent (except at the contact point). $f''(x) > 0$ is sufficient but not necessary ($x^4$).</li>
+        <li><b>Strong Convexity:</b> The function curves up at least as fast as a quadratic. Requires $f''(x) \ge m > 0$ everywhere.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <p><b>Example 1:</b> $f(x) = x^4$.
+    <br>Second derivative is $f''(x) = 12x^2$.
+    <br><b>Strictly Convex:</b> For any $x \neq y$ and $\theta \in (0,1)$, the strict inequality holds. Note that $f''(x) > 0$ almost everywhere is sufficient for strict convexity.
+    <br><b>Not Strongly Convex:</b> At $x=0$, $f''(0) = 0$. Strong convexity requires $f''(x) \ge m > 0$ for all $x$. Since the curvature vanishes at 0, it is not strongly convex.</p>
+
+    <p><b>Example 2:</b> $f(x) = e^x$.
+    <br><b>Strictly Convex:</b> $f''(x) = e^x > 0$ for all $x$.
+    <br><b>Not Strongly Convex:</b> As $x \to -\infty$, $f''(x) \to 0$. There is no lower bound $m > 0$ that holds for all $x$.</p>
+  </div>
+</div>
+
 </div>
 
       </section>

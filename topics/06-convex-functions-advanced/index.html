@@ -308,6 +308,31 @@
           <p>$f(x) = \int I_C(u) p(u-x) du$. Convolution of log-concave functions ($I_C$ and $p$) is log-concave.</p>
         </div>
       </div>
+<div class="problem">
+  <h3>P6.10 — Log-Concavity of Gaussian</h3>
+  <p>Show that the multivariate Gaussian density function $f(x)$ is log-concave.</p>
+  $$ f(x) = \frac{1}{(2\pi)^{n/2} (\det \Sigma)^{1/2}} \exp\left(-\frac{1}{2}(x-\mu)^\top \Sigma^{-1} (x-\mu)\right) $$
+  <p>where $\Sigma \succ 0$.</p>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      Take the logarithm:
+      $$ \log f(x) = -\frac{n}{2}\log(2\pi) - \frac{1}{2}\log(\det \Sigma) - \frac{1}{2}(x-\mu)^\top \Sigma^{-1} (x-\mu) $$
+    </div>
+    <div class="proof-step">
+      The first two terms are constants. The third term is a quadratic form.
+      Let $g(x) = \log f(x)$. The gradient is $\nabla g(x) = -\Sigma^{-1}(x-\mu)$.
+      The Hessian is $\nabla^2 g(x) = -\Sigma^{-1}$.
+    </div>
+    <div class="proof-step">
+      Since $\Sigma \succ 0$, its inverse $\Sigma^{-1} \succ 0$, so $-\Sigma^{-1} \prec 0$ (negative definite).
+      Since the Hessian is negative definite everywhere, $g(x)$ is strictly concave.
+      Therefore, $f(x)$ is log-concave.
+    </div>
+  </div>
+</div>
+
 
     </section>
     </article>

@@ -481,6 +481,38 @@
     </p>
   </div>
 </div>
+<div class="problem">
+  <h3>P7.6 — LP Reformulation: Piecewise Linear Objective</h3>
+  <p>Consider the problem of minimizing the sum of hinge losses:</p>
+  $$ \min_{x} \quad c^\top x + \sum_{i=1}^m \max(0, a_i^\top x + b_i) $$
+  <p>Formulate this as a Linear Program.</p>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Epigraph Variables.</strong>
+      For each term $\max(0, a_i^\top x + b_i)$, introduce a scalar variable $t_i$.
+      We require $t_i \ge \max(0, a_i^\top x + b_i)$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Split Max Constraints.</strong>
+      The condition $t_i \ge \max(0, u_i)$ is equivalent to two linear inequalities:
+      $$ t_i \ge 0 \quad \text{and} \quad t_i \ge u_i $$
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Final LP.</strong>
+      $$
+      \begin{aligned}
+      \min_{x, t} \quad & c^\top x + \sum_{i=1}^m t_i \\
+      \text{s.t.} \quad & t_i \ge 0, \quad i=1,\dots,m \\
+      & t_i \ge a_i^\top x + b_i, \quad i=1,\dots,m
+      \end{aligned}
+      $$
+      This is an LP with $n+m$ variables and $2m$ constraints.
+    </div>
+  </div>
+</div>
+
 
     </section>
     </article>

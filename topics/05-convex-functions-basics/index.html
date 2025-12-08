@@ -1201,6 +1201,47 @@
               Consequently, $f$ is strictly convex.
             </div>
           </div>
+<div class="problem">
+  <h3>P5.7 — Strong Convexity of Quadratic</h3>
+  <p>Let $f(x) = \frac{1}{2}x^\top P x + q^\top x + r$. Under what condition on $P$ is $f$ strongly convex?</p>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <p>The Hessian is $\nabla^2 f(x) = P$ (assuming $P$ is symmetric).
+    <br>Strong convexity requires $\nabla^2 f(x) \succeq mI$ for some $m > 0$.
+    <br>Therefore, we need $P \succeq mI$, which means the smallest eigenvalue $\lambda_{\min}(P) \ge m > 0$.
+    <br>Thus, $f$ is strongly convex if and only if $P$ is <b>positive definite</b> ($P \succ 0$).</p>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P5.8 — Convexity of Log-Sum-Exp via Cauchy-Schwarz</h3>
+  <p>Prove that $f(x) = \log(\sum e^{x_i})$ is convex by restricting it to a line and using the Cauchy-Schwarz inequality on the second derivative.</p>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      Let $g(t) = f(x+tv)$. We need $g''(t) \ge 0$.
+      $$ g'(t) = \nabla f(x+tv)^\top v = \frac{\sum v_i e^{x_i+tv_i}}{\sum e^{x_i+tv_i}} $$
+      Let $z_i = e^{x_i+tv_i}$ and $S = \sum z_i$. Then $g'(t) = \frac{1}{S} \sum v_i z_i$.
+    </div>
+    <div class="proof-step">
+      Differentiating again:
+      $$ g''(t) = \frac{S (\sum v_i^2 z_i) - (\sum v_i z_i)(\sum v_i z_i)}{S^2} $$
+    </div>
+    <div class="proof-step">
+      We need $S \sum v_i^2 z_i \ge (\sum v_i z_i)^2$.
+      Define $a_i = v_i \sqrt{z_i}$ and $b_i = \sqrt{z_i}$.
+      Then $\sum a_i^2 = \sum v_i^2 z_i$, $\sum b_i^2 = \sum z_i = S$, and $\sum a_i b_i = \sum v_i z_i$.
+    </div>
+    <div class="proof-step">
+      By Cauchy-Schwarz $(\sum a_i b_i)^2 \le (\sum a_i^2)(\sum b_i^2)$, we have:
+      $$ (\sum v_i z_i)^2 \le (\sum v_i^2 z_i) S $$
+      Thus the numerator is non-negative, so $g''(t) \ge 0$.
+    </div>
+  </div>
+</div>
+
         </div>
 
       </section>

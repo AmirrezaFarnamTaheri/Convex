@@ -411,6 +411,102 @@
     <br>Sensitivity: $p^*(u) \approx 1 - \lambda^* u = 1 - 2u$. Matches first order expansion of $(1-u)^2$.</p>
   </div>
 </div>
+<div class="problem">
+  <h3>P9.4 — Dual of a Linear Program</h3>
+  <p>Derive the dual of the standard form LP:
+  $$ \min c^\top x \quad \text{s.t.} \quad Ax = b, \ x \ge 0 $$
+  Show it is $\max -b^\top \nu$ s.t. $A^\top \nu + c \ge 0$ (or equivalently $\max b^\top y$ s.t. $A^\top y \le c$ via reparameterization).</p>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Lagrangian.</strong>
+      The constraints are $Ax - b = 0$ and $-x \le 0$.
+      $L(x, \lambda, \nu) = c^\top x - \lambda^\top x + \nu^\top (Ax - b) = -b^\top \nu + (c - \lambda + A^\top \nu)^\top x$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Dual Function.</strong>
+      $g(\lambda, \nu) = \inf_x L(x, \lambda, \nu)$.
+      If the coefficient of $x$ is not zero, the infimum is $-\infty$.
+      Thus $g(\lambda, \nu) = -b^\top \nu$ if $c - \lambda + A^\top \nu = 0$, else $-\infty$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Dual Problem.</strong>
+      Maximize $-b^\top \nu$ subject to $\lambda \ge 0$ and $c - \lambda + A^\top \nu = 0$.
+      Eliminate $\lambda$: $\lambda = c + A^\top \nu$. The condition $\lambda \ge 0$ becomes $c + A^\top \nu \ge 0$, or $A^\top (-\nu) \le c$.
+      Let $y = -\nu$. Then we maximize $b^\top y$ subject to $A^\top y \le c$.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P9.5 — Farkas' Lemma</h3>
+  <p>Use Strong Duality for LP to prove Farkas' Lemma:
+  Exactly one of the following systems has a solution:
+  <ol>
+    <li>$Ax = b, \ x \ge 0$</li>
+    <li>$A^\top y \ge 0, \ b^\top y < 0$</li>
+  </ol>
+  </p>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      Consider the LP: $p^* = \min \{ 0^\top x \mid Ax = b, x \ge 0 \}$.
+      If (1) is feasible, $p^* = 0$. If infeasible, $p^* = \infty$.
+    </div>
+    <div class="proof-step">
+      The dual is: $d^* = \max \{ -b^\top \nu \mid A^\top \nu \ge 0 \}$.
+      (Here we use $\nu$ for equality multiplier, and absorb sign).
+      Or standard dual of $\min 0$ s.t. $Ax=b, x \ge 0$ is $\max b^\top y$ s.t. $A^\top y \le 0$.
+      Let's stick to standard form.
+      Dual of $\min 0^\top x$ s.t. $Ax=b, x \ge 0$ is $\max b^\top y$ s.t. $A^\top y \le 0$.
+    </div>
+    <div class="proof-step">
+      <strong>Case 1: (1) Feasible.</strong> Then $p^* = 0$. By Strong Duality, $d^* = 0$.
+      This means $\sup \{ b^\top y \mid A^\top y \le 0 \} = 0$.
+      So for all $y$ with $A^\top y \le 0$, we must have $b^\top y \le 0$.
+      This implies there is NO solution to $A^\top y \le 0, b^\top y > 0$.
+      (Flipping signs $z=-y$: no solution to $A^\top z \ge 0, b^\top z < 0$).
+      Thus (2) is false.
+    </div>
+    <div class="proof-step">
+      <strong>Case 2: (1) Infeasible.</strong> Then $p^* = \infty$. By Strong Duality, $d^* = \infty$.
+      This means the dual is unbounded above.
+      There exists $y$ with $A^\top y \le 0$ such that $b^\top y > 0$.
+      Let $z = -y$. Then $A^\top z \ge 0$ and $b^\top (-z) > 0 \implies b^\top z < 0$.
+      This is exactly system (2). Thus (2) is true.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P9.6 — KKT for Water-filling</h3>
+  <p>Solve $\min \sum_{i=1}^n -\log(\alpha_i + x_i)$ subject to $x \ge 0, \mathbf{1}^\top x = 1$. Assume $\alpha_i > 0$. Derive the water-filling solution.</p>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Lagrangian:</strong> $L(x, \lambda, \nu) = -\sum \log(\alpha_i + x_i) - \lambda^\top x + \nu(\sum x_i - 1)$.
+    </div>
+    <div class="proof-step">
+      <strong>Stationarity:</strong> $\frac{-1}{\alpha_i + x_i} - \lambda_i + \nu = 0 \implies \alpha_i + x_i = \frac{1}{\nu - \lambda_i}$.
+    </div>
+    <div class="proof-step">
+      <strong>Complementary Slackness:</strong> $\lambda_i x_i = 0, \lambda_i \ge 0, x_i \ge 0$.
+      <ul>
+        <li>Case 1: $x_i > 0$. Then $\lambda_i = 0$. So $\alpha_i + x_i = 1/\nu$. Thus $x_i = 1/\nu - \alpha_i$.</li>
+        <li>Case 2: $x_i = 0$. Then $\alpha_i = 1/(\nu - \lambda_i)$. Since $\lambda_i \ge 0$, $\nu - \lambda_i \le \nu$, so $1/(\nu-\lambda_i) \ge 1/\nu$. Thus $\alpha_i \ge 1/\nu$.</li>
+      </ul>
+    </div>
+    <div class="proof-step">
+      <strong>Combined Solution:</strong>
+      $$ x_i = \max\left(0, \frac{1}{\nu} - \alpha_i\right) $$
+      Here $1/\nu$ acts as the "water level". We find $\nu$ such that $\sum x_i = 1$.
+    </div>
+  </div>
+</div>
+
 
       </section>
     </article>

@@ -281,9 +281,7 @@
     </section>
 
     <!-- SECTION 5: EXERCISES -->
-    <section class="section-card" id="section-exercises">
-      <h2><i data-feather="edit-3"></i> 5. Exercises</h2>
-
+    <section class="section-card" id="section-exercises"><h2><i data-feather="edit-3"></i> 5. Exercises</h2>
       <div class="insight">
         <h4>Recap & Key Concepts</h4>
         <p>These exercises explore the theoretical depths of matrix norms, the geometry of projections, and the algebraic properties of the trace. P1.1 links norms to duality (Lecture 02). P1.14 links SVD to the operator norm.</p>
@@ -301,8 +299,8 @@
       <h3>P1.4 — Affine Projection</h3>
       <p>Find the projection of $y = (1, 2, 3)^\top$ onto the plane $x_1 + x_2 + x_3 = 1$ using the formula derived in Lecture 00.</p>
 
-      <h3>P1.5 — Subspace Properties</h3>
-      <p>Prove that $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$ directly from the definition of the inner product.</p>
+      <h3>P1.5 — SVD Computation</h3>
+      <p>Compute the Singular Value Decomposition $A = U \Sigma V^\top$ by hand for the matrix $A = \begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix}$. Verify that the singular values are the square roots of the eigenvalues of $A^\top A$.</p>
 
       <h3>P1.6 — Normal Equations vs. QR</h3>
       <p>Solve the system $A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \\ 1 & 0 \end{bmatrix}, b = \begin{bmatrix} 2 \\ 2 \\ 1 \end{bmatrix}$ using (a) Normal Equations and (b) QR factorization. Compare the intermediate steps.</p>
@@ -322,11 +320,11 @@
       <h3>P1.11 — Hyperplane Projection</h3>
       <p>Find the projection of $(1, 2, 3)^\top$ onto $x_1 + x_2 + x_3 = 3$. (Compare with P1.4).</p>
 
-      <h3>P1.12 — Trace and Commutators</h3>
-      <p>Prove that $\mathrm{tr}(AB) = \mathrm{tr}(BA)$ and use this to show that $AB - BA = I$ has no solution for finite-dimensional matrices.</p>
+      <h3>P1.12 — Condition Number Calculation</h3>
+      <p>Calculate the condition number $\kappa(A) = \sigma_{\max}(A)/\sigma_{\min}(A)$ for the matrix $A = \begin{bmatrix} 1 & 0 \\ 0 & \epsilon \end{bmatrix}$ where $\epsilon > 0$. What happens as $\epsilon \to 0$?</p>
 
-      <h3>P1.13 — Frobenius Submultiplicativity</h3>
-      <p>Prove $\|AB\|_F \le \|A\|_F \|B\|_F$ using the Cauchy-Schwarz inequality on the rows/columns.</p>
+      <h3>P1.13 — Pseudoinverse of Rank-1 Matrix</h3>
+      <p>Let $A = xy^\top$ where $x, y \in \mathbb{R}^n$ are non-zero vectors. Show that $A^+ = \frac{A^\top}{\|x\|_2^2 \|y\|_2^2}$.</p>
 
       <h3>P1.14 — Operator Norm Properties</h3>
       <p>Prove that $\|A\|_2 = \sqrt{\lambda_{\max}(A^\top A)}$. Use the Rayleigh Quotient definition of eigenvalues.</p>
@@ -342,7 +340,7 @@
 
       <h3>P1.18 — PSD Cone Walls</h3>
       <p>Write down the explicit inequalities defining the PSD cone in 2D ($2 \times 2$ matrices) using trace and determinant.</p>
-    </section>
+</section>
 
     <!-- SECTION 6: READINGS -->
     <section class="section-card" id="section-readings">
