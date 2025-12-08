@@ -310,13 +310,16 @@
       </p>
 
       <h3>4.4 Eliminating Linear Equality Constraints</h3>
-      <p>Given $\min f_0(x)$ s.t. $Ax = b$ and other constraints, if $\text{range}(A) = \mathbb{R}^p$, we can parameterize the solution space as:</p>
-      <p style="text-align: center;">
-        $
-        x = A^\dagger b + (I - A^\dagger A) z
-        $
-      </p>
-      <p>where $A^\dagger$ is the pseudoinverse and $z \in \mathbb{R}^n$ is a new variable. This reduces the problem dimension.</p>
+      <p>If a problem has linear equality constraints $Ax = b$, we can often eliminate them to reduce the number of variables. If $A \in \mathbb{R}^{p \times n}$ has full row rank ($p \le n$), the system $Ax=b$ has solutions.</p>
+
+      <p>We can parametrize the affine solution set $\{x \mid Ax = b\}$ using a particular solution $x_0$ and the nullspace of $A$. Let $x_0$ be any vector such that $Ax_0 = b$ (for example, the minimum norm solution $x_0 = A^\top(AA^\top)^{-1}b$). Let $Z \in \mathbb{R}^{n \times (n-p)}$ be a matrix whose columns form a basis for the nullspace of $A$ (so $AZ = 0$).</p>
+
+      <p>Then any feasible $x$ can be written as:</p>
+      $$ x = x_0 + Zz $$
+      <p>where $z \in \mathbb{R}^{n-p}$ is the new, unconstrained variable. Substituting this into the objective and inequality constraints yields a new, equivalent problem with $n-p$ variables and no equality constraints:</p>
+      $$ \min_z f_0(x_0 + Zz) \quad \text{subject to} \quad f_i(x_0 + Zz) \le 0 $$
+
+      <p>This technique is particularly useful for unconstrained problems with equality constraints (e.g., $\min f(x)$ s.t. $Ax=b$).</p>
 
       <!-- Widget 6: Problem Reformulation Tool -->
       <div class="widget-container" style="margin: 24px 0;">

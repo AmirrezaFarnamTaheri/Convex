@@ -385,14 +385,23 @@
       </p>
 
       <h3>3.3 Solution via Bisection (Convex Feasibility)</h3>
-      <p>Quasiconvex optimization can be solved by solving a sequence of convex feasibility problems:</p>
+      <p>Quasiconvex optimization can be solved by solving a sequence of convex feasibility problems. This algorithm relies on the fact that for a fixed $t$, the set of $x$ such that $f_0(x) \le t$ is a convex set (by definition of quasiconvexity).</p>
+      <p>The algorithm finds the optimal value $p^*$ by performing a binary search (bisection) on the range of possible values.</p>
       <ol>
-        <li>Find interval $[l, u]$ containing $p^*$ (the optimal value)</li>
-        <li>At each iteration, test if the sublevel set $\{x \in \mathcal{F} \mid f_0(x) \le t\}$ is nonempty (for $t = (l+u)/2$)</li>
-        <li>Update $[l, u]$ based on feasibility</li>
-        <li>Repeat until $u - l < \epsilon$</li>
+        <li><b>Initialize:</b> Find an interval $[l, u]$ known to contain the optimal value $p^*$.</li>
+        <li><b>Check Feasibility:</b> Let $t = (l+u)/2$. Solve the convex feasibility problem:
+          $$ \text{find } x \quad \text{subject to } \quad f_i(x) \le 0, \ Ax = b, \ f_0(x) \le t $$
+          Note that $f_0(x) \le t$ is a convex constraint.
+        </li>
+        <li><b>Update:</b>
+          <ul>
+            <li>If feasible, then the optimal value $p^*$ is at most $t$. Set $u = t$.</li>
+            <li>If infeasible, then $p^*$ must be greater than $t$. Set $l = t$.</li>
+          </ul>
+        </li>
+        <li><b>Repeat:</b> Continue until $u - l < \epsilon$.</li>
       </ol>
-      <p>Each feasibility check is a convex problem, so quasiconvex optimization reduces to convex optimization.</p>
+      <p>This method allows us to solve any quasiconvex problem using a standard convex solver, at the cost of solving multiple (logarithmically many) instances.</p>
     </section>
 
     <!-- Section 4: Disciplined Convex Programming (DCP) -->
