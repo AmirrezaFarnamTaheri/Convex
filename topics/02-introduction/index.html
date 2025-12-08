@@ -1141,142 +1141,87 @@
     <section class="section-card" id="section-11">
       <h2><i data-feather="edit-3"></i> 11. Exercises</h2>
 
+      <p>These exercises cover the classification of convex problems, problem reformulation, and properties of convex sets and functions.
+      Detailed, step-by-step solutions are provided to ensure complete understanding.</p>
+
+      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+          <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Exercise Map</h4>
+          <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+              <li><b>P2.1 - P2.8:</b> Problem Reformulation & Basic Definitions</li>
+              <li><b>P2.9 - P2.15:</b> Geometric Sets (Voronoi, Dual Cones, Separation)</li>
+              <li><b>P2.16 - P2.24:</b> Theoretical Foundations (Convex Hulls, Combinations, Topology)</li>
+              <li><b>P2.25 - P2.31:</b> Advanced Conic Geometry (Duals, Epigraphs, Schur Complement)</li>
+          </ul>
+      </div>
 
 <div class="problem">
   <h3>P2.1 — Classify as Convex / Not Convex</h3>
-  <p>For each problem, state if it is convex and explain your answer.</p>
-          <ol type="a">
-            <li>$\min \|Ax - b\|_2^2$ subject to $Fx = g$.</li>
-            <li>$\min -\|x\|_2$ subject to $Ax \le b$.</li>
-            <li>$\min \|x\|_1$ subject to $\|Bx - c\|_\infty \le 1$.</li>
-            <li>$\min x^\top Q x$ subject to $Dx \le e$, where $Q$ is not guaranteed to be PSD.</li>
-            <li>$\min \|x\|_2^2$ subject to $x_i \in \{0, 1\}$ for all $i$.</li>
-          </ol>
+  <p>For each problem, state if it is convex and explain your answer. <ol type="a"> <li>$\min \|Ax - b\|_2^2$ subject to $Fx = g$.</li> <li>$\min -\|x\|_2$ subject to $Ax \le b$.</li> <li>$\min \|x\|_1$ subject to $\|Bx - c\|_\infty \le 1$.</li> <li>$\min x^\top Q x$ subject to $Dx \le e$, where $Q$ is not guaranteed to be PSD.</li> <li>$\min \|x\|_2^2$ subject to $x_i \in \{0, 1\}$ for all $i$.</li> </ol></p>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Composition Rules:</b> The key to identifying convexity is to peel back the layers of functions. Norms are convex, affine maps preserve convexity, and sublevel sets of convex functions are convex.</li>
-            <li><b>The PSD Condition:</b> Quadratic forms $x^\top Q x$ are the boundary between easy and hard; if $Q$ has even one negative eigenvalue, the function is nonconvex (has saddle points). This relies on the eigenvalue characterization from <a href="../00-linear-algebra-basics/index.html">Lecture 00</a>.</li>
-            <li><b>Integer Constraints:</b> Discreteness destroys convexity because the domain is no longer a connected set, eliminating local-to-global gradient information.</li>
-        </ul>
-      </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Convexity depends on the structure. Affine maps preserve convexity. The negative of a convex function is concave. Integer constraints destroy convexity.</p>
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Composition Rules:</b> The key to identifying convexity is to peel back the layers of functions. Norms are convex, affine maps preserve convexity, and sublevel sets of convex functions are convex.</li> <li><b>The PSD Condition:</b> Quadratic forms $x^\top Q x$ are the boundary between easy and hard; if $Q$ has even one negative eigenvalue, the function is nonconvex (has saddle points). This relies on the eigenvalue characterization from <a href="../00-linear-algebra-basics/index.html">Lecture 00</a>.</li> <li><b>Integer Constraints:</b> Discreteness destroys convexity because the domain is no longer a connected set, eliminating local-to-global gradient information.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
-            <ol type="a">
-              <li><b>✅ Convex.</b> The objective $\|Ax - b\|_2^2$ is a convex quadratic function (composition of convex $\|\cdot\|_2^2$ with affine $Ax - b$), and the constraint $Fx = g$ is affine.</li>
-              <li><b>❌ Not Convex.</b> The objective function $-\|x\|_2$ is concave (negative of a convex function), making this a concave maximization problem.</li>
-              <li><b>✅ Convex.</b> Both $\|x\|_1$ and $\|Bx - c\|_\infty$ are norms (hence convex), and the constraint $\|Bx - c\|_\infty \le 1$ defines a convex set (sublevel set of a norm).</li>
-              <li><b>❌ Not Convex.</b> The quadratic form $x^\top Q x$ is only guaranteed to be convex if $Q \succeq 0$ (positive semidefinite). Without this assumption, the problem is nonconvex.</li>
-              <li><b>❌ Not Convex.</b> The integer constraint $x_i \in \{0, 1\}$ makes the feasible set non-convex (it's a finite set of points, not a convex set).</li>
-            </ol>
+    <ol type="a">
+      <li><b>✅ Convex.</b> The objective $\|Ax - b\|_2^2$ is a convex quadratic function (composition of convex $\|\cdot\|_2^2$ with affine $Ax - b$), and the constraint $Fx = g$ is affine.</li>
+      <li><b>❌ Not Convex.</b> The objective function $-\|x\|_2$ is concave (negative of a convex function), making this a concave maximization problem.</li>
+      <li><b>✅ Convex.</b> Both $\|x\|_1$ and $\|Bx - c\|_\infty$ are norms (hence convex), and the constraint $\|Bx - c\|_\infty \le 1$ defines a convex set (sublevel set of a norm).</li>
+      <li><b>❌ Not Convex.</b> The quadratic form $x^\top Q x$ is only guaranteed to be convex if $Q \succeq 0$ (positive semidefinite). Without this assumption, the problem is nonconvex.</li>
+      <li><b>❌ Not Convex.</b> The integer constraint $x_i \in \{0, 1\}$ makes the feasible set non-convex (it's a finite set of points, not a convex set).</li>
+    </ol>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.2 — Real-World Modeling: Warehouse Location</h3>
-  <p>You are tasked with optimizing the placement of a distribution warehouse to minimize the sum of squared Euclidean distances to $k$ retail locations $r_1, \ldots, r_k \in \mathbb{R}^2$. The warehouse must be located within a region defined by linear inequalities $C x \le d$. Formulate this as a convex optimization problem.</p>
+  <p>You are tasked with optimizing the placement of a distribution warehouse to minimize the sum of squared Euclidean distances to $k$ retail locations $r_1, \dots, r_k \in \mathbb{R}^2$. The warehouse must be located within a region defined by linear inequalities $C x \le d$. Formulate this as a convex optimization problem.</p>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Summation Preserves Convexity:</b> The objective function is a sum of convex terms (squared Euclidean distances). Since the sum of convex functions is always convex, the overall problem is convex.</li>
-            <li><b>Geometric Interpretation:</b> This problem finds the 'centroid' weighted by squared distance. It is mathematically distinct from the Fermat-Weber problem (minimizing sum of Euclidean distances, not squared), which is an SOCP. Using squared distances makes the objective a quadratic form, simplifying the problem to a Quadratic Program (QP).</li>
-        </ul>
-      </div>
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Summation Preserves Convexity:</b> The objective function is a sum of convex terms (squared Euclidean distances). Since the sum of convex functions is always convex, the overall problem is convex.</li> <li><b>Geometric Interpretation:</b> This problem finds the "centroid" weighted by squared distance. It is mathematically distinct from the Fermat-Weber problem (minimizing sum of Euclidean distances, not squared), which is an SOCP. Using squared distances makes the objective a quadratic form, simplifying the problem to a Quadratic Program (QP).</li>
+    </ul>
+  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Step 1: Define decision variable.</strong> Let $x \in \mathbb{R}^2$ be the warehouse location (coordinates in the plane).
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Write the objective.</strong> The sum of squared distances to the retail locations is:
-              $$
-              f_0(x) = \sum_{i=1}^k \|x - r_i\|_2^2
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Verify convexity of objective.</strong> Each term $\|x - r_i\|_2^2$ is convex (composition of convex $\|\cdot\|_2^2$ with affine $x - r_i$). The sum of convex functions is convex.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 4: State the constraints.</strong> The warehouse must satisfy $Cx \le d$ (linear inequalities).
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 5: Complete formulation.</strong> The convex optimization problem is:
-              $$
-              \begin{aligned}
-              \min_{x \in \mathbb{R}^2} \quad & \sum_{i=1}^k \|x - r_i\|_2^2 \\
-              \text{s.t.} \quad & Cx \le d
-              \end{aligned}
-              $$
-              This is a <b>Quadratic Program (QP)</b> since the objective is quadratic and constraints are linear.
-            </div>
+    <div class="proof-step"><strong>Step 1: Define decision variable.</strong> Let $x \in \mathbb{R}^2$ be the warehouse location (coordinates in the plane).</div>
+    <div class="proof-step"><strong>Step 2: Write the objective.</strong> The sum of squared distances to the retail locations is:
+    $$ f_0(x) = \sum_{i=1}^k \|x - r_i\|_2^2 $$</div>
+    <div class="proof-step"><strong>Step 3: Verify convexity of objective.</strong> Each term $\|x - r_i\|_2^2$ is convex (composition of convex $\|\cdot\|_2^2$ with affine $x - r_i$). The sum of convex functions is convex.</div>
+    <div class="proof-step"><strong>Step 4: State the constraints.</strong> The warehouse must satisfy $Cx \le d$ (linear inequalities).</div>
+    <div class="proof-step"><strong>Step 5: Complete formulation.</strong> The convex optimization problem is:
+    $$ \begin{aligned} \min_{x \in \mathbb{R}^2} \quad & \sum_{i=1}^k \|x - r_i\|_2^2 \\ \text{s.t.} \quad & Cx \le d \end{aligned} $$
+    This is a <b>Quadratic Program (QP)</b> since the objective is quadratic and constraints are linear.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.3 — Reformulation: $\ell_1$ Regression as LP</h3>
-  <p>Show how to reformulate the following problem as a linear program:</p>
-          $$
-          \min_{x \in \mathbb{R}^n} \|Ax - b\|_1 \quad \text{s.t.} \quad \|x\|_\infty \le 1
-          $$
+  <p>Show how to reformulate the following problem as a linear program: $$ \min_{x \in \mathbb{R}^n} \|Ax - b\|_1 \quad \text{s.t.} \quad \|x\|_\infty \le 1 $$</p>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Epigraph Transformation (The "Minimax" Trick):</b> To minimize a function like $f(x) = \max_i g_i(x)$ or a norm, we introduce a scalar variable $t$ and constrain the function to be below it ($f(x) \le t$). This lifts the problem into a higher dimension where the nonlinearity becomes a set of linear constraints.</li>
-            <li><b>Linearizability of Polyhedral Norms:</b> The $\ell_1$ and $\ell_\infty$ norms have unit balls that are polyhedra (defined by linear inequalities). This means any optimization involving them can be cast as a Linear Program (LP).</li>
-        </ul>
-      </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Minimizing L1 norm is equivalent to LP via splitting variables or epigraph form. Infinity norm constraints are box constraints.</p>
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Epigraph Transformation (The "Minimax" Trick):</b> To minimize a function like $f(x) = \max_i g_i(x)$ or a norm, we introduce a scalar variable $t$ and constrain the function to be below it ($f(x) \le t$). This lifts the problem into a higher dimension where the nonlinearity becomes a set of linear constraints.</li> <li><b>Linearizability of Polyhedral Norms:</b> The $\ell_1$ and $\ell_\infty$ norms have unit balls that are polyhedra (defined by linear inequalities). This means any optimization involving them can be cast as a Linear Program (LP).</li>
+    </ul>
   </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Step 1: Introduce slack variables for the objective.</strong> Write $\|Ax - b\|_1 = \sum_{i=1}^m |[Ax - b]_i|$. Introduce variables $t_i \ge 0$ to represent the absolute values:
-              $$
-              |[Ax - b]_i| \le t_i \quad \iff \quad -t_i \le [Ax - b]_i \le t_i
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Rewrite the objective.</strong> Minimizing $\|Ax - b\|_1$ is equivalent to minimizing $\sum_{i=1}^m t_i = \mathbf{1}^\top t$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Convert the infinity norm constraint.</strong> The constraint $\|x\|_\infty \le 1$ is equivalent to:
-              $$
-              -\mathbf{1} \le x \le \mathbf{1} \quad (\text{componentwise})
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 4: Complete LP formulation.</strong> The equivalent linear program is:
-              $$
-              \begin{aligned}
-              \min_{x \in \mathbb{R}^n, t \in \mathbb{R}^m} \quad & \mathbf{1}^\top t \\
-              \text{s.t.} \quad & -t \le Ax - b \le t \\
-              & -\mathbf{1} \le x \le \mathbf{1} \\
-              & t \ge 0
-              \end{aligned}
-              $$
-              This is an LP with $n + m$ variables and $2m + 2n$ inequality constraints (plus nonnegativity on $t$).
-            </div>
+    <div class="proof-step"><strong>Step 1: Introduce slack variables for the objective.</strong> Write $\|Ax - b\|_1 = \sum_{i=1}^m |[Ax - b]_i|$. Introduce variables $t_i \ge 0$ to represent the absolute values:
+    $$ |[Ax - b]_i| \le t_i \quad \iff \quad -t_i \le [Ax - b]_i \le t_i $$</div>
+    <div class="proof-step"><strong>Step 2: Rewrite the objective.</strong> Minimizing $\|Ax - b\|_1$ is equivalent to minimizing $\sum_{i=1}^m t_i = \mathbf{1}^\top t$.</div>
+    <div class="proof-step"><strong>Step 3: Convert the infinity norm constraint.</strong> The constraint $\|x\|_\infty \le 1$ is equivalent to:
+    $$ -\mathbf{1} \le x \le \mathbf{1} \quad (\text{componentwise}) $$</div>
+    <div class="proof-step"><strong>Step 4: Complete LP formulation.</strong> The equivalent linear program is:
+    $$ \begin{aligned} \min_{x \in \mathbb{R}^n, t \in \mathbb{R}^m} \quad & \mathbf{1}^\top t \\ \text{s.t.} \quad & -t \le Ax - b \le t \\ & -\mathbf{1} \le x \le \mathbf{1} \\ & t \ge 0 \end{aligned} $$
+    This is an LP with $n + m$ variables and $2m + 2n$ inequality constraints (plus nonnegativity on $t$).</div>
   </div>
 </div>
 
@@ -1284,44 +1229,23 @@
   <h3>P2.4 — Prove: Feasible Set is Convex</h3>
   <p>Prove that for a convex optimization problem, the feasible set $\mathcal{F} = \{x \mid f_i(x) \le 0, Ax = b\}$ is convex.</p>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Definition of Convex Set:</b> Contains the line segment between any two points.</li>
-            <li><b>Intersection Property:</b> The feasible set is the intersection of sublevel sets of convex functions (inequalities) and hyperplanes (equalities). Since intersections of convex sets are convex, $\mathcal{F}$ is convex.</li>
-        </ul>
-      </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>The feasible set is the intersection of sublevel sets of convex functions. Intersection preserves convexity.</p>
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Definition of Convex Set:</b> Contains the line segment between any two points.</li> <li><b>Intersection Property:</b> The feasible set is the intersection of sublevel sets of convex functions (inequalities) and hyperplanes (equalities). Since intersections of convex sets are convex, $\mathcal{F}$ is convex.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Setup:</strong> Take any $x, y \in \mathcal{F}$ and $\theta \in [0,1]$. We must show $z = \theta x + (1-\theta)y \in \mathcal{F}$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 1: Verify inequality constraints.</strong> Since $x, y \in \mathcal{F}$, we have $f_i(x) \le 0$ and $f_i(y) \le 0$ for all $i$. By convexity of $f_i$:
-              $$
-              f_i(z) = f_i(\theta x + (1-\theta)y) \le \theta f_i(x) + (1-\theta)f_i(y) \le 0
-              $$
-              So $z$ satisfies all inequality constraints.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Verify equality constraints.</strong> Since $Ax = b$ and $Ay = b$:
-              $$
-              Az = A(\theta x + (1-\theta)y) = \theta Ax + (1-\theta)Ay = \theta b + (1-\theta)b = b
-              $$
-              So $z$ satisfies all equality constraints.
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> Since $z$ satisfies all constraints, $z \in \mathcal{F}$. Therefore, $\mathcal{F}$ is convex.
-            </div>
+    <div class="proof-step"><strong>Setup:</strong> Take any $x, y \in \mathcal{F}$ and $\theta \in [0,1]$. We must show $z = \theta x + (1-\theta)y \in \mathcal{F}$.</div>
+    <div class="proof-step"><strong>Step 1: Verify inequality constraints.</strong> Since $x, y \in \mathcal{F}$, we have $f_i(x) \le 0$ and $f_i(y) \le 0$ for all $i$. By convexity of $f_i$:
+    $$ f_i(z) = f_i(\theta x + (1-\theta)y) \le \theta f_i(x) + (1-\theta)f_i(y) \le 0 $$
+    So $z$ satisfies all inequality constraints.</div>
+    <div class="proof-step"><strong>Step 2: Verify equality constraints.</strong> Since $Ax = b$ and $Ay = b$:
+    $$ Az = A(\theta x + (1-\theta)y) = \theta Ax + (1-\theta)Ay = \theta b + (1-\theta)b = b $$
+    So $z$ satisfies all equality constraints.</div>
+    <div class="proof-step"><strong>Conclusion:</strong> Since $z$ satisfies all constraints, $z \in \mathcal{F}$. Therefore, $\mathcal{F}$ is convex.</div>
   </div>
 </div>
 
@@ -1329,161 +1253,106 @@
   <h3>P2.5 — Proving Uniqueness</h3>
   <p>Prove that if $f_0$ is strictly convex, then the optimization problem has at most one global minimizer.</p>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Strict Convexity implies Uniqueness:</b> Geometrically, a strictly convex function curves upward everywhere; it has no flat regions.</li>
-            <li><b>Proof Logic:</b> If there were two distinct global minima, the segment connecting them would lie strictly <i>above</i> the function graph (by definition of strict convexity), but also <i>on</i> the graph (since both endpoints are minimal and values cannot go lower), which is a contradiction. Thus, the solution must be unique.</li>
-        </ul>
-      </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Strict convexity implies that the graph lies strictly above the chord. This geometry prevents multiple global minima.</p>
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Strict Convexity implies Uniqueness:</b> Geometrically, a strictly convex function curves upward everywhere; it has no flat regions.</li> <li><b>Proof Logic:</b> If there were two distinct global minima, the segment connecting them would lie strictly <i>above</i> the function graph (by definition of strict convexity), but also <i>on</i> the graph (since both endpoints are minimal and values cannot go lower), which is a contradiction. Thus, the solution must be unique.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Setup (proof by contradiction):</strong> Assume there are two distinct global minimizers, $x$ and $y$, with $x \neq y$. Let the optimal value be $p^* = f_0(x) = f_0(y)$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 1: Form a convex combination.</strong> Consider the point $z = \frac{1}{2}x + \frac{1}{2}y$. Since the feasible set is convex, $z$ is feasible.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Apply strict convexity.</strong> Since $f_0$ is strictly convex and $x \neq y$:
-              $$
-              f_0(z) = f_0\left(\frac{1}{2}x + \frac{1}{2}y\right) < \frac{1}{2}f_0(x) + \frac{1}{2}f_0(y)
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Substitute optimal values.</strong>
-              $$
-              f_0(z) < \frac{1}{2}p^* + \frac{1}{2}p^* = p^*
-              $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> We found a feasible point $z$ with $f_0(z) < p^*$, which contradicts that $p^*$ is the global minimum. Thus, the assumption that there are two distinct minimizers must be false.
-            </div>
+    <div class="proof-step"><strong>Setup (proof by contradiction):</strong> Assume there are two distinct global minimizers, $x$ and $y$, with $x \neq y$. Let the optimal value be $p^* = f_0(x) = f_0(y)$.</div>
+    <div class="proof-step"><strong>Step 1: Form a convex combination.</strong> Consider the point $z = \frac{1}{2}x + \frac{1}{2}y$. Since the feasible set is convex, $z$ is feasible.</div>
+    <div class="proof-step"><strong>Step 2: Apply strict convexity.</strong> Since $f_0$ is strictly convex and $x \neq y$:
+    $$ f_0(z) = f_0\left(\frac{1}{2}x + \frac{1}{2}y\right) < \frac{1}{2}f_0(x) + \frac{1}{2}f_0(y) $$</div>
+    <div class="proof-step"><strong>Step 3: Substitute optimal values.</strong>
+    $$ f_0(z) < \frac{1}{2}p^* + \frac{1}{2}p^* = p^* $$</div>
+    <div class="proof-step"><strong>Conclusion:</strong> We found a feasible point $z$ with $f_0(z) < p^*$, which contradicts that $p^*$ is the global minimum. Thus, the assumption that there are two distinct minimizers must be false.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.6 — Modeling: Maximum Likelihood Estimation</h3>
-  <p>Consider a logistic regression model for binary classification. We have data points $(x_i, y_i)$ where $x_i \in \mathbb{R}^n$ are feature vectors and $y_i \in \{-1, 1\}$ are labels. The probability that $y_i = 1$ is modeled as:
-          $$ P(y_i=1 \mid x_i; w) = \frac{1}{1 + e^{-w^\top x_i}} $$
-          Formulate the problem of finding the weight vector $w$ that maximizes the log-likelihood of the data as a convex optimization problem. (Note: $P(y_i=-1 \mid x_i; w) = 1 - P(y_i=1) = \frac{1}{1 + e^{w^\top x_i}}$).
-          </p>
+  <p>Consider a logistic regression model for binary classification. We have data points $(x_i, y_i)$ where $x_i \in \mathbb{R}^n$ are feature vectors and $y_i \in \{-1, 1\}$ are labels. The probability that $y_i = 1$ is modeled as: $$ P(y_i=1 \mid x_i; w) = \frac{1}{1 + e^{-w^\top x_i}} $$ Formulate the problem of finding the weight vector $w$ that maximizes the log-likelihood of the data as a convex optimization problem. (Note: $P(y_i=-1 \mid x_i; w) = 1 - P(y_i=1) = \frac{1}{1 + e^{w^\top x_i}}$).</p>
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Log-Concavity in Statistics:</b> Many fundamental probability distributions (Exponential family) have log-concave density functions. This means maximizing the likelihood (product of probabilities) is equivalent to maximizing the log-likelihood (sum of logs), which is a concave maximization problem (hence convex).</li>
-            <li><b>Logistic Regression:</b> The specific loss function $f(z) = \log(1+e^{-z})$ is convex. This ensures that training logistic regression classifiers is a convex optimization problem with unique global optima (for regularized versions).</li>
-        </ul>
-      </div>
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Log-Concavity in Statistics:</b> Many fundamental probability distributions (Exponential family) have log-concave density functions. This means maximizing the likelihood (product of probabilities) is equivalent to maximizing the log-likelihood (sum of logs), which is a concave maximization problem (hence convex).</li> <li><b>Logistic Regression:</b> The specific loss function $f(z) = \log(1+e^{-z})$ is convex. This ensures that training logistic regression classifiers is a convex optimization problem with unique global optima (for regularized versions).</li>
+    </ul>
+  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step">
-              <strong>Step 1: Write the likelihood function.</strong> Assuming independent samples, the likelihood is:
-              $$ L(w) = \prod_{i=1}^m P(y_i \mid x_i; w) $$
-              We can unify the probability expression. Notice that $P(y_i \mid x_i; w) = \frac{1}{1 + e^{-y_i w^\top x_i}}$.
-              <br>Check: If $y_i=1$, $\frac{1}{1+e^{-w^\top x_i}}$. If $y_i=-1$, $\frac{1}{1+e^{w^\top x_i}} = \frac{e^{-w^\top x_i}}{1+e^{-w^\top x_i}} = 1 - \frac{1}{1+e^{-w^\top x_i}}$. Using the identity $1 - \sigma(z) = \sigma(-z)$:
-              $$ P(y=-1) = \frac{1}{1+e^{w^\top x}} = \frac{1}{1+e^{-(-1)w^\top x}} $$
-              So generally, $P(y \mid x; w) = \sigma(y w^\top x) = \frac{1}{1 + e^{-y w^\top x}}$.
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 2: Formulate the negative log-likelihood.</strong> Maximizing likelihood is equivalent to minimizing negative log-likelihood:
-              $$ \ell(w) = -\log L(w) = -\sum_{i=1}^m \log\left( \frac{1}{1 + e^{-y_i w^\top x_i}} \right) $$
-              $$ \ell(w) = \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$
-            </div>
-
-            <div class="proof-step">
-              <strong>Step 3: Verify convexity.</strong> The function $f(z) = \log(1+e^z)$ (softplus) is convex.
-              We compute the gradient and Hessian to verify:
-              $$ f'(z) = \frac{e^z}{1+e^z} = \frac{1}{1+e^{-z}} \quad (\text{sigmoid function}) $$
-              $$ f''(z) = \frac{e^z(1+e^z) - e^z(e^z)}{(1+e^z)^2} = \frac{e^z}{(1+e^z)^2} > 0 $$
-              Our objective is a sum of terms $f(-y_i w^\top x_i)$. Since $f$ is convex and the argument $-y_i w^\top x_i$ is affine in $w$, the composition is convex.
-              The sum of convex functions is convex.
-            </div>
-
-            <div class="proof-step">
-              <strong>Conclusion:</strong> The optimization problem is:
-              $$ \min_{w \in \mathbb{R}^n} \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$
-              This is an unconstrained convex optimization problem.
-            </div>
+    <div class="proof-step"><strong>Step 1: Write the likelihood function.</strong> Assuming independent samples, the likelihood is:
+    $$ L(w) = \prod_{i=1}^m P(y_i \mid x_i; w) $$
+    We can unify the probability expression. Notice that $P(y_i \mid x_i; w) = \frac{1}{1 + e^{-y_i w^\top x_i}}$.
+    <br>Check: If $y_i=1$, $\frac{1}{1+e^{-w^\top x_i}}$. If $y_i=-1$, $\frac{1}{1+e^{w^\top x_i}} = \frac{e^{-w^\top x_i}}{1+e^{-w^\top x_i}} = 1 - \frac{1}{1+e^{-w^\top x_i}}$. Using the identity $1 - \sigma(z) = \sigma(-z)$:
+    $$ P(y=-1) = \frac{1}{1+e^{w^\top x}} = \frac{1}{1+e^{-(-1)w^\top x}} $$
+    So generally, $P(y \mid x; w) = \sigma(y w^\top x) = \frac{1}{1 + e^{-y w^\top x}}$.</div>
+    <div class="proof-step"><strong>Step 2: Formulate the negative log-likelihood.</strong> Maximizing likelihood is equivalent to minimizing negative log-likelihood:
+    $$ \ell(w) = -\log L(w) = -\sum_{i=1}^m \log\left( \frac{1}{1 + e^{-y_i w^\top x_i}} \right) $$
+    $$ \ell(w) = \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$</div>
+    <div class="proof-step"><strong>Step 3: Verify convexity.</strong> The function $f(z) = \log(1+e^z)$ (softplus) is convex.
+    We compute the gradient and Hessian to verify:
+    $$ f'(z) = \frac{e^z}{1+e^z} = \frac{1}{1+e^{-z}} \quad (\text{sigmoid function}) $$
+    $$ f''(z) = \frac{e^z(1+e^z) - e^z(e^z)}{(1+e^z)^2} = \frac{e^z}{(1+e^z)^2} > 0 $$
+    Our objective is a sum of terms $f(-y_i w^\top x_i)$. Since $f$ is convex and the argument $-y_i w^\top x_i$ is affine in $w$, the composition is convex.
+    The sum of convex functions is convex.</div>
+    <div class="proof-step"><strong>Conclusion:</strong> The optimization problem is:
+    $$ \min_{w \in \mathbb{R}^n} \sum_{i=1}^m \log(1 + e^{-y_i w^\top x_i}) $$
+    This is an unconstrained convex optimization problem.</div>
   </div>
 </div>
 
 <div class="problem">
   <h3>P2.7 — Proving Convexity from First Principles</h3>
-  <p><b>Problem:</b> Prove that $f(x) = \|Ax - b\|_2^2$ is a convex function using only the definition of convexity:
-  $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \quad \forall \theta \in [0,1] $$
-  Do not use the Hessian condition or the composition rule.</p>
-
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-        <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-        <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-            <li><b>Definition is King:</b> While Hessians and composition rules are convenient shortcuts, the inequality definition is the "ground truth" of convexity. Being able to prove convexity directly from the definition is a crucial skill for understanding <i>why</i> a function is convex.</li>
-            <li><b>Quadratic Behavior:</b> The function $\|Ax-b\|^2$ is a "quadratic bowl". Along any line, its values trace a parabola opening upward. The condition $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ states that the chord connecting two points on the parabola lies above the curve.</li>
-        </ul>
-  </div>
-
-  <div class="solution-box">
-    <h4>Solution</h4>
-    <div class="proof-step">
-      <strong>Step 1: Simplify using affine composition.</strong>
-      Let $g(u) = \|u\|_2^2 = u^\top u$. We know $f(x) = g(Ax-b)$.
-      It is sufficient to prove that $g(u)$ is convex, because if $g$ is convex, then $f(x) = g(Ax-b)$ is convex (affine composition).
-      Let's prove $g(u) = \|u\|_2^2$ is convex.
-    </div>
-
-    <div class="proof-step">
-      <strong>Step 2: Expand the convex combination.</strong>
-      Let $u, v \in \mathbb{R}^n$ and $\theta \in [0,1]$. Let $z = \theta u + (1-\theta)v$.
-      $$ g(z) = \|\theta u + (1-\theta)v\|_2^2 = (\theta u + (1-\theta)v)^\top (\theta u + (1-\theta)v) $$
-      $$ = \theta^2 u^\top u + 2\theta(1-\theta) u^\top v + (1-\theta)^2 v^\top v $$
-      $$ = \theta^2 \|u\|^2 + 2\theta(1-\theta) u^\top v + (1-\theta)^2 \|v\|^2 $$
-    </div>
-
-    <div class="proof-step">
-      <strong>Step 3: Analyze the RHS of the definition.</strong>
-      The target is $\theta g(u) + (1-\theta)g(v) = \theta \|u\|^2 + (1-\theta)\|v\|^2$.
-    </div>
-
-    <div class="proof-step">
-      <strong>Step 4: Compute the difference (RHS - LHS).</strong>
-      $$ \Delta = [\theta \|u\|^2 + (1-\theta)\|v\|^2] - [\theta^2 \|u\|^2 + 2\theta(1-\theta) u^\top v + (1-\theta)^2 \|v\|^2] $$
-      Group terms by $\|u\|^2$ and $\|v\|^2$:
-      $$ \theta(1-\theta)\|u\|^2 + (1-\theta)(1-(1-\theta))\|v\|^2 - 2\theta(1-\theta)u^\top v $$
-      $$ = \theta(1-\theta)\|u\|^2 + \theta(1-\theta)\|v\|^2 - 2\theta(1-\theta)u^\top v $$
-      $$ = \theta(1-\theta) [ \|u\|^2 - 2u^\top v + \|v\|^2 ] $$
-      $$ = \theta(1-\theta) \|u - v\|_2^2 $$
-    </div>
-
-    <div class="proof-step">
-      <strong>Step 5: Conclusion.</strong>
-      Since $\theta \in [0,1]$, both $\theta$ and $(1-\theta)$ are non-negative. Also, the squared norm $\|u-v\|_2^2$ is always non-negative.
-      Thus, $\Delta \ge 0$, which implies:
-      $$ \theta g(u) + (1-\theta)g(v) \ge g(\theta u + (1-\theta)v) $$
-      So $g(u)$ is convex, and consequently $f(x) = \|Ax-b\|_2^2$ is convex.
-    </div>
-  </div>
-<div class="problem">
-  <h3>P2.8 — Strict vs. Strong Convexity</h3>
-  <p><b>Problem:</b> Give an example of a function $f: \mathbb{R} \to \mathbb{R}$ that is strictly convex but not strongly convex. Explain why.</p>
+  <p>Prove that $f(x) = \|Ax - b\|_2^2$ is a convex function using only the definition of convexity: $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \quad \forall \theta \in [0,1] $$ Do not use the Hessian condition or the composition rule.</p>
 
   <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-        <li><b>Strict Convexity:</b> The graph lies strictly above the tangent (except at the contact point). $f''(x) > 0$ is sufficient but not necessary ($x^4$).</li>
-        <li><b>Strong Convexity:</b> The function curves up at least as fast as a quadratic. Requires $f''(x) \ge m > 0$ everywhere.</li>
+        <li><b>Definition is King:</b> While Hessians and composition rules are convenient shortcuts, the inequality definition is the "ground truth" of convexity. Being able to prove convexity directly from the definition is a crucial skill for understanding <i>why</i> a function is convex.</li> <li><b>Quadratic Behavior:</b> The function $\|Ax-b\|^2$ is a "quadratic bowl". Along any line, its values trace a parabola opening upward. The condition $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ states that the chord connecting two points on the parabola lies above the curve.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Simplify using affine composition.</strong>
+    Let $g(u) = \|u\|_2^2 = u^\top u$. We know $f(x) = g(Ax-b)$.
+    It is sufficient to prove that $g(u)$ is convex, because if $g$ is convex, then $f(x) = g(Ax-b)$ is convex (affine composition).
+    Let's prove $g(u) = \|u\|_2^2$ is convex.</div>
+    <div class="proof-step"><strong>Step 2: Expand the convex combination.</strong>
+    Let $u, v \in \mathbb{R}^n$ and $\theta \in [0,1]$. Let $z = \theta u + (1-\theta)v$.
+    $$ g(z) = \|\theta u + (1-\theta)v\|_2^2 = (\theta u + (1-\theta)v)^\top (\theta u + (1-\theta)v) $$
+    $$ = \theta^2 u^\top u + 2\theta(1-\theta) u^\top v + (1-\theta)^2 v^\top v $$
+    $$ = \theta^2 \|u\|^2 + 2\theta(1-\theta) u^\top v + (1-\theta)^2 \|v\|^2 $$</div>
+    <div class="proof-step"><strong>Step 3: Analyze the RHS of the definition.</strong>
+    The target is $\theta g(u) + (1-\theta)g(v) = \theta \|u\|^2 + (1-\theta)\|v\|^2$.</div>
+    <div class="proof-step"><strong>Step 4: Compute the difference (RHS - LHS).</strong>
+    $$ \Delta = [\theta \|u\|^2 + (1-\theta)\|v\|^2] - [\theta^2 \|u\|^2 + 2\theta(1-\theta) u^\top v + (1-\theta)^2 \|v\|^2] $$
+    Group terms by $\|u\|^2$ and $\|v\|^2$:
+    $$ \theta(1-\theta)\|u\|^2 + (1-\theta)(1-(1-\theta))\|v\|^2 - 2\theta(1-\theta)u^\top v $$
+    $$ = \theta(1-\theta)\|u\|^2 + \theta(1-\theta)\|v\|^2 - 2\theta(1-\theta)u^\top v $$
+    $$ = \theta(1-\theta) [ \|u\|^2 - 2u^\top v + \|v\|^2 ] $$
+    $$ = \theta(1-\theta) \|u - v\|_2^2 $$</div>
+    <div class="proof-step"><strong>Step 5: Conclusion.</strong>
+    Since $\theta \in [0,1]$, both $\theta$ and $(1-\theta)$ are non-negative. Also, the squared norm $\|u-v\|_2^2$ is always non-negative.
+    Thus, $\Delta \ge 0$, which implies:
+    $$ \theta g(u) + (1-\theta)g(v) \ge g(\theta u + (1-\theta)v) $$
+    So $g(u)$ is convex, and consequently $f(x) = \|Ax-b\|_2^2$ is convex.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.8 — Strict vs. Strong Convexity</h3>
+  <p>Give an example of a function $f: \mathbb{R} \to \mathbb{R}$ that is strictly convex but not strongly convex. Explain why.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Strict Convexity:</b> The graph lies strictly above the tangent (except at the contact point). $f''(x) > 0$ is sufficient but not necessary ($x^4$).</li> <li><b>Strong Convexity:</b> The function curves up at least as fast as a quadratic. Requires $f''(x) \ge m > 0$ everywhere.</li>
     </ul>
   </div>
 
@@ -1493,13 +1362,630 @@
     <br>Second derivative is $f''(x) = 12x^2$.
     <br><b>Strictly Convex:</b> For any $x \neq y$ and $\theta \in (0,1)$, the strict inequality holds. Note that $f''(x) > 0$ almost everywhere is sufficient for strict convexity.
     <br><b>Not Strongly Convex:</b> At $x=0$, $f''(0) = 0$. Strong convexity requires $f''(x) \ge m > 0$ for all $x$. Since the curvature vanishes at 0, it is not strongly convex.</p>
-
     <p><b>Example 2:</b> $f(x) = e^x$.
     <br><b>Strictly Convex:</b> $f''(x) = e^x > 0$ for all $x$.
     <br><b>Not Strongly Convex:</b> As $x \to -\infty$, $f''(x) \to 0$. There is no lower bound $m > 0$ that holds for all $x$.</p>
   </div>
 </div>
 
+<div class="problem">
+  <h3>P2.9 — Voronoi Regions</h3>
+  <p>Let $x_1, \dots, x_k \in \mathbb{R}^n$ be a set of points (seeds). The Voronoi region associated with $x_i$ is defined as $V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2, \forall j \neq i\}$. Prove that $V_i$ is a convex set.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Polyhedra:</b> A polyhedron is the intersection of a finite number of halfspaces.</li><li><b>Geometric Locus:</b> The set of points closer to A than B is a halfspace defined by the perpendicular bisector of segment AB.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Analyze the inequality.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ can be squared (since norms are non-negative):
+    $$ \|x - x_i\|_2^2 \le \|x - x_j\|_2^2 $$
+    Expanding this:
+    $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
+    Canceling $x^\top x$ from both sides:
+    $$ -2x_i^\top x + \|x_i\|_2^2 \le -2x_j^\top x + \|x_j\|_2^2 $$
+    Rearranging terms to isolate $x$:
+    $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$</div>
+    <div class="proof-step"><strong>Step 2: Identify the geometric object.</strong> The inequality $a^\top x \le b$ with $a = 2(x_j - x_i)$ and $b = \|x_j\|_2^2 - \|x_i\|_2^2$ defines a <b>closed halfspace</b>. The boundary is the perpendicular bisector of the segment connecting $x_i$ and $x_j$.</div>
+    <div class="proof-step"><strong>Step 3: Intersection of convex sets.</strong> The Voronoi region $V_i$ is the intersection of $k-1$ such halfspaces (one for each $j \neq i$). Since halfspaces are convex sets, and the intersection of any number of convex sets is convex, $V_i$ is a convex set (specifically, a polyhedron).</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.10 — Linear-Fractional Functions</h3>
+  <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is linear-fractional if $f(x) = \frac{a^\top x + b}{c^\top x + d}$ with domain $\text{dom } f = \{x \mid c^\top x + d > 0\}$. Prove that the sublevel sets $S_\alpha = \{x \in \text{dom } f \mid f(x) \le \alpha\}$ are convex for all $\alpha \in \mathbb{R}$. Is $f$ convex?</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Quasiconvexity:</b> A function is quasiconvex if all its sublevel sets are convex.</li><li><b>Geometry:</b> While the graph of a linear-fractional function may be curved, its "shadow" at any level is cut by a straight line.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Write out the condition.</strong> $x \in S_\alpha$ means:
+    $$ \frac{a^\top x + b}{c^\top x + d} \le \alpha $$</div>
+    <div class="proof-step"><strong>Step 2: Clear the denominator.</strong> Since we are in the domain where $c^\top x + d > 0$, we can multiply by the denominator without flipping the inequality:
+    $$ a^\top x + b \le \alpha(c^\top x + d) $$</div>
+    <div class="proof-step"><strong>Step 3: Rearrange into affine form.</strong>
+    $$ a^\top x + b - \alpha c^\top x - \alpha d \le 0 $$
+    $$ (a - \alpha c)^\top x + (b - \alpha d) \le 0 $$</div>
+    <div class="proof-step"><strong>Step 4: Conclusion for Sublevel Sets.</strong> This is a linear inequality of the form $h^\top x + k \le 0$, which defines a halfspace. A halfspace (intersected with the open halfspace domain) is a convex set. Thus, $f$ is <b>quasiconvex</b>.</div>
+    <div class="proof-step"><strong>Step 5: Is it Convex?</strong> Generally, <b>no</b>. Consider $f(x) = 1/x$ on $x>0$. The second derivative $f''(x) = 2/x^3 > 0$, so it is convex. However, $f(x) = -1/x$ on $x>0$ has $f''(x) = -2/x^3 < 0$, so it is concave. A general linear-fractional function is <b>quasilinear</b> (both quasiconvex and quasiconcave), but usually neither convex nor concave.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.11 — The Convex Hull</h3>
+  <p>The convex hull of a set $S$, denoted $\text{conv}(S)$, is the set of all convex combinations of points in $S$. Prove that $\text{conv}(S)$ is the smallest convex set containing $S$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Definition:</b> Smallest means it is a subset of any other convex set containing S.</li><li><b>Intersection Definition:</b> Often defined as the intersection of all convex sets containing S. We must show equivalence.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Show $\text{conv}(S)$ is convex.</strong>
+    Let $x, y \in \text{conv}(S)$. Then $x = \sum \alpha_i u_i$ and $y = \sum \beta_j v_j$ where $u_i, v_j \in S$, $\sum \alpha_i = 1, \sum \beta_j = 1$.
+    Consider $z = \theta x + (1-\theta)y$.
+    $$ z = \theta \sum_i \alpha_i u_i + (1-\theta) \sum_j \beta_j v_j = \sum_i (\theta \alpha_i) u_i + \sum_j ((1-\theta)\beta_j) v_j $$
+    The coefficients are non-negative and sum to:
+    $$ \sum \theta \alpha_i + \sum (1-\theta)\beta_j = \theta(1) + (1-\theta)(1) = 1 $$
+    Thus, $z$ is a convex combination of points in $S$, so $z \in \text{conv}(S)$.</div>
+    <div class="proof-step"><strong>Step 2: Show $\text{conv}(S)$ contains $S$.</strong>
+    For any $x \in S$, we can write $x = 1 \cdot x$. This is a convex combination (trivial). So $S \subseteq \text{conv}(S)$.</div>
+    <div class="proof-step"><strong>Step 3: Show minimality.</strong>
+    Let $C$ be ANY convex set such that $S \subseteq C$. We must show $\text{conv}(S) \subseteq C$.
+    If $x \in \text{conv}(S)$, then $x = \sum_{i=1}^k \theta_i x_i$ with $x_i \in S$.
+    Since $S \subseteq C$, we have $x_i \in C$.
+    Since $C$ is convex, it must contain all convex combinations of its elements (by induction on $k$, see P2.16).
+    Therefore, $x \in C$.
+    </div>
+    <div class="proof-step"><strong>Conclusion:</strong> $\text{conv}(S)$ is a convex set containing $S$, and it is contained in every convex set that contains $S$. Thus, it is the unique smallest convex set containing $S$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.12 — Dual Cones & Polar Sets</h3>
+  <p>Let $K$ be a cone. The dual cone is $K^* = \{y \mid x^\top y \ge 0, \forall x \in K\}$. Find the dual cone of the non-negative orthant $\mathbb{R}^n_+$ and the semidefinite cone $\mathbb{S}^n_+$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Self-Duality:</b> Some cones are their own duals ($K = K^*$).</li><li><b>Inner Product:</b> For matrices, the inner product is $\text{tr}(XY)$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Part A: Non-negative Orthant.</strong>
+    $K = \mathbb{R}^n_+ = \{x \mid x_i \ge 0\}$.
+    $y \in K^*$ iff $x^\top y \ge 0$ for all $x \ge 0$.
+    <br>1. If $y_i < 0$ for some $i$, choose $x = e_i$ (standard basis vector). Then $x \in K$ but $x^\top y = y_i < 0$, violating the condition. So we must have $y_i \ge 0$.
+    <br>2. If $y \ge 0$, then for any $x \ge 0$, $x^\top y = \sum x_i y_i \ge 0$.
+    <br>Conclusion: $K^* = \mathbb{R}^n_+$. It is self-dual.</div>
+    <div class="proof-step"><strong>Part B: Semidefinite Cone.</strong>
+    $K = \mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid z^\top X z \ge 0 \forall z\}$.
+    $Y \in K^*$ iff $\langle X, Y \rangle = \text{tr}(XY) \ge 0$ for all $X \succeq 0$.
+    <br>Let $Y$ have eigendecomposition $Y = \sum \lambda_i u_i u_i^\top$.
+    <br>1. Suppose $Y \notin \mathbb{S}^n_+$. Then some eigenvalue $\lambda_k < 0$. Let corresponding eigenvector be $u_k$.
+    Choose $X = u_k u_k^\top$. $X$ is PSD (eigenvalues 1 and 0).
+    $\text{tr}(XY) = \text{tr}(u_k u_k^\top Y) = u_k^\top Y u_k = \lambda_k < 0$. Contradiction. So $Y$ must be PSD.
+    <br>2. Suppose $Y \succeq 0$. Let $Y = LL^\top$ (Cholesky). Then $\text{tr}(XY) = \text{tr}(X LL^\top) = \text{tr}(L^\top X L)$.
+    Since $X \succeq 0$, $L^\top X L$ is congruent to $X$ and thus also PSD. The trace of a PSD matrix is the sum of its eigenvalues (which are non-negative), so $\text{tr}(XY) \ge 0$.
+    <br>Conclusion: $K^* = \mathbb{S}^n_+$. It is self-dual.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.13 — Euclidean Distance Matrices (EDM)</h3>
+  <p>A matrix $D \in \mathbb{S}^n$ is a Euclidean Distance Matrix if there exist points $x_1, \dots, x_n$ such that $D_{ij} = \|x_i - x_j\|_2^2$. Show that the set of all EDMs is a convex cone.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Schoenberg Mapping:</b> There is a linear bijection relating EDMs to Gram matrices (PSD matrices).</li><li><b>Linear Map of Cone:</b> The image of a convex cone under a linear map is a convex cone.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Expand definition.</strong>
+    $D_{ij} = \|x_i - x_j\|^2 = \|x_i\|^2 + \|x_j\|^2 - 2x_i^\top x_j$.
+    Let $G$ be the Gram matrix where $G_{ij} = x_i^\top x_j$. Then $G \succeq 0$.
+    Let $v$ be the vector where $v_i = G_{ii} = \|x_i\|^2$.
+    We can write $D = v\mathbf{1}^\top + \mathbf{1}v^\top - 2G$.</div>
+    <div class="proof-step"><strong>Step 2: Identify Linear Structure.</strong>
+    The mapping $\mathcal{L}(G) = \text{diag}(G)\mathbf{1}^\top + \mathbf{1}\text{diag}(G)^\top - 2G$ is a linear map from $\mathbb{S}^n$ to $\mathbb{S}^n$.
+    The set of EDMs is the image of the PSD cone $\mathbb{S}^n_+$ under this linear map $\mathcal{L}$.</div>
+    <div class="proof-step"><strong>Step 3: Convexity.</strong>
+    Since $\mathbb{S}^n_+$ is a convex cone and linear maps preserve convexity and conical structure, the set of EDMs is a convex cone.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.14 — The Separation Theorem</h3>
+  <p>Let $C$ and $D$ be disjoint convex sets. Prove there exists a hyperplane $a^\top x = b$ that separates them (i.e., $a^\top x \le b$ for all $x \in C$ and $a^\top x \ge b$ for all $x \in D$). Assume $C$ is closed and $D$ is a singleton $\{y\}$ disjoint from $C$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Projection Theorem:</b> The proof relies on projecting the point $y$ onto the set $C$.</li><li><b>Normal Vector:</b> The separating normal is parallel to the vector connecting $y$ to its projection.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Projection.</strong>
+    Since $C$ is closed and convex and $y \notin C$, there exists a unique projection $P_C(y) = \text{argmin}_{x \in C} \|x - y\|_2$. Let $x^* = P_C(y)$.
+    Since $y \notin C$, $x^* \neq y$.</div>
+    <div class="proof-step"><strong>Step 2: Variational Inequality.</strong>
+    The optimality condition for the projection is:
+    $$ (y - x^*)^\top (z - x^*) \le 0 \quad \forall z \in C $$
+    Let $a = y - x^*$. Note $a \neq 0$. The inequality says $a^\top z \le a^\top x^*$ for all $z \in C$.</div>
+    <div class="proof-step"><strong>Step 3: Analyze point y.</strong>
+    Consider $a^\top y = a^\top (x^* + a) = a^\top x^* + \|a\|^2$.
+    Since $\|a\|^2 > 0$, we have $a^\top y > a^\top x^*$.</div>
+    <div class="proof-step"><strong>Step 4: Construct Hyperplane.</strong>
+    Let $b = \frac{a^\top x^* + a^\top y}{2}$.
+    For any $z \in C$, $a^\top z \le a^\top x^* < b$.
+    For the point $y$, $a^\top y > b$.
+    Thus the hyperplane $a^\top x = b$ strictly separates $C$ and $\{y\}$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.15 — Supporting Hyperplanes</h3>
+  <p>A hyperplane $a^\top x = b$ supports a set $C$ at $x_0 \in \partial C$ if $a^\top x \le b$ for all $x \in C$ and $a^\top x_0 = b$. Prove that if $C$ is a convex set, then for every point $x_0$ in the relative boundary of $C$, there exists a supporting hyperplane to $C$ at $x_0$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Limit Argument:</b> Construct a sequence of separating hyperplanes for points approaching the boundary and take the limit.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Sequence outside C.</strong>
+    Let $x_0$ be in the boundary. There exists a sequence $y_k \notin \text{cl}(C)$ such that $y_k \to x_0$.</div>
+    <div class="proof-step"><strong>Step 2: Separate.</strong>
+    By the separation theorem, for each $y_k$, there exists a non-zero vector $a_k$ (normalized so $\|a_k\|=1$) such that:
+    $$ a_k^\top z \le a_k^\top y_k \quad \forall z \in C $$</div>
+    <div class="proof-step"><strong>Step 3: Convergence.</strong>
+    The sequence $a_k$ lies on the unit sphere (compact). By Bolzano-Weierstrass, there is a convergent subsequence $a_{k_j} \to a$ with $\|a\|=1$.</div>
+    <div class="proof-step"><strong>Step 4: Limit.</strong>
+    Taking limits in the inequality $a_{k_j}^\top z \le a_{k_j}^\top y_{k_j}$:
+    $$ a^\top z \le a^\top x_0 \quad \forall z \in C $$
+    Since $x_0 \in \text{cl}(C)$, this inequality holds for $x_0$ (equality).
+    Thus $a^\top x = a^\top x_0$ is a supporting hyperplane.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.16 — Finite Convex Combinations</h3>
+  <p>Prove by induction that a set $C$ is convex if and only if it contains every convex combination of its points. Specifically, show that if $C$ is convex, then $x = \sum_{i=1}^k \theta_i x_i \in C$ for any $k \ge 2$, $x_i \in C$, $\theta_i \ge 0, \sum \theta_i = 1$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Base Case:</b> $k=2$ is the definition of convexity.</li><li><b>Inductive Step:</b> Reduce a $k$-point combination to a 2-point combination of a point and a $(k-1)$-point combination.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Base Case ($k=2$):</strong> True by definition of convexity.</div>
+    <div class="proof-step"><strong>Inductive Hypothesis:</strong> Assume true for $k-1$.</div>
+    <div class="proof-step"><strong>Inductive Step ($k$):</strong>
+    Let $x = \sum_{i=1}^k \theta_i x_i$. Assume $\theta_k < 1$ (if $\theta_k=1$, $x=x_k \in C$).
+    Rewrite $x$:
+    $$ x = \theta_k x_k + (1-\theta_k) \sum_{i=1}^{k-1} \frac{\theta_i}{1-\theta_k} x_i $$
+    Let $y = \sum_{i=1}^{k-1} \mu_i x_i$ where $\mu_i = \frac{\theta_i}{1-\theta_k}$.
+    Note $\sum_{i=1}^{k-1} \mu_i = \frac{1}{1-\theta_k} \sum_{i=1}^{k-1} \theta_i = \frac{1-\theta_k}{1-\theta_k} = 1$.
+    Also $\mu_i \ge 0$.
+    By the inductive hypothesis, $y \in C$.
+    Now $x = \theta_k x_k + (1-\theta_k) y$. This is a convex combination of two points in $C$ ($x_k$ and $y$).
+    Since $C$ is convex, $x \in C$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.17 — Convex & Affine via Lines</h3>
+  <p>Prove that a set $S \subseteq \mathbb{R}^n$ is convex if and only if its intersection with any line is convex. (Note: A convex subset of a line is either empty, a point, or an interval).</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Restriction to Lines:</b> Convexity is a 1D property essentially.</li><li><b>Verification:</b> This is often used to check convexity of complex sets by checking $g(t) = x + tv$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Direction $\implies$:</strong>
+    Let $S$ be convex. Let $L = \{x + tv \mid t \in \mathbb{R}\}$ be a line.
+    The intersection of convex sets is convex. A line is an affine set (hence convex). Thus $S \cap L$ is convex.</div>
+    <div class="proof-step"><strong>Direction $\impliedby$:</strong>
+    Assume $S \cap L$ is convex for all lines $L$.
+    Let $x, y \in S$. Let $L$ be the line passing through $x$ and $y$.
+    By assumption, $S \cap L$ is a convex set in 1D containing $x$ and $y$.
+    Thus it must contain the segment $[x, y]$.
+    Since $S \cap L \subseteq S$, the segment $[x, y] \subseteq S$.
+    Thus $S$ is convex.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.18 — Midpoint Convexity</h3>
+  <p>A set $C$ is midpoint convex if for any $x,y \in C$, $\frac{x+y}{2} \in C$. Prove that if $C$ is closed and midpoint convex, it is convex.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Dyadic Rationals:</b> Midpoint convexity implies any combination with weights $k/2^n$ is in $C$.</li><li><b>Closure:</b> Dyadic rationals are dense in $[0,1]$. Closure fills the gaps.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Dyadic Rationals.</strong>
+    By induction, any convex combination with weights $\theta = k/2^N$ (dyadic rationals) is in $C$.
+    For example, $1/4 x + 3/4 y = 1/2(1/2 x + 1/2 y) + 1/2 y$. Since $1/2 x + 1/2 y \in C$, the average with $y$ is also in $C$.</div>
+    <div class="proof-step"><strong>Step 2: Density.</strong>
+    The set of dyadic rationals $\mathbb{D} = \{ k/2^N \mid k, N \in \mathbb{N} \}$ is dense in $[0,1]$.
+    For any $\theta \in [0,1]$, there exists a sequence $d_i \in \mathbb{D}$ such that $d_i \to \theta$.</div>
+    <div class="proof-step"><strong>Step 3: Closure.</strong>
+    Let $x, y \in C$ and $\theta \in [0,1]$.
+    Consider the sequence $z_i = d_i x + (1-d_i) y$. Since $d_i$ are dyadic, $z_i \in C$.
+    Since $C$ is closed, $\lim z_i = \theta x + (1-\theta)y$ must be in $C$.
+    Thus $C$ is convex.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.19 — Hyperbolic Sets</h3>
+  <p>Show that the set $S = \{ x \in \mathbb{R}^2_{++} \mid x_1 x_2 \ge 1 \}$ is convex. Generalize this to the hyperbolic cone $\{ (x, t) \in \mathbb{R}^n \times \mathbb{R} \mid x^\top x \le t^2, t \ge 0 \}$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Sublevel Set:</b> $x_1 x_2 \ge 1 \iff \log x_1 + \log x_2 \ge 0$.</li><li><b>SOCP Connection:</b> The hyperbolic cone is actually the Second Order Cone rotated.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Part A: 2D Hyperbola.</strong>
+    $x_1 x_2 \ge 1$ on $x > 0$. Take logs: $\ln x_1 + \ln x_2 \ge 0$.
+    Or $-\ln x_1 - \ln x_2 \le 0$.
+    Since $-\ln x$ is convex, the sum is convex. The sublevel set of a convex function is convex.</div>
+    <div class="proof-step"><strong>Part B: Hyperbolic Cone.</strong>
+    $x^\top x \le t^2$ with $t \ge 0$ is equivalent to $\|x\|_2 \le t$.
+    This is exactly the Second Order Cone (Lorentz Cone), which is convex (it is the epigraph of the convex function $\|\cdot\|_2$).</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.20 — Set Classification</h3>
+  <p>Classify the following as convex or not: 1. A wedge (intersection of two halfspaces). 2. A torus. 3. The set of rank-1 matrices. 4. The set of matrices with trace 1.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Intersection:</b> Intersection preserves convexity.</li><li><b>Affine:</b> Linear constraints define affine sets (convex).</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>1. Wedge:</strong> YES. Intersection of two halfspaces (convex sets).</div>
+    <div class="proof-step"><strong>2. Torus:</strong> NO. It has a hole (doughnut shape). The segment connecting two points on opposite sides passes through the hole.</div>
+    <div class="proof-step"><strong>3. Rank-1 Matrices:</strong> NO. Let $A = e_1 e_1^\top$ and $B = e_2 e_2^\top$. Both rank 1. $A+B = \text{diag}(1,1,0\dots)$ has rank 2. Not closed under addition.</div>
+    <div class="proof-step"><strong>4. Trace 1:</strong> YES. This is an affine set defined by the linear equality $\text{tr}(X) = 1$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.21 — Partial Sums</h3>
+  <p>Let $S_k(x) = \sum_{i=1}^k x_i$. Show that the set $C = \{ x \in \mathbb{R}^n \mid S_k(x) \ge 0, k=1\dots n \}$ is a convex cone.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Linear Map:</b> The partial sums are linear functions of $x$.</li><li><b>Polyhedral Cone:</b> Intersection of linear halfspaces passing through 0.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Linearity.</strong>
+    $S_k(x) = \mathbf{1}_{1:k}^\top x$. This is a linear function $a_k^\top x$.</div>
+    <div class="proof-step"><strong>Step 2: Halfspaces.</strong>
+    The condition $S_k(x) \ge 0$ defines a closed halfspace passing through the origin.</div>
+    <div class="proof-step"><strong>Step 3: Intersection.</strong>
+    $C = \bigcap_{k=1}^n \{ x \mid a_k^\top x \ge 0 \}$.
+    Intersection of halfspaces is a polyhedron. Since RHS is 0, it is a cone.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.22 — Perspectives</h3>
+  <p>The perspective function $P: \mathbb{R}^{n+1} \to \mathbb{R}^n$ is $P(x, t) = x/t$ for $t > 0$. Prove that if $C \subseteq \mathbb{R}^n$ is convex, its inverse image under perspective $P^{-1}(C) = \{ (x,t) \mid x/t \in C, t > 0 \}$ is a convex cone.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Scaling:</b> $x/t \in C \iff x \in tC$. This relates to the conic hull.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Definition.</strong>
+    Let $(x_1, t_1), (x_2, t_2) \in P^{-1}(C)$. This means $x_1/t_1 \in C$ and $x_2/t_2 \in C$.
+    Let $\theta \in [0,1]$. We examine $z = \theta(x_1, t_1) + (1-\theta)(x_2, t_2)$.
+    $z = (\theta x_1 + (1-\theta)x_2, \theta t_1 + (1-\theta)t_2)$.
+    Let $x_{new} = \theta x_1 + (1-\theta)x_2$ and $t_{new} = \theta t_1 + (1-\theta)t_2$.</div>
+    <div class="proof-step"><strong>Step 2: Check membership.</strong>
+    We need to check if $x_{new}/t_{new} \in C$.
+    $$ \frac{x_{new}}{t_{new}} = \frac{\theta t_1 (x_1/t_1) + (1-\theta)t_2 (x_2/t_2)}{t_{new}} $$
+    Let $\lambda = \frac{\theta t_1}{t_{new}}$. Then $1-\lambda = \frac{(1-\theta)t_2}{t_{new}}$.
+    The expression is $\lambda (x_1/t_1) + (1-\lambda)(x_2/t_2)$.
+    This is a convex combination of two points in $C$. Since $C$ is convex, the result is in $C$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.23 — Linear-Fractional Functions (Detailed)</h3>
+  <p>A function $f(x) = \frac{Ax + b}{c^\top x + d}$ is defined on $\{x \mid c^\top x + d > 0\}$. Show that $f$ preserves convexity of sets in the following sense: if $S$ is convex, the image $f(S)$ is convex.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Decomposition:</b> $f$ is a composition of an affine map and a perspective map.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Perspective projection.</strong>
+    Consider the linear map $g(x) = (Ax+b, c^\top x + d) \in \mathbb{R}^{m+1}$.
+    Since $S$ is convex, the image set $K = g(S) = \{ (Ax+b, c^\top x+d) \mid x \in S \}$ is convex (affine image).</div>
+    <div class="proof-step"><strong>Step 2: Perspective map.</strong>
+    The function $f(x)$ is exactly the perspective of $g(x)$: $P(y, t) = y/t$.
+    So $f(S) = P(g(S))$.
+    The perspective function preserves convexity of sets. (Proof: Let $u, v \in P(K)$. Then $u=y_1/t_1, v=y_2/t_2$ for $(y,t) \in K$. A convex combination relies on the line segment in $K$ mapping to a line segment in image).
+    Actually, perspective image of a convex set is convex.
+    Thus $f(S)$ is convex.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.24 — Converse Supporting Hyperplane</h3>
+  <p>Prove that a closed set $S$ with non-empty interior is convex if and only if it has a supporting hyperplane at every boundary point.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Forward:</b> Convex $\implies$ Supporting HP (P2.15).</li><li><b>Reverse:</b> Requires showing that if $S$ is supported everywhere, it contains the segment between any two points.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Forward direction.</strong> Done in P2.15.</div>
+    <div class="proof-step"><strong>Step 2: Reverse direction (Contradiction).</strong>
+    Assume $S$ has supports everywhere but is non-convex.
+    Then there exist $x, y \in S$ such that the segment $[x,y] \not\subseteq S$.
+    Let $z \in [x,y] \setminus S$.
+    Expand a ball around $z$ until it touches $S$. Or simpler: $S$ is the intersection of all its supporting halfspaces.
+    The intersection of halfspaces is always convex.
+    If $S$ equals this intersection, $S$ is convex.
+    Since $S$ is closed and has supports at every boundary point, $S$ is indeed the intersection of these halfspaces.
+    Thus $S$ is convex.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.25 — 2D Cones (Wedges)</h3>
+  <p>In $\mathbb{R}^2$, a cone generated by two vectors $u, v$ is $K = \{ \alpha u + \beta v \mid \alpha, \beta \ge 0 \}$. Show that the dual cone $K^*$ is generated by the two normal vectors to the bounding rays.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Geometry:</b> The dual cone boundaries are perpendicular to the primal cone boundaries.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Normal vectors.</strong>
+    Let $n_u$ be such that $n_u^\perp u$ and $n_u^\top v > 0$.
+    Let $n_v$ be such that $n_v^\perp v$ and $n_v^\top u > 0$.
+    Actually, the dual cone is defined by $z^\top x \ge 0$.
+    This requires $z^\top u \ge 0$ and $z^\top v \ge 0$.</div>
+    <div class="proof-step"><strong>Step 2: Intersection of Halfspaces.</strong>
+    $K^* = \{ z \mid u^\top z \ge 0 \} \cap \{ z \mid v^\top z \ge 0 \}$.
+    This is the intersection of two halfplanes, forming another wedge.
+    The edges of $K^*$ are orthogonal to the edges of $K$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.26 — Dual Cone Properties</h3>
+  <p>Prove the following properties of dual cones: 1. $K^*$ is always closed and convex. 2. $K_1 \subseteq K_2 \implies K_2^* \subseteq K_1^*$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Definition:</b> $K^*$ is an intersection of closed halfspaces.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>1. Closed and Convex.</strong>
+    $K^* = \bigcap_{x \in K} \{ y \mid x^\top y \ge 0 \}$.
+    For each fixed $x$, the set $\{ y \mid x^\top y \ge 0 \}$ is a closed halfspace (convex and closed).
+    The intersection of any collection of closed convex sets is closed and convex.</div>
+    <div class="proof-step"><strong>2. Order Reversal.</strong>
+    Assume $K_1 \subseteq K_2$. Let $y \in K_2^*$.
+    By definition, $y^\top x \ge 0$ for all $x \in K_2$.
+    Since $K_1 \subseteq K_2$, this implies $y^\top x \ge 0$ for all $x \in K_1$.
+    Therefore, $y \in K_1^*$.
+    So $K_2^* \subseteq K_1^*$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.27 — Specific Cones</h3>
+  <p>Find the dual of the monotone cone $K = \{ x \in \mathbb{R}^n \mid x_1 \le x_2 \le \dots \le x_n \}$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Transformation:</b> Write $K$ as a linear map of the non-negative orthant.</li><li><b>Dual Formula:</b> $(Ax \ge 0)^* = \{ A^\top y \mid y \ge 0 \}$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Difference Variables.</strong>
+    Let $y_1 = x_1, y_2 = x_2-x_1, \dots, y_n = x_n - x_{n-1}$.
+    The condition is $y_2, \dots, y_n \ge 0$. (No condition on $y_1$?).
+    Wait, usually monotone non-negative cone? Or just sorted?
+    If just sorted, it's not a pointed cone (contains line along $\mathbf{1}$).
+    Let's assume standard monotone non-negative: $0 \le x_1 \le \dots \le x_n$.
+    Then $y_i \ge 0$ for all $i$.
+    $x_k = \sum_{i=1}^k y_i$.
+    $x = Ly$ where $L$ is lower triangular ones matrix.
+    $K = \{ Ly \mid y \ge 0 \} = L(\mathbb{R}^n_+)$.</div>
+    <div class="proof-step"><strong>Step 2: Dual of Image.</strong>
+    $(L K)^*$ where $K$ is self-dual orthant.
+    Actually, $(L \mathbb{R}^n_+)^* = \{ z \mid L^\top z \in \mathbb{R}^n_+ \} = \{ z \mid L^\top z \ge 0 \}$.
+    $L^\top$ is upper triangular ones.
+    $(L^\top z)_i = \sum_{j=i}^n z_j$.
+    So dual cone is $\{ z \mid \sum_{j=i}^n z_j \ge 0, \forall i \}$.
+    This is the set of vectors with non-negative suffix sums.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.28 — Geometric Mean Cone</h3>
+  <p>The geometric mean cone is $K_{gm} = \{ (x,t) \in \mathbb{R}^n_+ \times \mathbb{R}_+ \mid (\prod x_i)^{1/n} \ge t \}$. Prove this is a convex cone.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>AM-GM:</b> Connects to arithmetic mean.</li><li><b>Function:</b> Epigraph of concave function $f(x) = (\prod x_i)^{1/n}$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Log Transformation.</strong>
+    Condition: $\frac{1}{n} \sum \log x_i \ge \log t$.
+    The function $g(x) = (\prod x_i)^{1/n}$ is concave on $\mathbb{R}^n_+$.
+    (Hessian check or reduction to log-sum).
+    Since $g(x)$ is concave, its hypograph (set below it) is convex.
+    The set $K$ is the hypograph $\{ (x,t) \mid t \le g(x) \}$.
+    Thus $K$ is convex.</div>
+    <div class="proof-step"><strong>Step 2: Conic property.</strong>
+    $g(\alpha x) = (\prod \alpha x_i)^{1/n} = (\alpha^n \prod x_i)^{1/n} = \alpha g(x)$.
+    Homogeneity ensures it is a cone.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.29 — Schur Complement</h3>
+  <p>Let $X = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix}$. Prove that if $C \succ 0$, then $X \succeq 0$ if and only if the Schur complement $S = A - BC^{-1}B^\top \succeq 0$.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Factorization:</b> $X$ can be diagonalized by block elimination matrix.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Block Elimination.</strong>
+    Consider $M = \begin{bmatrix} I & -BC^{-1} \\ 0 & I \end{bmatrix}$.
+    Compute congruence transformation $M X M^\top$:
+    $$ \begin{bmatrix} I & -BC^{-1} \\ 0 & I \end{bmatrix} \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} \begin{bmatrix} I & 0 \\ -C^{-1}B^\top & I \end{bmatrix} $$
+    $$ = \begin{bmatrix} A - BC^{-1}B^\top & 0 \\ 0 & C \end{bmatrix} = \begin{bmatrix} S & 0 \\ 0 & C \end{bmatrix} $$</div>
+    <div class="proof-step"><strong>Step 2: Sylvester's Law of Inertia.</strong>
+    Congruence preserves inertia (signs of eigenvalues).
+    Since $C \succ 0$, $X \succeq 0$ iff $S \succeq 0$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.30 — Epigraph of Matrix Norm</h3>
+  <p>Let $f(X) = \|X\|_2$ (spectral norm) for $X \in \mathbb{R}^{m \times n}$. Express the epigraph $\{ (X, t) \mid \|X\|_2 \le t \}$ as a Linear Matrix Inequality (LMI).</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Singular Values:</b> $\|X\|_2 \le t \iff \sigma_{max}(X) \le t \iff X^\top X \preceq t^2 I$.</li><li><b>Schur Complement:</b> Convert quadratic to linear block.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Spectral Norm Definition.</strong>
+    $\|X\|_2 \le t$ means $z^\top X^\top X z \le t^2 z^\top z$ for all $z$.
+    Or $X^\top X \preceq t^2 I$.
+    This implies $t^2 I - X^\top X \succeq 0$.
+    Also need $t \ge 0$. So $t I \succeq 0$ (assuming $I$ identity size $m$ or $n$).</div>
+    <div class="proof-step"><strong>Step 2: Apply Schur Complement.</strong>
+    We want to write $t^2 I - X^\top I^{-1} X \succeq 0$ (roughly).
+    Consider the matrix $M = \begin{bmatrix} tI_m & X \\ X^\top & tI_n \end{bmatrix}$.
+    Schur complement with respect to $tI_m$ (if $t>0$):
+    $S = tI_n - X^\top (tI_m)^{-1} X = tI_n - \frac{1}{t} X^\top X$.
+    $S \succeq 0 \iff t^2 I_n - X^\top X \succeq 0$.
+    Thus, the condition is equivalent to the LMI:
+    $$ \begin{bmatrix} tI_m & X \\ X^\top & tI_n \end{bmatrix} \succeq 0 $$</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.31 — Sum of k Largest Eigenvalues</h3>
+  <p>Let $\lambda_1(X) \ge \dots \ge \lambda_n(X)$ be the eigenvalues of $X \in \mathbb{S}^n$. The function $f_k(X) = \sum_{i=1}^k \lambda_i(X)$ is convex. Provide its SDP representation.</p>
+
+  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Variational Form:</b> sum of k largest is max over orthogonal sets.</li><li><b>Dual:</b> $f_k(X) = \max \{ \text{tr}(XY) \mid 0 \preceq Y \preceq I, \text{tr}(Y)=k \}$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Dual Representation.</strong>
+    It is known (Ky Fan theorem) that the sum of $k$ largest eigenvalues is:
+    $$ f_k(X) = \max_{Y} \{ \text{tr}(XY) \mid 0 \preceq Y \preceq I, \text{tr}(Y) = k \} $$
+    This is a maximum of linear functions (in $X$), hence convex.</div>
+    <div class="proof-step"><strong>Step 2: Primal SDP Form (Epigraph).</strong>
+    We want $t \ge f_k(X)$. By strong duality of the expression above:
+    Minimization form:
+    $$ f_k(X) = \min_{Z, s} \quad k s + \text{tr}(Z) $$
+    $$ \text{s.t.} \quad Z \succeq 0, \quad Z + sI \succeq X $$
+    So the epigraph is defined by:
+    There exist $Z \in \mathbb{S}^n, s \in \mathbb{R}$ such that:
+    $$ k s + \text{tr}(Z) \le t $$
+    $$ Z \succeq 0 $$
+    $$ Z + sI - X \succeq 0 $$
+    This is an SDP representation.</div>
+  </div>
 </div>
 
       </section>

@@ -309,39 +309,185 @@
 
       <h3>P1.1 — Dual of $\ell_p$ Norm</h3>
       <p>Show that for $1 < p < \infty$, the dual norm of $\|\cdot\|_p$ is $\|\cdot\|_q$ where $\frac{1}{p} + \frac{1}{q} = 1$. Use Hölder's Inequality for the upper bound and construct an alignment vector for the lower bound.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <div class="proof-step">
+          <strong>Upper bound ($\le$):</strong> By Hölder's inequality, $x^\top y \le \|x\|_p \|y\|_q$.
+          The definition of the dual norm is $\|y\|_* = \sup_{\|x\|_p \le 1} x^\top y$.
+          From Hölder, if $\|x\|_p \le 1$, then $x^\top y \le \|y\|_q$. Thus $\|y\|_* \le \|y\|_q$.
+        </div>
+        <div class="proof-step">
+          <strong>Lower bound ($\ge$):</strong> We need to find specific $x$ with $\|x\|_p=1$ such that $x^\top y = \|y\|_q$.
+          Let $x_i = \mathrm{sign}(y_i) |y_i|^{q-1}$. Then $x_i y_i = |y_i|^q$.
+          $\|x\|_p^p = \sum |y_i|^{p(q-1)}$. Since $1/p + 1/q = 1$, we have $p(q-1) = p(q - q/p) = pq(1 - 1/p) = pq(1/q) = q$.
+          So $\|x\|_p^p = \sum |y_i|^q = \|y\|_q^q$. Thus $\|x\|_p = \|y\|_q^{q/p}$.
+          Normalize: let $\tilde{x} = x / \|y\|_q^{q/p}$. Then $\|\tilde{x}\|_p = 1$.
+          $\tilde{x}^\top y = \frac{1}{\|y\|_q^{q/p}} \sum |y_i|^q = \frac{\|y\|_q^q}{\|y\|_q^{q/p}} = \|y\|_q^{q - q/p} = \|y\|_q^1 = \|y\|_q$.
+          Thus the supremum is at least $\|y\|_q$.
+        </div>
+      </div>
 
       <h3>P1.2 — Frobenius Cauchy–Schwarz</h3>
       <p>Prove that $|\mathrm{tr}(A^\top B)| \le \|A\|_F \|B\|_F$ by viewing matrices in $\mathbb{R}^{m \times n}$ as vectors in $\mathbb{R}^{mn}$.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>The Frobenius norm corresponds to the standard Euclidean norm of the vectorized matrix: $\|A\|_F = \|\mathrm{vec}(A)\|_2$.
+        The inner product of matrices is $\langle A, B \rangle = \mathrm{tr}(A^\top B) = \sum_{i,j} A_{ij} B_{ij}$.
+        This is exactly the dot product of the vectorized forms: $\mathrm{vec}(A)^\top \mathrm{vec}(B)$.
+        By the standard Cauchy-Schwarz inequality for vectors:
+        $$ |\mathrm{vec}(A)^\top \mathrm{vec}(B)| \le \|\mathrm{vec}(A)\|_2 \|\mathrm{vec}(B)\|_2 $$
+        Substituting back the matrix notation yields $|\mathrm{tr}(A^\top B)| \le \|A\|_F \|B\|_F$.
+        </p>
+      </div>
 
       <h3>P1.3 — SVD Computation</h3>
       <p>Compute the Singular Value Decomposition $A = U \Sigma V^\top$ by hand for the matrix $A = \begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix}$. Verify that the singular values are the square roots of the eigenvalues of $A^\top A$.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <div class="proof-step">
+          <strong>1. Compute $A^\top A$ and its eigenvalues:</strong>
+          $A^\top A = \begin{bmatrix} 1 & 0 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 1 & 1 \\ 1 & 1 \end{bmatrix}$.
+          Characteristic eq: $(1-\lambda)^2 - 1 = 0 \implies \lambda^2 - 2\lambda = 0 \implies \lambda_1=2, \lambda_2=0$.
+          Singular values: $\sigma_1 = \sqrt{2}, \sigma_2 = 0$.
+        </div>
+        <div class="proof-step">
+          <strong>2. Compute $V$ (eigenvectors of $A^\top A$):</strong>
+          For $\lambda_1=2$: $\begin{bmatrix} -1 & 1 \\ 1 & -1 \end{bmatrix} v = 0 \implies v_1 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 1 \end{bmatrix}$.
+          For $\lambda_2=0$: $v_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ -1 \end{bmatrix}$.
+          $V = \frac{1}{\sqrt{2}} \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}$.
+        </div>
+        <div class="proof-step">
+          <strong>3. Compute $U$:</strong>
+          $u_1 = \frac{1}{\sigma_1} A v_1 = \frac{1}{\sqrt{2}} \begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix} \frac{1}{\sqrt{2}} \begin{bmatrix} 1 \\ 1 \end{bmatrix} = \frac{1}{2} \begin{bmatrix} 2 \\ 0 \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}$.
+          Since $m=2$, we need a second vector $u_2$ orthogonal to $u_1$. $u_2 = \begin{bmatrix} 0 \\ 1 \end{bmatrix}$.
+          $U = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$.
+        </div>
+        <div class="proof-step">
+          <strong>Result:</strong> $A = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} \sqrt{2} & 0 \\ 0 & 0 \end{bmatrix} \left(\frac{1}{\sqrt{2}} \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}\right)^\top$.
+        </div>
+      </div>
 
       <h3>P1.6 — Normal Equations vs. QR</h3>
       <p>Solve the system $A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \\ 1 & 0 \end{bmatrix}, b = \begin{bmatrix} 2 \\ 2 \\ 1 \end{bmatrix}$ using (a) Normal Equations and (b) QR factorization. Compare the intermediate steps.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p><b>(a) Normal Equations:</b> $A^\top A x = A^\top b$.
+        $A^\top A = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix}$.
+        $A^\top b = \begin{bmatrix} 1 & 0 & 1 \\ 1 & 1 & 0 \end{bmatrix} \begin{bmatrix} 2 \\ 2 \\ 1 \end{bmatrix} = \begin{bmatrix} 3 \\ 4 \end{bmatrix}$.
+        Solve $\begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix} x = \begin{bmatrix} 3 \\ 4 \end{bmatrix}$.
+        Multiply by inverse $\frac{1}{3} \begin{bmatrix} 2 & -1 \\ -1 & 2 \end{bmatrix}$:
+        $x = \frac{1}{3} \begin{bmatrix} 6-4 \\ -3+8 \end{bmatrix} = \frac{1}{3} \begin{bmatrix} 2 \\ 5 \end{bmatrix}$.</p>
+        <p><b>(b) QR Factorization:</b>
+        Gram-Schmidt on columns $a_1, a_2$.
+        $u_1 = a_1 = (1, 0, 1)^\top$. $q_1 = (1/\sqrt{2}, 0, 1/\sqrt{2})^\top$.
+        $v_2 = a_2 - \langle a_2, q_1 \rangle q_1 = (1, 1, 0)^\top - (1/\sqrt{2}) (1/\sqrt{2}, 0, 1/\sqrt{2})^\top = (1, 1, 0)^\top - (1/2, 0, 1/2)^\top = (1/2, 1, -1/2)^\top$.
+        Normalize $v_2$: $\|v_2\|^2 = 1/4 + 1 + 1/4 = 1.5 = 3/2$. $\|v_2\| = \sqrt{3/2}$.
+        $q_2 = \sqrt{2/3} (1/2, 1, -1/2)^\top$.
+        Solve $Rx = Q^\top b$.
+        $R = \begin{bmatrix} \sqrt{2} & 1/\sqrt{2} \\ 0 & \sqrt{3/2} \end{bmatrix}$. $Q^\top b = \begin{bmatrix} 3/\sqrt{2} \\ 4\sqrt{2/3}-1/\sqrt{6} \end{bmatrix}$.
+        Back substitution yields same $x$. QR avoids forming $A^\top A$ (better condition number).</p>
+      </div>
 
       <h3>P1.7 — Pseudoinverse Projectors</h3>
       <p>Show that $P = AA^+$ is the orthogonal projector onto $\mathcal{R}(A)$. Verify $P^2=P$ and $P^\top=P$ using SVD.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>Let $A = U \Sigma V^\top$. Then $A^+ = V \Sigma^+ U^\top$.
+        $P = AA^+ = (U \Sigma V^\top)(V \Sigma^+ U^\top) = U (\Sigma \Sigma^+) U^\top$.
+        $\Sigma \Sigma^+$ is a diagonal matrix with 1s for non-zero singular values and 0s otherwise.
+        Let $U_r$ be the first $r$ columns of $U$. Then $P = U_r U_r^\top$.
+        <br><b>Idempotent:</b> $P^2 = (U_r U_r^\top)(U_r U_r^\top) = U_r (U_r^\top U_r) U_r^\top = U_r I U_r^\top = P$.
+        <br><b>Symmetric:</b> $P^\top = (U_r U_r^\top)^\top = (U_r^\top)^\top U_r^\top = U_r U_r^\top = P$.
+        <br>Since the columns of $U_r$ form a basis for $\mathcal{R}(A)$, $P$ is the orthogonal projector onto $\mathcal{R}(A)$.</p>
+      </div>
 
       <h3>P1.8 — Projector Formula</h3>
       <p>Let $A$ have linearly independent columns. Derive the projection formula $P = A(A^\top A)^{-1}A^\top$ by minimizing $\|Ax - b\|_2^2$.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>We want to find the point $p = Ax$ in the column space closest to $b$.
+        Problem: $\min_x \|Ax - b\|_2^2$.
+        Gradient: $2A^\top (Ax - b) = 0$.
+        Normal eqs: $A^\top A x = A^\top b$.
+        Since cols are independent, $A^\top A$ is invertible.
+        Solution: $x^* = (A^\top A)^{-1} A^\top b$.
+        Projection: $p = A x^* = A(A^\top A)^{-1} A^\top b$.
+        The matrix mapping $b$ to $p$ is $P = A(A^\top A)^{-1} A^\top$.</p>
+      </div>
 
       <h3>P1.9 — Hyperplane Projection</h3>
       <p>Find the projection of $(1, 2, 3)^\top$ onto $x_1 + x_2 + x_3 = 3$. Verify your result using the standard formula for distance to a plane.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>Normal $a = (1, 1, 1)^\top$. Point $y = (1, 2, 3)^\top$. Target $b=3$.
+        $p = y - \frac{a^\top y - b}{\|a\|^2} a$.
+        $a^\top y = 1+2+3 = 6$. $\|a\|^2 = 3$.
+        $p = (1, 2, 3)^\top - \frac{6-3}{3} (1, 1, 1)^\top = (1, 2, 3)^\top - (1, 1, 1)^\top = (0, 1, 2)^\top$.
+        Check: $0+1+2=3$. Correct.
+        Distance: $\|y-p\| = \|(1, 1, 1)\| = \sqrt{3}$.
+        Formula: $\frac{|a^\top y - b|}{\|a\|} = \frac{|6-3|}{\sqrt{3}} = \frac{3}{\sqrt{3}} = \sqrt{3}$. Matches.</p>
+      </div>
 
       <h3>P1.10 — Condition Number Calculation</h3>
       <p>Calculate the condition number $\kappa(A) = \sigma_{\max}(A)/\sigma_{\min}(A)$ for the matrix $A = \begin{bmatrix} 1 & 0 \\ 0 & \epsilon \end{bmatrix}$ where $\epsilon > 0$. What happens as $\epsilon \to 0$?</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>The matrix is diagonal, so its singular values are the absolute values of diagonal entries: $1$ and $\epsilon$.
+        Assuming $\epsilon < 1$: $\sigma_{\max} = 1, \sigma_{\min} = \epsilon$.
+        $\kappa(A) = 1/\epsilon$.
+        As $\epsilon \to 0$, $\kappa(A) \to \infty$. The matrix becomes ill-conditioned (nearly singular).</p>
+      </div>
 
       <h3>P1.11 — Pseudoinverse of Rank-1 Matrix</h3>
       <p>Let $A = xy^\top$ where $x, y \in \mathbb{R}^n$ are non-zero vectors. Show that $A^+ = \frac{A^\top}{\|x\|_2^2 \|y\|_2^2}$.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>SVD of rank-1 matrix: $A = \sigma u v^\top$.
+        $\|A\|_F = \|x\|\|y\| = \sigma$.
+        $u = x/\|x\|$, $v = y/\|y\|$.
+        Check: $A = (\|x\|\|y\|) \frac{x}{\|x\|} \frac{y^\top}{\|y\|} = xy^\top$. Correct.
+        Pseudoinverse: $A^+ = \frac{1}{\sigma} v u^\top = \frac{1}{\|x\|\|y\|} \frac{y}{\|y\|} \frac{x^\top}{\|x\|} = \frac{yx^\top}{\|x\|^2 \|y\|^2}$.
+        Note that $A^\top = (xy^\top)^\top = yx^\top$.
+        Thus $A^+ = \frac{A^\top}{\|x\|^2 \|y\|^2}$.</p>
+      </div>
 
       <h3>P1.12 — Operator Norm Properties</h3>
       <p>Prove that $\|A\|_2 = \sqrt{\lambda_{\max}(A^\top A)}$. Use the Rayleigh Quotient definition of eigenvalues.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>$\|A\|_2^2 = \sup_{x \ne 0} \frac{\|Ax\|^2}{\|x\|^2} = \sup_{x \ne 0} \frac{x^\top A^\top A x}{x^\top x}$.
+        The term on the right is the Rayleigh quotient for the symmetric matrix $M = A^\top A$.
+        By the variational characterization of eigenvalues, the maximum value of the Rayleigh quotient is $\lambda_{\max}(M)$.
+        Thus $\|A\|_2^2 = \lambda_{\max}(A^\top A)$, so $\|A\|_2 = \sqrt{\lambda_{\max}(A^\top A)}$.</p>
+      </div>
 
       <h3>P1.13 — Orthogonal Invariance</h3>
       <p>Show that $\|U A V^\top\|_F = \|A\|_F$ and $\|U A V^\top\|_2 = \|A\|_2$ for orthogonal $U, V$. This proves that these norms depend only on the singular values.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p><b>Frobenius:</b> $\|X\|_F^2 = \mathrm{tr}(X^\top X)$.
+        $\|UAV^\top\|_F^2 = \mathrm{tr}(V A^\top U^\top U A V^\top) = \mathrm{tr}(V A^\top A V^\top) = \mathrm{tr}(V^\top V A^\top A) = \mathrm{tr}(A^\top A) = \|A\|_F^2$.
+        <br><b>Spectral:</b> $\|UAV^\top\|_2 = \sup_{\|x\|=1} \|UAV^\top x\|$.
+        Since $U$ is orthogonal, $\|Uy\| = \|y\|$. So we maximize $\|A (V^\top x)\|$.
+        Since $V$ is orthogonal, as $x$ ranges over the unit sphere, $y = V^\top x$ also ranges over the unit sphere.
+        Thus $\sup_{\|x\|=1} \|A V^\top x\| = \sup_{\|y\|=1} \|Ay\| = \|A\|_2$.
+        </p>
+      </div>
 
       <h3>P1.14 — The Orthogonal Group</h3>
       <p>Show that the set of orthogonal matrices forms a compact group.</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p><b>Group:</b>
+        1. Closure: $(Q_1 Q_2)^\top (Q_1 Q_2) = Q_2^\top Q_1^\top Q_1 Q_2 = Q_2^\top I Q_2 = I$.
+        2. Inverse: $Q^{-1} = Q^\top$, which is orthogonal since $(Q^\top)^\top Q^\top = Q Q^\top = I$.
+        3. Identity: $I \in O(n)$.
+        <br><b>Compactness:</b>
+        1. Bounded: The columns are unit vectors, so $\|Q\|_F = \sqrt{n}$. The set is bounded.
+        2. Closed: The condition $Q^\top Q = I$ is a continuous equality constraint (level set of a continuous function). Thus the set is closed.
+        By Heine-Borel, closed and bounded in finite dimensions implies compact.
+        </p>
+      </div>
 </section>
 
     <!-- SECTION 6: READINGS -->

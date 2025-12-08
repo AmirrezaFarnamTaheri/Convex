@@ -191,12 +191,39 @@
         </div>
 
         <div class="proof-box">
-          <h4>Proof Idea (Geometric Separation)</h4>
-          <p>Consider the set of achievable values in constraint-cost space:
-          $$ \mathcal{A} = \{ (f_1(x), \dots, f_m(x), h_1(x), \dots, h_p(x), f_0(x)) \mid x \in \mathcal{D} \} \subseteq \mathbb{R}^{m+p+1} $$
-          This set is not necessarily convex, but its epigraph $\mathcal{M}$ is convex (due to convexity of functions).
-          <br>We separate $\mathcal{M}$ from the "better than optimal" point $(0, 0, p^* - \epsilon)$ using a hyperplane.
-          <br>The normal vector to this hyperplane corresponds to the dual variables $(\lambda, \nu, \mu)$. Slater's condition ensures the hyperplane is non-vertical ($\mu > 0$), allowing us to recover the Lagrangian inequality.</p>
+          <h4>Geometric Proof via Separation</h4>
+          <div class="proof-step">
+            <strong>Step 1: Define the Set of Values.</strong>
+            Consider the set of achievable constraint and objective values:
+            $$ \mathcal{A} = \{ (f_1(x), \dots, f_m(x), h_1(x), \dots, h_p(x), f_0(x)) \mid x \in \mathcal{D} \} \subseteq \mathbb{R}^{m+p+1} $$
+            Define the epigraph set $\mathcal{M}$ to be the set of $(u, v, t)$ such that there exists $x \in \mathcal{D}$ with $f_i(x) \le u_i, h_j(x) = v_j, f_0(x) \le t$.
+            Since $f_i, f_0$ are convex and $h_j$ are affine, $\mathcal{M}$ is a convex set.
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Apply Separating Hyperplane.</strong>
+            The point $(0, 0, p^* - \epsilon)$ is not in $\mathcal{M}$ for any $\epsilon > 0$ (by definition of optimal value $p^*$).
+            By the Separating Hyperplane Theorem, there exists a non-zero vector $(\lambda, \nu, \mu)$ and scalar $\alpha$ such that for all $(u, v, t) \in \mathcal{M}$:
+            $$ \sum \lambda_i u_i + \sum \nu_j v_j + \mu t \ge \alpha $$
+            and at the separating point:
+            $$ \sum \lambda_i (0) + \sum \nu_j (0) + \mu (p^* - \epsilon) \le \alpha $$
+            This implies $\lambda \succeq 0, \mu \ge 0$. Since $\mathcal{M}$ is unbounded above in $u$ and $t$, the coefficients must be non-negative.
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Use Slater's Condition.</strong>
+            Slater's condition guarantees that there exists a point in $\mathcal{M}$ where the constraints are strictly satisfied. This strict feasibility prevents the hyperplane from being "vertical" (i.e., $\mu=0$).
+            Specifically, if $\mu=0$, the separation inequality would apply only to the constraints, which would contradict the existence of a strictly feasible point (where $\sum \lambda_i f_i(x) < 0$).
+            Thus, we must have $\mu > 0$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 4: Derive Strong Duality.</strong>
+            Dividing by $\mu$, we obtain the Lagrangian inequality.
+            Let $\tilde{\lambda} = \lambda/\mu$ and $\tilde{\nu} = \nu/\mu$.
+            The separation inequality implies that for all feasible $x$:
+            $$ \sum \tilde{\lambda}_i f_i(x) + \sum \tilde{\nu}_j h_j(x) + f_0(x) \ge p^* - \epsilon $$
+            Taking the infimum over $x$, we get $g(\tilde{\lambda}, \tilde{\nu}) \ge p^* - \epsilon$.
+            Since this holds for any $\epsilon > 0$, we have $d^* \ge p^*$.
+            Combined with weak duality $d^* \le p^*$, we get $d^* = p^*$.
+          </div>
         </div>
       </section>
 
