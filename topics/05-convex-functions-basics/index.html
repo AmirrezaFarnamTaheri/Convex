@@ -25,6 +25,32 @@
     </div>
   </header>
 
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+    <header class="lecture-header section-card">
+      <h1>05. Convex Functions: Basics</h1>
+      <div class="lecture-meta">
+        <span>Date: 2025-10-21</span>
+        <span>Duration: 90 min</span>
+        <span>Tags: convex-functions, jensen, hessian, epigraph</span>
+      </div>
+      <div class="lecture-summary">
+        <p>This lecture introduces the core concept of convex functions, which are the building blocks of convex optimization. We cover the definition via Jensen's inequality, the epigraph characterization, and first- and second-order conditions for differentiable functions. We also explore operations that preserve convexity, providing a toolkit for constructing and recognizing convex functions.</p>
+        <p><strong>Prerequisites:</strong> <a href="../03-convex-sets-geometry/index.html">Lecture 03: Convex Sets Geometry</a> (convex sets, lines, segments).</p>
+        <p><strong>Forward Connections:</strong> These concepts are foundational for defining convex problems in <a href="../07-convex-problems-standard/index.html">Lecture 07</a> and for duality theory in <a href="../09-duality/index.html">Lecture 09</a>.</p>
+      </div>
+    </header>
+
+    <section class="section-card">
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
+      <p>After this lecture, you will be able to:</p>
+      <ul>
+        <li><b>Define Convex Functions:</b> Apply Jensen's inequality and the epigraph definition to test for convexity.</li>
+        <li><b>Verify Convexity:</b> Use first-order (tangent) and second-order (Hessian) conditions to prove convexity for differentiable functions.</li>
+        <li><b>Apply Calculus Rules:</b> Construct complex convex functions from simple ones using sums, compositions, and pointwise maxima.</li>
+        <li><b>Recognize Key Examples:</b> Identify standard convex functions like norms, exponentials, and log-sum-exp.</li>
+      </ul>
+    </section>
+
     <article>
       <section class="section-card" id="section-1">
         <h2>1. Definition and Basic Properties</h2>
@@ -1240,6 +1266,16 @@
       Thus the numerator is non-negative, so $g''(t) \ge 0$.
     </div>
   </div>
+</div>
+
+<div class="problem">
+  <h3>P5.9 — Dual of a Strictly Convex Function</h3>
+  <p>Let $f$ be strictly convex. Prove that its conjugate $f^*(y) = \sup_x (y^\top x - f(x))$ is differentiable.</p>
+</div>
+
+<div class="problem">
+  <h3>P5.10 — Dual via Conjugates</h3>
+  <p>Using the definition of the convex conjugate, show that the dual of the problem $\min f(x)$ subject to $Ax = b$ is $\max -b^\top \nu - f^*(-A^\top \nu)$.</p>
 </div>
 
         </div>
