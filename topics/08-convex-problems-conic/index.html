@@ -356,73 +356,13 @@
       </div>
     </section>
 
-    <!-- Section 6: Problem Reformulation and Equivalence -->
-    <section class="section-card" id="section-4">
-      <h2>3. Problem Reformulation and Equivalence</h2>
+    <!-- Section 3: Quasiconvex Optimization -->
 
-      <h3>3.1 Equivalent Problems</h3>
-      <p>Two optimization problems are <strong>equivalent</strong> if the solution of one can be readily obtained from the solution of the other, and vice versa.</p>
 
-      <h4>Common Equivalence Transformations:</h4>
-      <ul>
-        <li><strong>Change of variables:</strong> Substitute $x = \phi(y)$ where $\phi$ is one-to-one</li>
-        <li><strong>Slack variables:</strong> Introduce $s$ to turn $f(x) \le t$ into $f(x) + s = t$, $s \ge 0$</li>
-        <li><strong>Epigraph form:</strong> Minimize $t$ subject to $f(x) \le t$ (instead of minimizing $f(x)$)</li>
-        <li><strong>Eliminating equality constraints:</strong> Use $Ax = b$ to eliminate variables</li>
-      </ul>
+      <section class="section-card" id="section-3">
+      <h2>3. Quasiconvex Optimization</h2>
 
-      <h3>3.2 Epigraph Reformulation</h3>
-      <p>The problem $\min f_0(x)$ s.t. $x \in \mathcal{C}$ is equivalent to:</p>
-      <p style="text-align: center;">
-        $
-        \begin{aligned}
-        \text{minimize} \quad & t \\
-        \text{subject to} \quad & f_0(x) \le t \\
-        & x \in \mathcal{C}
-        \end{aligned}
-        $
-      </p>
-      <p>This transformation is crucial for reformulating problems with complex objectives into standard forms.</p>
-
-      <h3>3.3 Example: Minimizing $\ell_\infty$ Norm</h3>
-      <p>Minimize $\|Ax - b\|_\infty$ can be reformulated as an LP:</p>
-      <p style="text-align: center;">
-        $
-        \begin{aligned}
-        \text{minimize} \quad & t \\
-        \text{subject to} \quad & -t \mathbf{1} \preceq Ax - b \preceq t \mathbf{1}
-        \end{aligned}
-        $
-      </p>
-
-      <h3>3.4 Eliminating Linear Equality Constraints</h3>
-      <p>Given $\min f_0(x)$ s.t. $Ax = b$ and other constraints, if $\text{range}(A) = \mathbb{R}^p$, we can parameterize the solution space as:</p>
-      <p style="text-align: center;">
-        $
-        x = A^\dagger b + (I - A^\dagger A) z
-        $
-      </p>
-      <p>where $A^\dagger$ is the pseudoinverse and $z \in \mathbb{R}^n$ is a new variable. This reduces the problem dimension.</p>
-
-      <!-- Widget 6: Problem Reformulation Tool -->
-      <div class="widget-container" style="margin: 24px 0;">
-        <h3 style="margin-top: 0;">Interactive: Problem Reformulation Tool</h3>
-        <p><strong>Purpose:</strong> Learn how to reformulate non-standard problems into LP, QP, SOCP, or SDP forms.</p>
-        <ul style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-          <li>Select a non-standard problem (e.g., $\ell_1$, $\ell_\infty$ minimization)</li>
-          <li>See reformulation to standard form</li>
-          <li>Understand epigraph and slack variable techniques</li>
-        </ul>
-        <div id="widget-reformulation-tool" style="width: 100%; height: 400px; position: relative;">
-          <!-- Widget will be rendered here -->
-        </div>
-      </div>
-    </section>
-
-      <section class="section-card" id="section-4">
-      <h2>4. Quasiconvex Optimization</h2>
-
-      <h3>4.1 Quasiconvex Functions</h3>
+      <h3>3.1 Quasiconvex Functions</h3>
       <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <strong>quasiconvex</strong> if its domain and all sublevel sets $\{x \mid f(x) \le \alpha\}$ are convex.</p>
 
       <p><strong>Examples:</strong></p>
@@ -432,7 +372,7 @@
         <li>$x^3$ on $\mathbb{R}$ (not quasiconvex; sublevel sets are not convex)</li>
       </ul>
 
-      <h3>4.2 Quasiconvex Optimization Problems</h3>
+      <h3>3.2 Quasiconvex Optimization Problems</h3>
       <p>A problem is <strong>quasiconvex</strong> if the objective is quasiconvex and the feasible set is convex:</p>
       <p style="text-align: center;">
         $
@@ -444,7 +384,7 @@
         $
       </p>
 
-      <h3>4.3 Solution via Bisection (Convex Feasibility)</h3>
+      <h3>3.3 Solution via Bisection (Convex Feasibility)</h3>
       <p>Quasiconvex optimization can be solved by solving a sequence of convex feasibility problems:</p>
       <ol>
         <li>Find interval $[l, u]$ containing $p^*$ (the optimal value)</li>
@@ -455,14 +395,14 @@
       <p>Each feasibility check is a convex problem, so quasiconvex optimization reduces to convex optimization.</p>
     </section>
 
-    <!-- Section 8: Disciplined Convex Programming (DCP) -->
-    <section class="section-card" id="section-6">
-      <h2>5. Disciplined Convex Programming (DCP)</h2>
+    <!-- Section 4: Disciplined Convex Programming (DCP) -->
+    <section class="section-card" id="section-4">
+      <h2>4. Disciplined Convex Programming (DCP)</h2>
 
-      <h3>5.1 Motivation</h3>
+      <h3>4.1 Motivation</h3>
       <p>While we can recognize many convex problems, it's often unclear whether a complex formulation is convex. <strong>Disciplined Convex Programming</strong> is a system of rules for constructing convex optimization problems from basic atoms.</p>
 
-      <h3>5.2 DCP Rules</h3>
+      <h3>4.2 DCP Rules</h3>
       <ul>
         <li><strong>Atoms:</strong> A set of basic convex/concave/affine functions with known curvature</li>
         <li><strong>Composition rules:</strong>
@@ -476,7 +416,7 @@
         <li><strong>Constraints:</strong> Convex constraints of the form $f(x) \le 0$ where $f$ is convex</li>
       </ul>
 
-      <h3>5.3 DCP in Practice: CVXPY</h3>
+      <h3>4.3 DCP in Practice: CVXPY</h3>
       <p>Tools like CVXPY verify DCP compliance and automatically transform problems to standard solver forms (LP, SOCP, SDP).</p>
 
       <!-- Widget 8: Solver Selection Guide -->
@@ -495,7 +435,7 @@
     </section>
 
 <section class="section-card" id="section-5">
-      <h2>6. Review & Cheat Sheet</h2>
+      <h2>5. Review & Cheat Sheet</h2>
 
       <h3>Problem Classes Reference</h3>
       <table class="data-table" style="width: 100%; margin-bottom: 24px;">
@@ -546,8 +486,8 @@
       </ul>
     </section>
 
-<section class="section-card" id="section-3">
-      <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
+<section class="section-card" id="section-6">
+      <h2><i data-feather="edit-3"></i> 6. Exercises</h2>
       <p>These problems consolidate the lecture material and provide practice in problem classification, formulation, and reformulation.</p>
 
       <!-- Problem 4.1 -->
@@ -1164,13 +1104,13 @@
       </ul>
     </section>
 
-    <!-- SECTION 11: SUMMARY -->
+    <!-- SECTION 5: SUMMARY -->
 
 
     <!-- READINGS -->
 
 
-    <!-- SECTION 10: PROBLEM SET -->
+    <!-- SECTION 6: EXERCISES -->
 
   
     </article>
