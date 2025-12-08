@@ -682,7 +682,7 @@
       The <b>Frobenius norm</b> (or Hilbert-Schmidt norm) is $\|X\|_F = \sqrt{\langle X, X \rangle}$.</p>
 
       <div class="proof-box">
-        <h4>Why does $\mathrm{tr}(A^\top A) = \sum a_{ij}^2$? (Index Gymnastics)</h4>
+        <h4>Derivation: Trace and Frobenius Norm</h4>
         <p>Let $A \in \mathbb{R}^{m \times n}$. The diagonal entries of the product $A^\top A$ are formed by dotting the columns of $A$ with themselves.
         <br>Specifically, the $(j,j)$ entry of $A^\top A$ is:
         $$ (A^\top A)_{jj} = \sum_{k=1}^m (A^\top)_{jk} A_{kj} = \sum_{k=1}^m A_{kj} A_{kj} = \sum_{k=1}^m A_{kj}^2 $$
@@ -1173,7 +1173,7 @@
       <h3>(a) Weighted Least Squares (WLS)</h3>
       <p>Given SPD weight $W \in \mathbb{R}^{m \times m}$:
       $$ \min_x \|Ax - b\|_W^2 := (Ax - b)^\top W(Ax - b) $$
-      Let $C$ satisfy $W = C^\top C$ (e.g., Cholesky). Then the problem is ordinary least squares in the <b>whitened</b> system $(CA)x \approx Cb$. Normal equations: $A^\top W A x = A^\top W b$.</p>
+      Let $C$ be a matrix such that $W = C^\top C$ (e.g., via Cholesky decomposition). Then the problem is equivalent to ordinary least squares in the <b>whitened</b> system, minimizing $\|C(Ax - b)\|_2^2 = \|CAx - Cb\|_2^2$. The normal equations are $A^\top W A x = A^\top W b$.</p>
 
       <h3>(b) Constrained to an Affine Set</h3>
       <p>Solve:
@@ -1317,7 +1317,7 @@
       </ol>
 
       <h3>P0.9 — Schur Complement Application</h3>
-      <p>Use the Schur Complement condition to determine the range of $x$ for which the matrix $M(x)$ is Positive Semidefinite:</p>
+      <p>Use the Schur Complement condition (assuming the top-left pivot is positive) to determine the range of $x$ for which the matrix $M(x)$ is Positive Semidefinite:</p>
       $$ M(x) = \begin{bmatrix} x & 1 \\ 1 & x \end{bmatrix} $$
       <p>Verify your answer by computing the eigenvalues directly.</p>
 

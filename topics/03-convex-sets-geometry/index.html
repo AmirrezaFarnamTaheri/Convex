@@ -1102,8 +1102,16 @@
           <div class="solution-box">
             <h4>Solution</h4>
             <div class="proof-step">
-              Let $z = \theta x + (1-\theta)y$. By weighted AM-GM on each component: $z_i \ge x_i^\theta y_i^{1-\theta}$.
-              Taking the product: $\prod z_i \ge (\prod x_i)^\theta (\prod y_i)^{1-\theta} \ge 1^\theta 1^{1-\theta} = 1$.
+              Let $z = \theta x + (1-\theta)y$. Apply the weighted AM-GM inequality $a^\lambda b^{1-\lambda} \le \lambda a + (1-\lambda)b$ (where $\lambda = \theta$) to each component $i$:
+              $$ z_i = \theta x_i + (1-\theta)y_i \ge x_i^\theta y_i^{1-\theta} $$
+            </div>
+            <div class="proof-step">
+              Taking the product over all $i$:
+              $$ \prod z_i \ge \prod (x_i^\theta y_i^{1-\theta}) = \left(\prod x_i\right)^\theta \left(\prod y_i\right)^{1-\theta} $$
+            </div>
+            <div class="proof-step">
+              Since $x, y \in C$, $\prod x_i \ge 1$ and $\prod y_i \ge 1$. Thus:
+              $$ \prod z_i \ge 1^\theta \cdot 1^{1-\theta} = 1 $$
               Thus $z \in C$.
             </div>
           </div>
@@ -1133,7 +1141,7 @@
               <ul>
                 <li>If $\theta = 1$: The quadratic term vanishes. We get a linear inequality (halfspace), which is convex.</li>
                 <li>If $\theta < 1$: The coefficient $(1-\theta^2)$ is positive. This defines a sublevel set of a convex quadratic (a ball), which is convex.</li>
-                <li>If $\theta > 1$: The coefficient is negative. This defines a superlevel set of a convex quadratic (exterior of a ball), which is <b>not convex</b>.</li>
+                <li>If $\theta > 1$: The coefficient is negative. This defines a superlevel set of a convex quadratic (the region exterior to a ball), which is <b>not convex</b> (it has a hole).</li>
               </ul>
               </li>
             </ul>

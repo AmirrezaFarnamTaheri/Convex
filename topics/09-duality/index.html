@@ -500,14 +500,19 @@
     <div class="proof-step">
       <strong>Complementary Slackness:</strong> $\lambda_i x_i = 0, \lambda_i \ge 0, x_i \ge 0$.
       <ul>
-        <li>Case 1: $x_i > 0$. Then $\lambda_i = 0$. So $\alpha_i + x_i = 1/\nu$. Thus $x_i = 1/\nu - \alpha_i$.</li>
-        <li>Case 2: $x_i = 0$. Then $\alpha_i = 1/(\nu - \lambda_i)$. Since $\lambda_i \ge 0$, $\nu - \lambda_i \le \nu$, so $1/(\nu-\lambda_i) \ge 1/\nu$. Thus $\alpha_i \ge 1/\nu$.</li>
+        <li>Case 1: $x_i > 0$. Then $\lambda_i = 0$. The stationarity condition becomes $\frac{1}{\alpha_i + x_i} = \nu \implies \alpha_i + x_i = \frac{1}{\nu}$. Thus $x_i = \frac{1}{\nu} - \alpha_i$. (Note: for $x_i > 0$, we need $1/\nu > \alpha_i$).</li>
+        <li>Case 2: $x_i = 0$. The stationarity condition is $\frac{1}{\alpha_i} = \nu - \lambda_i$. Since $\lambda_i \ge 0$, we have $\nu - \lambda_i \le \nu$.
+        Assuming $\nu > 0$ and $\nu - \lambda_i > 0$, taking reciprocals reverses the inequality:
+        $$ \frac{1}{\nu - \lambda_i} \ge \frac{1}{\nu} $$
+        Substituting back: $\alpha_i \ge \frac{1}{\nu}$.
+        </li>
       </ul>
     </div>
     <div class="proof-step">
       <strong>Combined Solution:</strong>
+      Combining the cases:
       $$ x_i = \max\left(0, \frac{1}{\nu} - \alpha_i\right) $$
-      Here $1/\nu$ acts as the "water level". We find $\nu$ such that $\sum x_i = 1$.
+      Here $\mu = 1/\nu$ acts as the "water level". We choose the water level such that the total amount of water poured equals the budget: $\sum x_i = 1$.
     </div>
   </div>
 </div>
