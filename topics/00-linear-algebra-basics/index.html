@@ -376,7 +376,7 @@
         <h4>Geometric Interpretation</h4>
         <ul>
           <li><b>Determinant as Volume:</b> $|\det(A)|$ is the factor by which the linear map scales volume. If $S$ is a set with volume $V$, then $A(S)$ has volume $|\det(A)| V$. The sign indicates orientation (preservation vs. reversal).</li>
-          <li><b>Eigenvalues as Stretch Factors:</b> If $Ax = \lambda x$, the map simply scales the vector $x$ by $\lambda$. If a matrix has a full set of eigenvectors, it maps a unit circle to an ellipse whose semiaxes are aligned with the eigenvectors and have lengths $|\lambda_i|$.</li>
+          <li><b>Eigenvalues as Stretch Factors:</b> If $Ax = \lambda x$, the map scales the vector $x$ by $\lambda$. If a matrix has a full set of eigenvectors, it maps a unit circle to an ellipse whose semiaxes are aligned with the eigenvectors and have lengths $|\lambda_i|$.</li>
         </ul>
       </div>
 
@@ -592,8 +592,8 @@
         <h4>💡 Geometric Intuition for Dual Norms</h4>
         <p>Think of the dual norm as measuring how "aligned" a vector $y$ can be with vectors in the unit ball of the primal norm.</p>
         <ul>
-          <li><b>$\ell_2$ is self-dual:</b> The unit ball is a sphere. The direction of maximum inner product with $y$ is simply $y$ itself (normalized). Thus $\|y\|_{2,*} = \|y\|_2$.</li>
-          <li><b>$\ell_1$ dual is $\ell_\infty$:</b> The $\ell_1$ unit ball is a diamond with corners at coordinate axes. To maximize $x^\top y$ over this diamond, you simply pick the corner $e_i$ (or $-e_i$) corresponding to the largest component of $y$. Thus, the maximum value is $\max_i |y_i| = \|y\|_\infty$.</li>
+          <li><b>$\ell_2$ is self-dual:</b> The unit ball is a sphere. The direction of maximum inner product with $y$ is $y$ itself (normalized). Thus $\|y\|_{2,*} = \|y\|_2$.</li>
+          <li><b>$\ell_1$ dual is $\ell_\infty$:</b> The $\ell_1$ unit ball is a diamond with corners at coordinate axes. To maximize $x^\top y$ over this diamond, you pick the corner $e_i$ (or $-e_i$) corresponding to the largest component of $y$. Thus, the maximum value is $\max_i |y_i| = \|y\|_\infty$.</li>
           <li><b>$\ell_\infty$ dual is $\ell_1$:</b> The $\ell_\infty$ unit ball is a box (corners at $(\pm 1, \dots, \pm 1)$). To maximize $x^\top y$ over the box, you choose each $x_i$ to match the sign of $y_i$. The result is $\sum y_i \mathrm{sign}(y_i) = \sum |y_i| = \|y\|_1$.</li>
         </ul>
       </div>
@@ -636,7 +636,7 @@
       <div class="proof-box">
         <h4>Proof of Hölder's Inequality</h4>
         <div class="proof-step">
-          <strong>Case 1: $x = 0$.</strong> The inequality is trivially true: $0 \le 0$.
+          <strong>Case 1: $x = 0$.</strong> The inequality holds since $0 \le 0$.
         </div>
         <div class="proof-step">
           <strong>Case 2: $x \neq 0$.</strong> Write:
@@ -672,7 +672,7 @@
         </div>
       </div>
 
-      <p><b>Dual Representation (Crucial for Convexity Proofs):</b> Just like the max eigenvalue, the spectral norm can be written as a supremum:
+      <p><b>Dual Representation (Crucial for Convexity Proofs):</b> Similar to the max eigenvalue, the spectral norm can be written as a supremum:
       $$ \|X\|_2 = \sup_{\|u\|_2=1, \|v\|_2=1} u^\top X v $$
       Since $f(X) = u^\top X v$ is a <b>linear function</b> of $X$, and $\|X\|_2$ is the supremum of these linear functions, $\|X\|_2$ is a <b>convex function</b>.</p>
 
@@ -691,7 +691,7 @@
         $$ \mathrm{tr}(A^\top A) = \sum_{j=1}^n (A^\top A)_{jj} = \sum_{j=1}^n \left(\sum_{k=1}^m A_{kj}^2\right) $$
         Since the sums are finite, we can swap the order of summation (flipping sum over columns to sum over rows):
         $$ \sum_{j=1}^n \sum_{k=1}^m A_{kj}^2 = \sum_{k=1}^m \sum_{j=1}^n A_{kj}^2 = \sum_{i,j} A_{ij}^2 $$
-        This is exactly the sum of squares of all entries. The 'tiny index detail' is simply swapping the order of summation.</p>
+        This is exactly the sum of squares of all entries. The 'tiny index detail' involves swapping the order of summation.</p>
       </div>
 
       <h4>Submultiplicativity of the Frobenius Norm</h4>
@@ -817,7 +817,7 @@
 
       <div class="insight">
         <h4>Forward Connection: The PSD Cone</h4>
-        <p>The set of all PSD matrices forms a convex cone, denoted $\mathbb{S}^n_+$. This geometric object is the foundation of <b>Semidefinite Programming (SDP)</b>, a powerful generalization of linear programming that we will study in <a href="../07-convex-problems-standard/index.html">Lecture 08</a>. Just as LP optimizes over the non-negative orthant, SDP optimizes over the PSD cone.</p>
+        <p>The set of all PSD matrices forms a convex cone, denoted $\mathbb{S}^n_+$. This geometric object is the foundation of <b>Semidefinite Programming (SDP)</b>, a powerful generalization of linear programming that we will study in <a href="../07-convex-problems-standard/index.html">Lecture 08</a>. As LP optimizes over the non-negative orthant, SDP optimizes over the PSD cone.</p>
       </div>
 
       <h4>Definition A: The Variational Definition</h4>
@@ -1265,7 +1265,7 @@
       <ol type="a">
         <li>What is the maximum possible rank of $A$?</li>
         <li>If the rank of $A$ is 8, what is the dimension of the nullspace $\mathcal{N}(A)$?</li>
-        <li>If $A x = 0$ has only the trivial solution $x=0$, is this possible? Explain.</li>
+        <li>If $A x = 0$ has only the solution $x=0$, is this possible? Explain.</li>
       </ol>
 
       <h3>P0.3 — Trace and Determinant</h3>

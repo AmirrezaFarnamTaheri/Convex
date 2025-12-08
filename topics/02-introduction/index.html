@@ -157,7 +157,7 @@
           <ul>
             <li><b>Quasiconvexity:</b> A function can have a single minimum but still be non-convex (e.g., "bowl" shape with flat spots or weird kinks). While quasiconvex problems are solvable, they require specialized methods (bisection).</li>
             <li><b>Stationary Points:</b> A non-convex function can have a single global minimum but many saddle points or local maxima, which can trap gradient-based algorithms (vanishing gradients).</li>
-            <li><b>Convexity is stronger:</b> Convexity guarantees not just uniqueness (under strict convexity) but also that <b>every</b> direction of descent points towards the optimum. This geometric structure allows for polynomial-time guarantees that mere unimodality does not.</li>
+            <li><b>Convexity is stronger:</b> Convexity guarantees not only uniqueness (under strict convexity) but also that <b>every</b> direction of descent points towards the optimum. This geometric structure allows for polynomial-time guarantees that mere unimodality does not.</li>
           </ul>
         </div>
 
@@ -505,7 +505,7 @@
         <div class="subsection">
           <h4>Properties and Applications</h4>
           <ul>
-            <li><b>Matrix variables:</b> Optimizing over matrix spaces (not just vectors).</li>
+            <li><b>Matrix variables:</b> Optimizing over matrix spaces (in addition to vectors).</li>
             <li><b>PSD cone:</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$ is a convex cone.</li>
             <li><b>Applications:</b> Control theory, combinatorial optimization relaxations, robust optimization, polynomial optimization.</li>
             <li><b>Algorithms:</b> Interior-point methods.</li>
@@ -659,7 +659,7 @@
           <h4>Analytical Reason: Subgradients at Zero</h4>
           <p>We can also see this algebraically. Consider minimizing a 1D objective $f(x) = \frac{1}{2}(x - y)^2 + \lambda |x|$.</p>
           <div class="proof-step">
-            <strong>Smooth case ($\ell_2$):</strong> If we used $\lambda x^2$, the derivative is $(x-y) + 2\lambda x = 0$, giving $x = y / (1+2\lambda)$. This simply shrinks $y$ towards 0, but never hits exactly 0 unless $y=0$.
+            <strong>Smooth case ($\ell_2$):</strong> If we used $\lambda x^2$, the derivative is $(x-y) + 2\lambda x = 0$, giving $x = y / (1+2\lambda)$. This shrinks $y$ towards 0, but never hits exactly 0 unless $y=0$.
           </div>
           <div class="proof-step">
             <strong>Sparse case ($\ell_1$):</strong> The subdifferential of $|x|$ at $x=0$ is the interval $[-1, 1]$. The optimality condition is:
@@ -1142,7 +1142,7 @@
 
 <div class="problem">
   <h3>P2.1 — Classify as Convex / Not Convex</h3>
-  <p>For each problem, state if it is convex and provide a one-sentence justification.</p>
+  <p>For each problem, state if it is convex and explain your answer.</p>
           <ol type="a">
             <li>$\min \|Ax - b\|_2^2$ subject to $Fx = g$.</li>
             <li>$\min -\|x\|_2$ subject to $Ax \le b$.</li>
@@ -1429,7 +1429,7 @@
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Definition is King:</b> While Hessians and composition rules are convenient shortcuts, the inequality definition is the "ground truth" of convexity. Being able to prove convexity directly from the definition is a crucial skill for understanding <i>why</i> a function is convex.</li>
-            <li><b>Quadratic Behavior:</b> The function $\|Ax-b\|^2$ is a "quadratic bowl". Along any line, its values trace a parabola opening upward. The condition $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ simply says that the chord connecting two points on the parabola lies above the curve.</li>
+            <li><b>Quadratic Behavior:</b> The function $\|Ax-b\|^2$ is a "quadratic bowl". Along any line, its values trace a parabola opening upward. The condition $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ states that the chord connecting two points on the parabola lies above the curve.</li>
         </ul>
   </div>
 
