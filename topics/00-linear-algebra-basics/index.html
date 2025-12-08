@@ -434,8 +434,16 @@
           $$ \mathrm{tr}(AB) = \sum_{i=1}^m (AB)_{ii} = \sum_{i=1}^m \sum_{k=1}^n a_{ik} b_{ki} $$
         </div>
         <div class="proof-step">
-          <strong>Switching order:</strong> Since the sums are finite, we can swap the order of summation:
-          $$ \sum_{k=1}^n \sum_{i=1}^m b_{ki} a_{ik} = \sum_{k=1}^n (BA)_{kk} = \mathrm{tr}(BA) $$
+          <strong>Switching order:</strong> Since the sums are finite, we can swap the order of summation. We also commute the scalar terms $a_{ik} b_{ki} = b_{ki} a_{ik}$:
+          $$ \sum_{i=1}^m \sum_{k=1}^n a_{ik} b_{ki} = \sum_{k=1}^n \sum_{i=1}^m b_{ki} a_{ik} $$
+        </div>
+        <div class="proof-step">
+          <strong>Recognize the diagonal of BA:</strong> The inner sum $\sum_{i=1}^m b_{ki} a_{ik}$ is exactly the element $(BA)_{kk}$ (the $k$-th diagonal entry of the matrix product $BA$).
+          $$ \sum_{k=1}^n \left( \sum_{i=1}^m b_{ki} a_{ik} \right) = \sum_{k=1}^n (BA)_{kk} $$
+        </div>
+        <div class="proof-step">
+          <strong>Conclusion:</strong> The sum of the diagonal entries is the trace.
+          $$ \sum_{k=1}^n (BA)_{kk} = \mathrm{tr}(BA) $$
         </div>
       </div>
 

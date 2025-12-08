@@ -471,19 +471,23 @@
       Dual of $\min 0^\top x$ s.t. $Ax=b, x \ge 0$ is $\max b^\top y$ s.t. $A^\top y \le 0$.
     </div>
     <div class="proof-step">
-      <strong>Case 1: (1) Feasible.</strong> Then $p^* = 0$. By Strong Duality, $d^* = 0$.
-      This means $\sup \{ b^\top y \mid A^\top y \le 0 \} = 0$.
-      So for all $y$ with $A^\top y \le 0$, we must have $b^\top y \le 0$.
-      This implies there is NO solution to $A^\top y \le 0, b^\top y > 0$.
-      (Flipping signs $z=-y$: no solution to $A^\top z \ge 0, b^\top z < 0$).
-      Thus (2) is false.
+      <strong>Case 1: (1) has a solution (Feasible).</strong>
+      If there exists $x \ge 0$ such that $Ax=b$, the primal optimal value is $p^* = 0^\top x = 0$.
+      <br>Since the primal is an LP, Strong Duality holds (assuming feasibility). Thus, the dual optimal value is also $d^* = 0$.
+      <br>The dual problem is to maximize $b^\top y$ subject to $A^\top y \le 0$.
+      Since the maximum is 0, for <i>every</i> feasible dual variable $y$ (where $A^\top y \le 0$), we must have $b^\top y \le 0$.
+      <br>This means there is <b>no</b> vector $y$ satisfying $A^\top y \le 0$ AND $b^\top y > 0$.
+      <br>Let $z = -y$. The non-existence of such a $y$ implies there is no $z$ such that $A^\top (-z) \le 0 \implies A^\top z \ge 0$ AND $b^\top (-z) > 0 \implies b^\top z < 0$.
+      <br>Thus, system (2) has <b>no solution</b>.
     </div>
     <div class="proof-step">
-      <strong>Case 2: (1) Infeasible.</strong> Then $p^* = \infty$. By Strong Duality, $d^* = \infty$.
-      This means the dual is unbounded above.
-      There exists $y$ with $A^\top y \le 0$ such that $b^\top y > 0$.
-      Let $z = -y$. Then $A^\top z \ge 0$ and $b^\top (-z) > 0 \implies b^\top z < 0$.
-      This is exactly system (2). Thus (2) is true.
+      <strong>Case 2: (1) has no solution (Infeasible).</strong>
+      If the primal is infeasible, then $p^* = +\infty$ (by convention for minimization).
+      <br>By Strong Duality for LPs, $d^* = p^* = +\infty$.
+      <br>This means the dual problem $\max \{ b^\top y \mid A^\top y \le 0 \}$ is unbounded above.
+      <br>For the objective $b^\top y$ to grow arbitrarily large while $y$ remains in the cone $A^\top y \le 0$, there must exist a direction $y$ such that $A^\top y \le 0$ and $b^\top y > 0$ (otherwise the max would be 0).
+      <br>Let $z = -y$. Then $A^\top (-z) \le 0 \implies A^\top z \ge 0$ and $b^\top (-z) > 0 \implies b^\top z < 0$.
+      <br>This $z$ is a solution to system (2). Thus, system (2) <b>has a solution</b>.
     </div>
   </div>
 </div>

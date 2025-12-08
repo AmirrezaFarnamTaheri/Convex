@@ -65,10 +65,14 @@
           </div>
 
           <div class="proof-step">
-            <strong>Step 3: Characterize Projection.</strong> By the projection theorem, for any $z \in \bar{S}$:
-            $$ (z - p)^\top (0 - p) \le 0 \implies (z - p)^\top (-p) \le 0 \implies z^\top p \ge p^\top p = \|p\|_2^2 > 0 $$
-            Since every $z \in S$ is of the form $c - d$:
-            $$ (c - d)^\top p \ge \|p\|_2^2 \implies p^\top c \ge p^\top d + \|p\|_2^2 $$
+            <strong>Step 3: Characterize Projection.</strong> By the projection theorem, the projection $p$ of a point $x$ (here $x=0$) onto a closed convex set $\bar{S}$ is characterized by the inequality $(z - p)^\top (x - p) \le 0$ for all $z \in \bar{S}$.
+            <br>Substitute $x=0$:
+            $$ (z - p)^\top (0 - p) \le 0 \implies (z - p)^\top (-p) \le 0 $$
+            Expand the inner product:
+            $$ -z^\top p + p^\top p \le 0 \implies z^\top p \ge p^\top p = \|p\|_2^2 $$
+            Since $0 \notin \bar{S}$, $p \ne 0$, so $\|p\|_2^2 > 0$.
+            <br>Since every $z \in S$ is of the form $c - d$:
+            $$ (c - d)^\top p \ge \|p\|_2^2 \implies p^\top c - p^\top d \ge \|p\|_2^2 \implies p^\top c \ge p^\top d + \|p\|_2^2 $$
           </div>
 
           <div class="proof-step">
@@ -252,6 +256,28 @@
                 <li>$\mathcal{Q}^{n+1}$ is <b>self-dual</b>: $(\mathcal{Q}^{n+1})^* = \mathcal{Q}^{n+1}$</li>
                 <li>$(L_p \text{ norm cone})^* = L_q \text{ norm cone}$ where $1/p + 1/q = 1$.</li>
             </ul>
+        </div>
+
+        <div class="proof-box">
+          <h4>Proof: Self-Duality of the PSD Cone</h4>
+          <p>We want to show that $(\mathbb{S}^n_+)^* = \mathbb{S}^n_+$ under the inner product $\langle A, B \rangle = \mathrm{tr}(AB)$.</p>
+          <div class="proof-step">
+            <strong>1. $\mathbb{S}^n_+ \subseteq (\mathbb{S}^n_+)^*$:</strong>
+            Let $A \in \mathbb{S}^n_+$. We must show that $\mathrm{tr}(AB) \ge 0$ for all $B \in \mathbb{S}^n_+$.
+            <br>Since $A, B \succeq 0$, we can write their spectral decompositions: $A = \sum \lambda_i u_i u_i^\top$ and $B = \sum \mu_j v_j v_j^\top$ with $\lambda_i, \mu_j \ge 0$.
+            $$ \mathrm{tr}(AB) = \mathrm{tr}\left( \left(\sum \lambda_i u_i u_i^\top\right) \left(\sum \mu_j v_j v_j^\top\right) \right) = \sum_{i,j} \lambda_i \mu_j \mathrm{tr}(u_i u_i^\top v_j v_j^\top) $$
+            Using the cyclic property $\mathrm{tr}(XYZ) = \mathrm{tr}(ZXY)$:
+            $$ \mathrm{tr}(u_i u_i^\top v_j v_j^\top) = \mathrm{tr}(v_j^\top u_i u_i^\top v_j) = (v_j^\top u_i)^2 \ge 0 $$
+            Since $\lambda_i, \mu_j \ge 0$, the total sum is non-negative. Thus $A \in (\mathbb{S}^n_+)^*$.
+          </div>
+          <div class="proof-step">
+            <strong>2. $(\mathbb{S}^n_+)^* \subseteq \mathbb{S}^n_+$:</strong>
+            Let $Y \in (\mathbb{S}^n_+)^*$. By definition, $\mathrm{tr}(XY) \ge 0$ for all $X \in \mathbb{S}^n_+$.
+            <br>For any vector $v \in \mathbb{R}^n$, let $X = vv^\top$. Note that $X$ is PSD (rank-1).
+            <br>The condition becomes:
+            $$ \mathrm{tr}((vv^\top)Y) = \mathrm{tr}(v^\top Y v) = v^\top Y v \ge 0 $$
+            Since $v^\top Y v \ge 0$ for all $v$, $Y$ is positive semidefinite by definition. Thus $Y \in \mathbb{S}^n_+$.
+          </div>
         </div>
 
         <div class="row" style="display: flex; gap: 20px; justify-content: center; margin: 24px 0;">
