@@ -393,7 +393,8 @@
         Consider their sum $w = u+v$. We must have $A(u+v) = \lambda_w (u+v)$.
         $$ \lambda_w u + \lambda_w v = \lambda_w(u+v) = A(u+v) = Au + Av = \lambda_u u + \lambda_v v $$
         Rearranging: $(\lambda_w - \lambda_u)u + (\lambda_w - \lambda_v)v = 0$.
-        Since $u$ and $v$ are independent, the coefficients must vanish: $\lambda_w = \lambda_u$ and $\lambda_w = \lambda_v$.
+        Since $u$ and $v$ are linearly independent, the only solution to $c_1 u + c_2 v = 0$ is the trivial solution $c_1=c_2=0$.
+        Therefore, the coefficients must vanish: $\lambda_w - \lambda_u = 0$ and $\lambda_w - \lambda_v = 0$, which implies $\lambda_w = \lambda_u$ and $\lambda_w = \lambda_v$.
         Thus $\lambda_u = \lambda_v$ for any independent pair. By transitivity, all vectors share the same eigenvalue $\lambda$. Thus $Ax = \lambda x$ for all $x$, so $A = \lambda I$.</p>
       </div>
       <p><b>Geometric Intuition:</b> A general matrix distorts a circle into an ellipse. If <i>every</i> direction is a principal axis (eigenvector), the ellipse must be a circle (isotropic scaling).</p>

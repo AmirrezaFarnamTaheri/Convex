@@ -112,10 +112,13 @@
         $$ g(\lambda, \nu) \le p^* $$
         <div class="proof-box">
           <h4>Proof</h4>
-          <p>Let $x^*$ be optimal feasible.
+          <p>Let $x^*$ be an optimal feasible solution. By definition of the infimum:
           $$ g(\lambda, \nu) = \inf_x L(x, \lambda, \nu) \le L(x^*, \lambda, \nu) $$
-          $$ = f_0(x^*) + \sum \lambda_i f_i(x^*) + \sum \nu_j h_j(x^*) \le f_0(x^*) = p^* $$
-          since $\lambda_i \ge 0, f_i(x^*) \le 0, h_j(x^*) = 0$.</p>
+          Expanding the Lagrangian at the optimal point:
+          $$ L(x^*, \lambda, \nu) = f_0(x^*) + \sum_{i=1}^m \lambda_i f_i(x^*) + \sum_{j=1}^p \nu_j h_j(x^*) $$
+          Since $x^*$ is feasible, $h_j(x^*) = 0$ for all $j$. Also $f_i(x^*) \le 0$. Given $\lambda_i \ge 0$, we have $\lambda_i f_i(x^*) \le 0$. Thus:
+          $$ L(x^*, \lambda, \nu) \le f_0(x^*) + 0 + 0 = p^* $$
+          Combining the inequalities gives $g(\lambda, \nu) \le p^*$.</p>
         </div>
 
         <h3>2.3 Examples of Dual Functions</h3>
@@ -308,12 +311,12 @@
 
         <h3>6.3 Semidefinite Programming</h3>
         <p>Primal: $\min \mathrm{tr}(CX)$ s.t. $\mathrm{tr}(A_i X) = b_i, X \succeq 0$.
-        <br>Lagrangian: $L(X, \nu) = \mathrm{tr}(CX) + \sum \nu_i (b_i - \mathrm{tr}(A_i X))$.
-        <br>We minimize $L(X, \nu)$ over $X \succeq 0$. Rearranging terms:
-        $$ L(X, \nu) = \sum_{i=1}^m \nu_i b_i + \mathrm{tr}\left( \left(C - \sum_{i=1}^m \nu_i A_i\right) X \right) $$
-        The term $\mathrm{tr}(SX)$ with $X \succeq 0$ is bounded below only if $S \succeq 0$. If $S \not\succeq 0$, we can choose $X$ to make the trace arbitrarily negative.
-        <br>Thus, $g(\nu) = \inf_{X \succeq 0} L(X, \nu) = \sum \nu_i b_i$ if $C - \sum \nu_i A_i \succeq 0$, and $-\infty$ otherwise.
-        <br>Dual Problem:
+        <br>We derive the dual using the generalized Lagrangian with matrix inner product.
+        <br>Lagrangian: $L(X, \nu) = \mathrm{tr}(CX) + \sum \nu_i (b_i - \mathrm{tr}(A_i X))$. We minimize this over the cone $X \succeq 0$.
+        <br>Grouping terms by $X$: $L(X, \nu) = \sum \nu_i b_i + \mathrm{tr}( (C - \sum \nu_i A_i) X )$.
+        <br>The infimum of $\mathrm{tr}(MX)$ over $X \succeq 0$ is $-\infty$ unless $M \succeq 0$ (otherwise we can align $X$ with a negative eigenvector). If $M \succeq 0$, the infimum is 0.
+        <br>Thus, the dual function is finite only if $C - \sum \nu_i A_i \succeq 0$.
+        <br>Dual:
         $$
         \begin{aligned}
         \text{maximize} \quad & b^\top \nu \\

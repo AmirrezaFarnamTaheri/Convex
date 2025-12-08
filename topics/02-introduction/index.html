@@ -781,13 +781,15 @@
 
             <div class="proof-step">
               <strong>Step 3: Show the bound is tight.</strong>
-              We need to find a $\Delta$ with $\|\Delta\|_2 \le \rho$ that achieves this upper bound.
+              We need to find a perturbation $\Delta$ with $\|\Delta\|_2 \le \rho$ that achieves this upper bound.
               Let $u = Ax - b$. If $x=0$, the term is $\|b\|_2$, which matches the formula.
-              If $x \ne 0$, choose $\Delta$ to be a rank-1 matrix: $\Delta = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2}$.
-              Then $\|\Delta\|_2 = \rho \cdot 1 \cdot 1 = \rho$.
-              And $\Delta x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2 = \frac{\rho \|x\|_2}{\|Ax - b\|_2} (Ax - b)$.
-              This vector is a positive scalar multiple of $Ax - b$, so they align perfectly.
-              Thus, $\max_{\|\Delta\|_2 \le \rho} \|(A + \Delta)x - b\|_2 = \|Ax - b\|_2 + \rho \|x\|_2$.
+              If $x \ne 0$, we choose $\Delta$ to align the perturbation $\Delta x$ with the residual $u$. Define the rank-1 matrix:
+              $$ \Delta = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2} $$
+              The spectral norm is $\|\Delta\|_2 = \rho \|\frac{u}{\|u\|_2}\|_2 \|\frac{x}{\|x\|_2}\|_2 = \rho \cdot 1 \cdot 1 = \rho$, so it is feasible.
+              Now, computing $\Delta x$:
+              $$ \Delta x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2 = \left( \frac{\rho \|x\|_2}{\|u\|_2} \right) u $$
+              This vector is a positive scalar multiple of $u = Ax - b$. Since $\|u + ku\|_2 = (1+k)\|u\|_2 = \|u\|_2 + k\|u\|_2$ for $k \ge 0$, the norms add linearly:
+              $$ \|(Ax - b) + \Delta x\|_2 = \|u\|_2 + \|\Delta x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2 $$
             </div>
 
             <div class="proof-step">

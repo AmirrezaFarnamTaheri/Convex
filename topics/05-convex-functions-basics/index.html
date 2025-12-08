@@ -199,10 +199,14 @@
             <br>Define $g(u) = f(u) - \ell(u)$. Then $g(x_0)=g(y_0)=0$ and $g(z_0) > 0$.
             <br>Assuming continuity, $g(u) > 0$ on some interval inside $[x_0, y_0]$. Thus $\int_{x_0}^{y_0} g(u) du > 0$.
             $$ \int_{x_0}^{y_0} f(u) du > \int_{x_0}^{y_0} \ell(u) du $$
-            The integral of the line $\ell$ over $[x_0, y_0]$ is the length $\times$ midpoint value: $(y_0-x_0) \frac{f(x_0)+f(y_0)}{2}$.
-            <br>Perform change of variables $u = tx_0 + (1-t)y_0$ (Jacobian is $|y_0-x_0|$):
-            $$ |y_0-x_0| \int_0^1 f(tx_0 + (1-t)y_0) dt > |y_0-x_0| \frac{f(x_0)+f(y_0)}{2} $$
-            Dividing by length gives $\int_0^1 f(\cdot) > \frac{f(x_0)+f(y_0)}{2}$, violating the condition.</p>
+            The integral of the line $\ell$ over $[x_0, y_0]$ is just length $\times$ midpoint value: $(y_0-x_0) \frac{f(x_0)+f(y_0)}{2}$.
+            <br>Perform the change of variables $u = (1-t)x_0 + ty_0$, so $du = (y_0 - x_0) dt$.
+            $$ \int_{x_0}^{y_0} f(u) du = \int_0^1 f((1-t)x_0 + ty_0) (y_0-x_0) dt $$
+            The inequality $\int_{x_0}^{y_0} f(u) du > \int_{x_0}^{y_0} \ell(u) du$ becomes:
+            $$ (y_0-x_0) \int_0^1 f((1-t)x_0 + ty_0) dt > (y_0-x_0) \frac{f(x_0)+f(y_0)}{2} $$
+            Dividing by the positive length $(y_0-x_0)$ yields:
+            $$ \int_0^1 f((1-t)x_0 + ty_0) dt > \frac{f(x_0)+f(y_0)}{2} $$
+            This directly violates the integral condition.</p>
           </div>
         </div>
 
