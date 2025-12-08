@@ -193,8 +193,10 @@
         </div>
         <div class="proof-step">
           <strong>Step 3: Linearize via Taylor Series.</strong>
-          For small $\lambda_i$, we use the Taylor expansion $\log(1+z) \approx z$.
-          $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i = \mathrm{tr}(E) = \mathrm{tr}(X^{-1}\Delta) $$
+          We use the first-order Taylor expansion of the logarithm, $\log(1+z) = z + O(z^2)$. For small $\lambda_i$ (which corresponds to small $\Delta$), we have:
+          $$ \sum_{i=1}^n \log(1 + \lambda_i) = \sum_{i=1}^n (\lambda_i + O(\lambda_i^2)) \approx \sum_{i=1}^n \lambda_i $$
+          Recalling that the sum of eigenvalues equals the trace:
+          $$ \sum_{i=1}^n \lambda_i = \mathrm{tr}(E) = \mathrm{tr}(X^{-1}\Delta) $$
           </div>
           <div class="proof-step">
           <strong>Step 4: Identify the Gradient.</strong>
@@ -1348,6 +1350,23 @@
       <h3>P0.15 — Isometries</h3>
       <p>An isometry is a linear map $f(x) = Qx$ that preserves distances: $\|Qx - Qy\|_2 = \|x - y\|_2$ for all $x, y$.
       <br>Show that this condition implies $Q^\top Q = I$. Thus, isometries are represented by orthogonal matrices.</p>
+
+      <h3>P0.16 — Loewner Order Transitivity</h3>
+      <p>The Loewner order is defined as $X \succeq Y \iff X - Y \succeq 0$. Prove that this order is transitive: if $X \succeq Y$ and $Y \succeq Z$, then $X \succeq Z$. Use the variational definition of PSD matrices.</p>
+
+      <h3>P0.17 — Weighted Inner Product</h3>
+      <p>Let $A \in \mathbb{S}^n_{++}$ be a symmetric positive definite matrix.
+      <br>(a) Prove that $\langle x, y \rangle_A = x^\top A y$ satisfies all axioms of an inner product.
+      <br>(b) Write down the Cauchy-Schwarz inequality for this inner product.</p>
+
+      <h3>P0.18 — Characterization of Projectors</h3>
+      <p>A matrix $P$ is an orthogonal projector if and only if it is idempotent ($P^2=P$) and symmetric ($P^\top=P$).
+      <br>(a) Prove that if $P$ is an orthogonal projector onto a subspace $S$, it satisfies these conditions.
+      <br>(b) Prove the converse.</p>
+
+      <h3>P0.19 — PSD Cone in 2D</h3>
+      <p>Consider the space of $2 \times 2$ symmetric matrices, which has dimension 3.
+      <br>Write down the explicit inequalities defining the PSD cone $S \succeq 0$ in terms of the matrix entries $x, y, z$ (where $S = \begin{bmatrix} x & y \\ y & z \end{bmatrix}$). Relate this to the trace and determinant conditions.</p>
     </section>
 
     <!-- SECTION 11: READINGS -->

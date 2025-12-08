@@ -239,7 +239,7 @@
           <br>Complementary Slackness: $\lambda_i x_i = 0$.
           <ul>
             <li>If $x_i > 0$, then $\lambda_i = 0 \implies \alpha_i + x_i = 1/\nu$.</li>
-            <li>If $x_i = 0$, then $\alpha_i \ge 1/\nu$ (since $\lambda_i \ge 0$).</li>
+            <li>If $x_i = 0$, then $\alpha_i = 1/(\nu-\lambda_i)$. Since $\lambda_i \ge 0$, $\nu - \lambda_i \le \nu$, so $1/(\nu-\lambda_i) \ge 1/\nu$. Thus $\alpha_i \ge 1/\nu$.</li>
           </ul>
           Result: $x_i = \max(0, 1/\nu - \alpha_i)$. This is "water-filling" on the levels $\alpha_i$. We solve for $\nu$ such that $\sum x_i = 1$.</p>
         </div>

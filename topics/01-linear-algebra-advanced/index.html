@@ -102,10 +102,7 @@
       </div>
 
       <h3>Solving Least Squares with QR</h3>
-      <p>Given $A = QR$, the least squares objective simplifies due to the orthogonal invariance of the Euclidean norm:</p>
-      $$ \|Ax - b\|_2^2 = \|QRx - b\|_2^2 = \|Q^\top(QRx - b)\|_2^2 + \|(I - QQ^\top)b\|_2^2 $$
-      <p>Wait, a simpler derivation relies on the property that if $Q$ is square orthogonal, $\|Qy\| = \|y\|$. Here $Q$ is $m \times n$. We can extend $Q$ to a full orthogonal matrix $\tilde{Q} = [Q \ Q_\perp]$.
-      However, the standard efficient approach is:</p>
+      <p>Given $A = QR$, the least squares objective simplifies due to the orthogonal invariance of the Euclidean norm. The standard efficient approach uses the normal equations:</p>
       $$ A^\top A x = A^\top b \iff (QR)^\top (QR) x = (QR)^\top b \iff R^\top Q^\top Q R x = R^\top Q^\top b $$
       <p>Since $Q^\top Q = I$, this simplifies to $R^\top R x = R^\top Q^\top b$. Since $R$ is invertible (full rank assumption), we multiply by $R^{-\top}$:
       $$ R x = Q^\top b $$
@@ -293,13 +290,7 @@
       <h3>P1.2 — Frobenius Cauchy–Schwarz</h3>
       <p>Prove that $|\mathrm{tr}(A^\top B)| \le \|A\|_F \|B\|_F$ by viewing matrices in $\mathbb{R}^{m \times n}$ as vectors in $\mathbb{R}^{mn}$.</p>
 
-      <h3>P1.3 — Loewner Order Transitivity</h3>
-      <p>If $X \succeq Y$ and $Y \succeq Z$, prove $X \succeq Z$. Use the definition of PSD matrices.</p>
-
-      <h3>P1.4 — Affine Projection</h3>
-      <p>Find the projection of $y = (1, 2, 3)^\top$ onto the plane $x_1 + x_2 + x_3 = 1$ using the formula derived in Lecture 00.</p>
-
-      <h3>P1.5 — SVD Computation</h3>
+      <h3>P1.3 — SVD Computation</h3>
       <p>Compute the Singular Value Decomposition $A = U \Sigma V^\top$ by hand for the matrix $A = \begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix}$. Verify that the singular values are the square roots of the eigenvalues of $A^\top A$.</p>
 
       <h3>P1.6 — Normal Equations vs. QR</h3>
@@ -308,38 +299,26 @@
       <h3>P1.7 — Pseudoinverse Projectors</h3>
       <p>Show that $P = AA^+$ is the orthogonal projector onto $\mathcal{R}(A)$. Verify $P^2=P$ and $P^\top=P$ using SVD.</p>
 
-      <h3>P1.8 — Isometries</h3>
-      <p>Prove that if $Q^\top Q = I$, then $\|Qx\|_2 = \|x\|_2$ for all $x$. Interpret this geometrically.</p>
-
-      <h3>P1.9 — Projector Formula</h3>
+      <h3>P1.8 — Projector Formula</h3>
       <p>Let $A$ have linearly independent columns. Derive the projection formula $P = A(A^\top A)^{-1}A^\top$ by minimizing $\|Ax - b\|_2^2$.</p>
 
-      <h3>P1.10 — Characterization of Projectors</h3>
-      <p>Prove that a matrix $P$ is an orthogonal projector if and only if $P^2=P$ and $P^\top=P$.</p>
+      <h3>P1.9 — Hyperplane Projection</h3>
+      <p>Find the projection of $(1, 2, 3)^\top$ onto $x_1 + x_2 + x_3 = 3$. Verify your result using the standard formula for distance to a plane.</p>
 
-      <h3>P1.11 — Hyperplane Projection</h3>
-      <p>Find the projection of $(1, 2, 3)^\top$ onto $x_1 + x_2 + x_3 = 3$. (Compare with P1.4).</p>
-
-      <h3>P1.12 — Condition Number Calculation</h3>
+      <h3>P1.10 — Condition Number Calculation</h3>
       <p>Calculate the condition number $\kappa(A) = \sigma_{\max}(A)/\sigma_{\min}(A)$ for the matrix $A = \begin{bmatrix} 1 & 0 \\ 0 & \epsilon \end{bmatrix}$ where $\epsilon > 0$. What happens as $\epsilon \to 0$?</p>
 
-      <h3>P1.13 — Pseudoinverse of Rank-1 Matrix</h3>
+      <h3>P1.11 — Pseudoinverse of Rank-1 Matrix</h3>
       <p>Let $A = xy^\top$ where $x, y \in \mathbb{R}^n$ are non-zero vectors. Show that $A^+ = \frac{A^\top}{\|x\|_2^2 \|y\|_2^2}$.</p>
 
-      <h3>P1.14 — Operator Norm Properties</h3>
+      <h3>P1.12 — Operator Norm Properties</h3>
       <p>Prove that $\|A\|_2 = \sqrt{\lambda_{\max}(A^\top A)}$. Use the Rayleigh Quotient definition of eigenvalues.</p>
 
-      <h3>P1.15 — Orthogonal Invariance</h3>
+      <h3>P1.13 — Orthogonal Invariance</h3>
       <p>Show that $\|U A V^\top\|_F = \|A\|_F$ and $\|U A V^\top\|_2 = \|A\|_2$ for orthogonal $U, V$. This proves that these norms depend only on the singular values.</p>
 
-      <h3>P1.16 — The Orthogonal Group</h3>
+      <h3>P1.14 — The Orthogonal Group</h3>
       <p>Show that the set of orthogonal matrices forms a compact group.</p>
-
-      <h3>P1.17 — Weighted Inner Product</h3>
-      <p>For $A \succ 0$, show that $\langle x, y \rangle_A = x^\top A y$ is a valid inner product. Prove the associated Cauchy-Schwarz inequality.</p>
-
-      <h3>P1.18 — PSD Cone Walls</h3>
-      <p>Write down the explicit inequalities defining the PSD cone in 2D ($2 \times 2$ matrices) using trace and determinant.</p>
 </section>
 
     <!-- SECTION 6: READINGS -->
