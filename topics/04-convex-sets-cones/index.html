@@ -95,6 +95,21 @@
           <p>The hyperplane $\{x \mid a^\top x = a^\top x_0\}$ "supports" $C$ at $x_0$—it touches $C$ at $x_0$ and $C$ lies entirely on one side.</p>
         </div>
 
+        <div class="proof-box">
+          <h4>Proof (Limit of Separating Hyperplanes)</h4>
+          <div class="proof-step">
+            <strong>Step 1: Point outside interior.</strong> Since $x_0 \in \partial C$ and $C$ is convex, $\mathrm{int}(C)$ is also convex. If $\mathrm{int}(C) = \emptyset$, $C$ lies in a lower-dimensional affine space, and any hyperplane containing that space supports $C$. Assume $\mathrm{int}(C) \neq \emptyset$. Then $x_0 \notin \mathrm{int}(C)$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Separation.</strong> By the Separating Hyperplane Theorem, there exists a hyperplane separating the disjoint convex sets $\{x_0\}$ and $\mathrm{int}(C)$. Let $a \neq 0$ be the normal such that:
+            $$ a^\top z \le a^\top x_0 \quad \forall z \in \mathrm{int}(C) $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Continuity to Closure.</strong> Since the linear function $f(z) = a^\top z$ is continuous, the inequality holds for all points in the closure of $\mathrm{int}(C)$. For a convex set with nonempty interior, $\mathrm{cl}(\mathrm{int}(C)) = \mathrm{cl}(C)$.
+            Thus, $a^\top x \le a^\top x_0$ for all $x \in \mathrm{cl}(C)$, and specifically for all $x \in C$.
+          </div>
+        </div>
+
         <figure style="text-align: center; margin: 24px 0;">
           <img src="assets/supporting-hyperplane-tangent.png"
                alt="Illustration of the Supporting Hyperplane Theorem"

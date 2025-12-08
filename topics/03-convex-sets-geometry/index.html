@@ -130,6 +130,26 @@
           <p><b>Implication:</b> To describe any point in the convex hull, we never need more than $n+1$ points, regardless of how large $S$ is!</p>
         </div>
 
+        <div class="proof-box">
+          <h4>Proof</h4>
+          <div class="proof-step">
+            <strong>Step 1: Linear Dependence.</strong> Let $x \in \mathrm{conv}(S)$. By definition, $x = \sum_{i=1}^k \theta_i x_i$ with $\theta_i > 0$ and $\sum \theta_i = 1$. Suppose $k > n+1$.
+            The $k$ points $x_1, \dots, x_k$ define $k-1$ vectors $x_2-x_1, \dots, x_k-x_1$. Since $k-1 > n$, these vectors are linearly dependent in $\mathbb{R}^n$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Constructing a zero sum.</strong> There exist scalars $\alpha_2, \dots, \alpha_k$, not all zero, such that $\sum_{i=2}^k \alpha_i (x_i - x_1) = 0$.
+            Defining $\alpha_1 = -\sum_{i=2}^k \alpha_i$, this implies $\sum_{i=1}^k \alpha_i x_i = 0$ and $\sum_{i=1}^k \alpha_i = 0$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Reducing the count.</strong> We can modify the weights: $x = \sum_{i=1}^k (\theta_i - \beta \alpha_i) x_i$. This sum is still valid (coefficients sum to 1) for any $\beta$.
+            To eliminate one point, we choose $\beta$ to drive the smallest positive ratio $\theta_i / \alpha_i$ to zero while keeping others non-negative.
+            Let $\beta = \min_{i: \alpha_i > 0} (\theta_i / \alpha_i)$. The index achieving the minimum will have a zero coefficient.
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion:</strong> We have expressed $x$ as a convex combination of $k-1$ points. Repeating this process until $k \le n+1$ proves the theorem.
+          </div>
+        </div>
+
         <figure style="text-align: center; margin: 24px 0;">
           <img src="assets/convex-hull.png"
                alt="Illustration of a convex hull"
@@ -559,6 +579,28 @@
         <div class="theorem-box">
           <h4>Theorem</h4>
           <p>The perspective function preserves convexity: if $C \subseteq \mathbb{R}^{n+1}$ is convex, then $P(C)$ is convex.</p>
+        </div>
+
+        <div class="proof-box">
+          <h4>Proof</h4>
+          <div class="proof-step">
+            Let $u, v \in P(C)$. Then there exist $(y, t) \in C$ and $(y', t') \in C$ such that $u = y/t$ and $v = y'/t'$.
+            Let $\alpha \in [0,1]$. We want to show $\alpha u + (1-\alpha)v \in P(C)$.
+          </div>
+          <div class="proof-step">
+            Consider the convex combination of the points in $C$:
+            $$ z = \mu (y, t) + (1-\mu) (y', t') = (\mu y + (1-\mu)y', \mu t + (1-\mu)t') $$
+            where $\mu \in [0,1]$. Since $C$ is convex, $z \in C$.
+          </div>
+          <div class="proof-step">
+            The image of $z$ under $P$ is:
+            $$ P(z) = \frac{\mu y + (1-\mu)y'}{\mu t + (1-\mu)t'} $$
+            We want this to equal $\alpha (y/t) + (1-\alpha)(y'/t')$.
+            Setting the coefficients proportional matches the terms. We choose $\mu$ such that:
+            $$ \frac{\mu t}{\mu t + (1-\mu)t'} = \alpha $$
+            Solving for $\mu$ gives $\mu = \frac{\alpha t'}{\alpha t' + (1-\alpha)t}$. As $\alpha$ varies from 0 to 1, $\mu$ varies from 0 to 1.
+            Thus, every point on the line segment $[u, v]$ is the image of some point on the line segment $[(y,t), (y',t')]$.
+          </div>
         </div>
 
         <p>A <a href="#" class="definition-link">linear-fractional function</a> is a composition of perspective with an affine function:</p>

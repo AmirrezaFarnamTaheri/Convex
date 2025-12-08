@@ -87,10 +87,10 @@
 
         <div class="proof-step">
           <strong>Step 2: Iteration ($k=2, \dots, n$).</strong>
-          We remove the projection of $a_k$ onto the subspace spanned by the previous orthonormal vectors $q_1, \dots, q_{k-1}$:
+          We project the current vector $a_k$ onto the subspace spanned by the previous orthonormal vectors $q_1, \dots, q_{k-1}$ and subtract this projection. This process, "Gram-Schmidt orthogonalization", ensures that the remaining vector $v_k$ is orthogonal to all previous $q_j$:
           $$ v_k = a_k - \sum_{j=1}^{k-1} \langle q_j, a_k \rangle q_j $$
-          Let $r_{jk} = \langle q_j, a_k \rangle$. These are the coefficients in the upper triangle.
-          <br>Normalize the residual: $r_{kk} = \|v_k\|_2$ and $q_k = v_k / r_{kk}$.
+          Let $r_{jk} = \langle q_j, a_k \rangle$. These are the coefficients in the upper triangle of $R$.
+          <br>Normalize the residual to get the next basis vector: $r_{kk} = \|v_k\|_2$ and $q_k = v_k / r_{kk}$.
         </div>
 
         <div class="proof-step">
@@ -190,10 +190,11 @@
       </ul>
 
       <h3>Low-Rank Approximation (Eckart-Young-Mirsky)</h3>
-      <p>The SVD allows us to find the best approximation of a matrix $A$ by a matrix of lower rank $k$. This is crucial for compression and denoising.</p>
+      <p>The SVD allows us to find the best approximation of a matrix $A$ by a matrix of lower rank $k$. This is crucial for compression (keeping signal) and denoising (discarding noise).</p>
       <div class="theorem-box">
         <p>Let $A_k = \sum_{i=1}^k \sigma_i u_i v_i^\top$ be the truncated SVD. Then $A_k$ is the solution to:</p>
         $$ \min_{\text{rank}(B) \le k} \|A - B\| $$
+        <p>Intuitively, by keeping the largest singular values, we capture the directions where the matrix has the most energy (action), minimizing the residual energy.</p>
         <p>for both the spectral norm ($\|\cdot\|_2$) and the Frobenius norm ($\|\cdot\|_F$). The errors are:</p>
         <ul>
           <li>Spectral Error: $\|A - A_k\|_2 = \sigma_{k+1}$</li>
@@ -235,7 +236,8 @@
 
       <h4>Properties and Applications</h4>
       <ul>
-        <li><b>Minimum Norm Solution:</b> For any system $Ax=b$, the vector $x^\star = A^+ b$ is the solution to the least squares problem $\min \|Ax-b\|_2$ that has the <b>minimum Euclidean norm</b>.</li>
+        <li><b>Minimum Norm Solution:</b> For any system $Ax=b$ (or the least squares problem), the vector $x^\star = A^+ b$ is the solution that has the <b>minimum Euclidean norm</b>.
+        <br><i>Why?</i> The general solution is $x = A^+ b + (I - A^+ A)z$ for arbitrary $z$. The first term $A^+ b$ lies in the row space $\mathcal{R}(A^\top)$ (image of $V$), while the second term projects onto the nullspace $\mathcal{N}(A)$. Since these subspaces are orthogonal, $\|x\|^2 = \|A^+ b\|^2 + \|(I - A^+ A)z\|^2$, which is clearly minimized when the second term is zero.</li>
         <li><b>Projectors:</b> $AA^+$ is the orthogonal projector onto the column space $\mathcal{R}(A)$. $A^+A$ is the orthogonal projector onto the row space $\mathcal{R}(A^\top)$.</li>
       </ul>
 

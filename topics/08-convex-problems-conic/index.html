@@ -141,14 +141,15 @@
         <div class="proof-step">
           <strong>Step 3: Construct Worst-Case Perturbation.</strong>
           We show the bound is tight. Let $u = Ax - b$.
-          If $u=0$ or $x=0$, the bound holds by definition. Assume $u \ne 0, x \ne 0$.
-          Choose $\Delta A$ to be a rank-1 matrix that aligns $\Delta A x$ with $u$:
+          If $u=0$ or $x=0$, the bound holds by definition (since $\Delta A$ can be 0). Assume $u \ne 0, x \ne 0$.
+          We want to choose $\Delta A$ such that $\Delta A x$ is parallel to $u$ (to maximize the norm sum) and $\|\Delta A x\|$ is maximized.
+          Consider the rank-1 matrix:
           $$ \Delta A = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2} $$
-          This matrix has spectral norm $\rho$ (product of unit vectors scaled by $\rho$).
-          Applying it to $x$:
-          $$ \Delta A x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2 $$
-          This vector is a positive scalar multiple of $u$, so the norms add directly:
-          $$ \|u + \Delta A x\|_2 = \|u\|_2 + \|\Delta A x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2 $$
+          <b>Check norm:</b> $\|\Delta A\|_2 = \rho \| \frac{u}{\|u\|} \|_2 \| \frac{x}{\|x\|} \|_2 = \rho \cdot 1 \cdot 1 = \rho$. So it is feasible.
+          <b>Check alignment:</b>
+          $$ \Delta A x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \frac{\|x\|_2^2}{\|x\|_2} = \left(\rho \frac{\|x\|_2}{\|u\|_2}\right) u $$
+          This vector is a positive scalar multiple of $u$. Thus:
+          $$ \|(Ax - b) + \Delta A x\|_2 = \|u + \Delta A x\|_2 = \|u\|_2 + \|\Delta A x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2 $$
         </div>
 
         <div class="proof-step">
