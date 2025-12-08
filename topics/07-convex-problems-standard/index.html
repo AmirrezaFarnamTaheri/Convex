@@ -93,7 +93,10 @@
         <p><strong>Statement:</strong> If $f_i$ are convex and $h_j$ are affine, then $\mathcal{F}$ is a convex set.</p>
 
         <div class="proof-step">
-          <strong>Proof:</strong> The feasible set $\mathcal{F}$ is the intersection of sublevel sets $\{x \mid f_i(x) \le 0\}$ (convex by <a href="../05-convex-functions-basics/index.html">Lecture 05</a>) and affine sets $\{x \mid h_j(x) = 0\}$ (convex by definition). Since the intersection of convex sets is convex (see <a href="../03-convex-sets-geometry/index.html">Lecture 03</a>), $\mathcal{F}$ is convex.
+          <strong>Proof:</strong> The feasible set $\mathcal{F}$ is the intersection of two types of sets:
+          1. The sublevel sets of convex functions: $S_i = \{x \mid f_i(x) \le 0\}$. Since $f_i$ is convex, $S_i$ is convex (Lecture 05).
+          2. The level sets of affine functions: $H_j = \{x \mid h_j(x) = 0\}$. These are hyperplanes, which are convex.
+          Since the intersection of any collection of convex sets is convex (Lecture 03), $\mathcal{F} = (\cap S_i) \cap (\cap H_j)$ is convex.
         </div>
       </div>
 

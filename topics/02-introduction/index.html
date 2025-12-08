@@ -488,7 +488,11 @@
 
         <div class="example">
           <h4>Example 2: Antenna Array Weight Design</h4>
-          <p>Design antenna weights to achieve a desired beam pattern while minimizing side lobes—naturally formulated as SOCP.</p>
+        <p>Design antenna weights to achieve a desired beam pattern while minimizing side lobes—naturally formulated as SOCP.
+        <br><i>Explanation:</i> We want to minimize the maximum magnitude of the array response in "side lobe" directions, subject to a unity response in the "main lobe" direction.
+        <br>Minimize $\max_k |w^\top a(\theta_k)|$ subject to $w^\top a(\theta_{\text{target}}) = 1$.
+        <br>This transforms to: $\min t$ s.t. $|w^\top a(\theta_k)| \le t$.
+        <br>Since these are complex magnitudes, $|z| \le t$ is a second-order cone constraint in the real/imaginary parts.</p>
         </div>
 
         <h3>4.4 Semidefinite Programming (SDP)</h3>
@@ -516,6 +520,12 @@
         <div class="example">
           <h4>Example: Minimum Volume Enclosing Ellipsoid (MVEE)</h4>
           <p>Given points $x_1, \ldots, x_N \in \mathbb{R}^n$, find the smallest-volume ellipsoid containing all of them. This can be formulated as an SDP and has applications in outlier detection and robust statistics.</p>
+        <p><b>Formulation:</b> An ellipsoid can be parameterized as $\mathcal{E} = \{x \mid \|Ax + b\|_2 \le 1\}$ where $A \succ 0$.
+        The volume is proportional to $\det(A^{-1})$. Maximizing $\det(A)$ is equivalent to minimizing $-\log\det(A)$.
+        <br>Objective: $\min -\log\det(A)$.
+        <br>Constraints: $\|Ax_i + b\|_2 \le 1$ for all $i=1,\dots,N$.
+        <br>Using the Schur complement, $\|Ax_i + b\|_2 \le 1 \iff \|Ax_i + b\|_2^2 \le 1 \iff \begin{bmatrix} I & Ax_i+b \\ (Ax_i+b)^\top & 1 \end{bmatrix} \succeq 0$.
+        <br>Thus, it is an SDP (with a convex log-det objective).</p>
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">
@@ -1859,15 +1869,14 @@
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Step 1: Difference Variables.</strong>
-    Let $y_1 = x_1, y_2 = x_2-x_1, \dots, y_n = x_n - x_{n-1}$.
-    The condition is $y_2, \dots, y_n \ge 0$. (No condition on $y_1$?).
-    Wait, usually monotone non-negative cone? Or just sorted?
-    If just sorted, it's not a pointed cone (contains line along $\mathbf{1}$).
-    Let's assume standard monotone non-negative: $0 \le x_1 \le \dots \le x_n$.
-    Then $y_i \ge 0$ for all $i$.
-    $x_k = \sum_{i=1}^k y_i$.
-    $x = Ly$ where $L$ is lower triangular ones matrix.
-    $K = \{ Ly \mid y \ge 0 \} = L(\mathbb{R}^n_+)$.</div>
+    We assume the standard monotone non-negative cone: $K = \{ x \in \mathbb{R}^n \mid 0 \le x_1 \le x_2 \le \dots \le x_n \}$.
+    Let's define new variables to express $x$ as a non-negative sum.
+    Let $y_1 = x_1$, $y_2 = x_2 - x_1$, ..., $y_n = x_n - x_{n-1}$.
+    The constraints imply $y_i \ge 0$ for all $i$.
+    We can reconstruct $x$ from $y$:
+    $$ x_k = \sum_{i=1}^k y_i $$
+    In matrix form, $x = Ly$, where $L$ is the lower triangular matrix of all ones.
+    Thus $K = \{ Ly \mid y \ge 0 \} = L(\mathbb{R}^n_+)$.</div>
     <div class="proof-step"><strong>Step 2: Dual of Image.</strong>
     $(L K)^*$ where $K$ is self-dual orthant.
     Actually, $(L \mathbb{R}^n_+)^* = \{ z \mid L^\top z \in \mathbb{R}^n_+ \} = \{ z \mid L^\top z \ge 0 \}$.

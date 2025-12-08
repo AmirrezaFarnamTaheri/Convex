@@ -297,14 +297,24 @@
     $G(\alpha x) = (\prod (\alpha x_i))^{1/n} = (\alpha^n \prod x_i)^{1/n} = \alpha G(x)$.
     $G$ is homogeneous of degree 1.</div>
     <div class="proof-step"><strong>Step 3: Theorem.</strong>
-    A function that is log-concave and homogeneous of degree 1 is concave.
-    <i>Proof sketch:</i> $G(x+y) \ge G(x)+G(y)$.
-    $G(x+y) = G(\frac{x+y}{2} \cdot 2) = 2 G(\frac{x}{2} + \frac{y}{2})$.
-    By log-concavity (and thus quasi-concavity? No, stronger):
-    Actually, use direct log-sum inequality or just the known property.
-    Because $\log G$ is concave, $G(\theta x + (1-\theta)y) \ge G(x)^\theta G(y)^{1-\theta}$.
-    If we scale $x, y$ such that $G(x)=G(y)=1$, then $G(\theta x + (1-\theta)y) \ge 1 = \theta G(x) + (1-\theta)G(y)$.
-    By homogeneity, this extends to all $x,y$. Thus $G$ is concave.</div>
+    We show that a function $G$ that is log-concave and homogeneous of degree 1 is concave.
+    We want to show $G(\theta x + (1-\theta)y) \ge \theta G(x) + (1-\theta)G(y)$.
+    By log-concavity, we have:
+    $$ G(\theta x + (1-\theta)y) \ge G(x)^\theta G(y)^{1-\theta} $$
+    Let $\alpha = G(x)$ and $\beta = G(y)$. If either is 0, the inequality holds trivially (since $G \ge 0$). Assume $\alpha, \beta > 0$.
+    Consider the normalized vectors $\tilde{x} = x/\alpha$ and $\tilde{y} = y/\beta$, so $G(\tilde{x}) = G(\tilde{y}) = 1$.
+    We want to relate the weighted geometric mean to the weighted arithmetic mean.
+    Actually, a simpler argument uses the AM-GM inequality directly on the log-concavity result.
+    $$ G(\theta x + (1-\theta)y) \ge \alpha^\theta \beta^{1-\theta} $$
+    This lower bound is the weighted geometric mean of the values. Concavity requires the weighted arithmetic mean.
+    However, if we choose specific weights based on the function values, we can prove superadditivity $G(x+y) \ge G(x) + G(y)$, which implies concavity for homogeneous functions.
+    <br><b>Formal Superadditivity Proof:</b>
+    Let $x, y$ be such that $G(x)=\alpha, G(y)=\beta$.
+    Let $\lambda = \frac{\alpha}{\alpha+\beta}$. Then $1-\lambda = \frac{\beta}{\alpha+\beta}$.
+    Consider the point $z = \frac{x+y}{\alpha+\beta} = \lambda \frac{x}{\alpha} + (1-\lambda) \frac{y}{\beta}$.
+    By log-concavity (and thus quasi-concavity), $G(z) \ge G(x/\alpha)^\lambda G(y/\beta)^{1-\lambda} = 1^\lambda 1^{1-\lambda} = 1$.
+    By homogeneity, $G(x+y) = (\alpha+\beta) G(z) \ge \alpha + \beta = G(x) + G(y)$.
+    Superadditivity plus homogeneity implies concavity.</div>
   </div>
 </div>
 \n<div class="problem">

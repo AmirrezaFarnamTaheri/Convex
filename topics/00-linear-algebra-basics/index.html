@@ -390,12 +390,14 @@
       <div class="proof-box">
         <h4>Proof</h4>
         <p>Let $u, v$ be linearly independent vectors. By assumption, $Au = \lambda_u u$ and $Av = \lambda_v v$.
-        Consider their sum $w = u+v$. We must have $A(u+v) = \lambda_w (u+v)$.
+        Consider their sum $w = u+v$. Since $w$ is also an eigenvector (by assumption for "every" vector), we must have $A(u+v) = \lambda_w (u+v)$.
         $$ \lambda_w u + \lambda_w v = \lambda_w(u+v) = A(u+v) = Au + Av = \lambda_u u + \lambda_v v $$
-        Rearranging: $(\lambda_w - \lambda_u)u + (\lambda_w - \lambda_v)v = 0$.
-        Since $u$ and $v$ are linearly independent, the only solution to $c_1 u + c_2 v = 0$ is the zero solution $c_1=c_2=0$.
-        Therefore, the coefficients must vanish: $\lambda_w - \lambda_u = 0$ and $\lambda_w - \lambda_v = 0$, which implies $\lambda_w = \lambda_u$ and $\lambda_w = \lambda_v$.
-        Thus $\lambda_u = \lambda_v$ for any independent pair. By transitivity, all vectors share the same eigenvalue $\lambda$. Thus $Ax = \lambda x$ for all $x$, so $A = \lambda I$.</p>
+        Rearranging the terms to one side:
+        $$ (\lambda_w - \lambda_u)u + (\lambda_w - \lambda_v)v = 0 $$
+        Since $u$ and $v$ are linearly independent, no non-trivial linear combination of them can be zero. Therefore, the coefficients must vanish individually:
+        $$ \lambda_w - \lambda_u = 0 \quad \text{and} \quad \lambda_w - \lambda_v = 0 $$
+        This implies $\lambda_w = \lambda_u$ and $\lambda_w = \lambda_v$.
+        Thus $\lambda_u = \lambda_v$ for any linearly independent pair. For any linearly dependent pair (where $v=cu$), we can pick a third vector independent of both to bridge the equality. By transitivity, all non-zero vectors share the same eigenvalue $\lambda$. Thus $Ax = \lambda x$ for all $x \in \mathbb{R}^n$, which implies $A = \lambda I$.</p>
       </div>
       <p><b>Geometric Intuition:</b> A general matrix distorts a circle into an ellipse. If <i>every</i> direction is a principal axis (eigenvector), the ellipse must be a circle (isotropic scaling).</p>
 
@@ -556,8 +558,8 @@
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Apply the discriminant condition.</strong> This quadratic in $t$ is non-negative for all $t$, so its discriminant must be non-positive:
-          $$ ( -2(x^\top y) )^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$
+          <strong>Step 2: Apply the discriminant condition.</strong> The quadratic is of the form $At^2 + Bt + C \ge 0$, with $A=\|y\|_2^2$, $B=-2x^\top y$, and $C=\|x\|_2^2$. For a parabola opening upwards ($A \ge 0$) to remain above the axis, it must have at most one real root (it either touches the axis or floats above it). This means its discriminant $\Delta = B^2 - 4AC$ must be non-positive:
+          $$ \Delta = ( -2(x^\top y) )^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$
         </div>
 
         <div class="proof-step">
@@ -973,7 +975,11 @@
             <li><b>Block Matrix:</b> Useful for Semidefinite Programming (SDP) constraints.</li>
             <li><b>Rank-1 Update:</b> Useful for algebraic manipulation ($tY \succeq xx^\top$).</li>
           </ul>
-          <p><i>Proof of $tY - xx^\top$:</i> Consider the quadratic form $v^\top(tY - xx^\top)v = t v^\top Y v - (x^\top v)^2$. This is non-negative for all $v$ if and only if $(x^\top v)^2 \le t (v^\top Y v)$. By Cauchy-Schwarz (specifically with inner product $\langle u, w \rangle_Y = u^\top Y w$), the maximum value of $\frac{(x^\top v)^2}{v^\top Y v}$ is $x^\top Y^{-1} x$. Thus we need $t \ge x^\top Y^{-1} x$.</p>
+          <p><i>Proof of $tY - xx^\top$:</i> Consider the quadratic form $v^\top(tY - xx^\top)v = t v^\top Y v - (x^\top v)^2$. This is non-negative for all $v$ if and only if $(x^\top v)^2 \le t (v^\top Y v)$.</p>
+          <p>To find the tightest bound on $t$, we maximize the ratio $\frac{(x^\top v)^2}{v^\top Y v}$. Let $u = Y^{1/2} v$ and $w = Y^{-1/2} x$. Then:
+          $$ \frac{(x^\top v)^2}{v^\top Y v} = \frac{(w^\top u)^2}{\|u\|_2^2} $$
+          By the standard Cauchy-Schwarz inequality, $(w^\top u)^2 \le \|w\|_2^2 \|u\|_2^2$, so the ratio is bounded by $\|w\|_2^2 = (Y^{-1/2} x)^\top (Y^{-1/2} x) = x^\top Y^{-1} x$.
+          Thus, we need $t \ge x^\top Y^{-1} x$.</p>
         </div>
 
       <p><b>Application:</b> This lemma turns the nonlinear constraint $\|Bx\|_2^2 \le c$ (equivalent to $x^\top B^\top B x \le c$) into an LMI:
