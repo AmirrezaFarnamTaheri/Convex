@@ -304,6 +304,16 @@
         </div>
       </div>
 
+      <div class="example">
+        <h4>Geometric Example: $\mathbb{R}^3$</h4>
+        <p>Let $A = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 0 & 0 \end{bmatrix}$.
+        <br><b>Column Space $\mathcal{R}(A)$:</b> The span of $(1,0,0)^\top$ and $(0,1,0)^\top$, i.e., the $xy$-plane ($z=0$).
+        <br><b>Left Nullspace $\mathcal{N}(A^\top)$:</b> We solve $A^\top y = 0$.
+        $$ \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \\ y_3 \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix} \implies y_1 = 0, y_2 = 0 $$
+        So $y = (0, 0, y_3)^\top$. This is the $z$-axis.
+        <br><b>Orthogonality:</b> The $xy$-plane is clearly orthogonal to the $z$-axis.</p>
+      </div>
+
       <h3>Rank and Rank–Nullity Theorem</h3>
       <p>$\mathrm{rank}(A) = \dim \mathcal{R}(A)$. For $A \in \mathbb{R}^{m \times n}$:
       $$ \dim \mathcal{N}(A) + \mathrm{rank}(A) = n $$
@@ -975,11 +985,33 @@
             <li><b>Block Matrix:</b> Useful for Semidefinite Programming (SDP) constraints.</li>
             <li><b>Rank-1 Update:</b> Useful for algebraic manipulation ($tY \succeq xx^\top$).</li>
           </ul>
-          <p><i>Proof of $tY - xx^\top$:</i> Consider the quadratic form $v^\top(tY - xx^\top)v = t v^\top Y v - (x^\top v)^2$. This is non-negative for all $v$ if and only if $(x^\top v)^2 \le t (v^\top Y v)$.</p>
-          <p>To find the tightest bound on $t$, we maximize the ratio $\frac{(x^\top v)^2}{v^\top Y v}$. Let $u = Y^{1/2} v$ and $w = Y^{-1/2} x$. Then:
-          $$ \frac{(x^\top v)^2}{v^\top Y v} = \frac{(w^\top u)^2}{\|u\|_2^2} $$
-          By the standard Cauchy-Schwarz inequality, $(w^\top u)^2 \le \|w\|_2^2 \|u\|_2^2$, so the ratio is bounded by $\|w\|_2^2 = (Y^{-1/2} x)^\top (Y^{-1/2} x) = x^\top Y^{-1} x$.
-          Thus, we need $t \ge x^\top Y^{-1} x$.</p>
+          <div class="proof-box">
+            <h4>Detailed Derivation: From Rank-1 to Scalar</h4>
+            <p>We want to show $tY - xx^\top \succeq 0 \iff t \ge x^\top Y^{-1} x$.</p>
+            <div class="proof-step">
+                <strong>Step 1: Variational Definition.</strong>
+                $tY - xx^\top \succeq 0$ means for all $v \in \mathbb{R}^n$:
+                $$ v^\top (tY - xx^\top) v \ge 0 \implies t (v^\top Y v) - (v^\top x)(x^\top v) \ge 0 \implies (x^\top v)^2 \le t (v^\top Y v) $$
+            </div>
+            <div class="proof-step">
+                <strong>Step 2: Change of Variables.</strong>
+                Since $Y \succ 0$, it has a square root $Y^{1/2}$. Let $u = Y^{1/2} v$. Then $v = Y^{-1/2} u$.
+                The term $v^\top Y v = u^\top Y^{-1/2} Y Y^{-1/2} u = u^\top u = \|u\|_2^2$.
+                The term $x^\top v = x^\top Y^{-1/2} u = (Y^{-1/2} x)^\top u$. Let $w = Y^{-1/2} x$. Then $x^\top v = w^\top u$.
+            </div>
+            <div class="proof-step">
+                <strong>Step 3: Apply Cauchy-Schwarz.</strong>
+                The inequality becomes $(w^\top u)^2 \le t \|u\|_2^2$ for all $u$.
+                We want to find the minimum $t$ that satisfies this. This is equivalent to:
+                $$ t \ge \sup_{u \neq 0} \frac{(w^\top u)^2}{\|u\|_2^2} $$
+                By the Cauchy-Schwarz inequality, $(w^\top u)^2 \le \|w\|_2^2 \|u\|_2^2$, with equality when $u$ is parallel to $w$.
+                Thus, the supremum is $\|w\|_2^2$.
+            </div>
+            <div class="proof-step">
+                <strong>Step 4: Conclusion.</strong>
+                $$ t \ge \|w\|_2^2 = w^\top w = (Y^{-1/2} x)^\top (Y^{-1/2} x) = x^\top Y^{-1} x $$
+            </div>
+          </div>
         </div>
 
       <p><b>Application:</b> This lemma turns the nonlinear constraint $\|Bx\|_2^2 \le c$ (equivalent to $x^\top B^\top B x \le c$) into an LMI:
@@ -1359,9 +1391,14 @@
           Since scalar transpose is identity ($x^\top A^\top b = b^\top A x$), we simplify to:
           $$ f(x) = \frac{1}{2} x^\top A^\top A x - b^\top A x + \frac{1}{2} b^\top b $$
           </li>
-          <li>$\nabla (\frac{1}{2} x^\top Q x) = Qx$ for symmetric $Q$. Here $Q = A^\top A$.
-          $\nabla (-b^\top A x) = \nabla (-(A^\top b)^\top x) = -A^\top b$.
-          Thus $\nabla f(x) = A^\top A x - A^\top b = A^\top (Ax - b)$.
+          <li><b>Gradient Derivation:</b>
+            <br>Term 1: $\frac{1}{2} x^\top (A^\top A) x$. Let $Q = A^\top A$ (symmetric).
+            $$ \nabla (\frac{1}{2} x^\top Q x) = \frac{1}{2} (Q + Q^\top) x = \frac{1}{2} (2Q) x = Qx = A^\top A x $$
+            <br>Term 2: $-b^\top A x$. This is linear in $x$. We can rewrite it as $-(A^\top b)^\top x$.
+            The gradient of $c^\top x$ is $c$. Here $c = -(A^\top b)$.
+            $$ \nabla (-b^\top A x) = -A^\top b $$
+            <br>Term 3: $\frac{1}{2} b^\top b$. Constant w.r.t $x$, gradient is 0.
+            <br><b>Result:</b> $\nabla f(x) = A^\top A x - A^\top b = A^\top (Ax - b)$.
           </li>
           <li>$\nabla f(x) = 0 \implies A^\top A x - A^\top b = 0 \implies A^\top A x = A^\top b$. These are the Normal Equations.
           </li>
@@ -1523,11 +1560,16 @@
           Using the cyclic property: $\mathrm{tr}(B^\top (A^\top A) B) = \mathrm{tr}((A^\top A) (B B^\top))$.
         </div>
         <div class="proof-step">
-          Let $P = A^\top A$ and $Q = B B^\top$. Both are PSD.
-          We use the inequality $\mathrm{tr}(PQ) \le \lambda_{\max}(P) \mathrm{tr}(Q)$ (Von Neumann's trace inequality or simple eigen-bound).
-          <br><i>Proof of mini-lemma:</i> Diagonalize $Q = U \Lambda U^\top$. $\mathrm{tr}(P U \Lambda U^\top) = \mathrm{tr}(U^\top P U \Lambda) = \sum (U^\top P U)_{ii} \lambda_i$.
-          The diagonal elements of $U^\top P U$ are bounded by $\lambda_{\max}(P)$.
-          Thus $\mathrm{tr}(PQ) \le \lambda_{\max}(P) \sum \lambda_i(Q) = \lambda_{\max}(P) \mathrm{tr}(Q)$.
+          <strong>Step 2: Trace Inequality.</strong>
+          Let $P = A^\top A$ and $Q = B B^\top$. Both are symmetric positive semidefinite (PSD).
+          We claim $\mathrm{tr}(PQ) \le \lambda_{\max}(P) \mathrm{tr}(Q)$.
+          <br><i>Proof:</i> Since $Q$ is symmetric, it has an eigendecomposition $Q = U \Lambda U^\top$ with $\lambda_i \ge 0$.
+          $$ \mathrm{tr}(PQ) = \mathrm{tr}(P U \Lambda U^\top) = \mathrm{tr}(U^\top P U \Lambda) $$
+          Let $M = U^\top P U$. The diagonal entry $M_{ii} = u_i^\top P u_i$.
+          Since $u_i$ is a unit vector (column of orthogonal matrix $U$), the Rayleigh quotient implies:
+          $$ \lambda_{\min}(P) \le u_i^\top P u_i \le \lambda_{\max}(P) $$
+          Thus $M_{ii} \le \lambda_{\max}(P)$.
+          $$ \mathrm{tr}(M \Lambda) = \sum_i M_{ii} \lambda_i \le \sum_i \lambda_{\max}(P) \lambda_i = \lambda_{\max}(P) \sum_i \lambda_i = \lambda_{\max}(P) \mathrm{tr}(Q) $$
         </div>
         <div class="proof-step">
           Applying this: $\|AB\|_F^2 \le \lambda_{\max}(A^\top A) \mathrm{tr}(B B^\top) = \|A\|_2^2 \|B\|_F^2$.

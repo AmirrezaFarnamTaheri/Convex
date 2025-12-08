@@ -104,7 +104,13 @@
             <li><b>Linearity (Affine):</b> Represents "flat" structures—lines, planes, hyperplanes. These are sets that extend infinitely in all directions within a subspace. They are both convex and concave. In optimization, we use them for equality constraints because the intersection of hyperplanes is a stable, convex object (a smaller affine set).</li>
             <li><b>Convexity:</b> Represents "bulging" or "bowl-like" structures—balls, ellipsoids, halfspaces. These sets have an "inside" and an "outside". In optimization, we use them for inequality constraints ("stay inside the bowl") or objectives ("find the bottom of the bowl").</li>
           </ul>
-          <p><b>Rule of Thumb:</b> If you force a "curved" function to be zero ($x^2=1$), you get a curved shell, which is not a solid convex set. If you force a "flat" function to be zero ($ax=b$), you get a flat slice, which is convex.</p>
+          <div class="example">
+            <h4>🚫 Counter-Example Corner: Why $x^2=1$ is Forbidden</h4>
+            <p>Suppose we try to enforce the constraint $x^2 = 1$ in a convex problem.
+            <br>The feasible set is $\{x \in \mathbb{R} \mid x^2 = 1\} = \{-1, +1\}$.
+            <br>Is this set convex? No! The line segment connecting $-1$ and $+1$ contains the point 0, which is not in the set ($0^2 \neq 1$).
+            <br>This is why equality constraints $h(x)=0$ must be affine (flat). If $h(x)$ is convex (like $x^2-1$), its zero-set is the boundary of a convex set, which is generally not convex.</p>
+          </div>
         </div>
 
         <div class="insight">
@@ -198,6 +204,9 @@
           </div>
 
           <div class="proof-step">
+            <div style="float: right; margin-left: 20px; width: 150px; padding: 10px; background: #f8f9fa; border: 1px solid #ddd; font-size: 0.9em;">
+                <strong>Visual Guide:</strong> Imagine a bowl. $x^*$ is a local dip. If $y$ is lower (global min), draw a line from $x^*$ to $y$. The line must go <em>down</em> from $x^*$. But that means points immediately next to $x^*$ are lower than $x^*$, so $x^*$ wasn't even a local min!
+            </div>
             <strong>Step 4: Construct a contradiction.</strong> As $\theta \to 0^+$, the point $z(\theta)$ approaches $x^*$. Specifically:
             $$
             \|z(\theta) - x^*\|_2 = \|\theta(y - x^*)\|_2 = \theta \|y - x^*\|_2
@@ -1342,11 +1351,13 @@
     The target is $\theta g(u) + (1-\theta)g(v) = \theta \|u\|^2 + (1-\theta)\|v\|^2$.</div>
     <div class="proof-step"><strong>Step 4: Compute the difference (RHS - LHS).</strong>
     $$ \Delta = [\theta \|u\|^2 + (1-\theta)\|v\|^2] - [\theta^2 \|u\|^2 + 2\theta(1-\theta) u^\top v + (1-\theta)^2 \|v\|^2] $$
-    Group terms by $\|u\|^2$ and $\|v\|^2$:
-    $$ \theta(1-\theta)\|u\|^2 + (1-\theta)(1-(1-\theta))\|v\|^2 - 2\theta(1-\theta)u^\top v $$
-    $$ = \theta(1-\theta)\|u\|^2 + \theta(1-\theta)\|v\|^2 - 2\theta(1-\theta)u^\top v $$
-    $$ = \theta(1-\theta) [ \|u\|^2 - 2u^\top v + \|v\|^2 ] $$
-    $$ = \theta(1-\theta) \|u - v\|_2^2 $$</div>
+    Group terms by $\|u\|^2$. Coefficient is $\theta - \theta^2 = \theta(1-\theta)$.
+    <br>Group terms by $\|v\|^2$. Coefficient is $(1-\theta) - (1-\theta)^2 = (1-\theta)(1 - (1-\theta)) = (1-\theta)\theta$.
+    <br>The cross term is $-2\theta(1-\theta) u^\top v$.
+    <br>Factor out the common term $\theta(1-\theta)$:
+    $$ \Delta = \theta(1-\theta) \left[ \|u\|^2 + \|v\|^2 - 2u^\top v \right] $$
+    Recognize the term in brackets as the squared norm of difference:
+    $$ \Delta = \theta(1-\theta) \|u - v\|_2^2 $$</div>
     <div class="proof-step"><strong>Step 5: Conclusion.</strong>
     Since $\theta \in [0,1]$, both $\theta$ and $(1-\theta)$ are non-negative. Also, the squared norm $\|u-v\|_2^2$ is always non-negative.
     Thus, $\Delta \ge 0$, which implies:

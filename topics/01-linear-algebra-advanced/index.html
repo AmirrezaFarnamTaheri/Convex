@@ -122,6 +122,24 @@
         <li><b>$U$ (Rotation/Reflection):</b> Rotates the stretched axes to their final directions in the output space.</li>
       </ul>
 
+      <div class="example">
+        <h4>Numerical Example: SVD in 2D</h4>
+        <p>Let $A = \begin{bmatrix} 3 & 0 \\ 0 & -2 \end{bmatrix}$. This matrix stretches x by 3 and y by -2 (flip and stretch).</p>
+        <ul>
+          <li><b>Original:</b> Maps $e_1 \to (3,0)$, $e_2 \to (0,-2)$.</li>
+          <li><b>SVD Form ($U \Sigma V^\top$):</b>
+            $$ A = \underbrace{\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}}_{U} \underbrace{\begin{bmatrix} 3 & 0 \\ 0 & 2 \end{bmatrix}}_{\Sigma} \underbrace{\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}}_{V^\top} $$
+          </li>
+          <li><b>Step-by-step:</b>
+            <ol>
+              <li>$V^\top$: Identity (no initial rotation).</li>
+              <li>$\Sigma$: Stretch x by 3, y by 2. (Maps $e_1 \to (3,0), e_2 \to (0,2)$).</li>
+              <li>$U$: Reflection across x-axis. Maps $(0,2) \to (0,-2)$.</li>
+            </ol>
+          </li>
+        </ul>
+      </div>
+
       <figure style="text-align: center;">
         <img src="../../static/assets/topics/00-linear-algebra-basics/matrix-multiplication.svg"
              alt="SVD Geometric Interpretation"
@@ -237,7 +255,30 @@
       <h4>Properties and Applications</h4>
       <ul>
         <li><b>Minimum Norm Solution:</b> For any system $Ax=b$ (or the least squares problem), the vector $x^\star = A^+ b$ is the solution that has the <b>minimum Euclidean norm</b>.
-        <br><i>Why?</i> The general solution is $x = A^+ b + (I - A^+ A)z$ for arbitrary $z$. The first term $A^+ b$ lies in the row space $\mathcal{R}(A^\top)$ (image of $V$), while the second term projects onto the nullspace $\mathcal{N}(A)$. Since these subspaces are orthogonal, $\|x\|^2 = \|A^+ b\|^2 + \|(I - A^+ A)z\|^2$, which is minimized when the second term is zero (since norms are non-negative).</li>
+        <br>
+        <div class="proof-box">
+          <h4>Proof: $x_{LS} = A^+b$ minimizes norm</h4>
+          <p>The general solution to the least squares problem is the set of all $x$ such that $A^\top A x = A^\top b$. This set is affine: $x = x_p + z$, where $x_p$ is a particular solution and $z \in \mathcal{N}(A)$.</p>
+          <div class="proof-step">
+            <strong>Step 1: Particular Solution.</strong> Let $x_p = A^+ b$.
+            We verify it satisfies normal equations: $A^\top A (A^+ b) = (V \Sigma U^\top) (U \Sigma V^\top) (V \Sigma^+ U^\top) b = V \Sigma^2 \Sigma^+ U^\top b$.
+            Note $\Sigma^2 \Sigma^+ = \Sigma$ (since $\sigma^2 \cdot (1/\sigma) = \sigma$).
+            So $A^\top A x_p = V \Sigma U^\top b = A^\top b$. Thus $x_p$ is a least squares solution.
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Orthogonality.</strong>
+            $x_p = V \Sigma^+ U^\top b$. This vector is a linear combination of columns of $V$ corresponding to non-zero singular values. These columns span the row space $\mathcal{R}(A^\top)$.
+            Any nullspace vector $z \in \mathcal{N}(A)$ is orthogonal to the row space.
+            Thus $x_p \perp z$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Pythagorean Theorem.</strong>
+            For any other solution $x = x_p + z$:
+            $$ \|x\|^2 = \|x_p + z\|^2 = \|x_p\|^2 + \|z\|^2 \ge \|x_p\|^2 $$
+            Equality holds only if $z=0$. Thus $x_p = A^+ b$ is the unique minimum norm solution.
+          </div>
+        </div>
+        </li>
         <li><b>Projectors:</b> $AA^+$ is the orthogonal projector onto the column space $\mathcal{R}(A)$. $A^+A$ is the orthogonal projector onto the row space $\mathcal{R}(A^\top)$.</li>
       </ul>
 
@@ -319,13 +360,16 @@
           From Hölder, if $\|x\|_p \le 1$, then $x^\top y \le \|y\|_q$. Thus $\|y\|_* \le \|y\|_q$.
         </div>
         <div class="proof-step">
-          <strong>Lower bound ($\ge$):</strong> We need to find specific $x$ with $\|x\|_p=1$ such that $x^\top y = \|y\|_q$.
-          Let $x_i = \mathrm{sign}(y_i) |y_i|^{q-1}$. Then $x_i y_i = |y_i|^q$.
-          $\|x\|_p^p = \sum |y_i|^{p(q-1)}$. Since $1/p + 1/q = 1$, we have $p(q-1) = p(q - q/p) = pq(1 - 1/p) = pq(1/q) = q$.
-          So $\|x\|_p^p = \sum |y_i|^q = \|y\|_q^q$. Thus $\|x\|_p = \|y\|_q^{q/p}$.
-          Normalize: let $\tilde{x} = x / \|y\|_q^{q/p}$. Then $\|\tilde{x}\|_p = 1$.
-          $\tilde{x}^\top y = \frac{1}{\|y\|_q^{q/p}} \sum |y_i|^q = \frac{\|y\|_q^q}{\|y\|_q^{q/p}} = \|y\|_q^{q - q/p} = \|y\|_q^1 = \|y\|_q$.
-          Thus the supremum is at least $\|y\|_q$.
+          <strong>Lower bound ($\ge$):</strong> We need to construct a vector $x$ that "aligns" with $y$ to maximize the inner product.
+          We want $x_i$ to have the same sign as $y_i$, and magnitudes such that equality holds in Hölder's.
+          Choose $x_i = \mathrm{sign}(y_i) |y_i|^{q-1}$.
+          <br>Check inner product: $x^\top y = \sum \mathrm{sign}(y_i)|y_i|^{q-1} y_i = \sum |y_i|^q = \|y\|_q^q$.
+          <br>Check norm of $x$: $\|x\|_p^p = \sum |x_i|^p = \sum |y_i|^{p(q-1)}$.
+          Since $(p-1)q = p \implies p(q-1) = q$: $\|x\|_p^p = \sum |y_i|^q = \|y\|_q^q$.
+          So $\|x\|_p = \|y\|_q^{q/p}$.
+          <br>Now normalize to get a unit vector $\tilde{x} = x / \|x\|_p = x / \|y\|_q^{q/p}$.
+          $$ \tilde{x}^\top y = \frac{\|y\|_q^q}{\|y\|_q^{q/p}} = \|y\|_q^{q - q/p} = \|y\|_q^1 = \|y\|_q $$
+          Since we found a unit vector achieving this value, $\|y\|_* \ge \|y\|_q$.
         </div>
       </div>
 

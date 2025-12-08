@@ -199,6 +199,32 @@
         $
       </p>
       <p>This transformation is fundamental: many convex problems can be reduced to LPs via epigraph reformulation.</p>
+
+      <h3>2.5 Hierarchy of Convex Problems</h3>
+      <p>The standard problem classes are nested. Each is a special case of the next:</p>
+      $$ \text{LP} \subset \text{QP} \subset \text{SOCP} \subset \text{SDP} $$
+      <table class="data-table">
+        <thead>
+            <tr>
+                <th>Inclusion</th>
+                <th>Algebraic Justification</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>LP $\subset$ QP</b></td>
+                <td>A linear objective is a quadratic with $P=0$. Linear constraints are quadratic constraints with zero quadratic term.</td>
+            </tr>
+            <tr>
+                <td><b>QP $\subset$ SOCP</b></td>
+                <td>A convex quadratic constraint $x^\top P x + q^\top x + r \le 0$ ($P=L L^\top$) is equivalent to $\|L^\top x + \frac{1}{2}L^{-1}q\|_2 \le \text{affine}(x)$, which is an SOC constraint.</td>
+            </tr>
+            <tr>
+                <td><b>SOCP $\subset$ SDP</b></td>
+                <td>The SOC constraint $\|x\|_2 \le t$ is equivalent to the Linear Matrix Inequality $\begin{bmatrix} tI & x \\ x^\top & t \end{bmatrix} \succeq 0$ (by Schur complement).</td>
+            </tr>
+        </tbody>
+      </table>
     </section>
 
     <!-- Section 3: Quadratic Programs (QP) -->
@@ -497,13 +523,15 @@
     <h4>Solution</h4>
     <div class="proof-step">
       <strong>Step 1: Epigraph Variables.</strong>
-      For each term $\max(0, a_i^\top x + b_i)$, introduce a scalar variable $t_i$.
-      We require $t_i \ge \max(0, a_i^\top x + b_i)$.
+      The objective is a sum of convex functions $h_i(x) = \max(0, a_i^\top x + b_i)$.
+      We introduce a slack variable $t_i$ for each term to represent its value: $t_i \ge h_i(x)$.
+      The new objective is linear: $\sum t_i + c^\top x$.
     </div>
     <div class="proof-step">
       <strong>Step 2: Split Max Constraints.</strong>
-      The condition $t_i \ge \max(0, u_i)$ is equivalent to two linear inequalities:
-      $$ t_i \ge 0 \quad \text{and} \quad t_i \ge u_i $$
+      The condition $t_i \ge \max(0, a_i^\top x + b_i)$ is equivalent to requiring $t_i$ to be greater than or equal to <i>both</i> arguments of the max function:
+      $$ t_i \ge 0 \quad \text{and} \quad t_i \ge a_i^\top x + b_i $$
+      (If $t_i$ satisfies both, it satisfies the max. Since we minimize $t_i$, it will be tight at the max).
     </div>
     <div class="proof-step">
       <strong>Step 3: Final LP.</strong>
