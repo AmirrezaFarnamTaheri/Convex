@@ -32,6 +32,9 @@
       <div class="insight">
         <h4>Core Idea</h4>
         <p>Given a function $f$, the conjugate $f^*$ is <b>"the best linear lower bound"</b> to $f$, encoded as a function of the slope $y$. This transformation is the bridge to duality.</p>
+        <div style="margin-top: 10px; border-left: 3px solid #007bff; padding-left: 10px;">
+            <strong>Slope Interpretation:</strong> Imagine trying to support the graph of $f(x)$ with a line of slope $y$, i.e., $L(x) = y^\top x - c$. We want the line to be below $f$ everywhere ($y^\top x - c \le f(x)$), so $c \ge y^\top x - f(x)$. To get the tightest bound (the supporting hyperplane), we choose the smallest possible $c$, which is $\sup_x (y^\top x - f(x))$. This optimal intercept value is exactly $f^*(y)$.
+        </div>
       </div>
 
       <h3>1.1 Definition and Geometry</h3>
@@ -275,11 +278,12 @@
     Hessian $\nabla^2 f(x) = \text{diag}(p) - pp^\top$.
     Let $v \in \mathbb{R}^n$.
     $v^\top \nabla^2 f v = \sum p_i v_i^2 - (p^\top v)^2 = \sum p_i v_i^2 - (\sum p_i v_i)^2$.</div>
-    <div class="proof-step"><strong>Part B: Variance Interpretation.</strong>
-    Consider a random variable $Z$ taking value $v_i$ with probability $p_i$.
-    $\mathbb{E}[Z] = \sum p_i v_i$. $\mathbb{E}[Z^2] = \sum p_i v_i^2$.
-    The expression is $\mathbb{E}[Z^2] - (\mathbb{E}[Z])^2 = \text{Var}(Z)$.
-    Since variance is always non-negative, $v^\top \nabla^2 f v \ge 0$. Thus $f$ is convex.</div>
+    <div class="proof-step"><strong>Part C: Variance Interpretation.</strong>
+    Consider a discrete random variable $Z$ that takes value $v_i$ with probability $p_i$ (where $p$ is the softmax vector defined above).
+    <br>The term $\sum p_i v_i$ is the expected value $\mathbb{E}[Z]$.
+    <br>The term $\sum p_i v_i^2$ is the second moment $\mathbb{E}[Z^2]$.
+    <br>The expression for the quadratic form is $\mathbb{E}[Z^2] - (\mathbb{E}[Z])^2$, which is exactly the variance $\text{Var}(Z)$.
+    <br>Since variance is always non-negative, $v^\top \nabla^2 f v \ge 0$. Thus $f$ is convex.</div>
   </div>
 </div>
 \n<div class="problem">

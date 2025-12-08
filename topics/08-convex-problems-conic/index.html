@@ -141,15 +141,19 @@
         <div class="proof-step">
           <strong>Step 3: Construct Worst-Case Perturbation.</strong>
           We show the bound is tight. Let $u = Ax - b$.
-          If $u=0$ or $x=0$, the bound holds by definition (since $\Delta A$ can be 0). Assume $u \ne 0, x \ne 0$.
-          We want to choose $\Delta A$ such that $\Delta A x$ is parallel to $u$ (to maximize the norm sum) and $\|\Delta A x\|$ is maximized.
-          Consider the rank-1 matrix:
+          If $u=0$ or $x=0$, the bound holds by definition. Assume $u \ne 0, x \ne 0$.
+          <br><b>Goal:</b> Find $\Delta A$ with $\|\Delta A\|_2 \le \rho$ to maximize $\|u + \Delta A x\|_2$. This happens when $\Delta A x$ points in the same direction as $u$, and has maximal length.
+          The max length of $\Delta A x$ is $\|\Delta A\|_2 \|x\|_2 = \rho \|x\|_2$.
+          <br><b>Construction:</b> We need a matrix that maps $x$ to a vector parallel to $u$. A rank-1 outer product works best.
           $$ \Delta A = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2} $$
-          <b>Check norm:</b> $\|\Delta A\|_2 = \rho \| \frac{u}{\|u\|} \|_2 \| \frac{x}{\|x\|} \|_2 = \rho \cdot 1 \cdot 1 = \rho$. So it is feasible.
-          <b>Check alignment:</b>
-          $$ \Delta A x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \frac{\|x\|_2^2}{\|x\|_2} = \left(\rho \frac{\|x\|_2}{\|u\|_2}\right) u $$
-          This vector is a positive scalar multiple of $u$. Thus:
-          $$ \|(Ax - b) + \Delta A x\|_2 = \|u + \Delta A x\|_2 = \|u\|_2 + \|\Delta A x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2 $$
+          <b>Verification:</b>
+          <ul>
+            <li><b>Norm:</b> $\|\Delta A\|_2 = \rho \| \frac{u}{\|u\|} \|_2 \| \frac{x}{\|x\|} \|_2 = \rho \cdot 1 \cdot 1 = \rho$. (Feasible).</li>
+            <li><b>Action on x:</b> $\Delta A x = \rho \frac{u}{\|u\|} \frac{x^\top x}{\|x\|} = \rho \frac{u}{\|u\|} \|x\| = \left(\rho \frac{\|x\|}{\|u\|}\right) u$.</li>
+            <li><b>Result:</b> The perturbation vector is parallel to $u$. The norms add:
+            $$ \|u + \Delta A x\|_2 = \|u\|_2 + \|\Delta A x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2 $$
+            </li>
+          </ul>
         </div>
 
         <div class="proof-step">
@@ -275,12 +279,14 @@
         </div>
         <div class="proof-step">
           <strong>Step 3: Schur Complement.</strong>
-          We can rewrite the quadratic matrix inequality $t^2 I - A(x)^\top A(x) \succeq 0$ using the Schur complement.
-          Recall that $\begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} \succeq 0$ iff $C \succeq 0$ and $A - B C^{-1} B^\top \succeq 0$.
-          We want to match $tI - A(x)^\top (tI)^{-1} A(x) \succeq 0$.
-          Set $A_{block} = tI$, $B_{block} = A(x)^\top$, $C_{block} = tI$.
-          Then the LMI is:
+          We want to express $t^2 I - A(x)^\top A(x) \succeq 0$ as a linear matrix inequality.
+          Assuming $t > 0$, we can divide by $t$ or use the Schur complement lemma directly.
+          Recall: $\begin{bmatrix} P & Q \\ Q^\top & R \end{bmatrix} \succeq 0 \iff R \succeq 0, P - Q R^{-1} Q^\top \succeq 0$.
+          We want to match the form $tI - A(x)^\top (tI)^{-1} A(x) \succeq 0$.
+          Set $P = tI$, $Q = A(x)^\top$, $R = tI$.
+          The condition becomes:
           $$ \begin{bmatrix} tI & A(x)^\top \\ A(x) & tI \end{bmatrix} \succeq 0 $$
+          This matrix is linear in $x$ and $t$, which is exactly what an SDP requires.
         </div>
         <div class="proof-step">
           <strong>Step 4: Final SDP Formulation.</strong>

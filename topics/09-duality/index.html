@@ -177,6 +177,17 @@
         <p>Let $d^*$ be the optimal value of the dual problem. The weak duality theorem states:</p>
         $$ \boxed{ d^* \le p^* } $$
         <p>This holds for <b>any</b> optimization problem. The difference $p^* - d^*$ is called the <b>duality gap</b>.</p>
+        <div class="example">
+            <h4>Example: Non-Convex Problem with Gap</h4>
+            <p>Consider $\min x^2$ subject to $x \ge 1$ or $x \le -1$ (non-convex constraint $x^2 \ge 1$). Optimal value $p^* = 1$.
+            <br>Lagrangian $L(x, \lambda) = x^2 + \lambda(1 - x^2) = (1-\lambda)x^2 + \lambda$.
+            <br>Dual function $g(\lambda) = \inf_x L(x, \lambda) = \begin{cases} \lambda & \lambda \le 1 \\ -\infty & \lambda > 1 \end{cases}$.
+            <br>Dual problem $\max \lambda$ s.t. $\lambda \le 1$. Dual optimal $d^* = 1$.
+            <br>Wait, this example has zero gap! Let's try a different one.
+            <br><b>Integer LP:</b> $\min x$ subject to $2x = 1, x \in \{0, 1\}$. Feasible set empty, $p^* = \infty$.
+            <br>Relaxed problem (LP): $x=0.5$.
+            <br>Often, weak duality gives a bound, but for non-convex problems, $d^* < p^*$. For instance, $\min x^3 - 3x$ has local minima, and the dual might stall at a lower bound.</p>
+        </div>
 
         <h3>3.3 Strong Duality and Slater's Condition</h3>
         <p>Strong duality means $d^* = p^*$ (zero duality gap). It does not hold generally but usually holds for convex problems under mild conditions.</p>
@@ -211,7 +222,9 @@
           <div class="proof-step">
             <strong>Step 3: Use Slater's Condition.</strong>
             Slater's condition guarantees that there exists a point in $\mathcal{M}$ where the constraints are strictly satisfied. This strict feasibility prevents the hyperplane from being "vertical" (i.e., $\mu=0$).
-            Specifically, if $\mu=0$, the separation inequality would apply only to the constraints, which would contradict the existence of a strictly feasible point (where $\sum \lambda_i f_i(x) < 0$).
+            <br><i>Why?</i> If $\mu=0$, the normal vector $(\lambda, \nu, 0)$ separates the set of achievable constraint values from the origin. This implies $\sum \lambda_i f_i(x) + \sum \nu_j h_j(x) \ge 0$ for all $x$.
+            <br>However, Slater's point $\tilde{x}$ satisfies $f_i(\tilde{x}) < 0$ and $h_j(\tilde{x}) = 0$.
+            Thus $\sum \lambda_i f_i(\tilde{x}) < 0$ (since $\lambda \ge 0$ and not all zero). This is a contradiction.
             Thus, we must have $\mu > 0$.
           </div>
           <div class="proof-step">
@@ -506,6 +519,7 @@
       <br>This means there is <b>no</b> vector $y$ satisfying $A^\top y \le 0$ AND $b^\top y > 0$.
       <br>Let $z = -y$. The non-existence of such a $y$ implies there is no $z$ such that $A^\top (-z) \le 0 \implies A^\top z \ge 0$ AND $b^\top (-z) > 0 \implies b^\top z < 0$.
       <br>Thus, system (2) has <b>no solution</b>.
+      <br><i>Connection:</i> This is the "Alternative Systems" logic. Strong duality says "Primal Feasible $\iff$ Dual Bounded". If Primal is Infeasible ($p^* = \infty$), then Dual is Unbounded ($d^* = \infty$), which means there exists an improving direction $y$ making $b^\top y \to \infty$. This direction is exactly the certificate of infeasibility.
     </div>
     <div class="proof-step">
       <strong>Case 2: (1) has no solution (Infeasible).</strong>

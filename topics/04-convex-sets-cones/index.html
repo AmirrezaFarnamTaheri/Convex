@@ -76,7 +76,10 @@
           </div>
 
           <div class="proof-step">
-            <strong>Step 4: Define the Hyperplane.</strong> Set the normal vector $a = p$. Define the scalar $b$ halfway between the boundaries:
+            <strong>Step 4: Define the Hyperplane.</strong> Set the normal vector $a = p$.
+            <br><i>Why?</i> Because $p$ points from the origin (which represents points in $D$ relative to $C$) towards $S=C-D$.
+            <br>The vector $p = \Pi_{\bar{S}}(0)$ is the shortest vector in the difference set. The hyperplane normal to $p$ passing through $p$ separates $S$ from 0.
+            <br>Define the scalar $b$ halfway between the boundaries:
             $$ b = \sup_{d \in D} a^\top d + \frac{1}{2}\|p\|_2^2 $$
             Then for all $c \in C, d \in D$:
             $$ a^\top c \ge a^\top d + \|p\|_2^2 > b > a^\top d $$
@@ -378,6 +381,7 @@
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Subspace Duality:</b> For a subspace, $y^\top x \ge 0$ implies $y^\top x = 0$ because both $x$ and $-x$ are in $V$.</li>
+            <li><b>Geometric Intuition:</b> A subspace is a "flat" cone. If you widen a cone until it becomes a plane, its dual cone narrows until it becomes the normal line (orthogonal complement).</li>
         </ul>
       </div>
 
