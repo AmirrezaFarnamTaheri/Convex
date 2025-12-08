@@ -99,7 +99,7 @@
           </div>
           <div class="proof-step">
             <strong>Inductive Step:</strong> Assume the inequality holds for any $k-1$ points. Consider $k$ points with $\sum_{i=1}^k \theta_i = 1$.
-            If $\theta_k = 1$, the result is trivial ($x_k = x_k$). If $\theta_k < 1$, let $\tilde{\theta} = 1 - \theta_k = \sum_{i=1}^{k-1} \theta_i > 0$.
+            If $\theta_k = 1$, the result is immediate ($x_k = x_k$). If $\theta_k < 1$, let $\tilde{\theta} = 1 - \theta_k = \sum_{i=1}^{k-1} \theta_i > 0$.
             <br>We can rewrite the convex combination as:
             $$ \sum_{i=1}^k \theta_i x_i = \theta_k x_k + \tilde{\theta} \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i = \theta_k x_k + \tilde{\theta} \bar{x} $$
             where $\bar{x} = \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i$.
@@ -199,7 +199,7 @@
             <br>Define $g(u) = f(u) - \ell(u)$. Then $g(x_0)=g(y_0)=0$ and $g(z_0) > 0$.
             <br>Assuming continuity, $g(u) > 0$ on some interval inside $[x_0, y_0]$. Thus $\int_{x_0}^{y_0} g(u) du > 0$.
             $$ \int_{x_0}^{y_0} f(u) du > \int_{x_0}^{y_0} \ell(u) du $$
-            The integral of the line $\ell$ over $[x_0, y_0]$ is just length $\times$ midpoint value: $(y_0-x_0) \frac{f(x_0)+f(y_0)}{2}$.
+            The integral of the line $\ell$ over $[x_0, y_0]$ is length $\times$ midpoint value: $(y_0-x_0) \frac{f(x_0)+f(y_0)}{2}$.
             <br>Perform the change of variables $u = (1-t)x_0 + ty_0$, so $du = (y_0 - x_0) dt$.
             $$ \int_{x_0}^{y_0} f(u) du = \int_0^1 f((1-t)x_0 + ty_0) (y_0-x_0) dt $$
             The inequality $\int_{x_0}^{y_0} f(u) du > \int_{x_0}^{y_0} \ell(u) du$ becomes:
@@ -332,7 +332,7 @@
         </div>
 
         <h3>2.3 Convex Hull of a Function</h3>
-        <p>Just as we can define the convex hull of a set, we can define the convex hull (or convex envelope) of a function $f: \mathbb{R}^n \to \mathbb{R}$ via its epigraph.</p>
+        <p>Analogous to the convex hull of a set, we can define the convex hull (or convex envelope) of a function $f: \mathbb{R}^n \to \mathbb{R}$ via its epigraph.</p>
         $$ g(x) = \inf \{ t \mid (x, t) \in \text{conv epi } f \} $$
         <p><b>Geometric Intuition:</b> Imagine "shrink-wrapping" the graph of $f$ from below. The function $g$ is the <b>greatest convex underestimator</b> of $f$. This concept is crucial in relaxation techniques for non-convex optimization (e.g., replacing a non-convex constraint with its convex hull).</p>
 
