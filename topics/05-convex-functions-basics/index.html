@@ -20,7 +20,7 @@
       <nav class="nav">
         <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
         <a href="../04-convex-sets-cones/index.html"><i data-feather="arrow-left"></i> Previous</a>
-        <a href="../07-convex-problems-standard/index.html">Next <i data-feather="arrow-right"></i></a>
+        <a href="../06-convex-functions-advanced/index.html">Next <i data-feather="arrow-right"></i></a>
       </nav>
     </div>
   </header>
@@ -30,12 +30,12 @@
         <h2>1. Definition and Basic Properties</h2>
 
         <h3>1.1 Convex Functions: The Core Definition</h3>
-        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link" data-term="convex function">convex</a> if its domain $\mathrm{dom}\, f$ is a convex set (see <a href="../04-convex-sets-cones/index.html">Lecture 04</a>), and for all $x, y \in \mathrm{dom}\, f$ and all $\theta \in [0, 1]$:</p>
+        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link" data-term="convex function">convex</a> if its domain $\mathrm{dom}\, f$ is a convex set, and for all $x, y \in \mathrm{dom}\, f$ and all $\theta \in [0, 1]$:</p>
         $$
         \boxed{ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) }
         \tag{1}
         $$
-        <p>This basic inequality states that the function value at a convex combination of points is at most the corresponding convex combination of function values. Geometrically, the <b>chord</b> connecting any two points $(x, f(x))$ and $(y, f(y))$ on the graph lies <b>above</b> the graph.</p>
+        <p>This fundamental inequality states that the function value at a convex combination of points is at most the corresponding convex combination of function values. Geometrically, the <b>chord</b> connecting any two points $(x, f(x))$ and $(y, f(y))$ on the graph lies <b>above</b> (or on) the graph.</p>
 
         <div class="proof-box">
           <h4>Proof: Convexity of Norms</h4>
@@ -56,11 +56,6 @@
             <strong>Conclusion:</strong>
             $f$ satisfies the convexity definition. Geometrically, the "bowl" of a norm never dips downward; it is always "V"-shaped or "U"-shaped.
           </div>
-        </div>
-
-        <div class="insight">
-          <h4>💡 Geometric Intuition</h4>
-          <p>The chord connecting any two points on the graph of $f$ lies above (or on) the graph. Equivalently, $f$ "curves upward"—there are no "dents" or concave regions.</p>
         </div>
 
         <h3>1.2 Jensen's Inequality: The General Form</h3>
@@ -169,7 +164,6 @@
             $$ \int_0^1 f(tx + (1-t)y) dt \le f(x)\int_0^1 t dt + f(y)\int_0^1 (1-t) dt $$
             Since $\int_0^1 t dt = \frac{1}{2}$ and $\int_0^1 (1-t) dt = \frac{1}{2}$, we obtain:
             $$ \int_0^1 f(tx + (1-t)y) dt \le \frac{f(x) + f(y)}{2} $$
-            (Note: The reverse direction involving $f(\frac{x+y}{2})$ corresponds to the other side of the Hermite-Hadamard inequality).
             </p>
           </div>
           <div class="proof-step">
@@ -207,11 +201,8 @@
           <p><b>Implication:</b> Strong convexity provides a quadratic lower bound on the growth of the function, leading to fast convergence rates in optimization algorithms.</p>
         </div>
 
-        <h3>1.5 Concave Functions</h3>
+        <h3>1.6 Concave Functions</h3>
         <p>A function $f$ is <a href="#" class="definition-link">concave</a> if $-f$ is convex. Equivalently, the chord lies below the graph. All results for convex functions can be "flipped" for concave functions by negating.</p>
-
-        <h3>1.6 Extended-Value Extension</h3>
-        <p>We often extend $f$ to all of $\mathbb{R}^n$ by setting $f(x) = +\infty$ for $x \notin \mathrm{dom}\, f$. This allows us to write constraints implicitly: minimizing $f$ over $\mathbb{R}^n$ is equivalent to minimizing over $\mathrm{dom}\, f$.</p>
 
         <h3>1.7 Restriction to a Line</h3>
         <p>A function $f: \mathbb{R}^n \to \mathbb{R} \cup \{+\infty\}$ is convex if and only if its restriction to any line is convex. This is a powerful tool for proving convexity.</p>
@@ -540,43 +531,6 @@
           </div>
         </div>
 
-        <div class="proof-box">
-          <h4>Proof: Concavity of Log-Determinant</h4>
-          <p>The function $f(X) = \log \det X$ is <b>concave</b> on $\mathbb{S}^n_{++}$. We use the "restriction to a line" technique to prove this formally.</p>
-
-          <div class="proof-step">
-            <strong>Step 1: Restrict to a line.</strong>
-            Let $X \in \mathbb{S}^n_{++}$ and $V \in \mathbb{S}^n$. Consider the line $Z(t) = X + tV$. The domain is $\{t \mid X+tV \succ 0\}$. Define $g(t) = \log \det(X + tV)$.
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 2: Factor out $X^{1/2}$.</strong>
-            Since $X \succ 0$, $X^{1/2}$ exists. Write:
-            $$ X + tV = X^{1/2} (I + t X^{-1/2} V X^{-1/2}) X^{1/2} $$
-            Let $Y = X^{-1/2} V X^{-1/2}$. Note that $Y$ is symmetric.
-            $$ \det(X + tV) = \det(X^{1/2}) \det(I + tY) \det(X^{1/2}) = \det(X) \det(I + tY) $$
-            $$ g(t) = \log \det X + \log \det(I + tY) $$
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 3: Diagonalize.</strong>
-            Let $\lambda_1, \dots, \lambda_n$ be the eigenvalues of the symmetric matrix $Y$. Then the eigenvalues of $I + tY$ are $1 + t\lambda_i$.
-            $$ \det(I + tY) = \prod_{i=1}^n (1 + t\lambda_i) $$
-            $$ g(t) = \log \det X + \sum_{i=1}^n \log(1 + t\lambda_i) $$
-          </div>
-
-          <div class="proof-step">
-            <strong>Step 4: Check derivatives.</strong>
-            $$ g'(t) = \sum_{i=1}^n \frac{\lambda_i}{1 + t\lambda_i} $$
-            $$ g''(t) = -\sum_{i=1}^n \frac{\lambda_i^2}{(1 + t\lambda_i)^2} $$
-            Since squares are non-negative, $g''(t) \le 0$ for all valid $t$. Thus $g(t)$ is concave.
-          </div>
-
-          <div class="proof-step">
-            <strong>Conclusion:</strong> Since the restriction to any line is concave, $f(X) = \log \det X$ is concave.
-          </div>
-        </div>
-
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Heatmap: Hessian Eigenvalue Analyzer</h3>
           <p><b>Visualize Convexity Through the Hessian:</b> For twice-differentiable functions, convexity is determined by the Hessian being positive semidefinite (PSD). This tool provides a visual test:</p>
@@ -594,120 +548,6 @@
           </ul>
           <p><i>Practical insight:</i> This is exactly how numerical optimization libraries verify convexity in practice—by checking that all eigenvalues of the Hessian are non-negative!</p>
           <div id="widget-hessian-heatmap" style="width: 100%; height: 450px; position: relative;"></div>
-        </div>
-
-                <h3>4.4 Log-Convex and Log-Concave Functions</h3>
-
-        <figure style="text-align: center;">
-          <img src="assets/log_concave_gaussian.png"
-               alt="Gaussian density vs its log"
-               style="max-width: 60%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
-          <figcaption><i>Figure 4.1:</i> The Gaussian density function (top) is bell-shaped and not concave. However, its logarithm (bottom) is a downward-opening parabola, which is concave. Thus, the Gaussian is log-concave.</figcaption>
-        </figure>
-
-        <h4>4.4.1 Definitions</h4>
-        <p>A function $f: \mathbb{R}^n \to \mathbb{R}_{++}$ is <b>log-convex</b> if $\log f$ is convex. Equivalently:</p>
-        $$ f(\theta x + (1-\theta)y) \le f(x)^\theta f(y)^{1-\theta} $$
-        <p>It is <b>log-concave</b> if $\log f$ is concave. Equivalently:</p>
-        $$ f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta} $$
-
-        <div class="insight">
-          <h4>Key Examples</h4>
-          <ul>
-            <li><b>Affine:</b> $f(x) = a^\top x + b$ is log-concave on $\{x \mid a^\top x + b > 0\}$.</li>
-            <li><b>Powers:</b> $x^a$ on $\mathbb{R}_{++}$ is log-convex if $a \le 0$, and log-concave if $a \ge 0$.</li>
-            <li><b>Gaussian Density:</b> $f(x) \propto e^{-\frac{1}{2}(x-\mu)^\top \Sigma^{-1}(x-\mu)}$ is log-concave.</li>
-            <li><b>Determinant:</b> $\det(X)$ is log-concave on $\mathbb{S}^n_{++}$ (since $\log \det$ is concave).</li>
-          </ul>
-        </div>
-
-        <h4>Example: Geometric Mean (Concavity via Log-Concavity)</h4>
-      <p>The function $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}^n_{++}$.</p>
-
-      <h4>Proof via Homogeneity + Log-Concavity</h4>
-      <p>This is a powerful general technique. A function $f > 0$ is concave if it is 1-homogeneous ($f(tx)=tf(x)$) and log-concave ($\log f$ is concave).</p>
-      <div class="proof-box">
-        <h4>Lemma: 1-Homogeneous + Log-Concave $\implies$ Concave</h4>
-        <p><b>Step 1: Superadditivity.</b> We show $f(x+y) \ge f(x) + f(y)$.
-        Let $u = x/f(x)$ and $v = y/f(y)$, so $f(u)=f(v)=1$.
-        Consider the convex combination with $\lambda = \frac{f(x)}{f(x)+f(y)}$.
-        $$ \lambda u + (1-\lambda)v = \frac{x+y}{f(x)+f(y)} $$
-        By log-concavity, $f(\lambda u + (1-\lambda)v) \ge f(u)^\lambda f(v)^{1-\lambda} = 1$.
-        By homogeneity, $f(\frac{x+y}{f(x)+f(y)}) = \frac{f(x+y)}{f(x)+f(y)} \ge 1 \implies f(x+y) \ge f(x)+f(y)$.</p>
-        <p><b>Step 2: Concavity.</b>
-        $f(\theta x + (1-\theta)y) \ge f(\theta x) + f((1-\theta)y) = \theta f(x) + (1-\theta)f(y)$.</p>
-      </div>
-      <p>Since $G(x)$ is 1-homogeneous and $\log G(x) = \frac{1}{n}\sum \log x_i$ is concave (sum of concave logs), $G(x)$ is concave.</p>
-
-
-
-        <h4>(a) Uniform on a Convex Set</h4>
-        <p>Let $C \subseteq \mathbb{R}^n$ be a convex set. The uniform density function:
-        $$ f(x) = \begin{cases} 1/\alpha & x \in C \\ 0 & x \notin C \end{cases} $$
-        is log-concave.
-        <br><i>Proof:</i> $\log f(x)$ takes value $-\log \alpha$ on $C$ and $-\infty$ outside.
-        For $x, y \in C$ and $\theta \in [0, 1]$, the point $z = \theta x + (1-\theta)y \in C$ (by convexity of $C$).
-        Thus $\log f(z) = -\log \alpha = \theta (-\log \alpha) + (1-\theta) (-\log \alpha) = \theta \log f(x) + (1-\theta) \log f(y)$.
-        If either point is outside $C$, the condition holds trivially ($-\infty \le \dots$).</p>
-
-        <h4>(b) Wishart Distribution</h4>
-        <p>The Wishart density on positive definite matrices $X \in \mathbb{S}^n_{++}$ is (up to normalization):
-        $$ f(X) \propto (\det X)^{(p-n-1)/2} \exp\left(-\frac{1}{2} \mathrm{tr}(\Sigma^{-1}X)\right) $$
-        Taking the log:
-        $$ \log f(X) = c + \frac{p-n-1}{2} \log \det X - \frac{1}{2} \mathrm{tr}(\Sigma^{-1}X) $$
-        <ul>
-            <li>The term $\log \det X$ is <b>concave</b> (as proven in Section 4.3).</li>
-            <li>The term $-\mathrm{tr}(\Sigma^{-1}X)$ is <b>linear</b> (hence concave).</li>
-        </ul>
-        Since the sum of concave functions is concave, $\log f$ is concave, so the Wishart distribution is log-concave.</p>
-
-        <h4>4.4.2 Hessian Condition</h4>
-        <p>Assume $f > 0$ and $f$ is twice differentiable. We derive the condition for log-concavity.</p>
-        <div class="proof-box">
-          <h4>Derivation</h4>
-          <p>Let $g(x) = \log f(x)$. By the chain rule:
-          $$ \nabla g(x) = \frac{\nabla f(x)}{f(x)} $$
-          The Hessian of $g$ is:
-          $$ \nabla^2 g(x) = \frac{f(x)\nabla^2 f(x) - \nabla f(x)\nabla f(x)^\top}{f(x)^2} $$
-          For $f$ to be log-concave, we require $\nabla^2 g(x) \preceq 0$ (negative semidefinite). Since $f(x)^2 > 0$, this is equivalent to the numerator being negative semidefinite:
-          $$ f(x)\nabla^2 f(x) - \nabla f(x)\nabla f(x)^\top \preceq 0 $$
-          Rearranging terms yields the condition:
-          $$ \boxed{ f(x) \nabla^2 f(x) \preceq \nabla f(x) \nabla f(x)^\top } $$
-          For log-convexity, the inequality is reversed.</p>
-        </div>
-
-        <h4>4.4.3 Integration Rules (Prékopa-Leindler)</h4>
-        <p>A powerful property of log-concave functions is that they are closed under integration.</p>
-
-        <div class="theorem-box">
-          <h4>Theorem (Integration Preserves Log-Convexity)</h4>
-          <p>If $f(x, y)$ is <b>log-convex</b> in $x$ for each fixed $y$, then $g(x) = \int f(x, y) dy$ is log-convex.</p>
-          <p><i>Example:</i> The Laplace transform $P(z) = \int p(x) e^{-z^\top x} dx$ is log-convex in $z$, because the integrand $e^{-z^\top x}$ is log-linear (hence log-convex) in $z$.</p>
-        </div>
-
-        <div class="theorem-box">
-          <h4>Theorem (Marginals Preserves Log-Concavity)</h4>
-          <p>If $f(x, y)$ is <b>log-concave jointly</b> in $(x, y)$, then the marginal function $g(x) = \int f(x, y) dy$ is log-concave.</p>
-          <p>This implies that marginals of log-concave distributions (like the multivariate normal) are log-concave.</p>
-        </div>
-
-        <div class="theorem-box">
-          <h4>Theorem (Convolution)</h4>
-          <p>If $f$ and $g$ are log-concave functions on $\mathbb{R}^n$, then their convolution $(f * g)(x) = \int f(x-y)g(y) dy$ is log-concave.</p>
-          <p><i>Probability Implication:</i> The sum of independent log-concave random variables is log-concave.</p>
-        </div>
-
-        <h4>4.4.4 Probability Examples</h4>
-        <div class="example">
-          <h4>1. Hitting a Convex Set</h4>
-          <p>Let $C \subseteq \mathbb{R}^n$ be a convex set and $w$ be a random variable with log-concave density $p(w)$. The probability that $x + w \in C$ is a log-concave function of $x$.</p>
-          <p><i>Proof:</i> $f(x) = \mathbb{P}(x+w \in C) = \int \mathbf{1}_C(x+w) p(w) dw = \int \mathbf{1}_C(u) p(u-x) du$. The integrand is the product of log-concave functions (indicator of convex set and shifted density), so it is jointly log-concave. By the marginalization theorem, $f(x)$ is log-concave.</p>
-        </div>
-
-        <div class="example">
-          <h4>2. Cumulative Distribution Function (CDF)</h4>
-          <p>If a density $p(t)$ is log-concave, its CDF $F(x) = \int_{-\infty}^x p(t) dt$ is log-concave.
-          <br>For multivariate $x$, $F(x) = \mathbb{P}(w \preceq x)$ is log-concave. This relies on the fact that the indicator function of the orthant $\{w \mid w \preceq x\}$ is log-concave.</p>
         </div>
       </section>
 
@@ -1177,7 +1017,7 @@
         $$ \boxed{ x^p + y^p \ge x + y \quad \text{for } x,y \in [0,1] } $$
         <p>Also, due to homogeneity ($(\lambda x)^p = \lambda^p x^p$), we can scale inequalities. For example, the function $f(x, y) = \frac{x^2}{y}$ arises from the homogeneity of quadratics.</p>
 
-        <h3>5.8 What Doesn't Preserve Convexity?</h3>
+        <h3>5.8 Pitfalls: What Doesn't Preserve Convexity?</h3>
         <p>A common pitfall is to assume the <b>minimum</b> of convex functions is convex. It is generally <b>not</b>.</p>
         <div class="insight">
           <h4>Counterexample</h4>
@@ -1340,6 +1180,26 @@
             Let $F(x, y) = \|x - y\| + I_C(y)$, where $I_C(y) = 0$ if $y \in C$ else $\infty$.
             $F$ is jointly convex in $(x, y)$ because $\|x-y\|$ is convex (composition of norm with affine) and $I_C$ is convex (since $C$ is convex).
             Then $d(x) = \inf_y F(x, y)$. Partial minimization of a jointly convex function yields a convex function.</p>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P5.6 — Entropy</h3>
+          <p>Show that the negative entropy function $f(x) = \sum_{i=1}^n x_i \log x_i$ is strictly convex on $\mathbb{R}^n_{++}$.</p>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              The function is separable: $f(x) = \sum g(x_i)$ where $g(u) = u \log u$.
+              A sum of strictly convex functions is strictly convex.
+            </div>
+            <div class="proof-step">
+              Check $g(u)$:
+              $$ g'(u) = 1 + \log u $$
+              $$ g''(u) = 1/u $$
+              On $\mathbb{R}_{++}$, $u > 0$, so $g''(u) > 0$. Thus $g$ is strictly convex.
+              Consequently, $f$ is strictly convex.
+            </div>
           </div>
         </div>
 

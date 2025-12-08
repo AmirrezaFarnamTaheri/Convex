@@ -40,7 +40,7 @@
         <span>Tags: prerequisites, review, linear-algebra, foundational</a>
       </div>
       <div class="lecture-summary">
-        <p><strong>Overview:</strong> This lecture establishes the fundamental linear algebra concepts required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, projections, and least squares, building the mathematical background necessary for optimization theory.</p>
+        <p>This lecture establishes the fundamental linear algebra concepts required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, projections, and least squares, building the mathematical background necessary for optimization theory.</p>
         <p><strong>Prerequisites:</strong> None.</p>
         <p><strong>Forward Connections:</strong> Projection techniques introduced here appear in least squares methods. Positive Semidefinite (PSD) matrices form the basis for convex quadratic programs. The four fundamental subspaces provide the geometric understanding of feasible sets. Advanced topics (QR, SVD, pseudoinverse) are covered in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</p>
       </div>
@@ -48,22 +48,20 @@
 
     <section class="section-card">
       <h2><i data-feather="target"></i> Learning Objectives</h2>
-      <p>After this lecture, you will be able to work with:</p>
+      <p>After this lecture, you will be able to:</p>
       <ul>
-        <li><b>Fundamental Objects and Subspaces:</b> Vectors, matrices, the four fundamental subspaces, and the Rank-Nullity Theorem.</li>
-        <li><b>Inner Products and Norms:</b> Standard and generalized inner products, canonical vector norms, dual norms, Hölder's inequality, and the Cauchy-Schwarz inequality.</li>
-        <li><b>Orthogonality and Projections:</b> Orthonormal bases, Gram-Schmidt process, QR decomposition, and projection onto subspaces and affine sets.</li>
-        <li><b>Positive Semidefinite Matrices:</b> Definitions, eigenvalue characterization, quadratic forms, ellipsoids, and the Loewner order.</li>
-        <li><b>Least Squares:</b> The method of least squares via normal equations and geometric interpretation as projection.</li>
-        <li><b>Matrix Structures:</b> Trace inner product, Frobenius norm, and componentwise order.</li>
+        <li><b>Analyze Fundamental Subspaces:</b> Identify and compute the dimensions of the four fundamental subspaces of a matrix using the Rank-Nullity Theorem.</li>
+        <li><b>Manipulate Norms and Inner Products:</b> Apply standard and generalized inner products, vector norms ($\ell_1, \ell_2, \ell_\infty$), and their duals to establish inequalities like Cauchy-Schwarz and Hölder.</li>
+        <li><b>Perform Geometric Operations:</b> Construct orthonormal bases via Gram-Schmidt and compute projections onto subspaces and affine sets.</li>
+        <li><b>Characterize PSD Matrices:</b> Determine positive semidefiniteness using eigenvalues, variational forms ($x^\top Ax \ge 0$), and the Schur Complement.</li>
+        <li><b>Solve Least Squares:</b> Derive and solve the normal equations for overdetermined systems and interpret the solution as an orthogonal projection.</li>
+        <li><b>Apply Matrix Calculus:</b> Compute gradients and Hessians for linear, quadratic, and log-determinant functions.</li>
       </ul>
     </section>
-
 
     <!-- SECTION 1: NOTATION -->
     <section class="section-card" id="section-notation">
       <h2>1. Notation and Basic Objects</h2>
-
 
       <h3>Preliminaries: Lines and Line Segments</h3>
       <p>We work in $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum x_i y_i$ and Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are fundamental to defining convexity.</p>
@@ -93,7 +91,7 @@
       <ul>
         <li><b>Scalars:</b> Real numbers $a \in \mathbb{R}$.</li>
         <li><b>Column vectors:</b> $x \in \mathbb{R}^n$ are $n \times 1$ matrices with entries $x_i$.
-          <br><i>Note on convention:</i> We treat vectors as columns to maintain algebraic consistency with matrix-vector multiplication $Ax$ representing linear maps $T(x)$. Treating $x$ as a row vector would necessitate the notation $xA^\top$. Throughout this course, unless specified otherwise, any vector $x$ is a column vector.</li>
+          <br><i>Note on convention:</i> We treat vectors as columns to maintain algebraic consistency with matrix-vector multiplication $Ax$ representing linear maps $T(x)$. Throughout this course, unless specified otherwise, any vector $x$ is a column vector.</li>
         <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$; entry $a_{ij}$ lies in row $i$, column $j$. The first dimension $m$ is the number of rows, and $n$ is the number of columns.</li>
         <li><b>Transpose:</b> $A^\top \in \mathbb{R}^{n \times m}$ satisfies $(A^\top)_{ij} = a_{ji}$. It flips the matrix across its main diagonal.</li>
         <li><b>Identity:</b> $I_n$ is the $n \times n$ square matrix with ones on the diagonal and zeros elsewhere; it satisfies $I_n x = x$ for all $x \in \mathbb{R}^n$.</li>
@@ -107,14 +105,14 @@
         <figcaption><i>Figure 0.2:</i> Matrix multiplication visualized—how rows of the first matrix combine with columns of the second.</figcaption>
       </figure>
 
-      <h3>Matrix–Vector and Matrix–Matrix Multiplication</h3>
+      <h3>Matrix Operations</h3>
       <ul>
         <li>$Ax$ is the <b>linear combination of columns of $A$</b> with coefficients from $x$.</li>
         <li>$(AB)_{ij} = \sum_k a_{ik} b_{kj}$.</li>
       </ul>
 
       <h3>Linear Maps</h3>
-      <p>A function $T: \mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if and only if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$. Every linear map can be represented by a matrix $A$ with $T(x) = Ax$.</p>
+      <p>A function $T: \mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if and only if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$. Every linear map between finite-dimensional vector spaces can be represented by a matrix multiplication $T(x) = Ax$.</p>
 
       <h3>Componentwise Order Notation</h3>
       <p>A notation used throughout optimization is the componentwise order. For vectors $x, y \in \mathbb{R}^n$:</p>
@@ -364,7 +362,7 @@
 
       <p>While a matrix $A$ represents a linear map in a specific basis, we are often interested in properties that are intrinsic to the map itself, independent of the basis. These are called <b>invariants</b>.</p>
 
-      <h3>2.1 The "Big Three" Invariants</h3>
+      <h3>3.1 The "Big Three" Invariants</h3>
       <p>For a square matrix $A \in \mathbb{R}^{n \times n}$ with eigenvalues $\lambda_1, \dots, \lambda_n$ (counted with algebraic multiplicity):</p>
       <ul>
         <li><b>Trace:</b> $\mathrm{tr}(A) = \sum_{i=1}^n A_{ii} = \sum_{i=1}^n \lambda_i$.</li>
@@ -381,7 +379,7 @@
       </div>
 
 
-      <h3>2.2 The "Isotropic Scaling" Lemma</h3>
+      <h3>3.2 The "Isotropic Scaling" Lemma</h3>
       <p>A classic result connects the geometry of eigenvectors to the structure of the matrix. What if <i>every</i> vector is an eigenvector?</p>
       <div class="theorem-box">
         <h4>Lemma: Scalar Matrices</h4>
@@ -398,7 +396,7 @@
       </div>
       <p><b>Geometric Intuition:</b> A general matrix distorts a circle into an ellipse. If <i>every</i> direction is a principal axis (eigenvector), the ellipse must be a circle (isotropic scaling).</p>
 
-      <h3>2.3 Algebraic Properties</h3>
+      <h3>3.3 Algebraic Properties</h3>
 
       <h4>Linearity of Trace</h4>
       <p>The trace is a linear functional:
@@ -456,7 +454,7 @@
         <br>This inequality is true generically; $\det$ is multiplicative, not additive.</p>
       </div>
 
-      <h3>2.4 Similarity and Basis Independence</h3>
+      <h3>3.4 Similarity and Basis Independence</h3>
       <p>Two matrices $A$ and $B$ are <b>similar</b> if $B = P A P^{-1}$ for some invertible $P$. This represents the same linear operator in a different basis.</p>
       <div class="theorem-box">
         <h4>Theorem: Invariance under Similarity</h4>
@@ -469,7 +467,7 @@
         <p>Thus, they have the <b>same eigenvalues</b>.</p>
       </div>
 
-      <h3>2.5 Spectral Shift</h3>
+      <h3>3.5 Spectral Shift</h3>
       <p>Adding a multiple of the identity shifts the eigenvalues but preserves eigenvectors.
       If $Ax = \lambda x$, then:
       $$ (A + tI)x = Ax + tIx = (\lambda + t)x. $$
@@ -785,7 +783,7 @@
     <section class="section-card" id="section-psd">
       <h2>6. Positive Semidefinite Matrices</h2>
 
-      <h3>5.1 The Space of Symmetric Matrices ($\mathbb{S}^n$)</h3>
+      <h3>6.1 The Space of Symmetric Matrices ($\mathbb{S}^n$)</h3>
       <p>In convex optimization, a central object is the Hessian matrix $\nabla^2 f(x)$. By Schwarz's Theorem, if a function is twice continuously differentiable, its Hessian is symmetric. A matrix $A \in \mathbb{R}^{n \times n}$ is symmetric if $A = A^\top$. The set of such matrices is denoted $\mathbb{S}^n$.</p>
 
       <h4>The Spectral Theorem</h4>
@@ -812,7 +810,7 @@
 
       <p><b>Implication for convexity:</b> The "shape" of a multivariable function (bowl vs. saddle) is entirely determined by the signs of the eigenvalues of its Hessian.</p>
 
-      <h3>5.2 Positive Semidefinite (PSD) Matrices</h3>
+      <h3>6.2 Positive Semidefinite (PSD) Matrices</h3>
       <p>This definition is central to the course. It provides the matrix equivalent of a "non-negative number" and underpins the definition of <b>Convex Functions</b> (<a href="../05-convex-functions-basics/index.html">Lecture 05</a>) and <b>Semidefinite Programming</b> (<a href="../07-convex-problems-standard/index.html">Lecture 08</a>).</p>
 
       <div class="insight">
@@ -857,12 +855,12 @@
         </div>
       </div>
 
-      <h3>5.3 The Rayleigh Quotient and Eigenvalues</h3>
+      <h3>6.3 The Rayleigh Quotient and Eigenvalues</h3>
       <p>The <b>maximum eigenvalue</b> $\lambda_{\max}(A)$ can be defined as an optimization problem:</p>
       $$ \lambda_{\max}(A) = \sup_{x \neq 0} \frac{x^\top A x}{x^\top x} = \sup_{\|x\|_2 = 1} x^\top A x $$
       <p>This is the <b>Rayleigh Quotient</b>. This definition proves that $\lambda_{\max}(A)$ is a convex function of $A$. Notice that for a fixed $x$, the function $g(A) = x^\top A x$ is <b>linear</b> in $A$. Since $\lambda_{\max}(A)$ is the <b>pointwise supremum</b> of a family of linear functions (indexed by $x$), it is a convex function.</p>
 
-      <h3>5.4 The Schur Complement Lemma</h3>
+      <h3>6.4 The Schur Complement Lemma</h3>
       <p>A powerful tool for handling block matrices in optimization is the Schur Complement. It allows us to convert complicated nonlinear constraints into Linear Matrix Inequalities (LMIs) and provides a systematic way to check positive semidefiniteness.</p>
 
       <figure style="text-align: center;">
@@ -1014,7 +1012,7 @@
         <div id="widget-hessian-landscape" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <h3>5.5 The Loewner Order</h3>
+      <h3>6.5 The Loewner Order</h3>
       <p>For symmetric matrices $X, Y \in \mathbb{S}^n$, we write <b>$X \succeq Y$</b> if and only if $X - Y$ is <b>positive semidefinite (PSD)</b>, meaning:</p>
       $$
       v^\top (X - Y) v \ge 0 \quad \text{for all } v \in \mathbb{R}^n
@@ -1167,7 +1165,7 @@
         </p>
       </div>
 
-      <h3>7.4 Variants: Weighted and Constrained Least Squares</h3>
+      <h3>8.4 Variants: Weighted and Constrained Least Squares</h3>
 
 
       <h3>(a) Weighted Least Squares (WLS)</h3>
@@ -1181,6 +1179,206 @@
       One method: parametrize $x = x_0 + Zy$, where $Fx_0 = g$ and columns of $Z$ form a basis for $\mathcal{N}(F)$. Then minimize $\|A(x_0 + Zy) - b\|_2^2$ over $y$ (an unconstrained LS). QR on $AZ$ is typically best.</p>
 
     </section>
+
+    <!-- SECTION 9: REVIEW -->
+    <section class="section-card" id="section-review">
+      <h2>9. Review & Cheat Sheet</h2>
+      <div class="lecture-summary" style="margin-bottom: 20px;">
+        <p>This section condenses the lecture into a quick-reference format for definitions, properties, and standard results.</p>
+      </div>
+
+      <h3>Definitions</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Concept</th>
+            <th>Definition</th>
+            <th>Key Properties</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Subspace</b></td>
+            <td>Set $S$ closed under addition and scalar multiplication</td>
+            <td>Contains $\mathbf{0}$. Intersection of subspaces is a subspace.</td>
+          </tr>
+          <tr>
+            <td><b>Inner Product</b></td>
+            <td>$\langle x, y \rangle$</td>
+            <td>Bilinear, Symmetric, Positive Definite. Enables angles and projection.</td>
+          </tr>
+          <tr>
+            <td><b>Norm</b></td>
+            <td>$\|x\|$</td>
+            <td>Positivity, Homogeneity, Triangle Inequality.</td>
+          </tr>
+          <tr>
+            <td><b>PSD Matrix</b></td>
+            <td>$A \succeq 0$</td>
+            <td>$x^\top A x \ge 0 \ \forall x$. Eigenvalues $\lambda_i \ge 0$.</td>
+          </tr>
+          <tr>
+            <td><b>Orthogonal Matrix</b></td>
+            <td>$Q^\top Q = I$</td>
+            <td>Preserves norms/angles. Columns are orthonormal.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Key Theorems</h3>
+      <ul>
+        <li><b>Rank-Nullity:</b> $\dim \mathcal{R}(A) + \dim \mathcal{N}(A) = n$ (for $A \in \mathbb{R}^{m \times n}$).</li>
+        <li><b>Spectral Theorem:</b> Real symmetric matrices have real eigenvalues and orthogonal eigenvectors.</li>
+        <li><b>Schur Complement:</b> $M \succeq 0 \iff D \succ 0$ and $A - BD^{-1}B^\top \succeq 0$.</li>
+        <li><b>Fundamental Theorem of Linear Algebra:</b> $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$ and $\mathcal{R}(A^\top) \perp \mathcal{N}(A)$.</li>
+      </ul>
+
+      <h3>Standard Formulas</h3>
+      <ul>
+        <li><b>Normal Equations:</b> $A^\top A x = A^\top b$</li>
+        <li><b>Projection onto Subspace:</b> $P = A(A^\top A)^{-1}A^\top$ (if $A$ full rank)</li>
+        <li><b>Cauchy-Schwarz:</b> $|x^\top y| \le \|x\|_2 \|y\|_2$</li>
+        <li><b>Gradient of Quadratic:</b> $\nabla (x^\top A x) = (A+A^\top)x$</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 10: EXERCISES -->
+    <section class="section-card" id="section-exercises">
+      <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
+      <div class="insight">
+        <h4>Recap & Key Concepts</h4>
+        <p>These exercises reinforce the foundational tools of linear algebra used in optimization. Focus on the geometry of subspaces, the calculus of gradients (crucial for finding optimality conditions), and the properties of PSD matrices (essential for convexity).</p>
+      </div>
+
+      <h3>P0.1 — Linear Independence</h3>
+      <p>Determine whether the following sets of vectors are linearly independent. If dependent, exhibit a linear combination summing to zero.</p>
+      <ol type="a">
+        <li>$v_1 = (1, 2, 3)^\top, v_2 = (4, 5, 6)^\top, v_3 = (7, 8, 9)^\top$.</li>
+        <li>$v_1 = (1, 0, 0)^\top, v_2 = (1, 1, 0)^\top, v_3 = (1, 1, 1)^\top$.</li>
+        <li>The columns of an upper triangular matrix with non-zero diagonal entries.</li>
+      </ol>
+
+      <h3>P0.2 — The Rank-Nullity Theorem</h3>
+      <p>Let $A$ be a $10 \times 15$ matrix.</p>
+      <ol type="a">
+        <li>What is the maximum possible rank of $A$?</li>
+        <li>If the rank of $A$ is 8, what is the dimension of the nullspace $\mathcal{N}(A)$?</li>
+        <li>If $A x = 0$ has only the trivial solution $x=0$, is this possible? Explain.</li>
+      </ol>
+
+      <h3>P0.3 — Trace and Determinant</h3>
+      <ol type="a">
+        <li>Show that $\mathrm{tr}(ABC) = \mathrm{tr}(BCA)$ but generally $\mathrm{tr}(ABC) \neq \mathrm{tr}(BAC)$. Construct a $2 \times 2$ counterexample.</li>
+        <li>Let $A \in \mathbb{R}^{n \times n}$ be skew-symmetric ($A^\top = -A$). Show that $x^\top A x = 0$ for all $x$.</li>
+        <li>Use the result from (b) to prove that if $n$ is odd, $\det(A) = 0$. (Hint: $\det(A^\top) = \det(-A)$).</li>
+      </ol>
+
+      <h3>P0.4 — Norm Equivalence</h3>
+      <p>In finite dimensions, all norms are equivalent. For $x \in \mathbb{R}^n$, prove the following inequalities:</p>
+      <ol type="a">
+        <li>$\|x\|_\infty \le \|x\|_2 \le \sqrt{n} \|x\|_\infty$</li>
+        <li>$\|x\|_2 \le \|x\|_1 \le \sqrt{n} \|x\|_2$</li>
+      </ol>
+      <p><i>Hint: Use Cauchy-Schwarz for the sum-based inequalities.</i></p>
+
+      <h3>P0.5 — Least Squares from Scratch</h3>
+      <p>Consider the function $f(x) = \frac{1}{2} \|Ax - b\|_2^2$.</p>
+      <ol type="a">
+        <li>Expand the squared norm into terms involving $x^\top A^\top A x$, etc.</li>
+        <li>Compute the gradient $\nabla f(x)$ step-by-step.</li>
+        <li>Set the gradient to zero to derive the Normal Equations.</li>
+        <li>Show that if $\mathcal{N}(A) = \{0\}$, the Hessian is positive definite, ensuring a unique global minimum.</li>
+      </ol>
+
+      <h3>P0.6 — Matrix Calculus Practice</h3>
+      <p>Compute the gradient with respect to $X \in \mathbb{R}^{n \times n}$ for the following functions:</p>
+      <ol type="a">
+        <li>$f(X) = \mathrm{tr}(A X B)$, where $A, B$ are constant matrices.</li>
+        <li>$f(X) = \mathrm{tr}(X^\top X)$.</li>
+        <li>$f(X) = a^\top X b$, where $a, b$ are constant vectors.</li>
+      </ol>
+
+      <h3>P0.7 — Hessian of a Cubic</h3>
+      <p>Let $f: \mathbb{R}^2 \to \mathbb{R}$ be defined by $f(x) = x_1^3 + x_2^3 + 2x_1 x_2$.</p>
+      <ol type="a">
+        <li>Compute the gradient $\nabla f(x)$.</li>
+        <li>Compute the Hessian matrix $\nabla^2 f(x)$.</li>
+        <li>For which $x$ is the Hessian Positive Semidefinite? (This identifies the region where the function is locally convex).</li>
+      </ol>
+
+      <h3>P0.8 — Testing Positive Semidefiniteness</h3>
+      <p>Determine whether the following matrices are PSD, PD, Indefinite, or Negative Definite/Semidefinite.</p>
+      <ol type="a">
+        <li>$A = \begin{bmatrix} 2 & -1 \\ -1 & 2 \end{bmatrix}$</li>
+        <li>$B = \begin{bmatrix} 1 & 2 \\ 2 & 1 \end{bmatrix}$</li>
+        <li>$C = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 3 \end{bmatrix}$</li>
+      </ol>
+
+      <h3>P0.9 — Schur Complement Application</h3>
+      <p>Use the Schur Complement condition to determine the range of $x$ for which the matrix $M(x)$ is Positive Semidefinite:</p>
+      $$ M(x) = \begin{bmatrix} x & 1 \\ 1 & x \end{bmatrix} $$
+      <p>Verify your answer by computing the eigenvalues directly.</p>
+
+      <h3>P0.10 — Projection onto a Line</h3>
+      <p>Let $a = (1, 1, 1)^\top$. Find the projection of $b = (1, 0, 0)^\top$ onto the line spanned by $a$. Verify that the residual $b - p$ is orthogonal to $a$.</p>
+
+      <h3>P0.11 — Projection onto a Hyperplane</h3>
+      <p>Find the projection of the point $y = (3, 3)^\top$ onto the line (hyperplane in 2D) defined by $x_1 + x_2 = 2$.</p>
+      <p><i>Hint: Shift the line to pass through the origin, project, then shift back, or use the affine projection formula with $F=[1 \ 1], g=2$.</i></p>
+
+      <h3>P0.12 — Orthogonal Complements</h3>
+      <p>Let $S$ be a subspace of $\mathbb{R}^n$. The orthogonal complement is $S^\perp = \{y \mid y^\top x = 0 \ \forall x \in S\}$.</p>
+      <ol type="a">
+        <li>Prove that $S^\perp$ is a subspace.</li>
+        <li>Prove that $S \cap S^\perp = \{0\}$.</li>
+        <li>If $S = \text{span}((1, 0, 0)^\top, (0, 1, 0)^\top)$, calculate $S^\perp$.</li>
+      </ol>
+
+      <h3>P0.13 — Frobenius Norm Submultiplicativity</h3>
+      <p>We proved $\|AB\|_F \le \|A\|_F \|B\|_F$ in the lecture using Cauchy-Schwarz.
+      <br>Re-derive this result by writing $\|X\|_F^2 = \mathrm{tr}(X^\top X)$ and using the property $\mathrm{tr}(M) = \sum \lambda_i(M)$ along with the fact that $\lambda_{\max}(A^\top A) \le \mathrm{tr}(A^\top A)$.</p>
+
+      <h3>P0.14 — Spectral Norm Properties</h3>
+      <p>Let $\|A\|_2$ denote the spectral norm (max singular value).</p>
+      <ol type="a">
+        <li>Show that $\|A\|_2 = 0$ if and only if $A=0$.</li>
+        <li>Show that $\|Q A\|_2 = \|A\|_2$ for any orthogonal matrix $Q$. (Orthogonal invariance).</li>
+      </ol>
+
+      <h3>P0.15 — Isometries</h3>
+      <p>An isometry is a linear map $f(x) = Qx$ that preserves distances: $\|Qx - Qy\|_2 = \|x - y\|_2$ for all $x, y$.
+      <br>Show that this condition implies $Q^\top Q = I$. Thus, isometries are represented by orthogonal matrices.</p>
+    </section>
+
+    <!-- SECTION 11: READINGS -->
+    <section class="section-card" id="section-readings">
+      <h2>11. Readings & Resources</h2>
+      <ul>
+        <li>
+          <b>Boyd & Vandenberghe, Convex Optimization:</b>
+          <ul>
+            <li>Appendix A: Mathematical Background (Norms, Analysis, Functions)</li>
+            <li>Appendix C: Numerical Linear Algebra (Operations, Factorizations)</li>
+          </ul>
+        </li>
+        <li>
+          <b>Gilbert Strang, Introduction to Linear Algebra:</b>
+          <ul>
+            <li>Chapter 2: Vector Spaces</li>
+            <li>Chapter 3: Orthogonality</li>
+            <li>Chapter 6: Eigenvalues and Eigenvectors</li>
+          </ul>
+        </li>
+        <li>
+          <b>Golub & Van Loan, Matrix Computations:</b>
+          <ul>
+            <li>Chapter 2: Matrix Multiplication (for numerical aspects)</li>
+            <li>Chapter 5: Orthogonalization and Least Squares</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
 
     <footer class="site-footer">
       <div class="container">

@@ -20,7 +20,7 @@
       <nav class="nav">
         <a href="../../index.html"><i data-feather="grid"></i> All Lectures</a>
         <a href="../02-introduction/index.html"><i data-feather="arrow-left"></i> Previous</a>
-        <a href="../05-convex-functions-basics/index.html">Next <i data-feather="arrow-right"></i></a>
+        <a href="../04-convex-sets-cones/index.html">Next <i data-feather="arrow-right"></i></a>
       </nav>
     </div>
   </header>
@@ -694,7 +694,7 @@
 
         <p>Relative interior is crucial for:</p>
         <ul>
-          <li><b>Constraint qualifications:</b> Slater's condition for strong duality (Lecture 13) requires a point in $\mathrm{ri}(\mathrm{dom}(f_0))$</li>
+          <li><b>Constraint qualifications:</b> Slater's condition for strong duality (Lecture 09) requires a point in $\mathrm{ri}(\mathrm{dom}(f_0))$</li>
           <li><b>Optimality conditions:</b> KKT conditions require regularity at boundary points</li>
           <li><b>Interior-point methods:</b> Algorithms that approach optimality from the relative interior</li>
         </ul>
@@ -726,9 +726,9 @@
 
         <div class="problem">
           <h3>P3.1 — Voronoi Regions</h3>
-          <p><b>Problem:</b> Let $x_0, \dots, x_k \in \mathbb{R}^n$. The Voronoi region $V_0$ corresponding to $x_0$ is the set of points closer to $x_0$ than to any other $x_i$:
-          $$ V_0 = \{x \in \mathbb{R}^n \mid \|x - x_0\|_2 \le \|x - x_i\|_2, \ i=1,\dots,k\} $$
-          Show that $V_0$ is a polyhedron (and thus a convex set).</p>
+          <p><b>Problem:</b> Let $x_1, \dots, x_k \in \mathbb{R}^n$ be a set of points. The Voronoi region associated with $x_i$ is defined as:
+          $$ V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2, \ \forall j \neq i\} $$
+          Prove that $V_i$ is a polyhedron (and thus a convex set).</p>
 
           <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
@@ -741,22 +741,21 @@
           <div class="solution-box">
             <h4>Solution</h4>
             <div class="proof-step">
-              <strong>Step 1: Analyze the condition.</strong> The condition $\|x - x_0\|_2 \le \|x - x_i\|_2$ is equivalent to squaring both sides:
-              $$ \|x - x_0\|_2^2 \le \|x - x_i\|_2^2 $$
+              <strong>Step 1: Analyze pairwise condition.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ is equivalent to squaring both sides:
+              $$ \|x - x_i\|_2^2 \le \|x - x_j\|_2^2 $$
             </div>
             <div class="proof-step">
               <strong>Step 2: Expand.</strong>
-              $$ (x - x_0)^\top (x - x_0) \le (x - x_i)^\top (x - x_i) $$
-              $$ x^\top x - 2x_0^\top x + x_0^\top x_0 \le x^\top x - 2x_i^\top x + x_i^\top x_i $$
+              $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
             </div>
             <div class="proof-step">
               <strong>Step 3: Simplify to linear inequality.</strong> The quadratic terms $x^\top x$ cancel out. Rearranging:
-              $$ 2(x_i - x_0)^\top x \le \|x_i\|_2^2 - \|x_0\|_2^2 $$
-              This is a linear inequality of the form $a_i^\top x \le b_i$.
+              $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
+              This is a linear inequality of the form $a_{ij}^\top x \le b_{ij}$.
             </div>
             <div class="proof-step">
               <strong>Step 4: Intersection.</strong>
-              $V_0$ is the intersection of $k$ such halfspaces (one for each $i \in \{1,\dots,k\}$). Therefore, $V_0$ is a polyhedron.
+              $V_i$ is the intersection of $k-1$ such halfspaces (one for each $j \neq i$). Therefore, $V_i$ is a polyhedron. Since polyhedra are convex, $V_i$ is convex.
             </div>
           </div>
         </div>
@@ -776,16 +775,21 @@
           <div class="solution-box">
             <h4>Solution</h4>
             <div class="proof-step">
-              <strong>Step 1: Dyadic Rationals.</strong> By induction, any convex combination $\theta x + (1-\theta)y$ where $\theta = k/2^n$ (a dyadic rational) is in $C$.
-              <br>(Base case $n=1$: midpoint. Inductive step: average of two dyadic rationals is dyadic).
+              <strong>Step 1: Dyadic Rationals.</strong>
+              By repeatedly applying the midpoint property, we can show that for any $x, y \in C$ and any $k \in \mathbb{N}, m \in \{0, \dots, 2^k\}$:
+              $$ \frac{m}{2^k} x + \left(1 - \frac{m}{2^k}\right) y \in C $$
+              (Proof by induction on $k$: Midpoint of two adjacent dyadics at level $k$ is a dyadic at level $k+1$).
             </div>
             <div class="proof-step">
-              <strong>Step 2: Density.</strong> The set of dyadic rationals is dense in $[0, 1]$. For any real $\theta \in [0, 1]$, there exists a sequence of dyadic rationals $\theta_k \to \theta$.
+              <strong>Step 2: Density.</strong>
+              The set of dyadic rationals $D = \{ m/2^k \mid k \ge 1, 0 \le m \le 2^k \}$ is dense in $[0, 1]$.
+              For any $\theta \in [0, 1]$, there exists a sequence $\lambda_i \in D$ such that $\lambda_i \to \theta$.
             </div>
             <div class="proof-step">
-              <strong>Step 3: Closure.</strong> Let $z_k = \theta_k x + (1-\theta_k) y$. Since $C$ is midpoint convex, $z_k \in C$.
-              Since $\theta_k \to \theta$, we have $z_k \to z = \theta x + (1-\theta)y$.
-              Because $C$ is closed, the limit $z$ must be in $C$. Thus $C$ is convex.
+              <strong>Step 3: Closure.</strong>
+              Let $z_i = \lambda_i x + (1-\lambda_i) y$. By Step 1, $z_i \in C$.
+              Since $\lambda_i \to \theta$, we have $z_i \to z = \theta x + (1-\theta)y$.
+              Since $C$ is closed, the limit $z$ must be in $C$. Thus $C$ is convex.
             </div>
           </div>
         </div>
@@ -848,6 +852,367 @@
           </div>
         </div>
 
+        <div class="problem">
+          <h3>P3.5 — Convexity of Quadratic Sublevel Set</h3>
+          <p>Show that the set $C = \{x \in \mathbb{R}^n \mid x^\top A x + b^\top x + c \le 0\}$ is convex when $A \in \mathbb{S}^n_+$ (positive semidefinite).</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Algebraic Convexity:</b> We prove convexity directly from the definition $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$.</li>
+                <li><b>Correction Term:</b> The value of a quadratic at an average is the average of values <i>minus</i> a term depending on the variance: $f(\bar{x}) = \overline{f(x)} - \text{variance}$. For convex functions ($A \succeq 0$), this 'variance' term is non-positive.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Step 1: Expand the Quadratic Form.</strong>
+              Let $z = \theta x + (1-\theta)y$. We want to compute $z^\top A z$.
+              $$
+              z^\top A z = \theta^2 x^\top A x + (1-\theta)^2 y^\top A y + 2\theta(1-\theta)x^\top A y
+              $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: The Key Identity.</strong>
+              Using $\theta^2 = \theta - \theta(1-\theta)$, we derive:
+              $$
+              z^\top A z = \theta x^\top A x + (1-\theta)y^\top A y - \theta(1-\theta)(x-y)^\top A (x-y)
+              $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Combine with Linear Terms.</strong>
+              Let $f(u) = u^\top A u + b^\top u + c$. By linearity of the other terms:
+              $$
+              f(z) = \theta f(x) + (1-\theta)f(y) - \theta(1-\theta)(x-y)^\top A (x-y)
+              $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 4: Apply PSD Condition.</strong>
+              Since $A \succeq 0$, $(x-y)^\top A (x-y) \ge 0$. Thus:
+              $$ f(z) \le \theta f(x) + (1-\theta)f(y) $$
+              Since $f(x) \le 0$ and $f(y) \le 0$, we have $f(z) \le 0$. Thus $C$ is convex.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.6 — Relative Interior of the Simplex</h3>
+          <p>Let $\Delta^n = \{x \in \mathbb{R}^n \mid x \ge 0, \mathbf{1}^\top x = 1\}$. Show that:
+          $$ \mathrm{ri}(\Delta^n) = \{x \in \mathbb{R}^n \mid x > 0, \mathbf{1}^\top x = 1\} $$</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Relative Interior:</b> The interior relative to the affine hull. It excludes "edges" that lie on the relative boundary.</li>
+                <li><b>Simplex Geometry:</b> The simplex lives in the hyperplane $\sum x_i = 1$. Its relative interior consists of strictly positive probability distributions.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Step 1: Identify affine hull.</strong> $\mathrm{aff}(\Delta^n) = \{x \in \mathbb{R}^n \mid \mathbf{1}^\top x = 1\}$ (the hyperplane).
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Necessity ($\Rightarrow$).</strong> If any $x_i = 0$, any ball in the affine hull centered at $x$ contains points with negative coordinates. Thus $x \notin \mathrm{ri}(\Delta^n)$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Sufficiency ($\Leftarrow$).</strong> If $x > 0$ and $\mathbf{1}^\top x = 1$, let $\varepsilon = \min x_i > 0$. Any point $y$ in the affine hull with $\|y-x\|_\infty < \varepsilon$ satisfies $y > 0$, hence $y \in \Delta^n$. Thus $x \in \mathrm{ri}(\Delta^n)$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.7 — Convex Hull Characterizations</h3>
+          <p>Given points $x_1, \dots, x_k \in \mathbb{R}^n$, show that the convex hull equals the intersection of all convex sets containing the points.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                 <li><b>Constructive vs. Intersection:</b> The convex hull can be built 'from the inside' (combinations) or 'from the outside' (intersections).</li>
+                 <li><b>Minimality:</b> The intersection definition proves that the convex hull is the <i>smallest</i> convex set containing $S$.</li>
+             </ul>
+           </div>
+
+           <div class="solution-box">
+             <h4>Solution</h4>
+             <div class="proof-step">
+               Let $C_{comb}$ be the set of convex combinations, and $C_{int} = \bigcap_{S \subseteq K, K \text{ convex}} K$.
+             </div>
+             <div class="proof-step">
+               <strong>($C_{comb} \subseteq C_{int}$):</strong> Let $x \in C_{comb}$. Then $x = \sum \theta_i x_i$. Any convex set $K$ containing $\{x_i\}$ must contain $x$ by definition. Thus $x$ is in the intersection of all such sets.
+             </div>
+             <div class="proof-step">
+               <strong>($C_{int} \subseteq C_{comb}$):</strong> $C_{comb}$ is itself a convex set containing the points. Therefore, it is one of the sets $K$ in the intersection. Thus the intersection is contained in $C_{comb}$.
+             </div>
+           </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.8 — Minkowski Sum of Sets</h3>
+          <p>The Minkowski sum is $X + Y = \{x+y \mid x \in X, y \in Y\}$. Show that if $X, Y$ are convex, $X+Y$ is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Linear Maps:</b> $X+Y$ is the image of $X \times Y$ under the linear map $f(x,y)=x+y$. Linear maps preserve convexity.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              Let $u, v \in X+Y$. Then $u = x_1+y_1$ and $v = x_2+y_2$ with $x_i \in X, y_i \in Y$.
+              For $\lambda \in [0,1]$:
+              $$ \lambda u + (1-\lambda)v = \lambda(x_1+y_1) + (1-\lambda)(x_2+y_2) = (\lambda x_1 + (1-\lambda)x_2) + (\lambda y_1 + (1-\lambda)y_2) $$
+              By convexity of $X$ and $Y$, the terms in parentheses are in $X$ and $Y$ respectively. Thus the sum is in $X+Y$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.9 — Convexity of Thickened Sets</h3>
+          <p>Let $C \subseteq \mathbb{R}^n$ be a closed convex set. Define $C_\varepsilon = \{y \mid \mathrm{dist}(y, C) \le \varepsilon\}$. Show that $C_\varepsilon$ is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Minkowski Sum Interpretation:</b> The thickened set $C_\varepsilon$ is exactly $C + B(0, \varepsilon)$.</li>
+                <li><b>Convexity Preservation:</b> Since $C$ is convex and the ball $B(0, \varepsilon)$ is convex, their Minkowski sum is convex.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              We observe that $C_\varepsilon = C + \{z \mid \|z\| \le \varepsilon\}$.
+              The set $\{z \mid \|z\| \le \varepsilon\}$ is a norm ball, which is convex.
+              The Minkowski sum of two convex sets is convex (Problem 3.8). Thus $C_\varepsilon$ is convex.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.10 — Closure of a Convex Set</h3>
+          <p>Show that if $C$ is convex, its closure $\mathrm{cl}(C)$ is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Sequences:</b> Limit points preserve non-strict inequalities like $\theta x + (1-\theta)y \in \dots$.</li>
+                <li><b>Intuition:</b> You cannot "bend" the boundary of a convex shape inwards (making it non-convex) without affecting the interior points.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              Let $a, b \in \mathrm{cl}(C)$. By definition, there exist sequences $x_k \to a, y_k \to b$ with $x_k, y_k \in C$.
+            </div>
+            <div class="proof-step">
+              Let $\lambda \in [0,1]$. By convexity, $z_k = \lambda x_k + (1-\lambda)y_k \in C$.
+            </div>
+            <div class="proof-step">
+              Taking limits: $z_k \to \lambda a + (1-\lambda)b$. Since limits of sequences in $C$ are in $\mathrm{cl}(C)$, the combination is in $\mathrm{cl}(C)$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.11 — Product of Convex Sets</h3>
+          <p>Show that if $X, Y$ are convex, then $X \times Y$ is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                 <li><b>Component-wise Convexity:</b> The Cartesian product stacks convexity conditions. A segment in the product space projects to segments in the components.</li>
+             </ul>
+           </div>
+
+           <div class="solution-box">
+             <h4>Solution</h4>
+             <div class="proof-step">
+               Let $u_1 = (x_1, y_1), u_2 = (x_2, y_2) \in X \times Y$.
+               $$ \lambda u_1 + (1-\lambda)u_2 = (\lambda x_1 + (1-\lambda)x_2, \lambda y_1 + (1-\lambda)y_2) $$
+               Since $X$ is convex, the first component is in $X$. Since $Y$ is convex, the second is in $Y$. Thus the pair is in $X \times Y$.
+             </div>
+           </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.12 — Finite Convex Combinations (Jensen's for Sets)</h3>
+          <p>Prove by induction that if $C$ is convex, then any convex combination of $k$ points from $C$ lies in $C$.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Recursive Structure:</b> Any $k$-point combination can be viewed as a 2-point combination of one point and a $(k-1)$-point combination.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Base Case ($k=2$):</strong> Definition of convexity.
+            </div>
+            <div class="proof-step">
+              <strong>Inductive Step:</strong> Assume true for $k$. Consider $x = \sum_{i=1}^{k+1} \theta_i x_i$. Let $\alpha = \sum_{i=1}^k \theta_i$. If $\alpha=0$, trivial. Otherwise, write:
+              $$ x = \alpha \sum_{i=1}^k \frac{\theta_i}{\alpha} x_i + \theta_{k+1} x_{k+1} $$
+              The sum term is a convex combination of $k$ points (in $C$ by hypothesis). Let's call it $y$.
+              Then $x = \alpha y + (1-\alpha)x_{k+1}$, which is a convex combination of 2 points. Thus $x \in C$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.13 — Convexity via Line Intersections</h3>
+          <p>Prove that $C$ is convex if and only if its intersection with every line is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Reduction to 1D:</b> This allows checking convexity by 'slicing' the set.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>($\Rightarrow$):</strong> Intersection of two convex sets ($C$ and line $L$) is convex.
+            </div>
+            <div class="proof-step">
+              <strong>($\Leftarrow$):</strong> For any $x, y \in C$, let $L$ be the line through them. $C \cap L$ is convex (by assumption) and contains $x, y$. Thus it contains the segment $[x, y]$. So $[x, y] \subseteq C$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.14 — Hyperbolic Sets</h3>
+          <p>Show that $C = \{ x \in \mathbb{R}^n_+ \mid \prod x_i \ge 1 \}$ is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>AM-GM Power:</b> $\prod z_i \ge \prod (x_i^\theta y_i^{1-\theta})$ allows component-wise analysis.</li>
+                <li><b>Superlevel Set:</b> Equivalently $\sum \log x_i \ge 0$, a superlevel set of a concave function.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              Let $z = \theta x + (1-\theta)y$. By weighted AM-GM on each component: $z_i \ge x_i^\theta y_i^{1-\theta}$.
+              Taking the product: $\prod z_i \ge (\prod x_i)^\theta (\prod y_i)^{1-\theta} \ge 1^\theta 1^{1-\theta} = 1$.
+              Thus $z \in C$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.15 — Set Classification Challenge</h3>
+          <p>Determine whether the following are convex: (a) Slab, (b) Rectangle, (c) Wedge, (d) Apollonius Set $\{x \mid \|x-a\| \le \theta \|x-b\|\}$.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Intersection Principle:</b> Slabs, rectangles, wedges are intersections of halfspaces.</li>
+                <li><b>Quadratic Inequalities:</b> Apollonius set reduces to a quadratic inequality.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <ul>
+              <li>(a-c) <b>Yes</b>, they are intersections of halfspaces (polyhedra).</li>
+              <li>(d) <b>Yes</b>. Squaring gives $\|x-a\|^2 \le \theta^2 \|x-b\|^2$, which is $x^\top x(1-\theta^2) + \dots \le 0$. If $\theta \le 1$, the quadratic term has coefficient $\ge 0$, defining a convex set (ball or halfspace).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.16 — Partial Sum of Convex Sets</h3>
+          <p>Show that $S = \{(x, y_1+y_2) \mid (x, y_1) \in S_1, (x, y_2) \in S_2\}$ is convex.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                 <li><b>Fiber-wise Sum:</b> For fixed $x$, the set is $S_1(x) + S_2(x)$.</li>
+             </ul>
+           </div>
+
+           <div class="solution-box">
+             <h4>Solution</h4>
+             <div class="proof-step">
+               Let $z^a, z^b \in S$. Then $y^a = y_1^a + y_2^a$.
+               Consider $\theta z^a + (1-\theta)z^b$. The $x$-component is $x^\theta$. The $y$-component is $y^\theta$.
+               We can decompose $y^\theta$ into $\tilde{y}_1 + \tilde{y}_2$ where $\tilde{y}_1$ is the combination of $y_1$'s.
+               Since $(x^\theta, \tilde{y}_1) \in S_1$ (by convexity) and $(x^\theta, \tilde{y}_2) \in S_2$, the sum is in $S$.
+             </div>
+           </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.17 — Perspective of Polyhedral Sets</h3>
+          <p>Determine the image of a convex hull $C = \mathrm{conv}\{(v_i, t_i)\}$ under $P(v,t) = v/t$.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Projective Map:</b> Perspective maps convex hulls to convex hulls.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              $P(C) = \mathrm{conv}\{v_i/t_i\}$.
+              Any point in $P(C)$ is $\frac{\sum \theta_i v_i}{\sum \theta_i t_i}$. This is a weighted average of the points $v_i/t_i$ with weights $\lambda_i \propto \theta_i t_i$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.18 — Invertible Linear-Fractional Functions</h3>
+          <p>Find the inverse of $f(x) = (Ax+b)/(c^\top x + d)$ assuming matrix $Q$ is nonsingular.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Matrix Representation:</b> Linear-fractional maps correspond to matrix multiplication in homogeneous coordinates. The inverse map corresponds to the inverse matrix.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              The function corresponds to $y \propto Q x_{hom}$. Inverting, $x_{hom} \propto Q^{-1} y_{hom}$.
+              If $Q^{-1} = \begin{bmatrix} E & f \\ g^\top & h \end{bmatrix}$, then $f^{-1}(y) = \frac{Ey + f}{g^\top y + h}$.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.19 — Preimages under Linear-Fractional Maps</h3>
+          <p>Find the inverse image of a halfspace, polyhedron, and ellipsoid under a linear-fractional map.</p>
+
+          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Complexity Preservation:</b> Polyhedra map to polyhedra. Ellipsoids map to sets defined by quadratic inequalities (related to SOCs).</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <ul>
+              <li><b>Halfspace:</b> Maps to a halfspace (intersected with domain).</li>
+              <li><b>Polyhedron:</b> Intersection of halfspaces $\to$ Intersection of halfspaces $\to$ Polyhedron.</li>
+              <li><b>Ellipsoid:</b> Maps to a set defined by a quadratic inequality (convex).</li>
+            </ul>
+          </div>
+        </div>
+
       </section>
     </article>
 
@@ -878,10 +1243,6 @@
   <script type="module">
     import { initConvexGeometryLab } from './widgets/js/convex-geometry-lab.js';
     initConvexGeometryLab('widget-convex-geometry-lab');
-  </script>
-  <script type="module">
-    import { initSeparatingHyperplane } from './widgets/js/separating-hyperplane.js';
-    initSeparatingHyperplane('widget-separating-hyperplane');
   </script>
   <script src="../../static/js/glossary-loader.js"></script>
 <script src="../../static/js/notes-widget.js"></script>
