@@ -204,38 +204,36 @@
         <div class="proof-box">
           <h4>Geometric Proof via Separation</h4>
           <div class="proof-step">
-            <strong>Step 1: Define the Set of Values.</strong>
-            Consider the set of achievable constraint and objective values:
-            $$ \mathcal{A} = \{ (f_1(x), \dots, f_m(x), h_1(x), \dots, h_p(x), f_0(x)) \mid x \in \mathcal{D} \} \subseteq \mathbb{R}^{m+p+1} $$
-            Define the epigraph set $\mathcal{M}$ to be the set of $(u, v, t)$ such that there exists $x \in \mathcal{D}$ with $f_i(x) \le u_i, h_j(x) = v_j, f_0(x) \le t$.
-            Since $f_i, f_0$ are convex and $h_j$ are affine, $\mathcal{M}$ is a convex set.
+            <strong>Step 1: Define the Epigraph Set.</strong>
+            Define the set of achievable constraint and objective values:
+            $$ \mathcal{A} = \{ (u, v, t) \in \mathbb{R}^m \times \mathbb{R}^p \times \mathbb{R} \mid \exists x \in \mathcal{D}, f_i(x) \le u_i, h_j(x) = v_j, f_0(x) \le t \} $$
+            Because $f_i$ are convex and $h_j$ are affine, $\mathcal{A}$ is a convex set.
           </div>
           <div class="proof-step">
-            <strong>Step 2: Apply Separating Hyperplane.</strong>
-            The point $(0, 0, p^* - \epsilon)$ is not in $\mathcal{M}$ for any $\epsilon > 0$ (by definition of optimal value $p^*$).
-            By the Separating Hyperplane Theorem, there exists a non-zero vector $(\lambda, \nu, \mu)$ and scalar $\alpha$ such that for all $(u, v, t) \in \mathcal{M}$:
-            $$ \sum \lambda_i u_i + \sum \nu_j v_j + \mu t \ge \alpha $$
-            and at the separating point:
-            $$ \sum \lambda_i (0) + \sum \nu_j (0) + \mu (p^* - \epsilon) \le \alpha $$
-            This implies $\lambda \succeq 0, \mu \ge 0$. Since $\mathcal{M}$ is unbounded above in $u$ and $t$, the coefficients must be non-negative.
+            <strong>Step 2: Separation.</strong>
+            The point $(0, 0, p^* - \epsilon)$ is not in $\mathcal{A}$ (otherwise we could achieve a value better than optimal).
+            By the Separating Hyperplane Theorem, there is a non-zero normal $(\lambda, \nu, \mu)$ separating $(0, 0, p^*)$ from $\mathcal{A}$.
+            Analysis shows $\lambda \succeq 0$ and $\mu \ge 0$.
+            The separation inequality gives:
+            $$ \inf_{(u,v,t) \in \mathcal{A}} (\lambda^\top u + \nu^\top v + \mu t) \ge \mu p^* $$
           </div>
           <div class="proof-step">
-            <strong>Step 3: Use Slater's Condition.</strong>
-            Slater's condition guarantees that there exists a point in $\mathcal{M}$ where the constraints are strictly satisfied. This strict feasibility prevents the hyperplane from being "vertical" (i.e., $\mu=0$).
-            <br><i>Why?</i> If $\mu=0$, the normal vector $(\lambda, \nu, 0)$ separates the set of achievable constraint values from the origin. This implies $\sum \lambda_i f_i(x) + \sum \nu_j h_j(x) \ge 0$ for all $x$.
-            <br>However, Slater's point $\tilde{x}$ satisfies $f_i(\tilde{x}) < 0$ and $h_j(\tilde{x}) = 0$.
-            Thus $\sum \lambda_i f_i(\tilde{x}) < 0$ (since $\lambda \ge 0$ and not all zero). This is a contradiction.
-            Thus, we must have $\mu > 0$.
+            <strong>Step 3: Slater's Condition implies $\mu > 0$.</strong>
+            Suppose $\mu = 0$. Then for all $x \in \mathcal{D}$, $\sum \lambda_i f_i(x) + \sum \nu_j h_j(x) \ge 0$.
+            Apply this to the Slater point $\tilde{x}$:
+            $$ \sum \lambda_i f_i(\tilde{x}) + \sum \nu_j (0) \ge 0 $$
+            Since $f_i(\tilde{x}) < 0$ and $\lambda_i \ge 0$, the sum can only be $\ge 0$ if all $\lambda_i = 0$.
+            But if $\lambda=0$ and $\mu=0$, then $\sum \nu_j h_j(x) \ge 0$ for all $x$. Since $h_j$ are affine ($Ax-b$), $A^\top \nu = 0$ implies $\nu=0$ (assuming full rank). Or more simply, linearity implies equality to 0.
+            This contradicts the non-zero normal vector. Thus $\mu > 0$.
           </div>
           <div class="proof-step">
-            <strong>Step 4: Derive Strong Duality.</strong>
-            Dividing by $\mu$, we obtain the Lagrangian inequality.
-            Let $\tilde{\lambda} = \lambda/\mu$ and $\tilde{\nu} = \nu/\mu$.
-            The separation inequality implies that for all feasible $x$:
-            $$ \sum \tilde{\lambda}_i f_i(x) + \sum \tilde{\nu}_j h_j(x) + f_0(x) \ge p^* - \epsilon $$
-            Taking the infimum over $x$, we get $g(\tilde{\lambda}, \tilde{\nu}) \ge p^* - \epsilon$.
-            Since this holds for any $\epsilon > 0$, we have $d^* \ge p^*$.
-            Combined with weak duality $d^* \le p^*$, we get $d^* = p^*$.
+            <strong>Step 4: Strong Duality.</strong>
+            Divide by $\mu > 0$ to get normalized multipliers $\tilde{\lambda} = \lambda/\mu, \tilde{\nu} = \nu/\mu$.
+            The separation inequality becomes:
+            $$ \inf_x (f_0(x) + \sum \tilde{\lambda}_i f_i(x) + \sum \tilde{\nu}_j h_j(x)) \ge p^* $$
+            The LHS is exactly the dual function $g(\tilde{\lambda}, \tilde{\nu})$.
+            Thus $d^* \ge g(\tilde{\lambda}, \tilde{\nu}) \ge p^*$.
+            Combined with weak duality ($d^* \le p^*$), we have $d^* = p^*$.
           </div>
         </div>
       </section>
