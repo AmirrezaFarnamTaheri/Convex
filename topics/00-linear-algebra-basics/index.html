@@ -193,18 +193,18 @@
         </div>
         <div class="proof-step">
           <strong>Step 3: Linearize via Taylor Series.</strong>
-          We use the first-order Taylor expansion of the logarithm, $\log(1+z) = z + O(z^2)$. For small $\lambda_i$ (which corresponds to small $\Delta$), we have:
-          $$ \sum_{i=1}^n \log(1 + \lambda_i) = \sum_{i=1}^n (\lambda_i + O(\lambda_i^2)) \approx \sum_{i=1}^n \lambda_i $$
-          Recalling that the sum of eigenvalues equals the trace:
-          $$ \sum_{i=1}^n \lambda_i = \mathrm{tr}(E) = \mathrm{tr}(X^{-1}\Delta) $$
+          We use the first-order Taylor expansion of the logarithm, $\log(1+z) \approx z$ for small $z$. For small $\Delta$, the eigenvalues $\lambda_i$ of $X^{-1}\Delta$ are small.
+          $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i $$
+          Recall that the sum of the eigenvalues of a matrix equals its trace:
+          $$ \sum_{i=1}^n \lambda_i = \mathrm{tr}(X^{-1}\Delta) $$
           </div>
           <div class="proof-step">
           <strong>Step 4: Identify the Gradient.</strong>
-            The first-order approximation is:
+            Substituting back into the expression for the perturbation:
             $$ \log \det(X+\Delta) \approx \log \det X + \mathrm{tr}(X^{-1}\Delta) $$
-          To extract the gradient, we write the trace term as an inner product $\langle G, \Delta \rangle = \mathrm{tr}(G^\top \Delta)$.
-            $$ \mathrm{tr}(X^{-1}\Delta) = \mathrm{tr}((X^{-\top})^\top \Delta) = \langle X^{-\top}, \Delta \rangle $$
-          Thus, by the definition of the gradient, $\nabla_X \log \det X = X^{-\top}$.
+            To extract the gradient, we rewrite the linear term using the trace inner product $\langle A, B \rangle = \mathrm{tr}(A^\top B)$.
+            $$ \mathrm{tr}(X^{-1}\Delta) = \mathrm{tr}((X^{-1}) \Delta) = \mathrm{tr}((X^{-\top})^\top \Delta) = \langle X^{-\top}, \Delta \rangle $$
+            By definition, the gradient is the matrix $G$ such that $f(X+\Delta) \approx f(X) + \langle G, \Delta \rangle$. Thus, $\nabla_X \log \det X = X^{-\top}$.
           </div>
         </div>
         </li>
@@ -346,11 +346,12 @@
         </div>
 
         <div class="proof-step">
-          <strong>Step 5: Contradiction via Basis Uniqueness.</strong> Since $u \in \mathcal{N}(A)$, it can be written as a linear combination of the nullspace basis $\{v_i\}$:
+          <strong>Step 5: Prove Independence via Basis Uniqueness.</strong> Since $u \in \mathcal{N}(A)$, it can be written as a linear combination of the nullspace basis $\{v_i\}$:
           $$ u = \sum_{i=1}^k \beta_i v_i $$
           Equating the two expressions for $u$:
           $$ \sum_{j=1}^{r} \alpha_j w_j = \sum_{i=1}^k \beta_i v_i \quad \implies \quad \sum_{j=1}^{r} \alpha_j w_j - \sum_{i=1}^k \beta_i v_i = 0 $$
-          Since the combined set $\{v_1, \dots, v_k, w_1, \dots, w_r\}$ is a basis for $\mathbb{R}^n$, all coefficients must be zero. Specifically, $\alpha_j = 0$ for all $j$.
+          This equation is a linear combination of the full basis set $\{v_1, \dots, v_k, w_1, \dots, w_r\}$ summing to zero. Since these vectors form a basis for $\mathbb{R}^n$, they are linearly independent, implying all coefficients must be zero. Specifically, $\alpha_j = 0$ for all $j=1, \dots, r$.
+          <br>Since the only solution to $\sum \alpha_j A w_j = 0$ is the trivial solution $\alpha = 0$, the set $\{Aw_1, \dots, Aw_r\}$ is linearly independent.
         </div>
 
         <div class="proof-step">
@@ -563,20 +564,23 @@
         <h4>Proof of Cauchy–Schwarz: $|x^\top y| \le \|x\|_2 \|y\|_2$</h4>
 
         <div class="proof-step">
-          <strong>Step 1: Consider a norm.</strong> For any scalar $t$, the expression $\|x - ty\|_2^2$ is non-negative:
-          $$ \|x - ty\|_2^2 = (x - ty)^\top(x - ty) = \|x\|_2^2 - 2t(x^\top y) + t^2 \|y\|_2^2 \ge 0 $$
+          <strong>Case 1: $y = 0$.</strong> If $y$ is the zero vector, then $x^\top 0 = 0$ and $\|x\|_2 \|0\|_2 = 0$. The inequality $0 \le 0$ holds trivially.
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Apply the discriminant condition.</strong> The quadratic is of the form $At^2 + Bt + C \ge 0$, with $A=\|y\|_2^2$, $B=-2x^\top y$, and $C=\|x\|_2^2$. For a parabola opening upwards ($A \ge 0$) to remain above the axis, it must have at most one real root (it either touches the axis or floats above it). This means its discriminant $\Delta = B^2 - 4AC$ must be non-positive:
-          $$ \Delta = ( -2(x^\top y) )^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$
+          <strong>Case 2: $y \neq 0$.</strong> Consider the function $f(t) = \|x - ty\|_2^2$. By the non-negativity of norms, $f(t) \ge 0$ for all $t \in \mathbb{R}$. Expanding the squared norm:
+          $$ f(t) = (x - ty)^\top(x - ty) = \|x\|_2^2 - 2t(x^\top y) + t^2 \|y\|_2^2 $$
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Simplify.</strong> Rearranging gives
-          $$ 4(x^\top y)^2 \le 4\|x\|_2^2 \|y\|_2^2 $$
-          Dividing by 4 and taking the square root of both sides (since all quantities are non-negative and $\sqrt{a^2}=|a|$):
-          $$ |x^\top y| \le \|x\|_2 \|y\|_2 $$
+          <strong>Discriminant Analysis.</strong> The function $f(t) = A t^2 + B t + C$ is a quadratic in $t$, with coefficients $A=\|y\|_2^2$, $B=-2x^\top y$, and $C=\|x\|_2^2$. Since $y \neq 0$, we have $A > 0$, so the parabola opens upwards. For the quadratic to remain non-negative for all $t$, it can have at most one real root (it either sits above the axis or touches it). This requires the discriminant $\Delta = B^2 - 4AC$ to be non-positive:
+          $$ \Delta = (-2x^\top y)^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Conclusion.</strong>
+          $$ 4(x^\top y)^2 \le 4\|x\|_2^2 \|y\|_2^2 \implies (x^\top y)^2 \le \|x\|_2^2 \|y\|_2^2 $$
+          Taking the square root of both sides yields $|x^\top y| \le \|x\|_2 \|y\|_2$.
         </div>
       </div>
 
@@ -1162,12 +1166,12 @@
       <h2>8. The Method of Least Squares</h2>
 
       <h3>The Problem: Overdetermined Systems</h3>
-      <p>Often in practice, we encounter a system of linear equations $Ax=b$ where there is no exact solution because the vector $b$ does not lie in the column space of $A$. This is common when $m > n$ (more equations than unknowns). The goal of least squares is to find the "best" approximate solution by minimizing the squared Euclidean norm of the residual vector $r = Ax-b$. This is the canonical example of an <b>unconstrained optimization problem</b> (<a href="../02-introduction/index.html">Lecture 01</a>):
-      $$ \min_{x \in \mathbb{R}^n} \|Ax - b\|_2^2 $$</p>
+      <p>In practice, we often encounter linear systems $Ax=b$ with no exact solution. This typically occurs when $m > n$ (more equations than unknowns) and $b \notin \mathcal{R}(A)$. The "least squares" approach finds the best approximate solution by minimizing the sum of squared errors—the squared Euclidean norm of the residual $r = Ax-b$. This formulates the canonical <b>unconstrained optimization problem</b>:</p>
+      $$ \min_{x \in \mathbb{R}^n} \|Ax - b\|_2^2 $$
 
       <div class="insight">
         <h4>Forward Connection: Optimization Formulation</h4>
-        <p>This problem is a specific instance of <b>Quadratic Programming</b> (<a href="../07-convex-problems-standard/index.html">Lecture 08</a>). In the notation of L01, the "loss function" is the squared Euclidean norm, and there are no constraints (or the feasible set is $\mathbb{R}^n$). Recognizing least squares as a convex optimization problem allows us to easily add regularizers (like $\ell_1$ in LASSO) or constraints (like $x \ge 0$).</p>
+        <p>This problem is an instance of <b>Quadratic Programming</b> (discussed in <a href="../07-convex-problems-standard/index.html">Lecture 07</a>). It minimizes a convex quadratic loss function over $\mathbb{R}^n$. This formulation is the starting point for more complex models, such as regularized regression (LASSO, Ridge) or constrained least squares ($x \ge 0$), which we explore in later lectures.</p>
       </div>
 
       <h3>Geometric Interpretation: Projection</h3>

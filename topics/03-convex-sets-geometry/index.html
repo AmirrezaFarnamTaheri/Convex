@@ -138,20 +138,26 @@
         <div class="proof-box">
           <h4>Proof</h4>
           <div class="proof-step">
-            <strong>Step 1: Linear Dependence.</strong> Let $x \in \mathrm{conv}(S)$. By definition, $x = \sum_{i=1}^k \theta_i x_i$ with $\theta_i > 0$ and $\sum \theta_i = 1$. Suppose $k > n+1$.
-            The $k$ points $x_1, \dots, x_k$ define $k-1$ vectors $x_2-x_1, \dots, x_k-x_1$. Since $k-1 > n$, these vectors are linearly dependent in $\mathbb{R}^n$.
+            <strong>Step 1: Linear Dependence.</strong> Let $x \in \mathrm{conv}(S)$. By definition, $x$ is a convex combination of $k$ points $x_1, \dots, x_k$ with strictly positive coefficients $\theta_i > 0$. Suppose $k > n+1$.
+            Consider the vectors $v_2 = x_2 - x_1, \dots, v_k = x_k - x_1$. There are $k-1$ such vectors. Since $k-1 > n$, these vectors must be linearly dependent in $\mathbb{R}^n$.
           </div>
           <div class="proof-step">
-            <strong>Step 2: Constructing a zero sum.</strong> There exist scalars $\alpha_2, \dots, \alpha_k$, not all zero, such that $\sum_{i=2}^k \alpha_i (x_i - x_1) = 0$.
-            Defining $\alpha_1 = -\sum_{i=2}^k \alpha_i$, this implies $\sum_{i=1}^k \alpha_i x_i = 0$ and $\sum_{i=1}^k \alpha_i = 0$.
+            <strong>Step 2: Constructing an Affine Dependency.</strong> There exist scalars $\alpha_2, \dots, \alpha_k$, not all zero, such that $\sum_{i=2}^k \alpha_i (x_i - x_1) = 0$.
+            Let $\alpha_1 = -\sum_{i=2}^k \alpha_i$. Then:
+            $$ \sum_{i=1}^k \alpha_i x_i = \alpha_1 x_1 + \sum_{i=2}^k \alpha_i x_i = -\left(\sum_{i=2}^k \alpha_i\right) x_1 + \sum_{i=2}^k \alpha_i x_i = \sum_{i=2}^k \alpha_i (x_i - x_1) = 0 $$
+            Additionally, $\sum_{i=1}^k \alpha_i = \alpha_1 + \sum_{i=2}^k \alpha_i = 0$.
+            Thus, we have a non-trivial linear combination summing to zero with weights summing to zero.
           </div>
           <div class="proof-step">
-            <strong>Step 3: Reducing the count.</strong> We can modify the weights: $x = \sum_{i=1}^k (\theta_i - \beta \alpha_i) x_i$. This sum is still valid (coefficients sum to 1) for any $\beta$.
-            To eliminate one point, we choose $\beta$ to drive the smallest positive ratio $\theta_i / \alpha_i$ to zero while keeping others non-negative.
-            Let $\beta = \min_{i: \alpha_i > 0} (\theta_i / \alpha_i)$. The index achieving the minimum will have a zero coefficient.
+            <strong>Step 3: Reducing the Count.</strong> We modify the original weights $\theta_i$ by subtracting a multiple of $\alpha_i$:
+            $$ \theta'_i = \theta_i - \beta \alpha_i $$
+            Note that $\sum \theta'_i = \sum \theta_i - \beta \sum \alpha_i = 1 - 0 = 1$. Also $\sum \theta'_i x_i = \sum \theta_i x_i - \beta \sum \alpha_i x_i = x - 0 = x$.
+            We choose $\beta$ to make at least one $\theta'_i$ zero while keeping the rest non-negative.
+            Let $\beta = \min \{ \theta_i / \alpha_i \mid \alpha_i > 0 \}$. Such an index exists because not all $\alpha_i$ can be non-positive (since they sum to 0 and are not all 0).
+            For the index $j$ achieving the minimum, $\theta'_j = 0$. For all other $i$, $\theta'_i \ge 0$.
           </div>
           <div class="proof-step">
-            <strong>Conclusion:</strong> We have expressed $x$ as a convex combination of $k-1$ points. Repeating this process until $k \le n+1$ proves the theorem.
+            <strong>Conclusion:</strong> We have expressed $x$ as a convex combination of $k-1$ points. We can repeat this process as long as $k > n+1$. The recursion stops when $k \le n+1$.
           </div>
         </div>
 

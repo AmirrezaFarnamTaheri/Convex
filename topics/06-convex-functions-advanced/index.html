@@ -104,15 +104,21 @@
 
       <div class="example">
         <h4>3. Log-Sum-Exp and Entropy</h4>
-        <p>Let $f(x) = \log(\sum e^{x_i})$. This is a key function in ML.
-        <br>Maximize $y^\top x - f(x)$. Gradient condition: $y_i = e^{x_i} / (\sum e^{x_k})$.
-        <br>This implies $y > 0$ and $\mathbf{1}^\top y = 1$ (probability simplex $\Delta$).
-        <br>Inverting: $e^{x_i} = y_i (\sum e^{x_k})$. Taking log: $x_i = \log y_i + C$.
-        <br>Substitute back:
-        $$ y^\top x - f(x) = \sum y_i (\log y_i + C) - \log(\sum y_i e^C) $$
-        $$ = \sum y_i \log y_i + C \sum y_i - (C + \log 1) = \sum y_i \log y_i $$
-        <b>Result:</b> The conjugate is the <b>negative entropy</b> on the simplex:
-        $$ f^*(y) = \begin{cases} \sum y_i \log y_i & y \in \Delta \\ \infty & \text{otherwise} \end{cases} $$
+        <p>Let $f(x) = \log(\sum_{i=1}^n e^{x_i})$. This is the "soft max" function used in ML. We compute $f^*(y) = \sup_x (y^\top x - f(x))$.</p>
+        <p><b>Case 1: $y \in \Delta$ (Simplex).</b> Setting the gradient to zero:
+        $$ y_i = \frac{e^{x_i}}{\sum_k e^{x_k}} $$
+        Since $y$ is a probability vector resulting from the softmax of $x$, this system is solvable. Inverting it, we find $x_i = \log y_i + C$ for any constant $C$. Substituting this back:
+        $$ y^\top x - f(x) = \sum_i y_i (\log y_i + C) - \log\left(\sum_i e^{\log y_i + C}\right) $$
+        $$ = \sum_i y_i \log y_i + C \sum_i y_i - \log(e^C \sum_i y_i) $$
+        Since $\sum y_i = 1$, this simplifies to $\sum y_i \log y_i + C - (C + \log 1) = \sum y_i \log y_i$.</p>
+        <p><b>Case 2: $y \notin \Delta$.</b>
+        <ul>
+            <li>If some $y_k < 0$: Let $x_k \to -\infty$ (keeping others fixed). Then $y^\top x \to +\infty$ while $f(x)$ stays bounded. Sup is $\infty$.</li>
+            <li>If $\sum y_i \neq 1$: Let $x = t \mathbf{1}$. Then $y^\top x - f(x) = t (\sum y_i) - (t + \log n) = t(\sum y_i - 1) - \log n$. If $\sum y_i \neq 1$, we can choose $t \to \pm \infty$ to drive this to $\infty$.</li>
+        </ul>
+        </p>
+        <p><b>Result:</b> The conjugate is the <b>negative entropy</b> restricted to the simplex:
+        $$ f^*(y) = \begin{cases} \sum_{i=1}^n y_i \log y_i & \text{if } y \succeq 0, \mathbf{1}^\top y = 1 \\ \infty & \text{otherwise} \end{cases} $$
         </p>
       </div>
 
