@@ -64,7 +64,7 @@
       <h2>1. The QR Decomposition</h2>
 
       <h3>Motivation: Numerical Stability</h3>
-      <p>In Lecture 00, we solved the least squares problem $\min \|Ax - b\|_2$ using the normal equations $A^\top A x = A^\top b$. While theoretically correct, this approach is numerically hazardous. If $A$ has condition number $\kappa(A)$, then $A^\top A$ has condition number $\kappa(A)^2$. For ill-conditioned matrices, this squaring can result in a loss of precision that exceeds machine limits.</p>
+      <p>In <a href="../00-linear-algebra-basics/index.html">Lecture 00</a>, we solved the least squares problem $\min \|Ax - b\|_2$ using the normal equations $A^\top A x = A^\top b$. While theoretically correct, this approach can be numerically unstable. If $A$ has condition number $\kappa(A)$, then $A^\top A$ has condition number $\kappa(A)^2$. For ill-conditioned matrices, this squaring can result in a loss of precision that exceeds machine limits (floating-point errors dominate).</p>
       <p>The <b>QR decomposition</b> offers a solution that depends on $\kappa(A)$ rather than $\kappa(A)^2$, providing significantly better stability.</p>
 
       <h3>Definition and Existence</h3>
@@ -114,7 +114,7 @@
       <h2>2. The Singular Value Decomposition (SVD)</h2>
 
       <h3>Geometric Intuition</h3>
-      <p>The SVD provides the "diagonalization" of any matrix, even rectangular ones. It states that <b>every linear map</b> can be decomposed into a rotation, a scaling, and another rotation.</p>
+      <p>The SVD generalizes eigendecomposition to rectangular matrices. It states that <b>every linear map</b> can be decomposed into a rotation, a scaling, and another rotation.</p>
       $$ A = U \Sigma V^\top $$
       <ul>
         <li><b>$V^\top$ (Rotation/Reflection):</b> Aligns the input basis with the "principal axes" of the data.</li>
@@ -164,7 +164,7 @@
         <div class="proof-step">
           <strong>Step 1: Eigenvalues of $A^\top A$.</strong>
           Let $A^\top A = V \Lambda V^\top$ be the spectral decomposition, with $\lambda_1 \ge \dots \ge \lambda_n \ge 0$.
-          Define the singular values $\sigma_i = \sqrt{\lambda_i}$. Let $r$ be the rank of $A$, so $\sigma_1, \dots, \sigma_r > 0$ and $\sigma_{r+1} = \dots = 0$.
+          Define the singular values $\sigma_i = \sqrt{\lambda_i}$. Let $r$ be the rank of $A$, so $\sigma_1, \dots, \sigma_r > 0$ and $\sigma_{r+1} = \dots = \sigma_n = 0$.
         </div>
 
         <div class="proof-step">
@@ -174,7 +174,7 @@
           $$ u_i^\top u_j = \left(\frac{1}{\sigma_i} A v_i\right)^\top \left(\frac{1}{\sigma_j} A v_j\right) = \frac{1}{\sigma_i \sigma_j} v_i^\top (A^\top A v_j) $$
           Substitute the eigenvalue equation $A^\top A v_j = \lambda_j v_j = \sigma_j^2 v_j$:
           $$ = \frac{1}{\sigma_i \sigma_j} v_i^\top (\sigma_j^2 v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} (v_i^\top v_j) $$
-          Since the eigenvectors $v_i$ are orthonormal, $v_i^\top v_j = \delta_{ij}$ (1 if $i=j$, 0 otherwise).
+          Since the eigenvectors $v_i$ are orthonormal, $v_i^\top v_j = \delta_{ij}$.
           <ul>
             <li>If $i \ne j$, the result is 0.</li>
             <li>If $i = j$, the result is $\frac{\sigma_i^2}{\sigma_i^2} \cdot 1 = 1$.</li>
@@ -192,7 +192,7 @@
             </li>
             <li>If $i > r$:
               $$ (U \Sigma V^\top) v_i = U \Sigma e_i = U (0) = 0 $$
-              Also $A v_i = 0$ because $v_i$ is an eigenvector of $A^\top A$ with eigenvalue $\lambda_i = 0$, which implies $v_i \in \mathcal{N}(A^\top A) = \mathcal{N}(A)$.
+              Also $A v_i = 0$ because $v_i \in \mathcal{N}(A^\top A) = \mathcal{N}(A)$.
             </li>
           </ul>
           Thus $A = U \Sigma V^\top$.

@@ -77,6 +77,29 @@
           </div>
         </div>
 
+        <div class="problem">
+          <h3>P3.20 — Convex Hull of a Set of Points</h3>
+          <p>Let $S = \{x_1, \dots, x_m\} \subset \mathbb{R}^n$. Prove that the convex hull $\text{conv}(S)$ is a convex set.</p>
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              Let $u, v \in \text{conv}(S)$. By definition, $u = \sum_{i=1}^m \alpha_i x_i$ and $v = \sum_{i=1}^m \beta_i x_i$ where $\alpha_i, \beta_i \ge 0$ and $\sum \alpha_i = \sum \beta_i = 1$.
+            </div>
+            <div class="proof-step">
+              For any $\theta \in [0, 1]$, consider $z = \theta u + (1-\theta)v$.
+              $$ z = \theta \sum \alpha_i x_i + (1-\theta) \sum \beta_i x_i = \sum (\theta \alpha_i + (1-\theta)\beta_i) x_i $$
+            </div>
+            <div class="proof-step">
+              Let $\gamma_i = \theta \alpha_i + (1-\theta)\beta_i$.
+              Since $\alpha_i, \beta_i \ge 0$ and $\theta \in [0, 1]$, we have $\gamma_i \ge 0$.
+              Also, $\sum \gamma_i = \theta \sum \alpha_i + (1-\theta) \sum \beta_i = \theta(1) + (1-\theta)(1) = 1$.
+            </div>
+            <div class="proof-step">
+              Thus $z$ is a convex combination of points in $S$, so $z \in \text{conv}(S)$.
+            </div>
+          </div>
+        </div>
+
         <figure style="text-align: center;">
           <img src="assets/affine-subspace.png"
                alt="An affine set C shown as a red plane parallel to a blue subspace V passing through the origin"

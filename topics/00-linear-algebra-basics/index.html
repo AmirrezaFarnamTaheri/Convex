@@ -40,9 +40,9 @@
         <span>Tags: prerequisites, review, linear-algebra, foundational</a>
       </div>
       <div class="lecture-summary">
-        <p>This lecture establishes the fundamental linear algebra concepts required for convex optimization. Beginning with vectors and matrices, we progress through inner products, norms, orthogonality, projections, and least squares, building the mathematical background necessary for optimization theory.</p>
+        <p>This lecture establishes the linear algebra foundations required for convex optimization. We begin with vectors and matrices, then progress to inner products, norms, orthogonality, projections, and least squares, building the mathematical background necessary for optimization theory.</p>
         <p><strong>Prerequisites:</strong> None.</p>
-        <p><strong>Forward Connections:</strong> Projection techniques introduced here appear in least squares methods. Positive Semidefinite (PSD) matrices form the basis for convex quadratic programs. The four fundamental subspaces provide the geometric understanding of feasible sets. Advanced topics (QR, SVD, pseudoinverse) are covered in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</p>
+        <p><strong>Forward Connections:</strong> Projection techniques introduced here underpin least squares methods. Positive Semidefinite (PSD) matrices form the basis for convex quadratic programs and semidefinite programming. The four fundamental subspaces provide the geometric understanding of feasible sets. Advanced topics (QR, SVD, pseudoinverse) are covered in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</p>
       </div>
     </header>
 
@@ -124,7 +124,7 @@
       <p>This is the <b>standard partial order</b> on $\mathbb{R}^n$ induced by the nonnegative orthant $\mathbb{R}^n_+ = \{x \mid x \ge 0\}$. The vector $\mathbf{1}$ denotes the vector of all ones. This notation is essential for <a href="../03-convex-sets-geometry/index.html">Lecture 03</a>'s treatment of polyhedra and cones.</p>
 
       <h3>Matrix Calculus Basics</h3>
-      <p>Optimization algorithms rely heavily on gradients and Hessians. Computing derivatives with respect to vectors and matrices is a core skill.</p>
+      <p>Gradient-based optimization relies on the computation of gradients and Hessians. Computing derivatives with respect to vectors and matrices is therefore a core skill.</p>
 
       <h4>Gradients of Linear and Quadratic Forms</h4>
       <p>For $x \in \mathbb{R}^n$, $A \in \mathbb{R}^{n \times n}$, and $b \in \mathbb{R}^n$:</p>
@@ -179,22 +179,22 @@
         <p>We derive the gradient by identifying the linear term in the Taylor expansion of $f(X+\Delta)$ around $X$. This derivation relies on the connection between determinant, trace, and eigenvalues.</p>
           <div class="proof-step">
             <strong>Step 1: Factor out X.</strong>
-            Assuming $X$ is invertible and $\Delta$ is small:
+          Assuming $X$ is invertible and $\Delta$ is small enough:
             $$ \log \det (X + \Delta) = \log \det (X(I + X^{-1}\Delta)) = \log (\det X \cdot \det(I + X^{-1}\Delta)) $$
           Using the property $\log(ab) = \log a + \log b$:
             $$ = \log \det X + \log \det(I + X^{-1}\Delta) $$
           </div>
           <div class="proof-step">
           <strong>Step 2: Relate Determinant to Trace.</strong>
-          Let $\lambda_i$ be the eigenvalues of the matrix $E = X^{-1}\Delta$. Since the eigenvalues of $I+E$ are $1+\lambda_i$, we have:
+          Let $E = X^{-1}\Delta$ and let $\lambda_i$ be the eigenvalues of $E$. The eigenvalues of $I+E$ are then $1+\lambda_i$. Thus:
           $$ \det(I + E) = \prod_{i=1}^n (1 + \lambda_i) $$
-          Taking the log:
+          Taking the natural logarithm:
           $$ \log \det(I + E) = \sum_{i=1}^n \log(1 + \lambda_i) $$
         </div>
         <div class="proof-step">
           <strong>Step 3: Linearize via Taylor Series.</strong>
-          We use the first-order Taylor expansion of the logarithm, $\log(1+z) = z + O(z^2)$. For small $\lambda_i$ (which corresponds to small $\Delta$), we have:
-          $$ \sum_{i=1}^n \log(1 + \lambda_i) = \sum_{i=1}^n (\lambda_i + O(\lambda_i^2)) \approx \sum_{i=1}^n \lambda_i $$
+          Using the first-order Taylor expansion $\log(1+z) \approx z$ for small $|z|$:
+          $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i $$
           Recalling that the sum of eigenvalues equals the trace:
           $$ \sum_{i=1}^n \lambda_i = \mathrm{tr}(E) = \mathrm{tr}(X^{-1}\Delta) $$
           </div>
@@ -327,7 +327,7 @@
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Extend to a basis for $\mathbb{R}^n$.</strong> By the Basis Extension Theorem, we can extend this set to form a basis for the entire space $\mathbb{R}^n$: $\{v_1, \dots, v_k, w_1, \dots, w_{n-k}\}$. Here, $r = n-k$ is the number of added vectors.
+          <strong>Step 2: Extend to a basis for $\mathbb{R}^n$.</strong> By the Basis Extension Theorem, we extend this set to a basis for the entire space $\mathbb{R}^n$: $\{v_1, \dots, v_k, w_1, \dots, w_{n-k}\}$. Let $r = n-k$ be the number of added vectors.
         </div>
 
         <div class="proof-step">
@@ -392,7 +392,7 @@
 
 
       <h3>3.2 The "Isotropic Scaling" Lemma</h3>
-      <p>A classic result connects the geometry of eigenvectors to the structure of the matrix. What if <i>every</i> vector is an eigenvector?</p>
+      <p>A classic result connects the geometry of eigenvectors to the structure of the matrix. We ask: what if <i>every</i> vector is an eigenvector?</p>
       <div class="theorem-box">
         <h4>Lemma: Scalar Matrices</h4>
         <p>If every non-zero vector $x \in \mathbb{R}^n$ is an eigenvector of $A$ (i.e., $Ax = \lambda(x)x$), then $A$ must be a scalar multiple of the identity: $A = \lambda I$.</p>
@@ -400,14 +400,14 @@
       <div class="proof-box">
         <h4>Proof</h4>
         <p>Let $u, v$ be linearly independent vectors. By assumption, $Au = \lambda_u u$ and $Av = \lambda_v v$.
-        Consider their sum $w = u+v$. Since $w$ is also an eigenvector (by assumption for "every" vector), we must have $A(u+v) = \lambda_w (u+v)$.
+        Consider their sum $w = u+v$. Since $w$ is also an eigenvector, $A(u+v) = \lambda_w (u+v)$.
+        By linearity:
         $$ \lambda_w u + \lambda_w v = \lambda_w(u+v) = A(u+v) = Au + Av = \lambda_u u + \lambda_v v $$
-        Rearranging the terms to one side:
+        Rearranging terms:
         $$ (\lambda_w - \lambda_u)u + (\lambda_w - \lambda_v)v = 0 $$
-        Since $u$ and $v$ are linearly independent, no non-trivial linear combination of them can be zero. Therefore, the coefficients must vanish individually:
+        Since $u$ and $v$ are linearly independent, their coefficients must vanish:
         $$ \lambda_w - \lambda_u = 0 \quad \text{and} \quad \lambda_w - \lambda_v = 0 $$
-        This implies $\lambda_w = \lambda_u$ and $\lambda_w = \lambda_v$.
-        Thus $\lambda_u = \lambda_v$ for any linearly independent pair. For any linearly dependent pair (where $v=cu$), we can pick a third vector independent of both to bridge the equality. By transitivity, all non-zero vectors share the same eigenvalue $\lambda$. Thus $Ax = \lambda x$ for all $x \in \mathbb{R}^n$, which implies $A = \lambda I$.</p>
+        This implies $\lambda_u = \lambda_w = \lambda_v$. Thus, any two linearly independent vectors share the same eigenvalue. For any linearly dependent pair (where $v=cu$), we can pick a third vector independent of both to bridge the equality. By transitivity, all non-zero vectors share the same eigenvalue $\lambda$. Thus $Ax = \lambda x$ for all $x$, which implies $A = \lambda I$.</p>
       </div>
       <p><b>Geometric Intuition:</b> A general matrix distorts a circle into an ellipse. If <i>every</i> direction is a principal axis (eigenvector), the ellipse must be a circle (isotropic scaling).</p>
 

@@ -25,6 +25,32 @@
     </div>
   </header>
 
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+    <header class="lecture-header section-card">
+      <h1>06. Convex Functions: Advanced Topics</h1>
+      <div class="lecture-meta">
+        <span>Date: 2025-10-21</span>
+        <span>Duration: 90 min</span>
+        <span>Tags: conjugate, quasiconvex, log-concave, advanced</span>
+      </div>
+      <div class="lecture-summary">
+        <p>This lecture explores advanced topics in convex analysis that bridge theory and modern applications. We examine the convex conjugate (Fenchel conjugate) and its central role in duality, define quasi-convex functions and their properties, and study log-concave functions, which are essential for probabilistic modeling and volume approximation.</p>
+        <p><strong>Prerequisites:</strong> <a href="../05-convex-functions-basics/index.html">Lecture 05: Convex Functions Basics</a>.</p>
+        <p><strong>Forward Connections:</strong> The convex conjugate is the key tool for deriving dual problems in <a href="../09-duality/index.html">Lecture 09</a>. Quasi-convexity appears in fractional programming problems in <a href="../08-convex-problems-conic/index.html">Lecture 08</a>.</p>
+      </div>
+    </header>
+
+    <section class="section-card">
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
+      <p>After this lecture, you will be able to:</p>
+      <ul>
+        <li><b>Compute Conjugates:</b> Derive the convex conjugate for standard functions like norms, quadratics, and log-sum-exp.</li>
+        <li><b>Apply Duality Mappings:</b> Connect primal domain properties to dual domain constraints via conjugation.</li>
+        <li><b>Analyze Quasi-Convexity:</b> Identify functions defined by convex sublevel sets and apply operations that preserve this property.</li>
+        <li><b>Work with Log-Concavity:</b> Recognize log-concave probability distributions and use their properties (integration, marginalization) in modeling.</li>
+      </ul>
+    </section>
+
     <article>
       <section class="section-card" id="section-1">
       <h2>1. The Convex Conjugate (Fenchel Conjugate)</h2>
@@ -243,7 +269,8 @@
     Thus the supremum is exactly $\frac{1}{2}\|y\|_*^2$.</div>
   </div>
 </div>
-\n<div class="problem">
+
+<div class="problem">
   <h3>P6.2 — Quasi-Convexity of Ceiling</h3>
   <p>Show that $f(x) = \lceil x \rceil$ (on $\mathbb{R}$) is quasi-convex.</p>
   <div class="solution-box">
@@ -260,7 +287,8 @@
     Therefore, $f$ is quasi-convex.</div>
   </div>
 </div>
-\n<div class="problem">
+
+<div class="problem">
   <h3>P6.3 — Softmax Analysis</h3>
   <p>For $f(x) = \log(\sum_{i=1}^n e^{x_i})$: <ol type="a"><li>Show $\max x_i \le f(x) \le \max x_i + \log n$.</li><li>Show $f$ is convex via Hessian analysis.</li></ol></p>
   <div class="solution-box">
@@ -286,7 +314,8 @@
     <br>Since variance is always non-negative, $v^\top \nabla^2 f v \ge 0$. Thus $f$ is convex.</div>
   </div>
 </div>
-\n<div class="problem">
+
+<div class="problem">
   <h3>P6.4 — Concavity of Geometric Mean</h3>
   <p>Prove $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}^n_{++}$ using log-concavity properties.</p>
   <div class="solution-box">
@@ -321,7 +350,8 @@
     Superadditivity plus homogeneity implies concavity.</div>
   </div>
 </div>
-\n<div class="problem">
+
+<div class="problem">
   <h3>P6.5 — Geometric Mean Cone</h3>
   <p>Show $K = \{x \in \mathbb{R}^n_+ \mid G(x) \ge \alpha A(x)\}$ is a convex cone for $\alpha \in [0,1]$, where $A(x) = \frac{1}{n}\sum x_i$ is the arithmetic mean.</p>
   <div class="solution-box">
@@ -343,7 +373,8 @@
     Thus $K$ is a cone.</div>
   </div>
 </div>
-\n<div class="problem">
+
+<div class="problem">
   <h3>P6.6 — Matrix Fractional Function</h3>
   <p>Prove convexity of $f(x, Y) = x^\top Y^{-1} x$ (for $Y \succ 0$) using the epigraph characterization.</p>
   <div class="solution-box">
@@ -361,7 +392,8 @@
     Thus $\text{epi } f = \{(x, Y, t) \mid M(x, Y, t) \succeq 0\}$ is convex.</div>
   </div>
 </div>
-\n<div class="problem">
+
+<div class="problem">
   <h3>P6.7 — Fenchel's Inequality & Biconjugate</h3>
   <p>For $f(x) = \frac{1}{2}x^\top Q x$ with $Q \succ 0$: 1. Verify Fenchel's inequality. 2. Verify $f^{**} = f$.</p>
   <div class="solution-box">
@@ -381,7 +413,8 @@
     So $f^{**}(x) = \frac{1}{2}x^\top Q x = f(x)$. Verified.</div>
   </div>
 </div>
-\n<div class="problem">
+
+<div class="problem">
   <h3>P6.8 — Quasiconvexity of Distance Ratio</h3>
   <p>Show $S_\theta = \{x \mid \|x-a\|_2 \le \theta \|x-b\|_2\}$ is convex for $\theta \le 1$.</p>
   <div class="solution-box">
@@ -399,7 +432,8 @@
     Thus $S_\theta$ is convex. (If $\theta > 1$, it's the complement of an ellipsoid, which is non-convex).</div>
   </div>
 </div>
-\n<div class="problem">
+
+<div class="problem">
   <h3>P6.9 — Log-Concavity of Probability Measures</h3>
   <p>If $p(x)$ is a log-concave probability density, show that the function $f(x) = \mathbb{P}(x+W \in C)$ is log-concave, where $W \sim p$ and $C$ is a convex set.</p>
   <div class="solution-box">
@@ -426,7 +460,8 @@
     (Note: The integral is essentially measuring the measure of the set $C$ shifted by $-x$. Prekopa-Leindler directly applies to marginals of log-concave functions).</div>
   </div>
 </div>
-\n<div class="problem">
+
+<div class="problem">
   <h3>P6.10 — Log-Concavity of Gaussian</h3>
   <p>Show that the multivariate Gaussian density function $f(x)$ is log-concave. $$ f(x) = \frac{1}{(2\pi)^{n/2} (\det \Sigma)^{1/2}} \exp\left(-\frac{1}{2}(x-\mu)^\top \Sigma^{-1} (x-\mu)\right) $$ where $\Sigma \succ 0$.</p>
   <div class="solution-box">

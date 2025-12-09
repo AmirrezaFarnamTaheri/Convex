@@ -29,7 +29,7 @@
       <section class="section-card" id="section-1">
         <h2>1. Separating and Supporting Hyperplane Theorems</h2>
 
-        <p>These theorems are the geometric backbone of duality theory, optimality conditions, and many algorithms in convex optimization. They formalize the intuition that convex sets can be "separated" from points outside them and "supported" by planes at their boundaries.</p>
+        <p>These theorems form the geometric backbone of duality theory, optimality conditions, and many algorithms in convex optimization. They formalize the intuition that convex sets can be "separated" from points outside them and "supported" by planes at their boundaries.</p>
 
         <h3>1.1 The Separating Hyperplane Theorem</h3>
 
@@ -53,15 +53,15 @@
           <h4>Proof (Constructive via Projection)</h4>
 
           <div class="proof-step">
-            <strong>Step 1: Form the Difference Set.</strong> Define the Minkowski difference $S = C - D = \{c - d \mid c \in C, d \in D\}$.
+            <strong>Step 1: Construct the Difference Set.</strong> Define the Minkowski difference $S = C - D = \{c - d \mid c \in C, d \in D\}$.
             <br>Since $C$ and $D$ are convex, their difference $S$ is also convex.
-            <br>Since $C \cap D = \emptyset$, the origin $0$ is <b>not</b> in $S$. (If $0 = c-d$, then $c=d \in C \cap D$).
+            <br>Because $C$ and $D$ are disjoint, the origin $0$ is <b>not</b> in $S$. (If $0 = c-d$, then $c=d \in C \cap D$).
           </div>
 
           <div class="proof-step">
             <strong>Step 2: Project Zero onto the Closure.</strong> Let $\bar{S} = \mathrm{cl}(S)$. Since $S$ is convex, $\bar{S}$ is closed and convex.
             <br>Let $p = \Pi_{\bar{S}}(0)$ be the projection of the origin onto $\bar{S}$.
-            <br>If $0 \notin \bar{S}$, then $p \neq 0$. (This covers the strict separation case).
+            <br>Assuming $0 \notin \bar{S}$ (which holds if $C, D$ are closed and one is compact), then $p \neq 0$.
           </div>
 
           <div class="proof-step">
@@ -620,6 +620,30 @@
     <div class="proof-step">
       <strong>Step 4: Take Dual again.</strong> Taking the dual of both sides: $(K_1^* + K_2^*)^{**} = (K_1 \cap K_2)^*$.
       The biconjugate of a cone is its closure (if it's convex). Thus $\mathrm{cl}(K_1^* + K_2^*) = (K_1 \cap K_2)^*$.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.15 — Euclidean Distance Matrices (EDM)</h3>
+  <p>A matrix $D \in \mathbb{S}^n$ is a Euclidean Distance Matrix if there exist points $x_1, \dots, x_n$ such that $D_{ij} = \|x_i - x_j\|_2^2$. Show that the set of all EDMs is a convex cone.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Expand definition.</strong>
+      $D_{ij} = \|x_i - x_j\|^2 = \|x_i\|^2 + \|x_j\|^2 - 2x_i^\top x_j$.
+      Let $G$ be the Gram matrix where $G_{ij} = x_i^\top x_j$. Then $G \succeq 0$.
+      Let $v$ be the vector where $v_i = G_{ii} = \|x_i\|^2$.
+      We can write $D = v\mathbf{1}^\top + \mathbf{1}v^\top - 2G$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Identify Linear Structure.</strong>
+      The mapping $\mathcal{L}(G) = \text{diag}(G)\mathbf{1}^\top + \mathbf{1}\text{diag}(G)^\top - 2G$ is a linear map from $\mathbb{S}^n$ to $\mathbb{S}^n$.
+      The set of EDMs is the image of the PSD cone $\mathbb{S}^n_+$ under this linear map $\mathcal{L}$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Convexity.</strong>
+      Since $\mathbb{S}^n_+$ is a convex cone and linear maps preserve convexity and conical structure, the set of EDMs is a convex cone.
     </div>
   </div>
 </div>

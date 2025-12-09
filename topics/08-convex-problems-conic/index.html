@@ -72,7 +72,7 @@
         </p>
       </div>
 
-      <p>where $x \in \mathbb{R}^n$ is the variable. Each constraint $\|A_i x + b_i\|_2 \le c_i^T x + d_i$ is called a <strong>second-order cone constraint</strong>.</p>
+      <p>where $x \in \mathbb{R}^n$ is the variable. Each constraint $\|A_i x + b_i\|_2 \le c_i^\top x + d_i$ is called a <strong>second-order cone constraint</strong>.</p>
 
       <h3>1.2 The Second-Order Cone (Lorentz Cone)</h3>
       <p>The <strong>second-order cone</strong> (or <strong>Lorentz cone</strong>) in $\mathbb{R}^{n+1}$ is:</p>
@@ -187,6 +187,7 @@
         \end{aligned}
         $
       </p>
+      <p>Note: The inequality constraints must define a convex set, so we typically require $f_i$ to be convex, not merely quasiconvex (since sublevel sets of individual quasiconvex functions are convex, but their intersection might not have nice properties without stronger assumptions, though technically intersection of convex sets is convex. Standard form usually requires convex constraints).</p>
       <p>The constraints $\|x - p_i\|_2 \le t_i$ are standard second-order cone constraints $(x - p_i, t_i) \in \mathcal{L}^{n+1}$.</p>
 
       <h3>1.5 Hierarchy: LP ⊂ QP ⊂ SOCP</h3>
