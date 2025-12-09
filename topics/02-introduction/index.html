@@ -82,7 +82,7 @@
         </figure>
 
         <h3>1.2 Formal Definition</h3>
-        <p>A mathematical optimization problem is <a href="#" class="definition-link" data-term="convex function">convex</a> if it can be written in the standard form:</p>
+        <p>A mathematical optimization problem is <b>convex</b> if it can be written in the following standard form:</p>
         $$
         \begin{aligned}
         \min_{x \in \mathbb{R}^n} \quad & f_0(x) && \text{(Objective function)} \\
@@ -90,26 +90,25 @@
         & Ax = b && \text{(Equality constraints)}
         \end{aligned}
         $$
-        <p>where <b>three critical structural conditions</b> must be satisfied:</p>
+        <p>where three critical conditions must be met:</p>
         <ol>
-          <li><b>Convex objective:</b> The objective function $f_0 : \mathbb{R}^n \to \mathbb{R}$ is convex (see <a href="../05-convex-functions-basics/index.html">Lecture 05</a> for the formal definition).</li>
-          <li><b>Convex inequality constraints:</b> Each constraint function $f_i : \mathbb{R}^n \to \mathbb{R}$ is convex (see <a href="../05-convex-functions-basics/index.html">Lecture 05</a>).</li>
-          <li><b>Affine equality constraints:</b> All equality constraints are <a href="#" class="definition-link">linear (affine)</a>, of the form $Ax = b$. Recall from <a href="../00-linear-algebra-basics/index.html">Lecture 00</a> that the set of solutions to $Ax=b$ is an affine set (a shifted subspace). If we allowed nonlinear equality constraints (like $x^2=1$), the feasible set would essentially consist of the boundary of a convex set, which is generally not convex.</li>
+          <li><b>Convex Objective:</b> The function $f_0$ is convex.</li>
+          <li><b>Convex Inequality Constraints:</b> The functions $f_i$ are convex.</li>
+          <li><b>Affine Equality Constraints:</b> The equality constraints are affine ($Ax=b$).</li>
         </ol>
+        <p><i>Note:</i> Minimizing a concave function is generally non-convex. Equality constraints $h(x)=0$ where $h$ is convex (but not affine) are generally non-convex (see "Counter-Example Corner" below).</p>
 
         <div class="insight">
-          <h4>Geometric Insight: Linearity vs. Convexity</h4>
-          <p>It is crucial to distinguish between "flat" and "curved" geometry:</p>
-          <ul>
-            <li><b>Linearity (Affine):</b> Represents "flat" structures—lines, planes, hyperplanes. These are sets that extend infinitely in all directions within a subspace. They are both convex and concave. In optimization, we use them for equality constraints because the intersection of hyperplanes is a stable, convex object (a smaller affine set).</li>
-            <li><b>Convexity:</b> Represents "bulging" or "bowl-like" structures—balls, ellipsoids, halfspaces. These sets have an "inside" and an "outside". In optimization, we use them for inequality constraints ("stay inside the bowl") or objectives ("find the bottom of the bowl").</li>
-          </ul>
+          <h4>Why Affine Equality Constraints?</h4>
+          <p>Why must equality constraints be linear ($Ax=b$)? Why not convex ($h(x)=0$)?</p>
           <div class="example">
-            <h4>🚫 Counter-Example Corner: Why $x^2=1$ is Forbidden</h4>
-            <p>Suppose we try to enforce the constraint $x^2 = 1$ in a convex problem.
-            <br>The feasible set is $\{x \in \mathbb{R} \mid x^2 = 1\} = \{-1, +1\}$.
-            <br>Is this set convex? No! The line segment connecting $-1$ and $+1$ contains the point 0, which is not in the set ($0^2 \neq 1$).
-            <br>This is why equality constraints $h(x)=0$ must be affine (flat). If $h(x)$ is convex (like $x^2-1$), its zero-set is the boundary of a convex set, which is generally not convex.</p>
+            <h4>🚫 Counter-Example: The Circle Boundary</h4>
+            <p>Consider the constraint $x_1^2 + x_2^2 = 1$. The function $h(x) = x_1^2 + x_2^2 - 1$ is convex. However, the set of points satisfying $h(x)=0$ is the <b>boundary</b> of the unit circle.</p>
+            <ul>
+              <li>The points $(-1, 0)$ and $(1, 0)$ are feasible.</li>
+              <li>Their midpoint $(0, 0)$ is <b>not</b> feasible ($0^2 + 0^2 \neq 1$).</li>
+            </ul>
+            <p>Thus, the feasible set is not convex. In convex optimization, we can constrain solutions to be <i>inside</i> a bowl ($f_i(x) \le 0$) or <i>on</i> a flat plane ($Ax=b$), but not on the curved boundary of a bowl.</p>
           </div>
         </div>
 

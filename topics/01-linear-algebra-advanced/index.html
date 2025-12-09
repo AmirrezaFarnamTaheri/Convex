@@ -114,29 +114,25 @@
       <h2>2. The Singular Value Decomposition (SVD)</h2>
 
       <h3>Geometric Intuition</h3>
-      <p>The SVD provides the "diagonalization" of any matrix, even rectangular ones. It states that <b>every linear map</b> can be decomposed into a rotation, a scaling, and another rotation.</p>
+      <p>The Singular Value Decomposition (SVD) generalizes the concept of diagonalization to all matrices, including non-square ones. It expresses any linear transformation $A$ as a composition of three simple operations: a rotation, a scaling, and another rotation.</p>
       $$ A = U \Sigma V^\top $$
-      <ul>
-        <li><b>$V^\top$ (Rotation/Reflection):</b> Aligns the input basis with the "principal axes" of the data.</li>
-        <li><b>$\Sigma$ (Stretch):</b> Scales the axes by the singular values $\sigma_i \ge 0$.</li>
-        <li><b>$U$ (Rotation/Reflection):</b> Rotates the stretched axes to their final directions in the output space.</li>
-      </ul>
+      <p>Given an input vector $x$:</p>
+      <ol>
+        <li><b>Rotate/Reflect ($V^\top$):</b> The matrix $V^\top$ is orthogonal. It rotates the coordinate system to align the input vector with the "principal axes" of the matrix.</li>
+        <li><b>Scale ($\Sigma$):</b> The matrix $\Sigma$ is diagonal with non-negative entries $\sigma_i$. It stretches or shrinks the vector along the coordinate axes. These scaling factors are the <b>singular values</b>.</li>
+        <li><b>Rotate/Reflect ($U$):</b> The matrix $U$ is orthogonal. It rotates the stretched vector to its final orientation in the output space.</li>
+      </ol>
+      <p>This decomposition reveals that the image of the unit sphere under any linear map is a hyperellipse. The singular values are the lengths of the hyperellipse's semi-axes, and the columns of $U$ are the directions of these axes.</p>
 
       <div class="example">
         <h4>Numerical Example: SVD in 2D</h4>
-        <p>Let $A = \begin{bmatrix} 3 & 0 \\ 0 & -2 \end{bmatrix}$. This matrix stretches x by 3 and y by -2 (flip and stretch).</p>
+        <p>Consider the matrix $A = \begin{bmatrix} 3 & 0 \\ 0 & -2 \end{bmatrix}$. It stretches the x-axis by 3 and the y-axis by 2, while reflecting the y-axis.</p>
+        <p>Its SVD is $A = U \Sigma V^\top$:</p>
+        $$ A = \underbrace{\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}}_{U} \underbrace{\begin{bmatrix} 3 & 0 \\ 0 & 2 \end{bmatrix}}_{\Sigma} \underbrace{\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}}_{V^\top} $$
         <ul>
-          <li><b>Original:</b> Maps $e_1 \to (3,0)$, $e_2 \to (0,-2)$.</li>
-          <li><b>SVD Form ($U \Sigma V^\top$):</b>
-            $$ A = \underbrace{\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}}_{U} \underbrace{\begin{bmatrix} 3 & 0 \\ 0 & 2 \end{bmatrix}}_{\Sigma} \underbrace{\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}}_{V^\top} $$
-          </li>
-          <li><b>Step-by-step:</b>
-            <ol>
-              <li>$V^\top$: Identity (no initial rotation).</li>
-              <li>$\Sigma$: Stretch x by 3, y by 2. (Maps $e_1 \to (3,0), e_2 \to (0,2)$).</li>
-              <li>$U$: Reflection across x-axis. Maps $(0,2) \to (0,-2)$.</li>
-            </ol>
-          </li>
+          <li><b>$V^\top = I$:</b> The input basis aligns with the standard axes (no rotation needed).</li>
+          <li><b>$\Sigma$:</b> The singular values are $3$ and $2$. The map stretches $e_1$ by 3 and $e_2$ by 2.</li>
+          <li><b>$U$:</b> The reflection $\begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}$ flips the y-component, accounting for the negative entry in $A$. Note that singular values must be non-negative, so the negative sign is absorbed into $U$ (or $V$).</li>
         </ul>
       </div>
 
@@ -174,13 +170,9 @@
           $$ u_i^\top u_j = \left(\frac{1}{\sigma_i} A v_i\right)^\top \left(\frac{1}{\sigma_j} A v_j\right) = \frac{1}{\sigma_i \sigma_j} v_i^\top (A^\top A v_j) $$
           Substitute the eigenvalue equation $A^\top A v_j = \lambda_j v_j = \sigma_j^2 v_j$:
           $$ = \frac{1}{\sigma_i \sigma_j} v_i^\top (\sigma_j^2 v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} (v_i^\top v_j) $$
-          Since the eigenvectors $v_i$ are orthonormal, $v_i^\top v_j = \delta_{ij}$ (1 if $i=j$, 0 otherwise).
-          <ul>
-            <li>If $i \ne j$, the result is 0.</li>
-            <li>If $i = j$, the result is $\frac{\sigma_i^2}{\sigma_i^2} \cdot 1 = 1$.</li>
-          </ul>
-          Thus, the vectors $u_1, \dots, u_r$ form an orthonormal set.
-          <br><b>Completion:</b> Use the Gram-Schmidt process to extend this set to a full orthonormal basis $\{u_1, \dots, u_m\}$ for $\mathbb{R}^m$. The matrix $U$ is formed with these basis vectors as columns.
+          Since the eigenvectors $v_i$ are orthonormal, $v_i^\top v_j = \delta_{ij}$.
+          Thus $u_i^\top u_j = \delta_{ij}$. The vectors $u_1, \dots, u_r$ form an orthonormal set in $\mathbb{R}^m$.
+          <br><b>Completion:</b> If $r < m$, we can extend this set to a full orthonormal basis $\{u_1, \dots, u_m\}$ for $\mathbb{R}^m$ (e.g., using Gram-Schmidt on random vectors). We define the full matrix $U = [u_1, \dots, u_m]$.
         </div>
 
         <div class="proof-step">
@@ -258,24 +250,30 @@
         <br>
         <div class="proof-box">
           <h4>Proof: $x_{LS} = A^+b$ minimizes norm</h4>
-          <p>The general solution to the least squares problem is the set of all $x$ such that $A^\top A x = A^\top b$. This set is affine: $x = x_p + z$, where $x_p$ is a particular solution and $z \in \mathcal{N}(A)$.</p>
+          <p>The general solution to the least squares problem $\min \|Ax-b\|_2$ is the set of all $x$ satisfying the normal equations $A^\top A x = A^\top b$. This solution set is affine: $S_{LS} = \{x_p + z \mid z \in \mathcal{N}(A)\}$, where $x_p$ is any particular solution.</p>
           <div class="proof-step">
-            <strong>Step 1: Particular Solution.</strong> Let $x_p = A^+ b$.
-            We verify it satisfies normal equations: $A^\top A (A^+ b) = (V \Sigma U^\top) (U \Sigma V^\top) (V \Sigma^+ U^\top) b = V \Sigma^2 \Sigma^+ U^\top b$.
-            Note $\Sigma^2 \Sigma^+ = \Sigma$ (since $\sigma^2 \cdot (1/\sigma) = \sigma$).
-            So $A^\top A x_p = V \Sigma U^\top b = A^\top b$. Thus $x_p$ is a least squares solution.
+            <strong>Step 1: $x_{mn} = A^+ b$ is a solution.</strong>
+            We check if $x_{mn} = V \Sigma^+ U^\top b$ satisfies $A^\top A x = A^\top b$.
+            $$ A^\top A x_{mn} = (V \Sigma U^\top)(U \Sigma V^\top) (V \Sigma^+ U^\top) b = V \Sigma (\Sigma \Sigma^+) U^\top b $$
+            The matrix $\Sigma \Sigma^+$ is diagonal with 1s for indices $1 \dots r$ and 0s otherwise.
+            Note that $\Sigma (\Sigma \Sigma^+) = \Sigma$. (Multiplying $\sigma$ by 1 keeps it $\sigma$; multiplying 0 by 0 keeps it 0).
+            $$ = V \Sigma U^\top b = A^\top b $$
+            Thus, $x_{mn}$ is indeed a least squares solution.
           </div>
           <div class="proof-step">
             <strong>Step 2: Orthogonality.</strong>
-            $x_p = V \Sigma^+ U^\top b$. This vector is a linear combination of columns of $V$ corresponding to non-zero singular values. These columns span the row space $\mathcal{R}(A^\top)$.
-            Any nullspace vector $z \in \mathcal{N}(A)$ is orthogonal to the row space.
-            Thus $x_p \perp z$.
+            $x_{mn}$ lies in the span of the first $r$ columns of $V$ (since $\Sigma^+$ has zeros for rows $r+1 \dots n$).
+            The columns $v_1, \dots, v_r$ span the row space $\mathcal{R}(A^\top)$.
+            The nullspace $\mathcal{N}(A)$ is spanned by $v_{r+1}, \dots, v_n$.
+            Therefore, $x_{mn} \in \mathcal{R}(A^\top)$ and is orthogonal to any $z \in \mathcal{N}(A)$.
           </div>
           <div class="proof-step">
-            <strong>Step 3: Pythagorean Theorem.</strong>
-            For any other solution $x = x_p + z$:
-            $$ \|x\|^2 = \|x_p + z\|^2 = \|x_p\|^2 + \|z\|^2 \ge \|x_p\|^2 $$
-            Equality holds only if $z=0$. Thus $x_p = A^+ b$ is the unique minimum norm solution.
+            <strong>Step 3: Minimality.</strong>
+            Any other solution is of the form $x = x_{mn} + z$ with $z \in \mathcal{N}(A)$.
+            $$ \|x\|^2 = \|x_{mn} + z\|^2 = \|x_{mn}\|^2 + \|z\|^2 + 2x_{mn}^\top z $$
+            Since $x_{mn} \perp z$, the cross term vanishes:
+            $$ \|x\|^2 = \|x_{mn}\|^2 + \|z\|^2 $$
+            This is minimized when $z=0$, so $x_{mn}$ is the unique minimum norm solution.
           </div>
         </div>
         </li>
