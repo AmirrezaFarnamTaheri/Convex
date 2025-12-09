@@ -34,7 +34,7 @@
         <span>Tags: convex-functions, jensen, hessian, epigraph</span>
       </div>
       <div class="lecture-summary">
-        <p>This lecture introduces the core concept of convex functions, which are the building blocks of convex optimization. We cover the definition via Jensen's inequality, the epigraph characterization, and first- and second-order conditions for differentiable functions. We also explore operations that preserve convexity, providing a toolkit for constructing and recognizing convex functions.</p>
+        <p>This lecture introduces the core concept of convex functions, which are the building blocks of convex optimization. We explore the definition via Jensen's inequality, the epigraph characterization, and first- and second-order conditions for differentiable functions. We also build a toolkit of operations that preserve convexity, enabling the construction and recognition of complex convex functions.</p>
         <p><strong>Prerequisites:</strong> <a href="../03-convex-sets-geometry/index.html">Lecture 03: Convex Sets Geometry</a> (convex sets, lines, segments).</p>
         <p><strong>Forward Connections:</strong> These concepts are foundational for defining convex problems in <a href="../07-convex-problems-standard/index.html">Lecture 07</a> and for duality theory in <a href="../09-duality/index.html">Lecture 09</a>.</p>
       </div>
@@ -101,8 +101,8 @@
             <strong>Inductive Step:</strong> Assume the inequality holds for any $k-1$ points. Consider $k$ points with $\sum_{i=1}^k \theta_i = 1$.
             <br><b>Case 1:</b> If $\theta_k = 1$, then $\theta_1=\dots=\theta_{k-1}=0$, and the result holds trivially.
             <br><b>Case 2:</b> If $\theta_k < 1$, let $\tilde{\theta} = 1 - \theta_k = \sum_{i=1}^{k-1} \theta_i > 0$.
-            <br>We can rewrite the sum to isolate $x_k$:
-            $$ \sum_{i=1}^k \theta_i x_i = \theta_k x_k + \sum_{i=1}^{k-1} \theta_i x_i = \theta_k x_k + \tilde{\theta} \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i $$
+            <br>We rewrite the sum to isolate $x_k$:
+            $$ \sum_{i=1}^k \theta_i x_i = \theta_k x_k + \tilde{\theta} \underbrace{\sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i}_{\bar{x}} $$
             Let $\bar{x} = \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i$.
             The weights $\alpha_i = \frac{\theta_i}{\tilde{\theta}}$ sum to $\frac{1}{\tilde{\theta}}\sum_{i=1}^{k-1} \theta_i = \frac{\tilde{\theta}}{\tilde{\theta}} = 1$.
             Thus $\bar{x}$ is a convex combination of $k-1$ points.
@@ -116,7 +116,7 @@
           </div>
           <div class="proof-step">
             <strong>Combine:</strong>
-            $$ f\left(\sum_{i=1}^k \theta_i x_i\right) \le \theta_k f(x_k) + \tilde{\theta} \left( \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i) \right) = \theta_k f(x_k) + \sum_{i=1}^{k-1} \theta_i f(x_i) = \sum_{i=1}^k \theta_i f(x_i) $$
+            $$ f\left(\sum_{i=1}^k \theta_i x_i\right) \le \theta_k f(x_k) + \tilde{\theta} \left( \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i) \right) = \sum_{i=1}^k \theta_i f(x_i) $$
           </div>
         </div>
 

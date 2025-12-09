@@ -171,7 +171,7 @@
             $
           </p>
         </div>
-        <p>This is a <b>convex optimization problem</b> (concave maximization is convex minimization), regardless of the primal's properties.</p>
+        <p>This is a <b>convex optimization problem</b> (concave maximization is equivalent to convex minimization), regardless of the primal's properties.</p>
 
         <h3>3.2 Weak Duality</h3>
         <p>Let $d^*$ be the optimal value of the dual problem. The weak duality theorem states:</p>
@@ -268,8 +268,8 @@
           \end{aligned}
           $$
           Since the LHS equals the RHS, all inequalities must be equalities.
-          <br>Equality 1: The infimum is attained at $x^*$, so $\nabla_x L = 0$ (Stationarity).
-          <br>Equality 2: The term $\sum \lambda_i^* f_i(x^*)$ must be 0. Since $\lambda_i^* \ge 0$ and $f_i(x^*) \le 0$, each term must be zero (Complementary Slackness).</p>
+          <br><b>Equality 1 (Stationarity):</b> The infimum of the Lagrangian with respect to $x$ is attained at $x^*$. For differentiable functions, this implies $\nabla_x L(x^*, \lambda^*, \nu^*) = 0$.
+          <br><b>Equality 2 (Complementary Slackness):</b> The term $\sum \lambda_i^* f_i(x^*)$ must be 0. Since $\lambda_i^* \ge 0$ and $f_i(x^*) \le 0$, the sum is non-positive. For it to be zero, each term must be zero: $\lambda_i^* f_i(x^*) = 0$.</p>
         </div>
 
         <div class="example">
