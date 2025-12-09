@@ -461,7 +461,7 @@
           <h4>Example 2: Least Squares with Constraints</h4>
           <p>Fit a model $y \approx Ax$ minimizing squared error, subject to constraints on $x$:</p>
           $$
-          \min_{x} \|Ax - y\|_2^2 \quad \text{s.t.} \quad x \ge 0, \ \mathbf{1}^\top x = 1
+          \min_{x} \quad \|Ax - y\|_2^2 \quad \text{s.t.} \quad x \ge 0, \ \mathbf{1}^\top x = 1
           $$
           <p>This arises in nonnegative matrix factorization, constrained regression, and image denoising.</p>
         </div>
@@ -899,7 +899,7 @@
             <div class="proof-step">
               <strong>Step 2: Transform objective.</strong>
               The objective becomes:
-              $$ \frac{c^\top x + d}{e^\top x + f} = c^\top \left(\frac{x}{e^\top x + f}\right) + d \left(\frac{1}{e^\top x + f}\right) = c^\top y + dz $$
+              $$ \frac{c^\top x + d}{e^\top x + f} = c^\top \left(\frac{x}{e^\top x + f}\right) + d \left(\frac{1}{e^\top x + f}\right) = c^\top y + d z $$
               This is linear in $y$ and $z$.
             </div>
 
@@ -909,7 +909,7 @@
               $$ A(y/z) \le b \iff Ay \le bz \iff Ay - bz \le 0 $$
               (Since $z > 0$, we can multiply through without flipping inequality).
               We also need the constraint that defines $z$:
-              $$ e^\top x + f = 1/z \implies e^\top (y/z) + f = 1/z \implies e^\top y + fz = 1 $$
+              $$ e^\top x + f = \frac{1}{z} \implies e^\top (y/z) + f = \frac{1}{z} \implies e^\top y + f z = 1 $$
               And finally $z \ge 0$.
             </div>
 
@@ -917,9 +917,9 @@
               <strong>Step 4: Final LP.</strong>
               $$
               \begin{aligned}
-              \min_{y, z} \quad & c^\top y + dz \\
+              \min_{y, z} \quad & c^\top y + d z \\
               \text{s.t.} \quad & Ay - bz \le 0 \\
-              & e^\top y + fz = 1 \\
+              & e^\top y + f z = 1 \\
               & z \ge 0
               \end{aligned}
               $$
