@@ -330,7 +330,7 @@
 
         <div class="proof-step">
           <strong>Step 1: Schur Complement Lemma.</strong>
-          Recall that for a block matrix $M = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix}$ with $A \succ 0$, we have $M \succeq 0 \iff C - B^\top A^{-1} B \succeq 0$.
+          Recall from <a href="../00-linear-algebra-basics/index.html">Lecture 00</a> that for a block matrix $M = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix}$ with $A \succ 0$, we have $M \succeq 0 \iff C - B^\top A^{-1} B \succeq 0$.
         </div>
 
         <div class="proof-step">
@@ -339,7 +339,7 @@
           $$
           M = \begin{bmatrix} tI & y \\ y^\top & t \end{bmatrix}
           $$
-          Assume $t > 0$ (if $t=0$, we need $y=0$, which is handled by the limit or closure). Then $tI \succ 0$.
+          Assume $t > 0$ (if $t=0$, we need $y=0$, which corresponds to the singular case). Then $tI \succ 0$.
         </div>
 
         <div class="proof-step">
@@ -359,7 +359,7 @@
           $$
           \begin{bmatrix} (c^\top x + d) I & Ax + b \\ (Ax + b)^\top & c^\top x + d \end{bmatrix} \succeq 0
           $$
-          Since this constraint is linear in the matrix variable (which depends linearly on $x$), an SOCP is a special case of an SDP.
+          Since this constraint is linear in the matrix variable (which depends linearly on $x$), an SOCP is a special case of an SDP. This embedding allows us to solve SOCPs using SDP solvers, although dedicated SOCP solvers are usually faster.
         </div>
       </div>
     </section>

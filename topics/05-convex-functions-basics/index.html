@@ -358,54 +358,29 @@
 
           <div class="proof-step">
             <strong>Part 1: Convex $\Rightarrow$ Inequality</strong>
-            <p>We use the idea "convex along every line".</p>
-            <ul>
-              <li><b>Step 1: Restrict to a line.</b> Fix two points $x, y \in \mathrm{dom}\, f$. Define direction $v = y-x$ and the 1-D function:
-                $$ g(t) = f(x + tv), \quad t \in [0, 1] $$
-              </li>
-              <li><b>Step 2: Use 1-D convexity.</b> Since $f$ is convex, $g(t)$ is a convex function of a single variable. For a differentiable convex function $g: \mathbb{R} \to \mathbb{R}$, the graph lies above the tangent line:
-                $$ g(b) \ge g(a) + g'(a)(b-a) $$
-              </li>
-              <li><b>Step 3: Apply at endpoints.</b> Set $a=0$ and $b=1$.
-                $$ g(1) \ge g(0) + g'(0)(1-0) $$
-              </li>
-              <li><b>Step 4: Chain Rule.</b>
-                <ul>
-                  <li>$g(1) = f(x+v) = f(y)$.</li>
-                  <li>$g(0) = f(x)$.</li>
-                  <li>$g'(t) = \nabla f(x+tv)^\top v$, so $g'(0) = \nabla f(x)^\top (y-x)$.</li>
-                </ul>
-              </li>
-              <li><b>Conclusion:</b> Substituting these back yields the inequality:
-                $$ f(y) \ge f(x) + \nabla f(x)^\top (y-x) $$
-              </li>
-            </ul>
+            <p>Assume $f$ is convex. For any $x, y \in \mathrm{dom}\, f$ and $t \in (0, 1]$:
+            $$ f(x + t(y-x)) = f((1-t)x + ty) \le (1-t)f(x) + tf(y) $$
+            Rearranging to isolate the difference quotient:
+            $$ f(x + t(y-x)) - f(x) \le t(f(y) - f(x)) $$
+            Dividing by $t > 0$:
+            $$ \frac{f(x + t(y-x)) - f(x)}{t} \le f(y) - f(x) $$
+            Taking the limit as $t \to 0^+$:
+            $$ \nabla f(x)^\top (y-x) \le f(y) - f(x) $$
+            Rearranging yields $f(y) \ge f(x) + \nabla f(x)^\top (y-x)$.</p>
           </div>
 
           <div class="proof-step">
             <strong>Part 2: Inequality $\Rightarrow$ Convex</strong>
-            <p>Assume the inequality holds for all $x, y$. Let $\theta \in [0, 1]$ and define $z = \theta x + (1-\theta)y$.</p>
-            <ul>
-              <li><b>Step 1: Apply at base point $z$.</b> Apply the inequality twice, once targeting $x$ and once targeting $y$:
-                $$ f(x) \ge f(z) + \nabla f(z)^\top (x-z) \quad (1) $$
-                $$ f(y) \ge f(z) + \nabla f(z)^\top (y-z) \quad (2) $$
-              </li>
-              <li><b>Step 2: Convex Combination.</b> Multiply (1) by $\theta$ and (2) by $(1-\theta)$ and sum them:
-                $$
-                \theta f(x) + (1-\theta)f(y) \ge \theta f(z) + (1-\theta)f(z) + \nabla f(z)^\top [\theta(x-z) + (1-\theta)(y-z)]
-                $$
-              </li>
-              <li><b>Step 3: Vanishing Gradient Term.</b> Analyze the vector term inside the brackets:
-                $$
-                \theta(x-z) + (1-\theta)(y-z) = \theta x + (1-\theta)y - (\theta + 1-\theta)z = z - z = 0
-                $$
-                Thus, the gradient term disappears.
-              </li>
-              <li><b>Conclusion:</b> The inequality simplifies to:
-                $$ \theta f(x) + (1-\theta)f(y) \ge f(z) = f(\theta x + (1-\theta)y) $$
-                This is exactly the definition of convexity.
-              </li>
-            </ul>
+            <p>Assume the inequality holds for all $x, y$. Let $z = \theta x + (1-\theta)y$ for $\theta \in [0, 1]$.
+            <br>Apply the inequality at $z$ targeting $x$:
+            $$ f(x) \ge f(z) + \nabla f(z)^\top (x-z) $$
+            Apply the inequality at $z$ targeting $y$:
+            $$ f(y) \ge f(z) + \nabla f(z)^\top (y-z) $$
+            Multiply the first by $\theta$ and the second by $(1-\theta)$ and sum:
+            $$ \theta f(x) + (1-\theta)f(y) \ge f(z) + \nabla f(z)^\top (\theta(x-z) + (1-\theta)(y-z)) $$
+            Since $\theta(x-z) + (1-\theta)(y-z) = 0$, the gradient term vanishes.
+            $$ \theta f(x) + (1-\theta)f(y) \ge f(z) = f(\theta x + (1-\theta)y) $$
+            Thus $f$ is convex.</p>
           </div>
         </div>
 
