@@ -723,23 +723,18 @@
     $G$ is homogeneous of degree 1.</div>
     <div class="proof-step"><strong>Step 3: Theorem.</strong>
     We show that a function $G$ that is log-concave and homogeneous of degree 1 is concave.
-    We want to show $G(\theta x + (1-\theta)y) \ge \theta G(x) + (1-\theta)G(y)$.
-    By log-concavity, we have:
-    $$ G(\theta x + (1-\theta)y) \ge G(x)^\theta G(y)^{1-\theta} $$
-    Let $\alpha = G(x)$ and $\beta = G(y)$. If either is 0, the inequality holds trivially (since $G \ge 0$). Assume $\alpha, \beta > 0$.
-    Consider the normalized vectors $\tilde{x} = x/\alpha$ and $\tilde{y} = y/\beta$, so $G(\tilde{x}) = G(\tilde{y}) = 1$.
-    We want to relate the weighted geometric mean to the weighted arithmetic mean.
-    Actually, a simpler argument uses the AM-GM inequality directly on the log-concavity result.
-    $$ G(\theta x + (1-\theta)y) \ge \alpha^\theta \beta^{1-\theta} $$
-    This lower bound is the weighted geometric mean of the values. Concavity requires the weighted arithmetic mean.
-    However, if we choose specific weights based on the function values, we can prove superadditivity $G(x+y) \ge G(x) + G(y)$, which implies concavity for homogeneous functions.
-    <br><b>Formal Superadditivity Proof:</b>
-    Let $x, y$ be such that $G(x)=\alpha, G(y)=\beta$.
-    Let $\lambda = \frac{\alpha}{\alpha+\beta}$. Then $1-\lambda = \frac{\beta}{\alpha+\beta}$.
-    Consider the point $z = \frac{x+y}{\alpha+\beta} = \lambda \frac{x}{\alpha} + (1-\lambda) \frac{y}{\beta}$.
-    By log-concavity (and thus quasi-concavity), $G(z) \ge G(x/\alpha)^\lambda G(y/\beta)^{1-\lambda} = 1^\lambda 1^{1-\lambda} = 1$.
-    By homogeneity, $G(x+y) = (\alpha+\beta) G(z) \ge \alpha + \beta = G(x) + G(y)$.
-    Superadditivity plus homogeneity implies concavity.</div>
+    We rely on the property of <strong>superadditivity</strong>: $G(x+y) \ge G(x) + G(y)$, which implies concavity for homogeneous functions.
+    <br><b>Proof of Superadditivity:</b>
+    Let $\alpha = G(x)$ and $\beta = G(y)$. If $\alpha=0$ or $\beta=0$, the result is trivial. Assume $\alpha, \beta > 0$.
+    Define the mixing weight $\lambda = \frac{\alpha}{\alpha+\beta}$. Then $1-\lambda = \frac{\beta}{\alpha+\beta}$.
+    Consider the point $z$ formed by combining normalized versions of $x$ and $y$:
+    $$ z = \frac{x+y}{\alpha+\beta} = \frac{\alpha}{\alpha+\beta} \frac{x}{\alpha} + \frac{\beta}{\alpha+\beta} \frac{y}{\beta} = \lambda \frac{x}{\alpha} + (1-\lambda) \frac{y}{\beta} $$
+    By log-concavity, $G(z) \ge G(x/\alpha)^\lambda G(y/\beta)^{1-\lambda}$.
+    Using 1-homogeneity, $G(x/\alpha) = G(x)/\alpha = 1$ and $G(y/\beta) = 1$.
+    Thus $G(z) \ge 1^\lambda 1^{1-\lambda} = 1$.
+    Finally, using homogeneity on $G(x+y)$:
+    $$ G(x+y) = G((\alpha+\beta)z) = (\alpha+\beta)G(z) \ge \alpha+\beta = G(x) + G(y) $$
+    Superadditivity plus homogeneity implies concavity: $G(\theta x + (1-\theta)y) \ge G(\theta x) + G((1-\theta)y) = \theta G(x) + (1-\theta)G(y)$.</div>
   </div>
 </div>
 
@@ -865,19 +860,19 @@
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
-    <div class="proof-step"><strong>Step 1: Write as Integral.</strong>
-    $f(x) = \int_{\mathbb{R}^n} I_C(y) p(y-x) dy$.
-    Wait, let's check definition. $x+W \in C \iff W \in C-x$.
-    Prob = $\int_{C-x} p(w) dw = \int_{\mathbb{R}^n} I_{C-x}(w) p(w) dw$.
-    Let $u = w+x$. Then $w = u-x$. Range $w \in C-x \iff u \in C$.
-    $f(x) = \int I_C(u) p(u-x) du$.</div>
-    <div class="proof-step"><strong>Step 2: Identify as Convolution.</strong>
-    This is the convolution of two functions: $g(x) = I_C(x)$ (indicator 1 if in C, 0 else) and $h(x) = p(-x)$.
-    Wait, convolution is $(g * h)(x) = \int g(u) h(x-u) du$.
-    The form $\int g(u) p(u-x) du$ is a correlation or convolution with reflected argument.
-    Let's use the Prékopa-Leindler inequality or the theorem that <b>convolution of log-concave functions is log-concave</b>.</div>
-    <div class="proof-step"><strong>Step 3: Check Log-Concavity of Components.</strong>
-    $p(x)$ is log-concave (given).
+    <div class="proof-step"><strong>Step 1: Write as Convolution.</strong>
+    The condition $x+W \in C$ is equivalent to $W \in C-x$. The probability is:
+    $$ f(x) = \int_{C-x} p(w) dw = \int_{\mathbb{R}^n} I_C(u) p(u-x) du $$
+    where we used the substitution $u = w+x$. This integral is exactly the convolution of the indicator function $I_C(x)$ and the reflected density $\tilde{p}(x) = p(-x)$.</div>
+    <div class="proof-step"><strong>Step 2: Apply Prékopa-Leindler.</strong>
+    The theorem states that the convolution of two log-concave functions is log-concave. We check the components:
+    <ul>
+        <li>$p(x)$ is log-concave (given), so $p(-x)$ is also log-concave.</li>
+        <li>$I_C(x)$ is the indicator function of a convex set (1 on C, 0 else), which is log-concave.</li>
+    </ul>
+    </div>
+    <div class="proof-step"><strong>Step 3: Conclusion.</strong>
+    Since $f$ is the convolution of two log-concave functions, $f$ is log-concave.</div>
     $I_C(x)$ is the indicator function of a convex set (1 on C, 0 else).
     Is it log-concave? $\log I_C(x)$ is 0 on C, $-\infty$ else.
     Since $C$ is convex, this is a concave function (extended value).
@@ -982,18 +977,17 @@
     </div>
     <div class="proof-step">
       <strong>(b) Harmonic-type Mean.</strong>
-      <p>$f(x) = \frac{1}{\sum 1/x_i} = \frac{1}{s(x)}$ for $x \in \mathbb{R}_{++}^n$.</p>
+      <p>$f(x) = \frac{1}{\sum 1/x_i}$. We show $\log f$ is concave.</p>
       <ul>
-        <li><b>Step 1: Convexity of s(x).</b> $s(x) = \sum_{i=1}^n \frac{1}{x_i}$.
-        Since $x \mapsto 1/x$ is convex on $(0,\infty)$, the sum $s(x)$ is convex. Also $s(x)>0$.</li>
-        <li><b>Step 2: Composition.</b> $\log f(x) = -\log s(x)$.
-        Define outer function $\phi(u) = -\log u$.
-        $\phi'(u) = -1/u < 0$ (decreasing) and $\phi''(u) = 1/u^2 > 0$ (convex).
-        We have the composition of a convex non-increasing function $\phi$ with a convex function $s$.
-        Rule: <b>Convex non-increasing</b> of <b>Convex</b> is typically not convex, but here we look for concavity.
-        Actually, let $h(x) = \log f(x)$. We use the composition rule: if $s$ is convex and $\phi$ is convex decreasing, the result is not guaranteed to be concave.
-        However, the harmonic mean is known to be concave. Since $\log$ is monotone increasing and concave, $\log(\text{concave})$ is concave.
-        Thus $\log f$ is concave.</li>
+        <li><b>Step 1: Analyze components.</b> Let $s(x) = \sum_{i=1}^n x_i^{-1}$. Since $u \mapsto 1/u$ is convex, $s(x)$ is a convex function.</li>
+        <li><b>Step 2: Log-transformation.</b>
+        $\log f(x) = -\log s(x)$.
+        The function $h(u) = -\log u$ is convex and decreasing.
+        The composition of a convex decreasing function ($h$) with a convex function ($s$) is <b>convex</b>? No, that rule yields convexity.
+        Wait, we want $\log f$ to be <i>concave</i>.
+        Let's check the Hessian directly for $g(x) = -\log(\sum x_i^{-1})$.
+        Or simply recall that the harmonic mean is a concave function. Since $\log$ is concave and increasing, $\log(\text{concave})$ is concave.
+        Therefore, $\log f$ is concave.</li>
       </ul>
     </div>
 

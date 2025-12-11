@@ -193,8 +193,8 @@
           <ul>
             <li><b>For $i \le r$:</b>
               <br>LHS: $(AV)_i = A v_i$.
-              <br>RHS: $(U\Sigma)_i = \sum_k U_{ik} \Sigma_{ki}$ (Wait, simpler: $U \Sigma e_i = \sigma_i U e_i = \sigma_i u_i$).
-              <br>By definition $u_i = \frac{1}{\sigma_i} A v_i \implies A v_i = \sigma_i u_i$. So they match.
+              <br>RHS: $(U\Sigma)_i = U (\Sigma e_i) = U (\sigma_i e_i) = \sigma_i (U e_i) = \sigma_i u_i$.
+              <br>By definition $u_i = \frac{1}{\sigma_i} A v_i$, which implies $A v_i = \sigma_i u_i$. Thus, the columns match.
             </li>
             <li><b>For $i > r$:</b>
               <br>LHS: $A v_i$. Since $v_i$ is an eigenvector of $A^\top A$ with eigenvalue 0, $A^\top A v_i = 0 \implies v_i^\top A^\top A v_i = 0 \implies \|Av_i\|^2 = 0 \implies A v_i = 0$.
@@ -268,17 +268,16 @@
           <p>The general solution to the least squares problem $\min \|Ax-b\|_2$ is the set of all $x$ satisfying the normal equations $A^\top A x = A^\top b$. This solution set is affine: $S_{LS} = \{x_p + z \mid z \in \mathcal{N}(A)\}$, where $x_p$ is any particular solution.</p>
           <div class="proof-step">
             <strong>Step 1: $x_{mn} = A^+ b$ is a solution.</strong>
-            We check if $x_{mn} = V \Sigma^+ U^\top b$ satisfies $A^\top A x = A^\top b$.
-          $$ A^\top A x_{mn} = (V \Sigma U^\top)^\top (U \Sigma V^\top) (V \Sigma^+ U^\top) b = (V \Sigma U^\top) (U \Sigma V^\top) (V \Sigma^+ U^\top) b $$
-          Wait, $A^\top = V \Sigma^\top U^\top = V \Sigma U^\top$ (since $\Sigma$ is diagonal, $\Sigma^\top$ has same diagonal entries in rectangular form).
-          Let's be precise: $A = U \Sigma V^\top$, so $A^\top = V \Sigma^\top U^\top$.
-          $$ A^\top A x_{mn} = (V \Sigma^\top U^\top) (U \Sigma V^\top) (V \Sigma^+ U^\top) b = V (\Sigma^\top \Sigma) \Sigma^+ U^\top b $$
-          Here $\Sigma^\top \Sigma$ is $n \times n$ diagonal with entries $\sigma_i^2$.
-          Then $(\Sigma^\top \Sigma) \Sigma^+$ is $n \times m$ diagonal.
-          The entry $i$ is $\sigma_i^2 (1/\sigma_i) = \sigma_i$ for $i \le r$, and 0 otherwise.
-          This is exactly $\Sigma^\top$.
-          $$ = V \Sigma^\top U^\top b = A^\top b $$
-            Thus, $x_{mn}$ is indeed a least squares solution.
+            We check if $x_{mn} = V \Sigma^+ U^\top b$ satisfies the normal equations $A^\top A x = A^\top b$.
+            First, recall that $A = U \Sigma V^\top$, so $A^\top = V \Sigma^\top U^\top$.
+            Substituting into the expression for $A^\top A x_{mn}$:
+            $$ A^\top A x_{mn} = (V \Sigma^\top U^\top) (U \Sigma V^\top) (V \Sigma^+ U^\top) b $$
+            Using $U^\top U = I$ and $V^\top V = I$:
+            $$ = V \Sigma^\top (\Sigma \Sigma^+) U^\top b $$
+            The matrix product $\Sigma^\top \Sigma \Sigma^+$ is an $n \times m$ matrix. For indices $i \le r$, the diagonal entries are $\sigma_i \cdot (\sigma_i \cdot 1/\sigma_i) = \sigma_i$. For $i > r$, they are 0.
+            This matrix is exactly $\Sigma^\top$.
+            $$ = V \Sigma^\top U^\top b = A^\top b $$
+            Thus, $x_{mn}$ satisfies the normal equations and is a least squares solution.
           </div>
           <div class="proof-step">
             <strong>Step 2: Orthogonality.</strong>

@@ -178,15 +178,25 @@
         $$ \boxed{ d^* \le p^* } $$
         <p>This holds for <b>any</b> optimization problem. The difference $p^* - d^*$ is called the <b>duality gap</b>.</p>
         <div class="example">
-            <h4>Example: Non-Convex Problem with Gap</h4>
-            <p>Consider $\min x^2$ subject to $x \ge 1$ or $x \le -1$ (non-convex constraint $x^2 \ge 1$). Optimal value $p^* = 1$.
-            <br>Lagrangian $L(x, \lambda) = x^2 + \lambda(1 - x^2) = (1-\lambda)x^2 + \lambda$.
-            <br>Dual function $g(\lambda) = \inf_x L(x, \lambda) = \begin{cases} \lambda & \lambda \le 1 \\ -\infty & \lambda > 1 \end{cases}$.
-            <br>Dual problem $\max \lambda$ s.t. $\lambda \le 1$. Dual optimal $d^* = 1$.
-            <br>Wait, this example has zero gap! Let's try a different one.
-            <br><b>Integer LP:</b> $\min x$ subject to $2x = 1, x \in \{0, 1\}$. Feasible set empty, $p^* = \infty$.
-            <br>Relaxed problem (LP): $x=0.5$.
-            <br>Often, weak duality gives a bound, but for non-convex problems, $d^* < p^*$. For instance, $\min x^3 - 3x$ has local minima, and the dual might stall at a lower bound.</p>
+            <h4>Example: Non-Convex Problem with Duality Gap</h4>
+            <p>We illustrate the duality gap with a simple discrete optimization problem where the feasible set is not convex.</p>
+            <p><b>Primal Problem:</b>
+            $$ \min x \quad \text{s.t.} \quad 2x = 1, \ x \in \{0, 1\} $$
+            The constraint $2x=1$ requires $x=0.5$, but the domain is $\{0, 1\}$. Thus, the problem is infeasible and $p^* = +\infty$.</p>
+
+            <p><b>Lagrangian:</b>
+            $$ L(x, \nu) = x + \nu(1 - 2x) = (1-2\nu)x + \nu $$
+            </p>
+
+            <p><b>Dual Function:</b>
+            The dual function minimizes the Lagrangian over the domain $D=\{0, 1\}$:
+            $$ g(\nu) = \inf_{x \in \{0, 1\}} ((1-2\nu)x + \nu) = \min((1-2\nu)(0) + \nu, (1-2\nu)(1) + \nu) = \min(\nu, 1-\nu) $$
+            </p>
+
+            <p><b>Dual Problem:</b>
+            Maximize $g(\nu) = \min(\nu, 1-\nu)$. The maximum occurs at $\nu = 0.5$, yielding $d^* = 0.5$.</p>
+
+            <p><b>Result:</b> $p^* - d^* = \infty - 0.5 = \infty$. The duality gap is infinite, demonstrating that strong duality can fail for non-convex problems.</p>
         </div>
 
         <h3>3.3 Strong Duality and Slater's Condition</h3>
@@ -560,11 +570,10 @@
       If (1) is feasible, $p^* = 0$. If infeasible, $p^* = \infty$.
     </div>
     <div class="proof-step">
-      The dual is: $d^* = \max \{ -b^\top \nu \mid A^\top \nu \ge 0 \}$.
-      (Here we use $\nu$ for equality multiplier, and absorb sign).
-      Or standard dual of $\min 0$ s.t. $Ax=b, x \ge 0$ is $\max b^\top y$ s.t. $A^\top y \le 0$.
-      Let's stick to standard form.
-      Dual of $\min 0^\top x$ s.t. $Ax=b, x \ge 0$ is $\max b^\top y$ s.t. $A^\top y \le 0$.
+      The dual of the LP $\min \{ 0^\top x \mid Ax = b, x \ge 0 \}$ is:
+      $$ d^* = \max \{ -b^\top \nu \mid A^\top \nu \ge 0 \} $$
+      (Using the standard derivation where equality constraints $Ax=b$ have dual variables $\nu$).
+      Alternatively, writing the dual in terms of $y = -\nu$, we maximize $b^\top y$ subject to $A^\top y \le 0$.
     </div>
     <div class="proof-step">
       <strong>Case 1: (1) has a solution (Feasible).</strong>

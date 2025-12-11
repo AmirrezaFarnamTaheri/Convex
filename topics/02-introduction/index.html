@@ -100,7 +100,7 @@
 
         <div class="insight">
           <h4>Why Affine Equality Constraints?</h4>
-          <p>Why must equality constraints be linear ($Ax=b$)? Why not convex ($h(x)=0$)?</p>
+          <p>We require equality constraints to be linear ($Ax=b$) because general convex equality constraints ($h(x)=0$) destroy convexity.</p>
           <div class="example">
             <h4>🚫 Counter-Example: The Circle Boundary</h4>
             <p>Consider the constraint $x_1^2 + x_2^2 = 1$. The function $h(x) = x_1^2 + x_2^2 - 1$ is convex. However, the set of points satisfying $h(x)=0$ is the <b>boundary</b> of the unit circle.</p>
@@ -843,7 +843,7 @@
           $$
 
           <div class="proof-box">
-            <h4>Derivation: Why this works</h4>
+          <h4>Derivation: Equivalence</h4>
             <div class="proof-step">
               <strong>Step 1: Analyze the constraints.</strong> The constraints $f_i(x) \le t$ for all $i=1,\dots,m$ are equivalent to:
               $$ \max_{i=1,\dots,m} f_i(x) \le t $$
@@ -1341,7 +1341,7 @@
     <div class="proof-step"><strong>Step 1: Simplify using affine composition.</strong>
     Let $g(u) = \|u\|_2^2 = u^\top u$. We know $f(x) = g(Ax-b)$.
     It is sufficient to prove that $g(u)$ is convex, because if $g$ is convex, then $f(x) = g(Ax-b)$ is convex (affine composition).
-    Let's prove $g(u) = \|u\|_2^2$ is convex.</div>
+    We prove $g(u) = \|u\|_2^2$ is convex.</div>
     <div class="proof-step"><strong>Step 2: Expand the convex combination.</strong>
     Let $u, v \in \mathbb{R}^n$ and $\theta \in [0,1]$. Let $z = \theta u + (1-\theta)v$.
     $$ g(z) = \|\theta u + (1-\theta)v\|_2^2 = (\theta u + (1-\theta)v)^\top (\theta u + (1-\theta)v) $$
