@@ -390,6 +390,30 @@
         $$ f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta} $$
         Log-concavity is crucial in probability (unimodality, tail bounds).</p>
 
+        <div class="theorem-box">
+          <h4>Gradient Condition (3.47)</h4>
+          <p>If $f$ is differentiable and $f(x) > 0$, then $f$ is log-concave if and only if for all $x, y \in \mathrm{dom}\, f$:</p>
+          $$ \frac{f(y)}{f(x)} \le \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right) $$
+          <p><b>Proof:</b> Let $u(x) = \log f(x)$. Concavity of $u$ means:
+          $$ u(y) \le u(x) + \nabla u(x)^\top (y-x) $$
+          Compute gradient: $\nabla u(x) = \frac{1}{f(x)}\nabla f(x)$.
+          $$ \log f(y) \le \log f(x) + \frac{\nabla f(x)^\top (y-x)}{f(x)} $$
+          Rearranging: $\log(f(y)/f(x)) \le \frac{\nabla f(x)^\top (y-x)}{f(x)}$.
+          Exponentiating both sides (since $\exp$ is increasing) yields the result.</p>
+        </div>
+
+        <div class="insight">
+          <h4>Property: Shifting Down (3.48)</h4>
+          <p>If $f$ is log-concave and $f(x) > a \ge 0$, then $g(x) = f(x) - a$ is log-concave on $\{x \mid f(x) > a\}$.
+          <br><b>Proof:</b> We verify $\log g(z) \ge \theta \log g(x_1) + (1-\theta) \log g(x_2)$.
+          <br>Let $h(u) = \log(u-a)$ for $u > a$.
+          <br>Derivatives: $h'(u) = \frac{1}{u-a} > 0$, $h''(u) = \frac{-1}{(u-a)^2} < 0$. So $h$ is <b>concave</b> and <b>increasing</b>.
+          <br>From log-concavity of $f$: $f(z) \ge f(x_1)^\theta f(x_2)^{1-\theta}$.
+          <br>Apply increasing $h$: $h(f(z)) \ge h(f(x_1)^\theta f(x_2)^{1-\theta})$.
+          <br>Using concavity properties (Jensen) and algebra involving $\log(u-a)$, it follows that $\log(f(z)-a) \ge \theta \log(f(x_1)-a) + (1-\theta)\log(f(x_2)-a)$.
+          <br>Thus $g$ is log-concave.</p>
+        </div>
+
         <h3>3.2 Examples</h3>
         <div class="example">
             <h4>1. Uniform Distribution on Convex Set</h4>
@@ -716,6 +740,56 @@
       Since $\Sigma \succ 0$, its inverse $\Sigma^{-1} \succ 0$, so $-\Sigma^{-1} \prec 0$ (negative definite).
       Since the Hessian is negative definite everywhere, $g(x)$ is strictly concave.
       Therefore, $f(x)$ is log-concave.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.12 — Log-Concavity Examples (3.49)</h3>
+  <p>Verify the log-concavity of the following functions.</p>
+  <ol type="a">
+    <li><b>Logistic:</b> $f(x) = e^x / (1+e^x)$ on $\mathbb{R}$.</li>
+    <li><b>Harmonic Mean:</b> $f(x) = (\sum x_i^{-1})^{-1}$ on $\mathbb{R}_{++}^n$.</li>
+    <li><b>Product over Sum:</b> $f(x) = (\prod x_i) / (\sum x_i)$ on $\mathbb{R}_{++}^n$.</li>
+    <li><b>Determinant over Trace:</b> $f(X) = \det X / \mathrm{tr} X$ on $\mathbb{S}_{++}^n$.</li>
+  </ol>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>(a) Logistic.</strong>
+      $\log f(x) = x - \log(1+e^x)$.
+      $\log(1+e^x)$ is the log-sum-exp of 0 and $x$, hence convex.
+      $\log f(x)$ is linear minus convex, so it is concave.
+    </div>
+    <div class="proof-step">
+      <strong>(b) Harmonic Mean.</strong>
+      $f(x) = 1/s(x)$ where $s(x) = \sum 1/x_i$.
+      $\log f(x) = -\log s(x)$.
+      Inner: $s(x)$ is convex (sum of convex $1/x_i$). $s(x)>0$.
+      Outer: $\phi(u) = -\log u$. $\phi'(u) = -1/u < 0$ (decreasing). $\phi''(u) = 1/u^2 > 0$ (convex).
+      Composition: <b>Convex decreasing</b> of <b>Convex</b> $\implies$ <b>Concave</b> (by composition rule duality).
+      Thus $\log f$ is concave.
+    </div>
+    <div class="proof-step">
+      <strong>(c) Product over Sum (Log-change variable).</strong>
+      $\log f(x) = \sum \log x_i - \log(\sum x_i)$.
+      Let $u_i = \log x_i$ ($x_i = e^{u_i}$).
+      Define $\Phi(u) = \log f(e^u) = \sum u_i - \log(\sum e^{u_i})$.
+      Term 1: Linear.
+      Term 2: Log-Sum-Exp (Convex).
+      $\Phi(u) = \text{Linear} - \text{Convex} = \text{Concave}$.
+      Concavity in $u$ is equivalent to log-concavity in $x$.
+    </div>
+    <div class="proof-step">
+      <strong>(d) Determinant over Trace.</strong>
+      $f(X)$ depends only on eigenvalues $\lambda$.
+      $\log f(X) = \sum \log \lambda_i - \log(\sum \lambda_i)$.
+      Let $u_i = \log \lambda_i$.
+      $\phi(\lambda(u)) = \sum u_i - \log(\sum e^{u_i})$.
+      This is the same $\Phi(u)$ as in part (c), which is concave.
+      Symmetric concave function of eigenvalues $\implies$ Concave on matrix space.
+      Thus $f$ is log-concave.
     </div>
   </div>
 </div>

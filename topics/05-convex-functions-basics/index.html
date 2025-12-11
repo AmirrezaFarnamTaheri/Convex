@@ -936,34 +936,52 @@
           </div>
 
           <div class="proof-box">
-            <h4>Proof Step-by-Step (Convex + Non-decreasing)</h4>
-            <p>Assume $g$ is convex, $h$ is convex, and $h$ is non-decreasing.</p>
+            <h4>Proof: Scalar Composition Rules</h4>
+            <p>We prove the two most critical cases rigorously.</p>
 
+            <h5>Case 1: Outer Convex & Non-decreasing, Inner Convex</h5>
+            <p>Assume $g$ is convex, and $h$ is convex and <b>non-decreasing</b> on the range of $g$.</p>
             <div class="proof-step">
-              <strong>Step 1: Use convexity of inner function $g$.</strong>
-              Take $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$.
-              $$ g(\theta x + (1-\theta)y) \le \theta g(x) + (1-\theta)g(y) $$
+              <strong>Step 1: Inner Convexity.</strong>
+              Take arbitrary $x, y \in \mathbb{R}^n$ and $\theta \in [0,1]$. By convexity of $g$:
+              $$ g(\theta x + (1-\theta) y) \le \theta g(x) + (1-\theta) g(y) $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Apply Monotonicity.</strong>
+              Apply $h$ to both sides. Since $h$ is <b>non-decreasing</b>, the inequality direction is maintained:
+              $$ h\big(g(\theta x + (1-\theta) y)\big) \le h\big(\theta g(x) + (1-\theta) g(y)\big) $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Apply Outer Convexity.</strong>
+              Now use the convexity of $h$ on the argument $\theta g(x) + (1-\theta) g(y)$:
+              $$ h\big(\theta g(x) + (1-\theta) g(y)\big) \le \theta h(g(x)) + (1-\theta) h(g(y)) $$
+            </div>
+            <div class="proof-step">
+              <strong>Combine:</strong>
+              $$ f(\theta x + (1-\theta)y) = h(g(\theta x + (1-\theta)y)) \le \theta f(x) + (1-\theta) f(y) $$
+              Thus $f$ is convex.
             </div>
 
-            <div class="proof-step">
-              <strong>Step 2: Apply monotone outer function $h$.</strong>
-              Since $h$ is non-decreasing, applying it to both sides preserves the inequality:
-              $$ h(g(\theta x + (1-\theta)y)) \le h(\theta g(x) + (1-\theta)g(y)) $$
-              The LHS is exactly $f(\theta x + (1-\theta)y)$.
-            </div>
+            <hr style="border-top: 1px dashed var(--border); margin: 16px 0;">
 
+            <h5>Case 2: Outer Convex & Non-increasing, Inner Concave</h5>
+            <p>Assume $g$ is concave, and $h$ is convex and <b>non-increasing</b>.</p>
             <div class="proof-step">
-              <strong>Step 3: Use convexity of outer function $h$.</strong>
-              Let $u = g(x)$ and $v = g(y)$. By convexity of $h$:
-              $$ h(\theta u + (1-\theta)v) \le \theta h(u) + (1-\theta)h(v) $$
-              Substituting $u, v$ back:
-              $$ h(\theta g(x) + (1-\theta)g(y)) \le \theta h(g(x)) + (1-\theta)h(g(y)) = \theta f(x) + (1-\theta)f(y) $$
+              <strong>Step 1: Inner Concavity.</strong>
+              $$ g(\theta x + (1-\theta)y) \ge \theta g(x) + (1-\theta) g(y) $$
             </div>
-
             <div class="proof-step">
-              <strong>Step 4: Combine.</strong>
-              Chaining Step 2 and Step 3:
-              $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) $$
+              <strong>Step 2: Apply Monotonicity (Flip).</strong>
+              Because $h$ is <b>non-increasing</b>, applying it flips the inequality:
+              $$ h\big(g(\theta x + (1-\theta)y)\big) \le h\big( \theta g(x) + (1-\theta)g(y)\big) $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Apply Outer Convexity.</strong>
+              $$ h(\theta g(x) + (1-\theta)g(y)) \le \theta h(g(x)) + (1-\theta)h(g(y)) $$
+            </div>
+            <div class="proof-step">
+              <strong>Conclusion:</strong>
+              $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta) f(y) $$
               Thus $f$ is convex.
             </div>
           </div>
@@ -1049,37 +1067,37 @@
         </div>
 
         <div class="proof-box">
-          <h4>Inequality Proof of Convexity</h4>
+          <h4>Direct Proof of Convexity</h4>
+          <p>We show $g(x,t) = t f(x/t)$ is convex by direct definition.</p>
           <div class="proof-step">
-            <strong>Step 1: Setup and Goal.</strong>
-            Take $(x_1, t_1), (x_2, t_2) \in \mathrm{dom}\, g$ (so $t_1, t_2 > 0$) and $\theta \in [0, 1]$.
-            We want to show:
-            $$ g(\theta x_1 + (1-\theta)x_2, \theta t_1 + (1-\theta)t_2) \le \theta g(x_1, t_1) + (1-\theta)g(x_2, t_2) $$
-            The RHS is $\theta t_1 f(x_1/t_1) + (1-\theta)t_2 f(x_2/t_2)$.
+            <strong>Step 1: Setup.</strong>
+            Take any $(x_1, t_1), (x_2, t_2)$ with $t_1, t_2 > 0$, and $\theta \in [0, 1]$.
+            Define $(x, t) = \theta(x_1, t_1) + (1-\theta)(x_2, t_2)$.
+            We must show:
+            $$ g(x, t) \le \theta g(x_1, t_1) + (1-\theta)g(x_2, t_2) $$
           </div>
 
           <div class="proof-step">
-            <strong>Step 2: Factor out the common scalar $T$.</strong>
-            Let $T = \theta t_1 + (1-\theta)t_2$. Since $t_1, t_2 > 0$, $T > 0$.
-            The LHS is $T f\left( \frac{\theta x_1 + (1-\theta)x_2}{T} \right)$.
-            We rewrite the argument of $f$ to identify a convex combination:
-            $$ \frac{\theta x_1 + (1-\theta)x_2}{T} = \frac{\theta t_1}{T} \frac{x_1}{t_1} + \frac{(1-\theta)t_2}{T} \frac{x_2}{t_2} $$
+            <strong>Step 2: Express $x/t$ as convex combination.</strong>
+            Compute the argument of $f$:
+            $$ \frac{x}{t} = \frac{\theta x_1 + (1-\theta)x_2}{\theta t_1 + (1-\theta)t_2} $$
+            Define weights $\lambda_1 = \frac{\theta t_1}{\theta t_1 + (1-\theta)t_2}$ and $\lambda_2 = \frac{(1-\theta)t_2}{\theta t_1 + (1-\theta)t_2}$.
+            Note that $\lambda_1, \lambda_2 \ge 0$ and $\lambda_1 + \lambda_2 = 1$.
+            We can rewrite the fraction as:
+            $$ \frac{x}{t} = \lambda_1 \frac{x_1}{t_1} + \lambda_2 \frac{x_2}{t_2} $$
           </div>
 
           <div class="proof-step">
-            <strong>Step 3: Define weights and apply convexity.</strong>
-            Define $\mu = \frac{\theta t_1}{T}$. Then $1 - \mu = \frac{(1-\theta)t_2}{T}$. Note that $\mu \in [0, 1]$.
-            By convexity of $f$:
-            $$ f\left( \mu \frac{x_1}{t_1} + (1-\mu) \frac{x_2}{t_2} \right) \le \mu f(x_1/t_1) + (1-\mu) f(x_2/t_2) $$
+            <strong>Step 3: Apply Convexity of $f$.</strong>
+            $$ f\left(\frac{x}{t}\right) \le \lambda_1 f\left(\frac{x_1}{t_1}\right) + \lambda_2 f\left(\frac{x_2}{t_2}\right) $$
           </div>
 
           <div class="proof-step">
-            <strong>Step 4: Scale by $T$ to finish.</strong>
-            Multiply the inequality by $T > 0$:
-            $$ T f\left( \frac{\theta x_1 + (1-\theta)x_2}{T} \right) \le T \mu f(x_1/t_1) + T(1-\mu) f(x_2/t_2) $$
-            Substitute back $T\mu = \theta t_1$ and $T(1-\mu) = (1-\theta)t_2$:
-            $$ g(\theta x_1 + (1-\theta)x_2, T) \le \theta t_1 f(x_1/t_1) + (1-\theta) t_2 f(x_2/t_2) $$
-            This matches the definition of convexity for $g$.
+            <strong>Step 4: Multiply by $t$.</strong>
+            $$ g(x, t) = t f(x/t) \le t \lambda_1 f(x_1/t_1) + t \lambda_2 f(x_2/t_2) $$
+            Observe that $t \lambda_1 = \theta t_1$ and $t \lambda_2 = (1-\theta)t_2$.
+            $$ g(x, t) \le \theta t_1 f(x_1/t_1) + (1-\theta) t_2 f(x_2/t_2) = \theta g(x_1, t_1) + (1-\theta) g(x_2, t_2) $$
+            Done: perspective is convex.
           </div>
         </div>
 
@@ -1130,7 +1148,70 @@
         $$ \boxed{ x^p + y^p \ge x + y \quad \text{for } x,y \in [0,1] } $$
         <p>Also, due to homogeneity ($(\lambda x)^p = \lambda^p x^p$), we can scale inequalities. For example, the function $f(x, y) = \frac{x^2}{y}$ arises from the homogeneity of quadratics.</p>
 
-        <h3>5.8 Pitfalls: What Doesn't Preserve Convexity?</h3>
+        <h3>5.8 The Minkowski Functional</h3>
+        <p>The Minkowski functional ties together the concepts of convex sets, homogeneity, and convex functions. It generalizes the notion of a norm.</p>
+
+        <div class="definition-box">
+          <h4>Definition</h4>
+          <p>Let $C \subset \mathbb{R}^n$ be a convex set containing the origin. The <b>Minkowski functional</b> of $C$ is defined as:</p>
+          $$ M_C(x) = \inf \{ t > 0 \mid t^{-1} x \in C \} $$
+          <p>The domain of $M_C$ is the set of $x$ for which this infimum is finite (i.e., the conic hull of $C$). If $C$ is symmetric, closed, bounded, and contains 0 in its interior, then $M_C(x)$ is exactly a <b>norm</b> whose unit ball is $C$.</p>
+        </div>
+
+        <div class="insight">
+          <h4>Geometric Interpretation</h4>
+          <p>Draw a ray from the origin through $x$. If the ray intersects the boundary of $C$ at some point $z$, then $x$ is some scaling of $z$, say $x = t z$. The value $M_C(x)$ is this scaling factor $t$ required to bring $x$ to the boundary of $C$.
+          <br>Specifically, $M_C(x) \le 1 \iff x \in C$.</p>
+        </div>
+
+        <div class="proof-box">
+          <h4>Proof of Convexity</h4>
+          <p>We show that $M_C$ is a convex function.</p>
+
+          <div class="proof-step">
+            <strong>Step 1: Positive Homogeneity.</strong>
+            For any $\alpha > 0$:
+            $$ M_C(\alpha x) = \inf \{ t > 0 \mid t^{-1} \alpha x \in C \} $$
+            Let $s = t/\alpha$ (so $t = \alpha s$). The condition $t^{-1}\alpha x \in C$ becomes $(\alpha s)^{-1} \alpha x = s^{-1} x \in C$.
+            $$ M_C(\alpha x) = \inf \{ \alpha s \mid s > 0, s^{-1} x \in C \} = \alpha M_C(x) $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 2: Convexity Inequality.</strong>
+            Let $x, y \in \mathrm{dom}\, M_C$ and $\theta \in [0, 1]$. We want to show:
+            $$ M_C(\theta x + (1-\theta) y) \le \theta M_C(x) + (1-\theta) M_C(y) $$
+            Let $\varepsilon > 0$. By definition of infimum, there exist $a, b > 0$ such that:
+            $$ a \le M_C(x) + \varepsilon, \quad a^{-1}x \in C $$
+            $$ b \le M_C(y) + \varepsilon, \quad b^{-1}y \in C $$
+            We construct a scaling factor $t = \theta a + (1-\theta) b$. We check if $t^{-1}(\theta x + (1-\theta)y) \in C$.
+            $$ \frac{\theta x + (1-\theta)y}{t} = \frac{\theta a (a^{-1}x) + (1-\theta)b (b^{-1}y)}{\theta a + (1-\theta)b} $$
+            This is a convex combination of $a^{-1}x \in C$ and $b^{-1}y \in C$ (weights $\lambda_1 = \theta a/t, \lambda_2 = (1-\theta)b/t$).
+            Since $C$ is convex, this point lies in $C$.
+            Thus, $M_C(\theta x + (1-\theta)y) \le t = \theta a + (1-\theta)b \le \theta M_C(x) + (1-\theta)M_C(y) + \varepsilon$.
+            Letting $\varepsilon \to 0$ proves convexity.
+          </div>
+        </div>
+
+        <div class="theorem-box">
+          <h4>When is $M_C$ a Norm?</h4>
+          <p>If $C$ is <b>closed, bounded, symmetric</b> ($x \in C \Rightarrow -x \in C$), and contains 0 in its <b>interior</b>, then $M_C$ is a norm.</p>
+          <div class="proof-step">
+            <strong>1. Positivity:</strong> $M_C(x) \ge 0$ by definition.
+          </div>
+          <div class="proof-step">
+            <strong>2. Symmetry:</strong>
+            $$ M_C(-x) = \inf\{t>0 \mid t^{-1}(-x) \in C\} = \inf\{t>0 \mid -(t^{-1}x) \in C\} $$
+            Since $C$ is symmetric, $-(t^{-1}x) \in C \iff t^{-1}x \in C$. Thus $M_C(-x) = M_C(x)$.
+          </div>
+          <div class="proof-step">
+            <strong>3. Non-degeneracy ($M_C(x)=0 \iff x=0$):</strong>
+            Suppose $M_C(x)=0$ and $x \ne 0$. This implies $\forall \varepsilon > 0, \exists t \in (0, \varepsilon)$ such that $t^{-1}x \in C$.
+            As $t \to 0^+$, $\|t^{-1}x\| \to \infty$. But $C$ is <b>bounded</b>, so it cannot contain points of arbitrarily large norm. Contradiction.
+            Thus $M_C(x)=0 \implies x=0$.
+          </div>
+        </div>
+
+        <h3>5.9 Pitfalls: What Doesn't Preserve Convexity?</h3>
         <p>A common pitfall is to assume the <b>minimum</b> of convex functions is convex. It is generally <b>not</b>.</p>
         <div class="insight">
           <h4>Counterexample</h4>
@@ -1138,7 +1219,7 @@
         </div>
         <p>Similarly, minimizing over a <b>nonconvex</b> set usually breaks convexity. For example, the distance to a nonconvex set is generally nonconvex.</p>
 
-        <h3>5.9 Summary: Mental Checklist</h3>
+        <h3>5.10 Summary: Mental Checklist</h3>
         <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px;">
           <h4 style="margin-top: 0;">Quick Recognition Guide</h4>
           <ul style="margin-top: 0.5rem;">
@@ -1489,6 +1570,96 @@
     So:
     $$ p^*(u) \ge p^*(0) - \lambda^{*\top} u $$
     This shows $-\lambda^*$ is a subgradient of $p^*$ at $u=0$.</div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P5.13 — Advanced Composition Rules (3.22)</h3>
+  <p>Determine the convexity of the following functions and identify the composition rule used. ($x \in \mathbb{R}^n$).</p>
+  <ol type="a">
+    <li>$f(x) = -\log(-\log \sum_{i=1}^m e^{a_i^\top x + b_i})$ on domain $\sum e^{a_i^\top x + b_i} < 1$.</li>
+    <li>$f(x, u, v) = -\sqrt{uv - x^\top x}$ on $u,v > 0, uv > x^\top x$.</li>
+    <li>$f(x, u, v) = -\log(uv - x^\top x)$ on the same domain.</li>
+    <li>$f(x, t) = -(t^p - \|x\|_p^p)^{1/p}$ on $t \ge \|x\|_p$ ($p>1$).</li>
+    <li>$f(x, t) = -\log(t^p - \|x\|_p^p)$ on $t \ge \|x\|_p$ ($p>1$).</li>
+  </ol>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <p>We analyze domains and composition conditions carefully.</p>
+
+    <div class="proof-step">
+      <strong>(a) Log-Log-Sum-Exp.</strong>
+      <br>Inner 1: $s(x) = \sum e^{a_i^\top x + b_i}$. Convex (sum of convex $e^{u_i(x)}$).
+      <br>Inner 2: $t(x) = \log s(x)$. Convex (Log-Sum-Exp). On domain, $s(x) < 1 \implies t(x) < 0$.
+      <br>Outer: $\phi(z) = -\log(-z)$ for $z < 0$.
+      <br>Derivatives: $\phi'(z) = 1/(-z) > 0$ (Non-decreasing), $\phi''(z) = 1/z^2 > 0$ (Convex).
+      <br>Composition: <b>Convex non-decreasing</b> of <b>Convex</b> $\implies$ <b>Convex</b>.
+    </div>
+
+    <div class="proof-step">
+      <strong>(b) Root-Quadratic.</strong>
+      <br>Rewrite: $f = -\sqrt{uv - x^\top x} = -\sqrt{u(v - x^\top x/u)}$.
+      <br>Inner 1: $s(x,u,v) = u$ (Concave/Affine).
+      <br>Inner 2: $t(x,u,v) = v - \frac{x^\top x}{u}$. Since $x^\top x/u$ is convex, $t$ is <b>Concave</b>.
+      <br>Outer: $r(s,t) = -\sqrt{st}$. Convex on $\mathbb{R}_{++}^2$.
+      <br>Monotonicity: $\frac{\partial r}{\partial s} < 0$, $\frac{\partial r}{\partial t} < 0$. Non-increasing in both.
+      <br>Composition: <b>Convex non-increasing</b> of <b>Concave</b> $\implies$ <b>Convex</b>.
+    </div>
+
+    <div class="proof-step">
+      <strong>(c) Log-Quadratic.</strong>
+      <br>From (b), let $w = \sqrt{uv - x^\top x}$. Since $-w$ is convex, $w$ is <b>Concave</b> ($w>0$).
+      <br>$f = -\log(uv - x^\top x) = -\log(w^2) = -2\log w$.
+      <br>Outer: $\psi(z) = -2\log z$. $\psi'(z) = -2/z < 0$ (Non-increasing), $\psi''(z) = 2/z^2 > 0$ (Convex).
+      <br>Composition: <b>Convex non-increasing</b> of <b>Concave</b> $\implies$ <b>Convex</b>.
+    </div>
+
+    <div class="proof-step">
+      <strong>(d) Norm Cone Concavity (Geometric Proof).</strong>
+      <br>Let $s(x,t) = (t^p - \|x\|_p^p)^{1/p}$.
+      <br>Consider its hypograph: $\text{hypo } s = \{(x,t,s) \mid s \le s(x,t)\}$.
+      <br>Rearranging: $s \le (t^p - \|x\|_p^p)^{1/p} \iff s^p \le t^p - \|x\|_p^p \iff s^p + \|x\|_p^p \le t^p$.
+      <br>This is exactly the condition $\|(x,s)\|_p \le t$, which describes the <b>$(n+1)$-dimensional $p$-norm cone</b>.
+      <br>Since norm cones are convex sets, the hypograph of $s$ is convex.
+      <br><b>Fact:</b> A function is concave iff its hypograph is convex. Thus $s$ is concave.
+      <br>$f = -s$ is <b>Convex</b>.
+    </div>
+
+    <div class="proof-step">
+      <strong>(e) Log-Norm Cone.</strong>
+      <br>$f = -\log(t^p - \|x\|_p^p) = -\log(s(x,t)^p) = -p \log s(x,t)$.
+      <br>Inner: $s(x,t)$ is <b>Concave</b> (from part d).
+      <br>Outer: $\psi(z) = -p \log z$. Convex and Non-increasing.
+      <br>Composition: <b>Convex non-increasing</b> of <b>Concave</b> $\implies$ <b>Convex</b>.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P5.14 — Perspective Examples (3.23)</h3>
+  <p>Show that the following functions are convex using the perspective transformation.</p>
+  <ol type="a">
+    <li>$f(x, t) = \|x\|_p^p / t^{p-1}$ for $p > 1, t > 0$.</li>
+    <li>$f(x) = \frac{\|Ax+b\|_2^2}{c^\top x + d}$ on $c^\top x + d > 0$.</li>
+  </ol>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>(a) Power Perspective.</strong>
+      <br>Let $\phi(z) = \sum |z_i|^p = \|z\|_p^p$. This is convex for $p \ge 1$.
+      <br>Perspective: $g(x, t) = t \phi(x/t) = t \sum |x_i/t|^p = t \frac{1}{t^p} \sum |x_i|^p = \frac{\|x\|_p^p}{t^{p-1}}$.
+      <br>Since perspective preserves convexity, $f$ is convex.
+    </div>
+    <div class="proof-step">
+      <strong>(b) Euclidean Perspective Composition.</strong>
+      <br>Base function $\phi(z) = \|z\|_2^2$ is convex.
+      <br>Perspective $g(z, t) = \|z\|_2^2 / t$ is convex.
+      <br>Affine mapping: $z(x) = Ax+b$ and $t(x) = c^\top x + d$.
+      <br>$f(x) = g(z(x), t(x))$.
+      <br>Composition of convex function with affine map is convex.
+    </div>
   </div>
 </div>
 
