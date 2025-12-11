@@ -199,7 +199,9 @@
       &= f^*(A^{-\top}y) - y^\top A^{-1}b
       \end{aligned}
       $$
-      If $A$ is not square/invertible, the formula holds if $y \in \mathrm{range}(A^\top)$, otherwise $g^*(y) = \infty$.
+      If $A$ is not square/invertible, we use the general rule from convex analysis involving an infimum over preimages:
+      $$ g^*(y) = \inf \{ f^*(z) - z^\top b \mid A^\top z = y \} $$
+      If $A$ is invertible, $z$ is uniquely determined as $z = A^{-\top}y$, and the infimum collapses to the simple substitution:
       $$ \boxed{ g^*(y) = f^*(A^{-\top}y) - y^\top A^{-1}b } \quad (\text{invertible case}) $$</p>
 
       <h4>(c) Sum of Independent Functions</h4>
@@ -228,6 +230,8 @@
       $$ \nabla_x (y^\top x - f(x)) = y - \nabla f(x) = 0 \implies y = \nabla f(x^*) $$
       Thus $x^* = (\nabla f)^{-1}(y)$. We can write:
       $$ f^*(y) = y^\top (\nabla f)^{-1}(y) - f((\nabla f)^{-1}(y)) $$
+      Alternatively, parametrizing by $z$ where $y = \nabla f(z)$, we get a cleaner form:
+      $$ f^*(\nabla f(z)) = z^\top \nabla f(z) - f(z) $$
       <b>Nice Identities:</b>
       <ul>
           <li>The gradient maps are inverses: $\nabla f^*(y) = x$ where $y = \nabla f(x)$. So $\nabla f^* = (\nabla f)^{-1}$.</li>
@@ -313,7 +317,8 @@
         <h4>Necessary Condition</h4>
         <p>If $f$ is quasiconvex, then for any $x \in \mathrm{dom}\, f$ and $y \in \mathbb{R}^n$:
         $$ y^\top \nabla f(x) = 0 \implies y^\top \nabla^2 f(x) y \ge 0 $$
-        <i>Interpretation:</i> If we look in a direction $y$ tangent to the level set ($\nabla f \perp y$), the function must curve upwards (positive curvature). The level sets cannot curve "inward" to create a disconnected or non-convex shape.</p>
+        <i>Interpretation:</i> If we look in a direction $y$ tangent to the level set ($\nabla f \perp y$), the function must curve upwards (positive curvature). The level sets cannot curve "inward" to create a disconnected or non-convex shape.
+        <br><b>1D Case:</b> This reduces to $f'(x) = 0 \implies f''(x) \ge 0$. A quasiconvex function on $\mathbb{R}$ cannot have a strict local maximum (which would have $f'=0, f''<0$). It effectively means the function has at most one "valley".</p>
 
         <h4>Sufficient Condition</h4>
         <p>If $f$ satisfies the stronger condition:
@@ -671,6 +676,32 @@
   </div>
 </div>
 
+<div class="problem">
+  <h3>P6.11 — Log-Convexity of the Gamma Function</h3>
+  <p>The Gamma function is defined as $\Gamma(x) = \int_0^\infty t^{x-1} e^{-t} dt$ for $x > 0$. Show that $\Gamma(x)$ is log-convex using the integration rule.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Identify the Integrand.</strong>
+      We can rewrite the integral as:
+      $$ \Gamma(x) = \int_0^\infty f(x, t) dt $$
+      where $f(x, t) = t^{x-1} e^{-t}$. Note that the domain of integration $(0, \infty)$ does not depend on $x$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Check Log-Convexity of Integrand.</strong>
+      Consider $g(x) = \log f(x, t)$ for a fixed $t > 0$.
+      $$ g(x) = \log(t^{x-1} e^{-t}) = (x-1)\log t - t $$
+      This function is linear (affine) in $x$ (slope $\log t$, intercept $-\log t - t$).
+      Since affine functions are convex, $g(x)$ is convex in $x$.
+      Thus, $f(x, t)$ is log-convex in $x$ for every $t$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Apply Integration Rule.</strong>
+      The theorem states that if $f(x, t)$ is log-convex in $x$ for each $t$, then $\int f(x, t) dt$ is log-convex (assuming convergence).
+      Therefore, $\Gamma(x)$ is log-convex.
+    </div>
+  </div>
+</div>
 
 </section>
     </article>
