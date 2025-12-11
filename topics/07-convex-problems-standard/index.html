@@ -291,6 +291,15 @@
             \end{aligned}
             $
         </p>
+        <div class="proof-step">
+            <strong>Significance of Auxiliary Variables:</strong>
+            The variables $y_{ij}$ serve as the "epigraph representation" of the absolute values $|a_{ij}(x)|$.
+            <ul>
+                <li>For any feasible $x$, the smallest feasible $y_{ij}$ satisfying the constraints is exactly $y_{ij} = |a_{ij}(x)|$.</li>
+                <li>Any larger $y_{ij}$ would satisfy the constraints but could only increase the sum $\sum y_{ij}$, potentially violating the upper bound $t$ or requiring a larger $t$.</li>
+                <li>Since we minimize $t$, the solver drives $y_{ij}$ down to its lower bound $|a_{ij}(x)|$ at optimality.</li>
+            </ul>
+        </div>
         <p>This is a standard LP. It demonstrates how to lift complex norm objectives into higher-dimensional linear spaces.</p>
       </div>
 
@@ -307,8 +316,14 @@
         <h4>LP Formulation</h4>
         <div class="proof-step">
             <strong>Step 1: Epigraph of Cost.</strong>
-            Note that $f(a) = \max\{a, -a, 2a-1, -2a-1\}$. This is the maximum of 4 linear functions.
-            We introduce slack variables $s(t) \ge f(u(t))$.
+            We can express the fuel cost as the maximum of 4 affine functions:
+            $$ f(a) = \max\{a, -a, 2a-1, -2a-1\} $$
+            <em>Check:</em>
+            <ul>
+                <li>If $|a| \le 1$: Then $2|a|-1 \le |a|$ (since $|a| \le 1$), so the max is $|a|$.</li>
+                <li>If $|a| > 1$: Then $2|a|-1 > |a|$, so the max is $2|a|-1$.</li>
+            </ul>
+            We introduce slack variables $s(t)$ and enforce $s(t) \ge \text{each of the 4 lines}$.
         </div>
         <div class="proof-step">
             <strong>Step 2: Dynamics.</strong>
@@ -426,28 +441,49 @@
       <h3>3.6 Robust Least Squares and the Huber Penalty</h3>
       <p>Robustness often leads to different formulations of the same underlying problem. Consider robust regression with the <strong>Huber penalty</strong> (Exercise 4.5):</p>
       $$ \phi(u) = \begin{cases} u^2 & |u| \le M \\ M(2|u| - M) & |u| > M \end{cases} $$
-      <p>This penalty is quadratic for small errors and linear for large outliers.</p>
+      <p>This penalty is quadratic for small errors and linear for large outliers, combining the efficiency of LS with the robustness of $\ell_1$.</p>
 
       <div class="insight">
         <h4>Three Equivalent Formulations</h4>
-        <p>The problem $\min \sum \phi(a_i^\top x - b_i)$ can be viewed in three ways:</p>
-        <ol>
-            <li><strong>Direct Convex Optimization:</strong> Minimizing a sum of convex Huber functions.</li>
-            <li><strong>Weighted Least Squares:</strong>
-                $$ \min_{x, w \ge 0} \sum \frac{r_i(x)^2}{w_i + 1} + M^2 \mathbf{1}^\top w $$
-                Solving for optimal weights $w_i$ recovers the Huber cost. This interprets robust regression as "reweighting" outliers.
-            </li>
-            <li><strong>Quadratic Program (QP):</strong>
-                $$
-                \begin{aligned}
-                \text{minimize} \quad & \sum (u_i^2 + 2M v_i) \\
-                \text{subject to} \quad & -u-v \preceq Ax - b \preceq u+v \\
-                & 0 \preceq u \preceq M\mathbf{1}, \quad v \succeq 0
-                \end{aligned}
-                $$
-                This splits the residual into a "quadratic part" $u$ and a "linear part" $v$.
-            </li>
-        </ol>
+        <p>The problem can be formulated in three distinct ways, each offering a different algorithmic perspective.</p>
+
+        <p><strong>(A) Direct Convex Optimization</strong></p>
+        <p>$\min_x \sum_{i=1}^m \phi(a_i^\top x - b_i)$. This is an unconstrained minimization of a sum of convex functions.</p>
+
+        <p><strong>(B) Weighted Least Squares</strong></p>
+        <p>We can view the Huber penalty as the infimum of a family of quadratic functions. Consider the problem:
+        $$ \min_{x, w \succeq 0} \quad \sum_{i=1}^m \left( \frac{r_i(x)^2}{w_i + 1} + M^2 w_i \right) $$
+        </p>
+        <div class="proof-step">
+            <strong>Equivalence Proof:</strong> Fix $x$ and minimize over $w_i \ge 0$ for each residual $r = r_i(x)$.
+            The function $f(w) = \frac{r^2}{w+1} + M^2 w$ has derivative $f'(w) = -\frac{r^2}{(w+1)^2} + M^2$.
+            Setting to zero gives $w+1 = |r|/M$, or $w^* = |r|/M - 1$.
+            <ul>
+                <li>If $|r| \le M$: Then $w^* \le 0$, so the constraint $w \ge 0$ binds. $w_{opt}=0$, giving cost $r^2$.</li>
+                <li>If $|r| > M$: Then $w^* > 0$ is feasible. The cost is $\frac{r^2}{|r|/M} + M^2(\frac{|r|}{M}-1) = M(2|r|-M)$.</li>
+            </ul>
+            This exactly matches $\phi(r)$. Thus, robust regression is equivalent to reweighted LS where outliers get larger weights ($w_i+1$).
+        </div>
+
+        <p><strong>(C) Quadratic Program (QP)</strong></p>
+        <p>We can lift the problem into a higher dimension to remove the non-smoothness:
+        $$
+        \begin{aligned}
+        \text{minimize} \quad & \sum_{i=1}^m (u_i^2 + 2M v_i) \\
+        \text{subject to} \quad & -u-v \preceq Ax - b \preceq u+v \\
+        & 0 \preceq u \preceq M\mathbf{1}, \quad v \succeq 0
+        \end{aligned}
+        $$
+        </p>
+        <div class="proof-step">
+            <strong>Equivalence Proof:</strong> The constraints imply $|r_i| \le u_i + v_i$.
+            To minimize cost, we make this tight. For fixed $u_i$, optimal $v_i = \max(0, |r_i| - u_i)$.
+            The cost becomes $u_i^2 + 2M \max(0, |r_i| - u_i)$ with $0 \le u_i \le M$.
+            <ul>
+                <li>If $|r_i| \le M$: We can set $u_i = |r_i|$ and $v_i=0$. Cost is $r_i^2$.</li>
+                <li>If $|r_i| > M$: Best we can do is saturate $u_i = M$, taking the remainder in $v_i = |r_i| - M$. Cost is $M^2 + 2M(|r_i| - M) = M(2|r_i| - M)$.</li>
+            </ul>
+        </div>
       </div>
 
       <h3>3.7 Quadratically Constrained Quadratic Programs (QCQP)</h3>
@@ -461,10 +497,41 @@
       <p>where $P_i \succeq 0$. If $P_i$ are not PSD, the problem is NP-hard.</p>
 
       <h4>Example: QCQP over the Unit Ball</h4>
-      <p>Consider minimizing a quadratic form over the unit ball (Exercise 4.22): $\min \frac{1}{2} x^\top P x + q^\top x$ subject to $x^\top x \le 1$.
-      <br>Using KKT conditions, we can derive the analytical solution:</p>
-      $$ x^\star = -(P + \lambda I)^{-1} q $$
-      <p>where $\lambda \ge 0$ is chosen such that either $\lambda=0$ (if the unconstrained minimum is inside the ball) or $\lambda$ solves the secular equation $q^\top (P+\lambda I)^{-2} q = 1$. This structure reveals that the constraint acts as a "Tikhonov regularization" on the system, shifting the eigenvalues of $P$.</p>
+      <p>Consider minimizing a convex quadratic over the unit ball (Exercise 4.22):</p>
+      $$ \text{minimize} \quad \frac{1}{2} x^\top P x + q^\top x + r \quad \text{subject to} \quad x^\top x \le 1 $$
+      <p>where $P \succeq 0$. We can derive the analytical solution via KKT conditions.</p>
+
+      <div class="proof-box">
+        <h4>Derivation</h4>
+        <div class="proof-step">
+            <strong>Step 1: KKT Conditions.</strong>
+            Lagrangian: $\mathcal{L}(x, \lambda) = \frac{1}{2} x^\top P x + q^\top x + r + \frac{\lambda}{2} (x^\top x - 1)$ with $\lambda \ge 0$.
+            <ul>
+                <li>Stationarity: $(P + \lambda I)x + q = 0 \implies x(\lambda) = -(P + \lambda I)^{-1} q$.</li>
+                <li>Complementary Slackness: $\lambda (x^\top x - 1) = 0$.</li>
+            </ul>
+        </div>
+
+        <div class="proof-step">
+            <strong>Step 2: The Secular Equation.</strong>
+            We need to find $\lambda \ge 0$.
+            Define $\phi(\lambda) = \|x(\lambda)\|^2 = q^\top (P + \lambda I)^{-2} q$.
+            Ideally, we want $\phi(\lambda) = 1$ when $\lambda > 0$.
+            Using the eigendecomposition $P = U \Lambda U^\top$, $\phi(\lambda) = \sum \frac{(u_i^\top q)^2}{(\mu_i + \lambda)^2}$.
+            This function is strictly decreasing in $\lambda$.
+        </div>
+
+        <div class="proof-step">
+            <strong>Step 3: The Solution.</strong>
+            There are two cases:
+            <ol>
+                <li><strong>Inactive Constraint:</strong> If the unconstrained minimizer $x_{unc} = -P^{-1}q$ is feasible ($\|x_{unc}\| \le 1$), then $\lambda^* = 0$ and $x^* = x_{unc}$. This corresponds to $\phi(0) \le 1$.</li>
+                <li><strong>Active Constraint:</strong> If $\|x_{unc}\| > 1$, then the solution must lie on the boundary ($x^\top x = 1$). We solve $\phi(\lambda) = 1$ for the unique $\lambda^* > 0$. Then $x^* = -(P + \lambda^* I)^{-1} q$.</li>
+            </ol>
+            Combined, $\lambda^* = \max(0, \bar{\lambda})$ where $\bar{\lambda}$ is the root of $\phi(\lambda)=1$.
+            This form explains why the constraint acts as <strong>Tikhonov regularization</strong>: it adds a "ridge" $\lambda I$ to the Hessian.
+        </div>
+      </div>
     </section>
 
     <!-- NEW SECTION 4: Linear-Fractional Programming -->
@@ -606,24 +673,44 @@
 
       <h3>4.6 Convex-Concave Fractional Programming</h3>
       <p>The perspective transform trick extends beyond linear functions (Exercise 4.7). Consider minimizing:</p>
-      $$ f_0(x) = \frac{h(x)}{g(x)}, \quad g(x) > 0 $$
-      <p>where $h$ is convex and $g$ is <strong>concave</strong>. (Note: standard LFP has affine $h, g$).</p>
+      $$ f_0(x) = \frac{f(x)}{h(x)}, \quad h(x) > 0 $$
+      <p>where $f$ is convex and $h$ is <strong>concave</strong>. (Note: standard LFP has affine $f, h$).</p>
 
       <div class="proof-box">
         <h4>Convex Reformulation</h4>
-        <p>We use the variable change $y = x/g(x)$ and $t = 1/g(x)$.
-        <br>The condition $g(x) = 1/t$ becomes $t g(y/t) = 1$. Since $g$ is concave, its perspective function $\tilde{g}(y,t) = t g(y/t)$ is concave.
-        <br>The equality constraint $\tilde{g}(y,t) = 1$ is not convex, but we can relax it to $\tilde{g}(y,t) \ge 1$ (a convex constraint). At optimality, the inequality will be tight.</p>
-        <p><strong>Result:</strong>
-        $$
-        \begin{aligned}
-        \text{minimize} \quad & t h(y/t) \quad \text{(Perspective of } h, \text{ convex)} \\
-        \text{subject to} \quad & t g(y/t) \ge 1 \quad \text{(Perspective of } g, \text{ concave)} \\
-        & Ay = bt, \quad t > 0
-        \end{aligned}
-        $$
-        This technique handles complex objectives like the ratio of trace to determinant ($\text{tr}(F(x)) / \det(F(x))^{1/m}$).</p>
+        <div class="proof-step">
+            <strong>Variable Transformation:</strong>
+            Let $t = 1/h(x)$ and $y = tx$.
+            Since $h$ is concave, its perspective function $\tilde{h}(y,t) = t h(y/t)$ is concave.
+            The condition $h(x) = 1/t$ becomes $t h(y/t) = 1$.
+        </div>
+        <div class="proof-step">
+            <strong>The Relaxation Trick:</strong>
+            The equality constraint $t h(y/t) = 1$ is not convex (boundary of a convex set).
+            However, we can relax it to $t h(y/t) \ge 1$. Since we minimize the objective (which scales with $t$), the solver will push $t$ to be as small as possible, making the constraint tight at optimum.
+            The set $\{(y,t) \mid t h(y/t) \ge 1\}$ is convex (superlevel set of a concave function).
+        </div>
+        <div class="proof-step">
+            <strong>Transformed Problem:</strong>
+            $$
+            \begin{aligned}
+            \text{minimize} \quad & t f(y/t) \quad \text{(Perspective of } f, \text{ convex)} \\
+            \text{subject to} \quad & t h(y/t) \ge 1 \quad \text{(Perspective of } h, \text{ concave)} \\
+            & Ay = bt, \quad t > 0
+            \end{aligned}
+            $$
+            This is a standard convex optimization problem.
+        </div>
       </div>
+
+      <h4>Example: Trace-Determinant Ratio</h4>
+      <p>Consider minimizing the ratio of the arithmetic mean to the geometric mean of eigenvalues of a matrix $F(x) = F_0 + \sum x_i F_i$:</p>
+      $$ \text{minimize} \quad \frac{\frac{1}{m}\text{tr}(F(x))}{\det(F(x))^{1/m}} $$
+      <ul>
+          <li>Numerator $f(x) = \frac{1}{m}\text{tr}(F(x))$ is affine (convex).</li>
+          <li>Denominator $h(x) = \det(F(x))^{1/m}$ is concave (Recall Lecture 05).</li>
+      </ul>
+      <p>This fits the convex-concave framework perfectly and can be solved efficiently.</p>
     </section>
 
         <!-- NEW SECTION 5: Geometric Programming -->
@@ -861,10 +948,38 @@
         <p><strong>(c)</strong> Show that if $f_0$ is bounded below, a minimizer exists and is unique (modulo the nullspace of $A$).</p>
 
         <div class="solution-box">
-          <h4>Solution</h4>
-          <p><strong>(a) Recession Cone:</strong> The domain is defined by $Ax \prec b$. Its recession cone is $\{v \mid A(x+tv) \prec b, \forall t\} = \{v \mid Av \preceq 0\}$. An unbounded domain means the recession cone is non-trivial ($v \ne 0$).</p>
-          <p><strong>(b) Unboundedness:</strong> If such a $v$ exists with $Av \ne 0$, then along the ray $x+tv$, some slacks $s_i(t)$ grow linearly while others stay constant. The term $-\log(s_i(t))$ goes to $-\infty$, driving $f_0 \to -\infty$. Conversely, if no such $v$ exists, a theorem of alternatives implies $\exists z \succ 0, A^\top z = 0$. We can use this $z$ to construct a lower bound.</p>
-          <p><strong>(c) Existence:</strong> If $f_0$ is bounded below, slacks cannot approach 0 arbitrarily without $x$ going to infinity in a "bad" direction. Since "bad" directions don't exist, the sublevel sets are bounded (modulo $\text{null}(A)$). As $f_0$ is continuous and strictly convex on the range of $A^\top$, the minimum is attained.</p>
+          <h4>Detailed Proof</h4>
+          <p>This problem connects the geometry of the domain to the analytic properties of the function.</p>
+
+          <p><strong>(a) Domain Unboundedness</strong></p>
+          <div class="proof-step">
+              The domain is $C = \{x \mid Ax \prec b\}$. Its recession cone is $\operatorname{rec}(C) = \{v \mid x + tv \in C, \forall t \ge 0\}$.
+              $$ x+tv \in C \iff A(x+tv) \prec b \iff Ax + tAv \prec b \implies Av \preceq 0 $$
+              Thus, the domain is unbounded iff there exists a nonzero direction $v$ such that $Av \preceq 0$.
+          </div>
+
+          <p><strong>(b) Function Unbounded Below</strong></p>
+          <div class="proof-step">
+              Recall $\nabla f_0(x) = A^\top z(x)$ where $z_i = 1/(b_i - a_i^\top x) > 0$.
+              Using a theorem of alternatives:
+              <ul>
+                  <li>Either $\exists v$ s.t. $Av \preceq 0, Av \neq 0$ (some slacks grow, none shrink).</li>
+                  <li>Or $\exists z \succ 0$ s.t. $A^\top z = 0$.</li>
+              </ul>
+              <strong>If (1) holds:</strong> Along the ray $x+tv$, slacks $s_i(t) = s_i(0) - t a_i^\top v$ are non-decreasing. Since $Av \ne 0$, at least one slack grows linearly to $\infty$. Thus $-\sum \log s_i(t) \to -\infty$.
+              <br><strong>If (2) holds:</strong> Consider $\psi(s) = -\sum \log s_i + z^\top s$. This function is bounded below on $\mathbb{R}_{++}^m$.
+              For feasible $x$, $\psi(b-Ax) = f_0(x) + z^\top b - z^\top Ax = f_0(x) + z^\top b$. Since $\psi$ is bounded below, $f_0(x)$ is bounded below.
+          </div>
+
+          <p><strong>(c) Existence and Uniqueness</strong></p>
+          <div class="proof-step">
+              If $f_0$ is bounded below, condition (2) holds ($A^\top z = 0$ for some $z \succ 0$).
+              Since the domain is open, any minimizer $x^*$ must satisfy $\nabla f_0(x^*) = 0$.
+              This requires solving $A^\top z(x) = 0$ for $x$, which is possible when $f_0$ is bounded below.
+              <br>
+              <strong>Optimal Set:</strong> $f_0$ is constant along any direction $v$ in the nullspace of $A$ ($Av=0$).
+              If $x^*$ is optimal, the set of all optimal points is the affine subspace $x^* + \operatorname{null}(A)$.
+          </div>
         </div>
       </div>
     </section>
