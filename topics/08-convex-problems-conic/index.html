@@ -595,18 +595,13 @@
         <p><strong>(b)</strong> Reformulate it as a standard LP.</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Composition of Convex Functions:</b> The objective function $\max_i |a_i^\top x - b_i|$ is built from simple convex atoms: affine functions, the absolute value (convex), and the maximum (convex and non-decreasing). This structure guarantees convexity by DCP rules.</li>
             <li><b>Epigraph Transformation:</b> Minimizing a maximum is equivalent to minimizing a scalar $t$ subject to $f_i(x) \le t$. This standard technique "lifts" the non-smooth max function into smooth linear constraints.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Minimizing a maximum (minimax) is a canonical convex problem. We use the epigraph trick: minimize $t$ subject to the max function $\le t$, which unfolds into multiple linear constraints.</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -642,18 +637,13 @@
         <p><strong>(b)</strong> Under what conditions on $A$ is the problem strictly convex (thus having a unique solution)?</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Quadratic Programs (QP):</b> QPs are defined by a quadratic objective and linear constraints. They occupy a sweet spot in optimization: more expressive than LPs but still efficiently solvable.</li>
             <li><b>Uniqueness Condition:</b> A strictly convex objective implies a unique global minimizer. For least squares $x^\top A^\top A x$, the curvature is determined by $A^\top A$. If $A$ has independent columns, $A^\top A$ is positive definite, ensuring uniqueness.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Box-constrained least squares is a QP. The Hessian $A^\top A$ determines convexity; strict convexity requires full column rank.</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -692,18 +682,13 @@
         <p><strong>(b)</strong> Compare this to Tikhonov regularization $\|Ax - b\|_2^2 + \lambda \|x\|_2^2$, which is a QP.</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>SOCP Modeling:</b> Second-Order Cone Programming generalizes LPs and QPs by allowing Euclidean norm constraints. This is essential for robust optimization and problems involving geometric distances.</li>
             <li><b>Splitting Norms:</b> The objective $\sum \|v_i\|$ is handled by introducing a slack variable for each norm term, $t_i \ge \|v_i\|$, and minimizing their sum. Each slack constraint is a second-order cone.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Sum of norms is SOCP. Tikhonov (sum of squares) is QP. SOCP is more general but QP is faster. The transformation requires introducing slack variables for each norm.</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -732,18 +717,13 @@
         <p><strong>(b)</strong> Write the dual problem (you may use the general SDP duality results).</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Eigenvalue Optimization:</b> The maximum eigenvalue is a convex function of a symmetric matrix. The condition $\lambda_{\max}(A) \le t$ transforms into the Linear Matrix Inequality (LMI) $tI - A \succeq 0$.</li>
             <li><b>Semidefinite Duality:</b> The dual of this problem reveals a fundamental connection to quantum mechanics: finding a density matrix (PSD, trace 1) that minimizes the expected energy (trace inner product) against the Hamiltonian $A$.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Eigenvalues are roots of characteristic polynomials, but $\lambda_{\max}$ has a variational definition (Rayleigh quotient) that proves convexity. Its epigraph is defined by a Linear Matrix Inequality (LMI).</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -797,18 +777,13 @@
         <p><strong>(b)</strong> Reformulate it to fit your classification.</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Quadratically Constrained Quadratic Programming (QCQP):</b> This class involves quadratic objectives and quadratic inequality constraints. Convexity requires all quadratic matrices to be PSD.</li>
             <li><b>Factorization Trick:</b> A convex quadratic constraint $x^\top \Sigma x \le c$ can be converted to an SOC constraint $\|L^\top x\|_2 \le \sqrt{c}$ using the Cholesky factorization $\Sigma = LL^\top$. This places QCQP inside the SOCP class.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Quadratic constraints define ellipsoids. Maximizing a linear function over an ellipsoid is a classic convex problem (QCQP/SOCP).</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -839,18 +814,13 @@
   <p>Show that the problem $\min \|x\|_1$ subject to $Ax = b$ is equivalent to an LP.</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>L1 Norm Linearization:</b> The condition $\|x\|_1 \le t$ describes a cross-polytope, which is an intersection of $2^n$ halfspaces. However, by introducing a slack variable for <i>each</i> component ($|x_i| \le t_i$), we only need $2n$ linear constraints.</li>
             <li><b>Sparsity Geometry:</b> The LP formulation works because the $\ell_1$ ball has "pointy" vertices on the axes. Optimizing a linear function over this shape tends to land on these sparse vertices.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>The $\ell_1$ norm encourages sparsity. Its unit ball is a polytope, allowing reformulation as an LP by splitting variables or using slack variables.</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -882,18 +852,13 @@
         <p><strong>(b)</strong> Describe how to solve this problem using bisection over $t$ and convex feasibility problems.</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Quasiconvexity via Sublevel Sets:</b> A function is quasiconvex if its sublevel sets are convex. For a ratio $N(x)/D(x)$, the condition $\frac{N(x)}{D(x)} \le t$ rearranges to the linear inequality $N(x) - t D(x) \le 0$ (assuming $D(x) > 0$), verifying quasiconvexity.</li>
             <li><b>Bisection Algorithm:</b> Since we can efficiently test if the optimal value is below $t$ (by solving a convex feasibility problem), we can perform a binary search on the optimal value $p^*$. This is the standard method for solving Quasiconvex problems.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Linear-fractional functions have convex sublevel sets (halfspaces) but are not convex functions. Bisection allows solving quasiconvex problems using a sequence of convex feasibility checks.</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -939,18 +904,13 @@
         <p><strong>(b)</strong> Formulate the problem as an SDP by using the objective $\log \det(A)$ (which is concave in $A$ for $A \succ 0$).</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Ellipsoid Volume:</b> The volume of an ellipsoid parameterized by matrix $A$ is proportional to $\det(A^{-1})$. Thus, minimizing volume is equivalent to maximizing $\det(A)$ or minimizing $-\log\det(A)$.</li>
             <li><b>Barrier Function:</b> The function $-\log\det(X)$ is strictly convex on the set of positive definite matrices. It acts as a "barrier" that blows up as the matrix approaches singularity (boundary of the cone), ensuring the solution is robust and full-rank.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>The volume of an ellipsoid is related to the determinant. $\log \det$ is a concave barrier function for the PSD cone, essential for interior point methods.</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -979,18 +939,13 @@
         <p><strong>(b)</strong> Verify that the objective is concave (so minimizing negative utility is convex).</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Diminishing Returns:</b> Standard utility functions like $\log(x)$ are concave, reflecting the economic principle that each additional unit of resource provides less value than the previous one.</li>
             <li><b>Separability:</b> The objective function is a sum of independent terms $\sum U_i(x_i)$. This "separable" structure allows for efficient decomposition algorithms (like Dual Decomposition), making it ideal for large-scale network problems.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Logarithmic utility (diminishing returns) makes the objective concave (minimization convex). Separable structure simplifies optimization.</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -1036,18 +991,13 @@
         <p><strong>(b)</strong> Write the resulting equivalent problem and verify it is an LP.</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Charnes-Cooper Transformation:</b> This specific change of variables ($y = \frac{x}{e^\top x + f}, z = \frac{1}{e^\top x + f}$) is a powerful trick to convert a linear-fractional programming problem into a pure Linear Program (LP).</li>
             <li><b>Constraint Linearity:</b> Under this projective transformation, linear constraints on $x$ become homogeneous linear constraints on $(y, z)$, preserving the LP structure.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Projective transformation (homogenization) linearizes the fractional objective, converting the problem to an LP. This is the Charnes-Cooper transformation.</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -1086,18 +1036,13 @@
         Prove that minimizing the weighted sum $\sum w_i f_i(x)$ with weights $w > 0$ yields a Pareto optimal point.</p>
 
 
-      <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+      <div class="recap-box">
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Scalarization Method:</b> To find Pareto optimal points for a vector objective, we minimize a weighted sum of the components. The weights represent the relative importance or "prices" of the different objectives.</li>
             <li><b>Pareto Optimality Condition:</b> If a point minimizes a weighted sum with strictly positive weights, it is guaranteed to be Pareto optimal. For convex problems, the converse is also true: any Pareto point can be found by some choice of weights.</li>
         </ul>
       </div>
-
-  <div class="recap-box">
-    <h4><i data-feather="key"></i> Recap & Key Concepts</h4>
-    <p>Scalarization (weighted sum) converts a vector optimization problem into a standard scalar convex problem. Positive weights guarantee Pareto optimality.</p>
-  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>

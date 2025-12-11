@@ -407,6 +407,11 @@
   <br>(b) State the dual problem explicitly.
   <br>(c) Verify weak duality directly for any feasible $x$ and $\lambda$.</p>
 
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The dual of a strictly convex QP is another QP. Minimizing the primal quadratic is related to maximizing a concave quadratic in the dual variables. Weak duality can be verified algebraically by completing the square.</p>
+  </div>
+
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
@@ -434,6 +439,11 @@
   <p>Maximize the entropy $-\sum x_i \log x_i$ subject to $\mathbf{1}^\top x = 1$ and $Ax \le b$.
   <br>Derive the KKT conditions. Show that the optimal solution has the form $x_i = e^{-\nu - 1 - (A^\top \lambda)_i}$.</p>
 
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>Entropy maximization naturally leads to exponential family distributions. The dual variables in the exponent correspond to the constraints (Gibbs distribution). This is the foundation of Maximum Entropy modeling.</p>
+  </div>
+
   <div class="solution-box">
     <h4>Solution</h4>
     <p>Lagrangian: $L = \sum x_i \log x_i + \nu(\sum x_i - 1) + \lambda^\top (Ax - b)$. (Note: minimizing neg entropy).
@@ -449,6 +459,11 @@
   <br>Perturb to $x \le -1 + u$. New optimum $x^* = -1+u$ (for small $u$), $p^*(u) = (-1+u)^2 \approx 1 - 2u$.
   <br>Find the dual optimal $\lambda^*$ of the original problem and verify $p^*(u) \approx p^*(0) - \lambda^* u$.</p>
 
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The optimal dual variable $\lambda^*$ acts as a sensitivity coefficient (shadow price). It tells you how much the optimal value improves if you relax the constraint by one unit. Here, relaxing the constraint to $x \le 0$ reduces the cost significantly.</p>
+  </div>
+
   <div class="solution-box">
     <h4>Solution</h4>
     <p>$L(x, \lambda) = x^2 + \lambda(x+1)$. $\nabla_x L = 2x + \lambda = 0 \implies x = -\lambda/2$.
@@ -462,6 +477,11 @@
   <p>Derive the dual of the standard form LP:
   $$ \min c^\top x \quad \text{s.t.} \quad Ax = b, \ x \ge 0 $$
   Show it is $\max -b^\top \nu$ s.t. $A^\top \nu + c \ge 0$ (or equivalently $\max b^\top y$ s.t. $A^\top y \le c$ via reparameterization).</p>
+
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The dual of an LP is another LP. The variables of the dual correspond to the constraints of the primal. This symmetric relationship is unique to Linear Programming.</p>
+  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -494,6 +514,11 @@
     <li>$A^\top y \ge 0, \ b^\top y < 0$</li>
   </ol>
   </p>
+
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>Farkas' Lemma is a theorem of alternatives. It says that if a linear system is infeasible, there is a certificate (hyperplane) proving it. Strong duality provides the mechanism to find this certificate (an unbounded dual ray).</p>
+  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -534,6 +559,11 @@
 <div class="problem">
   <h3>P9.6 — KKT for Water-filling</h3>
   <p>Solve $\min \sum_{i=1}^n -\log(\alpha_i + x_i)$ subject to $x \ge 0, \mathbf{1}^\top x = 1$. Assume $\alpha_i > 0$. Derive the water-filling solution.</p>
+
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>Water-filling is the analytic solution to allocating a limited resource to maximize the sum of concave utility functions. The KKT conditions reveal that the marginal gain must be equal for all active channels, up to a threshold.</p>
+  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>

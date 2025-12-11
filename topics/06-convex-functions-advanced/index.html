@@ -536,10 +536,10 @@
           <br>1. From log-concavity of $f$: $f(z) \ge f(x_1)^\theta f(x_2)^{1-\theta}$.
           <br>2. Since $h$ is increasing and defined on the range of $f$ (where $f>a$), we can apply it:
           $$ h(f(z)) \ge h(f(x_1)^\theta f(x_2)^{1-\theta}) $$
-          3. The function $k(u, v) = h(u^\theta v^{1-\theta})$ can be shown to be concave? Or more simply:
-          Subtracting a constant preserves the "log-concave" shape. The formal proof typically involves the concavity of $h \circ \exp$ or direct algebraic manipulation using the property that $h$ is concave.
-          <br>Specifically, since $h(u)$ is concave, $h(\lambda u + (1-\lambda) v) \ge \lambda h(u) + (1-\lambda)h(v)$.
-          Combined with $f(z)$ being "above the geometric mean", the shifted value stays "above the geometric mean of shifted values".
+          3. We rely on the property that for $u, v > a$, $\log(u^\theta v^{1-\theta} - a) \ge \theta \log(u-a) + (1-\theta)\log(v-a)$.
+          This inequality holds because the function $\phi(t) = \log(e^t - a)$ is concave for $t > \log a$.
+          Checking the second derivative of $\phi(t)$: $\phi'(t) = \frac{e^t}{e^t - a}$, $\phi''(t) = \frac{e^t(e^t - a) - e^t(e^t)}{(e^t - a)^2} = \frac{-a e^t}{(e^t - a)^2}$.
+          Since $a \ge 0$, $\phi''(t) \le 0$, so $\phi$ is concave.
           <br>Conclusion: Subtracting a non-negative constant from a positive log-concave function preserves log-concavity.</p>
         </div>
 
@@ -640,6 +640,10 @@
 <div class="problem">
   <h3>P6.1 — Conjugate of Norm Squared</h3>
   <p>Compute the conjugate of $f(x) = \frac{1}{2}\|x\|^2$ for a general norm $\|\cdot\|$. Show it is $\frac{1}{2}\|y\|_*^2$.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The squared norm $\frac{1}{2}\|x\|^2$ is a smooth approximation of the hard constraint $\|x\| \le 1$. Its conjugate is the squared dual norm, reflecting the duality between Primal/Dual norms.</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Step 1: Definition.</strong>
@@ -663,6 +667,10 @@
 <div class="problem">
   <h3>P6.2 — Quasi-Convexity of Ceiling</h3>
   <p>Show that $f(x) = \lceil x \rceil$ (on $\mathbb{R}$) is quasi-convex.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>Quasi-convex functions have convex sublevel sets. Monotonic functions (like ceiling) are always quasi-convex (and quasi-concave) because their sublevel sets are intervals (rays).</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Step 1: Definition of Quasi-Convexity.</strong>
@@ -681,6 +689,10 @@
 <div class="problem">
   <h3>P6.3 — Softmax Analysis</h3>
   <p>For $f(x) = \log(\sum_{i=1}^n e^{x_i})$: <ol type="a"><li>Show $\max x_i \le f(x) \le \max x_i + \log n$.</li><li>Show $f$ is convex via Hessian analysis.</li></ol></p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The Log-Sum-Exp function is the smooth convex approximation of the maximum function. Its Hessian is the covariance matrix of the softmax probability distribution, which guarantees PSD status.</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Part A: Bounds.</strong>
@@ -708,6 +720,10 @@
 <div class="problem">
   <h3>P6.4 — Concavity of Geometric Mean</h3>
   <p>Prove $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}^n_{++}$ using log-concavity properties.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>A function that is both Log-Concave and Homogeneous (degree 1) must be Concave. This provides a shortcut to proving concavity without computing the full Hessian.</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Step 1: Check Log-Concavity.</strong>
@@ -744,6 +760,10 @@
 <div class="problem">
   <h3>P6.5 — Geometric Mean Cone</h3>
   <p>Show $K = \{x \in \mathbb{R}^n_+ \mid G(x) \ge \alpha A(x)\}$ is a convex cone for $\alpha \in [0,1]$, where $A(x) = \frac{1}{n}\sum x_i$ is the arithmetic mean.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>Sublevel sets of convex functions are convex. Superlevel sets of concave functions are convex. Since $G(x) - \alpha A(x)$ is concave, the set where it is non-negative is a convex cone.</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Step 1: Rewrite condition.</strong>
@@ -767,6 +787,10 @@
 <div class="problem">
   <h3>P6.6 — Matrix Fractional Function</h3>
   <p>Prove convexity of $f(x, Y) = x^\top Y^{-1} x$ (for $Y \succ 0$) using the epigraph characterization.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The Matrix Fractional function is the "vector generalization" of $x^2/y$. Its epigraph is defined by a Linear Matrix Inequality (Schur Complement), proving it is a convex set.</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Step 1: Epigraph Definition.</strong>
@@ -786,6 +810,10 @@
 <div class="problem">
   <h3>P6.7 — Fenchel's Inequality & Biconjugate</h3>
   <p>For $f(x) = \frac{1}{2}x^\top Q x$ with $Q \succ 0$: 1. Verify Fenchel's inequality. 2. Verify $f^{**} = f$.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>Fenchel's Inequality $f(x) + f^*(y) \ge x^\top y$ is the convex analysis equivalent of Young's inequality ($ab \le a^p/p + b^q/q$). Equality holds when $y = \nabla f(x)$.</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Part 1: Fenchel's Inequality.</strong>
@@ -807,6 +835,10 @@
 <div class="problem">
   <h3>P6.8 — Quasiconvexity of Distance Ratio</h3>
   <p>Show $S_\theta = \{x \mid \|x-a\|_2 \le \theta \|x-b\|_2\}$ is convex for $\theta \le 1$.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The set of points closer to $A$ than to $B$ (scaled) forms a convex set (ball or halfspace) if the scaling factor $\theta \le 1$. If $\theta > 1$, the set becomes the complement of a ball (non-convex).</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Step 1: Square the condition.</strong>
@@ -826,6 +858,10 @@
 <div class="problem">
   <h3>P6.9 — Log-Concavity of Probability Measures</h3>
   <p>If $p(x)$ is a log-concave probability density, show that the function $f(x) = \mathbb{P}(x+W \in C)$ is log-concave, where $W \sim p$ and $C$ is a convex set.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The convolution of log-concave functions is log-concave (Prékopa-Leindler). Since the probability is a convolution of the density $p$ with the indicator of $C$ (both log-concave), the result follows.</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step"><strong>Step 1: Write as Integral.</strong>
@@ -854,6 +890,10 @@
 <div class="problem">
   <h3>P6.10 — Log-Concavity of Gaussian</h3>
   <p>Show that the multivariate Gaussian density function $f(x)$ is log-concave. $$ f(x) = \frac{1}{(2\pi)^{n/2} (\det \Sigma)^{1/2}} \exp\left(-\frac{1}{2}(x-\mu)^\top \Sigma^{-1} (x-\mu)\right) $$ where $\Sigma \succ 0$.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The Gaussian PDF is the prototype of log-concavity because its log is a concave quadratic function. This property ensures unimodality and strong tail decay.</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
@@ -876,6 +916,10 @@
 <div class="problem">
   <h3>P6.11 — Legendre Transform of Quadratic</h3>
   <p>Consider $f(x) = \frac{1}{2}x^\top Q x$ with $Q \succ 0$. Verify the Legendre transform formula $f^*(y) = x^\top y - f(x)$ where $y = \nabla f(x)$.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>For strictly convex differentiable functions, the convex conjugate is the Legendre transform. It swaps the independent variable $x$ with the gradient $y = \nabla f(x)$.</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
@@ -905,6 +949,11 @@
     <li><b>Product over Sum:</b> $f(x) = (\prod x_i) / (\sum x_i)$ on $\mathbb{R}_{++}^n$.</li>
     <li><b>Determinant over Trace:</b> $f(X) = \det X / \mathrm{tr} X$ on $\mathbb{S}_{++}^n$.</li>
   </ol>
+
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>Many "ratio" functions are log-concave. If the numerator is log-concave and the denominator is log-convex (or $\log(\text{denom})$ is convex), the ratio is log-concave. Specifically, $\log(f/g) = \log f - \log g$. If $\log f$ is concave and $\log g$ is convex, the difference is concave.</p>
+  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -976,6 +1025,10 @@
 <div class="problem">
   <h3>P6.13 — Log-Convexity of the Gamma Function</h3>
   <p>The Gamma function is defined as $\Gamma(x) = \int_0^\infty t^{x-1} e^{-t} dt$ for $x > 0$. Show that $\Gamma(x)$ is log-convex using the integration rule.</p>
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>Integration preserves log-convexity. The integrand of the Gamma function, viewed as a function of $x$, is of the form $e^{\text{linear in } x}$, which is log-convex. Thus the integral is log-convex.</p>
+  </div>
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">

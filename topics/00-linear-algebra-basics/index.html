@@ -1340,6 +1340,10 @@
           <li><b>Independent.</b> An upper triangular matrix $U$ with non-zero diagonal entries has determinant $\prod u_{ii} \neq 0$. Thus, its columns form a basis and are linearly independent.</li>
         </ol>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>To check linear independence, form a linear combination summing to zero. If the only solution is the zero coefficient vector, they are independent. Geometrically, dependent vectors lie in a lower-dimensional flat (e.g., three vectors on a plane).</p>
+      </div>
 
       <h3>P0.2 — The Rank-Nullity Theorem</h3>
       <p>Let $A$ be a $10 \times 15$ matrix.</p>
@@ -1355,6 +1359,10 @@
           <li>By the Rank-Nullity Theorem, $\dim(\mathcal{N}(A)) + \mathrm{rank}(A) = n$. Here $n=15$ (number of columns). So $\dim(\mathcal{N}(A)) = 15 - 8 = 7$.</li>
           <li>The condition "only the solution $x=0$" means $\mathcal{N}(A) = \{0\}$, so $\dim(\mathcal{N}(A)) = 0$. By Rank-Nullity, this would imply $\mathrm{rank}(A) = 15 - 0 = 15$. However, we established in (a) that the maximum rank is 10. Thus, this is <b>impossible</b>. An underdetermined system ($m < n$) always has a non-zero nullspace.</li>
         </ol>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The Rank-Nullity Theorem ($\dim \mathcal{R}(A) + \dim \mathcal{N}(A) = n$) acts as a conservation law for dimensions: every input dimension must either land in the range or be crushed to zero. Full column rank implies injectivity (zero nullspace).</p>
       </div>
 
       <h3>P0.3 — Trace and Determinant</h3>
@@ -1382,6 +1390,10 @@
           </li>
         </ol>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Trace is cyclic ($\mathrm{tr}(ABC) = \mathrm{tr}(BCA)$) but not multiplicative. Determinant is multiplicative ($\det(AB) = \det A \det B$) but not additive. Skew-symmetric matrices ($A^\top = -A$) always have zero trace and, if the dimension is odd, zero determinant.</p>
+      </div>
 
       <h3>P0.4 — Norm Equivalence</h3>
       <p>In finite dimensions, all norms are equivalent. For $x \in \mathbb{R}^n$, prove the following inequalities:</p>
@@ -1400,6 +1412,10 @@
           $$ \|x\|_1 = \sum |x_i| \cdot 1 = |x|^\top \mathbf{1} \le \||x|\|_2 \|\mathbf{1}\|_2 = \|x\|_2 \sqrt{n} $$
           </li>
         </ol>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>In finite-dimensional spaces, all norms are equivalent, meaning they bound each other up to constants depending on dimension $n$. Geometrically, this means any norm ball can be sandwiched between two scaled balls of another norm. $\ell_1$ is the largest (sum), $\ell_\infty$ is the smallest (max), and $\ell_2$ is in between.</p>
       </div>
 
       <h3>P0.5 — Least Squares from Scratch</h3>
@@ -1435,6 +1451,10 @@
           </li>
         </ol>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Least squares minimizes the Euclidean norm of the residual error. The optimality condition ($\nabla f = 0$) yields the Normal Equations $A^\top Ax = A^\top b$, which express that the optimal residual is orthogonal to the column space of $A$. A positive definite Hessian ensures the solution is a unique global minimum.</p>
+      </div>
 
       <h3>P0.6 — Matrix Calculus Practice</h3>
       <p>Compute the gradient with respect to $X \in \mathbb{R}^{n \times n}$ for the following functions:</p>
@@ -1460,6 +1480,10 @@
           (This is an outer product matrix).
           </li>
         </ol>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Matrix calculus relies heavily on the trace operator. The trace acts as an inner product for matrices ($\langle A, B \rangle = \mathrm{tr}(A^\top B)$). The identities $\nabla \mathrm{tr}(A^\top X) = A$ and $\nabla \mathrm{tr}(X^\top X) = 2X$ are the matrix analogs of derivatives for $ax$ and $x^2$.</p>
       </div>
 
       <h3>P0.7 — Hessian of a Cubic</h3>
@@ -1489,6 +1513,10 @@
           </li>
         </ol>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Local convexity is determined by the Hessian matrix being Positive Semidefinite (PSD). For small matrices (like $2 \times 2$), we can check PSD status using determinants and traces (Sylvester's criterion relates to principal minors).</p>
+      </div>
 
       <h3>P0.8 — Testing Positive Semidefiniteness</h3>
       <p>Determine whether the following matrices are PSD, PD, Indefinite, or Negative Definite/Semidefinite.</p>
@@ -1504,6 +1532,14 @@
           <li><b>Indefinite.</b> The determinant is $\det(B) = 1 - 4 = -3 < 0$. Since the product of eigenvalues is negative, they must have opposite signs ($\lambda = 3, -1$). Thus, $B$ is indefinite.</li>
           <li><b>Positive Semidefinite.</b> This is a diagonal matrix with entries $1, 0, 3$, which are the eigenvalues. Since all $\lambda_i \ge 0$ and one is zero, $C \succeq 0$ but is not positive definite.</li>
         </ol>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>To classify a symmetric matrix:
+        <br>• <b>PD ($A \succ 0$):</b> All $\lambda_i > 0$.
+        <br>• <b>PSD ($A \succeq 0$):</b> All $\lambda_i \ge 0$.
+        <br>• <b>Indefinite:</b> Some $\lambda_i > 0$, some $\lambda_i < 0$.
+        <br>Eigenvalues tell the whole story of the quadratic form's curvature.</p>
       </div>
 
       <h3>P0.9 — Schur Complement Application</h3>
@@ -1527,6 +1563,10 @@
         Matches.
         </p>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The Schur Complement provides a way to check positive definiteness of block matrices without computing all eigenvalues. It reduces a matrix condition to scalar or lower-dimensional conditions, which is extremely useful in Semidefinite Programming.</p>
+      </div>
 
       <h3>P0.10 — Projection onto a Line</h3>
       <p>Let $a = (1, 1, 1)^\top$. Find the projection of $b = (1, 0, 0)^\top$ onto the line spanned by $a$. Verify that the residual $b - p$ is orthogonal to $a$.</p>
@@ -1539,6 +1579,10 @@
         <br>Residual $r = b - p = (1-1/3, 0-1/3, 0-1/3)^\top = (2/3, -1/3, -1/3)^\top$.
         <br>Check orthogonality: $a^\top r = 1(2/3) + 1(-1/3) + 1(-1/3) = 0$. Verified.</p>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Projection onto a line spanned by $a$ is simply scaling $a$ by the coefficient $\frac{a^\top b}{a^\top a}$. The key feature is that the error (residual) vector is perpendicular to the line.</p>
+      </div>
 
       <h3>P0.11 — Projection onto a Hyperplane</h3>
       <p>Find the projection of the point $y = (3, 3)^\top$ onto the line (hyperplane in 2D) defined by $x_1 + x_2 = 2$.</p>
@@ -1550,6 +1594,10 @@
         $\|a\|^2 = 2$.
         $p = (3, 3)^\top - \frac{6 - 2}{2} (1, 1)^\top = (3, 3)^\top - 2(1, 1)^\top = (3, 3)^\top - (2, 2)^\top = (1, 1)^\top$.
         <br>Check: $1+1=2$. Point is on the line. Residual $(2, 2)$ is parallel to normal $(1, 1)$. Correct.</p>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Projection onto a hyperplane $a^\top x = b$ is done by moving from the point $y$ in the direction of the normal vector $a$. The distance moved is exactly the perpendicular distance from the point to the plane.</p>
       </div>
 
       <h3>P0.12 — Orthogonal Complements</h3>
@@ -1574,6 +1622,10 @@
           Thus $y = (0, 0, y_3)^\top$. $S^\perp$ is the $z$-axis (span of $e_3$).
           </li>
         </ol>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The orthogonal complement $S^\perp$ consists of all vectors perpendicular to every vector in subspace $S$. It is always a subspace, and $S \cap S^\perp = \{0\}$. In $\mathbb{R}^3$, the complement of a plane is its normal line.</p>
       </div>
 
       <h3>P0.13 — Frobenius Norm Submultiplicativity</h3>
@@ -1603,6 +1655,10 @@
           <br>Thus $\|AB\|_F^2 \le \|A\|_F^2 \|B\|_F^2$. Taking square roots gives the result.
         </div>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The Frobenius norm ($\|A\|_F$) behaves like an "L2 norm for matrices" and is compatible with matrix multiplication ($\|AB\| \le \|A\|\|B\|$). The proof relies on relating the trace to eigenvalues and using Cauchy-Schwarz or spectral bounds.</p>
+      </div>
 
       <h3>P0.14 — Spectral Norm Properties</h3>
       <p>Let $\|A\|_2$ denote the spectral norm (max singular value).</p>
@@ -1617,6 +1673,10 @@
           <li>$\|QA\|_2 = \sup_{\|x\|=1} \|QAx\|_2$. Since $Q$ is orthogonal, it preserves Euclidean norms: $\|QAx\|_2 = \|Ax\|_2$.
           Thus $\sup_{\|x\|=1} \|Ax\|_2 = \|A\|_2$. The spectral norm is invariant under left (and right) orthogonal multiplication.</li>
         </ol>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The spectral norm $\|A\|_2$ measures the maximum amplification of a vector's length by the matrix. Since orthogonal matrices $Q$ just rotate/reflect vectors without changing their length, they do not affect the spectral norm when multiplied ($ \|QA\|_2 = \|A\|_2 $).</p>
       </div>
 
       <h3>P0.15 — Isometries</h3>
@@ -1643,6 +1703,10 @@
           Since all entries are zero, $M = 0$, so $Q^\top Q = I$.
         </div>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>A linear map that preserves distances between all points must be orthogonal ($Q^\top Q = I$). This confirms that the only linear isometries in Euclidean space are rotations and reflections (represented by orthogonal matrices).</p>
+      </div>
 
       <h3>P0.16 — Loewner Order Transitivity</h3>
       <p>The Loewner order is defined as $X \succeq Y \iff X - Y \succeq 0$. Prove that this order is transitive: if $X \succeq Y$ and $Y \succeq Z$, then $X \succeq Z$. Use the variational definition of PSD matrices.</p>
@@ -1654,6 +1718,10 @@
         combining inequalities: $v^\top X v \ge v^\top Y v \ge v^\top Z v$.
         Thus $v^\top (X-Z) v \ge 0$.
         Since this holds for all $v$, $X - Z \succeq 0$, so $X \succeq Z$.</p>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The Loewner order $A \succeq B$ is a valid partial ordering of symmetric matrices. It behaves transitively like real numbers ($a \ge b \ge c \implies a \ge c$), but relies on the PSD property of the difference $A-B$.</p>
       </div>
 
       <h3>P0.17 — Weighted Inner Product</h3>
@@ -1671,6 +1739,10 @@
           Explicitly: $|x^\top A y| \le \sqrt{x^\top A x} \sqrt{y^\top A y}$.
           </li>
         </ol>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Any symmetric positive definite (PD) matrix $A$ can define a new geometry on $\mathbb{R}^n$ via the weighted inner product $\langle x, y \rangle_A = x^\top A y$. This distorts space (scaling/rotating axes) but preserves the fundamental axioms of geometry, including the Cauchy-Schwarz inequality.</p>
       </div>
 
       <h3>P0.18 — Characterization of Projectors</h3>
@@ -1697,6 +1769,10 @@
           </li>
         </ol>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Orthogonal projectors are exactly the matrices that are both symmetric ($P=P^\top$) and idempotent ($P=P^2$). Symmetry ensures orthogonality of the projection, while idempotence ensures that projecting twice is the same as projecting once.</p>
+      </div>
 
       <h3>P0.19 — PSD Cone in 2D</h3>
       <p>Consider the space of $2 \times 2$ symmetric matrices, which has dimension 3.
@@ -1711,6 +1787,10 @@
         <br>Thus the conditions are:
         $$ x \ge 0, \quad z \ge 0, \quad xz \ge y^2 $$
         Geometrically, this is a cone in $\mathbb{R}^3$. The boundary $xz=y^2$ is a rotated quadratic cone surface.</p>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The set of Positive Semidefinite matrices forms a convex cone. In 2D (mapped to $\mathbb{R}^3$), this cone looks like the familiar ice-cream cone (Lorentz cone). The constraints are defined by the non-negativity of the trace and determinant.</p>
       </div>
     </section>
 

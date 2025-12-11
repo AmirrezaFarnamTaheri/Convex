@@ -1176,7 +1176,7 @@
   <h3>P2.1 — Classify as Convex / Not Convex</h3>
   <p>For each problem, state if it is convex and explain your answer. <ol type="a"> <li>$\min \|Ax - b\|_2^2$ subject to $Fx = g$.</li> <li>$\min -\|x\|_2$ subject to $Ax \le b$.</li> <li>$\min \|x\|_1$ subject to $\|Bx - c\|_\infty \le 1$.</li> <li>$\min x^\top Q x$ subject to $Dx \le e$, where $Q$ is not guaranteed to be PSD.</li> <li>$\min \|x\|_2^2$ subject to $x_i \in \{0, 1\}$ for all $i$.</li> </ol></p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Composition Rules:</b> The key to identifying convexity is to peel back the layers of functions. Norms are convex, affine maps preserve convexity, and sublevel sets of convex functions are convex.</li> <li><b>The PSD Condition:</b> Quadratic forms $x^\top Q x$ are the boundary between easy and hard; if $Q$ has even one negative eigenvalue, the function is nonconvex (has saddle points). This relies on the eigenvalue characterization from <a href="../00-linear-algebra-basics/index.html">Lecture 00</a>.</li> <li><b>Integer Constraints:</b> Discreteness destroys convexity because the domain is no longer a connected set, eliminating local-to-global gradient information.</li>
@@ -1199,7 +1199,7 @@
   <h3>P2.2 — Real-World Modeling: Warehouse Location</h3>
   <p>You are tasked with optimizing the placement of a distribution warehouse to minimize the sum of squared Euclidean distances to $k$ retail locations $r_1, \dots, r_k \in \mathbb{R}^2$. The warehouse must be located within a region defined by linear inequalities $C x \le d$. Formulate this as a convex optimization problem.</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Summation Preserves Convexity:</b> The objective function is a sum of convex terms (squared Euclidean distances). Since the sum of convex functions is always convex, the overall problem is convex.</li> <li><b>Geometric Interpretation:</b> This problem finds the "centroid" weighted by squared distance. It is mathematically distinct from the Fermat-Weber problem (minimizing sum of Euclidean distances, not squared), which is an SOCP. Using squared distances makes the objective a quadratic form, simplifying the problem to a Quadratic Program (QP).</li>
@@ -1223,7 +1223,7 @@
   <h3>P2.3 — Reformulation: $\ell_1$ Regression as LP</h3>
   <p>Show how to reformulate the following problem as a linear program: $$ \min_{x \in \mathbb{R}^n} \|Ax - b\|_1 \quad \text{s.t.} \quad \|x\|_\infty \le 1 $$</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Epigraph Transformation (The "Minimax" Trick):</b> To minimize a function like $f(x) = \max_i g_i(x)$ or a norm, we introduce a scalar variable $t$ and constrain the function to be below it ($f(x) \le t$). This lifts the problem into a higher dimension where the nonlinearity becomes a set of linear constraints.</li> <li><b>Linearizability of Polyhedral Norms:</b> The $\ell_1$ and $\ell_\infty$ norms have unit balls that are polyhedra (defined by linear inequalities). This means any optimization involving them can be cast as a Linear Program (LP).</li>
@@ -1247,7 +1247,7 @@
   <h3>P2.4 — Prove: Feasible Set is Convex</h3>
   <p>Prove that for a convex optimization problem, the feasible set $\mathcal{F} = \{x \mid f_i(x) \le 0, Ax = b\}$ is convex.</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Definition of Convex Set:</b> Contains the line segment between any two points.</li> <li><b>Intersection Property:</b> The feasible set is the intersection of sublevel sets of convex functions (inequalities) and hyperplanes (equalities). Since intersections of convex sets are convex, $\mathcal{F}$ is convex.</li>
@@ -1271,7 +1271,7 @@
   <h3>P2.5 — Proving Uniqueness</h3>
   <p>Prove that if $f_0$ is strictly convex, then the optimization problem has at most one global minimizer.</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Strict Convexity implies Uniqueness:</b> Geometrically, a strictly convex function curves upward everywhere; it has no flat regions.</li> <li><b>Proof Logic:</b> If there were two distinct global minima, the segment connecting them would lie strictly <i>above</i> the function graph (by definition of strict convexity), but also <i>on</i> the graph (since both endpoints are minimal and values cannot go lower), which is a contradiction. Thus, the solution must be unique.</li>
@@ -1294,7 +1294,7 @@
   <h3>P2.6 — Modeling: Maximum Likelihood Estimation</h3>
   <p>Consider a logistic regression model for binary classification. We have data points $(x_i, y_i)$ where $x_i \in \mathbb{R}^n$ are feature vectors and $y_i \in \{-1, 1\}$ are labels. The probability that $y_i = 1$ is modeled as: $$ P(y_i=1 \mid x_i; w) = \frac{1}{1 + e^{-w^\top x_i}} $$ Formulate the problem of finding the weight vector $w$ that maximizes the log-likelihood of the data as a convex optimization problem. (Note: $P(y_i=-1 \mid x_i; w) = 1 - P(y_i=1) = \frac{1}{1 + e^{w^\top x_i}}$).</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Log-Concavity in Statistics:</b> Many fundamental probability distributions (Exponential family) have log-concave density functions. This means maximizing the likelihood (product of probabilities) is equivalent to maximizing the log-likelihood (sum of logs), which is a concave maximization problem (hence convex).</li> <li><b>Logistic Regression:</b> The specific loss function $f(z) = \log(1+e^{-z})$ is convex. This ensures that training logistic regression classifiers is a convex optimization problem with unique global optima (for regularized versions).</li>
@@ -1328,7 +1328,7 @@
   <h3>P2.7 — Proving Convexity from First Principles</h3>
   <p>Prove that $f(x) = \|Ax - b\|_2^2$ is a convex function using only the definition of convexity: $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) \quad \forall \theta \in [0,1] $$ Do not use the Hessian condition or the composition rule.</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Definition is King:</b> While Hessians and composition rules are convenient shortcuts, the inequality definition is the "ground truth" of convexity. Being able to prove convexity directly from the definition is a crucial skill for understanding <i>why</i> a function is convex.</li> <li><b>Quadratic Behavior:</b> The function $\|Ax-b\|^2$ is a "quadratic bowl". Along any line, its values trace a parabola opening upward. The condition $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$ states that the chord connecting two points on the parabola lies above the curve.</li>
@@ -1369,7 +1369,7 @@
   <h3>P2.8 — Strict vs. Strong Convexity</h3>
   <p>Give an example of a function $f: \mathbb{R} \to \mathbb{R}$ that is strictly convex but not strongly convex. Explain why.</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Strict Convexity:</b> The graph lies strictly above the tangent (except at the contact point). $f''(x) > 0$ is sufficient but not necessary ($x^4$).</li> <li><b>Strong Convexity:</b> The function curves up at least as fast as a quadratic. Requires $f''(x) \ge m > 0$ everywhere.</li>
@@ -1397,7 +1397,7 @@
   <h3>P2.9 — Voronoi Regions</h3>
   <p>Let $x_1, \dots, x_k \in \mathbb{R}^n$ be a set of points (seeds). The Voronoi region associated with $x_i$ is defined as $V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2, \forall j \neq i\}$. Prove that $V_i$ is a convex set.</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Polyhedra:</b> A polyhedron is the intersection of a finite number of halfspaces.</li><li><b>Geometric Locus:</b> The set of points closer to A than B is a halfspace defined by the perpendicular bisector of segment AB.</li>

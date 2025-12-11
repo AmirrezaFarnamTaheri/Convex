@@ -42,11 +42,13 @@ class KnowledgeWidget {
         this.buildSearchIndex();
         this.buildVocabulary();
         this.createUI();
-        this.render();
+        this.renderNotes(); // Render initial tab content
         this.restoreHighlights();
 
         // Global Event Listeners
         document.addEventListener('mouseup', (e) => this.handleSelection(e));
+        // Add keyboard listener for shortcuts
+        document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e));
         window.addEventListener('resize', () => this.handleResize());
     }
 
@@ -143,6 +145,29 @@ class KnowledgeWidget {
         this.showHighlightMenu(selection);
     }
 
+    handleKeyboardShortcuts(e) {
+        // Check for highlighting shortcuts: Alt + 1, 2, 3, 4 (or Ctrl+Alt+...)
+        // Let's use Alt + 1 (Yellow), Alt + 2 (Green), Alt + 3 (Blue), Alt + 4 (Red)
+        if (e.altKey && ['1', '2', '3', '4'].includes(e.key)) {
+            const selection = window.getSelection();
+            if (selection.isCollapsed || !selection.rangeCount) return;
+
+            // Don't act if focusing an input
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+            e.preventDefault();
+            const colors = ['yellow', 'green', 'blue', 'red'];
+            const colorIndex = parseInt(e.key) - 1;
+            this.createHighlight(selection, colors[colorIndex]);
+
+            // Remove menu if open
+            const menu = document.getElementById('kw-highlight-menu');
+            if (menu) menu.remove();
+
+            window.getSelection().removeAllRanges();
+        }
+    }
+
     showHighlightMenu(selection) {
         // Remove existing menu
         const existing = document.getElementById('kw-highlight-menu');
@@ -154,6 +179,7 @@ class KnowledgeWidget {
         const menu = document.createElement('div');
         menu.id = 'kw-highlight-menu';
         menu.className = 'kw-float-menu';
+        // Position just above the selection
         menu.style.top = `${window.scrollY + rect.top - 40}px`;
         menu.style.left = `${window.scrollX + rect.left}px`;
 
@@ -163,6 +189,7 @@ class KnowledgeWidget {
         colors.forEach((c, i) => {
             const btn = document.createElement('button');
             btn.style.backgroundColor = c;
+            btn.title = `Highlight ${names[i]} (Alt+${i+1})`;
             btn.onclick = (e) => {
                 e.stopPropagation();
                 this.createHighlight(selection, names[i]);
@@ -521,6 +548,10 @@ class KnowledgeWidget {
             .kw-bookmark:hover { border-color: var(--primary-500); }
         `;
         document.head.appendChild(style);
+    }
+
+    handleResize() {
+        // Handle window resize if needed
     }
 
     togglePanel() {

@@ -80,6 +80,10 @@
         <div class="problem">
           <h3>P3.20 — Convex Hull of a Set of Points</h3>
           <p>Let $S = \{x_1, \dots, x_m\} \subset \mathbb{R}^n$. Prove that the convex hull $\text{conv}(S)$ is a convex set.</p>
+          <div class="recap-box">
+            <h4>Recap</h4>
+            <p>The convex hull is the set of all convex combinations. To prove a set defined by a type of combination is convex, we show that a convex combination of convex combinations is still a convex combination (weights are products of sums, still summing to 1).</p>
+          </div>
           <div class="solution-box">
             <h4>Solution</h4>
             <div class="proof-step">
@@ -812,7 +816,7 @@
           $$ V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2, \ \forall j \neq i\} $$
           Prove that $V_i$ is a polyhedron (and thus a convex set).</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Halfspaces as Decision Boundaries:</b> The set of points closer to $A$ than $B$ is a halfspace separated by the perpendicular bisector of the segment $AB$.</li>
@@ -846,7 +850,7 @@
           <h3>P3.2 — Midpoint Convexity</h3>
           <p><b>Problem:</b> A set $C$ is <b>midpoint convex</b> if $\frac{1}{2}(x+y) \in C$ whenever $x, y \in C$. Prove that if $C$ is closed and midpoint convex, then $C$ is convex.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Dyadic Rationals:</b> By repeatedly taking midpoints, we can reach any point of the form $k/2^n$. These points are dense in the unit interval.</li>
@@ -880,7 +884,7 @@
           <h3>P3.3 — Convex Hull of a Union</h3>
           <p><b>Problem:</b> Let $C = \mathrm{conv}(S_1 \cup S_2)$, where $S_1, S_2$ are convex sets. Show that $x \in C$ if and only if $x = \theta y + (1-\theta) z$ for some $y \in S_1, z \in S_2, \theta \in [0,1]$.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Join of Sets:</b> The convex hull of two sets is the union of all line segments connecting them.</li>
@@ -910,7 +914,7 @@
           <h3>P3.4 — Linear-Fractional Functions</h3>
           <p><b>Problem:</b> Show that the range of a linear-fractional function $f(x) = \frac{Ax+b}{c^\top x+d}$ on a convex domain $C$ (where $c^\top x + d > 0$) is a convex set.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Perspective Composition:</b> Linear-fractional functions are the composition of an affine map with the perspective function $P(u, v) = u/v$.</li>
@@ -938,7 +942,7 @@
           <h3>P3.5 — Convexity of Quadratic Sublevel Set</h3>
           <p>Show that the set $C = \{x \in \mathbb{R}^n \mid x^\top A x + b^\top x + c \le 0\}$ is convex when $A \in \mathbb{S}^n_+$ (positive semidefinite).</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Algebraic Convexity:</b> We prove convexity directly from the definition $f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y)$.</li>
@@ -983,7 +987,7 @@
           <p>Let $\Delta^n = \{x \in \mathbb{R}^n \mid x \ge 0, \mathbf{1}^\top x = 1\}$. Show that:
           $$ \mathrm{ri}(\Delta^n) = \{x \in \mathbb{R}^n \mid x > 0, \mathbf{1}^\top x = 1\} $$</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Relative Interior:</b> The interior relative to the affine hull. It excludes "edges" that lie on the relative boundary.</li>
@@ -1009,7 +1013,7 @@
           <h3>P3.7 — Convex Hull Characterizations</h3>
           <p>Given points $x_1, \dots, x_k \in \mathbb{R}^n$, show that the convex hull equals the intersection of all convex sets containing the points.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
              <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
              <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                  <li><b>Constructive vs. Intersection:</b> The convex hull can be built 'from the inside' (combinations) or 'from the outside' (intersections).</li>
@@ -1035,7 +1039,7 @@
           <h3>P3.8 — Minkowski Sum of Sets</h3>
           <p>The Minkowski sum is $X + Y = \{x+y \mid x \in X, y \in Y\}$. Show that if $X, Y$ are convex, $X+Y$ is convex.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Linear Maps:</b> $X+Y$ is the image of $X \times Y$ under the linear map $f(x,y)=x+y$. Linear maps preserve convexity.</li>
@@ -1057,7 +1061,7 @@
           <h3>P3.9 — Convexity of Thickened Sets</h3>
           <p>Let $C \subseteq \mathbb{R}^n$ be a closed convex set. Define $C_\varepsilon = \{y \mid \mathrm{dist}(y, C) \le \varepsilon\}$. Show that $C_\varepsilon$ is convex.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Minkowski Sum Interpretation:</b> The thickened set $C_\varepsilon$ is exactly $C + B(0, \varepsilon)$.</li>
@@ -1079,7 +1083,7 @@
           <h3>P3.10 — Closure of a Convex Set</h3>
           <p>Show that if $C$ is convex, its closure $\mathrm{cl}(C)$ is convex.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Sequences:</b> Limit points preserve non-strict inequalities like $\theta x + (1-\theta)y \in \dots$.</li>
@@ -1105,7 +1109,7 @@
           <h3>P3.11 — Product of Convex Sets</h3>
           <p>Show that if $X, Y$ are convex, then $X \times Y$ is convex.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
              <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
              <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                  <li><b>Component-wise Convexity:</b> The Cartesian product stacks convexity conditions. A segment in the product space projects to segments in the components.</li>
@@ -1126,7 +1130,7 @@
           <h3>P3.12 — Finite Convex Combinations (Jensen's for Sets)</h3>
           <p>Prove by induction that if $C$ is convex, then any convex combination of $k$ points from $C$ lies in $C$.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Recursive Structure:</b> Any $k$-point combination can be viewed as a 2-point combination of one point and a $(k-1)$-point combination.</li>
@@ -1151,7 +1155,7 @@
           <h3>P3.13 — Convexity via Line Intersections</h3>
           <p>Prove that $C$ is convex if and only if its intersection with every line is convex.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Reduction to 1D:</b> This allows checking convexity by 'slicing' the set.</li>
@@ -1173,7 +1177,7 @@
           <h3>P3.14 — Hyperbolic Sets</h3>
           <p>Show that $C = \{ x \in \mathbb{R}^n_+ \mid \prod x_i \ge 1 \}$ is convex.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>AM-GM Power:</b> $\prod z_i \ge \prod (x_i^\theta y_i^{1-\theta})$ allows component-wise analysis.</li>
@@ -1205,7 +1209,7 @@
           <h3>P3.15 — Set Classification Challenge</h3>
           <p>Determine whether the following are convex: (a) Slab, (b) Rectangle, (c) Wedge, (d) Apollonius Set $\{x \mid \|x-a\| \le \theta \|x-b\|\}$.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Intersection Principle:</b> Slabs, rectangles, wedges are intersections of halfspaces.</li>
@@ -1236,7 +1240,7 @@
           <h3>P3.16 — Partial Sum of Convex Sets</h3>
           <p>Show that $S = \{(x, y_1+y_2) \mid (x, y_1) \in S_1, (x, y_2) \in S_2\}$ is convex.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
              <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
              <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                  <li><b>Fiber-wise Sum:</b> For fixed $x$, the set is $S_1(x) + S_2(x)$.</li>
@@ -1258,7 +1262,7 @@
           <h3>P3.17 — Perspective of Polyhedral Sets</h3>
           <p>Determine the image of a convex hull $C = \mathrm{conv}\{(v_i, t_i)\}$ under $P(v,t) = v/t$.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Projective Map:</b> Perspective maps convex hulls to convex hulls.</li>
@@ -1278,7 +1282,7 @@
           <h3>P3.18 — Invertible Linear-Fractional Functions</h3>
           <p>Find the inverse of $f(x) = (Ax+b)/(c^\top x + d)$ assuming matrix $Q$ is nonsingular.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Matrix Representation:</b> Linear-fractional maps correspond to matrix multiplication in homogeneous coordinates. The inverse map corresponds to the inverse matrix.</li>
@@ -1298,7 +1302,7 @@
           <h3>P3.19 — Preimages under Linear-Fractional Maps</h3>
           <p>Find the inverse image of a halfspace, polyhedron, and ellipsoid under a linear-fractional map.</p>
 
-          <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
                 <li><b>Complexity Preservation:</b> Polyhedra map to polyhedra. Ellipsoids map to sets defined by quadratic inequalities (related to SOCs).</li>
