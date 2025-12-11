@@ -61,14 +61,22 @@
       \boxed{f^*(y) := \sup_{x\in\mathrm{dom} f} \big( y^\top x - f(x) \big), \quad y\in\mathbb{R}^n}
       $$
 
-      <h4>Interpretation</h4>
-      <p>For a fixed slope $y$, consider the <b>affine</b> family of functions in $x$: $\ell_{y,c}(x) = y^\top x - c$. We want to find the largest shift such that the line lies below the function.
-      <br>Require $\ell_{y,c}(x) \le f(x)$ for all $x$. Rearranging: $c \ge y^\top x - f(x)$ for all $x$.
-      <br>The <b>smallest</b> such $c$ that works is $c_{\min}(y) = \sup_x (y^\top x - f(x)) = f^*(y)$.</p>
+      <h3>Supporting Hyperplane Viewpoint</h3>
+      <p>Fix $y \in \mathbb{R}^n$. Consider affine functions of $x$ with slope $y$:
+      $$ \ell_y(x) = y^\top x - c, \quad c \in \mathbb{R} $$
+      We want $\ell_y$ to lie <b>below</b> $f$ everywhere:
+      $$ y^\top x - c \le f(x) \quad \forall x \iff c \ge y^\top x - f(x) \quad \forall x $$
+      For this to hold for all $x$, $c$ must be at least the supremum of the RHS. The <b>smallest</b> possible $c$ that maintains the lower bound property is:
+      $$ c_{\min}(y) = \sup_x (y^\top x - f(x)) = f^*(y) $$
+      Thus, the tightest affine lower bound with slope $y$ is:
+      $$ \ell_y(x) = y^\top x - f^*(y) $$</p>
 
       <div class="insight">
         <h4>Geometric Intuition</h4>
-        <p>For each slope $y$, $f^*(y)$ is the minimal vertical shift so that the line $x \mapsto y^\top x - f^*(y)$ lies everywhere <b>below</b> the graph of $f$. Equivalently, $f^*(y)$ is the <b>maximal gap</b> between the linear function $y^\top x$ and the graph of $f$.</p>
+        <ul>
+            <li><b>Epigraph View:</b> The epigraph $\mathrm{epi} f$ is supported by the hyperplane $H = \{(x,t) \mid t = y^\top x - f^*(y)\}$. The conjugate $f^*$ encodes all non-vertical supporting hyperplanes of the epigraph.</li>
+            <li><b>Gap View (1D):</b> For a fixed slope $y$, the quantity $yx - f(x)$ is the vertical gap between the line through the origin with slope $y$ and the graph of $f$. $f^*(y)$ is the <b>maximum vertical gap</b>.</li>
+        </ul>
       </div>
 
       <h3>1.2 Why $f^*$ is Always Convex</h3>
@@ -167,13 +175,43 @@
       </div>
 
       <h3>1.5 Algebra Rules for Conjugates</h3>
-      <table class="data-table">
-        <tr><th>Operation</th><th>Function $g(x)$</th><th>Conjugate $g^*(y)$</th></tr>
-        <tr><td>Scaling</td><td>$a f(x) + b \quad (a>0)$</td><td>$a f^*(y/a) - b$</td></tr>
-        <tr><td>Affine Precomp</td><td>$f(Ax+b)$ (invertible A)</td><td>$f^*(A^{-\top} y) - b^\top (A^{-\top} y)$</td></tr>
-        <tr><td>Sum (Independent)</td><td>$f_1(u) + f_2(v)$</td><td>$f_1^*(y_1) + f_2^*(y_2)$</td></tr>
-        <tr><td>General Composition</td><td>$f(Ax+b)$ (general A)</td><td>$f^*(z) - b^\top z$ such that $A^\top z = y$ (infimum over z)</td></tr>
-      </table>
+
+      <h4>(a) Scaling and Vertical Shift</h4>
+      <p>Let $g(x) = a f(x) + b$ with $a > 0, b \in \mathbb{R}$.
+      $$
+      \begin{aligned}
+      g^*(y) &= \sup_x (y^\top x - a f(x) - b) \\
+      &= \sup_x (y^\top x - a f(x)) - b \\
+      &= a \sup_x \left( \frac{y}{a}^\top x - f(x) \right) - b \\
+      &= a f^*(y/a) - b
+      \end{aligned}
+      $$
+      So $\boxed{(af+b)^*(y) = a f^*(y/a) - b}$.</p>
+
+      <h4>(b) Affine Precomposition</h4>
+      <p>Let $g(x) = f(Ax + b)$.
+      $$ g^*(y) = \sup_x (y^\top x - f(Ax+b)) $$
+      Let $z = Ax+b$. If $A$ is invertible, $x = A^{-1}(z-b)$.
+      $$
+      \begin{aligned}
+      g^*(y) &= \sup_z (y^\top A^{-1}(z-b) - f(z)) \\
+      &= \sup_z ((A^{-\top}y)^\top z - f(z)) - y^\top A^{-1}b \\
+      &= f^*(A^{-\top}y) - y^\top A^{-1}b
+      \end{aligned}
+      $$
+      If $A$ is not square/invertible, the formula holds if $y \in \mathrm{range}(A^\top)$, otherwise $g^*(y) = \infty$.
+      $$ \boxed{ g^*(y) = f^*(A^{-\top}y) - y^\top A^{-1}b } \quad (\text{invertible case}) $$</p>
+
+      <h4>(c) Sum of Independent Functions</h4>
+      <p>Let $f(x, z) = f_1(x) + f_2(z)$.
+      $$
+      \begin{aligned}
+      f^*(y, w) &= \sup_{x,z} (y^\top x + w^\top z - f_1(x) - f_2(z)) \\
+      &= \sup_x (y^\top x - f_1(x)) + \sup_z (w^\top z - f_2(z)) \\
+      &= f_1^*(y) + f_2^*(w)
+      \end{aligned}
+      $$
+      So $\boxed{(f_1 \oplus f_2)^* = f_1^* \oplus f_2^*}$. This separation is key in duality.</p>
 
       <h3>1.6 Fenchel Inequality and Biconjugate</h3>
       <p>From the definition $f^*(y) \ge y^\top x - f(x)$, we immediately get <b>Fenchel's Inequality</b>:</p>
@@ -185,13 +223,17 @@
       <br><b>Theorem:</b> $f^{**} \le f$ always. If $f$ is closed and convex, then $f^{**} = f$.
       <br><i>Geometric Intuition:</i> $\mathrm{epi}(f^{**})$ is the closed convex hull of $\mathrm{epi}(f)$. Conjugation encodes all supporting hyperplanes; taking it again reconstructs the convex envelope from these planes.</p>
 
-      <h3>1.7 Legendre Transform</h3>
-      <p>If $f$ is convex and differentiable, and $\nabla f$ is injective, we can define the conjugate via the gradient condition.
-      <br>Maximize $y^\top x - f(x) \implies y = \nabla f(x)$. Let $x^* = (\nabla f)^{-1}(y)$.
-      $$ f^*(y) = y^\top x^* - f(x^*) $$
-      If we parametrize by $z$ where $y = \nabla f(z)$:
-      $$ f^*(\nabla f(z)) = z^\top \nabla f(z) - f(z) $$
-      This is the classical Legendre transform used in mechanics (Lagrangian $\leftrightarrow$ Hamiltonian).</p>
+      <h3>1.7 Legendre Transform: Smooth Case</h3>
+      <p>Assume $f$ is strictly convex and differentiable everywhere. The optimizer $x^*$ in the definition of $f^*(y)$ is characterized by:
+      $$ \nabla_x (y^\top x - f(x)) = y - \nabla f(x) = 0 \implies y = \nabla f(x^*) $$
+      Thus $x^* = (\nabla f)^{-1}(y)$. We can write:
+      $$ f^*(y) = y^\top (\nabla f)^{-1}(y) - f((\nabla f)^{-1}(y)) $$
+      <b>Nice Identities:</b>
+      <ul>
+          <li>The gradient maps are inverses: $\nabla f^*(y) = x$ where $y = \nabla f(x)$. So $\nabla f^* = (\nabla f)^{-1}$.</li>
+          <li>At the optimum, Fenchel's inequality holds with equality: $f(x) + f^*(y) = x^\top y$ where $y = \nabla f(x)$.</li>
+      </ul>
+      This transformation connects Lagrangian and Hamiltonian mechanics.</p>
     </section>
 
     <section class="section-card" id="section-2">
@@ -232,30 +274,51 @@
         </div>
         <div class="example">
             <h4>3. Linear-Fractional: $f(x) = \frac{a^\top x + b}{c^\top x + d}$</h4>
-            <p>Defined where $c^\top x + d > 0$.
-            <br>Sublevel set: $\frac{a^\top x + b}{c^\top x + d} \le \alpha \iff a^\top x + b \le \alpha(c^\top x + d)$.
-            <br>This is a linear inequality (halfspace), hence convex.
-            <br>Thus $f$ is quasiconvex (and similarly quasiconcave, so <b>quasilinear</b>).</p>
+            <p>Defined on the halfspace $D = \{x \mid c^\top x + d > 0\}$.
+            <br>Consider the sublevel set $S_\alpha = \{x \in D \mid \frac{a^\top x + b}{c^\top x + d} \le \alpha\}$.
+            $$ \frac{a^\top x + b}{c^\top x + d} \le \alpha \iff a^\top x + b \le \alpha (c^\top x + d) \iff (a - \alpha c)^\top x + (b - \alpha d) \le 0 $$
+            This is a linear inequality, which defines a closed halfspace.
+            <br>Thus $S_\alpha$ is the intersection of the domain $D$ (halfspace) and another halfspace. The intersection of convex sets is convex.
+            <br>Conclusion: Linear-fractional functions are quasiconvex. (Applying the same logic to $-f$ shows they are also quasiconcave, i.e., <b>quasilinear</b>).</p>
         </div>
         <div class="example">
             <h4>4. Distance Ratio</h4>
-            <p>$f(x) = \frac{\|x-a\|}{\|x-b\|}$. Sublevel set $\|x-a\| \le \alpha \|x-b\|$.
-            <br>Squared: $\|x-a\|^2 \le \alpha^2 \|x-b\|^2$.
-            <br>For $\alpha \le 1$, this defines a convex set (ball). For $\alpha > 1$, it is the complement of a ball (non-convex).
-            <br>So $f$ is quasiconvex on the domain where $f(x) \le 1$ (closer to $a$ than $b$).</p>
+            <p>Let $f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ for $a \ne b$.
+            <br>Sublevel set condition: $\|x-a\|_2 \le \alpha \|x-b\|_2$.
+            <br>Square both sides (valid since non-negative):
+            $$ \|x-a\|^2 \le \alpha^2 \|x-b\|^2 \iff (x-a)^\top(x-a) \le \alpha^2 (x-b)^\top(x-b) $$
+            Expanding terms:
+            $$ x^\top x - 2a^\top x + a^\top a \le \alpha^2 (x^\top x - 2b^\top x + b^\top b) $$
+            Grouping quadratic and linear terms:
+            $$ (1-\alpha^2) x^\top x - 2(a - \alpha^2 b)^\top x + (\|a\|^2 - \alpha^2 \|b\|^2) \le 0 $$
+            For $\alpha \le 1$, the coefficient $(1-\alpha^2) \ge 0$. This inequality describes a convex set (a ball or halfspace).
+            <br>Thus $f$ is quasiconvex on the set $\{x \mid f(x) \le 1\}$.</p>
         </div>
         <div class="example">
             <h4>5. Internal Rate of Return (IRR)</h4>
-            <p>Cashflows $x = (x_0, \dots, x_n)$. Present value $PV(x, r) = \sum x_i (1+r)^{-i}$.
-            <br>IRR$(x) = \inf \{r \ge 0 \mid PV(x, r) = 0\}$.
-            <br>IRR is a <b>quasiconcave</b> function of the cashflow vector $x$. (Superlevel sets are intersections of halfspaces).</p>
+            <p>Let $x = (x_0, \dots, x_n)$ be a cash flow stream.
+            <br>Present value at rate $r$: $PV(x, r) = \sum_{i=0}^n x_i (1+r)^{-i}$.
+            <br>IRR is defined as $\mathrm{IRR}(x) = \inf \{r \ge 0 \mid PV(x, r) = 0\}$.
+            <br>Consider the superlevel set $S_R = \{x \mid \mathrm{IRR}(x) \ge R\}$.
+            <br>Assuming standard cash flows (initial investment, then returns), $\mathrm{IRR}(x) \ge R$ roughly means the present value at rate $R$ is non-negative:
+            $$ PV(x, R) = \sum_{i=0}^n (1+R)^{-i} x_i \ge 0 $$
+            For a fixed $R$, this is a <b>linear inequality</b> in $x$.
+            <br>A superlevel set formed by a linear inequality is a halfspace (convex).
+            <br>So $\mathrm{IRR}(x)$ is a <b>quasiconcave</b> function of the cash flows.</p>
         </div>
 
         <h3>2.4 Second-Order Condition</h3>
-        <p>For a twice-differentiable function $f$, convexity requires $\nabla^2 f(x) \succeq 0$.
-        <br>Quasiconvexity only requires positive curvature <b>along the level sets</b>.
-        <br><b>Condition:</b> If $y^\top \nabla f(x) = 0$, then $y^\top \nabla^2 f(x) y \ge 0$.
-        <br><i>Interpretation:</i> Directions $y$ tangent to the contour ($y \perp \nabla f$) must not see negative curvature (hilltop). Valleys are okay, but you can't have a local maximum or saddle point that curves down along the contour.</p>
+        <p>Assume $f$ is twice differentiable.</p>
+
+        <h4>Necessary Condition</h4>
+        <p>If $f$ is quasiconvex, then for any $x \in \mathrm{dom}\, f$ and $y \in \mathbb{R}^n$:
+        $$ y^\top \nabla f(x) = 0 \implies y^\top \nabla^2 f(x) y \ge 0 $$
+        <i>Interpretation:</i> If we look in a direction $y$ tangent to the level set ($\nabla f \perp y$), the function must curve upwards (positive curvature). The level sets cannot curve "inward" to create a disconnected or non-convex shape.</p>
+
+        <h4>Sufficient Condition</h4>
+        <p>If $f$ satisfies the stronger condition:
+        $$ y^\top \nabla f(x) = 0, \ y \ne 0 \implies y^\top \nabla^2 f(x) y > 0 $$
+        then $f$ is <b>strictly quasiconvex</b>. This ensures no "flat" regions along the contours that could hide non-convexity.</p>
 
         <h3>2.5 Operations Preserving Quasiconvexity</h3>
         <ul>
@@ -294,31 +357,56 @@
         </div>
 
         <h3>3.3 Integration Rules</h3>
-        <p>Log-convexity and log-concavity behave nicely under integration.</p>
+        <p>Log-convexity and log-concavity behave nicely under integration, though the conditions differ.</p>
         <div class="theorem-box">
-            <h4>Preservation of Log-Convexity</h4>
-            <p>If $f(x, y)$ is log-convex in $x$ for each $y$, then $g(x) = \int f(x, y) dy$ is log-convex (Artin's Theorem).
-            <br>Example: The Gamma function $\Gamma(x) = \int t^{x-1} e^{-t} dt$ is log-convex.</p>
+            <h4>(a) Integrals of Log-Convex Functions</h4>
+            <p>If $f(x, y) \ge 0$ is log-convex in $x$ for each fixed $y$, then $g(x) = \int_C f(x, y) dy$ is log-convex.</p>
+            <div class="insight">
+                <h4>Intuition Sketch</h4>
+                <p>We need $g(\theta x + (1-\theta)z) \le g(x)^\theta g(z)^{1-\theta}$.
+                <br>By log-convexity of $f$:
+                $$ f(\theta x + (1-\theta)z, y) \le f(x, y)^\theta f(z, y)^{1-\theta} $$
+                Integrate both sides over $y$. The RHS integral is bounded using <b>Hölder's Inequality</b> for integrals (with $p=1/\theta, q=1/(1-\theta)$):
+                $$ \int f(x, y)^\theta f(z, y)^{1-\theta} dy \le \left(\int f(x, y) dy\right)^\theta \left(\int f(z, y) dy\right)^{1-\theta} = g(x)^\theta g(z)^{1-\theta} $$
+                This proves log-convexity of $g$.
+                <br><b>Examples:</b> Gamma function, Moment Generating Function ($M(z) = \mathbb{E} e^{z^\top X}$), Laplace Transform.</p>
+            </div>
         </div>
         <div class="theorem-box">
-            <h4>Preservation of Log-Concavity (Prékopa-Leindler)</h4>
-            <p>If $f(x, y)$ is jointly log-concave, then the marginal $g(x) = \int f(x, y) dy$ is log-concave.
-            <br><b>Consequence:</b> Convolution of log-concave functions is log-concave ($f*g$).</p>
+            <h4>(b) Integrals of Log-Concave Functions (Prékopa-Leindler)</h4>
+            <p>If $f(x, y)$ is <b>jointly</b> log-concave in $(x, y)$, then the marginal $g(x) = \int f(x, y) dy$ is log-concave.
+            <br><b>Consequence:</b> Convolution of log-concave functions is log-concave. If $f, g$ are log-concave, so is $(f*g)(x) = \int f(x-y)g(y) dy$.
+            <br><i>Why?</i> The integrand $f(x-y)g(y)$ is log-concave in $(x, y)$ (product of log-concave functions). Integrating out $y$ preserves log-concavity in $x$.</p>
         </div>
 
         <h3>3.4 Probability Examples</h3>
         <div class="example">
-            <h4>(a) Hitting a Convex Set</h4>
-            <p>Let $W$ have log-concave density $p$. Let $C$ be convex.
-            <br>$f(x) = \mathbb{P}(x + W \in C) = \int \mathbf{1}_C(u) p(u-x) du$.
-            <br>Integrand is log-concave in $(x, u)$ (product of log-concave $\mathbf{1}_C$ and shifted $p$).
-            <br>Thus $f(x)$ is log-concave. Probability of hitting a target falls off log-concavely.</p>
+            <h4>(a) Hitting a Convex Set with Log-Concave Noise</h4>
+            <p>Let $w$ be a random vector with log-concave density $p(w)$. Let $C$ be a convex set. Define:
+            $$ f(x) = \mathbb{P}(x + w \in C) $$
+            We can express this as a convolution:
+            $$ f(x) = \int \mathbf{1}_C(x+w) p(w) dw $$
+            Change of variables $u = x+w \implies w = u-x$:
+            $$ f(x) = \int \mathbf{1}_C(u) p(u-x) du $$
+            Consider the integrand $F(x, u) = \mathbf{1}_C(u) p(u-x)$.
+            <ul>
+                <li>$\mathbf{1}_C(u)$ is log-concave (indicator of convex set).</li>
+                <li>$p(u-x)$ is log-concave in $(x, u)$ (composition of log-concave $p$ with affine map).</li>
+                <li>The product is log-concave in $(x, u)$.</li>
+            </ul>
+            By the integration rule, $f(x)$ is log-concave.
+            <br><i>Interpretation:</i> The probability of a random point landing in a moving target $C$ varies "smoothly" (unimodally) as we shift the center $x$.</p>
         </div>
         <div class="example">
             <h4>(b) Cumulative Distribution Function (CDF)</h4>
-            <p>If PDF $f$ is log-concave, then CDF $F(x) = \int_{-\infty}^x f(t) dt$ is log-concave.
-            <br>Proof: $F(x) = \int \mathbf{1}_{t \le x} f(t) dt$. The indicator $\mathbf{1}_{t \le x}$ is log-concave in $(x, t)$ (indicator of halfspace).
-            <br>Example: Gaussian CDF $\Phi(x)$ is log-concave.</p>
+            <p>If a PDF $p(z)$ is log-concave on $\mathbb{R}^n$, then its CDF is log-concave:
+            $$ F(x) = \mathbb{P}(w \preceq x) = \int \mathbf{1}_{(-\infty, x]}(z) p(z) dz $$
+            We can view the indicator $\mathbf{1}_{(-\infty, x]}(z)$ as the function:
+            $$ I(x, z) = \begin{cases} 1 & z_i \le x_i \ \forall i \\ 0 & \text{otherwise} \end{cases} $$
+            The set $\{(x, z) \mid z_i \le x_i\}$ is a convex polyhedron (defined by linear inequalities). Thus its indicator $I(x, z)$ is log-concave in $(x, z)$.
+            <br>Since $p(z)$ is log-concave, the product $I(x, z)p(z)$ is jointly log-concave.
+            <br>Integrating out $z$ implies $F(x)$ is log-concave.
+            <br><b>Example:</b> The Gaussian CDF $\Phi(x)$ is log-concave.</p>
         </div>
     </section>
 
