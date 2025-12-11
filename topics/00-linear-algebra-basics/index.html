@@ -78,7 +78,7 @@
       $$
       y = \theta x_1 + (1-\theta)x_2, \quad 0 \le \theta \le 1
       $$
-      <p>This parametrization is the definition of a <b>convex combination</b> of two points. A set is defined to be <b>convex</b> if and only if it contains the entire line segment between any pair of its points.</p>
+      <p>This parametrization is the definition of a <b>convex combination</b> of two points. Intuitively, a convex combination is a "weighted average" that lies physically between the points. If you imagine a mass at $x_1$ and a mass at $x_2$, the point $y$ is the center of mass when the weights are $\theta$ and $1-\theta$. A set is defined to be <b>convex</b> if and only if it contains the entire line segment between any pair of its points.</p>
 
       <figure style="text-align: center;">
         <img src="assets/line-vs-segment.png"
@@ -193,7 +193,7 @@
           </div>
           <div class="proof-step">
             <strong>Step 3: Linearize via Taylor Series.</strong>
-            We use the first-order Taylor expansion of the logarithm, $\log(1+z) = z - \frac{z^2}{2} + \dots \approx z$ for small $z$. For small $\Delta$, the eigenvalues $\lambda_i$ of $E = X^{-1}\Delta$ are close to 0.
+            We use the first-order Taylor expansion of the logarithm, $\log(1+z) = z - \frac{z^2}{2} + \dots \approx z$ for small $z$. Here, the eigenvalues $\lambda_i$ of the perturbation matrix $E$ are small numbers (since $\Delta$ is small), so we can approximate $\log(1+\lambda_i) \approx \lambda_i$. This is the crucial linearization step.
             $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i $$
             Recall that the sum of the eigenvalues of a matrix equals its trace:
             $$ \sum_{i=1}^n \lambda_i = \mathrm{tr}(E) = \mathrm{tr}(X^{-1}\Delta) $$
@@ -913,6 +913,11 @@
       <p>A powerful tool for handling block matrices in optimization is the Schur Complement. It allows us to convert complicated nonlinear constraints into Linear Matrix Inequalities (LMIs) and provides a systematic way to check positive semidefiniteness.</p>
 
       <div class="insight">
+        <h4>💡 Intuition: Completing the Square</h4>
+        <p>In scalar algebra, the quadratic $ax^2 + 2bxy + cy^2$ can be minimized or analyzed by "completing the square". The Schur complement is the matrix generalization of the term $c - b^2/a$ that appears when we eliminate one variable from a coupled system.</p>
+      </div>
+
+      <div class="insight">
         <h4>Why is this useful?</h4>
         <p>Often in optimization we encounter nonlinear inequalities like $\frac{x^2}{y} \le t$ or $\|Ax\|_2^2 \le c$. These look difficult to handle with linear algebra. The Schur Complement allows us to rewrite them as <b>linear</b> constraints on a matrix variable. For example, $x^2 \le ty$ (with $y>0$) is equivalent to the matrix condition $\begin{bmatrix} y & x \\ x & t \end{bmatrix} \succeq 0$. This "lifting" trick is the key to Semidefinite Programming.</p>
       </div>
@@ -1230,7 +1235,7 @@
       <h3>Geometric Interpretation: Projection</h3>
       <p>The solution to the least squares problem has a clean geometric interpretation. The vector $Ax$ lies in the column space of $A$, denoted $\mathcal{R}(A)$. The problem $\min_x \|Ax - b\|_2$ is therefore equivalent to finding the point $p \in \mathcal{R}(A)$ that is closest to $b$ in Euclidean distance.</p>
 
-      <p>By the Pythagorean theorem, the closest point $p$ must satisfy a specific geometric condition: the error vector $b - p$ must be orthogonal to the subspace $\mathcal{R}(A)$. If the error vector were not orthogonal, we could project it onto the subspace to find a "correction" that brings us closer to $b$, contradicting the optimality of $p$. Thus, the optimal $p = Ax^\star$ is the <b>orthogonal projection</b> of $b$ onto $\mathcal{R}(A)$.</p>
+      <p>By the Pythagorean theorem, the closest point $p$ must satisfy a specific geometric condition: the error vector $b - p$ must be orthogonal to the subspace $\mathcal{R}(A)$. <b>Think of dropping a perpendicular:</b> The shortest path from a point to a plane (subspace) is the straight line perpendicular to that plane. If the error vector were not orthogonal, we could project it onto the subspace to find a "correction" that brings us closer to $b$, contradicting the optimality of $p$. Thus, the optimal $p = Ax^\star$ is the <b>orthogonal projection</b> of $b$ onto $\mathcal{R}(A)$.</p>
 
       <h3>The Normal Equations</h3>
       <p>The orthogonality condition, $(b - Ax^\star) \perp \mathcal{R}(A)$, implies that the residual vector must be orthogonal to every basis vector of the subspace. Since the columns of $A$ span $\mathcal{R}(A)$, the residual must be orthogonal to each column of $A$. This can be expressed compactly as:

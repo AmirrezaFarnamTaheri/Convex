@@ -132,23 +132,25 @@
 
         <div class="proof-step">
           <strong>Step 2: Triangle Inequality Upper Bound.</strong>
-          Using the triangle inequality:
+          Using the triangle inequality $\|a+b\| \le \|a\| + \|b\|$:
           $$ \|(Ax - b) + \Delta A x\|_2 \le \|Ax - b\|_2 + \|\Delta A x\|_2 $$
-          Since $\|\Delta A x\|_2 \le \|\Delta A\|_2 \|x\|_2 \le \rho \|x\|_2$, we have the upper bound:
+          Recall the definition of the spectral norm: $\|\Delta A\|_2 = \sup_{z \ne 0} \frac{\|\Delta A z\|_2}{\|z\|_2}$.
+          This implies $\|\Delta A x\|_2 \le \|\Delta A\|_2 \|x\|_2 \le \rho \|x\|_2$.
+          Combining these, we have the upper bound:
           $$ r(x) \le \|Ax - b\|_2 + \rho \|x\|_2 $$
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Construct Worst-Case Perturbation.</strong>
-          We show the bound is tight. Let $u = Ax - b$.
+          <strong>Step 3: Construct Worst-Case Perturbation (Tightness).</strong>
+          We show the bound is tight by constructing a specific $\Delta A$. Let $u = Ax - b$.
           If $u=0$ or $x=0$, the bound holds trivially. Assume $u \ne 0, x \ne 0$.
-          <br><b>Goal:</b> Find a matrix $\Delta A$ with $\|\Delta A\|_2 \le \rho$ such that $\|u + \Delta A x\|_2$ is maximized.
-          Maximal stretch occurs when $\Delta A$ aligns its maximum singular value direction with $x$ and maps it to the direction of $u$.
+          <br><b>Goal:</b> Find a matrix $\Delta A$ with $\|\Delta A\|_2 \le \rho$ that acts on $x$ to create a vector <i>parallel</i> to $u$, maximizing the sum.
           <br><b>Construction:</b> Let $\Delta A = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2}$.
-          This is a rank-1 matrix $uv^\top$ (scaled). Its spectral norm is the product of vector norms: $\|\Delta A\|_2 = \rho \frac{\|u\|}{\|u\|} \frac{\|x\|}{\|x\|} = \rho$.
-          <br><b>Action:</b> $\Delta A x = \rho \frac{u}{\|u\|} \frac{x^\top x}{\|x\|} = \rho \|x\|_2 \frac{u}{\|u\|_2}$.
-          This vector is parallel to $u$ and has length $\rho \|x\|_2$.
-          <br><b>Result:</b> $\|u + \Delta A x\|_2 = \|u\|_2 + \|\Delta A x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2$.
+          This is a rank-1 matrix $u v^\top$ (scaled). Its spectral norm is the product of vector norms: $\|\Delta A\|_2 = \rho \cdot 1 \cdot 1 = \rho$.
+          <br><b>Action:</b> $\Delta A x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2$.
+          This vector points in the direction of $u$ with magnitude $\rho \|x\|_2$.
+          <br><b>Result:</b> Since the vectors are parallel, their norms add linearly:
+          $$ \|u + \Delta A x\|_2 = \|u\|_2 + \|\Delta A x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2 $$
         </div>
 
         <div class="proof-step">
@@ -332,23 +334,29 @@
       <div class="proof-box">
         <h4>Derivation via Schur Complement</h4>
         <div class="proof-step">
-          <strong>Eigenvalue Condition:</strong>
-          $\|A\|_2 \le t \iff \lambda_{\max}(A^\top A) \le t^2 \iff A^\top A \preceq t^2 I$.
+          <strong>Step 1: Eigenvalue Condition.</strong>
+          The spectral norm is the square root of the maximum eigenvalue of $A^\top A$.
+          $$ \|A\|_2 \le t \iff \|A\|_2^2 \le t^2 \iff \lambda_{\max}(A^\top A) \le t^2 $$
+          This is equivalent to the matrix inequality $A^\top A \preceq t^2 I$ (assuming $t \ge 0$).
         </div>
         <div class="proof-step">
-          <strong>Schur Complement:</strong>
-          Consider the block matrix $M = \begin{bmatrix} tI & A \\ A^\top & tI \end{bmatrix}$.
-          For $t > 0$, $M \succeq 0 \iff tI - A^\top (tI)^{-1} A \succeq 0 \iff tI - \frac{1}{t} A^\top A \succeq 0 \iff A^\top A \preceq t^2 I$.
+          <strong>Step 2: Schur Complement application.</strong>
+          We want to linearize the quadratic term $A^\top A$. Consider the block matrix:
+          $$ M = \begin{bmatrix} tI & A \\ A^\top & tI \end{bmatrix} $$
+          Using the Schur complement of the top-left block ($tI$):
+          $$ M \succeq 0 \iff tI \succ 0 \quad \text{and} \quad tI - A^\top (tI)^{-1} A \succeq 0 $$
+          Simplifying the second condition:
+          $$ tI - \frac{1}{t} A^\top A \succeq 0 \iff t^2 I - A^\top A \succeq 0 \iff A^\top A \preceq t^2 I $$
         </div>
         <div class="proof-step">
-          <strong>SDP Form:</strong>
+          <strong>Step 3: SDP Form.</strong>
+          The nonlinear norm constraint is equivalent to the Linear Matrix Inequality $M \succeq 0$.
           $$
           \begin{aligned}
           \text{minimize} \quad & t \\
           \text{subject to} \quad & \begin{bmatrix} tI & A(x) \\ A(x)^\top & tI \end{bmatrix} \succeq 0
           \end{aligned}
           $$
-          This LMI exactly encodes the norm constraint.
         </div>
       </div>
 

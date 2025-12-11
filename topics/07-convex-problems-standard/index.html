@@ -219,23 +219,26 @@
       We want to maximize $r$ subject to $\mathcal{B} \subseteq \mathcal{P}$.</p>
 
       <div class="proof-box">
-        <h4>Derivation of the Chebyshev LP</h4>
+        <h4>Derivation of the Chebyshev LP (Center of Largest Inscribed Ball)</h4>
+        <p>The goal is to fit the largest possible ball $\mathcal{B}(x_c, r) = \{x_c + u \mid \|u\|_2 \le r\}$ inside the polyhedron $\mathcal{P} = \{x \mid a_i^\top x \le b_i\}$.</p>
         <div class="proof-step">
-            <strong>Step 1: Set Containment.</strong>
-            The condition $\mathcal{B} \subseteq \mathcal{P}$ is equivalent to requiring that every point $x \in \mathcal{B}$ satisfies $a_i^\top x \le b_i$ for all $i$.
-            $$ \sup_{x \in \mathcal{B}} a_i^\top x \le b_i $$
+            <strong>Step 1: Set Containment condition.</strong>
+            We require $\mathcal{B} \subseteq \mathcal{P}$. This means for every constraint $i$, every point in the ball must satisfy it:
+            $$ \sup_{x \in \mathcal{B}} a_i^\top x \le b_i \quad \forall i $$
         </div>
         <div class="proof-step">
             <strong>Step 2: Support Function of the Ball.</strong>
-            Substitute $x = x_c + u$ where $\|u\|_2 \le r$.
+            Expanding $x = x_c + u$:
             $$ \sup_{\|u\|_2 \le r} a_i^\top (x_c + u) = a_i^\top x_c + \sup_{\|u\|_2 \le r} a_i^\top u $$
-            By definition of the dual norm (where the dual of $\ell_2$ is $\ell_2$), $\sup_{\|u\| \le r} a_i^\top u = r \|a_i\|_2$.
+            The term $\sup_{\|u\| \le r} a_i^\top u$ is the support function of the ball. The direction that maximizes the dot product with $a_i$ is $u = r \frac{a_i}{\|a_i\|_2}$.
+            The value is $r \|a_i\|_2$.
         </div>
         <div class="proof-step">
             <strong>Step 3: Linear Constraints.</strong>
-            The containment condition becomes:
+            The condition becomes:
             $$ a_i^\top x_c + r \|a_i\|_2 \le b_i $$
-            Since $\|a_i\|_2$ is a constant (computed from data), this is a linear inequality in variables $x_c$ (center) and $r$ (radius).
+            This inequality must hold for each face $i$. The term $r \|a_i\|_2$ represents the "buffer" needed to keep the center $x_c$ away from the boundary wall defined by $a_i^\top x = b_i$.
+            Since $\|a_i\|_2$ is a known constant, this is linear in the variables $x_c$ and $r$.
         </div>
       </div>
 
@@ -257,7 +260,7 @@
 
       <div class="proof-box">
         <h4>The Epigraph Trick: Reformulation as LP</h4>
-        <p>We introduce a scalar variable $t$ to represent the upper bound.</p>
+        <p>The "Epigraph Trick" is the standard way to handle max functions. We introduce a scalar variable $t$ to serve as a uniform upper bound on all the affine functions.</p>
         <p style="text-align: center;">
             $
             \begin{aligned}
@@ -267,11 +270,12 @@
             $
         </p>
         <div class="proof-step">
-            <strong>Equivalence:</strong>
-            <ul>
-                <li><strong>(1) Original to LP:</strong> For any $x$, let $t = \max_i(a_i^\top x + b_i)$. Then $(x, t)$ is feasible for the LP and has the same objective value.</li>
-                <li><strong>(2) LP to Original:</strong> If $(x, t)$ is feasible, then $a_i^\top x + b_i \le t$ for all $i$, implying $f(x) \le t$. If we minimize $t$, we push it down until $t = f(x)$.</li>
-            </ul>
+            <strong>Why it works (Step-by-Step):</strong>
+            <ol>
+                <li>The condition $f(x) \le t$ is equivalent to $\max_i (a_i^\top x + b_i) \le t$.</li>
+                <li>The maximum of a set of numbers is less than $t$ if and only if <b>every single number</b> in that set is less than $t$.</li>
+                <li>Therefore, the single non-linear constraint $\max_i (\dots) \le t$ splits into $m$ separate linear constraints $a_i^\top x + b_i \le t$.</li>
+            </ol>
         </div>
         <div class="proof-step">
             Thus, minimizing the piecewise-linear function is equivalent to solving this LP with one extra variable.

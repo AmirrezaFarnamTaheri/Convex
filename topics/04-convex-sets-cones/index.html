@@ -40,6 +40,13 @@
           a^\top x \le b \quad \forall x \in C, \qquad a^\top y \ge b \quad \forall y \in D
           $$
           <p>If additionally one of $C$ or $D$ is closed and the other is compact, then we can achieve <b>strict separation</b> (where $a^\top x < b < a^\top y$).</p>
+          <div class="insight">
+            <h4>Why Compactness Matters?</h4>
+            <p>If both sets are merely closed (but unbounded), strict separation might fail.
+            <br><b>Counter-example:</b> Consider the set $C = \{(x,y) \mid xy \ge 1, x>0\}$ and the set $D = \{(x,y) \mid x \le 0\}$ (or the axis).
+            <br>Actually, take $C = \{(x,y) \mid xy \ge 1, x>0\}$ and $D = \{(x,y) \mid y \le 0\}$.
+            The x-axis ($y=0$) separates them, but the distance between $C$ and $D$ approaches 0 as $x \to \infty$. Thus, no hyperplane can <i>strictly</i> separate them with a nonzero gap.</p>
+          </div>
         </div>
 
         <figure style="text-align: center; margin: 24px 0;">
@@ -259,6 +266,7 @@
         $$
         K^* = \{y \in \mathbb{R}^n \mid y^\top x \ge 0 \ \forall x \in K\}
         $$
+        <p><b>Intuition:</b> If $K$ represents a set of "directions", $K^*$ represents the set of "gradients" that never point backwards relative to any direction in $K$. In mechanics, if $K$ is a cone of feasible displacements, $K^*$ is the cone of forces that do non-negative work.</p>
         <p>The dual cone $K^*$ is always a closed convex cone, regardless of whether $K$ is convex or closed.</p>
 
         <figure style="text-align: center; margin: 24px 0;">
