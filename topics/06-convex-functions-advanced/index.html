@@ -281,7 +281,7 @@
             <p>Defined on the halfspace $D = \{x \mid c^\top x + d > 0\}$.
             <br>Consider the sublevel set $S_\alpha = \{x \in D \mid \frac{a^\top x + b}{c^\top x + d} \le \alpha\}$.
             $$ \frac{a^\top x + b}{c^\top x + d} \le \alpha \iff a^\top x + b \le \alpha (c^\top x + d) \iff (a - \alpha c)^\top x + (b - \alpha d) \le 0 $$
-            This is a linear inequality, which defines a closed halfspace.
+            This is a linear inequality, which defines a closed halfspace (if $a-\alpha c \ne 0$) or the whole space/empty set (degenerate cases).
             <br>Thus $S_\alpha$ is the intersection of the domain $D$ (halfspace) and another halfspace. The intersection of convex sets is convex.
             <br>Conclusion: Linear-fractional functions are quasiconvex. (Applying the same logic to $-f$ shows they are also quasiconcave, i.e., <b>quasilinear</b>).</p>
         </div>
@@ -299,7 +299,26 @@
             <br>Thus $f$ is quasiconvex on the set $\{x \mid f(x) \le 1\}$.</p>
         </div>
         <div class="example">
-            <h4>5. Internal Rate of Return (IRR)</h4>
+            <h4>5. Cardinality on $\mathbb{R}_+^n$</h4>
+            <p>For $x \in \mathbb{R}_+^n$, let $\operatorname{card}(x)$ be the number of nonzero components.
+            <br>This function is <b>quasiconcave</b>.
+            <br><i>Reasoning:</i> Consider $\operatorname{card}(\theta x + (1-\theta)y)$ for $\theta \in (0,1)$ and $x, y \ge 0$.
+            <br>If a component $z_i = \theta x_i + (1-\theta)y_i$ is zero, then both $x_i$ and $y_i$ must be zero (since inputs are non-negative).
+            <br>Thus, the set of zero indices of the combination contains the intersection of the zero indices of $x$ and $y$.
+            <br>This implies that the number of nonzeros (cardinality) satisfies:
+            $$ \operatorname{card}(\theta x + (1-\theta)y) \ge \min(\operatorname{card}(x), \operatorname{card}(y)) $$
+            This is the condition for quasiconcavity (superlevel sets are convex).</p>
+        </div>
+        <div class="example">
+            <h4>6. Rank on PSD Cone</h4>
+            <p>For $X \in \mathbb{S}^n_+$, the function $f(X) = \operatorname{rank}(X)$ is <b>quasiconcave</b>.
+            <br><i>Reasoning:</i> For $X, Y \succeq 0$, the nullspace of the sum is the intersection of nullspaces: $\mathcal{N}(X+Y) = \mathcal{N}(X) \cap \mathcal{N}(Y)$.
+            <br>Using the Rank-Nullity Theorem ($n = \operatorname{rank} + \dim \mathcal{N}$), this implies:
+            $$ \operatorname{rank}(\theta X + (1-\theta)Y) \ge \max(\operatorname{rank}(X), \operatorname{rank}(Y)) \ge \min(\operatorname{rank}(X), \operatorname{rank}(Y)) $$
+            Thus, the superlevel sets $\{X \succeq 0 \mid \operatorname{rank}(X) \ge k\}$ are convex cones.</p>
+        </div>
+        <div class="example">
+            <h4>7. Internal Rate of Return (IRR)</h4>
             <p>Let $x = (x_0, \dots, x_n)$ be a cash flow stream.
             <br>Present value at rate $r$: $PV(x, r) = \sum_{i=0}^n x_i (1+r)^{-i}$.
             <br>IRR is defined as $\mathrm{IRR}(x) = \inf \{r \ge 0 \mid PV(x, r) = 0\}$.
