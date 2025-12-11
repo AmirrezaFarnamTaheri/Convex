@@ -357,32 +357,32 @@
         <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
         <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
             <li><b>Constructive Separation Proof:</b> The Separating Hyperplane Theorem for a closed convex set $C$ and an external point $y$ can be proven constructively using the projection theorem.</li>
-            <li><b>The Normal Vector:</b> The vector $a = y - p$ is normal to the separating hyperplane.</li>
+            <li><b>Variational Inequality:</b> The projection $p$ is the unique point in $C$ such that the angle between $y-p$ and $x-p$ is obtuse ($\ge 90^\circ$) for all $x \in C$.</li>
         </ul>
       </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
-              <strong>Step 1: Projection characterization.</strong> By the projection theorem (Lecture 00-01), for all $x \in C$:
+              <strong>Step 1: Projection characterization.</strong> Let $p = \Pi_C(y)$. By the variational characterization of the projection onto a closed convex set, for all $x \in C$:
               $$
               (y - p)^\top (x - p) \le 0
               $$
-              where $p = \Pi_C(y)$. Expanding with $a = y - p$:
-              $$
-              a^\top x - a^\top p \le 0 \quad \implies \quad a^\top x \le a^\top p
-              $$
+              Let $a = y - p$. The inequality becomes $a^\top (x - p) \le 0$, which implies $a^\top x \le a^\top p$.
             </div>
 
             <div class="proof-step">
-              <strong>Step 2: Strict inequality at $y$.</strong> Since $p \neq y$ (because $y \notin C$), we have $a = y - p \neq 0$, so $\|a\|_2 > 0$. Then:
+              <strong>Step 2: Strict inequality at $y$.</strong> Since $y \notin C$ and $p \in C$, we must have $y \neq p$. Thus $a = y - p$ is a non-zero vector, so $\|a\|_2^2 > 0$.
+              Now consider the value of the linear functional at $y$:
               $$
-              a^\top y = a^\top p + a^\top (y - p) = a^\top p + \|a\|_2^2 > a^\top p
+              a^\top y = a^\top (p + a) = a^\top p + \|a\|_2^2
               $$
+              Since $\|a\|_2^2 > 0$, we have $a^\top y > a^\top p$.
             </div>
 
             <div class="proof-step">
-              <strong>Conclusion:</strong> Combining both inequalities: $a^\top x \le a^\top p < a^\top y$ for all $x \in C$.
+              <strong>Conclusion:</strong> We have shown that for all $x \in C$, $a^\top x \le a^\top p$, while $a^\top y > a^\top p$.
+              The hyperplane defined by $\{z \mid a^\top z = a^\top p + \frac{1}{2}\|a\|^2\}$ strictly separates $y$ from $C$.
             </div>
   </div>
 </div>
@@ -566,7 +566,18 @@
 
   <div class="solution-box">
     <h4>Solution</h4>
-    <p>They are wedges defined by an angular interval $[\alpha, \beta]$ with width $\le \pi$. The dual cone is the wedge rotated by $90^\circ$ (roughly) with width $\pi - (\beta-\alpha)$.</p>
+    <div class="proof-step">
+      Any closed convex cone $K \subset \mathbb{R}^2$ must be one of the following:
+      <ul>
+        <li>The origin $\{0\}$.</li>
+        <li>A single ray $\{t v \mid t \ge 0\}$.</li>
+        <li>A "wedge" defined by the intersection of two half-planes passing through the origin. This can be parameterized by two angles $[\theta_1, \theta_2]$ where $|\theta_2 - \theta_1| \le \pi$. If the difference is $\pi$, it is a half-plane.</li>
+        <li>The entire plane $\mathbb{R}^2$.</li>
+      </ul>
+    </div>
+    <div class="proof-step">
+      Analytically, any proper cone in $\mathbb{R}^2$ can be written as $K = \{x \mid a_1^\top x \ge 0, a_2^\top x \ge 0\}$ for two linearly independent vectors $a_1, a_2$.
+    </div>
   </div>
 </div>
 

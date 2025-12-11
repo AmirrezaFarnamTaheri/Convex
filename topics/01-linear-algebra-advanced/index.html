@@ -214,6 +214,17 @@
         <li><b>Nuclear Norm (Trace Norm):</b> $\|A\|_* = \sum \sigma_i$. This is the convex envelope of the rank function on the unit ball, playing the same role for matrices that the $\ell_1$ norm plays for vectors (sparsity promotion).</li>
       </ul>
 
+      <div class="insight">
+        <h4>Analogy: Vectors vs. Matrices</h4>
+        <p>There is a direct correspondence between vector norms on the singular values and matrix norms:</p>
+        <ul>
+          <li>$\ell_\infty$ norm on $\sigma \implies$ Spectral norm on $A$. ($\max |\sigma_i|$)</li>
+          <li>$\ell_2$ norm on $\sigma \implies$ Frobenius norm on $A$. ($\sqrt{\sum \sigma_i^2}$)</li>
+          <li>$\ell_1$ norm on $\sigma \implies$ Nuclear norm on $A$. ($\sum |\sigma_i|$)</li>
+        </ul>
+        <p>This explains why the Nuclear Norm promotes low-rank solutions (sparsity in singular values) just as the $\ell_1$ norm promotes sparse vectors.</p>
+      </div>
+
       <h3>Low-Rank Approximation (Eckart-Young-Mirsky)</h3>
       <p>The SVD allows us to find the best approximation of a matrix $A$ by a matrix of lower rank $k$. This is crucial for compression (keeping signal) and denoising (discarding noise).</p>
       <div class="theorem-box">
@@ -225,6 +236,29 @@
           <li>Spectral Error: $\|A - A_k\|_2 = \sigma_{k+1}$</li>
           <li>Frobenius Error: $\|A - A_k\|_F = \sqrt{\sum_{i=k+1}^r \sigma_i^2}$</li>
         </ul>
+      </div>
+
+      <div class="proof-box">
+        <h4>Sketch of Proof (Spectral Norm)</h4>
+        <div class="proof-step">
+          <strong>Step 1: Upper Bound.</strong>
+          Since $A - A_k = \sum_{i=k+1}^r \sigma_i u_i v_i^\top$, the error is $\|A - A_k\|_2 = \sigma_{k+1}$.
+          Thus, $\min_{\text{rank}(B) \le k} \|A - B\|_2 \le \sigma_{k+1}$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Lower Bound.</strong>
+          Let $B$ be any matrix with rank $k$. By Rank-Nullity, its nullspace has dimension $n-k$.
+          Consider the subspace $S$ spanned by the first $k+1$ right singular vectors $\{v_1, \dots, v_{k+1}\}$. $\dim(S) = k+1$.
+          Since $\dim(S) + \dim(\mathcal{N}(B)) = (k+1) + (n-k) = n+1 > n$, the intersection $S \cap \mathcal{N}(B)$ must be non-trivial.
+          Let $w \in S \cap \mathcal{N}(B)$ with $\|w\|_2=1$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Energy Estimate.</strong>
+          Since $w \in \mathcal{N}(B)$, we have $Bw = 0$, so $\|(A-B)w\| = \|Aw\|$.
+          Since $w \in \text{span}(v_1, \dots, v_{k+1})$, we have $\|Aw\| \ge \sigma_{k+1}$.
+          (The smallest gain in the first $k+1$ directions is $\sigma_{k+1}$).
+          Thus $\|A-B\|_2 = \sup_{\|x\|=1} \|(A-B)x\| \ge \|(A-B)w\| \ge \sigma_{k+1}$.
+        </div>
       </div>
 
       <div class="widget-container" style="margin: 24px 0;">

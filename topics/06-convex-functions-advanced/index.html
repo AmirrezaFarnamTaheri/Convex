@@ -200,13 +200,17 @@
 
       <div class="example">
         <h4>(e) Negative Entropy & Log-Sum-Exp</h4>
-        <p>Let $f(x) = \sum_{i=1}^n x_i \log x_i$ on the probability simplex $\Delta_n = \{x \mid x \ge 0, \sum x_i = 1\}$. (Assume $f(x)=\infty$ if $x \notin \Delta_n$).
-        <br>We compute the conjugate $f^*(y) = \sup_{x \in \Delta_n} (y^\top x - \sum x_i \log x_i)$.
-        <br>Using Lagrange multipliers for the constraint $\sum x_i = 1$ (see derivation in P6.13 or lecture 5), the optimal $x$ has the form $x_i^* \propto e^{y_i}$. Specifically, the "Gibbs distribution" or "Softmax":
-        $$ x_i^* = \frac{e^{y_i}}{\sum_{k=1}^n e^{y_k}} $$
-        Plugging this back in yields the <b>Log-Sum-Exp</b> function:
-        $$ f^*(y) = \log\left(\sum_{i=1}^n e^{y_i}\right) $$
-        This fundamental pair (Entropy $\leftrightarrow$ Log-Sum-Exp) underpins much of information geometry and maximum entropy modeling.</p>
+          <p>Let $f(x) = \sum_{i=1}^n x_i \log x_i$ on the probability simplex $\Delta_n = \{x \mid x \ge 0, \sum x_i = 1\}$. This is the negative Shannon entropy.
+          <br><b>Conjugate Derivation:</b>
+          Maximize $y^\top x - \sum x_i \log x_i$ subject to $\sum x_i = 1$ and $x \ge 0$.
+          <br>Lagrangian: $L(x, \nu) = \sum y_i x_i - \sum x_i \log x_i + \nu (\sum x_i - 1)$.
+          <br>Stationarity: $y_i - (1 + \log x_i) + \nu = 0 \implies \log x_i = y_i + \nu - 1 \implies x_i = e^{y_i + \nu - 1}$.
+          <br>Normalize using $\sum x_i = 1$: $\sum e^{y_i + \nu - 1} = e^{\nu - 1} \sum e^{y_i} = 1 \implies e^{\nu - 1} = 1 / \sum e^{y_k}$.
+          <br>Substitute back: $x_i^* = \frac{e^{y_i}}{\sum e^{y_k}}$.
+          <br><b>Value:</b> $\sum y_i x_i^* - \sum x_i^* \log x_i^*$. Note $\log x_i^* = y_i - \log(\sum e^{y_k})$.
+          <br>Sum is $\sum x_i^* (y_i - (y_i - \log \sum e^{y_k})) = \sum x_i^* \log(\sum e^{y_k}) = \log(\sum e^{y_k})$.
+          <br><b>Result:</b> $f^*(y) = \log\left(\sum_{i=1}^n e^{y_i}\right)$ (Log-Sum-Exp).
+          <br>This duality is fundamental to Maximum Entropy modeling and Logistic Regression.</p>
       </div>
 
       <div class="example">
