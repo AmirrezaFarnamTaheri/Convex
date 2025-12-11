@@ -551,25 +551,22 @@
 
           <div class="proof-step">
             <strong>Step 1: Gradient.</strong>
-            Using the chain rule: $\frac{\partial f}{\partial x_i} = \frac{1}{S} \frac{\partial S}{\partial x_i} = \frac{1}{S} e^{x_i} = \frac{z_i}{S}$.
-            <br>In vector form: $\nabla f(x) = \frac{1}{S} z$, which is the <b>softmax</b> vector (probability distribution).
+            Recall $z_i = e^{x_i}$ and $S = \sum z_k$.
+            The partial derivative is:
+            $$ \frac{\partial f}{\partial x_i} = \frac{\partial}{\partial x_i} \log S = \frac{1}{S} \frac{\partial S}{\partial x_i} = \frac{1}{S} e^{x_i} = \frac{z_i}{S} $$
+            Let $p = z/S$ be the probability vector ($\sum p_i = 1$). Then $\nabla f(x) = p$.
           </div>
 
           <div class="proof-step">
             <strong>Step 2: Hessian (Element-wise).</strong>
-            We differentiate $\frac{\partial f}{\partial x_i} = \frac{z_i}{S}$ with respect to $x_j$ using the quotient rule:
-            $$
-            \frac{\partial^2 f}{\partial x_j \partial x_i} = \frac{\partial}{\partial x_j} \left( z_i S^{-1} \right)
-            = \frac{\partial z_i}{\partial x_j} S^{-1} + z_i \frac{\partial S^{-1}}{\partial x_j}
-            $$
-            <ul>
-              <li>$\frac{\partial z_i}{\partial x_j} = z_i \delta_{ij}$ (since $x_j$ only affects $z_j$).</li>
-              <li>$\frac{\partial S^{-1}}{\partial x_j} = -S^{-2} \frac{\partial S}{\partial x_j} = -S^{-2} z_j$.</li>
-            </ul>
-            Combining these:
-            $$ \frac{\partial^2 f}{\partial x_j \partial x_i} = \frac{z_i \delta_{ij}}{S} - \frac{z_i z_j}{S^2} $$
-            In matrix form:
-            $$ \nabla^2 f(x) = \frac{1}{S}\mathrm{diag}(z) - \frac{1}{S^2} z z^\top $$
+            We differentiate $p_i = z_i S^{-1}$ with respect to $x_j$.
+            Using the product rule:
+            $$ \frac{\partial p_i}{\partial x_j} = \frac{\partial z_i}{\partial x_j} S^{-1} + z_i \frac{\partial (S^{-1})}{\partial x_j} $$
+            Term 1: $\frac{\partial z_i}{\partial x_j} = \frac{\partial e^{x_i}}{\partial x_j}$. If $i=j$, this is $e^{x_i}=z_i$. If $i \neq j$, it is 0. So $\frac{\partial z_i}{\partial x_j} = z_i \delta_{ij}$.
+            Term 2: $\frac{\partial S^{-1}}{\partial x_j} = -S^{-2} \frac{\partial S}{\partial x_j} = -S^{-2} z_j$.
+            Combining:
+            $$ \frac{\partial^2 f}{\partial x_i \partial x_j} = \frac{z_i \delta_{ij}}{S} - \frac{z_i z_j}{S^2} = p_i \delta_{ij} - p_i p_j $$
+            In matrix form: $\nabla^2 f(x) = \mathrm{diag}(p) - p p^\top$.
           </div>
 
           <div class="proof-step">

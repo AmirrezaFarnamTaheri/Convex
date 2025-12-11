@@ -202,15 +202,24 @@
         <h4>(e) Negative Entropy & Log-Sum-Exp</h4>
           <p>Let $f(x) = \sum_{i=1}^n x_i \log x_i$ on the probability simplex $\Delta_n = \{x \mid x \ge 0, \sum x_i = 1\}$. This is the negative Shannon entropy.
           <br><b>Conjugate Derivation:</b>
-          Maximize $y^\top x - \sum x_i \log x_i$ subject to $\sum x_i = 1$ and $x \ge 0$.
-          <br>Lagrangian: $L(x, \nu) = \sum y_i x_i - \sum x_i \log x_i + \nu (\sum x_i - 1)$.
-          <br>Stationarity: $y_i - (1 + \log x_i) + \nu = 0 \implies \log x_i = y_i + \nu - 1 \implies x_i = e^{y_i + \nu - 1}$.
-          <br>Normalize using $\sum x_i = 1$: $\sum e^{y_i + \nu - 1} = e^{\nu - 1} \sum e^{y_i} = 1 \implies e^{\nu - 1} = 1 / \sum e^{y_k}$.
-          <br>Substitute back: $x_i^* = \frac{e^{y_i}}{\sum e^{y_k}}$.
-          <br><b>Value:</b> $\sum y_i x_i^* - \sum x_i^* \log x_i^*$. Note $\log x_i^* = y_i - \log(\sum e^{y_k})$.
-          <br>Sum is $\sum x_i^* (y_i - (y_i - \log \sum e^{y_k})) = \sum x_i^* \log(\sum e^{y_k}) = \log(\sum e^{y_k})$.
+          We want to solve $f^*(y) = \sup \{ y^\top x - \sum x_i \log x_i \mid \sum x_i = 1, x \ge 0 \}$.
+          <br>1. <b>Lagrangian:</b> Introduce $\nu$ for the constraint $\sum x_i = 1$. (We ignore $x \ge 0$ because the $\log$ barrier implicitly handles it, or check optimality later).
+          $$ \mathcal{L}(x, \nu) = \sum y_i x_i - \sum x_i \log x_i + \nu (\sum x_i - 1) $$
+          2. <b>Optimize x:</b> Differentiate w.r.t $x_i$:
+          $$ \frac{\partial \mathcal{L}}{\partial x_i} = y_i - (1 + \log x_i) + \nu = 0 $$
+          Solving for $x_i$:
+          $$ \log x_i = y_i + \nu - 1 \implies x_i(\nu) = e^{y_i + \nu - 1} $$
+          3. <b>Determine $\nu$:</b> Enforce $\sum x_i(\nu) = 1$:
+          $$ \sum_i e^{y_i + \nu - 1} = e^{\nu-1} \sum_i e^{y_i} = 1 $$
+          Thus $e^{\nu-1} = \left(\sum e^{y_k}\right)^{-1}$.
+          <br>4. <b>Substitute back:</b> The optimal $x_i^* = \frac{e^{y_i}}{\sum e^{y_k}}$ (the softmax function).
+          <br>5. <b>Compute Value:</b> Plug $x^*$ into the objective $y^\top x - f(x)$:
+          $$ \sum y_i x_i^* - \sum x_i^* \log x_i^* = \sum x_i^* (y_i - \log x_i^*) $$
+          From step 2, $y_i - \log x_i^* = 1 - \nu$.
+          So sum is $\sum x_i^* (1-\nu) = (1-\nu) \sum x_i^* = 1-\nu$.
+          From step 3, $e^{\nu-1} = (\sum e^{y_k})^{-1} \implies \nu - 1 = -\log(\sum e^{y_k}) \implies 1-\nu = \log(\sum e^{y_k})$.
           <br><b>Result:</b> $f^*(y) = \log\left(\sum_{i=1}^n e^{y_i}\right)$ (Log-Sum-Exp).
-          <br>This duality is fundamental to Maximum Entropy modeling and Logistic Regression.</p>
+          </p>
       </div>
 
       <div class="example">
