@@ -747,7 +747,9 @@
 
         <div class="proof-step">
           <strong>Step 4: Factorization Trick.</strong>
-          The double sum splits because the terms are independent (one depends only on $i$, the other only on $j$):
+          Define $\alpha_i = \|A_i\|_2^2$ and $\beta_j = \|B^j\|_2^2$. The double sum splits because the terms are independent:
+          $$ \sum_{i,j} \alpha_i \beta_j = \sum_i \alpha_i \left(\sum_j \beta_j\right) = \left(\sum_i \alpha_i\right) \left(\sum_j \beta_j\right) $$
+          Substituting back:
           $$ \sum_{i,j} \|A_i\|_2^2 \|B^j\|_2^2 = \left(\sum_{i=1}^m \|A_i\|_2^2\right) \left(\sum_{j=1}^p \|B^j\|_2^2\right) $$
         </div>
 

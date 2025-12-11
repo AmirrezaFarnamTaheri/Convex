@@ -215,12 +215,12 @@
             $$ f(tx + (1-t)y) \le t f(x) + (1-t)f(y) $$
             Integrating this inequality with respect to $t$:
             $$ \int_0^1 f(z(t)) dt \le f(x) \int_0^1 t dt + f(y) \int_0^1 (1-t) dt = \frac{f(x)+f(y)}{2} $$
-            This direction is simply "integrating the convexity definition".</p>
+            This direction is simply "integrating the convexity definition". It can be viewed as <b>Jensen's inequality applied to the uniform distribution</b> on the chord.</p>
           </div>
 
           <div class="proof-step">
             <strong>Step 3: Integral Inequality $\Rightarrow$ Convex.</strong>
-            <p>This direction uses a clever trick: <b>subtracting an affine function</b>.
+            <p>This direction uses a clever trick: <b>subtracting a supporting line</b> to measure the "bump" above it.
             <br>Assume the integral inequality holds for all $x, y$. Suppose for contradiction that $f$ is <b>not</b> convex. Then there exists a point $z_0$ on some segment where $f(z_0)$ lies strictly above the chord.
             <br>Let $\ell(u)$ be the <b>chord</b> connecting $(x, f(x))$ and $(y, f(y))$.
             <br>Define the difference function $g(u) = f(u) - \ell(u)$.
@@ -233,6 +233,7 @@
             $$ \int_0^1 g(z(t)) dt = \int_0^1 f(z(t)) dt - \int_0^1 \ell(z(t)) dt \le \frac{f(x)+f(y)}{2} - \frac{\ell(x)+\ell(y)}{2} = \frac{g(x)+g(y)}{2} = 0 $$
             So the integral of $g$ must be non-positive.
             <br>However, since $g(z_0) > 0$ and we typically assume continuity, there is a small interval around $z_0$ where $g$ is positive. Thus $\int g > 0$.
+            <br>The inequality effectively says the "average bump above the supporting line" must be zero (since endpoints are zero), which forces the function to never rise above the chord.
             <br>This contradiction ($\int g > 0$ vs $\int g \le 0$) proves $f$ must be convex.</p>
           </div>
         </div>
@@ -1107,7 +1108,9 @@
           <br>Define the mapping $\Phi: \{(x,t,s) \mid t>0\} \to \mathbb{R}^{n+1}$ by $\Phi(x,t,s) = (x/t, s/t)$.
           <br>The epigraph of $g$ is defined by $g(x,t) \le s \iff t f(x/t) \le s \iff f(x/t) \le s/t$.
           <br>Thus $(x,t,s) \in \text{epi } g \iff t > 0 \text{ and } (x/t, s/t) \in \text{epi } f$.
-          <br>We can express this as the inverse image of a linear map on homogeneous coordinates.
+          <br>We can express this explicitly as:
+          $$ \mathrm{epi}\, g = \Phi^{-1}(\mathrm{epi}\, f) \cap \{(x, t, s) \mid t > 0\} $$
+          where $\Phi$ is the linear map defined on homogeneous coordinates. Since the inverse image of a convex set under a linear map is convex, and the intersection with a halfspace ($t>0$) is convex, $\mathrm{epi}\, g$ is convex.
           <br>More simply: $\text{epi } g$ is the conic hull of $\text{epi } f$ (embedded at $t=1$). The conic hull of a convex set is convex.</p>
         </div>
 
