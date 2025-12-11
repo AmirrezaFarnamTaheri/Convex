@@ -113,29 +113,53 @@
 
       <div class="example">
         <h4>(b) Negative Log: $f(x) = -\log x$ on $(0,\infty)$</h4>
-        <p>Maximize $g(x) = yx + \log x$. Derivative $g'(x) = y + 1/x$. Set to 0: $x^* = -1/y$.
-        <br>Since $x^* > 0$, we must have $y < 0$. $g''(x) = -1/x^2 < 0$ (concave max).
-        <br>Value: $y(-1/y) + \log(-1/y) = -1 - \log(-y)$.
-        <br>If $y \ge 0$, $yx + \log x \to \infty$ as $x \to \infty$.
-        <br><b>Result:</b> $f^*(y) = -1 - \log(-y)$ for $y < 0$. Domain $(-\infty, 0)$.</p>
+        <p>We compute $f^*(y) = \sup_{x>0} (yx + \log x)$. Let $\phi(x) = yx + \log x$.</p>
+        <ol>
+          <li><b>Derivative:</b> $\phi'(x) = y + 1/x$. Setting to zero gives $x = -1/y$.</li>
+          <li><b>Domain Check:</b> Since we require $x > 0$, we must have $y < 0$.
+            <ul>
+              <li>If $y \ge 0$, then $\phi'(x) > 0$ for all $x$. As $x \to \infty$, $\phi(x) \to \infty$. So $f^*(y) = \infty$.</li>
+              <li>If $y < 0$, the critical point $x^* = -1/y$ is a global maximum (since $\phi''(x) = -1/x^2 < 0$).</li>
+            </ul>
+          </li>
+          <li><b>Value:</b> Plug $x^*$ back in:
+            $$ f^*(y) = y(-1/y) + \log(-1/y) = -1 + \log(1/(-y)) = -1 - \log(-y) $$
+          </li>
+        </ol>
+        <p><b>Result:</b> $f^*(y) = -1 - \log(-y)$ for $y < 0$. Domain $(-\infty, 0)$.</p>
       </div>
 
       <div class="example">
         <h4>(c) Exponential: $f(x) = e^x$ on $\mathbb{R}$</h4>
-        <p>Maximize $g(x) = yx - e^x$. Derivative $g'(x) = y - e^x = 0 \implies x^* = \log y$.
-        <br>Requires $y > 0$. Value: $y \log y - e^{\log y} = y \log y - y$.
-        <br>If $y=0$, $\sup (-e^x) = 0$ (as $x \to -\infty$).
-        <br>If $y < 0$, let $x \to -\infty$. Then $e^x \to 0$ and $yx \to +\infty$ (negative times negative). Sup is $+\infty$.
-        <br><b>Result:</b> $f^*(y) = y \log y - y$ for $y \ge 0$ (with $0 \log 0 = 0$), else $\infty$. Domain $[0, \infty)$.</p>
+        <p>We compute $f^*(y) = \sup_{x} (yx - e^x)$. Let $\phi(x) = yx - e^x$.</p>
+        <ol>
+          <li><b>Derivative:</b> $\phi'(x) = y - e^x$. Setting to zero gives $e^x = y$, or $x = \log y$. This requires $y > 0$.</li>
+          <li><b>Case $y > 0$:</b> The critical point $x^* = \log y$ is a global max ($\phi'' = -e^x < 0$).
+            $$ f^*(y) = y \log y - e^{\log y} = y \log y - y $$
+          </li>
+          <li><b>Case $y = 0$:</b> $\phi(x) = -e^x$. Supremum is $0$ (approached as $x \to -\infty$). Note that limit of $y \log y - y$ as $y \to 0$ is $0$.</li>
+          <li><b>Case $y < 0$:</b> $\phi'(x) = y - e^x < 0$. Function is strictly decreasing. As $x \to -\infty$, $\phi(x) \approx yx \to \infty$ (since $y<0, x<0$). So $f^*(y) = \infty$.</li>
+        </ol>
+        <p><b>Result:</b> $f^*(y) = y \log y - y$ for $y \ge 0$, else $\infty$. Domain $[0, \infty)$.</p>
       </div>
 
       <div class="example">
-        <h4>(d) Inverse: $f(x) = 1/x$ on $(0,\infty)$</h4>
-        <p>Maximize $g(x) = yx - 1/x$. Derivative $g'(x) = y + 1/x^2 = 0 \implies x^2 = -1/y$.
-        <br>Requires $y < 0$. Solution $x^* = \sqrt{-1/y}$.
-        <br>Value: $y\sqrt{-1/y} - \sqrt{-y} = -\sqrt{-y} - \sqrt{-y} = -2\sqrt{-y}$.
-        <br>If $y \ge 0$, $yx - 1/x \to \infty$ as $x \to \infty$.
-        <br><b>Result:</b> $f^*(y) = -2\sqrt{-y}$ for $y < 0$. Domain $(-\infty, 0)$.</p>
+        <h4>(d) Reciprocal: $f(x) = 1/x$ on $(0,\infty)$</h4>
+        <p>We compute $f^*(y) = \sup_{x>0} (yx - 1/x)$. Let $\phi(x) = yx - 1/x$.</p>
+        <ol>
+          <li><b>Derivative:</b> $\phi'(x) = y + 1/x^2$. Setting to zero gives $x^2 = -1/y$, so $x = \sqrt{-1/y}$. This requires $y < 0$.</li>
+          <li><b>Domain Analysis:</b>
+            <ul>
+              <li>If $y > 0$: $\phi(x) \approx yx \to \infty$ as $x \to \infty$. Supremum is $\infty$.</li>
+              <li>If $y = 0$: $\phi(x) = -1/x$. Supremum is $0$ (approached as $x \to \infty$).</li>
+              <li>If $y < 0$: The critical point $x^* = 1/\sqrt{-y}$ is a global max ($\phi'' = -2/x^3 < 0$).</li>
+            </ul>
+          </li>
+          <li><b>Value (for $y<0$):</b>
+            $$ f^*(y) = y \frac{1}{\sqrt{-y}} - \sqrt{-y} = \frac{-(-y)}{\sqrt{-y}} - \sqrt{-y} = -\sqrt{-y} - \sqrt{-y} = -2\sqrt{-y} $$
+          </li>
+        </ol>
+        <p><b>Result:</b> $f^*(y) = -2\sqrt{-y}$ for $y \le 0$ (with value 0 at $y=0$), else $\infty$. Domain $(-\infty, 0]$.</p>
       </div>
 
       <h3>1.4 Quadratic and Matrix Examples</h3>
@@ -172,6 +196,17 @@
         <br>Case 2: $\|y\|_* > 1$. There exists $x_0$ with $\|x_0\|=1$ and $y^\top x_0 > 1$. Let $x = t x_0$. Value $t(y^\top x_0 - 1) \to \infty$.
         <br><b>Result:</b> $f^*$ is the indicator of the unit ball of the dual norm $\|\cdot\|_*$.
         $$ f^*(y) = \begin{cases} 0 & \|y\|_* \le 1 \\ +\infty & \|y\|_* > 1 \end{cases} $$</p>
+      </div>
+
+      <div class="example">
+        <h4>(e) Negative Entropy & Log-Sum-Exp</h4>
+        <p>Let $f(x) = \sum_{i=1}^n x_i \log x_i$ on the probability simplex $\Delta_n = \{x \mid x \ge 0, \sum x_i = 1\}$. (Assume $f(x)=\infty$ if $x \notin \Delta_n$).
+        <br>We compute the conjugate $f^*(y) = \sup_{x \in \Delta_n} (y^\top x - \sum x_i \log x_i)$.
+        <br>Using Lagrange multipliers for the constraint $\sum x_i = 1$ (see derivation in P6.13 or lecture 5), the optimal $x$ has the form $x_i^* \propto e^{y_i}$. Specifically, the "Gibbs distribution" or "Softmax":
+        $$ x_i^* = \frac{e^{y_i}}{\sum_{k=1}^n e^{y_k}} $$
+        Plugging this back in yields the <b>Log-Sum-Exp</b> function:
+        $$ f^*(y) = \log\left(\sum_{i=1}^n e^{y_i}\right) $$
+        This fundamental pair (Entropy $\leftrightarrow$ Log-Sum-Exp) underpins much of information geometry and maximum entropy modeling.</p>
       </div>
 
       <h3>1.5 Algebra Rules for Conjugates</h3>
@@ -337,7 +372,7 @@
         <p>If $f$ is quasiconvex, then for any $x \in \mathrm{dom}\, f$ and $y \in \mathbb{R}^n$:
         $$ y^\top \nabla f(x) = 0 \implies y^\top \nabla^2 f(x) y \ge 0 $$
         <i>Interpretation:</i> If we look in a direction $y$ tangent to the level set ($\nabla f \perp y$), the function must curve upwards (positive curvature). The level sets cannot curve "inward" to create a disconnected or non-convex shape.
-        <br><b>1D Case:</b> This reduces to $f'(x) = 0 \implies f''(x) \ge 0$. A quasiconvex function on $\mathbb{R}$ cannot have a strict local maximum (which would have $f'=0, f''<0$). It effectively means the function has at most one "valley".</p>
+        <br><b>1D Case:</b> This reduces to $f'(x) = 0 \implies f''(x) \ge 0$. A quasiconvex function on $\mathbb{R}$ cannot have a strict interior local maximum (which would have $f'=0, f''<0$). It effectively means the function has at most one "valley": it decreases, then possibly stays flat, then increases.</p>
 
         <h4>Sufficient Condition</h4>
         <p>If $f$ satisfies the stronger condition:
@@ -771,6 +806,29 @@
 </div>
 
 <div class="problem">
+  <h3>P6.11 — Legendre Transform of Quadratic</h3>
+  <p>Consider $f(x) = \frac{1}{2}x^\top Q x$ with $Q \succ 0$. Verify the Legendre transform formula $f^*(y) = x^\top y - f(x)$ where $y = \nabla f(x)$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Gradient Map.</strong>
+      $\nabla f(x) = Qx$. So we set $y = Qx$.
+      This implies $x = Q^{-1}y$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Apply Formula.</strong>
+      $f^*(y) = x^\top y - f(x)$ evaluated at $x = Q^{-1}y$.
+      $$ f^*(y) = (Q^{-1}y)^\top y - \frac{1}{2}(Q^{-1}y)^\top Q (Q^{-1}y) $$
+      $$ = y^\top Q^{-1} y - \frac{1}{2} y^\top Q^{-1} y = \frac{1}{2}y^\top Q^{-1} y $$
+    </div>
+    <div class="proof-step">
+      <strong>Conclusion:</strong>
+      This matches the result from Example 1.4(a). The Legendre transform provides a mechanical way to compute conjugates for smooth strictly convex functions.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
   <h3>P6.12 — Log-Concavity Examples (3.49)</h3>
   <p>Verify the log-concavity of the following functions.</p>
   <ol type="a">
@@ -845,7 +903,7 @@
 </div>
 
 <div class="problem">
-  <h3>P6.11 — Log-Convexity of the Gamma Function</h3>
+  <h3>P6.13 — Log-Convexity of the Gamma Function</h3>
   <p>The Gamma function is defined as $\Gamma(x) = \int_0^\infty t^{x-1} e^{-t} dt$ for $x > 0$. Show that $\Gamma(x)$ is log-convex using the integration rule.</p>
   <div class="solution-box">
     <h4>Solution</h4>
