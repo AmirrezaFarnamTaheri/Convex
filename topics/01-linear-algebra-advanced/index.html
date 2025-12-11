@@ -121,11 +121,11 @@
       <h3>Geometric Intuition</h3>
       <p>The Singular Value Decomposition (SVD) generalizes the concept of diagonalization to all matrices, including non-square ones. It expresses any linear transformation $A$ as a composition of three simple operations: a rotation, a scaling, and another rotation.</p>
       $$ A = U \Sigma V^\top $$
-      <p>Given an input vector $x$:</p>
+      <p>Let's unpack this operation step-by-step for an input vector $x$:</p>
       <ol>
-        <li><b>Rotate/Reflect ($V^\top$):</b> The matrix $V^\top$ is orthogonal. It rotates the coordinate system to align the input vector with the "principal axes" of the matrix.</li>
-        <li><b>Scale ($\Sigma$):</b> The matrix $\Sigma$ is diagonal with non-negative entries $\sigma_i$. It stretches or shrinks the vector along the coordinate axes. These scaling factors are the <b>singular values</b>.</li>
-        <li><b>Rotate/Reflect ($U$):</b> The matrix $U$ is orthogonal. It rotates the stretched vector to its final orientation in the output space.</li>
+        <li><b>Rotate/Reflect (Analysis via $V^\top$):</b> The matrix $V^\top$ is orthogonal. It takes the vector $x$ and expresses it in a new coordinate system defined by the columns of $V$ (the "right singular vectors"). Essentially, it rotates space so the "principal input axes" align with the standard axes.</li>
+        <li><b>Scale (Gain via $\Sigma$):</b> The matrix $\Sigma$ is diagonal with non-negative entries $\sigma_i$. It independently stretches or shrinks each coordinate $i$ by the factor $\sigma_i$. This is where the magnitude change happens.</li>
+        <li><b>Rotate/Reflect (Synthesis via $U$):</b> The matrix $U$ is orthogonal. It takes the scaled coordinates and rotates them to the final orientation in the output space, defined by the columns of $U$ (the "left singular vectors").</li>
       </ol>
       <p>This decomposition reveals that the image of the unit sphere under any linear map is a hyperellipse. The singular values are the lengths of the hyperellipse's semi-axes, and the columns of $U$ are the directions of these axes.</p>
 
@@ -290,28 +290,30 @@
         <br>
         <div class="proof-box">
           <h4>Proof: $x_{LS} = A^+b$ minimizes norm</h4>
-        <p>The set of all least-squares solutions is given by $S_{LS} = \{x \mid A^\top A x = A^\top b\}$. Since this is an affine set $x_p + \mathcal{N}(A)$, there is a unique element with minimum Euclidean norm.</p>
+        <p>The set of all least-squares solutions is given by $S_{LS} = \{x \mid A^\top A x = A^\top b\}$. Since this is an affine set $x_p + \mathcal{N}(A)$, there is a unique element with minimum Euclidean norm. We show $x^+ = A^+b$ is that element.</p>
 
           <div class="proof-step">
           <strong>Step 1: Verification of Solution.</strong>
-          We verify that $x^+ = A^+ b$ satisfies the Normal Equations.
-          $$ A^\top A x^+ = (V \Sigma^\top U^\top) (U \Sigma V^\top) (V \Sigma^+ U^\top) b = V \Sigma^\top \Sigma \Sigma^+ U^\top b $$
-          Note that $\Sigma^\top \Sigma \Sigma^+$ is a diagonal matrix where the $i$-th entry is $\sigma_i \cdot \sigma_i \cdot (1/\sigma_i) = \sigma_i$ (for $i \le r$). This is exactly $\Sigma^\top$.
-            $$ = V \Sigma^\top U^\top b = A^\top b $$
-          Thus, $x^+$ is a valid least-squares solution.
+          First, we check that $x^+$ actually solves the least squares problem (satisfies Normal Equations).
+          Recall $A = U \Sigma V^\top$ and $A^+ = V \Sigma^+ U^\top$.
+          $$ A x^+ = U \Sigma V^\top V \Sigma^+ U^\top b = U (\Sigma \Sigma^+) U^\top b $$
+          The product $\Sigma \Sigma^+$ is a diagonal projection matrix (1s for indices $1 \dots r$, 0s otherwise). It projects onto the range of $A$.
+          Thus $Ax^+$ is the orthogonal projection of $b$ onto $\mathcal{R}(A)$, which defines the least squares solution.
           </div>
 
           <div class="proof-step">
           <strong>Step 2: Orthogonality of $x^+$.</strong>
-          The vector $x^+ = V \Sigma^+ U^\top b$ is a linear combination of the columns of $V$ corresponding to non-zero singular values (indices $1 \dots r$). These columns span the row space $\mathcal{R}(A^\top)$.
+          We check where $x^+$ lies.
+          $x^+ = V (\Sigma^+ U^\top b)$. This vector is a linear combination of the columns of $V$ corresponding to non-zero singular values (indices $1 \dots r$).
+          These columns span the <b>row space</b> $\mathcal{R}(A^\top)$.
           Thus, $x^+ \in \mathcal{R}(A^\top)$.
-          We know that $\mathcal{R}(A^\top) \perp \mathcal{N}(A)$.
+          Recall the fundamental orthogonality: $\mathcal{R}(A^\top) \perp \mathcal{N}(A)$.
           </div>
 
           <div class="proof-step">
           <strong>Step 3: Pythagorean Minimization.</strong>
-          Any other solution can be written as $x = x^+ + z$, where $z \in \mathcal{N}(A)$ (the homogeneous solution).
-          Since $x^+ \perp z$, we have:
+          Any generic solution $x$ can be decomposed into a row-space component and a nullspace component. Since $x$ is a solution, it must look like $x = x^+ + z$, where $z$ is some vector in the nullspace $\mathcal{N}(A)$.
+          Since $x^+ \in \mathcal{R}(A^\top)$ and $z \in \mathcal{N}(A)$, they are orthogonal: $\langle x^+, z \rangle = 0$.
           $$ \|x\|_2^2 = \|x^+ + z\|_2^2 = \|x^+\|_2^2 + \|z\|_2^2 $$
           To minimize this norm, we must choose $z=0$. Therefore, $x^+ = A^+b$ is the unique minimum-norm solution.
           </div>
