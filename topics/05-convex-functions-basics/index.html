@@ -129,24 +129,28 @@
         <br><i>Interpretation:</i> For a convex cost function, the cost of the average scenario is less than or equal to the average cost of all scenarios. Uncertainty typically increases expected cost for convex functions.</p>
 
         <h3>1.3 Applications of Jensen's Inequality</h3>
-        <p>Jensen's inequality is a power tool for deriving fundamental inequalities in analysis.</p>
+        <p>Jensen's inequality is a power tool for deriving fundamental inequalities in analysis. It translates the curvature of simple functions (like $\log x$ or $x^p$) into global bounds.</p>
 
         <div class="example">
           <h4>1. Arithmetic-Geometric Mean (AM-GM)</h4>
-          <p>We derive the weighted AM-GM inequality directly from Jensen's inequality.</p>
+          <p>The famous inequality $\sqrt{ab} \le \frac{a+b}{2}$ is just Jensen's inequality applied to the logarithm.</p>
           <div class="proof-step">
-            <strong>Step 1: Convexity of $-\ln x$.</strong>
-            Let $f(x) = -\ln x$ for $x > 0$. Then $f''(x) = 1/x^2 > 0$, so $f$ is convex.
+            <strong>Step 1: Choose the function.</strong>
+            Let $f(x) = -\ln x$ for $x > 0$. The second derivative $f''(x) = 1/x^2 > 0$, so $f$ is convex. (Alternatively, $\ln x$ is concave).
           </div>
           <div class="proof-step">
             <strong>Step 2: Apply Jensen.</strong>
-            For any $a, b > 0$ and $\theta \in [0, 1]$:
+            For any points $a, b > 0$ and weights $\theta \in [0, 1]$:
+            $$ f(\theta a + (1-\theta)b) \le \theta f(a) + (1-\theta) f(b) $$
             $$ -\ln(\theta a + (1-\theta)b) \le -\theta \ln a - (1-\theta)\ln b $$
           </div>
           <div class="proof-step">
-            <strong>Step 3: Rearrange.</strong>
-            Multiply by $-1$ and exponentiate:
-            $$ \ln(\theta a + (1-\theta)b) \ge \ln(a^\theta b^{1-\theta}) \implies \theta a + (1-\theta)b \ge a^\theta b^{1-\theta} $$
+            <strong>Step 3: Simplify.</strong>
+            Using log properties $\theta \ln a = \ln(a^\theta)$:
+            $$ -\ln(\theta a + (1-\theta)b) \le -(\ln(a^\theta) + \ln(b^{1-\theta})) = -\ln(a^\theta b^{1-\theta}) $$
+            Multiply by $-1$ (reversing the inequality) and exponentiate (preserving it):
+            $$ \ln(\theta a + (1-\theta)b) \ge \ln(a^\theta b^{1-\theta}) \implies \boxed{ \theta a + (1-\theta)b \ge a^\theta b^{1-\theta} } $$
+            Setting $\theta = 1/2$ gives the classic $\frac{a+b}{2} \ge \sqrt{ab}$.
           </div>
         </div>
 

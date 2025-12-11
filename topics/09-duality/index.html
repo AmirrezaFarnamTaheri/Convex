@@ -258,18 +258,31 @@
 
         <div class="proof-box">
           <h4>Derivation from Strong Duality</h4>
-          <p>If strong duality holds ($p^* = d^*$):
-          $$
-          \begin{aligned}
-          f_0(x^*) &= g(\lambda^*, \nu^*) \\
-          &= \inf_x \left( f_0(x) + \sum \lambda_i^* f_i(x) + \sum \nu_j^* h_j(x) \right) \\
-          &\le f_0(x^*) + \sum \lambda_i^* f_i(x^*) + \sum \nu_j^* h_j(x^*) \\
-          &\le f_0(x^*)
-          \end{aligned}
-          $$
-          Since the LHS equals the RHS, all inequalities must be equalities.
-          <br><b>Equality 1 (Stationarity):</b> The infimum of the Lagrangian with respect to $x$ is attained at $x^*$. For differentiable functions, this implies $\nabla_x L(x^*, \lambda^*, \nu^*) = 0$.
-          <br><b>Equality 2 (Complementary Slackness):</b> The term $\sum \lambda_i^* f_i(x^*)$ must be 0. Since $\lambda_i^* \ge 0$ and $f_i(x^*) \le 0$, the sum is non-positive. For it to be zero, each term must be zero: $\lambda_i^* f_i(x^*) = 0$.</p>
+          <p>Assume strong duality holds ($p^* = d^*$) and let $x^*$ and $(\lambda^*, \nu^*)$ be primal and dual optimal.</p>
+          <div class="proof-step">
+            <strong>The Duality Sandwich:</strong>
+            $$
+            \begin{aligned}
+            f_0(x^*) &= g(\lambda^*, \nu^*) \quad \text{(Strong Duality)} \\
+            &= \inf_x \left( f_0(x) + \sum \lambda_i^* f_i(x) + \sum \nu_j^* h_j(x) \right) \quad \text{(Def of Dual)} \\
+            &\le f_0(x^*) + \sum \lambda_i^* f_i(x^*) + \sum \nu_j^* h_j(x^*) \quad \text{(Plug in } x^*) \\
+            &\le f_0(x^*) \quad \text{(Since } \lambda \ge 0, f \le 0, h=0)
+            \end{aligned}
+            $$
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion 1: Stationarity.</strong>
+            The inequality $\inf_x L(x, \lambda^*, \nu^*) \le L(x^*, \lambda^*, \nu^*)$ is actually an equality. Thus, $x^*$ minimizes $L(x, \lambda^*, \nu^*)$ over $\mathbb{R}^n$.
+            If the functions are differentiable, the gradient must vanish at the minimizer:
+            $$ \nabla_x L(x^*, \lambda^*, \nu^*) = 0 $$
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion 2: Complementary Slackness.</strong>
+            The inequality $L(x^*, \lambda^*, \nu^*) \le f_0(x^*)$ is also an equality. This means:
+            $$ \sum_{i=1}^m \lambda_i^* f_i(x^*) = 0 $$
+            Since every term $\lambda_i^* f_i(x^*)$ is non-positive (product of $\ge 0$ and $\le 0$), the sum can only be zero if <b>every single term is zero</b>.
+            $$ \lambda_i^* f_i(x^*) = 0, \quad \forall i $$
+          </div>
         </div>
 
         <div class="example">

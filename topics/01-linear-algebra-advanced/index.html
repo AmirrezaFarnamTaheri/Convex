@@ -51,11 +51,11 @@
       <h2><i data-feather="target"></i> Learning Objectives</h2>
       <p>After this lecture, you will be able to:</p>
       <ul>
-        <li><b>Factorize Matrices:</b> Compute and interpret the QR decomposition and Singular Value Decomposition (SVD).</li>
-        <li><b>Solve Robust Least Squares:</b> Apply QR and SVD to solve least squares problems without forming $A^\top A$.</li>
-        <li><b>Handle Rank Deficiency:</b> Use the Moore-Penrose pseudoinverse to find minimum-norm solutions.</li>
-        <li><b>Analyze Stability:</b> Calculate condition numbers and estimate the sensitivity of linear systems to perturbations.</li>
-        <li><b>Approximate Matrices:</b> Apply the Eckart-Young-Mirsky theorem for optimal low-rank matrix approximations (PCA).</li>
+        <li><b>Factorize Matrices:</b> Compute and interpret the QR decomposition and Singular Value Decomposition (SVD) as fundamental tools for numerical linear algebra.</li>
+        <li><b>Solve Robust Least Squares:</b> Apply QR and SVD to solve least squares problems without forming the potentially ill-conditioned matrix $A^\top A$.</li>
+        <li><b>Handle Rank Deficiency:</b> Use the Moore-Penrose pseudoinverse to find minimum-norm solutions for rank-deficient or underdetermined systems.</li>
+        <li><b>Analyze Stability:</b> Calculate condition numbers and estimate the sensitivity of linear systems to perturbations in data.</li>
+        <li><b>Approximate Matrices:</b> Apply the Eckart-Young-Mirsky theorem for optimal low-rank matrix approximations (PCA) using truncated SVD.</li>
       </ul>
     </section>
 
@@ -254,10 +254,15 @@
           <div class="proof-step">
             <strong>Step 1: $x_{mn} = A^+ b$ is a solution.</strong>
             We check if $x_{mn} = V \Sigma^+ U^\top b$ satisfies $A^\top A x = A^\top b$.
-            $$ A^\top A x_{mn} = (V \Sigma U^\top)(U \Sigma V^\top) (V \Sigma^+ U^\top) b = V \Sigma (\Sigma \Sigma^+) U^\top b $$
-            The matrix $\Sigma \Sigma^+$ is diagonal with 1s for indices $1 \dots r$ and 0s otherwise.
-            Note that $\Sigma (\Sigma \Sigma^+) = \Sigma$. (Multiplying $\sigma$ by 1 keeps it $\sigma$; multiplying 0 by 0 keeps it 0).
-            $$ = V \Sigma U^\top b = A^\top b $$
+          $$ A^\top A x_{mn} = (V \Sigma U^\top)^\top (U \Sigma V^\top) (V \Sigma^+ U^\top) b = (V \Sigma U^\top) (U \Sigma V^\top) (V \Sigma^+ U^\top) b $$
+          Wait, $A^\top = V \Sigma^\top U^\top = V \Sigma U^\top$ (since $\Sigma$ is diagonal, $\Sigma^\top$ has same diagonal entries in rectangular form).
+          Let's be precise: $A = U \Sigma V^\top$, so $A^\top = V \Sigma^\top U^\top$.
+          $$ A^\top A x_{mn} = (V \Sigma^\top U^\top) (U \Sigma V^\top) (V \Sigma^+ U^\top) b = V (\Sigma^\top \Sigma) \Sigma^+ U^\top b $$
+          Here $\Sigma^\top \Sigma$ is $n \times n$ diagonal with entries $\sigma_i^2$.
+          Then $(\Sigma^\top \Sigma) \Sigma^+$ is $n \times m$ diagonal.
+          The entry $i$ is $\sigma_i^2 (1/\sigma_i) = \sigma_i$ for $i \le r$, and 0 otherwise.
+          This is exactly $\Sigma^\top$.
+          $$ = V \Sigma^\top U^\top b = A^\top b $$
             Thus, $x_{mn}$ is indeed a least squares solution.
           </div>
           <div class="proof-step">

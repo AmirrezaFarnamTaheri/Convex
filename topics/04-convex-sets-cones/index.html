@@ -124,14 +124,14 @@
 
         <h3>1.3 The Support Function</h3>
 
-        <p>The concept of supporting hyperplanes leads naturally to the <b>support function</b>, which provides an alternative, dual description of a convex set.</p>
+        <p>The concept of supporting hyperplanes leads naturally to the <b>support function</b>, which provides an alternative, dual description of a convex set. While a set is typically defined by its internal points ("what it contains"), the support function describes it by its external boundaries ("what contains it").</p>
 
         <div class="theorem-box">
           <h4>Definition (Support Function)</h4>
           <p>For a set $C \subseteq \mathbb{R}^n$, the support function $S_C: \mathbb{R}^n \to \mathbb{R} \cup \{+\infty\}$ is defined as:</p>
           $$ S_C(y) := \sup_{x \in C} y^\top x $$
-          <p><b>Geometric Meaning:</b> For a direction $y$, $S_C(y)$ tells you "how far" the set $C$ extends in that direction. The hyperplane $\{x \mid y^\top x = S_C(y)\}$ is a supporting hyperplane to $C$ with normal vector $y$.</p>
-          <p><b>Forward Connection:</b> The support function $S_C(y)$ is exactly the <b>convex conjugate</b> of the indicator function $I_C(x)$ (see <a href="../06-convex-functions-advanced/index.html">Lecture 06</a>).</p>
+          <p><b>Geometric Meaning:</b> For a direction $y$, $S_C(y)$ quantifies the maximum extent of the set $C$ in that direction. The hyperplane $H = \{x \mid y^\top x = S_C(y)\}$ is a <b>supporting hyperplane</b> to $C$ with normal vector $y$. The set $C$ lies entirely in the halfspace $\{x \mid y^\top x \le S_C(y)\}$.</p>
+          <p><b>Forward Connection:</b> The support function $S_C(y)$ is exactly the <b>convex conjugate</b> of the indicator function $I_C(x)$ (see <a href="../06-convex-functions-advanced/index.html">Lecture 06</a>). This duality allows us to manipulate sets algebraically.</p>
         </div>
 
         <div class="insight">
@@ -280,23 +280,35 @@
 
         <div class="proof-box">
           <h4>Proof: Self-Duality of the PSD Cone</h4>
-          <p>We want to show that $(\mathbb{S}^n_+)^* = \mathbb{S}^n_+$ under the inner product $\langle A, B \rangle = \mathrm{tr}(AB)$.</p>
+          <p>We want to show that $(\mathbb{S}^n_+)^* = \mathbb{S}^n_+$ under the trace inner product $\langle A, B \rangle = \mathrm{tr}(AB)$.</p>
+
           <div class="proof-step">
-            <strong>1. $\mathbb{S}^n_+ \subseteq (\mathbb{S}^n_+)^*$:</strong>
-            Let $A \in \mathbb{S}^n_+$. We must show that $\mathrm{tr}(AB) \ge 0$ for all $B \in \mathbb{S}^n_+$.
-            <br>Since $A, B \succeq 0$, we can write their spectral decompositions: $A = \sum \lambda_i u_i u_i^\top$ and $B = \sum \mu_j v_j v_j^\top$ with $\lambda_i, \mu_j \ge 0$.
-            $$ \mathrm{tr}(AB) = \mathrm{tr}\left( \left(\sum \lambda_i u_i u_i^\top\right) \left(\sum \mu_j v_j v_j^\top\right) \right) = \sum_{i,j} \lambda_i \mu_j \mathrm{tr}(u_i u_i^\top v_j v_j^\top) $$
-            Using the cyclic property $\mathrm{tr}(XYZ) = \mathrm{tr}(ZXY)$:
-            $$ \mathrm{tr}(u_i u_i^\top v_j v_j^\top) = \mathrm{tr}(v_j^\top u_i u_i^\top v_j) = (v_j^\top u_i)^2 \ge 0 $$
-            Since $\lambda_i, \mu_j \ge 0$, the total sum is non-negative. Thus $A \in (\mathbb{S}^n_+)^*$.
+            <strong>Part 1: $\mathbb{S}^n_+ \subseteq (\mathbb{S}^n_+)^*$ (Primal implies Dual)</strong>
+            <p>Assume $A \in \mathbb{S}^n_+$. We must show that for any $B \in \mathbb{S}^n_+$, $\mathrm{tr}(AB) \ge 0$.</p>
+            <ul>
+              <li>Since $A$ is PSD, it has a "square root" decomposition $A = L L^\top$ (e.g., Cholesky or spectral).</li>
+              <li>Then $\mathrm{tr}(AB) = \mathrm{tr}(L L^\top B) = \mathrm{tr}(L^\top B L)$ by the cyclic property.</li>
+              <li>Let $M = L^\top B L$. Notice that for any vector $x$, $x^\top M x = x^\top L^\top B L x = (Lx)^\top B (Lx)$.</li>
+              <li>Since $B \succeq 0$, $(Lx)^\top B (Lx) \ge 0$ for any vector $Lx$. Thus $M$ is PSD.</li>
+              <li>The trace of a PSD matrix is the sum of its eigenvalues (which are non-negative), so $\mathrm{tr}(M) \ge 0$.</li>
+            </ul>
+            <p>Thus $\mathrm{tr}(AB) \ge 0$, so $A \in (\mathbb{S}^n_+)^*$.</p>
           </div>
+
           <div class="proof-step">
-            <strong>2. $(\mathbb{S}^n_+)^* \subseteq \mathbb{S}^n_+$:</strong>
-            Let $Y \in (\mathbb{S}^n_+)^*$. By definition, $\mathrm{tr}(XY) \ge 0$ for all $X \in \mathbb{S}^n_+$.
-            <br>For any vector $v \in \mathbb{R}^n$, let $X = vv^\top$. Note that $X$ is PSD (rank-1).
-            <br>The condition becomes:
-            $$ \mathrm{tr}((vv^\top)Y) = \mathrm{tr}(v^\top Y v) = v^\top Y v \ge 0 $$
-            Since $v^\top Y v \ge 0$ for all $v$, $Y$ is positive semidefinite by definition. Thus $Y \in \mathbb{S}^n_+$.
+            <strong>Part 2: $(\mathbb{S}^n_+)^* \subseteq \mathbb{S}^n_+$ (Dual implies Primal)</strong>
+            <p>Assume $Y \in (\mathbb{S}^n_+)^*$. By definition, this means $\mathrm{tr}(XY) \ge 0$ for <i>all</i> test matrices $X \in \mathbb{S}^n_+$.</p>
+            <ul>
+              <li>We choose a specific family of test matrices. For any arbitrary vector $v \in \mathbb{R}^n$, let $X = vv^\top$.</li>
+              <li>Check if $X$ is PSD: $z^\top X z = z^\top v v^\top z = (v^\top z)^2 \ge 0$. Yes, it is.</li>
+              <li>Apply the dual condition: $\mathrm{tr}(XY) = \mathrm{tr}(vv^\top Y) = \mathrm{tr}(v^\top Y v) = v^\top Y v$.</li>
+              <li>The condition $\mathrm{tr}(XY) \ge 0$ implies $v^\top Y v \ge 0$.</li>
+            </ul>
+            <p>Since $v^\top Y v \ge 0$ holds for <i>all</i> vectors $v$, $Y$ satisfies the definition of a PSD matrix. Thus $Y \in \mathbb{S}^n_+$.</p>
+          </div>
+
+          <div class="proof-step">
+            <strong>Conclusion:</strong> Since both inclusions hold, $(\mathbb{S}^n_+)^* = \mathbb{S}^n_+$.
           </div>
         </div>
 

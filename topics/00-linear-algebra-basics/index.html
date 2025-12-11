@@ -40,9 +40,9 @@
         <span>Tags: prerequisites, review, linear-algebra, foundational</a>
       </div>
       <div class="lecture-summary">
-        <p>This lecture establishes the linear algebra foundations required for convex optimization. We begin with vectors and matrices, then progress to inner products, norms, orthogonality, projections, and least squares, building the mathematical background necessary for optimization theory.</p>
-        <p><strong>Prerequisites:</strong> None.</p>
-        <p><strong>Forward Connections:</strong> Projection techniques introduced here underpin least squares methods. Positive Semidefinite (PSD) matrices form the basis for convex quadratic programs and semidefinite programming. The four fundamental subspaces provide the geometric understanding of feasible sets. Advanced topics (QR, SVD, pseudoinverse) are covered in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</p>
+        <p>This lecture establishes the linear algebra foundations required for convex optimization. We begin with vectors and matrices, then progress to inner products, norms, orthogonality, projections, and least squares, building the mathematical background necessary for optimization theory. This material provides the rigorous language needed to describe convex sets, functions, and optimization problems.</p>
+        <p><strong>Prerequisites:</strong> Basic calculus and familiarity with matrix notation.</p>
+        <p><strong>Forward Connections:</strong> Projection techniques introduced here are essential for least squares methods and constrained optimization. Positive Semidefinite (PSD) matrices are the cornerstone of convex quadratic programs and semidefinite programming (<a href="../08-convex-problems-conic/index.html">Lecture 08</a>). The four fundamental subspaces provide the geometric understanding of feasible sets and duality. Advanced topics (QR, SVD, pseudoinverse) are covered in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</p>
       </div>
     </header>
 
@@ -50,12 +50,12 @@
       <h2><i data-feather="target"></i> Learning Objectives</h2>
       <p>After this lecture, you will be able to:</p>
       <ul>
-        <li><b>Analyze Fundamental Subspaces:</b> Identify and compute the dimensions of the four fundamental subspaces of a matrix using the Rank-Nullity Theorem.</li>
+        <li><b>Analyze Fundamental Subspaces:</b> Identify and compute the dimensions of the four fundamental subspaces of a matrix ($\mathcal{R}(A), \mathcal{N}(A), \mathcal{R}(A^\top), \mathcal{N}(A^\top)$) using the Rank-Nullity Theorem.</li>
         <li><b>Manipulate Norms and Inner Products:</b> Apply standard and generalized inner products, vector norms ($\ell_1, \ell_2, \ell_\infty$), and their duals to establish inequalities like Cauchy-Schwarz and Hölder.</li>
-        <li><b>Perform Geometric Operations:</b> Construct orthonormal bases via Gram-Schmidt and compute projections onto subspaces and affine sets.</li>
-        <li><b>Characterize PSD Matrices:</b> Determine positive semidefiniteness using eigenvalues, variational forms ($x^\top Ax \ge 0$), and the Schur Complement.</li>
-        <li><b>Solve Least Squares:</b> Derive and solve the normal equations for overdetermined systems and interpret the solution as an orthogonal projection.</li>
-        <li><b>Apply Matrix Calculus:</b> Compute gradients and Hessians for linear, quadratic, and log-determinant functions.</li>
+        <li><b>Perform Geometric Operations:</b> Construct orthonormal bases via Gram-Schmidt and compute orthogonal projections onto subspaces and affine sets.</li>
+        <li><b>Characterize PSD Matrices:</b> Determine positive semidefiniteness using eigenvalues, variational forms ($x^\top Ax \ge 0$), and the Schur Complement lemma.</li>
+        <li><b>Solve Least Squares:</b> Derive and solve the normal equations for overdetermined systems and interpret the solution geometrically as an orthogonal projection.</li>
+        <li><b>Apply Matrix Calculus:</b> Compute gradients and Hessians for linear, quadratic, and log-determinant functions, which are essential for first- and second-order optimization algorithms.</li>
       </ul>
     </section>
 
@@ -915,15 +915,15 @@
         $$ S := A - B D^{-1} C $$
 
         <h4>2. Constructing the Elimination Matrix</h4>
-        <p>To analyze $M$, we perform block Gaussian elimination. Define the elimination matrix $R$ (often denoted as $E$ in elimination contexts):</p>
-        $$ R = \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} $$
-        <p>This matrix is block lower-triangular with unit diagonal blocks, so $\det(R) = 1$. Multiplying $M$ by $R$ on the right yields the factorization:</p>
-        $$ MR = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} = \begin{bmatrix} A - BD^{-1}C & B \\ 0 & D \end{bmatrix} = \begin{bmatrix} S & B \\ 0 & D \end{bmatrix} $$
+        <p>To analyze $M$, we perform block Gaussian elimination. Define the elimination matrix $E$:</p>
+        $$ E = \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} $$
+        <p>This matrix is block lower-triangular with unit diagonal blocks, so $\det(E) = 1$. Multiplying $M$ by $E$ on the right yields the factorization:</p>
+        $$ ME = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} = \begin{bmatrix} A - BD^{-1}C & B \\ 0 & D \end{bmatrix} = \begin{bmatrix} S & B \\ 0 & D \end{bmatrix} $$
 
         <div class="proof-box">
           <h4>Line-by-Line Verification of Block Multiplication</h4>
-          <p>Let's verify this multiplication explicitly using the block multiplication rule $\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} E & F \\ G & H \end{bmatrix} = \begin{bmatrix} AE+BG & AF+BH \\ CE+DG & CF+DH \end{bmatrix}$.</p>
-          <p>Here $E=I_p, F=0, G=-D^{-1}C, H=I_q$.</p>
+          <p>Let's verify this multiplication explicitly using the block multiplication rule $\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} X & Y \\ Z & W \end{bmatrix} = \begin{bmatrix} AX+BZ & AY+BW \\ CX+DZ & CY+DW \end{bmatrix}$.</p>
+          <p>Here $X=I_p, Y=0, Z=-D^{-1}C, W=I_q$.</p>
           <ul>
             <li><b>Top-left:</b> $A(I_p) + B(-D^{-1}C) = A - BD^{-1}C = S$.</li>
             <li><b>Top-right:</b> $A(0) + B(I_q) = B$.</li>
@@ -935,7 +935,7 @@
         <div class="insight">
           <h4>💡 Choice of Elimination Matrix</h4>
           <p>The goal is to eliminate the bottom-left block $C$, analogous to Gaussian elimination. We require the $(2,1)$ block of the product to be zero:
-          $$ C \cdot I_p + D \cdot X = 0 \implies D X = -C \implies X = -D^{-1}C $$
+          $$ C \cdot I_p + D \cdot Z = 0 \implies D Z = -C \implies Z = -D^{-1}C $$
           This determines the entry $-D^{-1}C$ in the elimination matrix $E$.</p>
         </div>
 

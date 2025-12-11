@@ -150,11 +150,11 @@
       </p>
 
       <h4>Geometry of the Objective: Sliding Hyperplanes</h4>
-      <p>Minimizing $c^\top x$ corresponds to moving the hyperplane $c^\top x = \alpha$ in the direction of $-c$ (the direction of steepest descent).
-      Imagine "pushing the objective down" by sliding this supporting hyperplane until it just touches the feasible polyhedron.
+        <p>Minimizing $c^\top x$ corresponds to moving the hyperplane $H_\alpha = \{x \mid c^\top x = \alpha\}$ in the direction of $-c$ (the direction of steepest descent).
+        Imagine "pushing the objective down" by sliding this supporting hyperplane until it just touches the feasible polyhedron. The point where it makes contact is the optimal solution.
       <ul>
-          <li>If the polyhedron has a vertex (corner), the optimal solution $x^*$ will occur at an <strong>extreme point</strong> (vertex).</li>
-          <li>In 2D, this looks like a line sliding across a polygon until it hits the last remaining corner.</li>
+            <li><strong>Why Vertices?</strong> If the optimum is unique, it must be at a vertex (extreme point). If it is not unique (e.g., the hyperplane is parallel to a face), then an entire face is optimal, but at least one vertex on that face is also optimal.</li>
+            <li><strong>The Fundamental Theorem of LP:</strong> If an LP has an optimal solution, it has an optimal solution at a vertex of the feasible set. This geometric fact underpins the Simplex method.</li>
       </ul>
       </p>
 
