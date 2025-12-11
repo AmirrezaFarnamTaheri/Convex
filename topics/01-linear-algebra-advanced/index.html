@@ -41,9 +41,9 @@
         <span>Tags: prerequisites, linear-algebra, svd, qr, conditioning</span>
       </div>
       <div class="lecture-summary">
-        <p>This lecture covers advanced linear algebra topics essential for robust numerical optimization. We explore matrix factorizations (QR, SVD) that provide stable alternatives to the normal equations, define the pseudoinverse for rank-deficient problems, and analyze the impact of condition numbers on algorithmic stability.</p>
+        <p>This lecture bridges the gap between basic linear algebra and the robust numerical tools used in modern optimization. We move beyond the Normal Equations to explore numerically stable factorizations like QR and the Singular Value Decomposition (SVD), which reveal the geometry of linear maps in their purest form. We also introduce the Moore-Penrose pseudoinverse for solving ill-posed or rank-deficient problems and define the condition number—the fundamental metric for analyzing the stability of algorithms and the convergence speed of gradient descent.</p>
         <p><strong>Prerequisites:</strong> <a href="../00-linear-algebra-basics/index.html">Lecture 00: Linear Algebra Basics</a> (Subspaces, Norms, Least Squares).</p>
-        <p><strong>Forward Connections:</strong> The SVD is central to the analysis of the Nuclear Norm in <a href="../08-convex-problems-conic/index.html">Lecture 08</a>. Condition numbers determine the convergence rates of First-Order Methods in <a href="../13-unconstrained-minimization/index.html">Lecture 13</a>.</p>
+        <p><strong>Forward Connections:</strong> The SVD is central to the analysis of the Nuclear Norm and matrix completion in <a href="../08-convex-problems-conic/index.html">Lecture 08</a>. The condition number is the key parameter determining the convergence rates of First-Order Methods in <a href="../13-unconstrained-minimization/index.html">Lecture 13</a> and motivates the use of Newton's Method.</p>
       </div>
     </header>
 
@@ -77,27 +77,32 @@
 
       <div class="proof-box">
         <h4>Construction via Gram-Schmidt</h4>
-        <p>The existence of the QR decomposition follows directly from the Gram-Schmidt orthogonalization process applied to the columns $a_1, \dots, a_n$ of $A$.</p>
+        <p>The QR decomposition is the matrix-algebraic equivalent of the Gram-Schmidt orthogonalization process. It takes a set of linearly independent vectors (columns of $A$) and produces an orthonormal set (columns of $Q$) that spans the same sequence of subspaces.</p>
 
         <div class="proof-step">
           <strong>Step 1: Initialization.</strong>
-          Let $u_1 = a_1$. If $u_1 = 0$, we can pick any unit vector or skip; assuming linear independence, $u_1 \neq 0$. Normalize to get the first vector: $q_1 = u_1 / \|u_1\|_2$.
-          <br>Set $r_{11} = \|u_1\|_2$. Then $a_1 = r_{11} q_1$.
+          Consider the first column $a_1$. We define the first direction $q_1$ by normalizing $a_1$:
+          $$ r_{11} = \|a_1\|_2, \quad q_1 = \frac{a_1}{r_{11}} $$
+          Thus, $a_1 = r_{11} q_1$.
         </div>
 
         <div class="proof-step">
           <strong>Step 2: Iteration ($k=2, \dots, n$).</strong>
-          We project the current vector $a_k$ onto the subspace spanned by the previous orthonormal vectors $q_1, \dots, q_{k-1}$ and subtract this projection. This process, "Gram-Schmidt orthogonalization", ensures that the remaining vector $v_k$ is orthogonal to all previous $q_j$:
-          $$ v_k = a_k - \sum_{j=1}^{k-1} \underbrace{\langle q_j, a_k \rangle}_{r_{jk}} q_j $$
-          Here, $\langle q_j, a_k \rangle$ is the projection coefficient of $a_k$ onto $q_j$. Let $r_{jk} = \langle q_j, a_k \rangle$. These are the coefficients in the upper triangle of $R$.
-          <br>Normalize the residual to get the next basis vector: $r_{kk} = \|v_k\|_2$ and $q_k = v_k / r_{kk}$. (Note: $r_{kk} \neq 0$ due to linear independence).
+          For the $k$-th column $a_k$, we want to extract the component orthogonal to the span of $\{q_1, \dots, q_{k-1}\}$.
+          First, calculate the projection coefficients of $a_k$ onto the existing orthonormal basis vectors:
+          $$ r_{jk} = \langle q_j, a_k \rangle \quad \text{for } j=1, \dots, k-1 $$
+          Subtract these components from $a_k$ to obtain the orthogonal residual $v_k$:
+          $$ v_k = a_k - \sum_{j=1}^{k-1} r_{jk} q_j $$
+          Finally, normalize this residual to obtain the new basis vector $q_k$:
+          $$ r_{kk} = \|v_k\|_2, \quad q_k = \frac{v_k}{r_{kk}} $$
+          (Note: $r_{kk} > 0$ because $a_k$ is linearly independent of previous columns, so $v_k \neq 0$).
         </div>
 
         <div class="proof-step">
           <strong>Step 3: Matrix Form.</strong>
-          Rearranging the definition of $v_k$, we express each column $a_k$ as a linear combination of $q_1, \dots, q_k$:
-          $$ a_k = r_{1k} q_1 + r_{2k} q_2 + \dots + r_{kk} q_k $$
-          In matrix notation, this is exactly $A = QR$, where $R$ is upper triangular because $a_k$ depends only on the first $k$ columns of $Q$.
+          Rewrite the equation for $a_k$:
+          $$ a_k = \sum_{j=1}^{k-1} r_{jk} q_j + r_{kk} q_k $$
+          This expresses the $k$-th column of $A$ as a linear combination of the first $k$ columns of $Q$. In matrix notation, $A = QR$, where $R$ is upper triangular because $a_k$ does not depend on future basis vectors $q_{k+1}, \dots, q_n$.
         </div>
       </div>
 
@@ -155,54 +160,40 @@
 
       <div class="proof-box">
         <h4>Constructive Proof via Spectral Theorem</h4>
-        <p>We construct the SVD using the eigendecomposition of the symmetric PSD matrix $A^\top A$.</p>
+        <p>The existence of the SVD is a direct consequence of the Spectral Theorem applied to the symmetric matrix $A^\top A$.</p>
 
         <div class="proof-step">
-          <strong>Step 1: Spectral Decomposition of $A^\top A$.</strong>
-          The matrix $A^\top A \in \mathbb{R}^{n \times n}$ is symmetric and positive semidefinite.
-          Therefore, it has real, non-negative eigenvalues $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_n \ge 0$.
-          Let $\{v_1, \dots, v_n\}$ be an orthonormal set of eigenvectors corresponding to these eigenvalues.
-          Define the <b>singular values</b> as $\sigma_i = \sqrt{\lambda_i}$.
-          Let $r$ be the rank of $A$. Then $\sigma_1 \ge \dots \ge \sigma_r > 0$, and $\sigma_{r+1} = \dots = \sigma_n = 0$.
+          <strong>Step 1: Analyze $A^\top A$.</strong>
+          Consider the Gram matrix $G = A^\top A$. This matrix is symmetric and Positive Semidefinite ($x^\top A^\top A x = \|Ax\|_2^2 \ge 0$).
+          By the Spectral Theorem, there exists an orthogonal matrix $V$ and a diagonal matrix $\Lambda$ such that $A^\top A = V \Lambda V^\top$.
+          The diagonal entries $\lambda_i$ are non-negative. We order them $\lambda_1 \ge \dots \ge \lambda_r > 0 = \dots = 0$.
+          Define the <b>singular values</b> $\sigma_i = \sqrt{\lambda_i}$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Defining the Left Singular Vectors.</strong>
-          For $i = 1, \dots, r$, define the vectors $u_i \in \mathbb{R}^m$ as:
+          <strong>Step 2: Define Left Singular Vectors ($u_i$).</strong>
+          For indices $i=1, \dots, r$ (corresponding to non-zero $\sigma_i$), define:
           $$ u_i = \frac{1}{\sigma_i} A v_i $$
-          We claim that these $\{u_1, \dots, u_r\}$ form an orthonormal set.
-          <br><b>Proof:</b> Compute the inner product $\langle u_i, u_j \rangle$:
-          $$ u_i^\top u_j = \left( \frac{1}{\sigma_i} A v_i \right)^\top \left( \frac{1}{\sigma_j} A v_j \right) = \frac{1}{\sigma_i \sigma_j} v_i^\top (A^\top A v_j) $$
-          Since $v_j$ is an eigenvector of $A^\top A$ with eigenvalue $\sigma_j^2$:
-          $$ = \frac{1}{\sigma_i \sigma_j} v_i^\top (\sigma_j^2 v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} (v_i^\top v_j) $$
-          Since $\{v_i\}$ are orthonormal, $v_i^\top v_j = \delta_{ij}$. Thus $u_i^\top u_j = \delta_{ij}$.
+          We verify these vectors are orthonormal:
+          $$ \langle u_i, u_j \rangle = \frac{1}{\sigma_i \sigma_j} (A v_i)^\top (A v_j) = \frac{1}{\sigma_i \sigma_j} v_i^\top (A^\top A v_j) $$
+          $$ = \frac{1}{\sigma_i \sigma_j} v_i^\top (\sigma_j^2 v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} \delta_{ij} = \delta_{ij} $$
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Completing the Bases.</strong>
-          <ul>
-            <li>Let $V = [v_1 \dots v_n] \in \mathbb{R}^{n \times n}$. This matrix is orthogonal by construction.</li>
-            <li>We have orthonormal vectors $\{u_1, \dots, u_r\}$. If $r < m$, we can extend this set to a full orthonormal basis $\{u_1, \dots, u_m\}$ for $\mathbb{R}^m$ (using Gram-Schmidt). Let $U = [u_1 \dots u_m] \in \mathbb{R}^{m \times m}$.</li>
-            <li>Let $\Sigma \in \mathbb{R}^{m \times n}$ be a diagonal matrix with entries $\Sigma_{ii} = \sigma_i$ for $i \le r$ and 0 otherwise.</li>
-          </ul>
+          <strong>Step 3: Complete the Basis.</strong>
+          We have $r$ orthonormal vectors $\{u_1, \dots, u_r\}$ in $\mathbb{R}^m$. If $r < m$, we use Gram-Schmidt to extend this set to a full orthonormal basis $\{u_1, \dots, u_m\}$ for $\mathbb{R}^m$.
+          Form the matrix $U = [u_1 \dots u_m]$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 4: Verification.</strong>
-          We check that $AV = U\Sigma$. Equality of matrices is equivalent to equality of columns.
+          <strong>Step 4: Verify the Decomposition.</strong>
+          We check the equality $AV = U\Sigma$ column by column:
           <ul>
-            <li><b>For $i \le r$:</b>
-              <br>LHS: $(AV)_i = A v_i$.
-              <br>RHS: $(U\Sigma)_i = U (\Sigma e_i) = U (\sigma_i e_i) = \sigma_i (U e_i) = \sigma_i u_i$.
-              <br>By definition $u_i = \frac{1}{\sigma_i} A v_i$, which implies $A v_i = \sigma_i u_i$. Thus, the columns match.
-            </li>
-            <li><b>For $i > r$:</b>
-              <br>LHS: $A v_i$. Since $v_i$ is an eigenvector of $A^\top A$ with eigenvalue 0, $A^\top A v_i = 0 \implies v_i^\top A^\top A v_i = 0 \implies \|Av_i\|^2 = 0 \implies A v_i = 0$.
-              <br>RHS: $(U\Sigma)_i = U (\Sigma e_i) = U(0) = 0$.
-              <br>They match.
-            </li>
+            <li><b>For $i \le r$:</b> $(AV)_i = Av_i$. Also $(U\Sigma)_i = \sigma_i u_i$. Since we defined $u_i = \frac{1}{\sigma_i}Av_i$, these match.</li>
+            <li><b>For $i > r$:</b> $(AV)_i = Av_i$. Since $\sigma_i=0$, $v_i \in \mathcal{N}(A^\top A) = \mathcal{N}(A)$, so $Av_i = 0$.
+              On the RHS, $(U\Sigma)_i = U(0) = 0$. These match.</li>
           </ul>
-          Since $AV = U\Sigma$ and $V$ is orthogonal ($V^{-1} = V^\top$), we have $A = U \Sigma V^\top$.
+          Since $AV = U\Sigma$ and $V$ is orthogonal, multiplying by $V^\top$ gives $\boxed{A = U \Sigma V^\top}$.
         </div>
       </div>
 
@@ -299,34 +290,30 @@
         <br>
         <div class="proof-box">
           <h4>Proof: $x_{LS} = A^+b$ minimizes norm</h4>
-          <p>The general solution to the least squares problem $\min \|Ax-b\|_2$ is the set of all $x$ satisfying the normal equations $A^\top A x = A^\top b$. This solution set is affine: $S_{LS} = \{x_p + z \mid z \in \mathcal{N}(A)\}$, where $x_p$ is any particular solution.</p>
+        <p>The set of all least-squares solutions is given by $S_{LS} = \{x \mid A^\top A x = A^\top b\}$. Since this is an affine set $x_p + \mathcal{N}(A)$, there is a unique element with minimum Euclidean norm.</p>
+
           <div class="proof-step">
-            <strong>Step 1: $x_{mn} = A^+ b$ is a solution.</strong>
-            We check if $x_{mn} = V \Sigma^+ U^\top b$ satisfies the normal equations $A^\top A x = A^\top b$.
-            First, recall that $A = U \Sigma V^\top$, so $A^\top = V \Sigma^\top U^\top$.
-            Substituting into the expression for $A^\top A x_{mn}$:
-            $$ A^\top A x_{mn} = (V \Sigma^\top U^\top) (U \Sigma V^\top) (V \Sigma^+ U^\top) b $$
-            Using $U^\top U = I$ and $V^\top V = I$:
-            $$ = V \Sigma^\top (\Sigma \Sigma^+) U^\top b $$
-            The matrix product $\Sigma^\top \Sigma \Sigma^+$ is an $n \times m$ matrix. For indices $i \le r$, the diagonal entries are $\sigma_i \cdot (\sigma_i \cdot 1/\sigma_i) = \sigma_i$. For $i > r$, they are 0.
-            This matrix is exactly $\Sigma^\top$.
+          <strong>Step 1: Verification of Solution.</strong>
+          We verify that $x^+ = A^+ b$ satisfies the Normal Equations.
+          $$ A^\top A x^+ = (V \Sigma^\top U^\top) (U \Sigma V^\top) (V \Sigma^+ U^\top) b = V \Sigma^\top \Sigma \Sigma^+ U^\top b $$
+          Note that $\Sigma^\top \Sigma \Sigma^+$ is a diagonal matrix where the $i$-th entry is $\sigma_i \cdot \sigma_i \cdot (1/\sigma_i) = \sigma_i$ (for $i \le r$). This is exactly $\Sigma^\top$.
             $$ = V \Sigma^\top U^\top b = A^\top b $$
-            Thus, $x_{mn}$ satisfies the normal equations and is a least squares solution.
+          Thus, $x^+$ is a valid least-squares solution.
           </div>
+
           <div class="proof-step">
-            <strong>Step 2: Orthogonality.</strong>
-            $x_{mn}$ lies in the span of the first $r$ columns of $V$ (since $\Sigma^+$ has zeros for rows $r+1 \dots n$).
-            The columns $v_1, \dots, v_r$ span the row space $\mathcal{R}(A^\top)$.
-            The nullspace $\mathcal{N}(A)$ is spanned by $v_{r+1}, \dots, v_n$.
-            Therefore, $x_{mn} \in \mathcal{R}(A^\top)$ and is orthogonal to any $z \in \mathcal{N}(A)$.
+          <strong>Step 2: Orthogonality of $x^+$.</strong>
+          The vector $x^+ = V \Sigma^+ U^\top b$ is a linear combination of the columns of $V$ corresponding to non-zero singular values (indices $1 \dots r$). These columns span the row space $\mathcal{R}(A^\top)$.
+          Thus, $x^+ \in \mathcal{R}(A^\top)$.
+          We know that $\mathcal{R}(A^\top) \perp \mathcal{N}(A)$.
           </div>
+
           <div class="proof-step">
-            <strong>Step 3: Minimality.</strong>
-            Any other solution is of the form $x = x_{mn} + z$ with $z \in \mathcal{N}(A)$.
-            $$ \|x\|^2 = \|x_{mn} + z\|^2 = \|x_{mn}\|^2 + \|z\|^2 + 2x_{mn}^\top z $$
-            Since $x_{mn} \perp z$, the cross term vanishes:
-            $$ \|x\|^2 = \|x_{mn}\|^2 + \|z\|^2 $$
-            This is minimized when $z=0$, so $x_{mn}$ is the unique minimum norm solution.
+          <strong>Step 3: Pythagorean Minimization.</strong>
+          Any other solution can be written as $x = x^+ + z$, where $z \in \mathcal{N}(A)$ (the homogeneous solution).
+          Since $x^+ \perp z$, we have:
+          $$ \|x\|_2^2 = \|x^+ + z\|_2^2 = \|x^+\|_2^2 + \|z\|_2^2 $$
+          To minimize this norm, we must choose $z=0$. Therefore, $x^+ = A^+b$ is the unique minimum-norm solution.
           </div>
         </div>
         </li>
@@ -425,9 +412,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Duality of Norms:</b> $\|y\|_* = \sup \{ y^\top x \mid \|x\| \le 1 \}$.
-        <br><b>Hölder's Inequality:</b> $|x^\top y| \le \|x\|_p \|y\|_q$ for conjugate exponents $1/p+1/q=1$.
-        <br><b>Alignment:</b> Equality holds when $x$ and $y$ are aligned (component-wise powers).</p>
+        <p><b>Dual Norm:</b> Defined by $\|y\|_* = \sup \{ y^\top x \mid \|x\| \le 1 \}$.
+        <br><b>$\ell_p$ Dual:</b> The dual of the $\ell_p$ norm ($1 < p < \infty$) is the $\ell_q$ norm, where $1/p + 1/q = 1$.
+        <br><b>Hölder's Inequality:</b> $|x^\top y| \le \|x\|_p \|y\|_q$. This is the generalized Cauchy-Schwarz inequality.
+        <br><b>Alignment Condition:</b> Equality holds if $|x_i|^p$ is proportional to $|y_i|^q$ (and signs match). This is crucial for constructing worst-case examples in robustness analysis.</p>
       </div>
 
       <h3>P1.2 — Frobenius Cauchy–Schwarz</h3>
@@ -444,9 +432,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Vectorization:</b> $\mathrm{vec}(A)$ stacks columns. $\langle A, B \rangle = \mathrm{vec}(A)^\top \mathrm{vec}(B)$.
-        <br><b>Trace Inner Product:</b> $\langle A, B \rangle = \mathrm{tr}(A^\top B)$.
-        <br><b>Cauchy-Schwarz:</b> $|\mathrm{tr}(A^\top B)| \le \|A\|_F \|B\|_F$.</p>
+        <p><b>The $\mathrm{vec}$ Operator:</b> Stacks columns of a matrix into a single vector in $\mathbb{R}^{mn}$.
+        <br><b>Isometry:</b> The mapping $A \mapsto \mathrm{vec}(A)$ is an isometry between $(\mathbb{R}^{m \times n}, \|\cdot\|_F)$ and $(\mathbb{R}^{mn}, \|\cdot\|_2)$.
+        <br><b>Inner Product Consistency:</b> $\langle A, B \rangle = \mathrm{tr}(A^\top B) = \mathrm{vec}(A)^\top \mathrm{vec}(B)$.
+        <br><b>Result:</b> Cauchy-Schwarz for vectors immediately implies $|\mathrm{tr}(A^\top B)| \le \|A\|_F \|B\|_F$.</p>
       </div>
 
       <h3>P1.3 — SVD Computation</h3>
@@ -477,11 +466,15 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>SVD Algorithm:</b>
-        <br>1. Eigenvalues of $A^\top A$ give $\sigma_i^2$.
-        <br>2. Eigenvectors of $A^\top A$ give $V$ (Right singular vectors).
-        <br>3. Compute $u_i = \frac{1}{\sigma_i} A v_i$ (Left singular vectors).
-        <br>4. Form $A = \sum \sigma_i u_i v_i^\top$.</p>
+        <p><b>Hand-Calculation Strategy for SVD:</b>
+        <ol>
+            <li>Compute the Gram matrix $G = A^\top A$.</li>
+            <li>Find eigenvalues $\lambda_i$ of $G$. Singular values are $\sigma_i = \sqrt{\lambda_i}$.</li>
+            <li>Find normalized eigenvectors $v_i$ of $G$ to form $V$.</li>
+            <li>Compute $u_i = \frac{1}{\sigma_i} A v_i$ for non-zero $\sigma_i$.</li>
+            <li>If $m > r$, complete $U$ using Gram-Schmidt or inspection (orthogonality).</li>
+        </ol>
+        <br><b>Check:</b> Verify $AV = U\Sigma$.</p>
       </div>
 
       <h3>P1.6 — Normal Equations vs. QR</h3>
@@ -506,10 +499,18 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Least Squares Solvers:</b>
-        <br>1. <b>Normal Equations:</b> $A^\top A x = A^\top b$. Fast but unstable ($\kappa^2$).
-        <br>2. <b>QR Factorization:</b> $A=QR \implies Rx = Q^\top b$. Stable ($\kappa$).
-        <br><b>Geometry:</b> QR constructs an orthonormal basis for $\mathcal{R}(A)$.</p>
+        <p><b>Comparing Least Squares Algorithms:</b>
+        <ul>
+            <li><b>Normal Equations:</b>
+                <ul><li>Cost: $O(n^2 m)$ (forming $A^\top A$) + $O(n^3)$ (Cholesky).</li>
+                <li>Stability: Unstable. Dependence on $\kappa(A)^2$.</li></ul>
+            </li>
+            <li><b>QR Factorization:</b>
+                <ul><li>Cost: $2 \times$ Normal Equations (roughly).</li>
+                <li>Stability: Stable. Dependence on $\kappa(A)$. Standard choice.</li></ul>
+            </li>
+            <li><b>SVD:</b> Most expensive, but most robust (handles rank deficiency gracefully).</li>
+        </ul></p>
       </div>
 
       <h3>P1.7 — Pseudoinverse Projectors</h3>
@@ -526,11 +527,12 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Pseudoinverse Properties:</b>
-        <br>1. $A^+ = V \Sigma^+ U^\top$.
-        <br>2. $AA^+$ is the projector onto $\mathcal{R}(A)$.
-        <br>3. $A^+A$ is the projector onto $\mathcal{R}(A^\top) = \mathcal{N}(A)^\perp$.
-        <br>4. $x = A^+b$ is the minimum-norm least-squares solution.</p>
+        <p><b>Fundamental Projectors via SVD:</b>
+        <ul>
+            <li><b>Column Space Projector:</b> $P_{\mathcal{R}(A)} = A A^+ = U_r U_r^\top$.</li>
+            <li><b>Row Space Projector:</b> $P_{\mathcal{R}(A^\top)} = A^+ A = V_r V_r^\top$.</li>
+        </ul>
+        <br><b>Intuition:</b> $A^+$ inverts the action on the range and kills the orthogonal complement. $AA^+$ maps range $\to$ range (identity) and orthogonal complement $\to$ 0.</p>
       </div>
 
       <h3>P1.8 — Projector Formula</h3>
@@ -548,9 +550,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Projection Matrix:</b> If $A$ has full column rank, $P_{\mathcal{R}(A)} = A(A^\top A)^{-1}A^\top$.
-        <br><b>Derivation:</b> Set gradient of $\|Ax-b\|^2$ to zero.
-        <br><b>Properties:</b> Symmetric ($P^\top = P$) and Idempotent ($P^2 = P$).</p>
+        <p><b>The "Hat" Matrix:</b> $P = A(A^\top A)^{-1} A^\top$.
+        <br><b>Requirements:</b> Valid only when $A$ has full column rank (so $A^\top A$ is invertible).
+        <br><b>General Case:</b> If $A$ is rank-deficient, use the pseudoinverse form $P = AA^+$.
+        <br><b>Properties:</b> $P^2=P$ and $P^\top=P$. The residual is $(I-P)b$, which projects onto $\mathcal{N}(A^\top)$.</p>
       </div>
 
       <h3>P1.9 — Hyperplane Projection</h3>
@@ -567,9 +570,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Hyperplane Projection:</b> Projecting $y$ onto $a^\top x = b$.
-        <br><b>Formula:</b> $p = y - \frac{a^\top y - b}{\|a\|^2}a$.
-        <br><b>Residual:</b> Parallel to normal $a$. Length is distance to plane.</p>
+        <p><b>Constraint Projection:</b> The projection of $y$ onto the affine set $\{x \mid a^\top x = b\}$ is:
+        $$ \Pi(y) = y - \frac{a^\top y - b}{\|a\|^2} a $$
+        <b>Optimization View:</b> This is the solution to $\min_x \frac{1}{2}\|x-y\|^2$ s.t. $a^\top x = b$.
+        <br><b>Lagrange Multiplier:</b> The term $\frac{a^\top y - b}{\|a\|^2}$ corresponds to the Lagrange multiplier $\nu$ associated with the constraint.</p>
       </div>
 
       <h3>P1.10 — Condition Number Calculation</h3>
@@ -583,9 +587,13 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Condition Number:</b> $\kappa(A) = \sigma_{\max}(A) / \sigma_{\min}(A) = \|A\|_2 \|A^{-1}\|_2$.
-        <br><b>Significance:</b> Measures sensitivity of linear systems to error.
-        <br><b>Ill-conditioned:</b> $\kappa(A) \gg 1$. Near singular.</p>
+        <p><b>Condition Number $\kappa(A)$:</b> The ratio $\sigma_{\max}/\sigma_{\min}$ (for square invertible matrices).
+        <br><b>Interpretation:</b> The aspect ratio of the hyperellipse image of the unit sphere.
+        <br><b>Impact:</b>
+        <ul>
+            <li><b>Sensitivity:</b> Relative error in $x$ $\le \kappa(A) \times$ Relative error in $b$.</li>
+            <li><b>Optimization:</b> Controls convergence rate of gradient descent. High $\kappa$ $\implies$ "Zig-zagging".</li>
+        </ul></p>
       </div>
 
       <h3>P1.11 — Pseudoinverse of Rank-1 Matrix</h3>
@@ -602,9 +610,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Rank-1 Matrices:</b> $A = xy^\top$.
-        <br><b>SVD:</b> $\sigma_1 = \|x\|\|y\|$, $u=x/\|x\|$, $v=y/\|y\|$.
-        <br><b>Pseudoinverse:</b> $A^+ = \frac{yx^\top}{\|x\|^2\|y\|^2}$. Reverses scaling on the active subspaces.</p>
+        <p><b>Rank-1 SVD:</b> A matrix $A = xy^\top$ has exactly one non-zero singular value $\sigma_1 = \|x\|_2 \|y\|_2$.
+        <br><b>Singular Vectors:</b> $u_1 = x/\|x\|$, $v_1 = y/\|y\|$.
+        <br><b>Pseudoinverse Formula:</b> For rank-1 matrices, $A^+ = \frac{A^\top}{\|A\|_F^2} = \frac{yx^\top}{\|x\|^2 \|y\|^2}$.</p>
       </div>
 
       <h3>P1.12 — Operator Norm Properties</h3>
@@ -618,9 +626,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Spectral Norm:</b> $\|A\|_2 = \sup_{x \ne 0} \frac{\|Ax\|}{\|x\|} = \sqrt{\lambda_{\max}(A^\top A)}$.
-        <br><b>Rayleigh Quotient:</b> $\lambda_{\max}(M) = \sup_x \frac{x^\top M x}{x^\top x}$.
-        <br><b>Connection:</b> $\|Ax\|^2/\|x\|^2$ is the Rayleigh quotient for $A^\top A$.</p>
+        <p><b>Variational Definition of Eigenvalues:</b> For symmetric $M$, $\lambda_{\max}(M) = \max_{\|x\|=1} x^\top M x$.
+        <br><b>Spectral Norm Connection:</b> $\|A\|_2^2 = \max_{\|x\|=1} \|Ax\|^2 = \max_{\|x\|=1} x^\top (A^\top A) x = \lambda_{\max}(A^\top A)$.
+        <br><b>Implication:</b> The spectral norm is the square root of the largest eigenvalue of the Gram matrix.</p>
       </div>
 
       <h3>P1.13 — Orthogonal Invariance</h3>
@@ -637,8 +645,14 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Unitary Invariance:</b> Norms depending only on singular values are invariant under orthogonal transformations.
-        <br><b>Schatten Norms:</b> $\|A\|_p = (\sum \sigma_i^p)^{1/p}$. Includes Spectral ($p=\infty$) and Frobenius ($p=2$).</p>
+        <p><b>Orthogonal Invariance:</b> A matrix norm is orthogonally invariant if $\|UAV^\top\| = \|A\|$ for all orthogonal $U, V$.
+        <br><b>Schatten p-norms:</b> Defined as the $\ell_p$ norm of the singular values vector $\sigma(A)$.
+        <ul>
+            <li>$p=\infty$: Spectral Norm.</li>
+            <li>$p=2$: Frobenius Norm.</li>
+            <li>$p=1$: Nuclear Norm (Trace Norm).</li>
+        </ul>
+        <br>These are the "natural" norms for matrix analysis.</p>
       </div>
 
       <h3>P1.14 — The Orthogonal Group</h3>
@@ -657,9 +671,13 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Orthogonal Group $O(n)$:</b> $\{Q \mid Q^\top Q = I\}$.
-        <br><b>Topology:</b> Closed (inverse image of singleton) and Bounded ($|Q_{ij}| \le 1$) $\implies$ Compact.
-        <br><b>Implication:</b> Continuous functions on $O(n)$ attain extrema (Extreme Value Theorem).</p>
+        <p><b>The Orthogonal Group $O(n)$:</b> The set of all $n \times n$ orthogonal matrices.
+        <br><b>Compactness Proof:</b>
+        <ul>
+            <li><b>Boundedness:</b> $\|Q\|_F = \sqrt{n}$, so $O(n)$ is contained in a ball of radius $\sqrt{n}$.</li>
+            <li><b>Closedness:</b> It is the solution set of continuous polynomial equations $Q^\top Q - I = 0$.</li>
+        </ul>
+        <br><b>Optimization Consequence:</b> Any continuous function (like a norm or trace) maximized over orthogonal matrices <i>attains</i> its maximum. This is often used to prove existence of SVD.</p>
       </div>
 </section>
 

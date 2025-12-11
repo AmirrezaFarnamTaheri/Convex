@@ -61,26 +61,27 @@
         \boxed{ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) }
         \tag{1}
         $$
-        <p>This fundamental inequality states that the function value at a convex combination of points is at most the corresponding convex combination of function values. Geometrically, the <b>chord</b> connecting any two points $(x, f(x))$ and $(y, f(y))$ on the graph lies <b>above</b> (or on) the graph.</p>
+        <p>This fundamental inequality states that the function value at a convex combination of points is at most the corresponding convex combination of function values. Geometrically, the <b>chord</b> connecting any two points $(x, f(x))$ and $(y, f(y))$ on the graph lies <b>above</b> (or on) the graph. The domain convexity is crucial: without it, the intermediate points might not even be valid inputs.</p>
 
         <div class="proof-box">
-          <h4>Proof: Convexity of Norms</h4>
-          <p>Any norm $\|\cdot\|$ is a convex function.</p>
+          <h4>Proof: Norms are Convex</h4>
+          <p>We verify the convexity condition for any norm $f(x) = \|x\|$.</p>
           <div class="proof-step">
-            <strong>Step 1: Triangle Inequality.</strong>
-            Let $f(x) = \|x\|$. Take $x, y \in \mathbb{R}^n$ and $\theta \in [0, 1]$.
-            We compute $f(\theta x + (1-\theta)y) = \|\theta x + (1-\theta)y\|$.
+            <strong>Step 1: Convex Combination.</strong> Let $x, y \in \mathbb{R}^n$ and $\theta \in [0, 1]$.
+            $$ f(\theta x + (1-\theta)y) = \|\theta x + (1-\theta)y\| $$
           </div>
           <div class="proof-step">
-            <strong>Step 2: Homogeneity.</strong>
-            By the triangle inequality:
+            <strong>Step 2: Triangle Inequality.</strong> Using $\|a+b\| \le \|a\| + \|b\|$:
             $$ \|\theta x + (1-\theta)y\| \le \|\theta x\| + \|(1-\theta)y\| $$
-            By absolute homogeneity ($|\alpha| = \alpha$ for $\alpha \ge 0$):
-            $$ = \theta \|x\| + (1-\theta)\|y\| = \theta f(x) + (1-\theta)f(y) $$
           </div>
           <div class="proof-step">
-            <strong>Conclusion:</strong>
-            $f$ satisfies the convexity definition. Geometrically, the "bowl" of a norm never dips downward; it is always "V"-shaped or "U"-shaped.
+            <strong>Step 3: Positive Homogeneity.</strong> Since $\theta \ge 0$ and $1-\theta \ge 0$:
+            $$ \|\theta x\| = \theta \|x\| \quad \text{and} \quad \|(1-\theta)y\| = (1-\theta)\|y\| $$
+            Substituting back:
+            $$ \|\theta x + (1-\theta)y\| \le \theta \|x\| + (1-\theta)\|y\| = \theta f(x) + (1-\theta)f(y) $$
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion:</strong> All norms are convex functions.
           </div>
         </div>
 
@@ -93,30 +94,28 @@
         f\left(\sum_{i=1}^k \theta_i x_i\right) \le \sum_{i=1}^k \theta_i f(x_i)
         $$
         <div class="proof-box">
-          <h4>Proof by Induction</h4>
+          <h4>Proof of Jensen's Inequality</h4>
+          <p>We prove this by induction on the number of points $k$.</p>
           <div class="proof-step">
-            <strong>Base Case ($k=2$):</strong> This is the definition of convexity: $f(\theta_1 x_1 + \theta_2 x_2) \le \theta_1 f(x_1) + \theta_2 f(x_2)$ where $\theta_1+\theta_2=1$.
+            <strong>Base Case ($k=2$):</strong> This is exactly the definition of convexity.
           </div>
           <div class="proof-step">
-            <strong>Inductive Step:</strong> Assume the inequality holds for any $k-1$ points. Consider $k$ points with $\sum_{i=1}^k \theta_i = 1$.
-            <br><b>Case 1:</b> If $\theta_k = 1$, then $\theta_1=\dots=\theta_{k-1}=0$, and the result holds trivially.
-            <br><b>Case 2:</b> If $\theta_k < 1$, let $\tilde{\theta} = 1 - \theta_k = \sum_{i=1}^{k-1} \theta_i > 0$.
-            <br>We rewrite the sum to isolate $x_k$:
-            $$ \sum_{i=1}^k \theta_i x_i = \theta_k x_k + \tilde{\theta} \underbrace{\sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i}_{\bar{x}} $$
-            Let $\bar{x} = \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i$.
-            The weights $\alpha_i = \frac{\theta_i}{\tilde{\theta}}$ sum to $\frac{1}{\tilde{\theta}}\sum_{i=1}^{k-1} \theta_i = \frac{\tilde{\theta}}{\tilde{\theta}} = 1$.
-            Thus $\bar{x}$ is a convex combination of $k-1$ points.
+            <strong>Inductive Step:</strong> Assume the inequality holds for any convex combination of $k-1$ points. Consider a combination of $k$ points: $x = \sum_{i=1}^k \theta_i x_i$ with $\sum \theta_i = 1$ and $\theta_i > 0$.
+            <br>We can "peel off" the last point $x_k$ and treat the rest as a sub-combination.
+            Let $\tilde{\theta} = \sum_{i=1}^{k-1} \theta_i = 1 - \theta_k$. Since $\theta_k < 1$, $\tilde{\theta} > 0$.
+            $$ x = \theta_k x_k + \tilde{\theta} \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i = \theta_k x_k + \tilde{\theta} \bar{x} $$
+            where $\bar{x} = \sum_{i=1}^{k-1} (\theta_i/\tilde{\theta}) x_i$ is a valid convex combination of $k-1$ points (weights sum to 1).
           </div>
           <div class="proof-step">
-            <strong>Apply Convexity:</strong>
-            1. Apply the 2-point definition to $x_k$ and $\bar{x}$ (with weights $\theta_k$ and $\tilde{\theta}$):
-            $$ f(\theta_k x_k + \tilde{\theta} \bar{x}) \le \theta_k f(x_k) + \tilde{\theta} f(\bar{x}) $$
+            <strong>Apply Convexity Twice:</strong>
+            <br>1. Apply the 2-point definition to $x_k$ and $\bar{x}$:
+            $$ f(x) = f(\theta_k x_k + \tilde{\theta} \bar{x}) \le \theta_k f(x_k) + \tilde{\theta} f(\bar{x}) $$
             2. Apply the inductive hypothesis to $f(\bar{x})$:
-            $$ f(\bar{x}) = f\left(\sum_{i=1}^{k-1} \alpha_i x_i\right) \le \sum_{i=1}^{k-1} \alpha_i f(x_i) = \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i) $$
+            $$ f(\bar{x}) \le \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i) $$
           </div>
           <div class="proof-step">
-            <strong>Combine:</strong>
-            $$ f\left(\sum_{i=1}^k \theta_i x_i\right) \le \theta_k f(x_k) + \tilde{\theta} \left( \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i) \right) = \sum_{i=1}^k \theta_i f(x_i) $$
+            <strong>Conclusion:</strong> Substituting back:
+            $$ f(x) \le \theta_k f(x_k) + \tilde{\theta} \left(\sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i)\right) = \theta_k f(x_k) + \sum_{i=1}^{k-1} \theta_i f(x_i) = \sum_{i=1}^k \theta_i f(x_i) $$
           </div>
         </div>
 
@@ -129,28 +128,24 @@
         <br><i>Interpretation:</i> For a convex cost function, the cost of the average scenario is less than or equal to the average cost of all scenarios. Uncertainty typically increases expected cost for convex functions.</p>
 
         <h3>1.3 Applications of Jensen's Inequality</h3>
-        <p>Jensen's inequality is a power tool for deriving fundamental inequalities in analysis. It translates the curvature of simple functions (like $\log x$ or $x^p$) into global bounds.</p>
+        <p>Jensen's inequality is a powerful engine for generating algebraic inequalities.</p>
 
         <div class="example">
           <h4>1. Arithmetic-Geometric Mean (AM-GM)</h4>
-          <p>The famous inequality $\sqrt{ab} \le \frac{a+b}{2}$ is just Jensen's inequality applied to the logarithm.</p>
+          <p>We prove the generalized weighted AM-GM inequality using the concavity of the logarithm.</p>
           <div class="proof-step">
-            <strong>Step 1: Choose the function.</strong>
-            Let $f(x) = -\ln x$ for $x > 0$. The second derivative $f''(x) = 1/x^2 > 0$, so $f$ is convex. (Alternatively, $\ln x$ is concave).
+            <strong>Step 1: Setup.</strong> Let $f(x) = \log x$. Since $f''(x) = -1/x^2 < 0$, $f$ is concave.
+            Jensen's inequality for concave functions reverses the direction: $f(\mathbb{E}[X]) \ge \mathbb{E}[f(X)]$.
           </div>
           <div class="proof-step">
             <strong>Step 2: Apply Jensen.</strong>
-            For any points $a, b > 0$ and weights $\theta \in [0, 1]$:
-            $$ f(\theta a + (1-\theta)b) \le \theta f(a) + (1-\theta) f(b) $$
-            $$ -\ln(\theta a + (1-\theta)b) \le -\theta \ln a - (1-\theta)\ln b $$
+            Let $\theta \in [0, 1]$.
+            $$ \log(\theta a + (1-\theta)b) \ge \theta \log a + (1-\theta) \log b $$
           </div>
           <div class="proof-step">
-            <strong>Step 3: Simplify.</strong>
-            Using log properties $\theta \ln a = \ln(a^\theta)$:
-            $$ -\ln(\theta a + (1-\theta)b) \le -(\ln(a^\theta) + \ln(b^{1-\theta})) = -\ln(a^\theta b^{1-\theta}) $$
-            Multiply by $-1$ (reversing the inequality) and exponentiate (preserving it):
-            $$ \ln(\theta a + (1-\theta)b) \ge \ln(a^\theta b^{1-\theta}) \implies \boxed{ \theta a + (1-\theta)b \ge a^\theta b^{1-\theta} } $$
-            Setting $\theta = 1/2$ gives the classic $\frac{a+b}{2} \ge \sqrt{ab}$.
+            <strong>Step 3: Exponentiate.</strong>
+            $$ \log(\theta a + (1-\theta)b) \ge \log(a^\theta b^{1-\theta}) \implies \theta a + (1-\theta)b \ge a^\theta b^{1-\theta} $$
+            The weighted arithmetic mean is at least the weighted geometric mean.
           </div>
         </div>
 
@@ -485,34 +480,32 @@
 
         <div class="proof-box">
           <h4>Proof: Convexity $\iff$ PSD Hessian</h4>
+          <p>This proof connects $n$-dimensional convexity to 1-dimensional calculus via the "Restriction to a Line" theorem.</p>
 
           <div class="proof-step">
-            <strong>Part 1: Convex $\Rightarrow$ PSD</strong>
-            <p>Fix any point $x \in \mathrm{dom}\, f$ and an arbitrary direction $v \in \mathbb{R}^n$. Define the restriction $g(t) = f(x+tv)$.</p>
-            <ul>
-              <li><b>Step 1: Use convexity of restriction.</b> Since $f$ is convex, $g(t)$ is a convex function of one variable. Thus, its second derivative must be non-negative everywhere: $g''(t) \ge 0$.</li>
-              <li><b>Step 2: Directional Second Derivative.</b> Compute $g''(0)$ using the chain rule:
-                $$ g'(t) = \nabla f(x+tv)^\top v $$
-                $$ g''(t) = v^\top \nabla^2 f(x+tv) v $$
-              </li>
-              <li><b>Conclusion:</b> At $t=0$, we have $g''(0) = v^\top \nabla^2 f(x) v \ge 0$. Since this holds for <i>any</i> direction $v$, the Hessian $\nabla^2 f(x)$ is positive semidefinite by definition.</li>
-            </ul>
+            <strong>Part 1: Convex $\implies$ Hessian PSD.</strong>
+            Assume $f$ is convex. Pick any $x \in \mathrm{dom} f$ and any direction $v \in \mathbb{R}^n$.
+            Define the 1D function $g(t) = f(x + tv)$.
+            Since $f$ is convex, $g$ is convex.
+            For a twice-differentiable 1D function, convexity implies $g''(t) \ge 0$.
+            By the chain rule:
+            $$ g'(t) = \nabla f(x+tv)^\top v \implies g''(t) = v^\top \nabla^2 f(x+tv) v $$
+            Evaluating at $t=0$: $g''(0) = v^\top \nabla^2 f(x) v \ge 0$.
+            Since $v$ was arbitrary, this means $\nabla^2 f(x)$ is PSD.
           </div>
 
           <div class="proof-step">
-            <strong>Part 2: PSD $\Rightarrow$ Convex</strong>
-            <p>Assume $\nabla^2 f(x) \succeq 0$ for all $x$. Fix any two points $x, y$ and let $v = y-x$. Consider $g(t) = f(x+tv)$ on the interval $[0, 1]$.</p>
-            <ul>
-              <li><b>Step 1: Check curvature along the line.</b> For any $t \in [0, 1]$, the second derivative is:
-                $$ g''(t) = v^\top \nabla^2 f(x+tv) v $$
-              </li>
-              <li><b>Step 2: Apply PSD condition.</b> Since the Hessian is PSD at the point $x+tv$, we know $v^\top \nabla^2 f(x+tv) v \ge 0$. Thus $g''(t) \ge 0$ for all $t$.</li>
-              <li><b>Step 3: 1D Convexity.</b> A twice-differentiable function with a non-negative second derivative is convex. So $g(t)$ is convex.
-                <br><i>Why?</i> By Taylor's theorem with remainder: $g(1) = g(0) + g'(0) + \frac{1}{2}g''(\xi)$. Since $g''(\xi) \ge 0$, $g(1) \ge g(0) + g'(0)$.
-                This is $f(y) \ge f(x) + \nabla f(x)^\top(y-x)$. The first-order condition holds everywhere, so $f$ is convex.
-              </li>
-              <li><b>Conclusion:</b> Since the restriction of $f$ to <i>every</i> line segment is convex, the function $f$ is convex.</li>
-            </ul>
+            <strong>Part 2: Hessian PSD $\implies$ Convex.</strong>
+            Assume $\nabla^2 f(x) \succeq 0$ for all $x$.
+            Consider any two points $x, y$ and define $g(t) = f(x + t(y-x))$ for $t \in [0, 1]$.
+            The second derivative is $g''(t) = (y-x)^\top \nabla^2 f(z) (y-x)$, where $z$ is on the line segment.
+            By assumption, the Hessian is PSD at $z$, so $g''(t) \ge 0$ for all $t$.
+            A function with non-negative second derivative is convex.
+            Thus $g(t)$ is convex, which implies:
+            $$ g(\theta) \le (1-\theta)g(0) + \theta g(1) $$
+            Substituting back:
+            $$ f(x + \theta(y-x)) \le (1-\theta)f(x) + \theta f(y) $$
+            This is exactly the definition of convexity for $f$.
           </div>
         </div>
 

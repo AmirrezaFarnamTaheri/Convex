@@ -40,9 +40,9 @@
         <span>Tags: prerequisites, review, linear-algebra, foundational</a>
       </div>
       <div class="lecture-summary">
-        <p>This lecture establishes the linear algebra foundations required for convex optimization. We begin with vectors and matrices, then progress to inner products, norms, orthogonality, projections, and least squares, building the mathematical background necessary for optimization theory. This material provides the rigorous language needed to describe convex sets, functions, and optimization problems.</p>
-        <p><strong>Prerequisites:</strong> Basic calculus and familiarity with matrix notation.</p>
-        <p><strong>Forward Connections:</strong> Projection techniques introduced here are essential for least squares methods and constrained optimization. Positive Semidefinite (PSD) matrices are the cornerstone of convex quadratic programs and semidefinite programming (<a href="../08-convex-problems-conic/index.html">Lecture 08</a>). The four fundamental subspaces provide the geometric understanding of feasible sets and duality. Advanced topics (QR, SVD, pseudoinverse) are covered in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</p>
+        <p>This lecture establishes the rigorous linear algebra foundations required for convex optimization. We begin by defining the core objects—vectors, matrices, and their operations—and progress to the geometry of high-dimensional spaces through inner products, norms, and orthogonality. We then explore the crucial concept of Positive Semidefinite (PSD) matrices, which generalize non-negative numbers to the matrix setting and underpin convexity. Finally, we derive the method of least squares from a geometric perspective via orthogonal projections. This material provides the necessary language to describe convex sets, functions, and optimization problems with precision.</p>
+        <p><strong>Prerequisites:</strong> Basic multivariable calculus and familiarity with standard matrix notation.</p>
+        <p><strong>Forward Connections:</strong> The projection techniques introduced here are essential for the geometric interpretation of constrained optimization. PSD matrices are the cornerstone of convex quadratic programs (QP) and Semidefinite Programming (SDP) covered in <a href="../08-convex-problems-conic/index.html">Lecture 08</a>. The four fundamental subspaces provide the geometric intuition for duality theory (<a href="../09-duality/index.html">Lecture 09</a>). Advanced topics such as QR factorization, SVD, and pseudoinverses are covered in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</p>
       </div>
     </header>
 
@@ -64,21 +64,21 @@
       <h2>1. Notation and Basic Objects</h2>
 
       <h3>Preliminaries: Lines and Line Segments</h3>
-      <p>We work in $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum x_i y_i$ and Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are fundamental to defining convexity.</p>
+      <p>We work in the vector space $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$ and the induced Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are the building blocks of convexity.</p>
 
       <h4>Line through two points</h4>
       <p>Given two distinct points $x_1, x_2 \in \mathbb{R}^n$, the <b>line</b> passing through them is the set of all affine combinations of these points:</p>
       $$
-      y = \theta x_1 + (1-\theta)x_2, \quad \theta \in \mathbb{R}
+      y = \theta x_1 + (1-\theta)x_2 = x_2 + \theta(x_1 - x_2), \quad \theta \in \mathbb{R}
       $$
-      <p>As $\theta$ varies over $\mathbb{R}$, $y$ traces out the infinite line.</p>
+      <p>As $\theta$ varies over $\mathbb{R}$, $y$ traces out the infinite line passing through $x_2$ in the direction of $x_1 - x_2$. The value $\theta=0$ corresponds to $x_2$, and $\theta=1$ corresponds to $x_1$.</p>
 
       <h4>Line segment between two points</h4>
-      <p>The <b>line segment</b> connecting $x_1$ and $x_2$, denoted $[x_1, x_2]$, corresponds to restricting the parameter $\theta$ to the interval $[0, 1]$:</p>
+      <p>The <b>line segment</b> connecting $x_1$ and $x_2$, denoted $[x_1, x_2]$, corresponds to restricting the parameter $\theta$ to the unit interval $[0, 1]$:</p>
       $$
       y = \theta x_1 + (1-\theta)x_2, \quad 0 \le \theta \le 1
       $$
-      <p>This parametrization is key: a set is convex if and only if it contains the line segment between any pair of its points.</p>
+      <p>This parametrization is the definition of a <b>convex combination</b> of two points. A set is defined to be <b>convex</b> if and only if it contains the entire line segment between any pair of its points.</p>
 
       <figure style="text-align: center;">
         <img src="assets/line-vs-segment.png"
@@ -400,18 +400,31 @@
         <p>If every non-zero vector $x \in \mathbb{R}^n$ is an eigenvector of $A$ (i.e., $Ax = \lambda(x)x$), then $A$ must be a scalar multiple of the identity: $A = \lambda I$.</p>
       </div>
       <div class="proof-box">
-        <h4>Proof</h4>
-        <p>Let $u, v$ be linearly independent vectors. By assumption, $Au = \lambda_u u$ and $Av = \lambda_v v$.
-        Consider their sum $w = u+v$. Since $w$ is also an eigenvector, $A(u+v) = \lambda_w (u+v)$.
-        By linearity:
-        $$ \lambda_w u + \lambda_w v = \lambda_w(u+v) = A(u+v) = Au + Av = \lambda_u u + \lambda_v v $$
-        Rearranging terms:
-        $$ (\lambda_w - \lambda_u)u + (\lambda_w - \lambda_v)v = 0 $$
-        Since $u$ and $v$ are linearly independent, their coefficients must vanish:
-        $$ \lambda_w - \lambda_u = 0 \quad \text{and} \quad \lambda_w - \lambda_v = 0 $$
-        This implies $\lambda_u = \lambda_w = \lambda_v$. Thus, any two linearly independent vectors share the same eigenvalue. For any linearly dependent pair (where $v=cu$), we can pick a third vector independent of both to bridge the equality. By transitivity, all non-zero vectors share the same eigenvalue $\lambda$. Thus $Ax = \lambda x$ for all $x$, which implies $A = \lambda I$.</p>
+        <h4>Proof of the Isotropic Scaling Lemma</h4>
+        <div class="proof-step">
+            <strong>Step 1: Linearly Independent Vectors Share Eigenvalues.</strong>
+            Let $u, v$ be linearly independent vectors. By assumption, they are eigenvectors: $Au = \lambda_u u$ and $Av = \lambda_v v$.
+            Consider their sum $w = u+v$. Since every vector is an eigenvector, $w$ must also be one: $A(u+v) = \lambda_w (u+v)$.
+            By linearity:
+            $$ \lambda_w u + \lambda_w v = \lambda_w(u+v) = A(u+v) = Au + Av = \lambda_u u + \lambda_v v $$
+            Rearranging terms to group by vector:
+            $$ (\lambda_w - \lambda_u)u + (\lambda_w - \lambda_v)v = 0 $$
+            Since $u$ and $v$ are linearly independent, the only solution to this linear combination is the trivial one. Thus, their coefficients must vanish:
+            $$ \lambda_w - \lambda_u = 0 \quad \text{and} \quad \lambda_w - \lambda_v = 0 $$
+            This implies $\lambda_u = \lambda_w = \lambda_v$. Conclusion: Any two linearly independent vectors must correspond to the same eigenvalue.
+        </div>
+        <div class="proof-step">
+            <strong>Step 2: Linearly Dependent Vectors Share Eigenvalues.</strong>
+            Suppose $v = cu$ for some scalar $c \neq 0$. We cannot use the independence argument directly.
+            However, for $n \ge 2$, we can choose a third vector $z$ that is linearly independent of $u$ (and thus of $v$).
+            From Step 1, $\lambda_u = \lambda_z$ and $\lambda_v = \lambda_z$. By transitivity, $\lambda_u = \lambda_v$.
+        </div>
+        <div class="proof-step">
+            <strong>Step 3: Conclusion.</strong>
+            Since all non-zero vectors share the same eigenvalue $\lambda$, we have $Ax = \lambda x$ for all $x$. This is exactly the definition of the scalar matrix $A = \lambda I$.
+        </div>
       </div>
-      <p><b>Geometric Intuition:</b> A general matrix distorts a circle into an ellipse. If <i>every</i> direction is a principal axis (eigenvector), the ellipse must be a circle (isotropic scaling).</p>
+      <p><b>Geometric Intuition:</b> A general symmetric matrix maps the unit sphere to an ellipsoid. The eigenvectors correspond to the axes of the ellipsoid. If <i>every</i> vector is an eigenvector, then every direction is a principal axis. The only ellipsoid with this symmetry is a sphere (isotropic scaling).</p>
 
       <h3>3.3 Algebraic Properties</h3>
 
@@ -915,25 +928,28 @@
         <h4>1. Block Matrix Setup and Dimensions</h4>
         <p>Consider a block matrix $M$ partitioned as follows:</p>
         $$ M = \begin{bmatrix} A & B \\ C & D \end{bmatrix} $$
-        <p>where $A \in \mathbb{R}^{p \times p}$, $B \in \mathbb{R}^{p \times q}$, $C \in \mathbb{R}^{q \times p}$, and $D \in \mathbb{R}^{q \times q}$. Assume $D$ is invertible.</p>
-        <p>The <b>Schur complement</b> of $D$ in $M$ is defined as:</p>
+        <p>where $A \in \mathbb{R}^{p \times p}$, $B \in \mathbb{R}^{p \times q}$, $C \in \mathbb{R}^{q \times p}$, and $D \in \mathbb{R}^{q \times q}$. Assume the bottom-right block $D$ is invertible.</p>
+        <p>The <b>Schur complement</b> of $D$ in $M$ is the matrix defined as:</p>
         $$ S := A - B D^{-1} C $$
 
         <h4>2. Constructing the Elimination Matrix</h4>
-        <p>To analyze $M$, we perform block Gaussian elimination. Define the elimination matrix $E$:</p>
+        <p>To understand the origin of $S$, we apply <b>Block Gaussian Elimination</b>. The goal is to zero out the $C$ block (bottom-left) to obtain a block upper-triangular matrix, from which properties like determinant and invertibility are easily read.</p>
+        <p>We achieve this by post-multiplying $M$ by an elimination matrix $E$:</p>
         $$ E = \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} $$
-        <p>This matrix is block lower-triangular with unit diagonal blocks, so $\det(E) = 1$. Multiplying $M$ by $E$ on the right yields the factorization:</p>
+        <p>This matrix $E$ is block lower-triangular with identity matrices on the diagonal, so $\det(E) = 1$. It acts as a "column operation": it subtracts $D^{-1}C$ times the second column-block from the first column-block.</p>
+
+        <p>Multiplying $M$ by $E$ yields the factorization:</p>
         $$ ME = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} = \begin{bmatrix} A - BD^{-1}C & B \\ 0 & D \end{bmatrix} = \begin{bmatrix} S & B \\ 0 & D \end{bmatrix} $$
 
         <div class="proof-box">
           <h4>Line-by-Line Verification of Block Multiplication</h4>
-          <p>We verify this multiplication explicitly using the block multiplication rule $\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} X & Y \\ Z & W \end{bmatrix} = \begin{bmatrix} AX+BZ & AY+BW \\ CX+DZ & CY+DW \end{bmatrix}$.</p>
-          <p>Here $X=I_p, Y=0, Z=-D^{-1}C, W=I_q$.</p>
+          <p>We verify this multiplication explicitly using the standard block multiplication rule $\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} X & Y \\ Z & W \end{bmatrix} = \begin{bmatrix} AX+BZ & AY+BW \\ CX+DZ & CY+DW \end{bmatrix}$.</p>
+          <p>Here we set $X=I_p, Y=0, Z=-D^{-1}C, W=I_q$.</p>
           <ul>
-            <li><b>Top-left:</b> $A(I_p) + B(-D^{-1}C) = A - BD^{-1}C = S$.</li>
-            <li><b>Top-right:</b> $A(0) + B(I_q) = B$.</li>
-            <li><b>Bottom-left:</b> $C(I_p) + D(-D^{-1}C) = C - C = 0$. (This was the goal!)</li>
-            <li><b>Bottom-right:</b> $C(0) + D(I_q) = D$.</li>
+            <li><b>Top-left (The Pivot):</b> $A(I_p) + B(-D^{-1}C) = A - BD^{-1}C = S$. This term is exactly the "pivot" remaining after elimination.</li>
+            <li><b>Top-right:</b> $A(0) + B(I_q) = B$. (Unchanged).</li>
+            <li><b>Bottom-left (The Zero):</b> $C(I_p) + D(-D^{-1}C) = C - C = 0$. (This was the specific design goal of the elimination step).</li>
+            <li><b>Bottom-right:</b> $C(0) + D(I_q) = D$. (Unchanged).</li>
           </ul>
         </div>
 
@@ -969,12 +985,18 @@
 
         <div class="proof-step">
           <strong>Proof ($\Rightarrow$):</strong> Assume $M \succeq 0$.
-          We need to show $x^\top S x \ge 0$ for any $x$. To isolate $S$, we intelligently choose a test vector $z$ that minimizes the quadratic form with respect to the second block.
-          <br>Consider $z = [x^\top, y^\top]^\top$. The quadratic form is $x^\top A x + 2 x^\top B y + y^\top D y$. Minimizing this w.r.t. $y$ (by setting gradient to zero: $2B^\top x + 2Dy = 0$) gives $y = -D^{-1}B^\top x$.
-          <br>Substitute this specific $y$ into the test vector $z = [x^\top, -(D^{-1}B^\top x)^\top]^\top$:
-          $$ z^\top M z = x^\top A x - x^\top B (D^{-1}B^\top x) - (x^\top B D^{-1}) B^\top x + (x^\top B D^{-1}) D (D^{-1} B^\top x) $$
-          $$ = x^\top A x - 2 x^\top B D^{-1} B^\top x + x^\top B D^{-1} B^\top x = x^\top (A - B D^{-1} B^\top) x = x^\top S x $$
-          Since $M \succeq 0$, we have $z^\top M z \ge 0$ for any $z$, and thus $x^\top S x \ge 0$ for all $x$. Therefore, $S \succeq 0$.
+          We need to show that the Schur complement is PSD, i.e., $x^\top S x \ge 0$ for any $x$.
+          Since $M \succeq 0$, we know that $z^\top M z \ge 0$ for <i>any</i> vector $z$. The trick is to choose a specific test vector $z$ that isolates $S$.
+          <br>Let $z = \begin{bmatrix} x \\ y \end{bmatrix}$. The quadratic form is:
+          $$ z^\top M z = x^\top A x + 2 x^\top B y + y^\top D y $$
+          We want to choose $y$ to minimize this expression for a fixed $x$, effectively "concentrating" the condition onto $x$. Setting the gradient with respect to $y$ to zero:
+          $$ \nabla_y (z^\top M z) = 2B^\top x + 2Dy = 0 \implies y = -D^{-1}B^\top x $$
+          Now, we substitute this optimal $y$ back into the quadratic form:
+          $$ z^\top M z = x^\top A x + 2 x^\top B (-D^{-1}B^\top x) + (-D^{-1}B^\top x)^\top D (-D^{-1}B^\top x) $$
+          $$ = x^\top A x - 2 x^\top B D^{-1} B^\top x + x^\top B D^{-1} D D^{-1} B^\top x $$
+          $$ = x^\top A x - 2 x^\top B D^{-1} B^\top x + x^\top B D^{-1} B^\top x $$
+          $$ = x^\top (A - B D^{-1} B^\top) x = x^\top S x $$
+          Since $M \succeq 0$, we must have $z^\top M z \ge 0$. Therefore, $x^\top S x \ge 0$ for all $x$, which means $S \succeq 0$.
         </div>
 
         <div class="proof-step">
@@ -1351,10 +1373,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Definition:</b> Vectors $\{v_i\}$ are linearly independent if $\sum c_i v_i = 0 \implies c = 0$.
-        <br><b>Matrix View:</b> The matrix $A = [v_1 \dots v_k]$ has independent columns iff $\mathcal{N}(A) = \{0\}$ (full column rank).
-        <br><b>Determinant Test:</b> For $n$ vectors in $\mathbb{R}^n$, they are independent iff $\det([v_1 \dots v_n]) \neq 0$.
-        <br><b>Geometry:</b> Dependent vectors collapse into a lower-dimensional subspace (e.g., 3 vectors on a 2D plane).</p>
+        <p><b>Definition:</b> A set of vectors $\{v_1, \dots, v_k\}$ is <b>linearly independent</b> if the only linear combination summing to zero is the trivial one ($\sum c_i v_i = 0 \implies c_i = 0 \ \forall i$).
+        <br><b>Matrix View:</b> The matrix $A = [v_1 \dots v_k]$ formed by these vectors has full column rank ($\mathrm{rank}(A) = k$) if and only if $\mathcal{N}(A) = \{0\}$.
+        <br><b>Determinant Test (Square Case):</b> For $n$ vectors in $\mathbb{R}^n$, they form a <b>basis</b> (independent and spanning) if and only if $\det([v_1 \dots v_n]) \neq 0$.
+        <br><b>Geometric Intuition:</b> Linearly dependent vectors are "redundant"; one can be written as a combination of the others, collapsing the span into a lower-dimensional subspace.</p>
       </div>
 
       <h3>P0.2 — The Rank-Nullity Theorem</h3>
@@ -1374,9 +1396,14 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Theorem (Rank-Nullity):</b> For $A \in \mathbb{R}^{m \times n}$, $\dim \mathcal{R}(A) + \dim \mathcal{N}(A) = n$ (conservation of dimension).
-        <br><b>Rank Bounds:</b> $\mathrm{rank}(A) \le \min(m, n)$.
-        <br><b>Invertibility:</b> A square matrix is invertible iff it has full rank (rank $n$) iff its nullspace is trivial ($\{0\}$).</p>
+        <p><b>Rank-Nullity Theorem:</b> For any matrix $A \in \mathbb{R}^{m \times n}$, the dimension of the domain splits into the nullspace and the row space:
+        $$ \dim \mathcal{R}(A) + \dim \mathcal{N}(A) = n $$
+        <br><b>Rank Inequalities:</b> $\mathrm{rank}(A) \le \min(m, n)$. Also, $\mathrm{rank}(AB) \le \min(\mathrm{rank}(A), \mathrm{rank}(B))$ and $\mathrm{rank}(A+B) \le \mathrm{rank}(A) + \mathrm{rank}(B)$.
+        <br><b>Full Rank Conditions:</b>
+        <ul>
+            <li><b>Full Column Rank ($m \ge n$):</b> $\mathrm{rank}(A) = n \iff \mathcal{N}(A) = \{0\} \iff A^\top A$ is invertible.</li>
+            <li><b>Full Row Rank ($m \le n$):</b> $\mathrm{rank}(A) = m \iff \mathcal{R}(A) = \mathbb{R}^m \iff AA^\top$ is invertible.</li>
+        </ul></p>
       </div>
 
       <h3>P0.3 — Trace and Determinant</h3>
@@ -1406,9 +1433,21 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Trace Properties:</b> Linear ($\mathrm{tr}(A+B) = \mathrm{tr}A + \mathrm{tr}B$) and Cyclic ($\mathrm{tr}(ABC) = \mathrm{tr}(BCA)$).
-        <br><b>Determinant Properties:</b> Multiplicative ($\det(AB) = \det A \det B$). $\det(A^\top) = \det A$.
-        <br><b>Skew-Symmetric Matrices:</b> $A^\top = -A$. Implies $x^\top A x = 0$ for all $x$. Eigenvalues are purely imaginary or zero.</p>
+        <p><b>Trace Properties:</b>
+        <ul>
+            <li><b>Linearity:</b> $\mathrm{tr}(\alpha A + \beta B) = \alpha \mathrm{tr}(A) + \beta \mathrm{tr}(B)$.</li>
+            <li><b>Cyclic Invariance:</b> $\mathrm{tr}(ABC) = \mathrm{tr}(BCA) = \mathrm{tr}(CAB)$. Note: $\mathrm{tr}(ABC) \neq \mathrm{tr}(BAC)$ in general.</li>
+        </ul>
+        <br><b>Determinant Properties:</b>
+        <ul>
+            <li><b>Multiplicativity:</b> $\det(AB) = \det(A)\det(B)$.</li>
+            <li><b>Transpose:</b> $\det(A^\top) = \det(A)$.</li>
+        </ul>
+        <br><b>Skew-Symmetric Matrices ($A^\top = -A$):</b>
+        <ul>
+            <li><b>Quadratic Form:</b> $x^\top A x = 0$ for all $x \in \mathbb{R}^n$.</li>
+            <li><b>Eigenvalues:</b> Purely imaginary or zero. If $n$ is odd, at least one eigenvalue is 0 ($\det(A)=0$).</li>
+        </ul></p>
       </div>
 
       <h3>P0.4 — Norm Equivalence</h3>
@@ -1431,13 +1470,19 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Norm Equivalence:</b> In $\mathbb{R}^n$, any two norms $\|\cdot\|_a, \|\cdot\|_b$ satisfy $c \|x\|_a \le \|x\|_b \le C \|x\|_a$.
-        <br><b>Key Inequalities:</b>
+        <p><b>Norm Equivalence Theorem:</b> In finite-dimensional vector spaces, all norms are equivalent. For any two norms $\|\cdot\|_a, \|\cdot\|_b$, there exist constants $c, C > 0$ such that $c \|x\|_a \le \|x\|_b \le C \|x\|_a$. This implies they define the same topology (convergence sequences are the same).
+        <br><b>Standard Inequalities:</b>
         <ul>
-            <li>$\|x\|_\infty \le \|x\|_2 \le \sqrt{n} \|x\|_\infty$</li>
-            <li>$\|x\|_2 \le \|x\|_1 \le \sqrt{n} \|x\|_2$</li>
+            <li>$\|x\|_\infty \le \|x\|_2 \le \|x\|_1$ (Hierarchy of norms)</li>
+            <li>$\|x\|_2 \le \sqrt{n} \|x\|_\infty$</li>
+            <li>$\|x\|_1 \le \sqrt{n} \|x\|_2$ (Cauchy-Schwarz with $\mathbf{1}$)</li>
         </ul>
-        <br><b>Geometry:</b> The unit ball of $\ell_1$ is inscribed in $\ell_2$, which is inscribed in $\ell_\infty$ (up to scaling factors).</p>
+        <br><b>Geometry:</b>
+        <ul>
+            <li>$\ell_1$ ball: Cross-polytope (Diamond).</li>
+            <li>$\ell_2$ ball: Sphere.</li>
+            <li>$\ell_\infty$ ball: Hypercube.</li>
+        </ul></p>
       </div>
 
       <h3>P0.5 — Least Squares from Scratch</h3>
@@ -1475,9 +1520,18 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Normal Equations:</b> $A^\top A x = A^\top b$. Derived by setting $\nabla \|Ax-b\|^2 = 2A^\top(Ax-b) = 0$.
-        <br><b>Geometry:</b> The residual $r = b - Ax^*$ is orthogonal to $\mathcal{R}(A)$ (column space).
-        <br><b>Convexity:</b> $\nabla^2 f(x) = 2A^\top A$. Since $A^\top A \succeq 0$, the problem is convex. If $\mathcal{N}(A)=\{0\}$, $A^\top A \succ 0$ (strict convexity $\implies$ unique solution).</p>
+        <p><b>Least Squares Objective:</b> $f(x) = \frac{1}{2}\|Ax - b\|_2^2$ is a convex quadratic function.
+        <br><b>Gradients:</b>
+        <ul>
+            <li>$\nabla (\frac{1}{2} x^\top Q x) = Qx$ (for symmetric $Q$).</li>
+            <li>$\nabla (c^\top x) = c$.</li>
+        </ul>
+        <br><b>Normal Equations:</b> $A^\top A x = A^\top b$. This system represents the condition $A^\top (Ax - b) = 0$, meaning the residual is orthogonal to the columns of $A$.
+        <br><b>Convexity & Uniqueness:</b>
+        <ul>
+            <li>The Hessian $\nabla^2 f(x) = A^\top A$ is always PSD ($\succeq 0$), ensuring convexity.</li>
+            <li>If $\mathcal{N}(A) = \{0\}$ (Full Column Rank), $A^\top A$ is PD ($\succ 0$), ensuring <b>strict convexity</b> and a <b>unique global minimum</b>.</li>
+        </ul></p>
       </div>
 
       <h3>P0.6 — Matrix Calculus Practice</h3>
@@ -1507,13 +1561,15 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Matrix Gradient Rules:</b>
+        <p><b>Matrix Calculus Toolkit:</b>
+        <br><b>Definition:</b> The gradient $\nabla_X f(X)$ is the matrix $G$ such that the first-order approximation is $f(X+H) \approx f(X) + \langle G, H \rangle = f(X) + \mathrm{tr}(G^\top H)$.
+        <br><b>Key Formulas:</b>
         <ul>
-            <li>$\nabla_X \mathrm{tr}(A^\top X) = A$ (Linear)</li>
-            <li>$\nabla_X \mathrm{tr}(X^\top X) = 2X$ (Quadratic)</li>
-            <li>$\nabla_X \mathrm{tr}(X^\top A X) = (A + A^\top)X$</li>
+            <li>$\nabla_X \mathrm{tr}(A X) = A^\top$.</li>
+            <li>$\nabla_X \mathrm{tr}(X^\top A X) = (A + A^\top)X$. (For symmetric $A$, $2AX$).</li>
+            <li>$\nabla_X \|X\|_F^2 = 2X$.</li>
         </ul>
-        <br><b>Trick:</b> Use the cyclic property of trace to isolate $X$ on the right side of the inner product $\langle G, dX \rangle = \mathrm{tr}(G^\top dX)$.</p>
+        <br><b>Strategy:</b> Perturb $X \to X + H$, expand terms linear in $H$, and rearrange trace terms to match the form $\mathrm{tr}(G^\top H)$.</p>
       </div>
 
       <h3>P0.7 — Hessian of a Cubic</h3>
@@ -1545,9 +1601,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Second-Order Condition:</b> A function is locally convex where $\nabla^2 f(x) \succeq 0$.
-        <br><b>2x2 PSD Test:</b> $A = \begin{bmatrix} a & b \\ b & c \end{bmatrix} \succeq 0$ iff $a \ge 0, c \ge 0$ and $\det(A) = ac - b^2 \ge 0$.
-        <br><b>Sylvester's Criterion:</b> $A \succ 0$ iff all leading principal minors are positive.</p>
+        <p><b>Convexity Condition:</b> A twice-differentiable function is convex on a domain iff its Hessian matrix is Positive Semidefinite ($\nabla^2 f(x) \succeq 0$) everywhere in that domain.
+        <br><b>Sylvester's Criterion (for $A \succ 0$):</b> A symmetric matrix is Positive Definite iff all <b>leading principal minors</b> (determinants of top-left $k \times k$ submatrices) are positive.
+        <br><b>2x2 PSD Test:</b> $\begin{bmatrix} a & b \\ b & c \end{bmatrix} \succeq 0 \iff a \ge 0, c \ge 0, ac - b^2 \ge 0$. (Trace $\ge 0$ and Det $\ge 0$).</p>
       </div>
 
       <h3>P0.8 — Testing Positive Semidefiniteness</h3>
@@ -1567,12 +1623,17 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Spectral Characterization:</b> The definiteness of a symmetric matrix depends entirely on the signs of its eigenvalues.
-        <br><b>Tests:</b>
+        <p><b>Characterizing Definiteness:</b>
         <ul>
-            <li>PD: $\lambda_i > 0$ or Cholesky factorization exists.</li>
-            <li>PSD: $\lambda_i \ge 0$ or $x^\top A x \ge 0$ for all $x$.</li>
-            <li>Indefinite: $\det(A) < 0$ (if $n=2$ or odd negative eigenvalues).</li>
+            <li><b>Positive Definite (PD):</b> All $\lambda_i > 0$. Strictly convex bowl.</li>
+            <li><b>Positive Semidefinite (PSD):</b> All $\lambda_i \ge 0$. Convex bowl (possibly flat).</li>
+            <li><b>Indefinite:</b> Some $\lambda_i > 0$, some $\lambda_i < 0$. Saddle point geometry.</li>
+            <li><b>Negative Definite (ND):</b> All $\lambda_i < 0$. Concave cap.</li>
+        </ul>
+        <br><b>Practical Checks:</b>
+        <ul>
+            <li>Check determinant (product of eigenvalues) and trace (sum of eigenvalues).</li>
+            <li>If $\det(A) < 0$, it must have at least one negative eigenvalue (assuming $n$ even? No, if $\det < 0$ product is negative, so odd number of negative eigenvals. If $n=2$, exactly one neg).</li>
         </ul></p>
       </div>
 
@@ -1599,9 +1660,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Schur Complement Lemma:</b> $M = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} \succeq 0$ is equivalent to:
-        <br>$A \succ 0$ and $S = C - B^\top A^{-1} B \succeq 0$.
-        <br><b>Application:</b> Converts block LMI constraints into nonlinear convex constraints on sub-blocks (or vice versa).</p>
+        <p><b>Schur Complement Lemma:</b> A block matrix $M = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix}$ (with $A \succ 0$) is PSD if and only if the Schur complement $S = C - B^\top A^{-1} B$ is PSD.
+        <br><b>LMI (Linear Matrix Inequality):</b> A constraint of the form $F(x) \succeq 0$ where $F$ is affine in $x$.
+        <br><b>Trick:</b> Use Schur complements to convert nonlinear constraints (like $x^2 \le y$ or quadratic-over-linear forms) into equivalent Linear Matrix Inequalities. This allows them to be solved using Semidefinite Programming (SDP).</p>
       </div>
 
       <h3>P0.10 — Projection onto a Line</h3>
@@ -1617,9 +1678,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Projection Formula:</b> The projection of $b$ onto the line spanned by $a$ is $p = \frac{a^\top b}{a^\top a} a$.
-        <br><b>Orthogonality:</b> The error $e = b - p$ satisfies $a^\top e = 0$.
-        <br><b>Matrix Form:</b> $p = P b$ where $P = \frac{a a^\top}{a^\top a}$ is the projection matrix ($P^2=P, P^\top=P$).</p>
+        <p><b>Vector Projection:</b> The projection of a vector $b$ onto the line spanned by a non-zero vector $a$ is given by:
+        $$ \Pi_a(b) = \frac{\langle a, b \rangle}{\|a\|^2} a $$
+        <br><b>Geometric Intuition:</b> This scales $a$ by the "shadow" of $b$ onto $a$.
+        <br><b>Projection Matrix:</b> $P = \frac{a a^\top}{a^\top a}$ is a rank-1 orthogonal projector.</p>
       </div>
 
       <h3>P0.11 — Projection onto a Hyperplane</h3>
@@ -1635,10 +1697,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Hyperplane Projection:</b> To project $y$ onto $\{x \mid a^\top x = b\}$:
-        $$ p = y - \frac{a^\top y - b}{\|a\|^2} a $$
-        <b>Intuition:</b> Move against the gradient (normal $a$) until the constraint is satisfied.
-        <br><b>Distance:</b> The distance is $\frac{|a^\top y - b|}{\|a\|}$.</p>
+        <p><b>Hyperplane Definition:</b> A hyperplane is an affine set defined by a single linear equality constraint: $\mathcal{H} = \{x \mid a^\top x = b\}$.
+        <br><b>Projection Formula:</b> To project a point $y$ onto $\mathcal{H}$, you move in the direction of the normal vector $a$ (the most direct path) by exactly the amount needed to satisfy the equation:
+        $$ \Pi_{\mathcal{H}}(y) = y - \frac{a^\top y - b}{\|a\|^2} a $$
+        <br><b>Signed Distance:</b> The quantity $\frac{a^\top y - b}{\|a\|}$ is the signed distance from $y$ to the hyperplane.</p>
       </div>
 
       <h3>P0.12 — Orthogonal Complements</h3>
@@ -1666,14 +1728,14 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Definition:</b> $S^\perp = \{y \mid y^\top x = 0, \forall x \in S\}$.
-        <br><b>Properties:</b>
+        <p><b>Definition:</b> The orthogonal complement $S^\perp$ contains all vectors orthogonal to every vector in the subspace $S$.
+        <br><b>Fundamental Properties:</b>
         <ul>
-            <li>$\dim(S) + \dim(S^\perp) = n$.</li>
-            <li>$(S^\perp)^\perp = S$.</li>
-            <li>$\mathbb{R}^n = S \oplus S^\perp$ (Direct Sum).</li>
+            <li><b>Decomposition:</b> $\mathbb{R}^n = S \oplus S^\perp$. Any vector $x$ can be uniquely written as $x = x_S + x_{\perp}$, with $x_S \in S$ and $x_{\perp} \in S^\perp$.</li>
+            <li><b>Dimension:</b> $\dim(S) + \dim(S^\perp) = n$.</li>
+            <li><b>Duality:</b> $(S^\perp)^\perp = S$.</li>
         </ul>
-        </p>
+        <br><b>Connection to Matrices:</b> $\mathcal{R}(A)^\perp = \mathcal{N}(A^\top)$. (Fundamental Theorem of Linear Algebra).</p>
       </div>
 
       <h3>P0.13 — Frobenius Norm Submultiplicativity</h3>
@@ -1705,9 +1767,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Frobenius Norm:</b> $\|A\|_F = \sqrt{\mathrm{tr}(A^\top A)} = \sqrt{\sum \sigma_i^2}$.
-        <br><b>Submultiplicativity:</b> $\|AB\|_F \le \|A\|_F \|B\|_F$ (and also $\le \|A\|_2 \|B\|_F$).
-        <br><b>Trace Inequality:</b> $\mathrm{tr}(AB) \le \sum \sigma_i(A)\sigma_i(B)$ (Von Neumann).</p>
+        <p><b>Frobenius Norm:</b> $\|A\|_F = \sqrt{\sum_{i,j} A_{ij}^2} = \sqrt{\mathrm{tr}(A^\top A)}$. It measures the total "energy" of the matrix entries.
+        <br><b>Algebraic Property:</b> The Frobenius norm is <b>submultiplicative</b> (or consistent): $\|AB\|_F \le \|A\|_F \|B\|_F$.
+        <br><b>Comparison:</b> $\|A\|_2 \le \|A\|_F \le \sqrt{rank(A)} \|A\|_2$. The spectral norm is "tighter".</p>
       </div>
 
       <h3>P0.14 — Spectral Norm Properties</h3>
@@ -1726,9 +1788,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Spectral Norm:</b> $\|A\|_2 = \sigma_{\max}(A) = \sqrt{\lambda_{\max}(A^\top A)}$.
-        <br><b>Orthogonal Invariance:</b> $\|Q A\|_2 = \|A\|_2$ and $\|A Q\|_2 = \|A\|_2$ for $Q \in O_n$.
-        <br><b>Interpretation:</b> The "operator norm" induced by the Euclidean vector norm.</p>
+        <p><b>Definition:</b> The spectral norm (or operator norm) is the maximum amplification of a vector's length: $\|A\|_2 = \sup_{\|x\|_2=1} \|Ax\|_2$.
+        <br><b>Calculation:</b> $\|A\|_2 = \sigma_{\max}(A) = \sqrt{\lambda_{\max}(A^\top A)}$.
+        <br><b>Invariance:</b> The spectral norm is <b>orthogonally invariant</b>. $\|Q A Z\|_2 = \|A\|_2$ for any orthogonal matrices $Q, Z$. It depends only on the singular values (intrinsic geometry).</p>
       </div>
 
       <h3>P0.15 — Isometries</h3>
@@ -1757,9 +1819,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Concept:</b> An isometry preserves Euclidean norms ($\|Qx\| = \|x\|$).
-        <br><b>Trick:</b> The <b>Polarization Identity</b> relates norms to inner products: $\langle x, y \rangle = \frac{1}{4}(\|x+y\|^2 - \|x-y\|^2)$.
-        <br><b>Theorem:</b> Preserving norms implies preserving inner products ($\langle Qx, Qy \rangle = \langle x, y \rangle$), which implies orthogonality ($Q^\top Q = I$).</p>
+        <p><b>Isometry Definition:</b> A linear map $Q$ is an isometry if $\|Qx\|_2 = \|x\|_2$ for all $x$.
+        <br><b>Polarization Identity:</b> Inner products can be recovered solely from norm evaluations:
+        $$ \langle x, y \rangle = \frac{1}{4} (\|x+y\|^2 - \|x-y\|^2) $$
+        <br><b>Conclusion:</b> Preserving lengths is equivalent to preserving angles (inner products). Thus, isometries in Euclidean space are exactly the orthogonal matrices ($Q^\top Q = I$).</p>
       </div>
 
       <h3>P0.16 — Loewner Order Transitivity</h3>
@@ -1775,10 +1838,14 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Loewner Order:</b> $A \succeq B \iff A - B \succeq 0$.
-        <br><b>Properties:</b> Transitive, Reflexive, Antisymmetric.
-        <br><b>Congruence:</b> $A \succeq B \implies T^\top A T \succeq T^\top B T$ for any $T$.
-        <br><b>Warning:</b> $A \succeq B \not\implies A^2 \succeq B^2$ in general.</p>
+        <p><b>Loewner Order ($\succeq$):</b> A partial ordering on the set of symmetric matrices defined by $X \succeq Y \iff X - Y \succeq 0$ (i.e., $X-Y$ is PSD).
+        <br><b>Key Properties:</b>
+        <ul>
+            <li><b>Transitivity:</b> $X \succeq Y$ and $Y \succeq Z \implies X \succeq Z$.</li>
+            <li><b>Additivity:</b> $X \succeq Y \implies X+Z \succeq Y+Z$.</li>
+            <li><b>Congruence:</b> $X \succeq Y \implies T^\top X T \succeq T^\top Y T$ for any $T$.</li>
+            <li><b>Inversion:</b> If $X, Y \succ 0$, then $X \succeq Y \implies Y^{-1} \succeq X^{-1}$ (order reversal).</li>
+        </ul></p>
       </div>
 
       <h3>P0.17 — Weighted Inner Product</h3>
@@ -1799,9 +1866,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Generalized Inner Product:</b> $\langle x, y \rangle_P = x^\top P y$ is an inner product iff $P \succ 0$.
-        <br><b>Induced Norm:</b> $\|x\|_P = \sqrt{x^\top P x}$.
-        <br><b>Generalized Cauchy-Schwarz:</b> $|x^\top P y| \le \sqrt{x^\top P x} \sqrt{y^\top P y}$.</p>
+        <p><b>Weighted Inner Product:</b> Given a Positive Definite matrix $P \succ 0$, the function $\langle x, y \rangle_P = x^\top P y$ defines a valid inner product.
+        <br><b>Mahalanobis Distance:</b> The induced norm $\|x\|_P = \sqrt{x^\top P x}$ measures distance accounting for correlations/scales defined by $P$.
+        <br><b>Geometric Meaning:</b> The unit ball $\{x \mid x^\top P x \le 1\}$ is an ellipsoid centered at the origin.</p>
       </div>
 
       <h3>P0.18 — Characterization of Projectors</h3>
@@ -1830,10 +1897,12 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>Projector Characterization:</b> $P$ is an orthogonal projector onto $\mathcal{R}(P)$ iff:
-        <br>1. <b>Idempotent:</b> $P^2 = P$ (Projection property).
-        <br>2. <b>Symmetric:</b> $P = P^\top$ (Orthogonality property).
-        <br><b>Complement:</b> $I - P$ is the orthogonal projector onto $\mathcal{R}(P)^\perp = \mathcal{N}(P)$.</p>
+        <p><b>Orthogonal Projector Theorem:</b> A matrix $P$ represents an orthogonal projection onto some subspace if and only if:
+        <ul>
+            <li><b>$P^2 = P$:</b> It is a projection (idempotent). Applying it twice is the same as applying it once.</li>
+            <li><b>$P^\top = P$:</b> It is orthogonal (symmetric). The residual is orthogonal to the range.</li>
+        </ul>
+        <br><b>Oblique Projectors:</b> If $P^2=P$ but $P \neq P^\top$, it is an <i>oblique</i> projection (projects along a non-orthogonal angle).</p>
       </div>
 
       <h3>P0.19 — PSD Cone in 2D</h3>
@@ -1852,10 +1921,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p><b>PSD Cone $\mathbb{S}^n_+$:</b> The set $\{X \in \mathbb{S}^n \mid X \succeq 0\}$.
-        <br><b>2x2 Case:</b> Defined by $x \ge 0, z \ge 0, xz \ge y^2$ (where $X = \begin{smallmatrix} x & y \\ y & z \end{smallmatrix}$).
-        <br><b>Properties:</b> Convex cone, pointed, closed, solid (non-empty interior).
-        <br><b>Boundary:</b> Singular PSD matrices (where $\det X = 0$).</p>
+        <p><b>The PSD Cone $\mathbb{S}^n_+$:</b> The set of all symmetric positive semidefinite matrices forms a convex cone in $\mathbb{S}^n$.
+        <br><b>Geometry (2x2):</b> In the 3D space of entries $(x, y, z)$, the PSD cone is defined by $x \ge 0, z \ge 0, xz \ge y^2$. This looks like an "ice cream cone" with a non-circular cross-section.
+        <br><b>Boundary:</b> The boundary of the cone consists of singular PSD matrices (rank deficient, $\det(X)=0$).
+        <br><b>Interior:</b> The interior consists of Positive Definite (PD) matrices ($\det(X)>0, x>0$).</p>
       </div>
     </section>
 
