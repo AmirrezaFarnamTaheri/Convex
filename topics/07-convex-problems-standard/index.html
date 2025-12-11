@@ -272,7 +272,62 @@
         </div>
       </div>
 
-      <h3>2.5 Hierarchy of Convex Problems</h3>
+      <h3>2.5 Matrix Norm Approximation (LP)</h3>
+      <p>We can extend the $\ell_\infty$ norm minimization to matrices (Exercise 4.14). Let $A(x) = A_0 + \sum_{i=1}^k x_i A_i$. We want to minimize the induced $\ell_\infty$ norm (max row sum):</p>
+      $$ \text{minimize} \quad \|A(x)\|_\infty = \max_{i=1,\dots,m} \sum_{j=1}^n |a_{ij}(x)| $$
+
+      <div class="proof-box">
+        <h4>LP Formulation via Epigraph</h4>
+        <p>This looks nonlinear, but we can decompose it.
+        <br>Minimize $t$ subject to $\sum_j |a_{ij}(x)| \le t$ for all rows $i$.
+        <br>To handle the absolute values, introduce $y_{ij} \ge |a_{ij}(x)|$.
+        </p>
+        <p style="text-align: center;">
+            $
+            \begin{aligned}
+            \text{minimize} \quad & t \\
+            \text{subject to} \quad & -y_{ij} \le a_{ij}(x) \le y_{ij}, \quad \forall i,j \\
+            & \sum_{j=1}^n y_{ij} \le t, \quad \forall i
+            \end{aligned}
+            $
+        </p>
+        <p>This is a standard LP. It demonstrates how to lift complex norm objectives into higher-dimensional linear spaces.</p>
+      </div>
+
+      <h3>2.6 Minimum Fuel Optimal Control (LP)</h3>
+      <p>Consider a dynamic system $x(t+1) = A x(t) + b u(t)$ driving the state from $0$ to $x_{\text{des}}$ in $N$ steps (Exercise 4.16). We want to minimize fuel consumption.</p>
+      $$ \text{minimize} \quad \sum_{t=0}^{N-1} f(u(t)) $$
+      <p>where the fuel cost $f(u)$ is the piecewise-linear function:
+      $
+      f(a) = \begin{cases} |a| & |a| \le 1 \\ 2|a| - 1 & |a| > 1 \end{cases}
+      $
+      </p>
+
+      <div class="proof-box">
+        <h4>LP Formulation</h4>
+        <div class="proof-step">
+            <strong>Step 1: Epigraph of Cost.</strong>
+            Note that $f(a) = \max\{a, -a, 2a-1, -2a-1\}$. This is the maximum of 4 linear functions.
+            We introduce slack variables $s(t) \ge f(u(t))$.
+        </div>
+        <div class="proof-step">
+            <strong>Step 2: Dynamics.</strong>
+            The state constraints $x(t+1) = Ax(t) + bu(t)$ are linear equalities.
+        </div>
+        <div class="proof-step">
+            <strong>Step 3: Full LP.</strong>
+            $$
+            \begin{aligned}
+            \text{minimize} \quad & \sum_{t=0}^{N-1} s(t) \\
+            \text{subject to} \quad & x(t+1) = Ax(t) + bu(t) \\
+            & s(t) \ge u(t), \quad s(t) \ge -u(t) \\
+            & s(t) \ge 2u(t)-1, \quad s(t) \ge -2u(t)-1
+            \end{aligned}
+            $$
+        </div>
+      </div>
+
+      <h3>2.7 Hierarchy of Convex Problems</h3>
       <p>The standard problem classes are nested:</p>
       $$ \text{LP} \subset \text{QP} \subset \text{SOCP} \subset \text{SDP} $$
     </section>
@@ -367,6 +422,49 @@
         $$ \begin{bmatrix} A_1 & 0 \\ 0 & A_2 \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} \le \begin{bmatrix} b_1 \\ b_2 \end{bmatrix} $$
         Thus, distance computation is a standard QP in the variable $z$.</p>
       </div>
+
+      <h3>3.6 Robust Least Squares and the Huber Penalty</h3>
+      <p>Robustness often leads to different formulations of the same underlying problem. Consider robust regression with the <strong>Huber penalty</strong> (Exercise 4.5):</p>
+      $$ \phi(u) = \begin{cases} u^2 & |u| \le M \\ M(2|u| - M) & |u| > M \end{cases} $$
+      <p>This penalty is quadratic for small errors and linear for large outliers.</p>
+
+      <div class="insight">
+        <h4>Three Equivalent Formulations</h4>
+        <p>The problem $\min \sum \phi(a_i^\top x - b_i)$ can be viewed in three ways:</p>
+        <ol>
+            <li><strong>Direct Convex Optimization:</strong> Minimizing a sum of convex Huber functions.</li>
+            <li><strong>Weighted Least Squares:</strong>
+                $$ \min_{x, w \ge 0} \sum \frac{r_i(x)^2}{w_i + 1} + M^2 \mathbf{1}^\top w $$
+                Solving for optimal weights $w_i$ recovers the Huber cost. This interprets robust regression as "reweighting" outliers.
+            </li>
+            <li><strong>Quadratic Program (QP):</strong>
+                $$
+                \begin{aligned}
+                \text{minimize} \quad & \sum (u_i^2 + 2M v_i) \\
+                \text{subject to} \quad & -u-v \preceq Ax - b \preceq u+v \\
+                & 0 \preceq u \preceq M\mathbf{1}, \quad v \succeq 0
+                \end{aligned}
+                $$
+                This splits the residual into a "quadratic part" $u$ and a "linear part" $v$.
+            </li>
+        </ol>
+      </div>
+
+      <h3>3.7 Quadratically Constrained Quadratic Programs (QCQP)</h3>
+      <p>A natural generalization of QP is to allow quadratic inequality constraints:</p>
+      $$
+      \begin{aligned}
+      \text{minimize} \quad & \frac{1}{2} x^\top P_0 x + q_0^\top x + r_0 \\
+      \text{subject to} \quad & \frac{1}{2} x^\top P_i x + q_i^\top x + r_i \le 0, \quad i=1,\dots,m
+      \end{aligned}
+      $$
+      <p>where $P_i \succeq 0$. If $P_i$ are not PSD, the problem is NP-hard.</p>
+
+      <h4>Example: QCQP over the Unit Ball</h4>
+      <p>Consider minimizing a quadratic form over the unit ball (Exercise 4.22): $\min \frac{1}{2} x^\top P x + q^\top x$ subject to $x^\top x \le 1$.
+      <br>Using KKT conditions, we can derive the analytical solution:</p>
+      $$ x^\star = -(P + \lambda I)^{-1} q $$
+      <p>where $\lambda \ge 0$ is chosen such that either $\lambda=0$ (if the unconstrained minimum is inside the ball) or $\lambda$ solves the secular equation $q^\top (P+\lambda I)^{-2} q = 1$. This structure reveals that the constraint acts as a "Tikhonov regularization" on the system, shifting the eigenvalues of $P$.</p>
     </section>
 
     <!-- NEW SECTION 4: Linear-Fractional Programming -->
@@ -504,6 +602,27 @@
         The growth rate of sector $i$ is $x_i^+ / x_i$. We want to maximize the growth rate of the slowest growing sector (max-min fairness):
         $$ \max_{x, x^+} \min_{i} \frac{x_i^+}{x_i} $$
         This is a GLFP. It cannot be reduced to a single LP, but it is quasiconvex and efficiently solvable.</p>
+      </div>
+
+      <h3>4.6 Convex-Concave Fractional Programming</h3>
+      <p>The perspective transform trick extends beyond linear functions (Exercise 4.7). Consider minimizing:</p>
+      $$ f_0(x) = \frac{h(x)}{g(x)}, \quad g(x) > 0 $$
+      <p>where $h$ is convex and $g$ is <strong>concave</strong>. (Note: standard LFP has affine $h, g$).</p>
+
+      <div class="proof-box">
+        <h4>Convex Reformulation</h4>
+        <p>We use the variable change $y = x/g(x)$ and $t = 1/g(x)$.
+        <br>The condition $g(x) = 1/t$ becomes $t g(y/t) = 1$. Since $g$ is concave, its perspective function $\tilde{g}(y,t) = t g(y/t)$ is concave.
+        <br>The equality constraint $\tilde{g}(y,t) = 1$ is not convex, but we can relax it to $\tilde{g}(y,t) \ge 1$ (a convex constraint). At optimality, the inequality will be tight.</p>
+        <p><strong>Result:</strong>
+        $$
+        \begin{aligned}
+        \text{minimize} \quad & t h(y/t) \quad \text{(Perspective of } h, \text{ convex)} \\
+        \text{subject to} \quad & t g(y/t) \ge 1 \quad \text{(Perspective of } g, \text{ concave)} \\
+        & Ay = bt, \quad t > 0
+        \end{aligned}
+        $$
+        This technique handles complex objectives like the ratio of trace to determinant ($\text{tr}(F(x)) / \det(F(x))^{1/m}$).</p>
       </div>
     </section>
 
@@ -657,7 +776,7 @@
       <h2><i data-feather="edit-3"></i> 9. Exercises</h2>
 
       <div class="problem">
-        <h3>P8.1 — Diet Problem (LP)</h3>
+        <h3>P7.1 — Diet Problem (LP)</h3>
         <p>Formulate the classic diet problem as an LP. (See Example 2.1 for the derivation).
         Is the feasible set bounded?</p>
         <div class="solution-box">
@@ -668,7 +787,7 @@
       </div>
 
       <div class="problem">
-        <h3>P8.2 — Transportation Problem (LP)</h3>
+        <h3>P7.2 — Transportation Problem (LP)</h3>
         <p>Supply $s_i$ at sources, demand $d_j$ at destinations. Cost $C_{ij}$. Formulate as LP.</p>
         <div class="solution-box">
           <h4>Solution</h4>
@@ -677,7 +796,7 @@
       </div>
 
       <div class="problem">
-        <h3>P8.3 — PSD Block Matrix (Matrix Viewpoint)</h3>
+        <h3>P7.3 — PSD Block Matrix (Matrix Viewpoint)</h3>
         <p>Verify that the matrix $Q = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix}$ is positive semidefinite by explicitly factoring it as $B^\top B$. What is $B$?</p>
         <div class="solution-box">
           <h4>Solution</h4>
@@ -691,7 +810,7 @@
       </div>
 
       <div class="problem">
-        <h3>P8.4 — L1 Reformulation</h3>
+        <h3>P7.4 — L1 Reformulation</h3>
         <p>Reformulate $\min \|Ax - b\|_1$ subject to $\|x\|_\infty \le 1$ as an LP.</p>
         <div class="solution-box">
           <h4>Solution</h4>
@@ -700,7 +819,7 @@
       </div>
 
       <div class="problem">
-        <h3>P8.5 — LP Reformulation: Piecewise Linear Objective</h3>
+        <h3>P7.5 — LP Reformulation: Piecewise Linear Objective</h3>
         <p>Consider the problem of minimizing the sum of hinge losses:</p>
         $$ \min_{x} \quad c^\top x + \sum_{i=1}^m \max(0, a_i^\top x + b_i) $$
         <p>Formulate this as a Linear Program.</p>
@@ -732,6 +851,22 @@
             </div>
         </div>
         </div>
+
+      <div class="problem">
+        <h3>P7.6 — The Log-Barrier Problem</h3>
+        <p>Consider $f_0(x) = -\sum_{i=1}^m \log(b_i - a_i^\top x)$ with domain $\{x \mid Ax \prec b\}$.
+        Analyze the existence of minimizers (Exercise 4.2).</p>
+        <p><strong>(a)</strong> Show that the domain is unbounded if and only if there exists $v \ne 0$ such that $Av \preceq 0$.</p>
+        <p><strong>(b)</strong> Show that $f_0$ is unbounded below if and only if there exists $v$ such that $Av \preceq 0$ and $Av \ne 0$.</p>
+        <p><strong>(c)</strong> Show that if $f_0$ is bounded below, a minimizer exists and is unique (modulo the nullspace of $A$).</p>
+
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <p><strong>(a) Recession Cone:</strong> The domain is defined by $Ax \prec b$. Its recession cone is $\{v \mid A(x+tv) \prec b, \forall t\} = \{v \mid Av \preceq 0\}$. An unbounded domain means the recession cone is non-trivial ($v \ne 0$).</p>
+          <p><strong>(b) Unboundedness:</strong> If such a $v$ exists with $Av \ne 0$, then along the ray $x+tv$, some slacks $s_i(t)$ grow linearly while others stay constant. The term $-\log(s_i(t))$ goes to $-\infty$, driving $f_0 \to -\infty$. Conversely, if no such $v$ exists, a theorem of alternatives implies $\exists z \succ 0, A^\top z = 0$. We can use this $z$ to construct a lower bound.</p>
+          <p><strong>(c) Existence:</strong> If $f_0$ is bounded below, slacks cannot approach 0 arbitrarily without $x$ going to infinity in a "bad" direction. Since "bad" directions don't exist, the sublevel sets are bounded (modulo $\text{null}(A)$). As $f_0$ is continuous and strictly convex on the range of $A^\top$, the minimum is attained.</p>
+        </div>
+      </div>
     </section>
 
     <!-- SECTION 9: READINGS -->
