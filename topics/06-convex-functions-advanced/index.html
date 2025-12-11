@@ -193,20 +193,42 @@
 
         <h3>2.5 Examples</h3>
         <div class="example">
-          <h4>1. Linear-Fractional Function</h4>
-          <p>$f(x) = \frac{a^\top x + b}{c^\top x + d}$ on $\{x \mid c^\top x + d > 0\}$.
-          <br>Sublevel set: $a^\top x + b \le \alpha (c^\top x + d)$. This is a linear inequality (halfspace), so $f$ is quasi-convex (and quasi-concave).</p>
+          <h4>1. Linear-Fractional Function (Detailed)</h4>
+          <p>$f(x) = \frac{a^\top x + b}{c^\top x + d}$ on domain $\{x \mid c^\top x + d > 0\}$.
+          <br>We show this is <b>quasilinear</b> (both quasi-convex and quasi-concave) by examining sublevel and superlevel sets.</p>
+          <p><b>Sublevel Sets $S_\alpha = \{x \mid f(x) \le \alpha\}$:</b>
+          $$ \frac{a^\top x + b}{c^\top x + d} \le \alpha \iff a^\top x + b \le \alpha(c^\top x + d) \quad (\text{since } c^\top x + d > 0) $$
+          $$ \iff (a - \alpha c)^\top x \le \alpha d - b $$
+          This inequality defines a halfspace, which is a convex set. Thus $f$ is quasi-convex.</p>
+          <p><b>Superlevel Sets $T_\alpha = \{x \mid f(x) \ge \alpha\}$:</b>
+          $$ \frac{a^\top x + b}{c^\top x + d} \ge \alpha \iff a^\top x + b \ge \alpha(c^\top x + d) $$
+          This also defines a halfspace. Thus $f$ is quasi-concave.</p>
         </div>
 
         <div class="example">
           <h4>2. Distance Ratio</h4>
-          <p>$f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ on $\{x \mid \|x-a\| \le \|x-b\|\}$.
-          <br>Condition $f(x) \le \alpha$ squares to a quadratic inequality defining a ball (Apollonius circle). Thus quasi-convex.</p>
+          <p>$f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ on domain $\{x \mid \|x-a\| \le \|x-b\|\}$.
+          <br>Condition $f(x) \le \alpha$ becomes $\|x-a\| \le \alpha \|x-b\|$. Squaring both sides:
+          $$ \|x-a\|^2 \le \alpha^2 \|x-b\|^2 \iff (x-a)^\top(x-a) \le \alpha^2 (x-b)^\top(x-b) $$
+          This is a quadratic inequality. Since the coefficient of $x^\top x$ is $1 - \alpha^2$, if $\alpha \le 1$, this defines a convex set (ball or halfspace). Thus quasi-convex on the defined domain.</p>
         </div>
 
         <div class="example">
-          <h4>3. Internal Rate of Return (IRR)</h4>
-          <p>The IRR is a quasi-concave function of the cash flows (superlevel sets are convex).</p>
+          <h4>3. Cardinality of Nonnegative Vector</h4>
+          <p>For $x \in \mathbb{R}^n_+$, let $f(x) = \mathrm{card}(x)$ (number of non-zero entries).
+          <br>This function is <b>quasi-concave</b>. For $x, y \ge 0$ and $\theta \in (0,1)$, the support of the combination is the union of the supports: $\mathrm{supp}(\theta x + (1-\theta)y) = \mathrm{supp}(x) \cup \mathrm{supp}(y)$.
+          <br>The size of the union is at least the size of each individual set:
+          $$ \mathrm{card}(\theta x + (1-\theta)y) \ge \max(\mathrm{card}(x), \mathrm{card}(y)) \ge \min(\mathrm{card}(x), \mathrm{card}(y)) $$
+          This satisfies the superlevel set condition for quasi-concavity.</p>
+        </div>
+
+        <div class="example">
+          <h4>4. Rank of PSD Matrix</h4>
+          <p>For $X \in \mathbb{S}^n_+$, $f(X) = \mathrm{rank}(X)$.
+          <br>If $X, Y \succeq 0$, then $\mathcal{N}(X+Y) = \mathcal{N}(X) \cap \mathcal{N}(Y)$.
+          <br>Dimension of nullspace: $\dim \mathcal{N}(X+Y) \le \min(\dim \mathcal{N}(X), \dim \mathcal{N}(Y))$.
+          <br>By rank-nullity, $\mathrm{rank}(X+Y) \ge \max(\mathrm{rank}(X), \mathrm{rank}(Y))$.
+          <br>This satisfies the condition for quasi-concavity on the PSD cone (superlevel sets are convex cones).</p>
         </div>
     </section>
 

@@ -173,42 +173,46 @@
         </div>
 
         <h3>1.4 Integral Characterization of Convexity</h3>
-        <p>A powerful alternative definition of convexity involves integrals. This mirrors the "average value" property of harmonic functions but with an inequality.</p>
+        <p>A powerful alternative definition of convexity involves integrals. This mirrors the "average value" property of harmonic functions but with an inequality. We define the integral along the chord:</p>
+        $$ I_f(x,y) := \int_0^1 f(tx + (1-t)y) dt $$
 
         <div class="theorem-box">
           <h4>Theorem</h4>
-          <p>A continuous function $f: \mathbb{R} \to \mathbb{R}$ is convex <b>if and only if</b> for all $x, y \in \mathbb{R}$:</p>
-          $$ \int_0^1 f(x + t(y-x)) dt \le \frac{f(x) + f(y)}{2} $$
+          <p>A continuous function $f: \mathbb{R}^n \to \mathbb{R}$ is convex <b>if and only if</b> for all $x, y \in \mathrm{dom}\, f$:</p>
+          $$ \int_0^1 f(tx + (1-t)y) dt \le \frac{f(x) + f(y)}{2} $$
           <p>This states that the <b>average value</b> of the function along a segment is less than or equal to the <b>average of the values</b> at the endpoints.</p>
         </div>
 
         <div class="proof-box">
-          <h4>Proof</h4>
+          <h4>Proof Breakdown</h4>
+
           <div class="proof-step">
-            <strong>($\Rightarrow$) Convex implies Integral Inequality:</strong>
-            <p>Let $x, y \in \mathbb{R}$. We want to show the upper bound in the integral characterization.
-            <br>By convexity, for any $t \in [0, 1]$, we have $f(tx + (1-t)y) \le t f(x) + (1-t)f(y)$.
-            <br>Integrating both sides with respect to $t$ from 0 to 1:
-            $$ \int_0^1 f(tx + (1-t)y) dt \le f(x)\int_0^1 t dt + f(y)\int_0^1 (1-t) dt $$
-            Since $\int_0^1 t dt = \frac{1}{2}$ and $\int_0^1 (1-t) dt = \frac{1}{2}$, we obtain:
-            $$ \int_0^1 f(tx + (1-t)y) dt \le \frac{f(x) + f(y)}{2} $$
-            </p>
+            <strong>1. Affine Function Case.</strong>
+            <p>Let $\ell(z) = a^\top z + b$. Along the segment $z(t) = tx + (1-t)y$, we have:
+            $$ \ell(z(t)) = t(a^\top x + b) + (1-t)(a^\top y + b) = t \ell(x) + (1-t) \ell(y) $$
+            Integrating this:
+            $$ \int_0^1 \ell(z(t)) dt = \ell(x) \int_0^1 t dt + \ell(y) \int_0^1 (1-t) dt = \frac{1}{2}\ell(x) + \frac{1}{2}\ell(y) $$
+            For an affine function, the average value along the chord equals the average of the endpoints.</p>
           </div>
+
           <div class="proof-step">
-            <strong>($\Leftarrow$) Integral Inequality implies Convex (Contrapositive):</strong>
-            <p>Suppose $f$ is <b>not</b> convex. Then there exist points $x_0, y_0$ and some $\theta \in (0, 1)$ such that $f$ lies strictly above the chord at $z_0 = \theta x_0 + (1-\theta)y_0$.
-            <br>Let $\ell(u)$ be the affine function through $(x_0, f(x_0))$ and $(y_0, f(y_0))$.
-            <br>Define $g(u) = f(u) - \ell(u)$. Then $g(x_0)=g(y_0)=0$ and $g(z_0) > 0$.
-            <br>Assuming continuity, $g(u) > 0$ on some interval inside $[x_0, y_0]$. Thus $\int_{x_0}^{y_0} g(u) du > 0$.
-            $$ \int_{x_0}^{y_0} f(u) du > \int_{x_0}^{y_0} \ell(u) du $$
-            The integral of the line $\ell$ over $[x_0, y_0]$ is the length $\times$ midpoint value: $(y_0-x_0) \frac{f(x_0)+f(y_0)}{2}$.
-            <br>Perform the change of variables $u = (1-t)x_0 + ty_0$, so $du = (y_0 - x_0) dt$.
-            $$ \int_{x_0}^{y_0} f(u) du = \int_0^1 f((1-t)x_0 + ty_0) (y_0-x_0) dt $$
-            The inequality $\int_{x_0}^{y_0} f(u) du > \int_{x_0}^{y_0} \ell(u) du$ becomes:
-            $$ (y_0-x_0) \int_0^1 f((1-t)x_0 + ty_0) dt > (y_0-x_0) \frac{f(x_0)+f(y_0)}{2} $$
-            Dividing by the positive length $(y_0-x_0)$ yields:
-            $$ \int_0^1 f((1-t)x_0 + ty_0) dt > \frac{f(x_0)+f(y_0)}{2} $$
-            This directly violates the integral condition.</p>
+            <strong>2. Convex Function Case ($\Rightarrow$).</strong>
+            <p>If $f$ is convex, then $f(tx + (1-t)y) \le t f(x) + (1-t)f(y)$ for all $t \in [0,1]$.
+            Integrate both sides over $t \in [0,1]$. The RHS integrates to $\frac{f(x)+f(y)}{2}$ (as shown above).
+            $$ \int_0^1 f(tx + (1-t)y) dt \le \frac{f(x) + f(y)}{2} $$
+            This is Jensen's inequality applied to the uniform distribution on the chord.</p>
+          </div>
+
+          <div class="proof-step">
+            <strong>3. Subtracting a Supporting Line ($\Leftarrow$).</strong>
+            <p>Suppose the integral inequality holds. Assume for contradiction that $f$ is not convex. Then there exist $x, y$ and a point $z$ on the segment where $f(z)$ is strictly above the chord.
+            <br>Let $\ell(u)$ be the affine function defining the chord between $(x, f(x))$ and $(y, f(y))$.
+            <br>Define $g(u) = f(u) - \ell(u)$. Then $g(x) = g(y) = 0$.
+            <br>If $f$ is not convex, there is a sub-segment where $g(u) > 0$.
+            <br>The integral inequality for $f$ implies one for $g$:
+            $$ \int_0^1 g(z(t)) dt \le \frac{g(x) + g(y)}{2} = 0 $$
+            However, if $g(u)$ has a "bump" above 0 ($g(u) > 0$ somewhere) and is continuous, the integral on the LHS must be strictly positive (or we can zoom in on the sub-segment where it violates convexity).
+            <br>Thus $\int g > 0$, which contradicts $\int g \le 0$. So $f$ must be convex.</p>
           </div>
         </div>
 
@@ -687,9 +691,21 @@
 
         <div class="example">
           <h4>3. Maximum Eigenvalue</h4>
-          <p>For $X \in \mathbb{S}^n$, the maximum eigenvalue $\lambda_{\max}(X)$ is convex. By the Rayleigh-Ritz theorem:</p>
-          $$ \lambda_{\max}(X) = \sup_{\|y\|_2=1} y^\top X y $$
-          <p>For each fixed unit vector $y$, the map $X \mapsto y^\top X y$ is linear in $X$. Thus $\lambda_{\max}$ is the supremum of linear functions.</p>
+          <p>For $X \in \mathbb{S}^n$, the maximum eigenvalue $\lambda_{\max}(X)$ is convex. We use its variational representation:</p>
+          $$ f(X) = \lambda_{\max}(X) = \sup_{\|y\|_2=1} y^\top X y $$
+          <p>For any fixed unit vector $y$, define $g_y(X) = y^\top X y$. Note that:
+          $$ g_y(X) = \mathrm{tr}(y^\top X y) = \mathrm{tr}(X y y^\top) = \langle X, yy^\top \rangle $$
+          This shows $g_y(X)$ is a <b>linear function</b> of the matrix $X$.
+          <br>Since $f(X) = \sup_{\|y\|=1} g_y(X)$ is the pointwise supremum of a family of convex (linear) functions, $f(X)$ is convex.</p>
+        </div>
+
+        <div class="example">
+          <h4>4. Induced Matrix Norms</h4>
+          <p>Let $\|X\|_{a,b} = \sup_{\|v\|_b=1} \|Xv\|_a$ be the operator norm induced by vector norms $\|\cdot\|_a$ and $\|\cdot\|_b$.
+          <br>Using the definition of the dual norm $\|\cdot\|_{a^*}$, we can write $\|z\|_a = \sup_{\|u\|_{a^*} \le 1} u^\top z$.
+          $$ \|X\|_{a,b} = \sup_{\|v\|_b=1} \left( \sup_{\|u\|_{a^*} \le 1} u^\top X v \right) = \sup_{\|v\|_b=1, \ \|u\|_{a^*} \le 1} u^\top X v $$
+          For fixed $u, v$, the function $X \mapsto u^\top X v = \langle X, uv^\top \rangle$ is linear in $X$.
+          Thus, the induced norm is a supremum of linear functions, hence convex.</p>
         </div>
 
         <h3>5.4 Partial Minimization</h3>
@@ -725,13 +741,38 @@
         </div>
 
         <div class="example">
-          <h4>2. Schur Complement</h4>
-          <p>Let $f(x, y) = x^\top A x + 2x^\top B y + y^\top C y$ with $C \succ 0$.
-          <br>We perform partial minimization to eliminate $y$. The gradient w.r.t $y$ is $\nabla_y f = 2Cy + 2B^\top x$. Setting to zero gives $y^* = -C^{-1}B^\top x$.
-          <br>Substituting back:
-          $$ g(x) = f(x, y^*) = x^\top A x + 2x^\top B (-C^{-1}B^\top x) + (-C^{-1}B^\top x)^\top C (-C^{-1}B^\top x) $$
-          $$ = x^\top A x - 2x^\top B C^{-1} B^\top x + x^\top B C^{-1} B^\top x = x^\top (A - B C^{-1} B^\top) x $$
-          Since partial minimization preserves convexity, if the original block matrix is PSD, then the Schur complement $A - B C^{-1} B^\top$ is also PSD.</p>
+          <h4>2. Schur Complement via Quadratic Minimization</h4>
+          <p>Let $f(x, y) = x^\top A x + 2x^\top B y + y^\top C y$ with $C \succ 0$. We want to find $g(x) = \inf_y f(x, y)$.
+          <br>We "complete the square" in $y$. Let $u = y + C^{-1}B^\top x$. Then $y = u - C^{-1}B^\top x$.
+          $$ y^\top C y = (u - C^{-1}B^\top x)^\top C (u - C^{-1}B^\top x) = u^\top C u - 2x^\top B u + x^\top B C^{-1} B^\top x $$
+          $$ 2x^\top B y = 2x^\top B(u - C^{-1}B^\top x) = 2x^\top B u - 2x^\top B C^{-1} B^\top x $$
+          Summing terms, the cross terms involving $u$ cancel:
+          $$ f(x, y) = x^\top A x + u^\top C u - x^\top B C^{-1} B^\top x = u^\top C u + x^\top (A - B C^{-1} B^\top) x $$
+          Since $C \succ 0$, $u^\top C u \ge 0$ is minimized at $u=0$ (i.e., $y = -C^{-1}B^\top x$).
+          $$ g(x) = x^\top (A - B C^{-1} B^\top) x $$
+          Since partial minimization preserves convexity, if the original matrix is PSD, the Schur complement is PSD.</p>
+        </div>
+
+        <div class="example">
+          <h4>3. Infimum over an Affine Constraint</h4>
+          <p>Let $f(x) = \inf \{ h(y) \mid Ay = x \}$, where $h$ is a convex function.
+          <br>This can be viewed as partial minimization of the function $F(x, y) = h(y) + \delta_{\{Ay=x\}}(x,y)$.
+          <br>The set $\{(x, y) \mid Ay=x\}$ is an affine subspace, so its indicator function is convex.
+          <br>Thus $F$ is convex (sum of convex functions), and $f$ is convex (partial minimization of $F$).</p>
+        </div>
+
+        <div class="proof-box">
+          <h4>Alternative Proof: Distance to Convex Set (Epsilon-Delta)</h4>
+          <p>Let $S$ be convex and $d(x) = \inf_{y \in S} \|x-y\|$. We show $d(\theta x_1 + (1-\theta)x_2) \le \theta d(x_1) + (1-\theta)d(x_2)$.
+          <br>Let $\varepsilon > 0$. By definition of infimum, there exist $y_1, y_2 \in S$ such that:
+          $$ \|x_1 - y_1\| \le d(x_1) + \varepsilon, \quad \|x_2 - y_2\| \le d(x_2) + \varepsilon $$
+          Let $y_\theta = \theta y_1 + (1-\theta)y_2$. Since $S$ is convex, $y_\theta \in S$.
+          $$ d(x_\theta) \le \|x_\theta - y_\theta\| = \|(\theta x_1 + (1-\theta)x_2) - (\theta y_1 + (1-\theta)y_2)\| $$
+          $$ = \|\theta(x_1 - y_1) + (1-\theta)(x_2 - y_2)\| $$
+          By the triangle inequality and homogeneity:
+          $$ \le \theta \|x_1 - y_1\| + (1-\theta)\|x_2 - y_2\| $$
+          $$ \le \theta(d(x_1) + \varepsilon) + (1-\theta)(d(x_2) + \varepsilon) = \theta d(x_1) + (1-\theta)d(x_2) + \varepsilon $$
+          Since $\varepsilon$ is arbitrary, the result follows.</p>
         </div>
 
         <h4>The Matrix-Fractional Function</h4>
@@ -777,13 +818,18 @@
           <li><b>Block Matrix:</b> LMI form, useful for SDPs.</li>
           <li><b>Rank-1 Update:</b> $tY \succeq xx^\top$. Derived by setting $\alpha=1$ in the quadratic form argument above: $(x^\top v)^2 \le t v^\top Y v \iff v^\top (tY - xx^\top) v \ge 0$.</li>
         </ul>
-        <p><b>Determinant Identity:</b> We can derive this using a specific block elimination matrix. Define:
-        $$ P = \begin{bmatrix} I & -Y^{-1}x \\ 0 & 1 \end{bmatrix} $$
-        Multiplying the block matrix $M$ by $P$:
-        $$ M P = \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \begin{bmatrix} I & -Y^{-1}x \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} Y & -x + x \\ x^\top & -x^\top Y^{-1}x + t \end{bmatrix} = \begin{bmatrix} Y & 0 \\ x^\top & t - x^\top Y^{-1} x \end{bmatrix} $$
-        Since $MP$ is block lower-triangular, its determinant is the product of diagonal blocks: $\det(MP) = \det(Y)(t - x^\top Y^{-1}x)$.
-        Since $\det(P) = 1$, we have:
-        $$ \det(M) = \det(Y) \cdot (t - x^\top Y^{-1} x) $$
+        <p><b>Determinant Identity:</b> We can derive this using a specific block elimination matrix. Let $M = \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix}$. Define the elimination matrix:
+        $$ R = \begin{bmatrix} I & -Y^{-1}x \\ 0 & 1 \end{bmatrix} $$
+        Compute the product $MR$:
+        <ul>
+            <li>Top-left: $Y \cdot I + x \cdot 0 = Y$.</li>
+            <li>Top-right: $Y(-Y^{-1}x) + x \cdot 1 = -x + x = 0$.</li>
+            <li>Bottom-left: $x^\top \cdot I + t \cdot 0 = x^\top$.</li>
+            <li>Bottom-right: $x^\top(-Y^{-1}x) + t \cdot 1 = t - x^\top Y^{-1}x$.</li>
+        </ul>
+        So $MR = \begin{bmatrix} Y & 0 \\ x^\top & t - x^\top Y^{-1}x \end{bmatrix}$. This is block lower-triangular.
+        <br>Thus $\det(MR) = \det(Y)(t - x^\top Y^{-1}x)$. Since $\det(R)=1$, we have:
+        $$ \boxed{ \det \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} = (\det Y)(t - x^\top Y^{-1}x) } $$
         </p>
       </div>
 
@@ -933,14 +979,16 @@
         </div>
 
         <div class="example">
-          <h4>Example 2: Log-Sum-Exp of Convex Functions</h4>
-          <p>Let $f(x) = \log\left(\sum_{i=1}^m \exp(g_i(x))\right)$ where each $g_i$ is convex.</p>
-          <ul>
-            <li>Inner map: $g(x)$ is convex.</li>
-            <li>Outer map: $h(y) = \log(\sum e^{y_i})$ (Log-Sum-Exp).</li>
-            <li>Properties of $h$: It is convex and <b>non-decreasing</b> in each argument (derivative is softmax probability > 0).</li>
-            <li>Result: $f$ is convex.</li>
-          </ul>
+          <h4>Example 2: Log-Sum-Exp of Convex Functions (Detailed Check)</h4>
+          <p>Let $f(x) = \log\left(\sum_{i=1}^m \exp(g_i(x))\right)$ where each $g_i$ is convex. We verify the vector composition rule conditions:</p>
+          <ol>
+            <li><b>Convexity of Outer Function $h$:</b> $h(z) = \log(\sum e^{z_i})$ is convex (Log-Sum-Exp).
+            <br><i>Proof:</i> Using Hölder's inequality on $h(\theta z + (1-\theta)w) \le \theta h(z) + (1-\theta)h(w)$.</li>
+            <li><b>Monotonicity of Outer Function:</b> $h$ is non-decreasing in each argument.
+            <br><i>Proof:</i> $\frac{\partial h}{\partial z_j} = \frac{e^{z_j}}{\sum e^{z_k}} > 0$. Increasing any $z_j$ increases the sum, thus increasing the log-sum.</li>
+            <li><b>Convexity of Inner Functions:</b> Each $g_i(x)$ is convex (given).</li>
+          </ol>
+          <p><b>Conclusion:</b> Since $h$ is convex and non-decreasing, and $g_i$ are convex, the composition $f(x) = h(g_1(x), \dots, g_m(x))$ is convex.</p>
         </div>
 
         <h3>5.6 Perspective Function</h3>
@@ -988,6 +1036,16 @@
             $$ g(\theta x_1 + (1-\theta)x_2, T) \le \theta t_1 f(x_1/t_1) + (1-\theta) t_2 f(x_2/t_2) $$
             This matches the definition of convexity for $g$.
           </div>
+        </div>
+
+        <div class="proof-box">
+          <h4>Alternative Proof: Epigraph Mapping</h4>
+          <p>We can prove convexity by relating the epigraph of $g$ to the epigraph of $f$ via a linear map.
+          <br>Define the mapping $\Phi: \{(x,t,s) \mid t>0\} \to \mathbb{R}^{n+1}$ by $\Phi(x,t,s) = (x/t, s/t)$.
+          <br>The epigraph of $g$ is defined by $g(x,t) \le s \iff t f(x/t) \le s \iff f(x/t) \le s/t$.
+          <br>Thus $(x,t,s) \in \text{epi } g \iff t > 0 \text{ and } (x/t, s/t) \in \text{epi } f$.
+          <br>We can express this as the inverse image of a linear map on homogeneous coordinates.
+          <br>More simply: $\text{epi } g$ is the conic hull of $\text{epi } f$ (embedded at $t=1$). The conic hull of a convex set is convex.</p>
         </div>
 
         <div class="example">
