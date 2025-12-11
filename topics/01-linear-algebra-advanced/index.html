@@ -158,36 +158,51 @@
         <p>We construct the SVD using the eigendecomposition of the symmetric PSD matrix $A^\top A$.</p>
 
         <div class="proof-step">
-          <strong>Step 1: Eigenvalues of $A^\top A$.</strong>
-          Let $A^\top A = V \Lambda V^\top$ be the spectral decomposition, with $\lambda_1 \ge \dots \ge \lambda_n \ge 0$.
-          Define the singular values $\sigma_i = \sqrt{\lambda_i}$. Let $r$ be the rank of $A$, so $\sigma_1, \dots, \sigma_r > 0$ and $\sigma_{r+1} = \dots = \sigma_n = 0$.
+          <strong>Step 1: Spectral Decomposition of $A^\top A$.</strong>
+          The matrix $A^\top A \in \mathbb{R}^{n \times n}$ is symmetric and positive semidefinite.
+          Therefore, it has real, non-negative eigenvalues $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_n \ge 0$.
+          Let $\{v_1, \dots, v_n\}$ be an orthonormal set of eigenvectors corresponding to these eigenvalues.
+          Define the <b>singular values</b> as $\sigma_i = \sqrt{\lambda_i}$.
+          Let $r$ be the rank of $A$. Then $\sigma_1 \ge \dots \ge \sigma_r > 0$, and $\sigma_{r+1} = \dots = \sigma_n = 0$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Construct $U$.</strong>
-          For each non-zero singular value index $i = 1, \dots, r$, define the vector $u_i = \frac{1}{\sigma_i} A v_i$.
-          <br><b>Verify Orthonormality:</b> We compute the inner product $u_i^\top u_j$ for any pair $i, j \in \{1, \dots, r\}$:
-          $$ u_i^\top u_j = \left(\frac{1}{\sigma_i} A v_i\right)^\top \left(\frac{1}{\sigma_j} A v_j\right) = \frac{1}{\sigma_i \sigma_j} v_i^\top (A^\top A v_j) $$
-          Substitute the eigenvalue equation $A^\top A v_j = \lambda_j v_j = \sigma_j^2 v_j$:
+          <strong>Step 2: Defining the Left Singular Vectors.</strong>
+          For $i = 1, \dots, r$, define the vectors $u_i \in \mathbb{R}^m$ as:
+          $$ u_i = \frac{1}{\sigma_i} A v_i $$
+          We claim that these $\{u_1, \dots, u_r\}$ form an orthonormal set.
+          <br><b>Proof:</b> Compute the inner product $\langle u_i, u_j \rangle$:
+          $$ u_i^\top u_j = \left( \frac{1}{\sigma_i} A v_i \right)^\top \left( \frac{1}{\sigma_j} A v_j \right) = \frac{1}{\sigma_i \sigma_j} v_i^\top (A^\top A v_j) $$
+          Since $v_j$ is an eigenvector of $A^\top A$ with eigenvalue $\sigma_j^2$:
           $$ = \frac{1}{\sigma_i \sigma_j} v_i^\top (\sigma_j^2 v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} (v_i^\top v_j) $$
-          Since the eigenvectors $v_i$ are orthonormal, $v_i^\top v_j = \delta_{ij}$.
-          Thus $u_i^\top u_j = \delta_{ij}$. The vectors $u_1, \dots, u_r$ form an orthonormal set in $\mathbb{R}^m$.
-          <br><b>Completion:</b> If $r < m$, we can extend this set to a full orthonormal basis $\{u_1, \dots, u_m\}$ for $\mathbb{R}^m$ (e.g., using Gram-Schmidt on random vectors). We define the full matrix $U = [u_1, \dots, u_m]$.
+          Since $\{v_i\}$ are orthonormal, $v_i^\top v_j = \delta_{ij}$. Thus $u_i^\top u_j = \delta_{ij}$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Verification.</strong>
-          Since $\{v_1, \dots, v_n\}$ is a basis for $\mathbb{R}^n$, two linear maps are equal if they agree on all basis vectors. We check $A v_i$ against $U \Sigma V^\top v_i$:
+          <strong>Step 3: Completing the Bases.</strong>
           <ul>
-            <li>If $i \le r$:
-              $$ (U \Sigma V^\top) v_i = U \Sigma e_i = U (\sigma_i e_i) = \sigma_i u_i = \sigma_i \left(\frac{1}{\sigma_i} A v_i\right) = A v_i $$
+            <li>Let $V = [v_1 \dots v_n] \in \mathbb{R}^{n \times n}$. This matrix is orthogonal by construction.</li>
+            <li>We have orthonormal vectors $\{u_1, \dots, u_r\}$. If $r < m$, we can extend this set to a full orthonormal basis $\{u_1, \dots, u_m\}$ for $\mathbb{R}^m$ (using Gram-Schmidt). Let $U = [u_1 \dots u_m] \in \mathbb{R}^{m \times m}$.</li>
+            <li>Let $\Sigma \in \mathbb{R}^{m \times n}$ be a diagonal matrix with entries $\Sigma_{ii} = \sigma_i$ for $i \le r$ and 0 otherwise.</li>
+          </ul>
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 4: Verification.</strong>
+          We check that $AV = U\Sigma$. Equality of matrices is equivalent to equality of columns.
+          <ul>
+            <li><b>For $i \le r$:</b>
+              <br>LHS: $(AV)_i = A v_i$.
+              <br>RHS: $(U\Sigma)_i = \sum_k U_{ik} \Sigma_{ki}$ (Wait, simpler: $U \Sigma e_i = \sigma_i U e_i = \sigma_i u_i$).
+              <br>By definition $u_i = \frac{1}{\sigma_i} A v_i \implies A v_i = \sigma_i u_i$. So they match.
             </li>
-            <li>If $i > r$:
-              $$ (U \Sigma V^\top) v_i = U \Sigma e_i = U (0) = 0 $$
-              Also $A v_i = 0$ because $v_i \in \mathcal{N}(A^\top A) = \mathcal{N}(A)$.
+            <li><b>For $i > r$:</b>
+              <br>LHS: $A v_i$. Since $v_i$ is an eigenvector of $A^\top A$ with eigenvalue 0, $A^\top A v_i = 0 \implies v_i^\top A^\top A v_i = 0 \implies \|Av_i\|^2 = 0 \implies A v_i = 0$.
+              <br>RHS: $(U\Sigma)_i = U (\Sigma e_i) = U(0) = 0$.
+              <br>They match.
             </li>
           </ul>
-          Thus $A = U \Sigma V^\top$.
+          Since $AV = U\Sigma$ and $V$ is orthogonal ($V^{-1} = V^\top$), we have $A = U \Sigma V^\top$.
         </div>
       </div>
 

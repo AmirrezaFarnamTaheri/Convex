@@ -211,11 +211,16 @@
           </div>
           <div class="proof-step">
             <strong>Step 2: Separation.</strong>
-            The point $(0, 0, p^* - \epsilon)$ is not in $\mathcal{A}$ (otherwise we could achieve a value better than optimal).
-            By the Separating Hyperplane Theorem, there is a non-zero normal $(\lambda, \nu, \mu)$ separating $(0, 0, p^*)$ from $\mathcal{A}$.
-            Analysis shows $\lambda \succeq 0$ and $\mu \ge 0$.
-            The separation inequality gives:
-            $$ \inf_{(u,v,t) \in \mathcal{A}} (\lambda^\top u + \nu^\top v + \mu t) \ge \mu p^* $$
+            We want to separate the set of achievable values $\mathcal{A}$ from the "better-than-optimal" target.
+            Consider the point $(0, 0, s)$ where $s < p^*$. If this point were in $\mathcal{A}$, it would mean there exists a feasible $x$ (satisfying constraints $u \le 0, v=0$) with objective $f_0(x) \le s < p^*$. This contradicts the definition of $p^*$ as the optimal value.
+            <br>Thus, $(0, 0, p^*)$ is on the boundary of $\mathcal{A}$, and any point $(0, 0, s)$ with $s < p^*$ is strictly outside.
+            <br>By the Supporting Hyperplane Theorem, there exists a non-zero normal vector $(\lambda, \nu, \mu)$ and a scalar $\alpha$ such that for all $(u, v, t) \in \mathcal{A}$:
+            $$ \lambda^\top u + \nu^\top v + \mu t \ge \alpha \ge \lambda^\top 0 + \nu^\top 0 + \mu p^* = \mu p^* $$
+            Analysis of the coefficients:
+            <ul>
+                <li>Since $u_i$ can be arbitrarily large (bounded below by $f_i(x)$), we must have $\lambda_i \ge 0$ to bound the sum from below. Similarly $\mu \ge 0$.</li>
+                <li>The inequality implies $\inf_{x \in \mathcal{D}} (\sum \lambda_i f_i(x) + \sum \nu_j h_j(x) + \mu f_0(x)) \ge \mu p^*$.</li>
+            </ul>
           </div>
           <div class="proof-step">
             <strong>Step 3: Slater's Condition implies $\mu > 0$.</strong>
