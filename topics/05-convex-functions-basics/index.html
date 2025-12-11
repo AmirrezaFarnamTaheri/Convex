@@ -1148,66 +1148,67 @@
         $$ \boxed{ x^p + y^p \ge x + y \quad \text{for } x,y \in [0,1] } $$
         <p>Also, due to homogeneity ($(\lambda x)^p = \lambda^p x^p$), we can scale inequalities. For example, the function $f(x, y) = \frac{x^2}{y}$ arises from the homogeneity of quadratics.</p>
 
-        <h3>5.8 The Minkowski Functional</h3>
-        <p>The Minkowski functional ties together the concepts of convex sets, homogeneity, and convex functions. It generalizes the notion of a norm.</p>
-
-        <div class="definition-box">
-          <h4>Definition</h4>
-          <p>Let $C \subset \mathbb{R}^n$ be a convex set containing the origin. The <b>Minkowski functional</b> of $C$ is defined as:</p>
-          $$ M_C(x) = \inf \{ t > 0 \mid t^{-1} x \in C \} $$
-          <p>The domain of $M_C$ is the set of $x$ for which this infimum is finite (i.e., the conic hull of $C$). If $C$ is symmetric, closed, bounded, and contains 0 in its interior, then $M_C(x)$ is exactly a <b>norm</b> whose unit ball is $C$.</p>
-        </div>
+        <h3>5.8 The Minkowski Functional (3.34)</h3>
+        <p>The Minkowski functional generalizes the notion of a norm using a convex set. Let $C \subset \mathbb{R}^n$ be a convex set containing the origin. We define for each $x$:</p>
+        $$
+        M_C(x) = \inf \{ t > 0 \mid t^{-1} x \in C \}
+        $$
 
         <div class="insight">
-          <h4>Geometric Interpretation</h4>
-          <p>Draw a ray from the origin through $x$. If the ray intersects the boundary of $C$ at some point $z$, then $x$ is some scaling of $z$, say $x = t z$. The value $M_C(x)$ is this scaling factor $t$ required to bring $x$ to the boundary of $C$.
-          <br>Specifically, $M_C(x) \le 1 \iff x \in C$.</p>
+          <h4>Domain & Interpretation</h4>
+          <p>Consider the ray $R_x = \{s x \mid s \ge 0\}$. The value $M_C(x)$ is determined by where this ray exits the set $C$.
+          <br>Specifically, the set of scaling factors is $\{t > 0 \mid t^{-1} x \in C\} = \{1/s \mid s > 0, s x \in C\}$.
+          <br>Thus, $M_C(x)$ is finite if and only if the ray intersects $C$ at some positive multiple.
+          <br>If $x \in C$, then $t=1$ is feasible, so $M_C(x) \le 1$.
+          <br>Geometrically, $M_C(x)$ represents the "inverse distance" to the boundary along the direction $x$. $M_C(x) = 1$ means $x$ is on the "unit sphere" of the geometry defined by $C$.</p>
         </div>
 
         <div class="proof-box">
-          <h4>Proof of Convexity</h4>
-          <p>We show that $M_C$ is a convex function.</p>
+          <h4>Properties: Homogeneity and Convexity</h4>
 
           <div class="proof-step">
-            <strong>Step 1: Positive Homogeneity.</strong>
-            For any $\alpha > 0$:
-            $$ M_C(\alpha x) = \inf \{ t > 0 \mid t^{-1} \alpha x \in C \} $$
-            Let $s = t/\alpha$ (so $t = \alpha s$). The condition $t^{-1}\alpha x \in C$ becomes $(\alpha s)^{-1} \alpha x = s^{-1} x \in C$.
-            $$ M_C(\alpha x) = \inf \{ \alpha s \mid s > 0, s^{-1} x \in C \} = \alpha M_C(x) $$
+            <strong>1. Positive Homogeneity.</strong>
+            Let $\alpha > 0$. We compute $M_C(\alpha x) = \inf \{ t > 0 \mid t^{-1} \alpha x \in C \}$.
+            <br>Let $s = t/\alpha$ (so $t = \alpha s$). The condition becomes $s^{-1} x \in C$.
+            $$ M_C(\alpha x) = \inf \{ \alpha s \mid s > 0, s^{-1} x \in C \} = \alpha \inf \{ s > 0 \mid s^{-1} x \in C \} = \alpha M_C(x) $$
+            For $\alpha=0$, since $0 \in C$, $M_C(0)=0$. Thus homogeneity holds for all $\alpha \ge 0$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 2: Convexity Inequality.</strong>
-            Let $x, y \in \mathrm{dom}\, M_C$ and $\theta \in [0, 1]$. We want to show:
-            $$ M_C(\theta x + (1-\theta) y) \le \theta M_C(x) + (1-\theta) M_C(y) $$
-            Let $\varepsilon > 0$. By definition of infimum, there exist $a, b > 0$ such that:
-            $$ a \le M_C(x) + \varepsilon, \quad a^{-1}x \in C $$
-            $$ b \le M_C(y) + \varepsilon, \quad b^{-1}y \in C $$
-            We construct a scaling factor $t = \theta a + (1-\theta) b$. We check if $t^{-1}(\theta x + (1-\theta)y) \in C$.
-            $$ \frac{\theta x + (1-\theta)y}{t} = \frac{\theta a (a^{-1}x) + (1-\theta)b (b^{-1}y)}{\theta a + (1-\theta)b} $$
-            This is a convex combination of $a^{-1}x \in C$ and $b^{-1}y \in C$ (weights $\lambda_1 = \theta a/t, \lambda_2 = (1-\theta)b/t$).
-            Since $C$ is convex, this point lies in $C$.
-            Thus, $M_C(\theta x + (1-\theta)y) \le t = \theta a + (1-\theta)b \le \theta M_C(x) + (1-\theta)M_C(y) + \varepsilon$.
-            Letting $\varepsilon \to 0$ proves convexity.
+            <strong>2. Convexity.</strong>
+            We show $M_C(\theta x + (1-\theta)y) \le \theta M_C(x) + (1-\theta) M_C(y)$.
+            <br>Fix $\varepsilon > 0$. Since $M_C(x)$ is an infimum, there exists $a > 0$ such that $a^{-1}x \in C$ and $a \le M_C(x) + \varepsilon$.
+            <br>Similarly, there exists $b > 0$ such that $b^{-1}y \in C$ and $b \le M_C(y) + \varepsilon$.
+            <br>By convexity of $C$, the combination $\theta a^{-1}x + (1-\theta)b^{-1}y$ is not necessarily in $C$ directly, but we form a convex combination of points in $C$.
+            <br>Consider $z = \theta x + (1-\theta)y$. Let $t = \theta a + (1-\theta)b$.
+            We check the point $t^{-1}z$:
+            $$ \frac{z}{t} = \frac{\theta x + (1-\theta)y}{\theta a + (1-\theta)b} = \frac{\theta a (a^{-1}x) + (1-\theta)b (b^{-1}y)}{\theta a + (1-\theta)b} $$
+            This is a convex combination (weights $\lambda_1 = \theta a/t, \lambda_2 = (1-\theta)b/t$ sum to 1).
+            Since $a^{-1}x \in C$ and $b^{-1}y \in C$, and $C$ is convex, $t^{-1}z \in C$.
+            <br>Therefore, $M_C(z) \le t = \theta a + (1-\theta)b \le \theta M_C(x) + (1-\theta)M_C(y) + \varepsilon$.
+            <br>Letting $\varepsilon \to 0$ proves convexity.
           </div>
         </div>
 
         <div class="theorem-box">
           <h4>When is $M_C$ a Norm?</h4>
-          <p>If $C$ is <b>closed, bounded, symmetric</b> ($x \in C \Rightarrow -x \in C$), and contains 0 in its <b>interior</b>, then $M_C$ is a norm.</p>
+          <p>We require three conditions on $C$: <b>Closed, Bounded, Symmetric</b> ($x \in C \implies -x \in C$), and <b>$0 \in \text{int } C$</b>.</p>
           <div class="proof-step">
-            <strong>1. Positivity:</strong> $M_C(x) \ge 0$ by definition.
+            <strong>1. Positivity ($M_C(x) \ge 0$).</strong> Obvious from definition ($t>0$).
           </div>
           <div class="proof-step">
-            <strong>2. Symmetry:</strong>
-            $$ M_C(-x) = \inf\{t>0 \mid t^{-1}(-x) \in C\} = \inf\{t>0 \mid -(t^{-1}x) \in C\} $$
-            Since $C$ is symmetric, $-(t^{-1}x) \in C \iff t^{-1}x \in C$. Thus $M_C(-x) = M_C(x)$.
+            <strong>2. Symmetry ($M_C(-x) = M_C(x)$).</strong>
+            $$ M_C(-x) = \inf \{ t > 0 \mid t^{-1}(-x) \in C \} = \inf \{ t > 0 \mid -(t^{-1}x) \in C \} $$
+            Since $C$ is symmetric, $u \in C \iff -u \in C$. Thus the condition is equivalent to $t^{-1}x \in C$, so $M_C(-x)=M_C(x)$.
           </div>
           <div class="proof-step">
-            <strong>3. Non-degeneracy ($M_C(x)=0 \iff x=0$):</strong>
-            Suppose $M_C(x)=0$ and $x \ne 0$. This implies $\forall \varepsilon > 0, \exists t \in (0, \varepsilon)$ such that $t^{-1}x \in C$.
-            As $t \to 0^+$, $\|t^{-1}x\| \to \infty$. But $C$ is <b>bounded</b>, so it cannot contain points of arbitrarily large norm. Contradiction.
-            Thus $M_C(x)=0 \implies x=0$.
+            <strong>3. Non-degeneracy (Strict Positivity).</strong>
+            We must show $M_C(x)=0 \iff x=0$.
+            Suppose $M_C(x)=0$ for some $x \ne 0$.
+            By definition, this means for every $\varepsilon > 0$, there exists $t \in (0, \varepsilon)$ such that $t^{-1}x \in C$.
+            As $t \to 0^+$, the norm $\|t^{-1}x\| = t^{-1}\|x\| \to \infty$.
+            This implies $C$ contains points of arbitrarily large norm, which contradicts the assumption that $C$ is <b>bounded</b>.
+            Thus, if $C$ is bounded, $M_C(x)=0$ implies $x=0$.
           </div>
         </div>
 
@@ -1586,52 +1587,83 @@
 
   <div class="solution-box">
     <h4>Solution</h4>
-    <p>We analyze domains and composition conditions carefully.</p>
+    <p>We analyze domains and composition conditions carefully, tracking inner and outer functions step-by-step.</p>
 
     <div class="proof-step">
       <strong>(a) Log-Log-Sum-Exp.</strong>
-      <br>Inner 1: $s(x) = \sum e^{a_i^\top x + b_i}$. Convex (sum of convex $e^{u_i(x)}$).
-      <br>Inner 2: $t(x) = \log s(x)$. Convex (Log-Sum-Exp). On domain, $s(x) < 1 \implies t(x) < 0$.
-      <br>Outer: $\phi(z) = -\log(-z)$ for $z < 0$.
-      <br>Derivatives: $\phi'(z) = 1/(-z) > 0$ (Non-decreasing), $\phi''(z) = 1/z^2 > 0$ (Convex).
-      <br>Composition: <b>Convex non-decreasing</b> of <b>Convex</b> $\implies$ <b>Convex</b>.
+      <p>Domain: $\{x \mid \sum e^{a_i^\top x + b_i} < 1\}$. We show $f(x)$ is convex via a chain of compositions.</p>
+      <ul>
+        <li><b>Step 1: Inner Sum.</b> Let $s(x) = \sum_{i=1}^m e^{a_i^\top x + b_i}$.
+        Since $u_i(x) = a_i^\top x + b_i$ is affine and exponential is convex, $e^{u_i(x)}$ is convex. The sum of convex functions is convex.</li>
+        <li><b>Step 2: Log of Sum.</b> Let $t(x) = \log s(x)$.
+        The Log-Sum-Exp function is convex. Since $s(x) < 1$ on the domain, $t(x) \in (-\infty, 0)$.</li>
+        <li><b>Step 3: Outer Function.</b> Let $\phi(z) = -\log(-z)$ for $z < 0$.
+        Derivatives: $\phi'(z) = 1/(-z) > 0$ (Strictly increasing), $\phi''(z) = 1/z^2 > 0$ (Convex).
+        So $\phi$ is convex and non-decreasing.</li>
+        <li><b>Step 4: Composition.</b> $f(x) = \phi(t(x))$.
+        We have a convex outer function $\phi$ which is non-decreasing, composed with a convex inner function $t(x)$.
+        Rule: <b>Convex non-decreasing</b> of <b>Convex</b> $\implies$ <b>Convex</b>.</li>
+      </ul>
     </div>
 
     <div class="proof-step">
       <strong>(b) Root-Quadratic.</strong>
-      <br>Rewrite: $f = -\sqrt{uv - x^\top x} = -\sqrt{u(v - x^\top x/u)}$.
-      <br>Inner 1: $s(x,u,v) = u$ (Concave/Affine).
-      <br>Inner 2: $t(x,u,v) = v - \frac{x^\top x}{u}$. Since $x^\top x/u$ is convex, $t$ is <b>Concave</b>.
-      <br>Outer: $r(s,t) = -\sqrt{st}$. Convex on $\mathbb{R}_{++}^2$.
-      <br>Monotonicity: $\frac{\partial r}{\partial s} < 0$, $\frac{\partial r}{\partial t} < 0$. Non-increasing in both.
-      <br>Composition: <b>Convex non-increasing</b> of <b>Concave</b> $\implies$ <b>Convex</b>.
+      <p>Domain: $u>0, v>0, uv > x^\top x$. Rewrite as $f(x,u,v) = -\sqrt{u(v - x^\top x/u)}$.</p>
+      <ul>
+        <li><b>Step 1: Decomposition.</b> Let $s(x,u,v) = u$ and $t(x,u,v) = v - \frac{x^\top x}{u}$.
+        $s$ is affine (so concave).
+        For $t$, recall that $q(x,u) = x^\top x/u$ is convex (quadratic-over-linear). Thus $-q$ is concave, and $t = v - q$ is concave.</li>
+        <li><b>Step 2: Outer Function.</b> Let $r(s,t) = -\sqrt{st}$ on $\mathbb{R}_{++}^2$.
+        Hessian analysis shows $r$ is convex.
+        Monotonicity: $\frac{\partial r}{\partial s} = -\frac{1}{2}\sqrt{t/s} < 0$ and $\frac{\partial r}{\partial t} = -\frac{1}{2}\sqrt{s/t} < 0$.
+        So $r$ is non-increasing in both arguments.</li>
+        <li><b>Step 3: Multi-argument Composition.</b>
+        $f = r(s, t)$. Outer $r$ is convex and non-increasing in both args. Inner functions $s, t$ are concave.
+        Rule: <b>Convex non-increasing</b> of <b>Concave</b> $\implies$ <b>Convex</b>.</li>
+      </ul>
     </div>
 
     <div class="proof-step">
       <strong>(c) Log-Quadratic.</strong>
-      <br>From (b), let $w = \sqrt{uv - x^\top x}$. Since $-w$ is convex, $w$ is <b>Concave</b> ($w>0$).
-      <br>$f = -\log(uv - x^\top x) = -\log(w^2) = -2\log w$.
-      <br>Outer: $\psi(z) = -2\log z$. $\psi'(z) = -2/z < 0$ (Non-increasing), $\psi''(z) = 2/z^2 > 0$ (Convex).
-      <br>Composition: <b>Convex non-increasing</b> of <b>Concave</b> $\implies$ <b>Convex</b>.
+      <p>Using the result from (b):</p>
+      <ul>
+        <li><b>Step 1: Inner Concavity.</b> Let $w(x,u,v) = \sqrt{uv - x^\top x}$.
+        From part (b), we know $-w$ is convex, so $w$ is <b>concave</b> ($w>0$).</li>
+        <li><b>Step 2: Scalar Composition.</b>
+        $f(x,u,v) = -\log(uv - x^\top x) = -\log(w^2) = -2\log w$.
+        Let $\psi(z) = -2\log z$.
+        $\psi'(z) = -2/z < 0$ (decreasing) and $\psi''(z) = 2/z^2 > 0$ (convex).
+        Composition: $f = \psi(w)$.
+        Rule: <b>Convex non-increasing</b> of <b>Concave</b> $\implies$ <b>Convex</b>.</li>
+      </ul>
     </div>
 
     <div class="proof-step">
       <strong>(d) Norm Cone Concavity (Geometric Proof).</strong>
-      <br>Let $s(x,t) = (t^p - \|x\|_p^p)^{1/p}$.
-      <br>Consider its hypograph: $\text{hypo } s = \{(x,t,s) \mid s \le s(x,t)\}$.
-      <br>Rearranging: $s \le (t^p - \|x\|_p^p)^{1/p} \iff s^p \le t^p - \|x\|_p^p \iff s^p + \|x\|_p^p \le t^p$.
-      <br>This is exactly the condition $\|(x,s)\|_p \le t$, which describes the <b>$(n+1)$-dimensional $p$-norm cone</b>.
-      <br>Since norm cones are convex sets, the hypograph of $s$ is convex.
-      <br><b>Fact:</b> A function is concave iff its hypograph is convex. Thus $s$ is concave.
-      <br>$f = -s$ is <b>Convex</b>.
+      <p>Let $s(x,t) = (t^p - \|x\|_p^p)^{1/p}$. We show $s$ is concave by showing its hypograph is convex.</p>
+      <ul>
+        <li><b>Step 1: Hypograph.</b> $\text{hypo } s = \{(x,t,s) \mid s \le s(x,t)\}$.
+        Since $s \ge 0$, this is equivalent to $s^p \le t^p - \|x\|_p^p \iff \|x\|_p^p + s^p \le t^p$.</li>
+        <li><b>Step 2: Norm Cone.</b> The inequality $\|x\|_p^p + |s|^p \le t^p$ is exactly $\|(x,s)\|_p \le t$.
+        This defines the $(n+1)$-dimensional $p$-norm cone $K_p = \{(y,t) \mid \|y\|_p \le t\}$.</li>
+        <li><b>Step 3: Convexity.</b> Norm cones are convex sets. Therefore, the hypograph of $s$ is a convex set.</li>
+        <li><b>Conclusion:</b> A function is concave if and only if its hypograph is convex. Thus $s$ is concave.
+        So $f = -s$ is <b>Convex</b>.</li>
+      </ul>
     </div>
 
     <div class="proof-step">
       <strong>(e) Log-Norm Cone.</strong>
-      <br>$f = -\log(t^p - \|x\|_p^p) = -\log(s(x,t)^p) = -p \log s(x,t)$.
-      <br>Inner: $s(x,t)$ is <b>Concave</b> (from part d).
-      <br>Outer: $\psi(z) = -p \log z$. Convex and Non-increasing.
-      <br>Composition: <b>Convex non-increasing</b> of <b>Concave</b> $\implies$ <b>Convex</b>.
+      <p>$f(x,t) = -\log(t^p - \|x\|_p^p)$.</p>
+      <ul>
+        <li><b>Step 1: Rewrite.</b> $t^p - \|x\|_p^p = s(x,t)^p$.
+        So $f = -\log(s(x,t)^p) = -p \log s(x,t)$.</li>
+        <li><b>Step 2: Composition.</b>
+        Inner: $s(x,t)$ is <b>concave</b> and positive (from part d).
+        Outer: $\psi(z) = -p \log z$.
+        $\psi'(z) = -p/z < 0$ (decreasing) and $\psi''(z) = p/z^2 > 0$ (convex).
+        Rule: <b>Convex non-increasing</b> of <b>Concave</b> $\implies$ <b>Convex</b>.</li>
+      </ul>
     </div>
   </div>
 </div>
@@ -1648,17 +1680,24 @@
     <h4>Solution</h4>
     <div class="proof-step">
       <strong>(a) Power Perspective.</strong>
-      <br>Let $\phi(z) = \sum |z_i|^p = \|z\|_p^p$. This is convex for $p \ge 1$.
-      <br>Perspective: $g(x, t) = t \phi(x/t) = t \sum |x_i/t|^p = t \frac{1}{t^p} \sum |x_i|^p = \frac{\|x\|_p^p}{t^{p-1}}$.
-      <br>Since perspective preserves convexity, $f$ is convex.
+      <ul>
+        <li><b>Step 1: Base Function.</b> Let $\phi(z) = \sum_{i=1}^n |z_i|^p = \|z\|_p^p$.
+        For $p \ge 1$, the map $u \mapsto |u|^p$ is convex, so $\phi$ is convex (sum of convex).</li>
+        <li><b>Step 2: Perspective.</b> The perspective of $\phi$ is $g(x, t) = t \phi(x/t)$.
+        $$ g(x, t) = t \sum \left|\frac{x_i}{t}\right|^p = t \sum \frac{|x_i|^p}{t^p} = \frac{1}{t^{p-1}} \sum |x_i|^p = \frac{\|x\|_p^p}{t^{p-1}} $$</li>
+        <li><b>Conclusion:</b> Since the perspective operation preserves convexity, $f=g$ is convex on $t>0$.</li>
+      </ul>
     </div>
     <div class="proof-step">
       <strong>(b) Euclidean Perspective Composition.</strong>
-      <br>Base function $\phi(z) = \|z\|_2^2$ is convex.
-      <br>Perspective $g(z, t) = \|z\|_2^2 / t$ is convex.
-      <br>Affine mapping: $z(x) = Ax+b$ and $t(x) = c^\top x + d$.
-      <br>$f(x) = g(z(x), t(x))$.
-      <br>Composition of convex function with affine map is convex.
+      <ul>
+        <li><b>Step 1: Base Function.</b> Let $\phi(z) = \|z\|_2^2 = z^\top z$. This is convex (Hessian $2I \succ 0$).</li>
+        <li><b>Step 2: Perspective.</b> $g(z, t) = t \phi(z/t) = \frac{\|z\|_2^2}{t}$ is convex for $t > 0$.</li>
+        <li><b>Step 3: Affine Substitution.</b> Define the affine map:
+        $z(x) = Ax + b$ and $t(x) = c^\top x + d$.
+        Then $f(x) = g(z(x), t(x)) = \frac{\|Ax+b\|_2^2}{c^\top x + d}$.</li>
+        <li><b>Conclusion:</b> The composition of a convex function $g$ with an affine map is convex.</li>
+      </ul>
     </div>
   </div>
 </div>

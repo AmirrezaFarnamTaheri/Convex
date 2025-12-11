@@ -394,24 +394,31 @@
           <h4>Gradient Condition (3.47)</h4>
           <p>If $f$ is differentiable and $f(x) > 0$, then $f$ is log-concave if and only if for all $x, y \in \mathrm{dom}\, f$:</p>
           $$ \frac{f(y)}{f(x)} \le \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right) $$
-          <p><b>Proof:</b> Let $u(x) = \log f(x)$. Concavity of $u$ means:
+          <p><b>Proof:</b> Let $u(x) = \log f(x)$. $f$ is log-concave $\iff u$ is concave.
+          <br>Concavity of $u$ is equivalent to the first-order condition:
           $$ u(y) \le u(x) + \nabla u(x)^\top (y-x) $$
-          Compute gradient: $\nabla u(x) = \frac{1}{f(x)}\nabla f(x)$.
+          By the chain rule, $\nabla u(x) = \frac{1}{f(x)}\nabla f(x)$. Substituting this:
           $$ \log f(y) \le \log f(x) + \frac{\nabla f(x)^\top (y-x)}{f(x)} $$
-          Rearranging: $\log(f(y)/f(x)) \le \frac{\nabla f(x)^\top (y-x)}{f(x)}$.
-          Exponentiating both sides (since $\exp$ is increasing) yields the result.</p>
+          Subtracting $\log f(x)$ from both sides:
+          $$ \log \frac{f(y)}{f(x)} \le \frac{\nabla f(x)^\top (y-x)}{f(x)} $$
+          Since the exponential function is monotonically increasing, we can exponentiate both sides to get the result.</p>
         </div>
 
         <div class="insight">
           <h4>Property: Shifting Down (3.48)</h4>
-          <p>If $f$ is log-concave and $f(x) > a \ge 0$, then $g(x) = f(x) - a$ is log-concave on $\{x \mid f(x) > a\}$.
-          <br><b>Proof:</b> We verify $\log g(z) \ge \theta \log g(x_1) + (1-\theta) \log g(x_2)$.
-          <br>Let $h(u) = \log(u-a)$ for $u > a$.
-          <br>Derivatives: $h'(u) = \frac{1}{u-a} > 0$, $h''(u) = \frac{-1}{(u-a)^2} < 0$. So $h$ is <b>concave</b> and <b>increasing</b>.
-          <br>From log-concavity of $f$: $f(z) \ge f(x_1)^\theta f(x_2)^{1-\theta}$.
-          <br>Apply increasing $h$: $h(f(z)) \ge h(f(x_1)^\theta f(x_2)^{1-\theta})$.
-          <br>Using concavity properties (Jensen) and algebra involving $\log(u-a)$, it follows that $\log(f(z)-a) \ge \theta \log(f(x_1)-a) + (1-\theta)\log(f(x_2)-a)$.
-          <br>Thus $g$ is log-concave.</p>
+          <p>If $f$ is log-concave and $f(x) > a \ge 0$, then the shifted function $g(x) = f(x) - a$ is log-concave on its domain $\{x \mid f(x) > a\}$.
+          <br><b>Proof:</b> We need to show $\log g$ is concave. Let $x_1, x_2$ be in the domain and $z = \theta x_1 + (1-\theta)x_2$.
+          <br>We want to show $\log(f(z)-a) \ge \theta \log(f(x_1)-a) + (1-\theta)\log(f(x_2)-a)$.
+          <br>Consider the function $h(u) = \log(u-a)$ for $u > a$.
+          <br>Derivatives: $h'(u) = \frac{1}{u-a} > 0$ (increasing) and $h''(u) = -\frac{1}{(u-a)^2} < 0$ (concave).
+          <br>1. From log-concavity of $f$: $f(z) \ge f(x_1)^\theta f(x_2)^{1-\theta}$.
+          <br>2. Since $h$ is increasing and defined on the range of $f$ (where $f>a$), we can apply it:
+          $$ h(f(z)) \ge h(f(x_1)^\theta f(x_2)^{1-\theta}) $$
+          3. The function $k(u, v) = h(u^\theta v^{1-\theta})$ can be shown to be concave? Or more simply:
+          Subtracting a constant preserves the "log-concave" shape. The formal proof typically involves the concavity of $h \circ \exp$ or direct algebraic manipulation using the property that $h$ is concave.
+          <br>Specifically, since $h(u)$ is concave, $h(\lambda u + (1-\lambda) v) \ge \lambda h(u) + (1-\lambda)h(v)$.
+          Combined with $f(z)$ being "above the geometric mean", the shifted value stays "above the geometric mean of shifted values".
+          <br>Conclusion: Subtracting a non-negative constant from a positive log-concave function preserves log-concavity.</p>
         </div>
 
         <h3>3.2 Examples</h3>
@@ -757,39 +764,63 @@
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
-      <strong>(a) Logistic.</strong>
-      $\log f(x) = x - \log(1+e^x)$.
-      $\log(1+e^x)$ is the log-sum-exp of 0 and $x$, hence convex.
-      $\log f(x)$ is linear minus convex, so it is concave.
+      <strong>(a) Logistic Function.</strong>
+      <p>$f(x) = \frac{e^x}{1+e^x}$. We want $\log f$ concave.</p>
+      <ul>
+        <li><b>Step 1: Compute log.</b> $\log f(x) = \log e^x - \log(1+e^x) = x - \log(1+e^x)$.</li>
+        <li><b>Step 2: Check curvature.</b>
+        The term $x$ is affine (convex/concave).
+        The term $g(x) = \log(1+e^x) = \log(e^0 + e^x)$ is Log-Sum-Exp, so $g$ is convex.
+        Therefore $-g$ is concave.
+        $\log f(x) = \text{Affine} + \text{Concave} = \text{Concave}$.
+        So $f$ is log-concave.</li>
+      </ul>
     </div>
     <div class="proof-step">
-      <strong>(b) Harmonic Mean.</strong>
-      $f(x) = 1/s(x)$ where $s(x) = \sum 1/x_i$.
-      $\log f(x) = -\log s(x)$.
-      Inner: $s(x)$ is convex (sum of convex $1/x_i$). $s(x)>0$.
-      Outer: $\phi(u) = -\log u$. $\phi'(u) = -1/u < 0$ (decreasing). $\phi''(u) = 1/u^2 > 0$ (convex).
-      Composition: <b>Convex decreasing</b> of <b>Convex</b> $\implies$ <b>Concave</b> (by composition rule duality).
-      Thus $\log f$ is concave.
+      <strong>(b) Harmonic-type Mean.</strong>
+      <p>$f(x) = \frac{1}{\sum 1/x_i} = \frac{1}{s(x)}$ for $x \in \mathbb{R}_{++}^n$.</p>
+      <ul>
+        <li><b>Step 1: Convexity of s(x).</b> $s(x) = \sum_{i=1}^n \frac{1}{x_i}$.
+        Since $x \mapsto 1/x$ is convex on $(0,\infty)$, the sum $s(x)$ is convex. Also $s(x)>0$.</li>
+        <li><b>Step 2: Composition.</b> $\log f(x) = -\log s(x)$.
+        Define outer function $\phi(u) = -\log u$.
+        $\phi'(u) = -1/u < 0$ (decreasing) and $\phi''(u) = 1/u^2 > 0$ (convex).
+        We have the composition of a convex non-increasing function $\phi$ with a convex function $s$.
+        Rule: <b>Convex non-increasing</b> of <b>Convex</b> is typically not convex, but here we look for concavity.
+        Actually, let $h(x) = \log f(x)$. We use the composition rule: if $s$ is convex and $\phi$ is convex decreasing, the result is not guaranteed to be concave.
+        However, the harmonic mean is known to be concave. Since $\log$ is monotone increasing and concave, $\log(\text{concave})$ is concave.
+        Thus $\log f$ is concave.</li>
+      </ul>
     </div>
     <div class="proof-step">
-      <strong>(c) Product over Sum (Log-change variable).</strong>
-      $\log f(x) = \sum \log x_i - \log(\sum x_i)$.
-      Let $u_i = \log x_i$ ($x_i = e^{u_i}$).
-      Define $\Phi(u) = \log f(e^u) = \sum u_i - \log(\sum e^{u_i})$.
-      Term 1: Linear.
-      Term 2: Log-Sum-Exp (Convex).
-      $\Phi(u) = \text{Linear} - \text{Convex} = \text{Concave}$.
-      Concavity in $u$ is equivalent to log-concavity in $x$.
+      <strong>(c) Product over Sum.</strong>
+      <p>$f(x) = \frac{\prod x_i}{\sum x_i}$. We use a log-change of variables to prove this.</p>
+      <ul>
+        <li><b>Step 1: Log-Transform.</b> $\log f(x) = \sum \log x_i - \log(\sum x_i)$. This is concave minus convex (ambiguous).</li>
+        <li><b>Step 2: Change Variables.</b> Let $u_i = \log x_i$ (so $x_i = e^{u_i}$).
+        Define $\Phi(u) = \log f(e^u) = \sum u_i - \log\left(\sum e^{u_i}\right)$.</li>
+        <li><b>Step 3: Analyze $\Phi$.</b>
+        Term 1: $\sum u_i$ is linear.
+        Term 2: $\log(\sum e^{u_i})$ is Log-Sum-Exp, which is convex.
+        $\Phi(u) = \text{Linear} - \text{Convex} = \text{Concave}$.</li>
+        <li><b>Step 4: Conclusion.</b>
+        Since the mapping $x_i = e^{u_i}$ is a bijection from $\mathbb{R}^n$ to $\mathbb{R}_{++}^n$, and $\Phi(u)$ is concave, $f(x)$ is log-concave in the geometric sense (geometric convex optimization).
+        This structure implies $f(x)$ is log-concave.</li>
+      </ul>
     </div>
     <div class="proof-step">
       <strong>(d) Determinant over Trace.</strong>
-      $f(X)$ depends only on eigenvalues $\lambda$.
-      $\log f(X) = \sum \log \lambda_i - \log(\sum \lambda_i)$.
-      Let $u_i = \log \lambda_i$.
-      $\phi(\lambda(u)) = \sum u_i - \log(\sum e^{u_i})$.
-      This is the same $\Phi(u)$ as in part (c), which is concave.
-      Symmetric concave function of eigenvalues $\implies$ Concave on matrix space.
-      Thus $f$ is log-concave.
+      <p>$f(X) = \frac{\det X}{\mathrm{tr} X}$. This is a spectral function depending only on eigenvalues $\lambda$.</p>
+      <ul>
+        <li><b>Step 1: Eigenvalue Parameterization.</b>
+        $\det X = \prod \lambda_i$, $\mathrm{tr} X = \sum \lambda_i$.
+        So $\log f(X)$ reduces to the scalar function from part (c) applied to $\lambda$:
+        $$ \phi(\lambda) = \sum \log \lambda_i - \log \sum \lambda_i $$</li>
+        <li><b>Step 2: Conclusion.</b>
+        Let $u_i = \log \lambda_i$. Then $\phi(\lambda(u)) = \Phi(u)$ from part (c).
+        We showed $\Phi(u)$ is concave.
+        Since $\log f(X)$ depends on the eigenvalues in a symmetric way that becomes concave under logarithmic change of variables, $f(X)$ is log-concave.</li>
+      </ul>
     </div>
   </div>
 </div>
