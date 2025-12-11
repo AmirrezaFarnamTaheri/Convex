@@ -331,6 +331,50 @@
             <li><b>Composition:</b> $g(h(x))$ is quasiconvex if $h$ is quasiconvex and $g$ is <b>non-decreasing</b>.</li>
             <li><b>Warning:</b> Sums of quasiconvex functions are generally <b>not</b> quasiconvex.</li>
         </ul>
+
+        <h3>2.6 Worked Example: Classification Challenge</h3>
+        <p>Determine the convexity properties of the following functions.</p>
+
+        <div class="example">
+            <h4>(a) $f(x) = e^x - 1$ on $\mathbb{R}$</h4>
+            <p><b>Analysis:</b> $f'(x) = e^x$, $f''(x) = e^x > 0$.
+            <br>Strictly convex. Since it is monotone increasing, it is also both quasiconvex and quasiconcave.</p>
+        </div>
+
+        <div class="example">
+            <h4>(b) $f(x_1, x_2) = x_1 x_2$ on $\mathbb{R}^2_{++}$</h4>
+            <p><b>Analysis:</b> Hessian is indefinite ($\det = -1$). Not convex or concave.
+            <br>Sublevel sets ($x_1 x_2 \le \alpha$) are non-convex (region under hyperbola). Not quasiconvex.
+            <br>Superlevel sets ($x_1 x_2 \ge \alpha$) are convex (region above hyperbola). <b>Quasiconcave</b>.</p>
+        </div>
+
+        <div class="example">
+            <h4>(c) $f(x_1, x_2) = 1/(x_1 x_2)$ on $\mathbb{R}^2_{++}$</h4>
+            <p><b>Analysis:</b> $f(x) = (x_1 x_2)^{-1}$. Hessian has positive diagonal and positive determinant ($3/(x_1 x_2)^4 > 0$).
+            <br><b>Convex</b> (and thus quasiconvex).
+            <br>Superlevel sets are the same as sublevel sets of $x_1 x_2$. Non-convex. Not quasiconcave.</p>
+        </div>
+
+        <div class="example">
+            <h4>(d) $f(x_1, x_2) = x_1 / x_2$ on $\mathbb{R} \times \mathbb{R}_{++}$</h4>
+            <p><b>Analysis:</b> Linear-fractional function.
+            <br>Sublevel sets $x_1 \le \alpha x_2$ are halfspaces (convex).
+            <br>Superlevel sets $x_1 \ge \alpha x_2$ are halfspaces (convex).
+            <br><b>Quasilinear</b> (both quasiconvex and quasiconcave). Not convex/concave.</p>
+        </div>
+
+        <div class="example">
+            <h4>(e) $f(x_1, x_2) = x_1^2 / x_2$ on $\mathbb{R} \times \mathbb{R}_{++}$</h4>
+            <p><b>Analysis:</b> This is the perspective of the square function $h(u)=u^2$.
+            <br>Since $h$ is convex, its perspective is <b>convex</b>.</p>
+        </div>
+
+        <div class="example">
+            <h4>(f) $f(x_1, x_2) = x_1^\alpha x_2^{1-\alpha}$ on $\mathbb{R}^2_{++}$ for $\alpha \in [0,1]$</h4>
+            <p><b>Analysis:</b> Geometric mean (Cobb-Douglas function).
+            <br>It is <b>concave</b> (Hessian is negative semidefinite).
+            <br>Thus it is <b>quasiconcave</b>. It is generally not quasiconvex.</p>
+        </div>
     </section>
 
     <section class="section-card" id="section-3">
