@@ -99,7 +99,7 @@ export function initPolyhedronVisualizer(containerId) {
         y = d3.scaleLinear().domain([-5, 5]).range([height, 0]);
 
         // Grid
-        svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(height).tickFormat("")).attr("transform", `translate(0,0)`);
+        svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(-height).tickFormat("")).attr("transform", `translate(0,0)`);
         svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat(""));
 
         // Axes

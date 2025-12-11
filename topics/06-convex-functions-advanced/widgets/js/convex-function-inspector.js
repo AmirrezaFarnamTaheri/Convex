@@ -122,7 +122,7 @@ export function initConvexFunctionInspector(containerId) {
     // Priority: Jensen (2 clicks) > Tangent (1 click/drag).
     // Actually, let's maintain both states.
 
-    let svg, x, y;
+    let svg, x, y, width, height;
 
     function init() {
         // Populate Select
@@ -160,8 +160,8 @@ export function initConvexFunctionInspector(containerId) {
     function setupChart() {
         canvas.innerHTML = '';
         const margin = {top: 20, right: 20, bottom: 30, left: 40};
-        const width = canvas.clientWidth - margin.left - margin.right;
-        const height = canvas.clientHeight - margin.top - margin.bottom;
+        width = canvas.clientWidth - margin.left - margin.right;
+        height = canvas.clientHeight - margin.top - margin.bottom;
 
         svg = d3.select(canvas).append("svg")
             .attr("width", "100%").attr("height", "100%")
@@ -220,8 +220,8 @@ export function initConvexFunctionInspector(containerId) {
         // Axes
         svg.select(".axis-x").call(d3.axisBottom(x).ticks(5));
         svg.select(".axis-y").call(d3.axisLeft(y).ticks(5));
-        svg.select(".grid-x").call(d3.axisBottom(x).tickSize(-500).tickFormat("")).attr("stroke-opacity", 0.1); // Hack height
-        svg.select(".grid-y").call(d3.axisLeft(y).tickSize(-500).tickFormat("")).attr("stroke-opacity", 0.1);
+        svg.select(".grid-x").call(d3.axisBottom(x).tickSize(-height).tickFormat("")).attr("stroke-opacity", 0.1);
+        svg.select(".grid-y").call(d3.axisLeft(y).tickSize(-width).tickFormat("")).attr("stroke-opacity", 0.1);
 
         // 1. Function Curve
         const line = d3.line().x(d => x(d.x)).y(d => y(d.y));

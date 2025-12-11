@@ -214,30 +214,10 @@ export async function initMatrixGeometry(containerId) {
 
     function createBasePlot(selector) {
         const div = container.querySelector(selector);
-        div.innerHTML = '';
-        // Re-add header overlay if needed or rely on static HTML above
-        // We nuked innerHTML, so let's restore the headers manually or just append SVG
-        // The headers are absolute positioned children of the div, so clearing innerHTML removes them.
-        // Fix: Don't clear innerHTML of the container div, but rather append SVG or clear ONLY SVG.
-        // Actually, let's re-add the header to be safe.
-        const headerHTML = div.id === 'linear-plot' ?
-            `<div style="position: absolute; top: 10px; left: 10px; z-index: 5; pointer-events: none;">
-                <span style="background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); border: 1px solid var(--color-border);">
-                    Linear Map: y = Ax
-                </span>
-                <div style="margin-top:4px; font-size: 0.75rem; color: var(--color-text-muted);">
-                    Shows <span style="color: var(--color-primary);">Unit Circle</span> transformed
-                </div>
-            </div>` :
-            `<div style="position: absolute; top: 10px; left: 10px; z-index: 5; pointer-events: none;">
-                <span style="background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); border: 1px solid var(--color-border);">
-                    Quadratic Form: z = xᵀAx
-                </span>
-                <div style="margin-top:4px; font-size: 0.75rem; color: var(--color-text-muted);">
-                    Contours of curvature
-                </div>
-            </div>`;
-        div.innerHTML = headerHTML;
+
+        // Remove existing SVG to rebuild
+        const existingSvg = div.querySelector('.widget-svg');
+        if (existingSvg) existingSvg.remove();
 
         const w = div.clientWidth;
         const h = div.clientHeight;

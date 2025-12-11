@@ -59,7 +59,7 @@ export function initConvexCombination(containerId) {
         y = d3.scaleLinear().domain([-10, 10]).range([height / 2, -height / 2]);
 
         // Grid
-        svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(height).tickFormat("")).attr("transform", `translate(0, ${-height/2})`);
+        svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(-height).tickFormat("")).attr("transform", `translate(0, ${-height/2})`);
         svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat("")).attr("transform", `translate(${-width/2}, 0)`);
 
         // Hull

@@ -290,18 +290,9 @@ export async function initRankNullspace(containerId) {
         let scale;
 
         const initSvg = () => {
-            codomainContainer.innerHTML = '';
-            // Re-add header
-            codomainContainer.innerHTML = `
-                <div style="position: absolute; top: 10px; left: 10px; z-index: 5; pointer-events: none;">
-                     <span style="background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); border: 1px solid var(--color-border);">
-                        Codomain (Output Space) ℝ<sup>m</sup>
-                    </span>
-                    <div style="margin-top: 4px; font-size: 0.75rem; color: var(--color-text-muted);">
-                        <span style="color: var(--color-accent);">■ Col Space</span> ⊥ <span style="color: var(--warning);">■ Left Null Space</span>
-                    </div>
-                </div>
-            `;
+            // Remove existing SVG
+            const existingSvg = codomainContainer.querySelector('.widget-svg');
+            if (existingSvg) existingSvg.remove();
 
             const margin = { top: 20, right: 20, bottom: 20, left: 20 };
             width = codomainContainer.clientWidth - margin.left - margin.right;
