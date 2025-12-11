@@ -171,6 +171,19 @@
           </ol>
           </p>
         </div>
+        <div class="insight">
+          <h4>Example 3: The Variance Conjecture (A Cautionary Tale)</h4>
+          <p>Jensen's inequality says $\mathbb{E} f(x_0 + v) \ge f(x_0)$ for zero-mean noise $v$.
+          <br>Does larger variance imply a larger expected value?
+          <br><b>Conjecture:</b> If $\mathrm{var}(v) > \mathrm{var}(w)$, then $\mathbb{E} f(x_0+v) > \mathbb{E} f(x_0+w)$?
+          <br><b>False!</b> Consider $f(x)=e^x$.
+          <ul>
+              <li>Let $v = \pm 1$ with prob 0.5. $\text{Var}(v)=1$. $\mathbb{E} e^v \approx 1.54$.</li>
+              <li>Let $w = \pm 4$ with prob 0.02, else 0. $\text{Var}(w) = 0.64$. $\mathbb{E} e^w \approx 2.05$.</li>
+          </ul>
+          Here $v$ has larger variance but smaller expectation. Convex functions are sensitive to tails, not just variance.
+          <br><b>However:</b> If $w = c v$ is a scaled version of $v$ (with $|c| < 1$), then the monotonicity holds.</p>
+        </div>
 
         <h3>1.4 Integral Characterization of Convexity</h3>
         <p>A powerful alternative definition of convexity involves integrals. This mirrors the "average value" property of harmonic functions but with an inequality. We define the integral along the chord:</p>
@@ -187,32 +200,40 @@
           <h4>Proof Breakdown</h4>
 
           <div class="proof-step">
-            <strong>1. Affine Function Case.</strong>
-            <p>Let $\ell(z) = a^\top z + b$. Along the segment $z(t) = tx + (1-t)y$, we have:
+            <strong>Step 1: The "Little Red Formula" (Affine Case).</strong>
+            <p>Let $\ell(z) = a^\top z + b$ be an affine function. We evaluate its integral along the segment $z(t) = tx + (1-t)y$ for $t \in [0, 1]$.
+            <br>By linearity:
             $$ \ell(z(t)) = t(a^\top x + b) + (1-t)(a^\top y + b) = t \ell(x) + (1-t) \ell(y) $$
-            Integrating this:
-            $$ \int_0^1 \ell(z(t)) dt = \ell(x) \int_0^1 t dt + \ell(y) \int_0^1 (1-t) dt = \frac{1}{2}\ell(x) + \frac{1}{2}\ell(y) $$
-            For an affine function, the average value along the chord equals the average of the endpoints.</p>
+            Now integrate from $0$ to $1$:
+            $$ \int_0^1 \ell(z(t)) dt = \ell(x) \underbrace{\int_0^1 t dt}_{1/2} + \ell(y) \underbrace{\int_0^1 (1-t) dt}_{1/2} = \frac{\ell(x) + \ell(y)}{2} $$
+            This establishes a crucial baseline: <b>for an affine function, the average value along the segment equals the average of the endpoint values.</b> Geometrically, this is the area of a trapezoid.</p>
           </div>
 
           <div class="proof-step">
-            <strong>2. Convex Function Case ($\Rightarrow$).</strong>
-            <p>If $f$ is convex, then $f(tx + (1-t)y) \le t f(x) + (1-t)f(y)$ for all $t \in [0,1]$.
-            Integrate both sides over $t \in [0,1]$. The RHS integrates to $\frac{f(x)+f(y)}{2}$ (as shown above).
-            $$ \int_0^1 f(tx + (1-t)y) dt \le \frac{f(x) + f(y)}{2} $$
-            This is Jensen's inequality applied to the uniform distribution on the chord.</p>
+            <strong>Step 2: Convex $\Rightarrow$ Integral Inequality.</strong>
+            <p>If $f$ is convex, the function lies below the chord:
+            $$ f(tx + (1-t)y) \le t f(x) + (1-t)f(y) $$
+            Integrating this inequality with respect to $t$:
+            $$ \int_0^1 f(z(t)) dt \le f(x) \int_0^1 t dt + f(y) \int_0^1 (1-t) dt = \frac{f(x)+f(y)}{2} $$
+            This direction is simply "integrating the convexity definition".</p>
           </div>
 
           <div class="proof-step">
-            <strong>3. Subtracting a Supporting Line ($\Leftarrow$).</strong>
-            <p>Suppose the integral inequality holds. Assume for contradiction that $f$ is not convex. Then there exist $x, y$ and a point $z$ on the segment where $f(z)$ is strictly above the chord.
-            <br>Let $\ell(u)$ be the affine function defining the chord between $(x, f(x))$ and $(y, f(y))$.
-            <br>Define $g(u) = f(u) - \ell(u)$. Then $g(x) = g(y) = 0$.
-            <br>If $f$ is not convex, there is a sub-segment where $g(u) > 0$.
-            <br>The integral inequality for $f$ implies one for $g$:
-            $$ \int_0^1 g(z(t)) dt \le \frac{g(x) + g(y)}{2} = 0 $$
-            However, if $g(u)$ has a "bump" above 0 ($g(u) > 0$ somewhere) and is continuous, the integral on the LHS must be strictly positive (or we can zoom in on the sub-segment where it violates convexity).
-            <br>Thus $\int g > 0$, which contradicts $\int g \le 0$. So $f$ must be convex.</p>
+            <strong>Step 3: Integral Inequality $\Rightarrow$ Convex.</strong>
+            <p>This direction uses a clever trick: <b>subtracting an affine function</b>.
+            <br>Assume the integral inequality holds for all $x, y$. Suppose for contradiction that $f$ is <b>not</b> convex. Then there exists a point $z_0$ on some segment where $f(z_0)$ lies strictly above the chord.
+            <br>Let $\ell(u)$ be the <b>chord</b> connecting $(x, f(x))$ and $(y, f(y))$.
+            <br>Define the difference function $g(u) = f(u) - \ell(u)$.
+            <br>Key properties of $g$:
+            <ul>
+                <li>$g(x) = f(x) - \ell(x) = 0$ and $g(y) = 0$.</li>
+                <li>At the violating point $z_0$, $g(z_0) > 0$.</li>
+            </ul>
+            Now, apply the integral inequality to $g$. Since the integral condition is linear, and equality holds for $\ell$:
+            $$ \int_0^1 g(z(t)) dt = \int_0^1 f(z(t)) dt - \int_0^1 \ell(z(t)) dt \le \frac{f(x)+f(y)}{2} - \frac{\ell(x)+\ell(y)}{2} = \frac{g(x)+g(y)}{2} = 0 $$
+            So the integral of $g$ must be non-positive.
+            <br>However, since $g(z_0) > 0$ and we typically assume continuity, there is a small interval around $z_0$ where $g$ is positive. Thus $\int g > 0$.
+            <br>This contradiction ($\int g > 0$ vs $\int g \le 0$) proves $f$ must be convex.</p>
           </div>
         </div>
 
@@ -544,6 +565,24 @@
             <br>Thus $v^\top \nabla^2 f(x) v \ge 0$ for all $v$, so the Hessian is PSD.
           </div>
         </div>
+        <div class="example">
+            <h4>Example 3: Trace of Inverse</h4>
+            <p>Let $f(X) = \mathrm{tr}(X^{-1})$ on $\mathbb{S}^n_{++}$.
+            <br>Derivative: $\nabla f(X) = -X^{-2}$.
+            <br>Second derivative along line $X+tH$: $f''(t) = 2 \mathrm{tr}(X^{-1} H X^{-1} H X^{-1})$.
+            <br>Let $Y = X^{-1/2} H X^{-1/2}$. This becomes $2 \mathrm{tr}(Y^2 X^{-1})$.
+            <br>Actually, simplifying the quadratic form: $2 \mathrm{tr}(X^{-1/2} Y Y X^{-1/2}) = 2 \|Y X^{-1/2}\|_F^2 \ge 0$.
+            <br>Thus $f$ is convex.</p>
+        </div>
+
+        <div class="example">
+            <h4>Example 4: Geometric Mean of Eigenvalues</h4>
+            <p>Let $f(X) = (\det X)^{1/n}$ on $\mathbb{S}^n_{++}$.
+            <br>This function is <b>concave</b>.
+            <br><i>Proof:</i> This follows from the Minkowski Determinant Inequality:
+            $$ \det(A+B)^{1/n} \ge \det(A)^{1/n} + \det(B)^{1/n} $$
+            Also related to log-concavity of determinant: $\log \det X$ is concave.</p>
+        </div>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Heatmap: Hessian Eigenvalue Analyzer</h3>
@@ -648,6 +687,12 @@
           <p>Let $\ell_i(x) = a_i^\top x + b_i$ for $i=1,\dots,m$. Define:</p>
           $$ f(x) = \max_{1\le i\le m} (a_i^\top x + b_i) $$
           <p>Each $\ell_i$ is convex, so $f$ is convex. Geometrically, this is a polyhedral convex function (its epigraph is a polyhedron).</p>
+        </div>
+        <div class="example">
+          <h4>2. The $\ell_p$-type Mean ($p < 1$)</h4>
+          <p>Consider the function $f(x) = \left(\sum x_i^p\right)^{1/p}$ for $0 < p < 1$ on $\mathbb{R}^n_{++}$.
+          <br>This function is <b>concave</b>.
+          <br><i>Note:</i> For $p \ge 1$, this is the $\ell_p$ norm, which is convex. The switch in curvature for $p < 1$ is a subtle but important distinction. The proof involves checking the Hessian or using a variation of Minkowski's inequality.</p>
         </div>
 
         <div class="example">
@@ -1164,6 +1209,8 @@
             <li>$f(x) = x^a$ on $\mathbb{R}_{++}$ for $a \in \mathbb{R}$.</li>
             <li>$f(x) = |x|^p$ on $\mathbb{R}$ for $p \ge 1$.</li>
             <li>$f(x) = x \log x$ on $\mathbb{R}_{++}$.</li>
+            <li>$u_\alpha(x) = \frac{x^\alpha - 1}{\alpha}$ for $\alpha \in (0,1]$ (CRRA Utility).</li>
+
           </ol>
 
           <div class="solution-box">
@@ -1178,6 +1225,7 @@
               </li>
               <li><b>(c) Convex:</b> Composition of convex $g(u)=u^p$ ($p \ge 1$) and convex $h(x)=|x|$. Since $g$ is increasing on $\mathbb{R}_+$, convexity is preserved.</li>
               <li><b>(d) Convex:</b> $f'(x) = 1 + \log x$, $f''(x) = 1/x > 0$. (Negative entropy).</li>
+              <li><b>(e) Concave:</b> $u' = x^{\alpha-1} > 0$, $u'' = (\alpha-1)x^{\alpha-2}$. Since $\alpha \le 1$, $u'' \le 0$. Note: As $\alpha \to 0$, this approaches $\log x$.</li>
             </ul>
           </div>
         </div>

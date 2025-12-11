@@ -723,42 +723,40 @@
       <p>For compatible matrices $A, B$, we have the inequality $\|AB\|_F \le \|A\|_F \|B\|_F$. This property is crucial for analyzing the convergence of matrix iterations.</p>
 
       <div class="proof-box">
-        <h4>Proof via "Scalar" Cauchy-Schwarz on Entries</h4>
-        <p>We prove this by using the definition of the Frobenius norm, componentwise Cauchy-Schwarz, and a factorization of double sums.</p>
+        <h4>Proof via Column/Row Factorization</h4>
+        <p>We prove this inequality by decomposing the matrix multiplication into vector inner products and applying Cauchy-Schwarz.</p>
 
         <div class="proof-step">
-          <strong>Step 1: Definitions and Row/Column View.</strong>
-          Let $A \in \mathbb{R}^{m \times n}$ and $B \in \mathbb{R}^{n \times p}$.
-          The Frobenius norm is $\|A\|_F^2 = \sum_{i=1}^m \sum_{k=1}^n a_{ik}^2$.
-          The $(i,j)$-entry of $AB$ is $(AB)_{ij} = \sum_{k=1}^n a_{ik} b_{kj}$.
-          We can view this as the inner product of the $i$-th row of $A$ ($A_{i\cdot}$) and the $j$-th column of $B$ ($B_{\cdot j}$):
-          $$ (AB)_{ij} = \langle A_{i\cdot}, B_{\cdot j} \rangle $$
+          <strong>Step 1: Setup.</strong>
+          Let $A \in \mathbb{R}^{m \times n}$ and $B \in \mathbb{R}^{n \times p}$. Let $C = AB$.
+          <br>Denote the $i$-th <b>column</b> of $A^\top$ (which is the $i$-th row of $A$) as $A_i \in \mathbb{R}^n$.
+          <br>Denote the $j$-th <b>column</b> of $B$ as $B^j \in \mathbb{R}^n$.
+          <br>The $(i,j)$ entry of $C$ is the inner product: $C_{ij} = \langle A_i, B^j \rangle$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Compute $\|AB\|_F^2$.</strong>
-          $$
-          \|AB\|_F^2 = \sum_{i=1}^m \sum_{j=1}^p (AB)_{ij}^2 = \sum_{i=1}^m \sum_{j=1}^p \langle A_{i\cdot}, B_{\cdot j} \rangle^2
-          $$
-          Using the Cauchy-Schwarz inequality $\langle u, v \rangle^2 \le \|u\|_2^2 \|v\|_2^2$ for each term:
-          $$ \langle A_{i\cdot}, B_{\cdot j} \rangle^2 \le \|A_{i\cdot}\|_2^2 \|B_{\cdot j}\|_2^2 $$
-          Thus:
-          $$ \|AB\|_F^2 \le \sum_{i=1}^m \sum_{j=1}^p \|A_{i\cdot}\|_2^2 \|B_{\cdot j}\|_2^2 $$
+          <strong>Step 2: Expand Squared Norm.</strong>
+          $$ \|C\|_F^2 = \sum_{i=1}^m \sum_{j=1}^p C_{ij}^2 = \sum_{i=1}^m \sum_{j=1}^p \langle A_i, B^j \rangle^2 $$
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Factor the double sum.</strong>
-          Define $\alpha_i = \|A_{i\cdot}\|_2^2$ for $i=1,\dots,m$ and $\beta_j = \|B_{\cdot j}\|_2^2$ for $j=1,\dots,p$.
-          $$ \sum_{i,j} \alpha_i \beta_j = \sum_i \alpha_i \left( \sum_j \beta_j \right) = \left( \sum_i \alpha_i \right) \left( \sum_j \beta_j \right) $$
-          So:
-          $$ \|AB\|_F^2 \le \left( \sum_{i=1}^m \|A_{i\cdot}\|_2^2 \right) \left( \sum_{j=1}^p \|B_{\cdot j}\|_2^2 \right) $$
+          <strong>Step 3: Apply Cauchy-Schwarz.</strong>
+          For each term, $\langle A_i, B^j \rangle^2 \le \|A_i\|_2^2 \|B^j\|_2^2$.
+          $$ \|C\|_F^2 \le \sum_{i=1}^m \sum_{j=1}^p \|A_i\|_2^2 \|B^j\|_2^2 $$
         </div>
 
         <div class="proof-step">
-          <strong>Step 4: Identify the norms.</strong>
-          Note that $\sum_i \|A_{i\cdot}\|_2^2 = \sum_{i,k} a_{ik}^2 = \|A\|_F^2$ and $\sum_j \|B_{\cdot j}\|_2^2 = \sum_{k,j} b_{kj}^2 = \|B\|_F^2$.
+          <strong>Step 4: Factorization Trick.</strong>
+          The double sum splits because the terms are independent (one depends only on $i$, the other only on $j$):
+          $$ \sum_{i,j} \|A_i\|_2^2 \|B^j\|_2^2 = \left(\sum_{i=1}^m \|A_i\|_2^2\right) \left(\sum_{j=1}^p \|B^j\|_2^2\right) $$
+        </div>
+
+        <div class="proof-step">
+          <strong>Step 5: Identify Norms.</strong>
+          The sum of squared norms of rows of $A$ is exactly $\|A\|_F^2$.
+          The sum of squared norms of columns of $B$ is exactly $\|B\|_F^2$.
           $$ \|AB\|_F^2 \le \|A\|_F^2 \|B\|_F^2 $$
-          Taking square roots yields $\boxed{\|AB\|_F \le \|A\|_F \|B\|_F}$.
+          Taking square roots gives the result: $\boxed{\|AB\|_F \le \|A\|_F \|B\|_F}$.
         </div>
       </div>
     </section>
@@ -974,6 +972,20 @@
           $$ z^\top M z = x^\top S x + (y + D^{-1}B^\top x)^\top D (y + D^{-1}B^\top x) $$
           Since $S \succeq 0$, the first term is non-negative. Since $D \succ 0$, the second term is non-negative. Thus $z^\top M z \ge 0$ for all $z$.
         </div>
+      <div class="example">
+        <h4>Example: Determinant of Symmetric Block Matrix</h4>
+        <p>Consider the matrix $M = \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix}$ where $Y \succ 0$.
+        Using the general determinant formula with $A=Y, B=x, C=x^\top, D=t$:
+        $$ \det M = \det Y \cdot \det(t - x^\top Y^{-1} x) = (\det Y)(t - x^\top Y^{-1} x) $$
+        This scalar formula is frequently used to check if $M \succ 0$: we need $\det Y > 0$ (given) and the Schur complement $t - x^\top Y^{-1} x > 0$.</p>
+      </div>
+      <div class="example">
+        <h4>Example: Determinant of Symmetric Block Matrix</h4>
+        <p>Consider the matrix $M = \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix}$ where $Y \succ 0$.
+        Using the general determinant formula with $A=Y, B=x, C=x^\top, D=t$:
+        $$ \det M = \det Y \cdot \det(t - x^\top Y^{-1} x) = (\det Y)(t - x^\top Y^{-1} x) $$
+        This scalar formula is frequently used to check if $M \succ 0$: we need $\det Y > 0$ (given) and the Schur complement $t - x^\top Y^{-1} x > 0$.</p>
+      </div>
       </div>
 
       <p><b>Forward Connection:</b> This result can also be viewed as minimizing the quadratic form $f(x, y) = [x^\top \ y^\top] M [x^\top \ y^\top]^\top$ with respect to $y$ (partial minimization), yielding a new quadratic form in $x$ defined by the Schur complement matrix. This perspective is explored in <a href="../05-convex-functions-basics/index.html">Lecture 05</a>.</p>
