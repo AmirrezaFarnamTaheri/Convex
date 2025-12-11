@@ -899,6 +899,11 @@
       <h3>6.4 The Schur Complement Lemma</h3>
       <p>A powerful tool for handling block matrices in optimization is the Schur Complement. It allows us to convert complicated nonlinear constraints into Linear Matrix Inequalities (LMIs) and provides a systematic way to check positive semidefiniteness.</p>
 
+      <div class="insight">
+        <h4>Why is this useful?</h4>
+        <p>Often in optimization we encounter nonlinear inequalities like $\frac{x^2}{y} \le t$ or $\|Ax\|_2^2 \le c$. These look difficult to handle with linear algebra. The Schur Complement allows us to rewrite them as <b>linear</b> constraints on a matrix variable. For example, $x^2 \le ty$ (with $y>0$) is equivalent to the matrix condition $\begin{bmatrix} y & x \\ x & t \end{bmatrix} \succeq 0$. This "lifting" trick is the key to Semidefinite Programming.</p>
+      </div>
+
       <figure style="text-align: center;">
         <img src="assets/schur_complement_block.png"
              alt="Schur Complement Block Matrix Transformation Visualization"
@@ -922,7 +927,7 @@
 
         <div class="proof-box">
           <h4>Line-by-Line Verification of Block Multiplication</h4>
-          <p>Let's verify this multiplication explicitly using the block multiplication rule $\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} X & Y \\ Z & W \end{bmatrix} = \begin{bmatrix} AX+BZ & AY+BW \\ CX+DZ & CY+DW \end{bmatrix}$.</p>
+          <p>We verify this multiplication explicitly using the block multiplication rule $\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} X & Y \\ Z & W \end{bmatrix} = \begin{bmatrix} AX+BZ & AY+BW \\ CX+DZ & CY+DW \end{bmatrix}$.</p>
           <p>Here $X=I_p, Y=0, Z=-D^{-1}C, W=I_q$.</p>
           <ul>
             <li><b>Top-left:</b> $A(I_p) + B(-D^{-1}C) = A - BD^{-1}C = S$.</li>
@@ -1179,9 +1184,9 @@
 
       <div class="proof-box">
         <h3>Example 1: Projection onto a Line</h3>
-        <p>Let's find the projection of the vector $b = (2, 3)^\top$ onto the line spanned by the vector $u = (1, 1)^\top$. The projection $p$ is given by the formula:
+        <p>We compute the projection of the vector $b = (2, 3)^\top$ onto the line spanned by the vector $u = (1, 1)^\top$. The projection $p$ is given by the formula:
         $$ p = \frac{u^\top b}{u^\top u} u = \frac{(1)(2) + (1)(3)}{(1)(1) + (1)(1)} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \frac{5}{2} \begin{pmatrix} 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 2.5 \\ 2.5 \end{pmatrix} $$
-        The residual vector is $r = b - p = (2 - 2.5, 3 - 2.5)^\top = (-0.5, 0.5)^\top$. We can verify that the residual is orthogonal to the line: $u^\top r = (1)(-0.5) + (1)(0.5) = 0$.
+        The residual vector is $r = b - p = (2 - 2.5, 3 - 2.5)^\top = (-0.5, 0.5)^\top$. We verify that the residual is orthogonal to the line: $u^\top r = (1)(-0.5) + (1)(0.5) = 0$.
         </p>
       </div>
 
@@ -1226,7 +1231,7 @@
 
       <div class="proof-box">
         <h3>Example 2: Solving Least Squares with Normal Equations</h3>
-        <p>Let's solve the least squares problem for the system $Ax=b$ with:
+        <p>Consider the least squares problem for the system $Ax=b$ with:
         $$ A = \begin{pmatrix} 1 & 1 \\ 1 & -1 \\ 1 & 1 \end{pmatrix}, \quad b = \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix} $$
         First, we form the normal equations $A^\top A x = A^\top b$:
         $$ A^\top A = \begin{pmatrix} 1 & 1 & 1 \\ 1 & -1 & 1 \end{pmatrix} \begin{pmatrix} 1 & 1 \\ 1 & -1 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix} $$

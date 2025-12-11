@@ -274,15 +274,39 @@
         </div>
         <div class="proof-box">
           <h4>Proof</h4>
-          <p><b>($\Rightarrow$)</b> If $f$ is convex, then for any $t_1, t_2$ and $\theta \in [0,1]$:
-          $$ g(\theta t_1 + (1-\theta)t_2) = f(x + (\theta t_1 + (1-\theta)t_2)v) = f(\theta(x+t_1 v) + (1-\theta)(x+t_2 v)) $$
-          $$ \le \theta f(x+t_1 v) + (1-\theta)f(x+t_2 v) = \theta g(t_1) + (1-\theta)g(t_2) $$
-          So $g$ is convex.</p>
-          <p><b>($\Leftarrow$)</b> If every restriction is convex, take any $x, y \in \mathrm{dom}\, f$ and $\theta \in [0,1]$. Define the line through $x$ and $y$ by $h(t) = f(x + t(y-x))$.
-          Then $h(0) = f(x)$ and $h(1) = f(y)$. By convexity of $h$:
-          $$ f(\theta x + (1-\theta)y) = f(x + (1-\theta)(y-x)) = h(1-\theta) $$
-          $$ \le (1-(1-\theta))h(0) + (1-\theta)h(1) = \theta f(x) + (1-\theta)f(y) $$
-          Thus $f$ is convex.</p>
+          <p>This theorem allows us to reduce $n$-dimensional convexity to 1-dimensional convexity.</p>
+          <div class="proof-step">
+            <strong>($\Rightarrow$) Convex $\implies$ Restriction is Convex.</strong>
+            Assume $f$ is convex. Fix $x, v$. Let $t_1, t_2$ be scalars and $\theta \in [0, 1]$.
+            <br>We compute $g$ at the convex combination of points:
+            $$ g(\theta t_1 + (1-\theta)t_2) = f(x + (\theta t_1 + (1-\theta)t_2)v) $$
+            Rearrange the argument as a convex combination of vectors:
+            $$ = f(\theta(x + t_1 v) + (1-\theta)(x + t_2 v)) $$
+            By convexity of $f$:
+            $$ \le \theta f(x + t_1 v) + (1-\theta)f(x + t_2 v) = \theta g(t_1) + (1-\theta)g(t_2) $$
+            Thus $g$ satisfies the definition of a convex function.
+          </div>
+          <div class="proof-step">
+            <strong>($\Leftarrow$) Restriction is Convex $\implies$ Convex.</strong>
+            Assume $g(t) = f(x+tv)$ is convex for all lines.
+            Take any two points $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$.
+            We want to evaluate $f$ at $z = \theta x + (1-\theta)y$.
+            <br>Consider the specific line passing through $x$ and $y$. Let $v = y - x$.
+            Define the restriction $g(t) = f(x + tv)$.
+            Note that:
+            <ul>
+                <li>$g(0) = f(x)$</li>
+                <li>$g(1) = f(x + (y-x)) = f(y)$</li>
+                <li>$g(1-\theta) = f(x + (1-\theta)(y-x)) = f(\theta x + (1-\theta)y) = f(z)$</li>
+            </ul>
+            Since $g$ is convex, we apply the definition with points $t_1=0, t_2=1$ and weight $1-\theta$:
+            $$ g((1-(1-\theta))\cdot 0 + (1-\theta)\cdot 1) \le (1-(1-\theta))g(0) + (1-\theta)g(1) $$
+            Simplifying the weights:
+            $$ g(1-\theta) \le \theta g(0) + (1-\theta)g(1) $$
+            Substituting back the function values:
+            $$ f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) $$
+            Thus $f$ is convex.
+          </div>
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">
@@ -572,12 +596,17 @@
         </div>
         <div class="example">
             <h4>Example 3: Trace of Inverse</h4>
-            <p>Let $f(X) = \mathrm{tr}(X^{-1})$ on $\mathbb{S}^n_{++}$.
-            <br>Derivative: $\nabla f(X) = -X^{-2}$.
-            <br>Second derivative along line $X+tH$: $f''(t) = 2 \mathrm{tr}(X^{-1} H X^{-1} H X^{-1})$.
-            <br>Let $Y = X^{-1/2} H X^{-1/2}$. This becomes $2 \mathrm{tr}(Y^2 X^{-1})$.
-            <br>Actually, simplifying the quadratic form: $2 \mathrm{tr}(X^{-1/2} Y Y X^{-1/2}) = 2 \|Y X^{-1/2}\|_F^2 \ge 0$.
-            <br>Thus $f$ is convex.</p>
+            <p>Let $f(X) = \mathrm{tr}(X^{-1})$ on $\mathbb{S}^n_{++}$. We can establish convexity in two ways:</p>
+            <p><strong>Method 1: Spectral Functions</strong><br>
+            The function $f(X)$ is a spectral function corresponding to the scalar function $g(x) = 1/x$. Since $g(x)$ is convex on $(0, \infty)$, the corresponding matrix trace function $f(X) = \sum_{i=1}^n g(\lambda_i(X))$ is convex on $\mathbb{S}^n_{++}$.</p>
+            <p><strong>Method 2: Second Derivative</strong><br>
+            Consider the restriction to a line $X(t) = X + tH$. The second derivative is given by:
+            $$ \frac{d^2}{dt^2} f(X+tH) \Big|_{t=0} = 2 \mathrm{tr}(X^{-1} H X^{-1} H X^{-1}) $$
+            Let $M = X^{-1/2} H X^{-1/2}$. Substituting $H = X^{1/2} M X^{1/2}$ into the trace expression:
+            $$ 2 \mathrm{tr}(X^{-1} (X^{1/2} M X^{1/2}) X^{-1} (X^{1/2} M X^{1/2}) X^{-1}) = 2 \mathrm{tr}(X^{-1/2} M M X^{-1/2}) $$
+            Using the cyclic property of the trace, this simplifies to:
+            $$ 2 \mathrm{tr}(X^{-1} M^2) $$
+            Since $M$ is symmetric, $M^2$ is positive semidefinite. Since $X^{-1}$ is positive definite, the trace of the product of a positive semidefinite matrix and a positive definite matrix is non-negative (proven by observing $\mathrm{tr}(X^{-1} M^2) = \mathrm{tr}(X^{-1/2} M^2 X^{-1/2}) \ge 0$). Thus, the second derivative is non-negative for all $H$, establishing convexity.</p>
         </div>
 
         <div class="proof-box">

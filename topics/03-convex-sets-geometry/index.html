@@ -832,6 +832,40 @@
           $$ V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2, \ \forall j \neq i\} $$
           Prove that $V_i$ is a polyhedron (and thus a convex set).</p>
 
+          <div class="recap-box">
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Polyhedra:</b> A polyhedron is the intersection of a finite number of halfspaces. To prove a set is a polyhedron, we typically show it is defined by a system of linear inequalities $Ax \le b$.</li>
+                <li><b>Bisectors:</b> The set of points equidistant to two points $p$ and $q$ is a hyperplane (the perpendicular bisector). The set of points closer to $p$ than $q$ is a halfspace.</li>
+            </ul>
+          </div>
+
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              <strong>Step 1: Analyze the inequality.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ involves norms. Since norms are non-negative, we can square both sides to remove the square roots:
+              $$ \|x - x_i\|_2^2 \le \|x - x_j\|_2^2 $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 2: Expand the terms.</strong>
+              $$ (x - x_i)^\top (x - x_i) \le (x - x_j)^\top (x - x_j) $$
+              $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
+            </div>
+            <div class="proof-step">
+              <strong>Step 3: Simplify to linear form.</strong> Subtract $x^\top x$ from both sides and rearrange terms to group $x$:
+              $$ 2x_j^\top x - 2x_i^\top x \le x_j^\top x_j - x_i^\top x_i $$
+              $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
+              This is a linear inequality of the form $a_{ij}^\top x \le b_{ij}$, where $a_{ij} = 2(x_j - x_i)$ and $b_{ij} = \|x_j\|^2 - \|x_i\|^2$.
+              Geometrically, this defines the closed halfspace containing $x_i$ bounded by the perpendicular bisector of the segment $[x_i, x_j]$.
+            </div>
+            <div class="proof-step">
+              <strong>Step 4: Intersection.</strong> The Voronoi region $V_i$ is the intersection of these halfspaces for all $j \neq i$:
+              $$ V_i = \bigcap_{j \neq i} \{x \mid 2(x_j - x_i)^\top x \le \|x_j\|^2 - \|x_i\|^2\} $$
+              Since $V_i$ is the intersection of a finite number ($k-1$) of halfspaces, it is by definition a <b>polyhedron</b>. Since polyhedra are convex sets, $V_i$ is convex.
+            </div>
+          </div>
+        </div>
+
         <div class="problem">
           <h3>P3.2 — Midpoint Convexity</h3>
           <p><b>Problem:</b> A set $C$ is <b>midpoint convex</b> if $\frac{1}{2}(x+y) \in C$ whenever $x, y \in C$. Prove that if $C$ is closed and midpoint convex, then $C$ is convex.</p>
