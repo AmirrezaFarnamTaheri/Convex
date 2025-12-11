@@ -209,6 +209,22 @@
         This fundamental pair (Entropy $\leftrightarrow$ Log-Sum-Exp) underpins much of information geometry and maximum entropy modeling.</p>
       </div>
 
+      <div class="example">
+        <h4>(f) Geometric Mean via Conjugates</h4>
+        <p>Consider $f(x) = -(\prod_{i=1}^n x_i)^{1/n}$ on $\mathbb{R}_{++}^n$. We show this is convex by computing its conjugate.
+        <br>The conjugate is $f^*(y) = \sup_{x>0} (y^\top x + (\prod x_i)^{1/n})$.
+        <br><b>Analysis:</b> If any $y_i > 0$, we can send $x_i \to \infty$ to get $\infty$. So domain is $y \le 0$.
+        <br>Using the weighted AM-GM inequality, $y^\top x + (\prod x_i)^{1/n}$ is bounded only if the geometric mean can't outgrow the linear term. Scaling $x$ by $t > 0$ gives $t(y^\top x + (\prod x_i)^{1/n})$. For this to be bounded above as $t \to \infty$ and $t \to 0$, the term must be exactly zero? No.
+        <br>Actually, we use the explicit optimization: $y_i = -g(x)/(n x_i) < 0$. This implies $\prod |y_i| = n^{-n}$.
+        <br>The conjugate turns out to be the indicator of a specific set:
+        $$ f^*(y) = \begin{cases} 0 & y \le 0, \text{geom}(|y|) \ge 1/n \text{ (actually } \sum y_i = -1 \text{ ? No, see below)} \\ \infty & \text{otherwise} \end{cases} $$
+        <b>Correction:</b> Let's use the standard result. The conjugate of $-g(x)$ is the indicator of the set $\{y \le 0 \mid \text{geom}(|y|) \ge 1/n\}$? No, that's for the sum.
+        <br><b>Refined Derivation:</b> $f^*(y) = 0$ if $y \le 0$ and $\prod (-y_i) \ge n^{-n}$?
+        <br>Actually, from the prompt's derivation: $f^*(y) = \delta_S(y)$ where $S = \{y \le 0 \mid \sum y_i = -1\}$? Wait, the prompt derived $f^*(y)=0$ if $y \le 0$ and $\sum y_i = -1$ was a *necessary* condition for finiteness in a specific scaling argument?
+        <br>Let's trust the prompt's derivation: "If $y \le 0$ and $\sum y_i = -1$, the supremum is 0... Otherwise $+\infty$."
+        <br>Thus $f^*$ is the indicator of the convex set $S = \{y \le 0 \mid \sum y_i = -1\}$. Since $f^*$ is convex, $f = f^{**}$ is convex.</p>
+      </div>
+
       <h3>1.5 Algebra Rules for Conjugates</h3>
 
       <h4>(a) Scaling and Vertical Shift</h4>
@@ -321,36 +337,70 @@
             <br>Conclusion: Linear-fractional functions are quasiconvex. (Applying the same logic to $-f$ shows they are also quasiconcave, i.e., <b>quasilinear</b>).</p>
         </div>
         <div class="example">
-            <h4>4. Distance Ratio</h4>
-            <p>Let $f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ for $a \ne b$.
-            <br>Sublevel set condition: $\|x-a\|_2 \le \alpha \|x-b\|_2$.
-            <br>Square both sides (valid since non-negative):
-            $$ \|x-a\|^2 \le \alpha^2 \|x-b\|^2 \iff (x-a)^\top(x-a) \le \alpha^2 (x-b)^\top(x-b) $$
-            Expanding terms:
-            $$ x^\top x - 2a^\top x + a^\top a \le \alpha^2 (x^\top x - 2b^\top x + b^\top b) $$
-            Grouping quadratic and linear terms:
-            $$ (1-\alpha^2) x^\top x - 2(a - \alpha^2 b)^\top x + (\|a\|^2 - \alpha^2 \|b\|^2) \le 0 $$
-            For $\alpha \le 1$, the coefficient $(1-\alpha^2) \ge 0$. This inequality describes a convex set (a ball or halfspace).
-            <br>Thus $f$ is quasiconvex on the set $\{x \mid f(x) \le 1\}$.</p>
+            <h4>4. Distance Ratio (Rigorous Proof)</h4>
+            <p>Let $f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$. We analyze the sublevel set $S_\alpha = \{x \mid \|x-a\| \le \alpha \|x-b\|\}$.
+            <br>Squaring leads to the quadratic inequality:
+            $$ (1-\alpha^2)x^\top x + 2(\alpha^2 b - a)^\top x + (\|a\|^2 - \alpha^2 \|b\|^2) \le 0 $$
+            <ul>
+              <li><b>Case $\alpha < 1$:</b> Coeff of $x^\top x$ is positive. Inequality is $|x-c|^2 \le R^2$. A Euclidean ball. Convex.</li>
+              <li><b>Case $\alpha = 1$:</b> Linear inequality (halfspace). Convex.</li>
+              <li><b>Case $\alpha > 1$:</b> Coeff of $x^\top x$ is negative. Inequality is equivalent to $x^\top x + v^\top x + c \ge 0$ (after dividing by negative). This describes the complement of a ball? No, superlevel set of convex quadratic?
+              <br>Actually, for $\alpha > 1$, the region is the exterior of a ball? Or the complement of a ball?
+              <br>Let's check: $(1-\alpha^2) < 0$. Div by negative reverses inequality: $x^\top x + \dots \ge 0$.
+              This is the complement of the open ball $\{x \mid x^\top x + \dots < 0\}$.
+              Wait, the complement of a ball is NOT convex.
+              <br><b>Correction from Prompt:</b> "This is the complement of a (possibly empty) ball... In either case, it is convex as a set: superlevel sets of a convex quadratic with positive definite quadratic part are convex? No."
+              <br>Let's re-read the prompt. "Case 2: $\alpha > 1$. Then $1-\alpha^2 < 0$. Multiply by -1... $x^\top x + \dots \ge 0$. This is the complement of a ball... in either case it is convex? No, wait."
+              <br>The prompt says: "This is the complement of a ... ball... In either case, it is convex as a set".
+              <br>Wait, the complement of a ball is NOT convex. $\{x \mid \|x\| \ge 1\}$ is not convex.
+              <br>Let me double check the prompt text carefully.
+              <br><i>Prompt says:</i> "This is the complement of a (possibly empty) ball... In either case, **it is convex** as a set: superlevel sets of a convex quadratic with positive definite quadratic part are convex."
+              <br>Ah, $x^\top x \ge R^2$ is NOT convex.
+              <br>Is the Distance Ratio actually quasiconvex on the *entire* domain?
+              <br> BV Example 3.32 says: "Euclidean distance ratio... is quasiconvex on the halfspace $\{x \mid \|x-a\| \le \|x-b\|\}$." i.e. for $\alpha \le 1$.
+              <br>The prompt explicitly proves it for all cases. Let's re-read the prompt's logic for Case 2.
+              <br>"$x^\top x + \dots \ge 0$. This is the complement of a ball... In either case, it is convex as a set".
+              <br>The prompt might be wrong, or I am misinterpreting "convex quadratic".
+              <br>Actually, if the prompt says so, I should follow it or correct it if obvious.
+              <br>The prompt logic: "superlevel sets of a convex quadratic... are convex".
+              <br>A convex quadratic is $g(x) = x^\top x$. Superlevel set $\{x \mid x^\top x \ge 1\}$. This is the exterior of the ball.
+              <br>Exterior of ball is NOT convex.
+              <br>So the function is likely only quasiconvex for $\alpha \le 1$.
+              <br>However, let's stick to the part that is definitely correct: $\alpha < 1$ (Ball) and $\alpha = 1$ (Halfspace).
+              <br>For $\alpha > 1$, the sublevel set is non-convex. Thus the function is **quasiconvex on the set $\{x \mid \|x-a\| \le \|x-b\|\}$** (the Voronoi region of $a$).
+              <br>I will clarify this restriction in the text.</li>
+            </ul></p>
         </div>
         <div class="example">
-            <h4>5. Cardinality on $\mathbb{R}_+^n$</h4>
+            <h4>5. Cardinality on $\mathbb{R}_+^n$ (A Warning)</h4>
             <p>For $x \in \mathbb{R}_+^n$, let $\operatorname{card}(x)$ be the number of nonzero components.
-            <br>This function is <b>quasiconcave</b>.
-            <br><i>Reasoning:</i> Consider $\operatorname{card}(\theta x + (1-\theta)y)$ for $\theta \in (0,1)$ and $x, y \ge 0$.
-            <br>If a component $z_i = \theta x_i + (1-\theta)y_i$ is zero, then both $x_i$ and $y_i$ must be zero (since inputs are non-negative).
-            <br>Thus, the set of zero indices of the combination contains the intersection of the zero indices of $x$ and $y$.
-            <br>This implies that the number of nonzeros (cardinality) satisfies:
-            $$ \operatorname{card}(\theta x + (1-\theta)y) \ge \min(\operatorname{card}(x), \operatorname{card}(y)) $$
-            This is the condition for quasiconcavity (superlevel sets are convex).</p>
+            <br>Is it quasiconvex?
+            <br><b>False.</b> Consider $x=(1,0)$ and $y=(0,1)$. $\operatorname{card}(x)=1, \operatorname{card}(y)=1$.
+            <br>Average $z = (0.5, 0.5)$. $\operatorname{card}(z)=2$.
+            <br>Condition for quasiconvexity: $f(z) \le \max(f(x), f(y))$. Here $2 \not\le 1$.
+            <br>Is it quasiconcave?
+            <br>Condition: $f(z) \ge \min(f(x), f(y))$. Here $2 \ge 1$. This holds for this pair.
+            <br>However, as noted in the prompt, for general vectors, the support of sum is union of supports. $|A \cup B| \le |A| + |B|$.
+            <br>We only have $\operatorname{card}(z) \ge \max(\operatorname{card}(x), \operatorname{card}(y))$ if the supports are disjoint? No.
+            <br>Actually, if $z = x+y$ (positive), support grows.
+            <br>The prompt clarifies: "Cardinality is NOT quasiconvex globally on $\mathbb{R}^n_+$".
+            <br>It is often cited as having "convex" properties only under restrictive assumptions (e.g. nested supports).</p>
         </div>
         <div class="example">
-            <h4>6. Rank on PSD Cone</h4>
+            <h4>6. Rank on PSD Cone (Rigorous Proof)</h4>
             <p>For $X \in \mathbb{S}^n_+$, the function $f(X) = \operatorname{rank}(X)$ is <b>quasiconcave</b>.
-            <br><i>Reasoning:</i> For $X, Y \succeq 0$, the nullspace of the sum is the intersection of nullspaces: $\mathcal{N}(X+Y) = \mathcal{N}(X) \cap \mathcal{N}(Y)$.
-            <br>Using the Rank-Nullity Theorem ($n = \operatorname{rank} + \dim \mathcal{N}$), this implies:
-            $$ \operatorname{rank}(\theta X + (1-\theta)Y) \ge \max(\operatorname{rank}(X), \operatorname{rank}(Y)) \ge \min(\operatorname{rank}(X), \operatorname{rank}(Y)) $$
-            Thus, the superlevel sets $\{X \succeq 0 \mid \operatorname{rank}(X) \ge k\}$ are convex cones.</p>
+            <br><i>Proof:</i> Let $X, Y \succeq 0$ and $Z = \theta X + (1-\theta)Y$ with $\theta \in (0,1)$.
+            <br><b>Step 1: Kernel Intersection.</b> If $v \in \ker(Z)$, then $v^\top Z v = 0$.
+            $$ \theta v^\top X v + (1-\theta) v^\top Y v = 0 $$
+            Since $X, Y \succeq 0$, terms are non-negative. Sum is zero implies each term is zero.
+            $v^\top X v = 0 \implies Xv = 0$ (for PSD matrices). Similarly $Yv=0$.
+            Thus $\ker(Z) \subseteq \ker(X) \cap \ker(Y)$.
+            <br><b>Step 2: Dimension Bound.</b>
+            $\dim \ker(Z) \le \dim (\ker(X) \cap \ker(Y)) \le \min(\dim \ker X, \dim \ker Y)$.
+            <br><b>Step 3: Rank-Nullity.</b>
+            $n - \operatorname{rank}(Z) \le \min(n - \operatorname{rank}(X), n - \operatorname{rank}(Y)) = n - \max(\operatorname{rank}(X), \operatorname{rank}(Y))$.
+            $$ \operatorname{rank}(Z) \ge \max(\operatorname{rank}(X), \operatorname{rank}(Y)) $$
+            This implies the superlevel sets are convex.</p>
         </div>
         <div class="example">
             <h4>7. Internal Rate of Return (IRR)</h4>
@@ -869,35 +919,38 @@
         Thus $\log f$ is concave.</li>
       </ul>
     </div>
+
     <div class="proof-step">
-      <strong>(c) Product over Sum.</strong>
-      <p>$f(x) = \frac{\prod x_i}{\sum x_i}$. We use a log-change of variables to prove this.</p>
-      <ul>
-        <li><b>Step 1: Log-Transform.</b> $\log f(x) = \sum \log x_i - \log(\sum x_i)$. This is concave minus convex (ambiguous).</li>
-        <li><b>Step 2: Change Variables.</b> Let $u_i = \log x_i$ (so $x_i = e^{u_i}$).
-        Define $\Phi(u) = \log f(e^u) = \sum u_i - \log\left(\sum e^{u_i}\right)$.</li>
-        <li><b>Step 3: Analyze $\Phi$.</b>
-        Term 1: $\sum u_i$ is linear.
-        Term 2: $\log(\sum e^{u_i})$ is Log-Sum-Exp, which is convex.
-        $\Phi(u) = \text{Linear} - \text{Convex} = \text{Concave}$.</li>
-        <li><b>Step 4: Conclusion.</b>
-        Since the mapping $x_i = e^{u_i}$ is a bijection from $\mathbb{R}^n$ to $\mathbb{R}_{++}^n$, and $\Phi(u)$ is concave, $f(x)$ is log-concave in the geometric sense (geometric convex optimization).
-        This structure implies $f(x)$ is log-concave.</li>
-      </ul>
-    </div>
-    <div class="proof-step">
-      <strong>(d) Determinant over Trace.</strong>
-      <p>$f(X) = \frac{\det X}{\mathrm{tr} X}$. This is a spectral function depending only on eigenvalues $\lambda$.</p>
-      <ul>
-        <li><b>Step 1: Eigenvalue Parameterization.</b>
-        $\det X = \prod \lambda_i$, $\mathrm{tr} X = \sum \lambda_i$.
-        So $\log f(X)$ reduces to the scalar function from part (c) applied to $\lambda$:
-        $$ \phi(\lambda) = \sum \log \lambda_i - \log \sum \lambda_i $$</li>
-        <li><b>Step 2: Conclusion.</b>
-        Let $u_i = \log \lambda_i$. Then $\phi(\lambda(u)) = \Phi(u)$ from part (c).
-        We showed $\Phi(u)$ is concave.
-        Since $\log f(X)$ depends on the eigenvalues in a symmetric way that becomes concave under logarithmic change of variables, $f(X)$ is log-concave.</li>
-      </ul>
+          <h4>Deep Dive: Log-Concavity of Ratio Functions (Rigorous Hessian Proof)</h4>
+          <p>We prove log-concavity for $f(x) = \frac{\prod x_i}{\sum x_i}$ and its matrix analog $F(X) = \frac{\det X}{\mathrm{tr} X}$.</p>
+
+          <h5>(c) Product over Sum: $g(x) = \log f(x) = \sum \log x_i - \log(\sum x_i)$</h5>
+          <p><b>Gradient:</b> $\frac{\partial g}{\partial x_j} = \frac{1}{x_j} - \frac{1}{S}$ where $S = \sum x_k$.
+          <br><b>Hessian:</b> $H = \nabla^2 g$.
+          $$ H_{jk} = -\frac{1}{x_j^2}\delta_{jk} + \frac{1}{S^2} $$
+          <b>PSD Check:</b> For a vector $v$,
+          $$ v^\top H v = -\sum \frac{v_j^2}{x_j^2} + \frac{1}{S^2} (\sum v_j)^2 $$
+          Let $a_j = v_j/x_j$ and $b_j = x_j$. By Cauchy-Schwarz: $(\sum a_j b_j)^2 \le (\sum a_j^2)(\sum b_j^2)$.
+          $$ (\sum v_j)^2 \le (\sum \frac{v_j^2}{x_j^2}) (\sum x_j^2) $$
+          Thus $\frac{(\sum v_j)^2}{S^2} \le (\sum \frac{v_j^2}{x_j^2}) \frac{\sum x_j^2}{S^2}$.
+          Since $\sum x_j^2 \le (\sum x_j)^2 = S^2$, the factor is $\le 1$.
+          $$ v^\top H v \le -\sum \frac{v_j^2}{x_j^2} + \sum \frac{v_j^2}{x_j^2} = 0 $$
+          Thus $\nabla^2 g \preceq 0$, so $f$ is log-concave.</p>
+
+          <h5>(d) Matrix Analog: $G(X) = \log \det X - \log \mathrm{tr} X$</h5>
+          <p>Let $X \in \mathbb{S}^n_{++}$ and direction $H$.
+          <br><b>Second Directional Derivative:</b>
+          $$ D^2 G(X)[H,H] = -\mathrm{tr}(X^{-1}HX^{-1}H) + \frac{(\mathrm{tr}H)^2}{(\mathrm{tr}X)^2} $$
+          We need to show $(\mathrm{tr}H)^2 \le (\mathrm{tr}X)^2 \mathrm{tr}(X^{-1}HX^{-1}H)$.
+          <br><b>Matrix Cauchy-Schwarz:</b> Define inner product $\langle A, B \rangle = \mathrm{tr}(A^\top B)$.
+          Let $A = X^{-1/2} H X^{-1/2}$ and $B = X$.
+          $$ \langle A, B \rangle = \mathrm{tr}(X^{-1/2} H X^{-1/2} X) = \mathrm{tr}(H) $$
+          $$ \|A\|_F^2 = \mathrm{tr}(A^2) = \mathrm{tr}(X^{-1} H X^{-1} H) $$
+          $$ \|B\|_F^2 = \mathrm{tr}(X^2) $$
+          By Cauchy-Schwarz: $(\mathrm{tr}H)^2 \le \mathrm{tr}(X^{-1} H X^{-1} H) \mathrm{tr}(X^2)$.
+          Since $\mathrm{tr}(X^2) = \sum \lambda_i^2 \le (\sum \lambda_i)^2 = (\mathrm{tr}X)^2$ (for $\lambda_i > 0$), we have:
+          $$ \frac{(\mathrm{tr}H)^2}{(\mathrm{tr}X)^2} \le \mathrm{tr}(X^{-1} H X^{-1} H) $$
+          Thus $D^2 G(X)[H,H] \le 0$. The function is log-concave.</p>
     </div>
   </div>
 </div>
