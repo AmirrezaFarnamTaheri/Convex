@@ -507,9 +507,68 @@
       </div>
     </section>
 
-    <!-- NEW SECTION 5: Summary Pattern Library -->
+        <!-- NEW SECTION 5: Geometric Programming -->
     <section class="section-card" id="section-5">
-      <h2>5. Summary: The Convex Optimization Pattern Library</h2>
+      <h2>5. Geometric Programming (GP)</h2>
+      <p>Geometric Programs (GP) are a class of quasiconvex optimization problems that become convex under a logarithmic change of variables. They naturally model problems involving powers, products, and ratios, such as circuit sizing and chemical equilibrium.</p>
+
+      <h3>5.1 Monomials and Posynomials</h3>
+      <p>We work with variables $x \in \mathbb{R}_{++}^n$ (strictly positive).
+      <ul>
+          <li>A <strong>monomial</strong> is a function $f(x) = c x_1^{a_1} x_2^{a_2} \dots x_n^{a_n}$ with $c > 0$ and $a_i \in \mathbb{R}$.</li>
+          <li>A <strong>posynomial</strong> is a sum of monomials: $f(x) = \sum_{k=1}^K c_k x_1^{a_1^k} \dots x_n^{a_n^k}$ with $c_k > 0$.</li>
+      </ul>
+      Posynomials are closed under addition, multiplication, and nonnegative scaling. Monomials are closed under multiplication and division.</p>
+
+      <h3>5.2 Standard GP Form</h3>
+      <p>A <strong>Geometric Program</strong> in standard form is:</p>
+      <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
+        <p style="margin: 0;">
+          $$
+          \begin{aligned}
+          \text{minimize} \quad & f_0(x) \\
+          \text{subject to} \quad & f_i(x) \le 1, \quad i=1,\dots,m \\
+          & h_j(x) = 1, \quad j=1,\dots,p
+          \end{aligned}
+          $$
+        </p>
+      </div>
+      <p>where $f_0, \dots, f_m$ are posynomials and $h_1, \dots, h_p$ are monomials.
+      <br><em>Note:</em> The constraints are upper-bound 1 for posynomials and equality to 1 for monomials.</p>
+
+      <h3>5.3 Convex Reformulation via Log-Transform</h3>
+      <p>GPs are not convex in their natural variables $x$. We convexify them by transforming variables to the log-domain.</p>
+      <p>Let $y_i = \log x_i$, so $x_i = e^{y_i}$.</p>
+
+      <h4>Transforming Monomials</h4>
+      <p>A monomial $f(x) = c \prod x_i^{a_i}$ becomes:
+      $$ f(e^y) = c \prod (e^{y_i})^{a_i} = c e^{\sum a_i y_i} = e^{a^\top y + b} $$
+      where $b = \log c$. Taking the log gives an <strong>affine function</strong>: $\log f(e^y) = a^\top y + b$.</p>
+
+      <h4>Transforming Posynomials</h4>
+      <p>A posynomial $f(x) = \sum_k c_k \prod x_i^{a_{ik}}$ becomes:
+      $$ f(e^y) = \sum_k e^{a_k^\top y + b_k} $$
+      Taking the log gives the <strong>Log-Sum-Exp</strong> function:
+      $$ \log f(e^y) = \log \left( \sum_{k=1}^K e^{a_k^\top y + b_k} \right) $$
+      Recall from <a href="../05-convex-functions-basics/index.html">Lecture 05</a> that Log-Sum-Exp is convex.</p>
+
+      <h4>The Convexified GP</h4>
+      <p>Taking the log of the objective and constraints in the standard GP transforms it into a convex problem in $y$:</p>
+      <p style="text-align: center;">
+          $$
+          \begin{aligned}
+          \text{minimize} \quad & \log \left( \sum_{k} e^{a_{0k}^\top y + b_{0k}} \right) \\
+          \text{subject to} \quad & \log \left( \sum_{k} e^{a_{ik}^\top y + b_{ik}} \right) \le 0, \quad i=1,\dots,m \\
+          & G y + d = 0
+          \end{aligned}
+          $$
+      </p>
+      <p>This is a convex optimization problem. We can solve it for $y^*$ and recover $x^* = e^{y^*}$.</p>
+    </section>
+
+<!-- NEW SECTION 5: Summary Pattern Library -->
+    <section class="section-card" id="section-6">
+      <h2>6. Summary: The Convex Optimization Pattern Library</h2>
       <p>We have encountered three fundamental patterns that translate geometric or analytic descriptions into standard convex problems. Internalizing these is key to mastering formulation.</p>
 
       <div class="proof-box">
@@ -532,11 +591,19 @@
         <p><strong>Transformation:</strong> Homogenize variables: $y = x/(e^\top x + f)$, $z = 1/(e^\top x + f)$.</p>
         <p><strong>Result:</strong> Turns fractional objectives into linear ones (LP).</p>
       </div>
+
+      <div class="proof-box">
+        <h4>Pattern 4: Geometric Programming</h4>
+        <p><strong>Problem:</strong> Minimize posynomials (sums of products) with positive variables.</p>
+        <p><strong>Transformation:</strong> Log-transform variables ($y=\log x$) and functions.</p>
+        <p><strong>Result:</strong> Turns multiplicative structure into additive convex structure (Log-Sum-Exp).</p>
+      </div>
+
     </section>
 
     <!-- NEW SECTION 6: Matrix Viewpoint -->
-    <section class="section-card" id="section-6">
-      <h2>6. Matrix Viewpoint: The Algebra of QPs</h2>
+    <section class="section-card" id="section-7">
+      <h2>7. Matrix Viewpoint: The Algebra of QPs</h2>
       <p>Throughout this lecture, we've used block matrices and quadratic forms to construct optimization problems. Let's formalize the linear algebra that makes this work.</p>
 
       <h3>6.1 Congruence and PSD Matrices</h3>
@@ -565,8 +632,8 @@
     </section>
 
     <!-- SECTION 7: Reformulation -->
-    <section class="section-card" id="section-7">
-      <h2>7. Problem Reformulation</h2>
+    <section class="section-card" id="section-8">
+      <h2>8. Problem Reformulation</h2>
       <h3>7.1 Equivalent Problems</h3>
       <p>Two optimization problems are equivalent if the solution of one can be readily obtained from the solution of the other, and vice versa. Common techniques include:</p>
       <ul>
@@ -586,8 +653,8 @@
     </section>
 
     <!-- SECTION 8: EXERCISES -->
-    <section class="section-card" id="section-8">
-      <h2><i data-feather="edit-3"></i> 8. Exercises</h2>
+    <section class="section-card" id="section-9">
+      <h2><i data-feather="edit-3"></i> 9. Exercises</h2>
 
       <div class="problem">
         <h3>P8.1 — Diet Problem (LP)</h3>
@@ -668,8 +735,8 @@
     </section>
 
     <!-- SECTION 9: READINGS -->
-    <section class="section-card" id="section-9">
-      <h2>9. Readings & Resources</h2>
+    <section class="section-card" id="section-10">
+      <h2>10. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, Chapter 4.</li>
       </ul>

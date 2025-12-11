@@ -199,8 +199,67 @@
     </section>
 
     <!-- Section 5: Semidefinite Programs (SDP) -->
+        <!-- NEW SECTION 2: Robust Linear Programming -->
     <section class="section-card" id="section-2">
-      <h2>2. Semidefinite Programs (SDP)</h2>
+      <h2>2. Robust Linear Programming</h2>
+      <p>Standard Linear Programming assumes exact data. In practice, data $(a_i, b_i, c)$ is often uncertain. <strong>Robust Optimization</strong> seeks a solution that remains feasible for all possible realizations of the data within an uncertainty set.</p>
+
+      <h3>2.1 Deterministic Robust LP</h3>
+      <p>Consider the constraint $a_i^\top x \le b_i$. If $a_i$ is uncertain and belongs to a set $\mathcal{E}_i$, the robust constraint is:</p>
+      $$ \sup_{a_i \in \mathcal{E}_i} a_i^\top x \le b_i $$
+
+      <h4>Ellipsoidal Uncertainty</h4>
+      <p>Suppose $\mathcal{E}_i$ is an ellipsoid: $\mathcal{E}_i = \{ \bar{a}_i + P_i u \mid \|u\|_2 \le 1 \}$.
+      <br>Here $\bar{a}_i$ is the nominal value and $P_i$ shapes the uncertainty.</p>
+      <div class="proof-box">
+        <h4>Derivation: Robust to SOCP</h4>
+        <div class="proof-step">
+          <strong>Supremum over Ellipsoid:</strong>
+          $$ \sup_{\|u\|_2 \le 1} (\bar{a}_i + P_i u)^\top x = \bar{a}_i^\top x + \sup_{\|u\|_2 \le 1} u^\top P_i^\top x $$
+        </div>
+        <div class="proof-step">
+          <strong>Cauchy-Schwarz:</strong> The sup is achieved when $u$ aligns with $P_i^\top x$. The value is $\|P_i^\top x\|_2$.
+        </div>
+        <div class="proof-step">
+          <strong>Result:</strong> The constraint becomes $\bar{a}_i^\top x + \|P_i^\top x\|_2 \le b_i$.
+          This is exactly a <strong>Second-Order Cone constraint</strong>.
+        </div>
+      </div>
+      <p>Thus, Robust LP with ellipsoidal uncertainty is an SOCP.</p>
+
+      <h3>2.2 Stochastic Robust LP (Chance Constraints)</h3>
+      <p>Alternatively, assume $a_i$ is random and we require the constraint to hold with probability $\eta$ (e.g., 95%):</p>
+      $$ \mathbb{P}(a_i^\top x \le b_i) \ge \eta $$
+
+      <h4>Gaussian Uncertainty</h4>
+      <p>Let $a_i \sim \mathcal{N}(\bar{a}_i, \Sigma_i)$. Then $a_i^\top x$ is a scalar Gaussian random variable with:
+      <ul>
+          <li>Mean: $\mu = \bar{a}_i^\top x$</li>
+          <li>Variance: $\sigma^2 = x^\top \Sigma_i x$</li>
+      </ul>
+      The chance constraint is equivalent to requiring the mean to be "safe" by a margin of $k$ standard deviations, where $k = \Phi^{-1}(\eta)$.</p>
+
+      <div class="proof-box">
+        <h4>Derivation: Chance to SOCP</h4>
+        <div class="proof-step">
+          <strong>Standardization:</strong>
+          $$ \mathbb{P}(a_i^\top x \le b_i) = \Phi\left(\frac{b_i - \bar{a}_i^\top x}{\sqrt{x^\top \Sigma_i x}}\right) \ge \eta $$
+        </div>
+        <div class="proof-step">
+          <strong>Inversion:</strong>
+          $$ b_i - \bar{a}_i^\top x \ge \Phi^{-1}(\eta) \|\Sigma_i^{1/2} x\|_2 $$
+        </div>
+        <div class="proof-step">
+          <strong>Result:</strong>
+          $$ \bar{a}_i^\top x + \Phi^{-1}(\eta) \|\Sigma_i^{1/2} x\|_2 \le b_i $$
+          For $\eta \ge 0.5$, $\Phi^{-1}(\eta) \ge 0$, so this is a convex SOC constraint.
+        </div>
+      </div>
+      <p><strong>Conclusion:</strong> Both deterministic (worst-case) and stochastic (Gaussian) robustifications of LP lead to SOCP formulations.</p>
+    </section>
+
+<section class="section-card" id="section-3">
+      <h2>3. Semidefinite Programs (SDP)</h2>
 
       <h3>2.1 Definition</h3>
       <p>A <strong>Semidefinite Program (<a href="#" class="definition-link" data-term="sdp">SDP</a>)</strong> has the form:</p>
@@ -244,62 +303,60 @@
 
       <h3>2.4 Standard SDP Examples</h3>
 
-      <h4>Example 5.1: Eigenvalue Minimization</h4>
-      <p>Minimize the maximum eigenvalue of $A(x) = A_0 + \sum_{i=1}^n x_i A_i$:</p>
-      <p style="text-align: center;">
-        $
-        \min_x \lambda_{\max}(A(x))
-        $
-      </p>
-      <p>This is equivalent to the SDP:</p>
-      <p style="text-align: center;">
-        $
-        \begin{aligned}
-        \text{minimize} \quad & t \\
-        \text{subject to} \quad & A(x) \preceq t I
-        \end{aligned}
-        $
-      </p>
-      <p>The constraint $A(x) \preceq tI$ is equivalent to $tI - A(x) \succeq 0$, which is an LMI (linear matrix inequality).</p>
-
-      <h4>Example 5.2: Matrix Norm Minimization (Operator Norm)</h4>
-      <p>Minimize the spectral norm (operator norm) of a matrix depending linearly on variables $x$: $\|A(x)\|_2$, where $A(x) = A_0 + \sum_{i=1}^n x_i A_i$.</p>
+            <h4>Example 3.1: Eigenvalue Minimization</h4>
+      <p>Minimize the maximum eigenvalue of a symmetric matrix affine in $x$: $A(x) = A_0 + \sum x_i A_i$.</p>
+      $$ \min_x \lambda_{\max}(A(x)) $$
 
       <div class="proof-box">
-        <h4>Derivation of SDP Form</h4>
+        <h4>Derivation via Loewner Order</h4>
         <div class="proof-step">
-          <strong>Step 1: Epigraph Form.</strong>
-          The problem is equivalent to:
-          $$ \text{minimize } t \quad \text{subject to } \|A(x)\|_2 \le t $$
+          <strong>Variational Characterization:</strong>
+          $\lambda_{\max}(M) = \sup_{\|u\|_2=1} u^\top M u$. This shows $\lambda_{\max}$ is convex.
         </div>
         <div class="proof-step">
-          <strong>Step 2: Singular Value Characterization.</strong>
-          The spectral norm $\|A\|_2$ is the maximum singular value $\sigma_{\max}(A)$. Recall from <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a> that the spectral norm is $\sqrt{\lambda_{\max}(A^\top A)}$.
-          The condition $\sigma_{\max}(A) \le t$ (for $t \ge 0$) is equivalent to saying all eigenvalues of $A^\top A$ are $\le t^2$:
-          $$ A(x)^\top A(x) \preceq t^2 I $$
+          <strong>Loewner Condition:</strong>
+          We know $\lambda_{\max}(M) \le t \iff M \preceq tI$.
+          Proof: $M \preceq tI \iff tI - M \succeq 0 \iff \lambda_{\min}(tI - M) \ge 0 \iff t - \lambda_{\max}(M) \ge 0$.
         </div>
         <div class="proof-step">
-          <strong>Step 3: Schur Complement.</strong>
-          We want to express $t^2 I - A(x)^\top A(x) \succeq 0$ as a linear matrix inequality.
-          Assuming $t > 0$, we can divide by $t$ or use the Schur complement lemma directly.
-          Recall: $\begin{bmatrix} P & Q \\ Q^\top & R \end{bmatrix} \succeq 0 \iff R \succeq 0, P - Q R^{-1} Q^\top \succeq 0$.
-          We want to match the form $tI - A(x)^\top (tI)^{-1} A(x) \succeq 0$.
-          Set $P = tI$, $Q = A(x)^\top$, $R = tI$.
-          The condition becomes:
-          $$ \begin{bmatrix} tI & A(x)^\top \\ A(x) & tI \end{bmatrix} \succeq 0 $$
-          This matrix is linear in $x$ and $t$, which is exactly what an SDP requires.
-        </div>
-        <div class="proof-step">
-          <strong>Step 4: Final SDP Formulation.</strong>
+          <strong>SDP Form:</strong>
           $$
           \begin{aligned}
           \text{minimize} \quad & t \\
-          \text{subject to} \quad & \begin{bmatrix} tI & A(x)^\top \\ A(x) & tI \end{bmatrix} \succeq 0
+          \text{subject to} \quad & tI - A(x) \succeq 0
           \end{aligned}
           $$
-          This is a standard SDP in variables $(x, t)$.
+          This minimizes the largest eigenvalue using an LMI constraint.
         </div>
       </div>
+
+            <h4>Example 3.2: Matrix Norm Minimization</h4>
+      <p>Minimize the spectral norm (largest singular value) of $A(x) \in \mathbb{R}^{p \times q}$.</p>
+      $$ \min_x \|A(x)\|_2 = \min_x \sqrt{\lambda_{\max}(A(x)^\top A(x))} $$
+
+      <div class="proof-box">
+        <h4>Derivation via Schur Complement</h4>
+        <div class="proof-step">
+          <strong>Eigenvalue Condition:</strong>
+          $\|A\|_2 \le t \iff \lambda_{\max}(A^\top A) \le t^2 \iff A^\top A \preceq t^2 I$.
+        </div>
+        <div class="proof-step">
+          <strong>Schur Complement:</strong>
+          Consider the block matrix $M = \begin{bmatrix} tI & A \\ A^\top & tI \end{bmatrix}$.
+          For $t > 0$, $M \succeq 0 \iff tI - A^\top (tI)^{-1} A \succeq 0 \iff tI - \frac{1}{t} A^\top A \succeq 0 \iff A^\top A \preceq t^2 I$.
+        </div>
+        <div class="proof-step">
+          <strong>SDP Form:</strong>
+          $$
+          \begin{aligned}
+          \text{minimize} \quad & t \\
+          \text{subject to} \quad & \begin{bmatrix} tI & A(x) \\ A(x)^\top & tI \end{bmatrix} \succeq 0
+          \end{aligned}
+          $$
+          This LMI exactly encodes the norm constraint.
+        </div>
+      </div>
+
 
       <!-- Widget 5: SDP Visualizer -->
       <div style="margin: 24px 0; padding: 16px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px;">
@@ -367,8 +424,8 @@
     <!-- Section 3: Quasiconvex Optimization -->
 
 
-      <section class="section-card" id="section-3">
-      <h2>3. Quasiconvex Optimization</h2>
+      <section class="section-card" id="section-4">
+      <h2>4. Quasiconvex Optimization</h2>
 
       <h3>3.1 Quasiconvex Functions</h3>
       <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <strong>quasiconvex</strong> if its domain and all sublevel sets $\{x \mid f(x) \le \alpha\}$ are convex.</p>
@@ -413,8 +470,8 @@
     </section>
 
     <!-- Section 4: Disciplined Convex Programming (DCP) -->
-    <section class="section-card" id="section-4">
-      <h2>4. Disciplined Convex Programming (DCP)</h2>
+    <section class="section-card" id="section-5">
+      <h2>5. Disciplined Convex Programming (DCP)</h2>
 
       <h3>4.1 Motivation</h3>
       <p>While we can recognize many convex problems, it's often unclear whether a complex formulation is convex. <strong>Disciplined Convex Programming</strong> is a system of rules for constructing convex optimization problems from basic atoms.</p>
@@ -451,10 +508,24 @@
       </div>
     </section>
 
-<section class="section-card" id="section-5">
-      <h2>5. Review & Cheat Sheet</h2>
+<section class="section-card" id="section-6">
+      <h2>6. Review & Cheat Sheet</h2>
 
-      <h3>Problem Classes Reference</h3>
+
+      <h3>Meta-Patterns: Convexification Recipes</h3>
+      <div class="proof-box">
+        <h4>Recipe 1: Robustness $\to$ Norms $\to$ SOCP</h4>
+        <p>Uncertainty in data (worst-case or Gaussian) converts linear constraints into norms of affine functions.
+        <br>$\sup a^\top x$ or $\mathbb{P}(a^\top x \le b)$ $\implies$ $\|P^\top x\|_2 \le b - \bar{a}^\top x$.</p>
+      </div>
+      <div class="proof-box">
+        <h4>Recipe 2: Eigenvalues $\to$ LMIs $\to$ SDP</h4>
+        <p>Minimizing maximal eigenvalues or singular values converts to Linear Matrix Inequalities.
+        <br>$\lambda_{\max}(A) \le t \iff A \preceq tI$.
+        <br>$\|A\|_2 \le t \iff \begin{bmatrix} tI & A \\ A^\top & tI \end{bmatrix} \succeq 0$.</p>
+      </div>
+
+<h3>Problem Classes Reference</h3>
       <table class="data-table" style="width: 100%; margin-bottom: 24px;">
         <thead>
           <tr>
@@ -503,8 +574,8 @@
       </ul>
     </section>
 
-<section class="section-card" id="section-6">
-      <h2><i data-feather="edit-3"></i> 6. Exercises</h2>
+<section class="section-card" id="section-7">
+      <h2><i data-feather="edit-3"></i> 7. Exercises</h2>
       <p>These problems consolidate the lecture material and provide practice in problem classification, formulation, and reformulation.</p>
 
       <!-- Problem 4.1 -->
@@ -1111,8 +1182,8 @@
 
     </section>
 
-<section class="section-card" id="section-7" style="margin-bottom: 32px;">
-      <h2>7. Readings & Resources</h2>
+<section class="section-card" id="section-8" style="margin-bottom: 32px;">
+      <h2>8. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Boyd & Vandenberghe, Convex Optimization:</strong> Chapter 4 — Convex Optimization Problems</li>
         <li><strong>Nesterov, Introductory Lectures on Convex Optimization:</strong> Chapter 1 — Linear and Conic Programming</li>
