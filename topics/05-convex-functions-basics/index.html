@@ -576,6 +576,21 @@
             <br>Thus $f$ is convex.</p>
         </div>
 
+        <div class="proof-box">
+          <h4>Deep Dive: Matrix Cauchy-Schwarz & Hilbert-Schmidt Inequality</h4>
+          <p>The Frobenius inner product $\langle A, B \rangle = \mathrm{tr}(A^\top B)$ satisfies the Cauchy-Schwarz inequality:
+          $$ (\mathrm{tr}(A^\top B))^2 \le \mathrm{tr}(A^\top A) \mathrm{tr}(B^\top B) = \|A\|_F^2 \|B\|_F^2 $$
+          This allows us to prove the submultiplicativity of the Frobenius norm: $\|AB\|_F \le \|A\|_F \|B\|_F$.
+          <br><b>Proof:</b>
+          $$ \|AB\|_F^2 = \mathrm{tr}((AB)^\top AB) = \mathrm{tr}(B^\top A^\top A B) = \langle A^\top A, B B^\top \rangle $$
+          By Matrix Cauchy-Schwarz:
+          $$ \langle A^\top A, B B^\top \rangle \le \|A^\top A\|_F \|B B^\top\|_F $$
+          Using singular values, $\|A^\top A\|_F^2 = \sum \sigma_i^4 \le (\sum \sigma_i^2)^2 = \|A\|_F^4$. So $\|A^\top A\|_F \le \|A\|_F^2$.
+          <br>Combining these:
+          $$ \|AB\|_F^2 \le \|A\|_F^2 \|B\|_F^2 \implies \|AB\|_F \le \|A\|_F \|B\|_F $$
+          This inequality is a powerful tool when bounding Hessian terms involving matrix products.</p>
+        </div>
+
         <div class="example">
             <h4>Example 4: Geometric Mean of Eigenvalues</h4>
             <p>Let $f(X) = (\det X)^{1/n}$ on $\mathbb{S}^n_{++}$.
@@ -760,11 +775,22 @@
           <h4>2. Sum of the $r$ Largest Components (Ky Fan Norm)</h4>
           <p>For $x \in \mathbb{R}^n$, let $x_{[1]} \ge x_{[2]} \ge \dots \ge x_{[n]}$ denote components sorted in descending order. Define:
           $$ f(x) = \sum_{k=1}^r x_{[k]} $$
-          This function is convex and coordinate-wise nondecreasing.
-          <br><b>Proof via continuous majorization:</b> Consider the set $C_r = \{ \lambda \in \mathbb{R}^n \mid 0 \le \lambda_i \le 1, \sum \lambda_i = r \}$.
-          <br>We claim $f(x) = \max_{\lambda \in C_r} \sum_{i=1}^n \lambda_i x_i$.
-          <br>Ideally, we want to put as much weight ($\lambda_i=1$) on the largest components of $x$ as possible. Since $\sum \lambda_i = r$ and $\lambda_i \le 1$, the optimal strategy is to set $\lambda$ corresponding to the $r$ largest indices to 1, and the rest to 0.
-          <br>Thus $f$ is the pointwise maximum of a family of linear functions (indexed by $\lambda \in C_r$), which implies convexity.</p>
+          This function is convex and coordinate-wise nondecreasing.</p>
+
+          <div class="proof-box">
+            <h4>Detailed Proof: Representation as Max of Linear Functionals</h4>
+            <p>Consider the convex set of weights:
+            $$ C_r = \{ \lambda \in \mathbb{R}^n \mid 0 \le \lambda_i \le 1, \sum_{i=1}^n \lambda_i = r \} $$
+            We claim that $f(x) = \max_{\lambda \in C_r} \sum_{i=1}^n \lambda_i x_i$.
+            <br><b>Step 1: Variational Argument.</b> Take any feasible $\lambda \in C_r$. Suppose we have indices $j, l$ such that $x_j > x_l$ but $\lambda_j < 1$ and $\lambda_l > 0$.
+            <br>We can shift a small weight $\delta > 0$ from $l$ to $j$: $\lambda'_j = \lambda_j + \delta$, $\lambda'_l = \lambda_l - \delta$.
+            <br>The change in the objective is $\delta x_j - \delta x_l = \delta(x_j - x_l) > 0$.
+            <br>Thus, to maximize the sum, we must shift mass from smaller components to larger components until we hit the constraints $\lambda_i \in [0, 1]$.
+            <br><b>Step 2: Optimal Solution.</b> The process terminates when $\lambda_i = 1$ for the $r$ largest components and $0$ for the rest.
+            $$ \max_{\lambda \in C_r} \lambda^\top x = \sum_{i=1}^r x_{[i]} = f(x) $$
+            <b>Conclusion:</b> $f(x)$ is the pointwise maximum of the family of linear functions $\{g_\lambda(x) = \lambda^\top x \mid \lambda \in C_r\}$. Since the pointwise maximum of convex (linear) functions is convex, $f$ is convex.
+            <br><b>Monotonicity:</b> Increasing any coordinate $x_j$ increases the sum $\lambda^\top x$ (since $\lambda \ge 0$), thus increasing the maximum. So $f$ is nondecreasing.</p>
+          </div>
         </div>
 
         <h3>5.3 Pointwise Supremum over an Index Set</h3>
@@ -1124,12 +1150,17 @@
 
         <div class="example">
           <h4>Example 3: $p$-Means ($h(z) = (\sum z_i^p)^{1/p}$)</h4>
-          <p>Consider $f(x) = (\sum_{i=1}^k g_i(x)^p)^{1/p}$ where $g_i(x) \ge 0$.</p>
+          <p>Consider $f(x) = (\sum_{i=1}^k g_i(x)^p)^{1/p}$ where $g_i(x) \ge 0$. We rely on the convexity/concavity and monotonicity of the outer function $h(z) = (\sum z_i^p)^{1/p}$.</p>
           <ul>
-            <li><b>Case $p \ge 1$:</b> The outer function $h(z) = (\sum z_i^p)^{1/p}$ is <b>convex</b> (Minkowski inequality) and <b>non-decreasing</b> ($z \ge 0$).
-            <br>Thus, if $g_i$ are convex, $f$ is convex.</li>
-            <li><b>Case $0 < p \le 1$:</b> The outer function $h(z)$ is <b>concave</b> (Reverse Minkowski) and <b>non-decreasing</b>.
-            <br>Thus, if $g_i$ are concave, $f$ is concave.</li>
+            <li><b>Case $p \ge 1$ (Convex):</b>
+            <br><i>Convexity:</i> By the Minkowski inequality (triangle inequality for $p$-norm), $h$ is convex.
+            <br><i>Monotonicity:</i> $\frac{\partial h}{\partial z_j} \propto z_j^{p-1} \ge 0$ for $z \ge 0$.
+            <br><b>Result:</b> Since $h$ is convex and non-decreasing, if $g_i$ are convex and non-negative, $f$ is convex.</li>
+
+            <li><b>Case $0 < p \le 1$ (Concave):</b>
+            <br><i>Concavity:</i> By the Reverse Minkowski inequality (or Hessian analysis), $h$ is concave on $\mathbb{R}_{++}^k$.
+            <br><i>Monotonicity:</i> $\frac{\partial h}{\partial z_j} \propto z_j^{p-1} > 0$ for $z > 0$.
+            <br><b>Result:</b> Since $h$ is concave and non-decreasing, if $g_i$ are concave and positive, $f$ is concave.</li>
           </ul>
         </div>
 
@@ -1139,10 +1170,10 @@
           <br>The outer function $h(z) = (\prod z_i)^{1/k}$ is <b>concave</b> and <b>non-decreasing</b> on $\mathbb{R}_{++}^k$.
           <br><b>Proof check:</b>
           <ul>
-              <li>Monotonicity: $\partial h/\partial z_j = (1/k) (\prod z_i)^{1/k} z_j^{-1} > 0$.</li>
-              <li>Concavity: $\nabla^2 h \preceq 0$ (see Section 4 for deep dive).</li>
+              <li><b>Monotonicity:</b> $\frac{\partial h}{\partial z_j} = \frac{1}{k} \left(\prod_{i \ne j} z_i\right)^{1/k} z_j^{1/k-1} > 0$.</li>
+              <li><b>Concavity:</b> $\nabla^2 h \preceq 0$ (see Section 4 for deep dive). Alternatively, $h$ is log-concave and 1-homogeneous.</li>
           </ul>
-          <b>Result:</b> If $g_i$ are concave, then the geometric mean $f(x)$ is concave.</p>
+          <b>Result:</b> If $g_i$ are concave and positive, then the geometric mean $f(x)$ is concave.</p>
         </div>
 
         <div class="example">
