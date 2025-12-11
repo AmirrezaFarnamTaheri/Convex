@@ -377,7 +377,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The dual of the $\ell_p$ norm is the $\ell_q$ norm, where $1/p + 1/q = 1$. This generalizes the familiar pairs $(\ell_1, \ell_\infty)$ and $(\ell_2, \ell_2)$.</p>
+        <p><b>Duality of Norms:</b> $\|y\|_* = \sup \{ y^\top x \mid \|x\| \le 1 \}$.
+        <br><b>Hölder's Inequality:</b> $|x^\top y| \le \|x\|_p \|y\|_q$ for conjugate exponents $1/p+1/q=1$.
+        <br><b>Alignment:</b> Equality holds when $x$ and $y$ are aligned (component-wise powers).</p>
       </div>
 
       <h3>P1.2 — Frobenius Cauchy–Schwarz</h3>
@@ -394,7 +396,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The Frobenius norm treats a matrix essentially as a long vector. Thus, it inherits properties like the Cauchy-Schwarz inequality directly from the vector $\ell_2$ norm.</p>
+        <p><b>Vectorization:</b> $\mathrm{vec}(A)$ stacks columns. $\langle A, B \rangle = \mathrm{vec}(A)^\top \mathrm{vec}(B)$.
+        <br><b>Trace Inner Product:</b> $\langle A, B \rangle = \mathrm{tr}(A^\top B)$.
+        <br><b>Cauchy-Schwarz:</b> $|\mathrm{tr}(A^\top B)| \le \|A\|_F \|B\|_F$.</p>
       </div>
 
       <h3>P1.3 — SVD Computation</h3>
@@ -425,7 +429,11 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Calculating SVD by hand involves diagonalizing $A^\top A$ to find $V$ and $\Sigma$, then mapping $v_i$ to $u_i$ via $A$. It explicitly shows how SVD is related to the eigendecomposition of the Gram matrix.</p>
+        <p><b>SVD Algorithm:</b>
+        <br>1. Eigenvalues of $A^\top A$ give $\sigma_i^2$.
+        <br>2. Eigenvectors of $A^\top A$ give $V$ (Right singular vectors).
+        <br>3. Compute $u_i = \frac{1}{\sigma_i} A v_i$ (Left singular vectors).
+        <br>4. Form $A = \sum \sigma_i u_i v_i^\top$.</p>
       </div>
 
       <h3>P1.6 — Normal Equations vs. QR</h3>
@@ -450,7 +458,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>While mathematically equivalent, the QR method is numerically superior to Normal Equations because it works with the condition number $\kappa(A)$ instead of $\kappa(A)^2$. Gram-Schmidt is the engine behind QR.</p>
+        <p><b>Least Squares Solvers:</b>
+        <br>1. <b>Normal Equations:</b> $A^\top A x = A^\top b$. Fast but unstable ($\kappa^2$).
+        <br>2. <b>QR Factorization:</b> $A=QR \implies Rx = Q^\top b$. Stable ($\kappa$).
+        <br><b>Geometry:</b> QR constructs an orthonormal basis for $\mathcal{R}(A)$.</p>
       </div>
 
       <h3>P1.7 — Pseudoinverse Projectors</h3>
@@ -467,7 +478,11 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The pseudoinverse $A^+$ generalizes the concept of inversion. $AA^+$ projects onto the range (column space), while $A^+A$ projects onto the row space. This matches the intuition that $A$ acts invertibly only between its row space and column space.</p>
+        <p><b>Pseudoinverse Properties:</b>
+        <br>1. $A^+ = V \Sigma^+ U^\top$.
+        <br>2. $AA^+$ is the projector onto $\mathcal{R}(A)$.
+        <br>3. $A^+A$ is the projector onto $\mathcal{R}(A^\top) = \mathcal{N}(A)^\perp$.
+        <br>4. $x = A^+b$ is the minimum-norm least-squares solution.</p>
       </div>
 
       <h3>P1.8 — Projector Formula</h3>
@@ -485,7 +500,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>This "Hat Matrix" formula is ubiquitous in statistics and least squares. It constructs the orthogonal projection onto the subspace spanned by the columns of $A$.</p>
+        <p><b>Projection Matrix:</b> If $A$ has full column rank, $P_{\mathcal{R}(A)} = A(A^\top A)^{-1}A^\top$.
+        <br><b>Derivation:</b> Set gradient of $\|Ax-b\|^2$ to zero.
+        <br><b>Properties:</b> Symmetric ($P^\top = P$) and Idempotent ($P^2 = P$).</p>
       </div>
 
       <h3>P1.9 — Hyperplane Projection</h3>
@@ -502,7 +519,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Projecting onto a hyperplane is a simple analytical operation. The formula represents moving from the point $y$ in the direction opposite to the normal vector $a$, by a distance exactly sufficient to land on the plane.</p>
+        <p><b>Hyperplane Projection:</b> Projecting $y$ onto $a^\top x = b$.
+        <br><b>Formula:</b> $p = y - \frac{a^\top y - b}{\|a\|^2}a$.
+        <br><b>Residual:</b> Parallel to normal $a$. Length is distance to plane.</p>
       </div>
 
       <h3>P1.10 — Condition Number Calculation</h3>
@@ -516,7 +535,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The condition number $\kappa$ measures the ratio of maximum to minimum stretch. A large $\kappa$ means the matrix flattens space in some direction ($\epsilon$), making inversion numerically unstable.</p>
+        <p><b>Condition Number:</b> $\kappa(A) = \sigma_{\max}(A) / \sigma_{\min}(A) = \|A\|_2 \|A^{-1}\|_2$.
+        <br><b>Significance:</b> Measures sensitivity of linear systems to error.
+        <br><b>Ill-conditioned:</b> $\kappa(A) \gg 1$. Near singular.</p>
       </div>
 
       <h3>P1.11 — Pseudoinverse of Rank-1 Matrix</h3>
@@ -533,7 +554,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>For a rank-1 matrix $xy^\top$, the pseudoinverse is simply a scaled transpose. This is because the action is 1-dimensional, so inversion just means reversing the scaling on that one dimension.</p>
+        <p><b>Rank-1 Matrices:</b> $A = xy^\top$.
+        <br><b>SVD:</b> $\sigma_1 = \|x\|\|y\|$, $u=x/\|x\|$, $v=y/\|y\|$.
+        <br><b>Pseudoinverse:</b> $A^+ = \frac{yx^\top}{\|x\|^2\|y\|^2}$. Reverses scaling on the active subspaces.</p>
       </div>
 
       <h3>P1.12 — Operator Norm Properties</h3>
@@ -547,7 +570,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The spectral norm is the square root of the largest eigenvalue of $A^\top A$. This connects the geometric definition (max stretch) with the algebraic properties (eigenvalues).</p>
+        <p><b>Spectral Norm:</b> $\|A\|_2 = \sup_{x \ne 0} \frac{\|Ax\|}{\|x\|} = \sqrt{\lambda_{\max}(A^\top A)}$.
+        <br><b>Rayleigh Quotient:</b> $\lambda_{\max}(M) = \sup_x \frac{x^\top M x}{x^\top x}$.
+        <br><b>Connection:</b> $\|Ax\|^2/\|x\|^2$ is the Rayleigh quotient for $A^\top A$.</p>
       </div>
 
       <h3>P1.13 — Orthogonal Invariance</h3>
@@ -564,7 +589,8 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Orthogonal matrices (rotations/reflections) do not change length or energy. Therefore, multiplying by them does not change the spectral or Frobenius norms.</p>
+        <p><b>Unitary Invariance:</b> Norms depending only on singular values are invariant under orthogonal transformations.
+        <br><b>Schatten Norms:</b> $\|A\|_p = (\sum \sigma_i^p)^{1/p}$. Includes Spectral ($p=\infty$) and Frobenius ($p=2$).</p>
       </div>
 
       <h3>P1.14 — The Orthogonal Group</h3>
@@ -583,7 +609,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The set of orthogonal matrices $O(n)$ is a compact Lie group. Compactness is key in optimization because continuous functions (like trace maximization) on compact sets are guaranteed to achieve their maximum/minimum.</p>
+        <p><b>Orthogonal Group $O(n)$:</b> $\{Q \mid Q^\top Q = I\}$.
+        <br><b>Topology:</b> Closed (inverse image of singleton) and Bounded ($|Q_{ij}| \le 1$) $\implies$ Compact.
+        <br><b>Implication:</b> Continuous functions on $O(n)$ attain extrema (Extreme Value Theorem).</p>
       </div>
 </section>
 

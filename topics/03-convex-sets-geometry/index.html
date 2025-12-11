@@ -86,7 +86,9 @@
           <p>Let $S = \{x_1, \dots, x_m\} \subset \mathbb{R}^n$. Prove that the convex hull $\text{conv}(S)$ is a convex set.</p>
           <div class="recap-box">
             <h4>Recap</h4>
-            <p>The convex hull is the set of all convex combinations. To prove a set defined by a type of combination is convex, we show that a convex combination of convex combinations is still a convex combination (weights are products of sums, still summing to 1).</p>
+            <p><b>Definition:</b> $\mathrm{conv}(S) = \{\sum \theta_i x_i \mid \theta \ge 0, \sum \theta_i = 1\}$.
+            <br><b>Strategy:</b> Prove that a convex combination of convex combinations is still a convex combination.
+            <br><b>Key Algebra:</b> If $z = \theta u + (1-\theta)v$ where $u,v$ are combinations with weights $\alpha, \beta$, then $z$ uses weights $\gamma = \theta \alpha + (1-\theta)\beta$. Since $\alpha, \beta$ are probability vectors, their mixture $\gamma$ is also a probability vector.</p>
           </div>
           <div class="solution-box">
             <h4>Solution</h4>
@@ -829,36 +831,6 @@
           <p><b>Problem:</b> Let $x_1, \dots, x_k \in \mathbb{R}^n$ be a set of points. The Voronoi region associated with $x_i$ is defined as:
           $$ V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2, \ \forall j \neq i\} $$
           Prove that $V_i$ is a polyhedron (and thus a convex set).</p>
-
-          <div class="recap-box">
-            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Halfspaces as Decision Boundaries:</b> The set of points closer to $A$ than $B$ is a halfspace separated by the perpendicular bisector of the segment $AB$.</li>
-                <li><b>Polyhedra as Intersections:</b> Since the Voronoi region is the intersection of these "closer-to-me" conditions (one for each neighbor), it is an intersection of halfspaces, which defines a polyhedron.</li>
-            </ul>
-          </div>
-
-          <div class="solution-box">
-            <h4>Solution</h4>
-            <div class="proof-step">
-              <strong>Step 1: Analyze pairwise condition.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ is equivalent to squaring both sides:
-              $$ \|x - x_i\|_2^2 \le \|x - x_j\|_2^2 $$
-            </div>
-            <div class="proof-step">
-              <strong>Step 2: Expand.</strong>
-              $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
-            </div>
-            <div class="proof-step">
-              <strong>Step 3: Simplify to linear inequality.</strong> The quadratic terms $x^\top x$ cancel out. Rearranging:
-              $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
-              This is a linear inequality of the form $a_{ij}^\top x \le b_{ij}$.
-            </div>
-            <div class="proof-step">
-              <strong>Step 4: Intersection.</strong>
-              $V_i$ is the intersection of $k-1$ such halfspaces (one for each $j \neq i$). Therefore, $V_i$ is a polyhedron. Since polyhedra are convex, $V_i$ is convex.
-            </div>
-          </div>
-        </div>
 
         <div class="problem">
           <h3>P3.2 — Midpoint Convexity</h3>

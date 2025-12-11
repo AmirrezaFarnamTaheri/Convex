@@ -1451,8 +1451,11 @@
           </ol>
 
           <div class="recap-box">
-            <h4>Recap</h4>
-            <p>Convexity is determined by curvature. Differentiable functions are convex if $f'' \ge 0$. Functions like $|x|^p$ are convex because they are compositions of convex functions.</p>
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Curvature Rules:</b> Convexity is fundamentally about "non-negative curvature" ($f'' \ge 0$).</li>
+                <li><b>Composition Power:</b> Most complex convex functions are built from simple atoms (exp, norm, power) using composition rules that preserve curvature.</li>
+            </ul>
           </div>
 
           <div class="solution-box">
@@ -1479,8 +1482,11 @@
           where $x_i > 0, \theta_i \ge 0, \sum \theta_i = 1$.</p>
 
           <div class="recap-box">
-            <h4>Recap</h4>
-            <p>Jensen's inequality applied to the concave $\log$ function immediately yields the AM-GM inequality. This highlights Jensen's role as a generator of inequalities.</p>
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Jensen as a Generator:</b> Jensen's inequality is not just a definition; it is a machine for generating algebraic inequalities (AM-GM, Hölder, Minkowski).</li>
+                <li><b>Choice of Function:</b> The key is choosing the right convex/concave function (here, $\log x$) to lift the arithmetic/geometric operations into the inequality.</li>
+            </ul>
           </div>
 
           <div class="solution-box">
@@ -1504,8 +1510,11 @@
           <p>Show that $f(x) = \log(\sum_{i=1}^n e^{x_i})$ is convex.</p>
 
           <div class="recap-box">
-            <h4>Recap</h4>
-            <p>The Log-Sum-Exp function is a smooth approximation of the max function ($\text{lse}(x) \approx \max_i x_i$). Since $\max$ is convex, it makes sense that its smooth approximation is also convex.</p>
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Smooth Max:</b> Log-Sum-Exp ($\text{lse}(x)$) is the smooth, convex approximation of $\max_i x_i$.</li>
+                <li><b>Key Properties:</b> It is convex, non-decreasing in each argument, and bounded: $\max x_i \le \text{lse}(x) \le \max x_i + \log n$.</li>
+            </ul>
           </div>
 
           <div class="solution-box">
@@ -1524,8 +1533,11 @@
           <p>Show that $f(x, y) = x^2/y$ is convex for $y > 0$. Generalize to vector case $f(x,y) = \|x\|^2/y$.</p>
 
           <div class="recap-box">
-            <h4>Recap</h4>
-            <p>The quadratic-over-linear function arises as the perspective of the quadratic function $x^2$. Since perspective preserves convexity, this form (appearing in Schur complements and SOCP constraints) is convex.</p>
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Perspective Transform:</b> $f(x,y) = x^2/y$ is the perspective of the parabola $x^2$. Perspective functions $tf(x/t)$ preserve convexity.</li>
+                <li><b>Schur Connection:</b> The convexity of $x^2/y$ is the scalar equivalent of the Schur complement condition for matrix positive definiteness.</li>
+            </ul>
           </div>
 
           <div class="solution-box">
@@ -1548,8 +1560,11 @@
           <p>Let $C \subseteq \mathbb{R}^n$ be a convex set. Show that $d(x) = \inf_{y \in C} \|x - y\|$ is a convex function.</p>
 
           <div class="recap-box">
-            <h4>Recap</h4>
-            <p>Distance to a convex set is convex because it is the partial minimization of the jointly convex function $F(x,y) = \|x-y\| + I_C(y)$.</p>
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Partial Minimization:</b> Minimizing a jointly convex function $f(x,y)$ over one variable ($y$) yields a convex function in the other ($x$).</li>
+                <li><b>Geometric Projection:</b> The epigraph of the result is the projection of the original epigraph. Projecting a convex set preserves convexity.</li>
+            </ul>
           </div>
 
           <div class="solution-box">
@@ -1566,8 +1581,11 @@
           <p>Show that the negative entropy function $f(x) = \sum_{i=1}^n x_i \log x_i$ is strictly convex on $\mathbb{R}^n_{++}$.</p>
 
           <div class="recap-box">
-            <h4>Recap</h4>
-            <p>Negative entropy is strictly convex because its second derivative $1/x$ is strictly positive. As a separable sum of strictly convex functions, the total entropy is strictly convex.</p>
+            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+                <li><b>Separability:</b> Functions of the form $\sum f_i(x_i)$ inherit properties (like strict convexity) directly from their scalar components.</li>
+                <li><b>Information Geometry:</b> Negative entropy induces the KL-divergence as its Bregman divergence, central to information theory and interior point methods.</li>
+            </ul>
           </div>
 
           <div class="solution-box">
@@ -1589,8 +1607,11 @@
   <p>Let $f(x) = \frac{1}{2}x^\top P x + q^\top x + r$. Under what condition on $P$ is $f$ strongly convex?</p>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>Strong convexity for a quadratic is equivalent to the matrix $P$ having a strictly positive minimum eigenvalue, i.e., being positive definite ($P \succ 0$).</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Quadratic Growth:</b> Strong convexity means the function grows at least quadratically away from the minimum.</li>
+        <li><b>Eigenvalue Bound:</b> For twice differentiable functions, strong convexity is equivalent to $\nabla^2 f(x) \succeq mI$, or $\lambda_{\min}(\text{Hessian}) \ge m$.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
@@ -1607,8 +1628,11 @@
   <p>Prove that $f(x) = \log(\sum e^{x_i})$ is convex by restricting it to a line and using the Cauchy-Schwarz inequality on the second derivative.</p>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The Hessian of log-sum-exp has the form of a covariance matrix (diagonal minus rank-1). The non-negativity of variance (Cauchy-Schwarz) proves convexity.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Hessian Structure:</b> The Hessian of $\text{lse}(x)$ is the covariance matrix of the softmax probability distribution. Covariance matrices are always PSD.</li>
+        <li><b>Cauchy-Schwarz:</b> The core inequality proving convexity is simply $(\mathbb{E}[X])^2 \le \mathbb{E}[X^2]$, which is Cauchy-Schwarz (or Jensen's).</li>
+    </ul>
   </div>
 
   <div class="solution-box">
@@ -1781,8 +1805,15 @@
   </ol>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>Complex functions can be proven convex by decomposing them into compositions of simpler convex/concave and monotone functions. Tracking the curvature (convex/concave) and monotonicity (increasing/decreasing) through the layers is key.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Structural Analysis:</b> Don't differentiate blindly! Decompose complex functions into layers ($h(g(x))$).</li>
+        <li><b>The Four Rules:</b>
+            1. Convex + Incr $\to$ Convex.
+            2. Convex + Decr $\to$ ??? (No).
+            3. Concave + Decr $\to$ Convex.
+            4. Affine inner always works.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
@@ -1877,8 +1908,11 @@
   </ol>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The perspective transform $g(x,t) = tf(x/t)$ preserves convexity. It is the functional equivalent of the perspective projection in geometry. Any function that looks like a scaled version of a convex function (divided by a variable) is likely a perspective.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Pattern Recognition:</b> Look for terms like $\|x\|^p/t^{p-1}$ or $x^2/y$. This "homogenization" suggests a perspective function.</li>
+        <li><b>Convexity Preservation:</b> Perspective takes a convex function and creates a convex cone-like structure (related to the conic hull of the epigraph).</li>
+    </ul>
   </div>
 
   <div class="solution-box">

@@ -867,8 +867,11 @@
         <p>Formulate the classic diet problem as an LP. (See Example 2.1 for the derivation).
         Is the feasible set bounded?</p>
         <div class="recap-box">
-          <h4>Recap</h4>
-          <p>The Diet Problem is a canonical LP where we minimize a linear cost subject to linear lower bound constraints. The geometry of the feasible set is an unbounded polyhedron (like an inverted pyramid).</p>
+          <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+          <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+              <li><b>Canonical Form:</b> The Diet Problem ($\min c^\top x$ s.t. $Ax \ge b, x \ge 0$) is the prototype for all covering problems.</li>
+              <li><b>Geometry:</b> The feasible region is unbounded (an inverted pyramid). The cost vector $c$ points "up", and the solution lies at a vertex where the "floor" defined by constraints holds.</li>
+          </ul>
         </div>
         <div class="solution-box">
           <h4>Solution</h4>
@@ -881,8 +884,11 @@
         <h3>P7.2 — Transportation Problem (LP)</h3>
         <p>Supply $s_i$ at sources, demand $d_j$ at destinations. Cost $C_{ij}$. Formulate as LP.</p>
         <div class="recap-box">
-          <h4>Recap</h4>
-          <p>The Transportation Problem is a network flow LP. Its constraint matrix has a special structure (Total Unimodularity) which guarantees that if supplies and demands are integers, the optimal solution is also integer.</p>
+          <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+          <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+              <li><b>Structure:</b> Network flow problems (like Transportation) have constraint matrices containing only $0, 1, -1$.</li>
+              <li><b>Integrality:</b> Due to Total Unimodularity (TU), the vertices of the feasible polyhedron are integers. This allows solving discrete allocation problems using continuous LPs.</li>
+          </ul>
         </div>
         <div class="solution-box">
           <h4>Solution</h4>
@@ -894,8 +900,11 @@
         <h3>P7.3 — PSD Block Matrix (Matrix Viewpoint)</h3>
         <p>Verify that the matrix $Q = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix}$ is positive semidefinite by explicitly factoring it as $B^\top B$. What is $B$?</p>
         <div class="recap-box">
-          <h4>Recap</h4>
-          <p>Constructing PSD matrices from blocks allows us to model coupled objectives like distance minimization $\|x-y\|^2$ as standard quadratic forms $z^\top Q z$.</p>
+          <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+          <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+              <li><b>Block Construction:</b> A block matrix $Q = [A, B; B^\top, C]$ is PSD if and only if $A \succeq 0$ and the Schur complement $C - B^\top A^{-1} B \succeq 0$.</li>
+              <li><b>Coupling:</b> This structure allows us to treat coupled problems (like distance between two sets) as a single high-dimensional QP.</li>
+          </ul>
         </div>
         <div class="solution-box">
           <h4>Solution</h4>
@@ -912,8 +921,11 @@
         <h3>P7.4 — L1 Reformulation</h3>
         <p>Reformulate $\min \|Ax - b\|_1$ subject to $\|x\|_\infty \le 1$ as an LP.</p>
         <div class="recap-box">
-          <h4>Recap</h4>
-          <p>This problem combines L1 regression (robust fitting) with box constraints (bounded variables). Both the objective and constraints are polyhedral, making it a Linear Program.</p>
+          <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+          <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+              <li><b>Pattern:</b> Minimizing L1 norm $\iff$ Minimizing sum of slack variables with linear bounds ($\min \sum t_i$ s.t. $-t_i \le r_i \le t_i$).</li>
+              <li><b>Efficiency:</b> L1 minimization promotes sparsity in residuals (robustness to outliers), unlike L2 which spreads error.</li>
+          </ul>
         </div>
         <div class="solution-box">
           <h4>Solution</h4>
@@ -928,8 +940,11 @@
         <p>Formulate this as a Linear Program.</p>
 
         <div class="recap-box">
-          <h4>Recap</h4>
-          <p>The "Sum of Max" pattern is ubiquitous in machine learning (SVMs, ReLU networks). The Epigraph Trick converts the non-smooth max function into smooth linear inequalities by lifting the problem dimension.</p>
+          <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+          <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+              <li><b>Epigraph Trick:</b> The universal solvent of convex reformulation. $\min \max(A, B) \iff \min t \text{ s.t. } t \ge A, t \ge B$.</li>
+              <li><b>Dimension Lifting:</b> By adding variables (one per max term), we remove non-smoothness and "linearize" the objective.</li>
+          </ul>
         </div>
 
         <div class="solution-box">
@@ -969,8 +984,11 @@
         <p><strong>(c)</strong> Show that if $f_0$ is bounded below, a minimizer exists and is unique (modulo the nullspace of $A$).</p>
 
         <div class="recap-box">
-          <h4>Recap</h4>
-          <p>The analytic center of a polytope is the minimizer of the log-barrier function. This problem connects the algebraic conditions for unboundedness (recession cone) with the existence of the analytic center.</p>
+          <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+          <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+              <li><b>Analytic Center:</b> The minimizer of the log-barrier is the "geometric center" of the polytope.</li>
+              <li><b>Existence Theorem:</b> The analytic center exists iff the feasible set is bounded (or has no recession directions). This condition is checked via the alternative theorem ($Av \preceq 0$).</li>
+          </ul>
         </div>
 
         <div class="solution-box">

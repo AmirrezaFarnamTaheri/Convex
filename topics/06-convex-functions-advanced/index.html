@@ -641,8 +641,11 @@
   <h3>P6.1 — Conjugate of Norm Squared</h3>
   <p>Compute the conjugate of $f(x) = \frac{1}{2}\|x\|^2$ for a general norm $\|\cdot\|$. Show it is $\frac{1}{2}\|y\|_*^2$.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The squared norm $\frac{1}{2}\|x\|^2$ is a smooth approximation of the hard constraint $\|x\| \le 1$. Its conjugate is the squared dual norm, reflecting the duality between Primal/Dual norms.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Self-Conjugacy:</b> For the Euclidean norm, $f(x)=\frac{1}{2}\|x\|_2^2$ is self-conjugate ($f^*=f$).</li>
+        <li><b>Dual Norms:</b> For general norms, the conjugate of $\frac{1}{2}\|x\|^2$ is $\frac{1}{2}\|y\|_*^2$. This is the basis for the relationship between Primal and Dual problems in optimization.</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -668,8 +671,11 @@
   <h3>P6.2 — Quasi-Convexity of Ceiling</h3>
   <p>Show that $f(x) = \lceil x \rceil$ (on $\mathbb{R}$) is quasi-convex.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>Quasi-convex functions have convex sublevel sets. Monotonic functions (like ceiling) are always quasi-convex (and quasi-concave) because their sublevel sets are intervals (rays).</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Monotonicity:</b> Any monotonic function on $\mathbb{R}$ is both quasi-convex and quasi-concave (quasilinear), regardless of discontinuities.</li>
+        <li><b>Sublevel Sets:</b> The definition relies purely on the geometry of the sets $\{x \mid f(x) \le \alpha\}$, making it robust to re-parameterization.</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -690,8 +696,11 @@
   <h3>P6.3 — Softmax Analysis</h3>
   <p>For $f(x) = \log(\sum_{i=1}^n e^{x_i})$: <ol type="a"><li>Show $\max x_i \le f(x) \le \max x_i + \log n$.</li><li>Show $f$ is convex via Hessian analysis.</li></ol></p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The Log-Sum-Exp function is the smooth convex approximation of the maximum function. Its Hessian is the covariance matrix of the softmax probability distribution, which guarantees PSD status.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Smooth Max:</b> Log-Sum-Exp is to $\max$ what the Huber loss is to absolute value—a smooth, convex differentiable approximation.</li>
+        <li><b>Hessian-Covariance:</b> $\nabla^2 \text{lse}(x) = \text{Var}(p)$, where $p$ is the softmax distribution. Since variance is non-negative, convexity follows immediately.</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -721,8 +730,11 @@
   <h3>P6.4 — Concavity of Geometric Mean</h3>
   <p>Prove $G(x) = (\prod_{i=1}^n x_i)^{1/n}$ is concave on $\mathbb{R}^n_{++}$ using log-concavity properties.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>A function that is both Log-Concave and Homogeneous (degree 1) must be Concave. This provides a shortcut to proving concavity without computing the full Hessian.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>The H-L-C Theorem:</b> Homogeneity + Log-Concavity $\implies$ Concavity. This powerful theorem turns multiplicative properties (geometric mean) into additive inequalities.</li>
+        <li><b>Superadditivity:</b> The core geometric property derived is $G(x+y) \ge G(x) + G(y)$.</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -761,8 +773,11 @@
   <h3>P6.5 — Geometric Mean Cone</h3>
   <p>Show $K = \{x \in \mathbb{R}^n_+ \mid G(x) \ge \alpha A(x)\}$ is a convex cone for $\alpha \in [0,1]$, where $A(x) = \frac{1}{n}\sum x_i$ is the arithmetic mean.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>Sublevel sets of convex functions are convex. Superlevel sets of concave functions are convex. Since $G(x) - \alpha A(x)$ is concave, the set where it is non-negative is a convex cone.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Concave Superlevel Sets:</b> For a concave function $f$, the set $\{x \mid f(x) \ge 0\}$ is convex.</li>
+        <li><b>Conic Extension:</b> Any inequality involving 1-homogeneous functions ($G(x) \ge A(x)$) naturally defines a cone, as scaling $x$ by $k$ scales both sides equally.</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -788,8 +803,11 @@
   <h3>P6.6 — Matrix Fractional Function</h3>
   <p>Prove convexity of $f(x, Y) = x^\top Y^{-1} x$ (for $Y \succ 0$) using the epigraph characterization.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The Matrix Fractional function is the "vector generalization" of $x^2/y$. Its epigraph is defined by a Linear Matrix Inequality (Schur Complement), proving it is a convex set.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Schur Complement:</b> The bridge between non-linear rational functions and linear matrix inequalities (LMIs). $x^\top Y^{-1} x \le t \iff \begin{bmatrix} Y & x \\ x^\top & t \end{bmatrix} \succeq 0$.</li>
+        <li><b>Joint Convexity:</b> This proves that optimizing jointly over the filter/controller $x$ and the preconditioner $Y$ is a convex problem.</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -811,8 +829,11 @@
   <h3>P6.7 — Fenchel's Inequality & Biconjugate</h3>
   <p>For $f(x) = \frac{1}{2}x^\top Q x$ with $Q \succ 0$: 1. Verify Fenchel's inequality. 2. Verify $f^{**} = f$.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>Fenchel's Inequality $f(x) + f^*(y) \ge x^\top y$ is the convex analysis equivalent of Young's inequality ($ab \le a^p/p + b^q/q$). Equality holds when $y = \nabla f(x)$.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Fundamental Inequality:</b> $f(x) + f^*(y) \ge x^\top y$ is the "Cauchy-Schwarz" of Convex Analysis. It bounds the inner product by the sum of energies.</li>
+        <li><b>Duality Gap:</b> In optimization, this inequality manifests as Weak Duality (Primal $\ge$ Dual). The gap closes (equality holds) exactly at optimality.</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -836,8 +857,11 @@
   <h3>P6.8 — Quasiconvexity of Distance Ratio</h3>
   <p>Show $S_\theta = \{x \mid \|x-a\|_2 \le \theta \|x-b\|_2\}$ is convex for $\theta \le 1$.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The set of points closer to $A$ than to $B$ (scaled) forms a convex set (ball or halfspace) if the scaling factor $\theta \le 1$. If $\theta > 1$, the set becomes the complement of a ball (non-convex).</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Voronoi Regions:</b> For $\theta=1$, this defines a halfspace (Voronoi boundary).</li>
+        <li><b>Apollonius Circles:</b> For $\theta \ne 1$, the boundary is a sphere. For $\theta < 1$, the sublevel set is the ball; for $\theta > 1$, it is the exterior (not convex). Thus, distance ratios are only quasiconvex for "contractive" ratios.</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -859,8 +883,11 @@
   <h3>P6.9 — Log-Concavity of Probability Measures</h3>
   <p>If $p(x)$ is a log-concave probability density, show that the function $f(x) = \mathbb{P}(x+W \in C)$ is log-concave, where $W \sim p$ and $C$ is a convex set.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The convolution of log-concave functions is log-concave (Prékopa-Leindler). Since the probability is a convolution of the density $p$ with the indicator of $C$ (both log-concave), the result follows.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Prékopa-Leindler Theorem:</b> The marginal of a log-concave function is log-concave. Since convolution is an integral operation, it preserves log-concavity.</li>
+        <li><b>Robustness:</b> This implies that if your noise is "nice" (log-concave, e.g., Gaussian, Uniform) and your target set is convex, the success probability behaves nicely (unimodally).</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -891,8 +918,11 @@
   <h3>P6.10 — Log-Concavity of Gaussian</h3>
   <p>Show that the multivariate Gaussian density function $f(x)$ is log-concave. $$ f(x) = \frac{1}{(2\pi)^{n/2} (\det \Sigma)^{1/2}} \exp\left(-\frac{1}{2}(x-\mu)^\top \Sigma^{-1} (x-\mu)\right) $$ where $\Sigma \succ 0$.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The Gaussian PDF is the prototype of log-concavity because its log is a concave quadratic function. This property ensures unimodality and strong tail decay.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Log-Quadratic:</b> The Gaussian is the "most" log-concave function (log is strictly concave quadratic).</li>
+        <li><b>Closure:</b> Because the Gaussian is log-concave, any marginal, conditional, or linear transformation of a Gaussian is also log-concave (and in fact, Gaussian).</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -917,8 +947,11 @@
   <h3>P6.11 — Legendre Transform of Quadratic</h3>
   <p>Consider $f(x) = \frac{1}{2}x^\top Q x$ with $Q \succ 0$. Verify the Legendre transform formula $f^*(y) = x^\top y - f(x)$ where $y = \nabla f(x)$.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>For strictly convex differentiable functions, the convex conjugate is the Legendre transform. It swaps the independent variable $x$ with the gradient $y = \nabla f(x)$.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Variable Swap:</b> The Legendre transform changes coordinates from position $x$ to slope (force) $y = \nabla f(x)$.</li>
+        <li><b>Hamiltonian Mechanics:</b> This is exactly the transformation from Lagrangian $L(q, \dot{q})$ to Hamiltonian $H(q, p)$ used in physics.</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
@@ -951,8 +984,11 @@
   </ol>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>Many "ratio" functions are log-concave. If the numerator is log-concave and the denominator is log-convex (or $\log(\text{denom})$ is convex), the ratio is log-concave. Specifically, $\log(f/g) = \log f - \log g$. If $\log f$ is concave and $\log g$ is convex, the difference is concave.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Ratio Rule:</b> $\frac{\text{Log-Concave}}{\text{Log-Convex}} = \text{Log-Concave}$.</li>
+        <li><b>Examples:</b> Logistic function, Harmonic mean, Determinant over Trace. These structures appear frequently in information theory and spectral graph theory.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
@@ -1026,8 +1062,11 @@
   <h3>P6.13 — Log-Convexity of the Gamma Function</h3>
   <p>The Gamma function is defined as $\Gamma(x) = \int_0^\infty t^{x-1} e^{-t} dt$ for $x > 0$. Show that $\Gamma(x)$ is log-convex using the integration rule.</p>
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>Integration preserves log-convexity. The integrand of the Gamma function, viewed as a function of $x$, is of the form $e^{\text{linear in } x}$, which is log-convex. Thus the integral is log-convex.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Artin's Theorem:</b> The log-convexity of the Gamma function (Bohr-Mollerup theorem) is a specific instance of the general rule: integrals of log-convex functions are log-convex.</li>
+        <li><b>Moment Generating Functions:</b> The MGF $\mathbb{E}[e^{tX}]$ is always log-convex for the same reason.</li>
+    </ul>
   </div>
   <div class="solution-box">
     <h4>Solution</h4>
