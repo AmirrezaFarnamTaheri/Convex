@@ -370,6 +370,10 @@
           Since we found a unit vector achieving this value, $\|y\|_* \ge \|y\|_q$.
         </div>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The dual of the $\ell_p$ norm is the $\ell_q$ norm, where $1/p + 1/q = 1$. This generalizes the familiar pairs $(\ell_1, \ell_\infty)$ and $(\ell_2, \ell_2)$.</p>
+      </div>
 
       <h3>P1.2 — Frobenius Cauchy–Schwarz</h3>
       <p>Prove that $|\mathrm{tr}(A^\top B)| \le \|A\|_F \|B\|_F$ by viewing matrices in $\mathbb{R}^{m \times n}$ as vectors in $\mathbb{R}^{mn}$.</p>
@@ -382,6 +386,10 @@
         $$ |\mathrm{vec}(A)^\top \mathrm{vec}(B)| \le \|\mathrm{vec}(A)\|_2 \|\mathrm{vec}(B)\|_2 $$
         Substituting back the matrix notation yields $|\mathrm{tr}(A^\top B)| \le \|A\|_F \|B\|_F$.
         </p>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The Frobenius norm treats a matrix essentially as a long vector. Thus, it inherits properties like the Cauchy-Schwarz inequality directly from the vector $\ell_2$ norm.</p>
       </div>
 
       <h3>P1.3 — SVD Computation</h3>
@@ -410,6 +418,10 @@
           <strong>Result:</strong> $A = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} \sqrt{2} & 0 \\ 0 & 0 \end{bmatrix} \left(\frac{1}{\sqrt{2}} \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}\right)^\top$.
         </div>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Calculating SVD by hand involves diagonalizing $A^\top A$ to find $V$ and $\Sigma$, then mapping $v_i$ to $u_i$ via $A$. It explicitly shows how SVD is related to the eigendecomposition of the Gram matrix.</p>
+      </div>
 
       <h3>P1.6 — Normal Equations vs. QR</h3>
       <p>Solve the system $A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \\ 1 & 0 \end{bmatrix}, b = \begin{bmatrix} 2 \\ 2 \\ 1 \end{bmatrix}$ using (a) Normal Equations and (b) QR factorization. Compare the intermediate steps.</p>
@@ -431,6 +443,10 @@
         $R = \begin{bmatrix} \sqrt{2} & 1/\sqrt{2} \\ 0 & \sqrt{3/2} \end{bmatrix}$. $Q^\top b = \begin{bmatrix} 3/\sqrt{2} \\ 4\sqrt{2/3}-1/\sqrt{6} \end{bmatrix}$.
         Back substitution yields same $x$. QR avoids forming $A^\top A$ (better condition number).</p>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>While mathematically equivalent, the QR method is numerically superior to Normal Equations because it works with the condition number $\kappa(A)$ instead of $\kappa(A)^2$. Gram-Schmidt is the engine behind QR.</p>
+      </div>
 
       <h3>P1.7 — Pseudoinverse Projectors</h3>
       <p>Show that $P = AA^+$ is the orthogonal projector onto $\mathcal{R}(A)$. Verify $P^2=P$ and $P^\top=P$ using SVD.</p>
@@ -443,6 +459,10 @@
         <br><b>Idempotent:</b> $P^2 = (U_r U_r^\top)(U_r U_r^\top) = U_r (U_r^\top U_r) U_r^\top = U_r I U_r^\top = P$.
         <br><b>Symmetric:</b> $P^\top = (U_r U_r^\top)^\top = (U_r^\top)^\top U_r^\top = U_r U_r^\top = P$.
         <br>Since the columns of $U_r$ form a basis for $\mathcal{R}(A)$, $P$ is the orthogonal projector onto $\mathcal{R}(A)$.</p>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The pseudoinverse $A^+$ generalizes the concept of inversion. $AA^+$ projects onto the range (column space), while $A^+A$ projects onto the row space. This matches the intuition that $A$ acts invertibly only between its row space and column space.</p>
       </div>
 
       <h3>P1.8 — Projector Formula</h3>
@@ -458,6 +478,10 @@
         Projection: $p = A x^* = A(A^\top A)^{-1} A^\top b$.
         The matrix mapping $b$ to $p$ is $P = A(A^\top A)^{-1} A^\top$.</p>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>This "Hat Matrix" formula is ubiquitous in statistics and least squares. It constructs the orthogonal projection onto the subspace spanned by the columns of $A$.</p>
+      </div>
 
       <h3>P1.9 — Hyperplane Projection</h3>
       <p>Find the projection of $(1, 2, 3)^\top$ onto $x_1 + x_2 + x_3 = 3$. Verify your result using the standard formula for distance to a plane.</p>
@@ -471,6 +495,10 @@
         Distance: $\|y-p\| = \|(1, 1, 1)\| = \sqrt{3}$.
         Formula: $\frac{|a^\top y - b|}{\|a\|} = \frac{|6-3|}{\sqrt{3}} = \frac{3}{\sqrt{3}} = \sqrt{3}$. Matches.</p>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Projecting onto a hyperplane is a simple analytical operation. The formula represents moving from the point $y$ in the direction opposite to the normal vector $a$, by a distance exactly sufficient to land on the plane.</p>
+      </div>
 
       <h3>P1.10 — Condition Number Calculation</h3>
       <p>Calculate the condition number $\kappa(A) = \sigma_{\max}(A)/\sigma_{\min}(A)$ for the matrix $A = \begin{bmatrix} 1 & 0 \\ 0 & \epsilon \end{bmatrix}$ where $\epsilon > 0$. What happens as $\epsilon \to 0$?</p>
@@ -480,6 +508,10 @@
         Assuming $\epsilon < 1$: $\sigma_{\max} = 1, \sigma_{\min} = \epsilon$.
         $\kappa(A) = 1/\epsilon$.
         As $\epsilon \to 0$, $\kappa(A) \to \infty$. The matrix becomes ill-conditioned (nearly singular).</p>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The condition number $\kappa$ measures the ratio of maximum to minimum stretch. A large $\kappa$ means the matrix flattens space in some direction ($\epsilon$), making inversion numerically unstable.</p>
       </div>
 
       <h3>P1.11 — Pseudoinverse of Rank-1 Matrix</h3>
@@ -494,6 +526,10 @@
         Note that $A^\top = (xy^\top)^\top = yx^\top$.
         Thus $A^+ = \frac{A^\top}{\|x\|^2 \|y\|^2}$.</p>
       </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>For a rank-1 matrix $xy^\top$, the pseudoinverse is simply a scaled transpose. This is because the action is 1-dimensional, so inversion just means reversing the scaling on that one dimension.</p>
+      </div>
 
       <h3>P1.12 — Operator Norm Properties</h3>
       <p>Prove that $\|A\|_2 = \sqrt{\lambda_{\max}(A^\top A)}$. Use the Rayleigh Quotient definition of eigenvalues.</p>
@@ -503,6 +539,10 @@
         The term on the right is the Rayleigh quotient for the symmetric matrix $M = A^\top A$.
         By the variational characterization of eigenvalues, the maximum value of the Rayleigh quotient is $\lambda_{\max}(M)$.
         Thus $\|A\|_2^2 = \lambda_{\max}(A^\top A)$, so $\|A\|_2 = \sqrt{\lambda_{\max}(A^\top A)}$.</p>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The spectral norm is the square root of the largest eigenvalue of $A^\top A$. This connects the geometric definition (max stretch) with the algebraic properties (eigenvalues).</p>
       </div>
 
       <h3>P1.13 — Orthogonal Invariance</h3>
@@ -516,6 +556,10 @@
         Since $V$ is orthogonal, as $x$ ranges over the unit sphere, $y = V^\top x$ also ranges over the unit sphere.
         Thus $\sup_{\|x\|=1} \|A V^\top x\| = \sup_{\|y\|=1} \|Ay\| = \|A\|_2$.
         </p>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>Orthogonal matrices (rotations/reflections) do not change length or energy. Therefore, multiplying by them does not change the spectral or Frobenius norms.</p>
       </div>
 
       <h3>P1.14 — The Orthogonal Group</h3>
@@ -531,6 +575,10 @@
         2. Closed: The condition $Q^\top Q = I$ is a continuous equality constraint (level set of a continuous function). Thus the set is closed.
         By Heine-Borel, closed and bounded in finite dimensions implies compact.
         </p>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p>The set of orthogonal matrices $O(n)$ is a compact Lie group. Compactness is key in optimization because continuous functions (like trace maximization) on compact sets are guaranteed to achieve their maximum/minimum.</p>
       </div>
 </section>
 

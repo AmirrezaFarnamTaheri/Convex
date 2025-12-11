@@ -866,6 +866,10 @@
         <h3>P7.1 — Diet Problem (LP)</h3>
         <p>Formulate the classic diet problem as an LP. (See Example 2.1 for the derivation).
         Is the feasible set bounded?</p>
+        <div class="recap-box">
+          <h4>Recap</h4>
+          <p>The Diet Problem is a canonical LP where we minimize a linear cost subject to linear lower bound constraints. The geometry of the feasible set is an unbounded polyhedron (like an inverted pyramid).</p>
+        </div>
         <div class="solution-box">
           <h4>Solution</h4>
           <p>Matrix Form: $\min c^\top x$ s.t. $Ax \ge b, x \ge 0$.
@@ -876,6 +880,10 @@
       <div class="problem">
         <h3>P7.2 — Transportation Problem (LP)</h3>
         <p>Supply $s_i$ at sources, demand $d_j$ at destinations. Cost $C_{ij}$. Formulate as LP.</p>
+        <div class="recap-box">
+          <h4>Recap</h4>
+          <p>The Transportation Problem is a network flow LP. Its constraint matrix has a special structure (Total Unimodularity) which guarantees that if supplies and demands are integers, the optimal solution is also integer.</p>
+        </div>
         <div class="solution-box">
           <h4>Solution</h4>
           <p>$\min \sum C_{ij} x_{ij}$ s.t. $\sum_j x_{ij} \le s_i$, $\sum_i x_{ij} = d_j$, $x_{ij} \ge 0$.</p>
@@ -885,6 +893,10 @@
       <div class="problem">
         <h3>P7.3 — PSD Block Matrix (Matrix Viewpoint)</h3>
         <p>Verify that the matrix $Q = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix}$ is positive semidefinite by explicitly factoring it as $B^\top B$. What is $B$?</p>
+        <div class="recap-box">
+          <h4>Recap</h4>
+          <p>Constructing PSD matrices from blocks allows us to model coupled objectives like distance minimization $\|x-y\|^2$ as standard quadratic forms $z^\top Q z$.</p>
+        </div>
         <div class="solution-box">
           <h4>Solution</h4>
           <p>We want $z^\top Q z = \|Bz\|^2$.
@@ -899,6 +911,10 @@
       <div class="problem">
         <h3>P7.4 — L1 Reformulation</h3>
         <p>Reformulate $\min \|Ax - b\|_1$ subject to $\|x\|_\infty \le 1$ as an LP.</p>
+        <div class="recap-box">
+          <h4>Recap</h4>
+          <p>This problem combines L1 regression (robust fitting) with box constraints (bounded variables). Both the objective and constraints are polyhedral, making it a Linear Program.</p>
+        </div>
         <div class="solution-box">
           <h4>Solution</h4>
           <p>Standard slack variable trick: $-t \le Ax - b \le t$. Constraints on $x$ become $-\mathbf{1} \le x \le \mathbf{1}$. Minimize $\mathbf{1}^\top t$.</p>
@@ -910,6 +926,11 @@
         <p>Consider the problem of minimizing the sum of hinge losses:</p>
         $$ \min_{x} \quad c^\top x + \sum_{i=1}^m \max(0, a_i^\top x + b_i) $$
         <p>Formulate this as a Linear Program.</p>
+
+        <div class="recap-box">
+          <h4>Recap</h4>
+          <p>The "Sum of Max" pattern is ubiquitous in machine learning (SVMs, ReLU networks). The Epigraph Trick converts the non-smooth max function into smooth linear inequalities by lifting the problem dimension.</p>
+        </div>
 
         <div class="solution-box">
             <h4>Solution</h4>
@@ -946,6 +967,11 @@
         <p><strong>(a)</strong> Show that the domain is unbounded if and only if there exists $v \ne 0$ such that $Av \preceq 0$.</p>
         <p><strong>(b)</strong> Show that $f_0$ is unbounded below if and only if there exists $v$ such that $Av \preceq 0$ and $Av \ne 0$.</p>
         <p><strong>(c)</strong> Show that if $f_0$ is bounded below, a minimizer exists and is unique (modulo the nullspace of $A$).</p>
+
+        <div class="recap-box">
+          <h4>Recap</h4>
+          <p>The analytic center of a polytope is the minimizer of the log-barrier function. This problem connects the algebraic conditions for unboundedness (recession cone) with the existence of the analytic center.</p>
+        </div>
 
         <div class="solution-box">
           <h4>Detailed Proof</h4>

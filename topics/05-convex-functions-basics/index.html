@@ -1469,6 +1469,11 @@
 
           </ol>
 
+          <div class="recap-box">
+            <h4>Recap</h4>
+            <p>Convexity is determined by curvature. Differentiable functions are convex if $f'' \ge 0$. Functions like $|x|^p$ are convex because they are compositions of convex functions.</p>
+          </div>
+
           <div class="solution-box">
             <h4>Solution</h4>
             <ul>
@@ -1492,6 +1497,11 @@
           $$ \sum_{i=1}^n \theta_i x_i \ge \prod_{i=1}^n x_i^{\theta_i} $$
           where $x_i > 0, \theta_i \ge 0, \sum \theta_i = 1$.</p>
 
+          <div class="recap-box">
+            <h4>Recap</h4>
+            <p>Jensen's inequality applied to the concave $\log$ function immediately yields the AM-GM inequality. This highlights Jensen's role as a generator of inequalities.</p>
+          </div>
+
           <div class="solution-box">
             <h4>Solution</h4>
             <div class="proof-step">
@@ -1512,6 +1522,11 @@
           <h3>P5.3 — Log-Sum-Exp</h3>
           <p>Show that $f(x) = \log(\sum_{i=1}^n e^{x_i})$ is convex.</p>
 
+          <div class="recap-box">
+            <h4>Recap</h4>
+            <p>The Log-Sum-Exp function is a smooth approximation of the max function ($\text{lse}(x) \approx \max_i x_i$). Since $\max$ is convex, it makes sense that its smooth approximation is also convex.</p>
+          </div>
+
           <div class="solution-box">
             <h4>Solution</h4>
             <p><b>Method 1: Hessian.</b> (See Lecture derivation). $\nabla^2 f(x) = \text{diag}(p) - pp^\top$ where $p_i = e^{x_i}/\sum e^{x_k}$. By Cauchy-Schwarz, $v^\top \nabla^2 f v = \sum p_i v_i^2 - (\sum p_i v_i)^2 \ge 0$.</p>
@@ -1526,6 +1541,11 @@
         <div class="problem">
           <h3>P5.4 — Quadratic-over-Linear</h3>
           <p>Show that $f(x, y) = x^2/y$ is convex for $y > 0$. Generalize to vector case $f(x,y) = \|x\|^2/y$.</p>
+
+          <div class="recap-box">
+            <h4>Recap</h4>
+            <p>The quadratic-over-linear function arises as the perspective of the quadratic function $x^2$. Since perspective preserves convexity, this form (appearing in Schur complements and SOCP constraints) is convex.</p>
+          </div>
 
           <div class="solution-box">
             <h4>Solution</h4>
@@ -1546,6 +1566,11 @@
           <h3>P5.5 — Distance to a Set</h3>
           <p>Let $C \subseteq \mathbb{R}^n$ be a convex set. Show that $d(x) = \inf_{y \in C} \|x - y\|$ is a convex function.</p>
 
+          <div class="recap-box">
+            <h4>Recap</h4>
+            <p>Distance to a convex set is convex because it is the partial minimization of the jointly convex function $F(x,y) = \|x-y\| + I_C(y)$.</p>
+          </div>
+
           <div class="solution-box">
             <h4>Solution</h4>
             <p>This is a partial minimization.
@@ -1558,6 +1583,11 @@
         <div class="problem">
           <h3>P5.6 — Entropy</h3>
           <p>Show that the negative entropy function $f(x) = \sum_{i=1}^n x_i \log x_i$ is strictly convex on $\mathbb{R}^n_{++}$.</p>
+
+          <div class="recap-box">
+            <h4>Recap</h4>
+            <p>Negative entropy is strictly convex because its second derivative $1/x$ is strictly positive. As a separable sum of strictly convex functions, the total entropy is strictly convex.</p>
+          </div>
 
           <div class="solution-box">
             <h4>Solution</h4>
@@ -1577,6 +1607,11 @@
   <h3>P5.7 — Strong Convexity of Quadratic</h3>
   <p>Let $f(x) = \frac{1}{2}x^\top P x + q^\top x + r$. Under what condition on $P$ is $f$ strongly convex?</p>
 
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>Strong convexity for a quadratic is equivalent to the matrix $P$ having a strictly positive minimum eigenvalue, i.e., being positive definite ($P \succ 0$).</p>
+  </div>
+
   <div class="solution-box">
     <h4>Solution</h4>
     <p>The Hessian is $\nabla^2 f(x) = P$ (assuming $P$ is symmetric).
@@ -1589,6 +1624,11 @@
 <div class="problem">
   <h3>P5.8 — Convexity of Log-Sum-Exp via Cauchy-Schwarz</h3>
   <p>Prove that $f(x) = \log(\sum e^{x_i})$ is convex by restricting it to a line and using the Cauchy-Schwarz inequality on the second derivative.</p>
+
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The Hessian of log-sum-exp has the form of a covariance matrix (diagonal minus rank-1). The non-negativity of variance (Cauchy-Schwarz) proves convexity.</p>
+  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -1630,7 +1670,7 @@
   <h3>P5.9 — Dual of a Strictly Convex Function</h3>
   <p>Let $f$ be a closed, strictly convex function. Prove that its conjugate $f^*(y) = \sup_x (y^\top x - f(x))$ is differentiable. (Hint: The maximizing $x$ is unique).</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Duality of Regularity:</b> There is a deep symmetry: Strict Convexity $\leftrightarrow$ Differentiability.</li><li><b>Envelope Theorem:</b> The gradient of the value function $\nabla f^*(y)$ is the optimal solution $x^*(y)$.</li>
@@ -1659,7 +1699,7 @@
   <h3>P5.10 — Dual via Conjugates</h3>
   <p>Using the definition of the convex conjugate, show that the dual of the problem $\min f(x)$ subject to $Ax = b$ is $\max -b^\top \nu - f^*(-A^\top \nu)$.</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Lagrangian Duality:</b> The dual function $g(\nu) = \inf_x L(x, \nu)$.</li><li><b>Conjugate Link:</b> $\inf_x (\dots)$ can often be rewritten as $-\sup_x (\dots) = -f^*(\cdot)$.</li>
@@ -1689,7 +1729,7 @@
   <h3>P5.11 — Derivation: Dual of QP</h3>
   <p>Consider the equality constrained Quadratic Program: $\min \frac{1}{2}x^\top P x + q^\top x$ s.t. $Ax = b$, with $P \succ 0$. Derive the dual problem using the conjugate method from P5.10.</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Conjugate of Quadratic:</b> If $f(x) = \frac{1}{2}x^\top P x + q^\top x$, then $f^*(y) = \frac{1}{2}(y-q)^\top P^{-1} (y-q)$.</li>
@@ -1719,7 +1759,7 @@
   <h3>P5.12 — Sensitivity Analysis using Subgradients</h3>
   <p>Let $p^*(u)$ be the optimal value of the perturbed problem $\min f_0(x)$ s.t. $f_i(x) \le u_i, Ax=b$. Prove that the optimal dual variables $\lambda^*$ provide a lower bound on the perturbed value: $p^*(u) \ge p^*(0) - \lambda^{*\top} u$. This implies $\lambda_i^* \approx -\frac{\partial p^*}{\partial u_i}$ (Shadow Prices).</p>
 
-  <div class="recap-box" style="background: var(--surface-2); border: 1px dashed var(--primary-300); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+  <div class="recap-box">
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Weak Duality:</b> $p^*(u) \ge g(\lambda, \nu)$ for any feasible dual variables.</li><li><b>Global Inequality:</b> Convexity gives us a global linear underestimator, not merely a local derivative.</li>
@@ -1758,6 +1798,11 @@
     <li>$f(x, t) = -(t^p - \|x\|_p^p)^{1/p}$ on $t \ge \|x\|_p$ ($p>1$).</li>
     <li>$f(x, t) = -\log(t^p - \|x\|_p^p)$ on $t \ge \|x\|_p$ ($p>1$).</li>
   </ol>
+
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>Complex functions can be proven convex by decomposing them into compositions of simpler convex/concave and monotone functions. Tracking the curvature (convex/concave) and monotonicity (increasing/decreasing) through the layers is key.</p>
+  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
@@ -1849,6 +1894,11 @@
     <li>$f(x, t) = \|x\|_p^p / t^{p-1}$ for $p > 1, t > 0$.</li>
     <li>$f(x) = \frac{\|Ax+b\|_2^2}{c^\top x + d}$ on $c^\top x + d > 0$.</li>
   </ol>
+
+  <div class="recap-box">
+    <h4>Recap</h4>
+    <p>The perspective transform $g(x,t) = tf(x/t)$ preserves convexity. It is the functional equivalent of the perspective projection in geometry. Any function that looks like a scaled version of a convex function (divided by a variable) is likely a perspective.</p>
+  </div>
 
   <div class="solution-box">
     <h4>Solution</h4>
