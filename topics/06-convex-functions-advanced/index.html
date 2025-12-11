@@ -55,207 +55,270 @@
       <section class="section-card" id="section-1">
       <h2>1. The Convex Conjugate (Fenchel Conjugate)</h2>
 
+      <h3>1.1 Definition and Geometric Meaning</h3>
+      <p>Start with a function $f : \mathbb{R}^n \to \mathbb{R} \cup \{+\infty\}$. Allowing $+\infty$ is a standard way of encoding hard constraints ("$x$ not allowed"). The <a href="#" class="definition-link" data-term="convex conjugate">Fenchel conjugate</a> is defined as:</p>
+      $$
+      \boxed{f^*(y) := \sup_{x\in\mathrm{dom} f} \big( y^\top x - f(x) \big), \quad y\in\mathbb{R}^n}
+      $$
+
+      <h4>Interpretation</h4>
+      <p>For a fixed slope $y$, consider the <b>affine</b> family of functions in $x$: $\ell_{y,c}(x) = y^\top x - c$. We want to find the largest shift such that the line lies below the function.
+      <br>Require $\ell_{y,c}(x) \le f(x)$ for all $x$. Rearranging: $c \ge y^\top x - f(x)$ for all $x$.
+      <br>The <b>smallest</b> such $c$ that works is $c_{\min}(y) = \sup_x (y^\top x - f(x)) = f^*(y)$.</p>
+
       <div class="insight">
-        <h4>Core Idea</h4>
-        <p>Given a function $f$, the conjugate $f^*$ is <b>"the best linear lower bound"</b> to $f$, encoded as a function of the slope $y$. This transformation is the bridge to duality.</p>
-        <div style="margin-top: 10px; border-left: 3px solid #007bff; padding-left: 10px;">
-            <strong>Slope Interpretation:</strong> Imagine trying to support the graph of $f(x)$ with a line of slope $y$, i.e., $L(x) = y^\top x - c$. We want the line to be below $f$ everywhere ($y^\top x - c \le f(x)$), so $c \ge y^\top x - f(x)$. To get the tightest bound (the supporting hyperplane), we choose the smallest possible $c$, which is $\sup_x (y^\top x - f(x))$. This optimal intercept value is exactly $f^*(y)$.
-        </div>
+        <h4>Geometric Intuition</h4>
+        <p>For each slope $y$, $f^*(y)$ is the minimal vertical shift so that the line $x \mapsto y^\top x - f^*(y)$ lies everywhere <b>below</b> the graph of $f$. Equivalently, $f^*(y)$ is the <b>maximal gap</b> between the linear function $y^\top x$ and the graph of $f$.</p>
       </div>
 
-      <h3>1.1 Definition and Geometry</h3>
-      <p>Let $f : \mathbb{R}^n \to \mathbb{R} \cup \{+\infty\}$ be an extended-real function. Its <a href="#" class="definition-link" data-term="convex conjugate">Fenchel conjugate</a> is defined as:</p>
-      $$
-      \boxed{f^*(y) = \sup_{x \in \mathrm{dom}\, f} \left( y^\top x - f(x) \right)}
-      $$
-      <p>The domain of the conjugate is $\mathrm{dom}\, f^* = \{ y \in \mathbb{R}^n \mid \sup_x (y^\top x - f(x)) < +\infty \}$.</p>
-
-      <h4>Geometric Interpretation</h4>
-      <p>Consider the affine function $h(x) = y^\top x - c$. For this to be a lower bound on $f$ (i.e., $h(x) \le f(x)$ everywhere), we need $c \ge y^\top x - f(x)$. The tightest (smallest) such $c$ is $f^*(y)$. Thus, $y^\top x - f^*(y)$ is the best affine underestimator of $f$ with slope $y$.</p>
-
-      <h3>1.2 Basic Properties</h3>
-      <ul>
-        <li><b>Convexity:</b> $f^*$ is always convex, because it is the pointwise supremum of a family of affine functions of $y$.</li>
-        <li><b>Fenchel's Inequality:</b> Directly from the definition:
-        $$ \boxed{f(x) + f^*(y) \ge x^\top y} $$
-        Equality holds if and only if $y \in \partial f(x)$ (convex case). This generalizes the inequality $xy \le \frac{1}{2}x^2 + \frac{1}{2}y^2$.</li>
-      </ul>
-
-      <h3>1.3 Differentiable Case: Legendre Transform</h3>
-      <p>If $f$ is strictly convex and differentiable, the maximum in the definition occurs where $\nabla_x (y^\top x - f(x)) = 0$, i.e., $y = \nabla f(x)$. Let $x^* = (\nabla f)^{-1}(y)$. Then:
-      $$ f^*(y) = y^\top x^* - f(x^*) $$
-      This specific case is the classical Legendre transform.</p>
-
-      <h3>1.4 1D Examples: Detailed Derivations</h3>
-
-      <div class="example">
-        <h4>1. Affine Function: $f(x) = ax + b$</h4>
-        <p>$$ f^*(y) = \sup_{x} (yx - ax - b) = \sup_x ((y-a)x - b) $$</p>
-        <p>If $y \ne a$, the term is linear in $x$ with a non-zero slope. As $x \to \infty$ or $x \to -\infty$, the value goes to $\infty$. Thus the supremum is unbounded. If $y=a$, the expression simplifies to $-b$.
-        $$ f^*(y) = \begin{cases} -b & y=a \\ \infty & y \ne a \end{cases} $$</p>
+      <h3>1.2 Why $f^*$ is Always Convex</h3>
+      <p>A crucial property is that $f^*$ is convex <b>regardless</b> of whether $f$ is convex.</p>
+      <div class="proof-box">
+        <h4>Proof</h4>
+        <p>Take any fixed $x$. As a function of $y$, the expression $\phi_x(y) := y^\top x - f(x)$ is <b>affine</b> in $y$ (linear term $y^\top x$ plus constant $-f(x)$).
+        <br>Now $f^*$ is the pointwise supremum over all these affine functions:
+        $$ f^*(y) = \sup_{x} \phi_x(y) $$
+        <b>Fact:</b> The pointwise supremum of any family of convex (or affine) functions is convex.
+        <br>Explicitly, if $g(y) = \sup_i g_i(y)$ where each $g_i$ is convex, then for any $\theta \in [0,1]$:
+        $$
+        \begin{aligned}
+        g(\theta y_1+(1-\theta)y_2) &= \sup_i g_i(\theta y_1+(1-\theta)y_2) \\
+        &\le \sup_i \big( \theta g_i(y_1) + (1-\theta)g_i(y_2) \big) \\
+        &\le \theta \sup_i g_i(y_1) + (1-\theta)\sup_i g_i(y_2) \\
+        &= \theta g(y_1) + (1-\theta)g(y_2)
+        \end{aligned}
+        $$
+        Thus, $f^*$ is convex for <b>any</b> $f$. The conjugate lives in the "convex world" even if $f$ doesn't.</p>
       </div>
 
-      <div class="example">
-        <h4>2. Negative Log: $f(x) = -\log x$ on $\mathbb{R}_{++}$</h4>
-        <p>Maximize $yx + \log x$. Derivative $y + 1/x = 0 \implies x = -1/y$.
-        <br>Requires $y < 0$ for $x > 0$.
-        <br>Value: $y(-1/y) + \log(-1/y) = -1 - \log(-y)$.
-        $$ f^*(y) = \begin{cases} -1 - \log(-y) & y < 0 \\ \infty & \text{otherwise} \end{cases} $$</p>
-      </div>
+      <h3>1.3 1D Examples in Detail</h3>
 
       <div class="example">
-        <h4>3. Exponential: $f(x) = e^x$</h4>
-        <p>Maximize $yx - e^x$. Derivative $y - e^x = 0 \implies x = \log y$. Requires $y > 0$.
-        <br>Value: $y \log y - e^{\log y} = y \log y - y$.
-        <br>Boundary $y=0$: $\sup (-e^x) = 0$. For $y<0$, unbounded.
-        $$ f^*(y) = \begin{cases} y \log y - y & y \ge 0 \\ \infty & y < 0 \end{cases} $$</p>
-      </div>
-
-      <h3>1.5 Matrix and Vector Examples</h3>
-
-      <div class="example">
-        <h4>1. Quadratic: $f(x) = \frac{1}{2} x^\top Q x$ ($Q \succ 0$)</h4>
-        <p>Maximize $y^\top x - \frac{1}{2} x^\top Q x$.
-        <br>Gradient zero: $y - Qx = 0 \implies x = Q^{-1}y$.
-        <br>Value: $y^\top Q^{-1}y - \frac{1}{2} (Q^{-1}y)^\top Q (Q^{-1}y) = \frac{1}{2} y^\top Q^{-1} y$.
-        <br><b>Result:</b> The conjugate of a quadratic is a quadratic with the inverse matrix.</p>
-      </div>
-
-      <div class="example">
-        <h4>2. Norm Squared: $f(x) = \frac{1}{2}\|x\|^2$</h4>
-        <p>Using dual norm definition ($y^\top x \le \|x\|\|y\|_*$) and Young's inequality:
-        $$ f^*(y) = \sup_x (y^\top x - \frac{1}{2}\|x\|^2) = \frac{1}{2}\|y\|_*^2 $$
-        where $\|\cdot\|_*$ is the dual norm.</p>
-      </div>
-
-      <div class="example">
-        <h4>3. Log-Sum-Exp and Entropy</h4>
-        <p>Let $f(x) = \log(\sum_{i=1}^n e^{x_i})$. This is the "soft max" function used in ML. We compute $f^*(y) = \sup_x (y^\top x - f(x))$.</p>
-        <p><b>Case 1: $y \in \Delta$ (Simplex).</b> Setting the gradient to zero:
-        $$ y_i = \frac{e^{x_i}}{\sum_k e^{x_k}} $$
-        Since $y$ is a probability vector resulting from the softmax of $x$, this system is solvable. Inverting it, we find $x_i = \log y_i + C$ for any constant $C$. Substituting this back:
-        $$ y^\top x - f(x) = \sum_i y_i (\log y_i + C) - \log\left(\sum_i e^{\log y_i + C}\right) $$
-        $$ = \sum_i y_i \log y_i + C \sum_i y_i - \log(e^C \sum_i y_i) $$
-        Since $\sum y_i = 1$, this simplifies to $\sum y_i \log y_i + C - (C + \log 1) = \sum y_i \log y_i$.</p>
-        <p><b>Case 2: $y \notin \Delta$.</b>
+        <h4>(a) Affine function $f(x) = ax + b$</h4>
+        <p>Compute $f^*(y) = \sup_{x} (yx - (ax+b)) = \sup_x ((y-a)x - b)$.</p>
         <ul>
-            <li>If some $y_k < 0$: Let $x_k \to -\infty$ (keeping others fixed). Then $y^\top x \to +\infty$ while $f(x)$ stays bounded. Sup is $\infty$.</li>
-            <li>If $\sum y_i \neq 1$: Let $x = t \mathbf{1}$. Then $y^\top x - f(x) = t (\sum y_i) - (t + \log n) = t(\sum y_i - 1) - \log n$. If $\sum y_i \neq 1$, we can choose $t \to \pm \infty$ to drive this to $\infty$.</li>
+            <li><b>Case 1: $y \ne a$.</b> The term $((y-a)x - b)$ is a line with nonzero slope. As $x \to \pm \infty$, this goes to $+\infty$. So $f^*(y) = +\infty$.</li>
+            <li><b>Case 2: $y = a$.</b> The term is constant $-b$. Supremum is $-b$.</li>
         </ul>
-        </p>
-        <p><b>Result:</b> The conjugate is the <b>negative entropy</b> restricted to the simplex:
-        $$ f^*(y) = \begin{cases} \sum_{i=1}^n y_i \log y_i & \text{if } y \succeq 0, \mathbf{1}^\top y = 1 \\ \infty & \text{otherwise} \end{cases} $$
-        </p>
+        <p><b>Result:</b> $f^*(y) = -b$ if $y=a$, else $+\infty$. Domain is the singleton $\{a\}$. (Indicator of a single slope).</p>
       </div>
 
       <div class="example">
-        <h4>4. Log-Determinant</h4>
-        <p>For $f(X) = -\log \det X$ on $\mathbb{S}^n_{++}$:
-        $$ f^*(Y) = \begin{cases} -n - \log \det(-Y) & Y \prec 0 \\ \infty & \text{otherwise} \end{cases} $$
-        The conjugate relates $\mathbb{S}^n_{++}$ to $\mathbb{S}^n_{--}$ (negative definite).</p>
+        <h4>(b) Negative Log: $f(x) = -\log x$ on $(0,\infty)$</h4>
+        <p>Maximize $g(x) = yx + \log x$. Derivative $g'(x) = y + 1/x$. Set to 0: $x^* = -1/y$.
+        <br>Since $x^* > 0$, we must have $y < 0$. $g''(x) = -1/x^2 < 0$ (concave max).
+        <br>Value: $y(-1/y) + \log(-1/y) = -1 - \log(-y)$.
+        <br>If $y \ge 0$, $yx + \log x \to \infty$ as $x \to \infty$.
+        <br><b>Result:</b> $f^*(y) = -1 - \log(-y)$ for $y < 0$. Domain $(-\infty, 0)$.</p>
       </div>
 
-      <h3>1.6 The Biconjugate Theorem</h3>
-      <p>The <b>biconjugate</b> $f^{**} = (f^*)^*$ is the closed convex hull of $f$.
-      <br><b>Theorem:</b> If $f$ is closed and convex, then $f^{**} = f$.
-      <br>This equivalence ($f$ vs supremum of affine functions) is the foundation of dual decomposition.</p>
+      <div class="example">
+        <h4>(c) Exponential: $f(x) = e^x$ on $\mathbb{R}$</h4>
+        <p>Maximize $g(x) = yx - e^x$. Derivative $g'(x) = y - e^x = 0 \implies x^* = \log y$.
+        <br>Requires $y > 0$. Value: $y \log y - e^{\log y} = y \log y - y$.
+        <br>If $y=0$, $\sup (-e^x) = 0$ (as $x \to -\infty$).
+        <br>If $y < 0$, let $x \to -\infty$. Then $e^x \to 0$ and $yx \to +\infty$ (negative times negative). Sup is $+\infty$.
+        <br><b>Result:</b> $f^*(y) = y \log y - y$ for $y \ge 0$ (with $0 \log 0 = 0$), else $\infty$. Domain $[0, \infty)$.</p>
+      </div>
+
+      <div class="example">
+        <h4>(d) Inverse: $f(x) = 1/x$ on $(0,\infty)$</h4>
+        <p>Maximize $g(x) = yx - 1/x$. Derivative $g'(x) = y + 1/x^2 = 0 \implies x^2 = -1/y$.
+        <br>Requires $y < 0$. Solution $x^* = \sqrt{-1/y}$.
+        <br>Value: $y\sqrt{-1/y} - \sqrt{-y} = -\sqrt{-y} - \sqrt{-y} = -2\sqrt{-y}$.
+        <br>If $y \ge 0$, $yx - 1/x \to \infty$ as $x \to \infty$.
+        <br><b>Result:</b> $f^*(y) = -2\sqrt{-y}$ for $y < 0$. Domain $(-\infty, 0)$.</p>
+      </div>
+
+      <h3>1.4 Quadratic and Matrix Examples</h3>
+
+      <div class="example">
+        <h4>(a) Quadratic: $f(x) = \frac{1}{2} x^\top Q x$ with $Q \succ 0$</h4>
+        <p>Maximize $\phi(x) = y^\top x - \frac{1}{2} x^\top Q x$. This is a concave quadratic.
+        <br>Gradient $\nabla \phi(x) = y - Qx = 0 \implies x^* = Q^{-1}y$.
+        <br>Value: $y^\top (Q^{-1}y) - \frac{1}{2} (Q^{-1}y)^\top Q (Q^{-1}y) = y^\top Q^{-1} y - \frac{1}{2} y^\top Q^{-1} y = \frac{1}{2} y^\top Q^{-1} y$.
+        <br><b>Result:</b> Quadratic with matrix $Q$ conjugates to quadratic with $Q^{-1}$.</p>
+      </div>
+
+      <div class="example">
+        <h4>(b) Log-Determinant: $f(X) = -\log \det X$ on $\mathbb{S}^n_{++}$</h4>
+        <p>Maximize $\mathrm{tr}(YX) + \log \det X$ over $X \succ 0$.
+        <br>Gradient: $Y + X^{-1} = 0 \implies X = -Y^{-1}$.
+        <br>Requires $Y$ invertible and $-Y^{-1} \succ 0 \implies Y \prec 0$ (negative definite).
+        <br>Value: $\mathrm{tr}(Y(-Y^{-1})) + \log \det (-Y^{-1}) = -n - \log \det(-Y)$.
+        <br><b>Result:</b> $f^*(Y) = -\log \det(-Y) - n$ on domain $\mathbb{S}^n_{--}$.</p>
+      </div>
+
+      <div class="example">
+        <h4>(c) Indicator $\leftrightarrow$ Support Function</h4>
+        <p>Let $I_S(x)$ be the indicator of a set $S$ (0 if $x \in S$, $+\infty$ else).
+        <br>$I_S^*(y) = \sup_x (y^\top x - I_S(x)) = \sup_{x \in S} (y^\top x)$.
+        <br><b>Result:</b> $I_S^* = \sigma_S$, the support function of $S$.</p>
+      </div>
+
+      <div class="example">
+        <h4>(d) Norm $\leftrightarrow$ Indicator of Dual Ball</h4>
+        <p>Let $f(x) = \|x\|$. Dual norm definition: $\|y\|_* = \sup_{\|x\|\le 1} y^\top x$.
+        <br>$f^*(y) = \sup_x (y^\top x - \|x\|)$.
+        <br>Case 1: $\|y\|_* \le 1$. Then $y^\top x \le \|y\|_* \|x\| \le \|x\|$. So $y^\top x - \|x\| \le 0$. Max is 0 (at $x=0$).
+        <br>Case 2: $\|y\|_* > 1$. There exists $x_0$ with $\|x_0\|=1$ and $y^\top x_0 > 1$. Let $x = t x_0$. Value $t(y^\top x_0 - 1) \to \infty$.
+        <br><b>Result:</b> $f^*$ is the indicator of the unit ball of the dual norm $\|\cdot\|_*$.
+        $$ f^*(y) = \begin{cases} 0 & \|y\|_* \le 1 \\ +\infty & \|y\|_* > 1 \end{cases} $$</p>
+      </div>
+
+      <h3>1.5 Algebra Rules for Conjugates</h3>
+      <table class="data-table">
+        <tr><th>Operation</th><th>Function $g(x)$</th><th>Conjugate $g^*(y)$</th></tr>
+        <tr><td>Scaling</td><td>$a f(x) + b \quad (a>0)$</td><td>$a f^*(y/a) - b$</td></tr>
+        <tr><td>Affine Precomp</td><td>$f(Ax+b)$ (invertible A)</td><td>$f^*(A^{-\top} y) - b^\top (A^{-\top} y)$</td></tr>
+        <tr><td>Sum (Independent)</td><td>$f_1(u) + f_2(v)$</td><td>$f_1^*(y_1) + f_2^*(y_2)$</td></tr>
+        <tr><td>General Composition</td><td>$f(Ax+b)$ (general A)</td><td>$f^*(z) - b^\top z$ such that $A^\top z = y$ (infimum over z)</td></tr>
+      </table>
+
+      <h3>1.6 Fenchel Inequality and Biconjugate</h3>
+      <p>From the definition $f^*(y) \ge y^\top x - f(x)$, we immediately get <b>Fenchel's Inequality</b>:</p>
+      $$ \boxed{ f(x) + f^*(y) \ge x^\top y } $$
+      <p>Equality holds exactly when $y \in \partial f(x)$ (for convex $f$).</p>
+
+      <h4>The Biconjugate $f^{**}$</h4>
+      <p>The conjugate of the conjugate is $f^{**}(x) = \sup_y (x^\top y - f^*(y))$.
+      <br><b>Theorem:</b> $f^{**} \le f$ always. If $f$ is closed and convex, then $f^{**} = f$.
+      <br><i>Geometric Intuition:</i> $\mathrm{epi}(f^{**})$ is the closed convex hull of $\mathrm{epi}(f)$. Conjugation encodes all supporting hyperplanes; taking it again reconstructs the convex envelope from these planes.</p>
+
+      <h3>1.7 Legendre Transform</h3>
+      <p>If $f$ is convex and differentiable, and $\nabla f$ is injective, we can define the conjugate via the gradient condition.
+      <br>Maximize $y^\top x - f(x) \implies y = \nabla f(x)$. Let $x^* = (\nabla f)^{-1}(y)$.
+      $$ f^*(y) = y^\top x^* - f(x^*) $$
+      If we parametrize by $z$ where $y = \nabla f(z)$:
+      $$ f^*(\nabla f(z)) = z^\top \nabla f(z) - f(z) $$
+      This is the classical Legendre transform used in mechanics (Lagrangian $\leftrightarrow$ Hamiltonian).</p>
     </section>
 
     <section class="section-card" id="section-2">
-        <h2>2. Quasi-Convex Functions</h2>
+        <h2>2. Quasiconvex Functions</h2>
 
-        <h3>2.1 Definition via Sublevel Sets</h3>
-        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link">quasi-convex</a> if its domain is convex and all its <b>sublevel sets</b> are convex:</p>
+        <h3>2.1 Definition: Sublevel Sets</h3>
+        <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <a href="#" class="definition-link">quasiconvex</a> if its domain is convex and all its <b>sublevel sets</b> are convex:</p>
         $$
-        S_\alpha = \{x \in \mathrm{dom}\, f \mid f(x) \le \alpha\}
+        S_\alpha := \{x \in \mathrm{dom}\, f \mid f(x) \le \alpha\}
         $$
-        <p>is convex for all $\alpha \in \mathbb{R}$. Geometrically, the function is "unimodal" or "valley-shaped" but may not have positive curvature everywhere.</p>
+        <p>is a convex set for every $\alpha \in \mathbb{R}$.
+        <br><i>Note:</i> Convex $\implies$ Quasiconvex, but not conversely. Quasiconvexity allows "bendy" graphs, as long as the "valley" shape is maintained.</p>
 
-        <h3>2.2 Modified Jensen's Inequality</h3>
-        <p>$f$ is quasi-convex if and only if:</p>
-        $$
-        f(\theta x + (1-\theta)y) \le \max\{f(x), f(y)\}
-        $$
-        <p>for all $x, y \in \mathrm{dom}\, f$ and $\theta \in [0, 1]$. The value on a segment never exceeds the larger endpoint.</p>
+        <h3>2.2 Simple 1D Examples</h3>
+        <div class="example">
+            <h4>(a) Logarithm: $f(x) = \log x$</h4>
+            <p>Sublevel set $\{x > 0 \mid \log x \le \alpha\} = \{x \mid x \le e^\alpha\} = (0, e^\alpha]$. This is a convex interval.
+            <br>So $\log x$ is quasiconvex. (It is also concave, so $-\log x$ is convex).</p>
+        </div>
+        <div class="example">
+            <h4>(b) Ceiling: $f(x) = \lceil x \rceil$</h4>
+            <p>Sublevel set $\{x \mid \lceil x \rceil \le k\} = (-\infty, k]$. This is an interval.
+            <br>So $\lceil x \rceil$ is quasiconvex. (It is step-like and definitely not convex).</p>
+        </div>
 
-        <h3>2.3 Differentiable Conditions</h3>
+        <h3>2.3 Vector Examples</h3>
+        <div class="example">
+            <h4>1. Length of a Vector</h4>
+            <p>Define len$(x) = \max\{i \mid x_i \ne 0\}$ (index of last nonzero element).
+            <br>Sublevel set $\{x \mid \text{len}(x) \le k\} = \{x \mid x_{k+1} = \dots = x_n = 0\}$.
+            <br>This is a linear subspace, hence convex. So len$(x)$ is quasiconvex.</p>
+        </div>
+        <div class="example">
+            <h4>2. Bilinear: $f(x_1, x_2) = x_1 x_2$ on $\mathbb{R}^2_{++}$</h4>
+            <p>Hessian is indefinite (not convex).
+            <br>Superlevel set $\{x \in \mathbb{R}^2_{++} \mid x_1 x_2 \ge \alpha\}$ is convex (bounded by hyperbola).
+            <br>Thus $f$ is <b>quasiconcave</b> on the positive quadrant.</p>
+        </div>
+        <div class="example">
+            <h4>3. Linear-Fractional: $f(x) = \frac{a^\top x + b}{c^\top x + d}$</h4>
+            <p>Defined where $c^\top x + d > 0$.
+            <br>Sublevel set: $\frac{a^\top x + b}{c^\top x + d} \le \alpha \iff a^\top x + b \le \alpha(c^\top x + d)$.
+            <br>This is a linear inequality (halfspace), hence convex.
+            <br>Thus $f$ is quasiconvex (and similarly quasiconcave, so <b>quasilinear</b>).</p>
+        </div>
+        <div class="example">
+            <h4>4. Distance Ratio</h4>
+            <p>$f(x) = \frac{\|x-a\|}{\|x-b\|}$. Sublevel set $\|x-a\| \le \alpha \|x-b\|$.
+            <br>Squared: $\|x-a\|^2 \le \alpha^2 \|x-b\|^2$.
+            <br>For $\alpha \le 1$, this defines a convex set (ball). For $\alpha > 1$, it is the complement of a ball (non-convex).
+            <br>So $f$ is quasiconvex on the domain where $f(x) \le 1$ (closer to $a$ than $b$).</p>
+        </div>
+        <div class="example">
+            <h4>5. Internal Rate of Return (IRR)</h4>
+            <p>Cashflows $x = (x_0, \dots, x_n)$. Present value $PV(x, r) = \sum x_i (1+r)^{-i}$.
+            <br>IRR$(x) = \inf \{r \ge 0 \mid PV(x, r) = 0\}$.
+            <br>IRR is a <b>quasiconcave</b> function of the cashflow vector $x$. (Superlevel sets are intersections of halfspaces).</p>
+        </div>
+
+        <h3>2.4 Second-Order Condition</h3>
+        <p>For a twice-differentiable function $f$, convexity requires $\nabla^2 f(x) \succeq 0$.
+        <br>Quasiconvexity only requires positive curvature <b>along the level sets</b>.
+        <br><b>Condition:</b> If $y^\top \nabla f(x) = 0$, then $y^\top \nabla^2 f(x) y \ge 0$.
+        <br><i>Interpretation:</i> Directions $y$ tangent to the contour ($y \perp \nabla f$) must not see negative curvature (hilltop). Valleys are okay, but you can't have a local maximum or saddle point that curves down along the contour.</p>
+
+        <h3>2.5 Operations Preserving Quasiconvexity</h3>
         <ul>
-            <li><b>First-Order:</b> $f(y) \le f(x) \implies \nabla f(x)^\top (y - x) \le 0$. (The gradient defines a supporting hyperplane to the sublevel set).</li>
-            <li><b>Second-Order:</b> If $v^\top \nabla f(x) = 0$, then $v^\top \nabla^2 f(x) v \ge 0$. (Curvature is non-negative along contours).</li>
+            <li><b>Max:</b> $f(x) = \max_i f_i(x)$ is quasiconvex (Intersection of convex sublevel sets).</li>
+            <li><b>Composition:</b> $g(h(x))$ is quasiconvex if $h$ is quasiconvex and $g$ is <b>non-decreasing</b>.</li>
+            <li><b>Warning:</b> Sums of quasiconvex functions are generally <b>not</b> quasiconvex.</li>
         </ul>
-
-        <h3>2.4 Operations Preserving Quasi-Convexity</h3>
-        <ul>
-            <li><b>Max:</b> $f(x) = \max_i f_i(x)$ is quasi-convex (Intersection of convex sublevel sets is convex).</li>
-            <li><b>Composition:</b> $g(h(x))$ is quasi-convex if $h$ is quasi-convex and $g$ is <b>non-decreasing</b>.</li>
-            <li><b>Warning:</b> Sums of quasi-convex functions are generally <b>not</b> quasi-convex.</li>
-        </ul>
-
-        <h3>2.5 Examples</h3>
-        <div class="example">
-          <h4>1. Linear-Fractional Function (Detailed)</h4>
-          <p>$f(x) = \frac{a^\top x + b}{c^\top x + d}$ on domain $\{x \mid c^\top x + d > 0\}$.
-          <br>We show this is <b>quasilinear</b> (both quasi-convex and quasi-concave) by examining sublevel and superlevel sets.</p>
-          <p><b>Sublevel Sets $S_\alpha = \{x \mid f(x) \le \alpha\}$:</b>
-          $$ \frac{a^\top x + b}{c^\top x + d} \le \alpha \iff a^\top x + b \le \alpha(c^\top x + d) \quad (\text{since } c^\top x + d > 0) $$
-          $$ \iff (a - \alpha c)^\top x \le \alpha d - b $$
-          This inequality defines a halfspace, which is a convex set. Thus $f$ is quasi-convex.</p>
-          <p><b>Superlevel Sets $T_\alpha = \{x \mid f(x) \ge \alpha\}$:</b>
-          $$ \frac{a^\top x + b}{c^\top x + d} \ge \alpha \iff a^\top x + b \ge \alpha(c^\top x + d) $$
-          This also defines a halfspace. Thus $f$ is quasi-concave.</p>
-        </div>
-
-        <div class="example">
-          <h4>2. Distance Ratio</h4>
-          <p>$f(x) = \frac{\|x-a\|_2}{\|x-b\|_2}$ on domain $\{x \mid \|x-a\| \le \|x-b\|\}$.
-          <br>Condition $f(x) \le \alpha$ becomes $\|x-a\| \le \alpha \|x-b\|$. Squaring both sides:
-          $$ \|x-a\|^2 \le \alpha^2 \|x-b\|^2 \iff (x-a)^\top(x-a) \le \alpha^2 (x-b)^\top(x-b) $$
-          This is a quadratic inequality. Since the coefficient of $x^\top x$ is $1 - \alpha^2$, if $\alpha \le 1$, this defines a convex set (ball or halfspace). Thus quasi-convex on the defined domain.</p>
-        </div>
-
-        <div class="example">
-          <h4>3. Cardinality of Nonnegative Vector</h4>
-          <p>For $x \in \mathbb{R}^n_+$, let $f(x) = \mathrm{card}(x)$ (number of non-zero entries).
-          <br>This function is <b>quasi-concave</b>. For $x, y \ge 0$ and $\theta \in (0,1)$, the support of the combination is the union of the supports: $\mathrm{supp}(\theta x + (1-\theta)y) = \mathrm{supp}(x) \cup \mathrm{supp}(y)$.
-          <br>The size of the union is at least the size of each individual set:
-          $$ \mathrm{card}(\theta x + (1-\theta)y) \ge \max(\mathrm{card}(x), \mathrm{card}(y)) \ge \min(\mathrm{card}(x), \mathrm{card}(y)) $$
-          This satisfies the superlevel set condition for quasi-concavity.</p>
-        </div>
-
-        <div class="example">
-          <h4>4. Rank of PSD Matrix</h4>
-          <p>For $X \in \mathbb{S}^n_+$, $f(X) = \mathrm{rank}(X)$.
-          <br>If $X, Y \succeq 0$, then $\mathcal{N}(X+Y) = \mathcal{N}(X) \cap \mathcal{N}(Y)$.
-          <br>Dimension of nullspace: $\dim \mathcal{N}(X+Y) \le \min(\dim \mathcal{N}(X), \dim \mathcal{N}(Y))$.
-          <br>By rank-nullity, $\mathrm{rank}(X+Y) \ge \max(\mathrm{rank}(X), \mathrm{rank}(Y))$.
-          <br>This satisfies the condition for quasi-concavity on the PSD cone (superlevel sets are convex cones).</p>
-        </div>
     </section>
 
     <section class="section-card" id="section-3">
-        <h2>3. Log-Concave Functions</h2>
+        <h2>3. Log-Concave and Log-Convex Functions</h2>
 
-        <h3>3.1 Definition</h3>
-        <p>A function $f: \mathbb{R}^n \to \mathbb{R}_{++}$ is <a href="#" class="definition-link">log-concave</a> if $\log f(x)$ is concave.
-        $$ f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta} $$
-        Many probability densities are log-concave.</p>
-
-        <h3>3.2 Properties</h3>
+        <h3>3.1 Definitions</h3>
+        <p>Let $f: \mathbb{R}^n \to \mathbb{R}_{++}$.
         <ul>
-            <li><b>Hessian Condition:</b> $f(x) \nabla^2 f(x) \preceq \nabla f(x) \nabla f(x)^\top$.</li>
-            <li><b>Product:</b> Products of log-concave functions are log-concave.</li>
-            <li><b>Marginals:</b> If $f(x, y)$ is log-concave, $\int f(x, y) dy$ is log-concave (Prékopa-Leindler).</li>
-            <li><b>Convolution:</b> Convolution of log-concave functions is log-concave.</li>
+            <li>$f$ is <b>log-concave</b> if $\log f(x)$ is concave.</li>
+            <li>$f$ is <b>log-convex</b> if $\log f(x)$ is convex.</li>
         </ul>
+        Equivalently, for log-concavity (multiplicative form):
+        $$ f(\theta x + (1-\theta)y) \ge f(x)^\theta f(y)^{1-\theta} $$
+        Log-concavity is crucial in probability (unimodality, tail bounds).</p>
 
-        <h3>3.3 Examples</h3>
+        <h3>3.2 Examples</h3>
         <div class="example">
-            <ul>
-                <li><b>Gaussian Density:</b> $\exp(-\frac{1}{2}x^\top \Sigma^{-1} x)$ has a concave quadratic log.</li>
-                <li><b>Indicator of Convex Set:</b> Log is 0 or $-\infty$ (concave).</li>
-                <li><b>Determinant:</b> $\det X$ is log-concave on $\mathbb{S}^n_{++}$.</li>
-                <li><b>CDF:</b> If a PDF is log-concave, its CDF is log-concave.</li>
-            </ul>
+            <h4>1. Uniform Distribution on Convex Set</h4>
+            <p>Let $C$ be convex. $f(x) = 1/\alpha$ if $x \in C$, else 0.
+            <br>$\log f(x) = -\log \alpha$ on $C$, $-\infty$ outside.
+            <br>This is a concave function (indicator of convex set). So uniform density is log-concave.</p>
+        </div>
+        <div class="example">
+            <h4>2. Wishart Distribution</h4>
+            <p>Density $f(X) \propto (\det X)^{k} e^{-\mathrm{tr}(\Sigma^{-1}X)}$.
+            <br>$\log f(X) = c + k \log \det X - \mathrm{tr}(\Sigma^{-1}X)$.
+            <br>$\log \det$ is concave; trace is linear. Sum is concave.
+            <br>Thus Wishart is log-concave.</p>
+        </div>
+
+        <h3>3.3 Integration Rules</h3>
+        <p>Log-convexity and log-concavity behave nicely under integration.</p>
+        <div class="theorem-box">
+            <h4>Preservation of Log-Convexity</h4>
+            <p>If $f(x, y)$ is log-convex in $x$ for each $y$, then $g(x) = \int f(x, y) dy$ is log-convex (Artin's Theorem).
+            <br>Example: The Gamma function $\Gamma(x) = \int t^{x-1} e^{-t} dt$ is log-convex.</p>
+        </div>
+        <div class="theorem-box">
+            <h4>Preservation of Log-Concavity (Prékopa-Leindler)</h4>
+            <p>If $f(x, y)$ is jointly log-concave, then the marginal $g(x) = \int f(x, y) dy$ is log-concave.
+            <br><b>Consequence:</b> Convolution of log-concave functions is log-concave ($f*g$).</p>
+        </div>
+
+        <h3>3.4 Probability Examples</h3>
+        <div class="example">
+            <h4>(a) Hitting a Convex Set</h4>
+            <p>Let $W$ have log-concave density $p$. Let $C$ be convex.
+            <br>$f(x) = \mathbb{P}(x + W \in C) = \int \mathbf{1}_C(u) p(u-x) du$.
+            <br>Integrand is log-concave in $(x, u)$ (product of log-concave $\mathbf{1}_C$ and shifted $p$).
+            <br>Thus $f(x)$ is log-concave. Probability of hitting a target falls off log-concavely.</p>
+        </div>
+        <div class="example">
+            <h4>(b) Cumulative Distribution Function (CDF)</h4>
+            <p>If PDF $f$ is log-concave, then CDF $F(x) = \int_{-\infty}^x f(t) dt$ is log-concave.
+            <br>Proof: $F(x) = \int \mathbf{1}_{t \le x} f(t) dt$. The indicator $\mathbf{1}_{t \le x}$ is log-concave in $(x, t)$ (indicator of halfspace).
+            <br>Example: Gaussian CDF $\Phi(x)$ is log-concave.</p>
         </div>
     </section>
 
@@ -263,13 +326,22 @@
       <h2>4. Review & Cheat Sheet</h2>
       <h3>Conjugate Transformations</h3>
       <table class="data-table">
-        <tr><th>Primal $f(x)$</th><th>Conjugate $f^*(y)$</th></tr>
-        <tr><td>$\frac{1}{2}x^\top Q x$ ($Q \succ 0$)</td><td>$\frac{1}{2}y^\top Q^{-1} y$</td></tr>
-        <tr><td>$-\log x$</td><td>$-1 - \log(-y)$</td></tr>
-        <tr><td>$\log(\sum e^{x_i})$</td><td>$\sum y_i \log y_i$ (Neg Entropy) on $\Delta$</td></tr>
-        <tr><td>$I_C(x)$</td><td>$S_C(y)$ (Support Function)</td></tr>
-        <tr><td>$\|x\|$</td><td>$I_{B_*}(y)$ (Indicator of dual unit ball)</td></tr>
+        <tr><th>Primal $f(x)$</th><th>Conjugate $f^*(y)$</th><th>Domain of $f^*$</th></tr>
+        <tr><td>$\frac{1}{2}x^\top Q x$ ($Q \succ 0$)</td><td>$\frac{1}{2}y^\top Q^{-1} y$</td><td>$\mathbb{R}^n$</td></tr>
+        <tr><td>$-\log x$</td><td>$-1 - \log(-y)$</td><td>$y < 0$</td></tr>
+        <tr><td>$e^x$</td><td>$y \log y - y$</td><td>$y \ge 0$</td></tr>
+        <tr><td>$1/x$ ($x>0$)</td><td>$-2\sqrt{-y}$</td><td>$y < 0$</td></tr>
+        <tr><td>$I_C(x)$</td><td>$\sigma_C(y)$ (Support)</td><td>$\mathbb{R}^n$</td></tr>
+        <tr><td>$\|x\|$</td><td>$I_{B_*}(y)$ (Dual Ball)</td><td>$\|y\|_* \le 1$</td></tr>
       </table>
+
+      <h3>Key Concepts</h3>
+      <ul>
+          <li><b>Conjugate $f^*$:</b> Best linear lower bound (support function of epigraph). Always convex.</li>
+          <li><b>Fenchel Inequality:</b> $f(x) + f^*(y) \ge x^\top y$.</li>
+          <li><b>Quasiconvex:</b> Convex sublevel sets. $f(\theta x + (1-\theta)y) \le \max(f(x), f(y))$.</li>
+          <li><b>Log-Concave:</b> $\log f$ is concave. Closed under product, marginals, convolution.</li>
+      </ul>
     </section>
 
     <section class="section-card" id="section-5">
