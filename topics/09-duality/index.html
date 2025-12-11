@@ -213,42 +213,35 @@
 
         <div class="proof-box">
           <h4>Geometric Proof via Separation</h4>
+          <p>This proof constructs the dual variables as the coefficients of a separating hyperplane in the space of (constraints, objective).</p>
           <div class="proof-step">
-            <strong>Step 1: Define the Epigraph Set.</strong>
-            Define the set of achievable constraint and objective values:
-            $$ \mathcal{A} = \{ (u, v, t) \in \mathbb{R}^m \times \mathbb{R}^p \times \mathbb{R} \mid \exists x \in \mathcal{D}, f_i(x) \le u_i, h_j(x) = v_j, f_0(x) \le t \} $$
-            Because $f_i$ are convex and $h_j$ are affine, $\mathcal{A}$ is a convex set.
+            <strong>Step 1: The Set of Achievable Values $\mathcal{A}$.</strong>
+            Consider the set of triplets $(u, v, t)$ that are "worse" than some feasible point $x$:
+            $$ \mathcal{A} = \{ (u, v, t) \mid \exists x \in \mathcal{D}, f_i(x) \le u_i, h_j(x) = v_j, f_0(x) \le t \} $$
+            This set is convex (it's the projection of the epigraph of the problem).
           </div>
           <div class="proof-step">
             <strong>Step 2: Separation.</strong>
-            We want to separate the set of achievable values $\mathcal{A}$ from the "better-than-optimal" target.
-            Consider the point $(0, 0, s)$ where $s < p^*$. If this point were in $\mathcal{A}$, it would mean there exists a feasible $x$ (satisfying constraints $u \le 0, v=0$) with objective $f_0(x) \le s < p^*$. This contradicts the definition of $p^*$ as the optimal value.
-            <br>Thus, $(0, 0, p^*)$ is on the boundary of $\mathcal{A}$, and any point $(0, 0, s)$ with $s < p^*$ is strictly outside.
-            <br>By the Supporting Hyperplane Theorem, there exists a non-zero normal vector $(\lambda, \nu, \mu)$ and a scalar $\alpha$ such that for all $(u, v, t) \in \mathcal{A}$:
-            $$ \lambda^\top u + \nu^\top v + \mu t \ge \alpha \ge \lambda^\top 0 + \nu^\top 0 + \mu p^* = \mu p^* $$
-            Analysis of the coefficients:
-            <ul>
-                <li>Since $u_i$ can be arbitrarily large (bounded below by $f_i(x)$), we must have $\lambda_i \ge 0$ to bound the sum from below. Similarly $\mu \ge 0$.</li>
-                <li>The inequality implies $\inf_{x \in \mathcal{D}} (\sum \lambda_i f_i(x) + \sum \nu_j h_j(x) + \mu f_0(x)) \ge \mu p^*$.</li>
-            </ul>
+            The point $(0, 0, p^*)$ is on the boundary of $\mathcal{A}$. The set $\mathcal{A}$ does not contain any point with $u \le 0, v=0, t < p^*$.
+            By the Supporting Hyperplane Theorem, there exists a non-zero vector $(\lambda, \nu, \mu)$ such that for all $(u, v, t) \in \mathcal{A}$:
+            $$ \lambda^\top u + \nu^\top v + \mu t \ge \lambda^\top 0 + \nu^\top 0 + \mu p^* = \mu p^* $$
+            Analyzing directions $u \to \infty$ and $t \to \infty$ implies $\lambda \succeq 0$ and $\mu \ge 0$.
           </div>
           <div class="proof-step">
-            <strong>Step 3: Slater's Condition implies $\mu > 0$.</strong>
-            Suppose $\mu = 0$. Then for all $x \in \mathcal{D}$, $\sum \lambda_i f_i(x) + \sum \nu_j h_j(x) \ge 0$.
-            Apply this to the Slater point $\tilde{x}$:
-            $$ \sum \lambda_i f_i(\tilde{x}) + \sum \nu_j (0) \ge 0 $$
-            Since $f_i(\tilde{x}) < 0$ and $\lambda_i \ge 0$, the sum can only be $\ge 0$ if all $\lambda_i = 0$.
-            But if $\lambda=0$ and $\mu=0$, then $\sum \nu_j h_j(x) \ge 0$ for all $x$. Since $h_j$ are affine ($Ax-b$), $A^\top \nu = 0$ implies $\nu=0$ (assuming full rank). Or more simply, linearity implies equality to 0.
-            This contradicts the non-zero normal vector. Thus $\mu > 0$.
+            <strong>Step 3: Slater's Condition implies Non-Verticality ($\mu > 0$).</strong>
+            Suppose $\mu = 0$. The inequality becomes $\sum \lambda_i f_i(x) + \sum \nu_j h_j(x) \ge 0$ for all $x$.
+            Applying this to the Slater point $\tilde{x}$ (where $f_i(\tilde{x}) < 0$):
+            $$ \sum \lambda_i \underbrace{f_i(\tilde{x})}_{< 0} + 0 \ge 0 $$
+            Since $\lambda_i \ge 0$, this forces $\lambda = 0$.
+            If $\lambda=0, \mu=0$, then $\nu^\top (Ax-b) \ge 0$ for all $x$, which implies $A^\top \nu = 0$. If $A$ is full rank, $\nu=0$.
+            This contradicts $(\lambda, \nu, \mu) \ne 0$. Thus $\mu > 0$.
           </div>
           <div class="proof-step">
-            <strong>Step 4: Strong Duality.</strong>
-            Divide by $\mu > 0$ to get normalized multipliers $\tilde{\lambda} = \lambda/\mu, \tilde{\nu} = \nu/\mu$.
-            The separation inequality becomes:
-            $$ \inf_x (f_0(x) + \sum \tilde{\lambda}_i f_i(x) + \sum \tilde{\nu}_j h_j(x)) \ge p^* $$
-            The LHS is exactly the dual function $g(\tilde{\lambda}, \tilde{\nu})$.
-            Thus $d^* \ge g(\tilde{\lambda}, \tilde{\nu}) \ge p^*$.
-            Combined with weak duality ($d^* \le p^*$), we have $d^* = p^*$.
+            <strong>Step 4: Recovering Strong Duality.</strong>
+            Divide the separation inequality by $\mu$. Let $\tilde{\lambda} = \lambda/\mu, \tilde{\nu} = \nu/\mu$.
+            $$ f_0(x) + \sum \tilde{\lambda}_i f_i(x) + \sum \tilde{\nu}_j h_j(x) \ge p^* \quad \forall x $$
+            Taking the infimum over $x$, we get $g(\tilde{\lambda}, \tilde{\nu}) \ge p^*$.
+            Thus $d^* \ge p^*$. Since $d^* \le p^*$ always, we have $d^* = p^*$.
           </div>
         </div>
       </section>

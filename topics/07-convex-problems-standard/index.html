@@ -92,13 +92,16 @@
 
       <div class="proof-box">
         <h4>Theorem: Convexity of Feasible Set</h4>
-        <p><strong>Statement:</strong> If $f_i$ are convex and $h_j$ are affine, then $\mathcal{F}$ is a convex set.</p>
+        <p><strong>Statement:</strong> If the problem is in standard convex form ($f_i$ convex, $h_j$ affine), the feasible set $\mathcal{F}$ is convex.</p>
 
         <div class="proof-step">
-          <strong>Proof:</strong> The feasible set $\mathcal{F}$ is the intersection of two types of sets:
-          1. The sublevel sets of convex functions: $S_i = \{x \mid f_i(x) \le 0\}$. Since $f_i$ is convex, $S_i$ is convex (Lecture 05).
-          2. The level sets of affine functions: $H_j = \{x \mid h_j(x) = 0\}$. These are hyperplanes, which are convex.
-          Since the intersection of any collection of convex sets is convex (Lecture 03), $\mathcal{F} = (\cap S_i) \cap (\cap H_j)$ is convex.
+          <strong>Step 1: Inequality Constraints.</strong> The set $S_i = \{x \mid f_i(x) \le 0\}$ is the 0-sublevel set of the convex function $f_i$. By the basic property of convex functions, $S_i$ is a convex set.
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Equality Constraints.</strong> The set $H_j = \{x \mid h_j(x) = 0\}$ is a hyperplane (affine set) because $h_j$ is affine. All affine sets are convex.
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Intersection.</strong> The full feasible set $\mathcal{F} = (\cap_{i=1}^m S_i) \cap (\cap_{j=1}^p H_j)$ is the intersection of a collection of convex sets. Since the intersection of convex sets is always convex, $\mathcal{F}$ is convex.
         </div>
       </div>
 
@@ -216,20 +219,23 @@
       We want to maximize $r$ subject to $\mathcal{B} \subseteq \mathcal{P}$.</p>
 
       <div class="proof-box">
-        <h4>Derivation</h4>
+        <h4>Derivation of the Chebyshev LP</h4>
         <div class="proof-step">
-            The condition $\mathcal{B} \subseteq \mathcal{P}$ holds if and only if every point in the ball satisfies all linear inequalities:
-            $$ \sup_{\|u\|_2 \le r} a_i^\top (x_c + u) \le b_i, \quad \forall i=1,\dots,m $$
+            <strong>Step 1: Set Containment.</strong>
+            The condition $\mathcal{B} \subseteq \mathcal{P}$ is equivalent to requiring that every point $x \in \mathcal{B}$ satisfies $a_i^\top x \le b_i$ for all $i$.
+            $$ \sup_{x \in \mathcal{B}} a_i^\top x \le b_i $$
         </div>
         <div class="proof-step">
-            Expanding the dot product:
-            $$ a_i^\top x_c + \sup_{\|u\|_2 \le r} a_i^\top u \le b_i $$
-            Using the Cauchy-Schwarz inequality, $\sup_{\|u\|_2 \le r} a_i^\top u = r \|a_i\|_2$. The supremum is achieved when $u$ is in the direction of $a_i$.
+            <strong>Step 2: Support Function of the Ball.</strong>
+            Substitute $x = x_c + u$ where $\|u\|_2 \le r$.
+            $$ \sup_{\|u\|_2 \le r} a_i^\top (x_c + u) = a_i^\top x_c + \sup_{\|u\|_2 \le r} a_i^\top u $$
+            By definition of the dual norm (where the dual of $\ell_2$ is $\ell_2$), $\sup_{\|u\| \le r} a_i^\top u = r \|a_i\|_2$.
         </div>
         <div class="proof-step">
-            Substitute back:
+            <strong>Step 3: Linear Constraints.</strong>
+            The containment condition becomes:
             $$ a_i^\top x_c + r \|a_i\|_2 \le b_i $$
-            This is a linear inequality in variables $x_c$ and $r$.
+            Since $\|a_i\|_2$ is a constant (computed from data), this is a linear inequality in variables $x_c$ (center) and $r$ (radius).
         </div>
       </div>
 
@@ -579,26 +585,30 @@
       </div>
 
       <h3>4.3 Reformulation as an LP</h3>
-      <p>We can transform the LFP into an equivalent LP using the <strong>Charnes-Cooper transformation</strong>. The idea is to normalize the denominator.</p>
+      <p>We can transform the LFP into an equivalent LP using the <strong>Charnes-Cooper transformation</strong>. This is a specific instance of the "perspective transformation" applied to the entire problem.</p>
 
       <div class="proof-box">
-        <h4>Derivation</h4>
+        <h4>Derivation of Charnes-Cooper Transformation</h4>
         <div class="proof-step">
-            <strong>Variable Change:</strong>
-            Let $z = \frac{1}{e^\top x + f}$. Since the domain requires the denominator to be positive, $z > 0$.
-            Let $y = x z = \frac{x}{e^\top x + f}$.
+            <strong>Step 1: Homogenization Variable.</strong>
+            Introduce a scalar variable $z = \frac{1}{e^\top x + f}$. Since the domain assumes $e^\top x + f > 0$, we have $z > 0$.
+            Define the vector $y = x z$. Note that $x = y/z$.
         </div>
         <div class="proof-step">
-            <strong>Transforming Constraints:</strong>
+            <strong>Step 2: Constraint Transformation.</strong>
+            Substitute $x = y/z$ into the original constraints:
             <ul>
-                <li>$Ax = b \implies A(y/z) = b \implies Ay = bz$.</li>
-                <li>$Gx \le h \implies G(y/z) \le h \implies Gy \le hz$ (since $z > 0$).</li>
-                <li>$e^\top x + f = 1/z \implies z(e^\top x + f) = 1 \implies e^\top y + fz = 1$.</li>
+                <li>$Ax = b \iff A(y/z) = b \iff Ay - bz = 0$.</li>
+                <li>$Gx \le h \iff G(y/z) \le h \iff Gy - hz \le 0$ (multiplying by $z>0$ preserves inequality).</li>
             </ul>
+            We also need to enforce the definition of $z$:
+            $$ e^\top x + f = \frac{1}{z} \iff z(e^\top x + f) = 1 \iff e^\top (xz) + fz = 1 \iff e^\top y + fz = 1 $$
         </div>
         <div class="proof-step">
-            <strong>Transforming Objective:</strong>
-            $$ \frac{c^\top x + d}{e^\top x + f} = z(c^\top (y/z) + d) = c^\top y + dz $$
+            <strong>Step 3: Objective Transformation.</strong>
+            The objective function becomes:
+            $$ \frac{c^\top x + d}{e^\top x + f} = \frac{c^\top (y/z) + d}{1/z} = z(c^\top (y/z) + d) = c^\top y + dz $$
+            This is a linear function of $(y, z)$.
         </div>
       </div>
 
@@ -970,7 +980,7 @@
             & t_i \ge a_i^\top x + b_i, \quad i=1,\dots,m
             \end{aligned}
             $$
-            This is an LP with $n+m$ variables and $2m$ constraints.
+            This is an LP with $n+m$ variables and $2m$ constraints. The solution $x^*$ will minimize the sum of hinge losses.
             </div>
         </div>
         </div>

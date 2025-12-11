@@ -141,20 +141,14 @@
         <div class="proof-step">
           <strong>Step 3: Construct Worst-Case Perturbation.</strong>
           We show the bound is tight. Let $u = Ax - b$.
-          If $u=0$ or $x=0$, the bound holds by definition. Assume $u \ne 0, x \ne 0$.
-          <br><b>Goal:</b> Find $\Delta A$ with $\|\Delta A\|_2 \le \rho$ to maximize $\|u + \Delta A x\|_2$. This happens when $\Delta A x$ points in the same direction as $u$, and has maximal length.
-          The max length of $\Delta A x$ is $\|\Delta A\|_2 \|x\|_2 = \rho \|x\|_2$.
-          <br><b>Construction:</b> We need a matrix that maps $x$ to a vector parallel to $u$. A rank-1 outer product works best.
-          $$ \Delta A = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2} $$
-          (Note: If $u=0$ and $x \ne 0$, any $\Delta A$ maximizing $\|\Delta A x\|$ works, e.g., $\Delta A = \rho v x^\top/\|x\|^2$ for arbitrary unit $v$).
-          <b>Verification:</b>
-          <ul>
-            <li><b>Norm:</b> $\|\Delta A\|_2 = \rho \| \frac{u}{\|u\|} \|_2 \| \frac{x}{\|x\|} \|_2 = \rho \cdot 1 \cdot 1 = \rho$. (Feasible).</li>
-            <li><b>Action on x:</b> $\Delta A x = \rho \frac{u}{\|u\|} \frac{x^\top x}{\|x\|} = \rho \frac{u}{\|u\|} \|x\| = \left(\rho \frac{\|x\|}{\|u\|}\right) u$.</li>
-            <li><b>Result:</b> The perturbation vector is parallel to $u$. The norms add:
-            $$ \|u + \Delta A x\|_2 = \|u\|_2 + \|\Delta A x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2 $$
-            </li>
-          </ul>
+          If $u=0$ or $x=0$, the bound holds trivially. Assume $u \ne 0, x \ne 0$.
+          <br><b>Goal:</b> Find a matrix $\Delta A$ with $\|\Delta A\|_2 \le \rho$ such that $\|u + \Delta A x\|_2$ is maximized.
+          Maximal stretch occurs when $\Delta A$ aligns its maximum singular value direction with $x$ and maps it to the direction of $u$.
+          <br><b>Construction:</b> Let $\Delta A = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2}$.
+          This is a rank-1 matrix $uv^\top$ (scaled). Its spectral norm is the product of vector norms: $\|\Delta A\|_2 = \rho \frac{\|u\|}{\|u\|} \frac{\|x\|}{\|x\|} = \rho$.
+          <br><b>Action:</b> $\Delta A x = \rho \frac{u}{\|u\|} \frac{x^\top x}{\|x\|} = \rho \|x\|_2 \frac{u}{\|u\|_2}$.
+          This vector is parallel to $u$ and has length $\rho \|x\|_2$.
+          <br><b>Result:</b> $\|u + \Delta A x\|_2 = \|u\|_2 + \|\Delta A x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2$.
         </div>
 
         <div class="proof-step">
@@ -385,41 +379,25 @@
       <p><b>Why not always use SDP?</b> While SDP is the most general, its solvers ($O(n^6)$ complexity or similar) are significantly slower than dedicated LP/QP solvers ($O(n^3)$). Always use the most specific class possible.</p>
 
       <div class="proof-box">
-        <h4>Embedding SOCP into SDP via Schur Complement</h4>
-        <p>We want to show that the second-order cone constraint $\|y\|_2 \le t$ (where $y = Ax+b, t = c^\top x + d$) is equivalent to a Linear Matrix Inequality (LMI).</p>
-
+        <h4>SOCP to SDP: The Embedding Proof</h4>
         <div class="proof-step">
-          <strong>Step 1: Schur Complement Lemma.</strong>
-          Recall from <a href="../00-linear-algebra-basics/index.html">Lecture 00</a> that for a block matrix $M = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix}$ with $A \succ 0$, we have $M \succeq 0 \iff C - B^\top A^{-1} B \succeq 0$.
+          <strong>Step 1: Scalar to Matrix.</strong>
+          We want to encode $\|y\|_2 \le t$ as a matrix inequality.
+          This is equivalent to $t^2 - y^\top y \ge 0$ (assuming $t \ge 0$).
+          Rewriting: $t - y^\top (tI)^{-1} y \ge 0$.
         </div>
-
         <div class="proof-step">
-          <strong>Step 2: Construct the matrix.</strong>
-          Consider the matrix:
-          $$
-          M = \begin{bmatrix} tI & y \\ y^\top & t \end{bmatrix}
-          $$
-          Assume $t > 0$ (if $t=0$, we need $y=0$, which corresponds to the singular case). Then $tI \succ 0$.
+          <strong>Step 2: Schur Complement.</strong>
+          The expression $t - y^\top (tI)^{-1} y$ is exactly the Schur complement of the top-left block $tI$ in the matrix:
+          $$ M = \begin{bmatrix} tI & y \\ y^\top & t \end{bmatrix} $$
+          By the Schur Complement Lemma, $M \succeq 0 \iff tI \succ 0$ and $t - y^\top(tI)^{-1}y \ge 0$.
         </div>
-
         <div class="proof-step">
-          <strong>Step 3: Apply the Lemma.</strong>
-          Identifying blocks: $A = tI$, $B = y$, $C = t$. The Schur complement of $A$ is $C - B^\top A^{-1} B$.
-          The condition $M \succeq 0$ is equivalent to:
-          $$ t - y^\top (tI)^{-1} y \ge 0 $$
-          $$ t - \frac{1}{t} y^\top y \ge 0 $$
-          Multiplying by $t$ (since $t > 0$, we can do this without reversing inequality):
-          $$ t^2 - y^\top y \ge 0 \implies y^\top y \le t^2 \implies \|y\|_2^2 \le t^2 $$
-          Since $t > 0$, this is equivalent to $\|y\|_2 \le t$.
-        </div>
-
-        <div class="proof-step">
-          <strong>Step 4: Conclusion.</strong>
-          The SOC constraint $\|Ax+b\|_2 \le c^\top x + d$ is equivalent to the LMI:
-          $$
-          \begin{bmatrix} (c^\top x + d) I & Ax + b \\ (Ax + b)^\top & c^\top x + d \end{bmatrix} \succeq 0
-          $$
-          Since this constraint is linear in the matrix variable (which depends linearly on $x$), an SOCP is a special case of an SDP. This embedding allows us to solve SOCPs using SDP solvers, although dedicated SOCP solvers are usually faster.
+          <strong>Step 3: Linear Matrix Inequality.</strong>
+          The matrix $M$ is linear in $y$ and $t$.
+          $$ M(y,t) = t \begin{bmatrix} I & 0 \\ 0 & 1 \end{bmatrix} + \sum y_i \begin{bmatrix} 0 & e_i \\ e_i^\top & 0 \end{bmatrix} $$
+          Since $y$ and $t$ are affine functions of $x$, the constraint becomes an LMI in $x$.
+          Thus, every SOCP constraint can be written as an SDP constraint.
         </div>
       </div>
     </section>

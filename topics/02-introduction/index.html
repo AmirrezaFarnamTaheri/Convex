@@ -82,19 +82,19 @@
         </figure>
 
         <h3>1.2 Formal Definition</h3>
-        <p>A mathematical optimization problem is <b>convex</b> if it can be written in the following standard form:</p>
+        <p>A mathematical optimization problem is <b>convex</b> if it can be cast in the following canonical form:</p>
         $$
         \begin{aligned}
         \min_{x \in \mathbb{R}^n} \quad & f_0(x) && \text{(Objective function)} \\
         \text{subject to} \quad & f_i(x) \le 0, && i=1,\dots,m \quad \text{(Inequality constraints)}\\
-        & Ax = b && \text{(Equality constraints)}
+        & A x = b && \text{(Equality constraints)}
         \end{aligned}
         $$
-        <p>where three critical conditions must be met:</p>
+        <p>where three rigorous conditions must be satisfied:</p>
         <ol>
-          <li><b>Convex Objective:</b> The function $f_0$ is convex.</li>
-          <li><b>Convex Inequality Constraints:</b> The functions $f_i$ are convex.</li>
-          <li><b>Affine Equality Constraints:</b> The equality constraints are affine ($Ax=b$).</li>
+          <li><b>Convex Objective:</b> The function $f_0: \mathcal{D} \to \mathbb{R}$ is convex. (i.e., its domain is convex and $f_0(\theta x + (1-\theta)y) \le \theta f_0(x) + (1-\theta)f_0(y)$).</li>
+          <li><b>Convex Inequality Constraints:</b> The functions $f_i$ defining the sublevel sets must be convex. This ensures the set $\{x \mid f_i(x) \le 0\}$ is convex.</li>
+          <li><b>Affine Equality Constraints:</b> The equality constraints must be linear/affine ($Ax=b$). Arbitrary convex equality constraints (like $x^2=1$) define non-convex sets.</li>
         </ol>
         <p><i>Note:</i> Minimizing a concave function is generally non-convex. Equality constraints $h(x)=0$ where $h$ is convex (but not affine) are generally non-convex (see "Counter-Example Corner" below).</p>
 
@@ -173,51 +173,44 @@
         </div>
 
         <div class="proof-box">
-          <h4>Proof</h4>
+          <h4>Proof of Global Optimality</h4>
 
           <div class="proof-step">
-            <strong>Setup (proof by contradiction):</strong> Assume $x^*$ is a local minimum but not a global minimum. Then there exists a feasible point $y \in \mathcal{F}$ with $f_0(y) < f_0(x^*)$.
+            <strong>Hypothesis:</strong> Assume the problem is convex. Suppose $x^*$ is a local minimum, meaning there is a radius $R > 0$ such that $f_0(x^*) \le f_0(z)$ for all feasible $z$ with $\|z - x^*\|_2 \le R$.
+            <br><strong>Contradiction Assumption:</strong> Suppose $x^*$ is <b>not</b> a global minimum. Then there exists some feasible point $y$ such that $f_0(y) < f_0(x^*)$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 1: Convexity of feasible set.</strong> Since the problem is convex, the feasible set $\mathcal{F}$ is convex. Therefore, for any $\theta \in [0,1]$, the point:
-            $$
-            z(\theta) = \theta y + (1-\theta)x^*
-            $$
-            is also feasible, i.e., $z(\theta) \in \mathcal{F}$.
+            <strong>Step 1: Construct a path.</strong>
+            Consider the line segment connecting the local minimum $x^*$ to the global minimum candidate $y$. Parameterize it by $\theta \in [0, 1]$:
+            $$ z(\theta) = (1-\theta)x^* + \theta y $$
+            Since the feasible set $\mathcal{F}$ is convex, the entire segment lies within $\mathcal{F}$. Thus $z(\theta)$ is feasible for all $\theta$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 2: Apply convexity of objective.</strong> By convexity of $f_0$:
-            $$
-            f_0(z(\theta)) = f_0(\theta y + (1-\theta)x^*) \le \theta f_0(y) + (1-\theta)f_0(x^*)
-            $$
+            <strong>Step 2: Evaluate the objective along the path.</strong>
+            By the convexity of $f_0$:
+            $$ f_0(z(\theta)) \le (1-\theta)f_0(x^*) + \theta f_0(y) $$
+            Since we assumed $f_0(y) < f_0(x^*)$, we can strictly bound the RHS:
+            $$ (1-\theta)f_0(x^*) + \theta f_0(y) < (1-\theta)f_0(x^*) + \theta f_0(x^*) = f_0(x^*) $$
+            Thus, for any $\theta \in (0, 1]$, we have $f_0(z(\theta)) < f_0(x^*)$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 3: Use the assumption $f_0(y) < f_0(x^*)$.</strong> Rearranging the convexity inequality:
-            $$
-            f_0(z(\theta)) \le \theta f_0(y) + (1-\theta)f_0(x^*) < \theta f_0(x^*) + (1-\theta)f_0(x^*) = f_0(x^*)
-            $$
-            Therefore, $f_0(z(\theta)) < f_0(x^*)$ for all $\theta \in (0, 1)$.
+            <strong>Step 3: The Contradiction.</strong>
+            The function decreases strictly as we move away from $x^*$ towards $y$.
+            For extremely small $\theta$, the point $z(\theta)$ is extremely close to $x^*$.
+            Specifically, choose $\theta$ small enough such that $\|z(\theta) - x^*\|_2 = \|\theta(y - x^*)\|_2 < R$.
+            For this point, we have:
+            <ol>
+                <li>$z(\theta)$ is in the local neighborhood of $x^*$.</li>
+                <li>$f_0(z(\theta)) < f_0(x^*)$ (from Step 2).</li>
+            </ol>
+            This directly contradicts the definition of $x^*$ as a local minimum.
           </div>
 
           <div class="proof-step">
-            <div style="float: right; margin-left: 20px; width: 150px; padding: 10px; background: #f8f9fa; border: 1px solid #ddd; font-size: 0.9em;">
-                <strong>Visual Guide:</strong> Imagine a bowl. $x^*$ is a local dip. If $y$ is lower (global min), draw a line from $x^*$ to $y$. The line must go <em>down</em> from $x^*$. But that means points immediately next to $x^*$ are lower than $x^*$, so $x^*$ wasn't even a local min!
-            </div>
-            <strong>Step 4: Construct a contradiction.</strong> As $\theta \to 0^+$, the point $z(\theta)$ approaches $x^*$. Specifically:
-            $$
-            \|z(\theta) - x^*\|_2 = \|\theta(y - x^*)\|_2 = \theta \|y - x^*\|_2
-            $$
-            Since $x^*$ is a local minimum, there exists a radius $\delta > 0$ such that $f_0(x^*) \le f_0(x)$ for all feasible $x$ with $\|x - x^*\|_2 < \delta$.
-            <br>We can choose a sufficiently small $\theta \in (0, 1)$ such that $\theta \|y - x^*\|_2 < \delta$.
-            <br>For this choice of $\theta$, the point $z(\theta)$ lies within the local neighborhood ($\|z(\theta) - x^*\|_2 < \delta$).
-            <br>However, we established in Step 3 that $f_0(z(\theta)) < f_0(x^*)$. This contradicts the definition of $x^*$ as a local minimum.
-          </div>
-
-          <div class="proof-step">
-            <strong>Conclusion:</strong> The assumption that $x^*$ is a local minimum but not a global minimum leads to a contradiction. Therefore, any local minimum must be a global minimum.
+            <strong>Conclusion:</strong> The assumption that a better point $y$ exists must be false. Therefore, $x^*$ is a global minimum.
           </div>
         </div>
 
@@ -496,11 +489,11 @@
 
         <div class="example">
           <h4>Example 2: Antenna Array Weight Design</h4>
-        <p>Design antenna weights to achieve a desired beam pattern while minimizing side lobes—naturally formulated as SOCP.
-        <br><i>Explanation:</i> We want to minimize the maximum magnitude of the array response in "side lobe" directions, subject to a unity response in the "main lobe" direction.
-        <br>Minimize $\max_k |w^\top a(\theta_k)|$ subject to $w^\top a(\theta_{\text{target}}) = 1$.
-        <br>This transforms to: $\min t$ s.t. $|w^\top a(\theta_k)| \le t$.
-        <br>Since these are complex magnitudes, $|z| \le t$ is a second-order cone constraint in the real/imaginary parts.</p>
+        <p>Design complex antenna weights $w \in \mathbb{C}^n$ to achieve a desired beam pattern.
+        <br><b>Goal:</b> Minimize the maximum side lobe level while maintaining unity gain in the target direction $\theta_0$.
+        <br><b>Formulation:</b>
+        $$ \min_{w, t} \ t \quad \text{s.t.} \quad |w^H a(\theta_k)| \le t \ (\forall k \in \text{sidelobes}), \quad w^H a(\theta_0) = 1 $$
+        <br>Here $a(\theta)$ is the array steering vector. The constraint $|z| \le t$ for a complex scalar $z$ is equivalent to $\sqrt{\text{Re}(z)^2 + \text{Im}(z)^2} \le t$, which is a second-order cone constraint in $\mathbb{R}^3$. Thus, this is an SOCP.</p>
         </div>
 
         <h3>4.4 Semidefinite Programming (SDP)</h3>
@@ -526,14 +519,20 @@
         </div>
 
         <div class="example">
-          <h4>Example: Minimum Volume Enclosing Ellipsoid (MVEE)</h4>
-          <p>Given points $x_1, \ldots, x_N \in \mathbb{R}^n$, find the smallest-volume ellipsoid containing all of them. This can be formulated as an SDP and has applications in outlier detection and robust statistics.</p>
-        <p><b>Formulation:</b> An ellipsoid can be parameterized as $\mathcal{E} = \{x \mid \|Ax + b\|_2 \le 1\}$ where $A \succ 0$.
-        The volume is proportional to $\det(A^{-1})$. Maximizing $\det(A)$ is equivalent to minimizing $-\log\det(A)$.
-        <br>Objective: $\min -\log\det(A)$.
-        <br>Constraints: $\|Ax_i + b\|_2 \le 1$ for all $i=1,\dots,N$.
-        <br>Using the Schur complement, $\|Ax_i + b\|_2 \le 1 \iff \|Ax_i + b\|_2^2 \le 1 \iff \begin{bmatrix} I & Ax_i+b \\ (Ax_i+b)^\top & 1 \end{bmatrix} \succeq 0$.
-        <br>Thus, it is an SDP (with a convex log-det objective).</p>
+          <h4>Example: Minimum Volume Enclosing Ellipsoid (Löwner-John)</h4>
+          <p>Find the ellipsoid of minimum volume that contains a set of points $\{x_1, \dots, x_N\}$.</p>
+          <p><b>Parameterization:</b> $\mathcal{E} = \{x \mid \|Ax + b\|_2 \le 1\}$ with $A \in \mathbb{S}^n_{++}$. The volume is proportional to $\det(A^{-1})$.
+          <br><b>Optimization Problem:</b> Maximize $\log \det A$ (minimize volume) subject to $x_i \in \mathcal{E}$.
+          $$
+          \begin{aligned}
+          \min_{A, b} \quad & -\log \det A \\
+          \text{s.t.} \quad & \|A x_i + b\|_2 \le 1, \quad i=1,\dots,N \\
+          & A \succ 0
+          \end{aligned}
+          $$
+          <br><b>Convexity:</b> The objective $-\log \det A$ is convex on the PSD cone. The constraints $\|Ax_i+b\|_2 \le 1$ can be written as LMIs using the Schur complement:
+          $$ \begin{bmatrix} I & Ax_i + b \\ (Ax_i + b)^\top & 1 \end{bmatrix} \succeq 0 $$
+          Thus, this is a convex problem involving LMI constraints (an SDP).</p>
         </div>
 
         <div class="widget-container" style="margin: 24px 0;">

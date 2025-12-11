@@ -81,34 +81,7 @@
           </div>
         </div>
 
-        <div class="problem">
-          <h3>P3.20 — Convex Hull of a Set of Points</h3>
-          <p>Let $S = \{x_1, \dots, x_m\} \subset \mathbb{R}^n$. Prove that the convex hull $\text{conv}(S)$ is a convex set.</p>
-          <div class="recap-box">
-            <h4>Recap</h4>
-            <p><b>Definition:</b> $\mathrm{conv}(S) = \{\sum \theta_i x_i \mid \theta \ge 0, \sum \theta_i = 1\}$.
-            <br><b>Strategy:</b> Prove that a convex combination of convex combinations is still a convex combination.
-            <br><b>Key Algebra:</b> If $z = \theta u + (1-\theta)v$ where $u,v$ are combinations with weights $\alpha, \beta$, then $z$ uses weights $\gamma = \theta \alpha + (1-\theta)\beta$. Since $\alpha, \beta$ are probability vectors, their mixture $\gamma$ is also a probability vector.</p>
-          </div>
-          <div class="solution-box">
-            <h4>Solution</h4>
-            <div class="proof-step">
-              Let $u, v \in \text{conv}(S)$. By definition, $u = \sum_{i=1}^m \alpha_i x_i$ and $v = \sum_{i=1}^m \beta_i x_i$ where $\alpha_i, \beta_i \ge 0$ and $\sum \alpha_i = \sum \beta_i = 1$.
-            </div>
-            <div class="proof-step">
-              For any $\theta \in [0, 1]$, consider $z = \theta u + (1-\theta)v$.
-              $$ z = \theta \sum \alpha_i x_i + (1-\theta) \sum \beta_i x_i = \sum (\theta \alpha_i + (1-\theta)\beta_i) x_i $$
-            </div>
-            <div class="proof-step">
-              Let $\gamma_i = \theta \alpha_i + (1-\theta)\beta_i$.
-              Since $\alpha_i, \beta_i \ge 0$ and $\theta \in [0, 1]$, we have $\gamma_i \ge 0$.
-              Also, $\sum \gamma_i = \theta \sum \alpha_i + (1-\theta) \sum \beta_i = \theta(1) + (1-\theta)(1) = 1$.
-            </div>
-            <div class="proof-step">
-              Thus $z$ is a convex combination of points in $S$, so $z \in \text{conv}(S)$.
-            </div>
-          </div>
-        </div>
+        <!-- Moved P3.20 to Section 6 -->
 
         <figure style="text-align: center;">
           <img src="assets/affine-subspace.png"
@@ -835,33 +808,29 @@
           <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Polyhedra:</b> A polyhedron is the intersection of a finite number of halfspaces. To prove a set is a polyhedron, we typically show it is defined by a system of linear inequalities $Ax \le b$.</li>
-                <li><b>Bisectors:</b> The set of points equidistant to two points $p$ and $q$ is a hyperplane (the perpendicular bisector). The set of points closer to $p$ than $q$ is a halfspace.</li>
+                <li><b>Polyhedron Definition:</b> A polyhedron is the intersection of a finite number of halfspaces. The goal is to show $V_i$ fits the form $\{x \mid Ax \le b\}$.</li>
+                <li><b>Geometry of Distance:</b> The condition $\|x - a\| \le \|x - b\|$ is equivalent to a linear inequality $2(b-a)^\top x \le \|b\|^2 - \|a\|^2$. This defines a halfspace bounded by the perpendicular bisector of $a$ and $b$.</li>
             </ul>
           </div>
 
           <div class="solution-box">
             <h4>Solution</h4>
             <div class="proof-step">
-              <strong>Step 1: Analyze the inequality.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ involves norms. Since norms are non-negative, we can square both sides to remove the square roots:
-              $$ \|x - x_i\|_2^2 \le \|x - x_j\|_2^2 $$
-            </div>
-            <div class="proof-step">
-              <strong>Step 2: Expand the terms.</strong>
-              $$ (x - x_i)^\top (x - x_i) \le (x - x_j)^\top (x - x_j) $$
+              <strong>Step 1: Expand the inequality.</strong>
+              The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ is equivalent to $\|x - x_i\|_2^2 \le \|x - x_j\|_2^2$.
               $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
             </div>
             <div class="proof-step">
-              <strong>Step 3: Simplify to linear form.</strong> Subtract $x^\top x$ from both sides and rearrange terms to group $x$:
-              $$ 2x_j^\top x - 2x_i^\top x \le x_j^\top x_j - x_i^\top x_i $$
+              <strong>Step 2: Linearize.</strong>
+              The quadratic term $x^\top x$ cancels out from both sides (this is the key step). Rearranging terms:
               $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
-              This is a linear inequality of the form $a_{ij}^\top x \le b_{ij}$, where $a_{ij} = 2(x_j - x_i)$ and $b_{ij} = \|x_j\|^2 - \|x_i\|^2$.
-              Geometrically, this defines the closed halfspace containing $x_i$ bounded by the perpendicular bisector of the segment $[x_i, x_j]$.
+              This is a linear inequality $a_{ij}^\top x \le b_{ij}$ defining a closed halfspace $H_{ij}$.
             </div>
             <div class="proof-step">
-              <strong>Step 4: Intersection.</strong> The Voronoi region $V_i$ is the intersection of these halfspaces for all $j \neq i$:
-              $$ V_i = \bigcap_{j \neq i} \{x \mid 2(x_j - x_i)^\top x \le \|x_j\|^2 - \|x_i\|^2\} $$
-              Since $V_i$ is the intersection of a finite number ($k-1$) of halfspaces, it is by definition a <b>polyhedron</b>. Since polyhedra are convex sets, $V_i$ is convex.
+              <strong>Step 3: Intersection.</strong>
+              The Voronoi region is the intersection of these halfspaces for all $j \neq i$:
+              $$ V_i = \bigcap_{j \neq i} H_{ij} $$
+              Since $V_i$ is the intersection of a finite number ($k-1$) of halfspaces, it is a polyhedron. Since halfspaces are convex and intersections preserve convexity, $V_i$ is convex.
             </div>
           </div>
         </div>
@@ -873,59 +842,59 @@
           <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Dyadic Rationals:</b> By repeatedly taking midpoints, we can reach any point of the form $k/2^n$. These points are dense in the unit interval.</li>
-                <li><b>Role of Closure:</b> Midpoint convexity gets you all dyadic rational combinations. Closure fills in the "gaps" (irrational coefficients) via limits, ensuring full convexity. Without closure, the set of rational numbers $\mathbb{Q}$ is midpoint convex but not convex!</li>
+                <li><b>Dyadic Rationals:</b> Fractions of the form $k/2^n$. These are dense in the real numbers.</li>
+                <li><b>Jensen's Logic:</b> If a property holds for midpoints, it holds for quarters, eighths, etc.</li>
+                <li><b>Role of Topology:</b> Midpoint convexity implies convexity only for closed (or open) sets. Counter-example: The set of rational numbers $\mathbb{Q}$ is midpoint convex but not convex (contains holes).</li>
             </ul>
           </div>
 
           <div class="solution-box">
             <h4>Solution</h4>
             <div class="proof-step">
-              <strong>Step 1: Dyadic Rationals.</strong>
-              By repeatedly applying the midpoint property, we can show that for any $x, y \in C$ and any $k \in \mathbb{N}, m \in \{0, \dots, 2^k\}$:
-              $$ \frac{m}{2^k} x + \left(1 - \frac{m}{2^k}\right) y \in C $$
-              (Proof by induction on $k$: Midpoint of two adjacent dyadics at level $k$ is a dyadic at level $k+1$).
+              <strong>Step 1: Dyadic Combinations.</strong>
+              By induction, we show $\lambda x + (1-\lambda)y \in C$ for all dyadic rationals $\lambda = k/2^n \in [0,1]$.
+              Base case ($n=1$): $\lambda=1/2$, true by assumption.
+              Inductive step: If true for $n$, any dyadic at $n+1$ is the midpoint of two dyadics at level $n$. Since $C$ is midpoint convex, the property holds.
             </div>
             <div class="proof-step">
-              <strong>Step 2: Density.</strong>
-              The set of dyadic rationals $D = \{ m/2^k \mid k \ge 1, 0 \le m \le 2^k \}$ is dense in $[0, 1]$.
-              For any $\theta \in [0, 1]$, there exists a sequence $\lambda_i \in D$ such that $\lambda_i \to \theta$.
+              <strong>Step 2: Density Argument.</strong>
+              Let $\theta \in [0, 1]$ be any real number. Since dyadic rationals are dense in $[0, 1]$, there exists a sequence $\lambda_k \in \{m/2^n\}$ such that $\lambda_k \to \theta$.
             </div>
             <div class="proof-step">
-              <strong>Step 3: Closure.</strong>
-              Let $z_i = \lambda_i x + (1-\lambda_i) y$. By Step 1, $z_i \in C$.
-              Since $\lambda_i \to \theta$, we have $z_i \to z = \theta x + (1-\theta)y$.
-              Since $C$ is closed, the limit $z$ must be in $C$. Thus $C$ is convex.
+              <strong>Step 3: Limit via Closure.</strong>
+              Let $z_k = \lambda_k x + (1-\lambda_k)y$. From Step 1, $z_k \in C$ for all $k$.
+              The sequence converges: $z_k \to z = \theta x + (1-\theta)y$.
+              Since $C$ is closed, it must contain all its limit points. Thus $z \in C$.
             </div>
           </div>
         </div>
 
         <div class="problem">
           <h3>P3.3 — Convex Hull of a Union</h3>
-          <p><b>Problem:</b> Let $C = \mathrm{conv}(S_1 \cup S_2)$, where $S_1, S_2$ are convex sets. Show that $x \in C$ if and only if $x = \theta y + (1-\theta) z$ for some $y \in S_1, z \in S_2, \theta \in [0,1]$.</p>
+          <p><b>Problem:</b> Let $S_1, S_2$ be convex sets. Show that $\mathrm{conv}(S_1 \cup S_2)$ consists exactly of all line segments connecting points in $S_1$ to points in $S_2$. i.e., $x \in \mathrm{conv}(S_1 \cup S_2) \iff x = \theta y + (1-\theta)z$ for $y \in S_1, z \in S_2, \theta \in [0,1]$.</p>
 
           <div class="recap-box">
             <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
             <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Join of Sets:</b> The convex hull of two sets is the union of all line segments connecting them.</li>
-                <li><b>Simplifying Carathéodory:</b> While general convex hulls require combinations of many points, if the sets are already convex, we only need to combine <i>one</i> point from each set.</li>
+                <li><b>Join of Sets:</b> The convex hull of a union $A \cup B$ is called the "join". Geometrically, it fills the space between $A$ and $B$.</li>
+                <li><b>Reduction:</b> A generic convex combination of points in $S_1 \cup S_2$ can be grouped into a "weighted center" for $S_1$ and a "weighted center" for $S_2$.</li>
             </ul>
           </div>
 
           <div class="solution-box">
             <h4>Solution</h4>
             <div class="proof-step">
-              <strong>Direction ($\Leftarrow$):</strong> If $x = \theta y + (1-\theta)z$ with $y \in S_1, z \in S_2$, then $y, z \in S_1 \cup S_2$. Thus $x$ is a convex combination of points in the union, so $x \in \mathrm{conv}(S_1 \cup S_2)$.
+              <strong>($\Leftarrow$):</strong> Let $x = \theta y + (1-\theta)z$ with $y \in S_1, z \in S_2$. Since $S_1, S_2 \subseteq S_1 \cup S_2$, both $y$ and $z$ are in the union. Since the convex hull contains all convex combinations, $x \in \mathrm{conv}(S_1 \cup S_2)$.
             </div>
             <div class="proof-step">
-              <strong>Direction ($\Rightarrow$):</strong> Let $x \in \mathrm{conv}(S_1 \cup S_2)$. Then $x = \sum \lambda_i u_i$ where $u_i \in S_1 \cup S_2$.
-              Split the sum into terms from $S_1$ and terms from $S_2$:
-              $$ x = \sum_{u_i \in S_1} \lambda_i u_i + \sum_{u_j \in S_2} \lambda_j u_j $$
-              Let $\theta = \sum_{u_i \in S_1} \lambda_i$. Then $\sum_{u_j \in S_2} \lambda_j = 1-\theta$.
-              If $\theta=0$ or $\theta=1$, the result holds immediately. Otherwise, define:
-              $$ y = \frac{1}{\theta} \sum_{u_i \in S_1} \lambda_i u_i, \quad z = \frac{1}{1-\theta} \sum_{u_j \in S_2} \lambda_j u_j $$
-              Since $S_1$ is convex, $y \in S_1$ (convex combination of its points). Similarly $z \in S_2$.
-              And $x = \theta y + (1-\theta) z$.
+              <strong>($\Rightarrow$):</strong> Let $x \in \mathrm{conv}(S_1 \cup S_2)$. By definition, $x = \sum_{i=1}^k \lambda_i u_i$ with $u_i \in S_1 \cup S_2$.
+              Reorder indices so $u_1, \dots, u_m \in S_1$ and $u_{m+1}, \dots, u_k \in S_2$.
+              $$ x = \sum_{i=1}^m \lambda_i u_i + \sum_{j=m+1}^k \lambda_j u_j $$
+              Let $\theta = \sum_{i=1}^m \lambda_i$. If $\theta=0$, $x$ is a convex combination of points only in $S_2$, so $x \in S_2$ (convex). Same for $\theta=1$.
+              If $0 < \theta < 1$, define:
+              $$ y = \sum_{i=1}^m \frac{\lambda_i}{\theta} u_i, \quad z = \sum_{j=m+1}^k \frac{\lambda_j}{1-\theta} u_j $$
+              These coefficients sum to 1, so $y \in S_1$ and $z \in S_2$ (by convexity of $S_1, S_2$).
+              Substituting back, $x = \theta y + (1-\theta)z$.
             </div>
           </div>
         </div>

@@ -329,22 +329,23 @@
       </section>
 
       <section class="section-card" id="section-3">
-      <h2>3. Review & Cheat Sheet</h2>
-
-      <h3>Quick Reference Glossary</h3>
-        <ul style="column-count: 2; column-gap: 2rem;">
-          <li><b>Cone:</b> Set closed under positive scaling ($\theta x \in C$ for $\theta \ge 0$).</li>
-          <li><b>Convex cone:</b> Cone that is also convex. Closed under addition.</li>
-          <li><b>Proper cone:</b> Convex, closed, pointed (no lines), solid (nonempty interior).</li>
-          <li><b>Dual cone ($K^*$):</b> $\{y \mid y^\top x \ge 0 \ \forall x \in K\}$.</li>
-          <li><b>Generalized inequality:</b> $x \preceq_K y$ iff $y - x \in K$.</li>
-          <li><b>Separating hyperplane:</b> Exists for any two disjoint convex sets.</li>
-          <li><b>Strict separation:</b> Possible if sets are disjoint, closed, and one is compact.</li>
-          <li><b>Supporting hyperplane:</b> Touches boundary of set, set lies on one side.</li>
-          <li><b>Support function ($S_C(y)$):</b> $\sup_{x \in C} y^\top x$. Defines supporting hyperplanes.</li>
-          <li><b>Self-dual cones:</b> Orthant $\mathbb{R}^n_+$, SOC $\mathcal{Q}$, PSD cone $\mathbb{S}^n_+$.</li>
+        <h2>3. Review & Cheat Sheet</h2>
+        <h3>Separation Theorems</h3>
+        <ul>
+          <li><b>Separating Hyperplane:</b> Any two disjoint convex sets can be separated by a hyperplane ($a^\top x \le b \le a^\top y$).</li>
+          <li><b>Strict Separation:</b> Requires disjoint, closed, and one set compact.</li>
+          <li><b>Supporting Hyperplane:</b> At every boundary point of a convex set, there exists a hyperplane containing the set on one side.</li>
+          <li><b>Farkas Lemma:</b> The fundamental theorem of the alternative for linear inequalities, derived from separation.</li>
         </ul>
-    </section>
+
+        <h3>Cones and Duality</h3>
+        <ul>
+          <li><b>Proper Cone:</b> Convex, Closed, Pointed, Solid. Induces a partial order $\preceq_K$.</li>
+          <li><b>Dual Cone ($K^*$):</b> The set of vectors making a non-obtuse angle with $K$.</li>
+          <li><b>Self-Dual Cones:</b> $\mathbb{R}^n_+$, $\mathcal{Q}^{n+1}$ (SOC), $\mathbb{S}^n_+$ (PSD).</li>
+          <li><b>Dual Operations:</b> $(K_1 + K_2)^* = K_1^* \cap K_2^*$ (for closed convex cones).</li>
+        </ul>
+      </section>
 
     <section class="section-card" id="section-4">
       <h2><i data-feather="edit-3"></i> 4. Exercises</h2>
