@@ -814,6 +814,7 @@
               <strong>Step 4: Formulate as Optimization.</strong>
               The problem becomes:
               $$ \min_x \left( \|Ax - b\|_2 + \rho \|x\|_2 \right) $$
+            This is a regularized least squares problem, specifically with $\ell_2$ regularization (but on the norm itself, not squared). This is sometimes called "square-root LASSO" or similar variants in statistics.
             </div>
 
             <div class="proof-step">
@@ -823,7 +824,7 @@
               Subject to:
               $$ \|Ax - b\|_2 \le t_1 $$
               $$ \|x\|_2 \le t_2 $$
-              These are two second-order cone constraints. Thus, Robust Least Squares is an SOCP.
+            These are two second-order cone constraints (of the form $\|y\|_2 \le t$). Thus, Robust Least Squares is an SOCP.
             </div>
           </div>
         </div>

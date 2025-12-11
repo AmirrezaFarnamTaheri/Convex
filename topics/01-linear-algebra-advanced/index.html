@@ -81,16 +81,16 @@
 
         <div class="proof-step">
           <strong>Step 1: Initialization.</strong>
-          Let $u_1 = a_1$. Normalize to get the first vector: $q_1 = u_1 / \|u_1\|_2$.
+          Let $u_1 = a_1$. If $u_1 = 0$, we can pick any unit vector or skip; assuming linear independence, $u_1 \neq 0$. Normalize to get the first vector: $q_1 = u_1 / \|u_1\|_2$.
           <br>Set $r_{11} = \|u_1\|_2$. Then $a_1 = r_{11} q_1$.
         </div>
 
         <div class="proof-step">
           <strong>Step 2: Iteration ($k=2, \dots, n$).</strong>
           We project the current vector $a_k$ onto the subspace spanned by the previous orthonormal vectors $q_1, \dots, q_{k-1}$ and subtract this projection. This process, "Gram-Schmidt orthogonalization", ensures that the remaining vector $v_k$ is orthogonal to all previous $q_j$:
-          $$ v_k = a_k - \sum_{j=1}^{k-1} \langle q_j, a_k \rangle q_j $$
+          $$ v_k = a_k - \sum_{j=1}^{k-1} \underbrace{\langle q_j, a_k \rangle}_{r_{jk}} q_j $$
           Here, $\langle q_j, a_k \rangle$ is the projection coefficient of $a_k$ onto $q_j$. Let $r_{jk} = \langle q_j, a_k \rangle$. These are the coefficients in the upper triangle of $R$.
-          <br>Normalize the residual to get the next basis vector: $r_{kk} = \|v_k\|_2$ and $q_k = v_k / r_{kk}$.
+          <br>Normalize the residual to get the next basis vector: $r_{kk} = \|v_k\|_2$ and $q_k = v_k / r_{kk}$. (Note: $r_{kk} \neq 0$ due to linear independence).
         </div>
 
         <div class="proof-step">

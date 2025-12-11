@@ -146,6 +146,7 @@
           The max length of $\Delta A x$ is $\|\Delta A\|_2 \|x\|_2 = \rho \|x\|_2$.
           <br><b>Construction:</b> We need a matrix that maps $x$ to a vector parallel to $u$. A rank-1 outer product works best.
           $$ \Delta A = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2} $$
+          (Note: If $u=0$ and $x \ne 0$, any $\Delta A$ maximizing $\|\Delta A x\|$ works, e.g., $\Delta A = \rho v x^\top/\|x\|^2$ for arbitrary unit $v$).
           <b>Verification:</b>
           <ul>
             <li><b>Norm:</b> $\|\Delta A\|_2 = \rho \| \frac{u}{\|u\|} \|_2 \| \frac{x}{\|x\|} \|_2 = \rho \cdot 1 \cdot 1 = \rho$. (Feasible).</li>

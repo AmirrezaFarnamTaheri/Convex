@@ -82,7 +82,9 @@
             <br>Define the scalar $b$ halfway between the boundaries:
             $$ b = \sup_{d \in D} a^\top d + \frac{1}{2}\|p\|_2^2 $$
             Then for all $c \in C, d \in D$:
-            $$ a^\top c \ge a^\top d + \|p\|_2^2 > b > a^\top d $$
+            $$ a^\top c = a^\top (c-d+d) = a^\top (c-d) + a^\top d \ge \|p\|_2^2 + a^\top d $$
+            Since this holds for any $d$, $a^\top c \ge \sup_d a^\top d + \|p\|_2^2 > b$.
+            And $b > \sup_d a^\top d \ge a^\top d$.
             Thus, the hyperplane $\{x \mid a^\top x = b\}$ strictly separates $C$ and $D$.
           </div>
         </div>

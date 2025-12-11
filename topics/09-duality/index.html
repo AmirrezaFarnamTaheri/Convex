@@ -535,14 +535,12 @@
     </div>
     <div class="proof-step">
       <strong>Case 1: (1) has a solution (Feasible).</strong>
-      If there exists $x \ge 0$ such that $Ax=b$, the primal optimal value is $p^* = 0^\top x = 0$.
-      <br>Since the primal is an LP, Strong Duality holds (assuming feasibility). Thus, the dual optimal value is also $d^* = 0$.
-      <br>The dual problem is to maximize $b^\top y$ subject to $A^\top y \le 0$.
-      Since the maximum is 0, for <i>every</i> feasible dual variable $y$ (where $A^\top y \le 0$), we must have $b^\top y \le 0$.
-      <br>This means there is <b>no</b> vector $y$ satisfying $A^\top y \le 0$ AND $b^\top y > 0$.
-      <br>Let $z = -y$. The non-existence of such a $y$ implies there is no $z$ such that $A^\top (-z) \le 0 \implies A^\top z \ge 0$ AND $b^\top (-z) > 0 \implies b^\top z < 0$.
+      If there exists $x \ge 0$ such that $Ax=b$, the primal optimal value is $p^* = 0$.
+      <br>By Weak Duality, for any dual feasible $y$ (where $A^\top y \le 0$), we have $b^\top y \le p^* = 0$.
+      <br>Thus $A^\top y \le 0 \implies b^\top y \le 0$.
+      <br>Let $z = -y$. Then $A^\top (-z) \le 0 \implies A^\top z \ge 0$, and $b^\top (-z) \le 0 \implies b^\top z \ge 0$.
+      <br>System (2) requires $A^\top z \ge 0$ and $b^\top z < 0$. But we showed $b^\top z \ge 0$.
       <br>Thus, system (2) has <b>no solution</b>.
-      <br><i>Connection:</i> This is the "Alternative Systems" logic. Strong duality says "Primal Feasible $\iff$ Dual Bounded". If Primal is Infeasible ($p^* = \infty$), then Dual is Unbounded ($d^* = \infty$), which means there exists an improving direction $y$ making $b^\top y \to \infty$. This direction is exactly the certificate of infeasibility.
     </div>
     <div class="proof-step">
       <strong>Case 2: (1) has no solution (Infeasible).</strong>
