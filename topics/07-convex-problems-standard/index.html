@@ -296,12 +296,77 @@
       </div>
       <p>where $P \in \mathbb{S}_+^n$ (positive semidefinite). If $P=0$, this reduces to an LP.</p>
 
-      <h3>3.2 Standard QP Examples</h3>
-      <h4>Example 3.1: Least-Squares with Constraints</h4>
-      <p>Minimize $\|Ax - b\|_2^2$ subject to $Cx \preceq d$. This is a QP with $P = 2A^\top A$.</p>
+      <h3>3.2 Geometry and Convexity</h3>
+      <p>The objective function is a convex quadratic.
+      <ul>
+          <li><strong>Gradient:</strong> $\nabla f_0(x) = Px + q$.</li>
+          <li><strong>Hessian:</strong> $\nabla^2 f_0(x) = P$.</li>
+      </ul>
+      Since $P \succeq 0$, the Hessian is positive semidefinite everywhere, ensuring convexity.
+      Geometrically, the level sets of the objective are <strong>ellipsoids</strong>. We are finding the lowest point of an ellipsoidal bowl subject to polyhedral constraints.</p>
 
-      <h4>Example 3.2: Markowitz Portfolio Optimization</h4>
-      <p>Minimize risk $x^\top \Sigma x$ subject to expected return $\mu^\top x \ge r_{\text{target}}$. This is a fundamental QP in finance.</p>
+      <h3>3.3 Least-Squares as a QP</h3>
+      <p>The classic unconstrained least-squares problem is to minimize $\|Ax - b\|_2^2$. This is a QP in disguise.</p>
+
+      <div class="proof-box">
+        <h4>Algebraic Expansion</h4>
+        <p>Expanding the squared norm:</p>
+        $$
+        \begin{aligned}
+        \|Ax - b\|_2^2 &= (Ax - b)^\top (Ax - b) \\
+        &= x^\top A^\top A x - 2 b^\top A x + b^\top b
+        \end{aligned}
+        $$
+        <p>Comparing to the standard QP form $\frac{1}{2} x^\top P x + q^\top x + r$:</p>
+        <ul>
+            <li>$P = 2 A^\top A$ (Note: $A^\top A$ is always PSD).</li>
+            <li>$q = -2 A^\top b$.</li>
+            <li>$r = b^\top b$.</li>
+        </ul>
+        <p>Setting the gradient to zero ($\nabla f(x) = 2A^\top A x - 2A^\top b = 0$) recovers the <strong>Normal Equations</strong>:
+        $$ A^\top A x = A^\top b $$</p>
+      </div>
+
+      <h4>Constrained Least-Squares</h4>
+      <p>If we add linear constraints (e.g., $l \le x \le u$), the problem becomes:</p>
+      $$
+      \begin{aligned}
+      \text{minimize} \quad & \|Ax - b\|_2^2 \\
+      \text{subject to} \quad & Gx \le h
+      \end{aligned}
+      $$
+      <p>This is a standard QP. Geometrically, we are projecting the vector $b$ onto the image of the feasible set under $A$. Unlike the unconstrained case, there is generally no closed-form solution.</p>
+
+      <h3>3.4 Application: Mean-Variance Analysis</h3>
+      <p>In finance and stochastic control, we often face random costs.</p>
+      <ul>
+          <li>Let $c$ be a random cost vector with mean $\bar{c}$ and covariance $\Sigma \succeq 0$.</li>
+          <li>The cost is $c^\top x$. Its expectation is $\bar{c}^\top x$.</li>
+          <li>Its variance is $\text{var}(c^\top x) = x^\top \Sigma x$.</li>
+      </ul>
+      <p>A risk-averse decision maker minimizes a weighted combination of expected cost and variance:</p>
+      $$
+      \begin{aligned}
+      \text{minimize} \quad & \bar{c}^\top x + \gamma x^\top \Sigma x \\
+      \text{subject to} \quad & Ax = b, \quad Gx \le h
+      \end{aligned}
+      $$
+      <p>where $\gamma > 0$ is the risk aversion parameter. This is a QP with $P = 2\gamma \Sigma$. It balances the "linear" desire for low cost with the "quadratic" penalty for risk.</p>
+
+      <h3>3.5 Application: Distance Between Polyhedra</h3>
+      <p>Consider two polyhedra $\mathcal{P}_1 = \{x \mid A_1 x \le b_1\}$ and $\mathcal{P}_2 = \{y \mid A_2 y \le b_2\}$. We want to find the distance between them:
+      $$ \min \|x - y\|_2^2 \quad \text{s.t.} \quad x \in \mathcal{P}_1, y \in \mathcal{P}_2 $$
+      </p>
+
+      <div class="insight">
+        <h4>Block Matrix Formulation</h4>
+        <p>We can stack the variables into a single vector $z = (x, y)$. The objective becomes:</p>
+        $$ \|x - y\|_2^2 = x^\top x - 2 x^\top y + y^\top y = \begin{bmatrix} x^\top & y^\top \end{bmatrix} \begin{bmatrix} I & -I \\ -I & I \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} $$
+        <p>The matrix $Q = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix}$ is PSD (it factorizes as $B^\top B$ where $B = [I, -I]$).
+        <br>The constraints stack diagonally:
+        $$ \begin{bmatrix} A_1 & 0 \\ 0 & A_2 \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} \le \begin{bmatrix} b_1 \\ b_2 \end{bmatrix} $$
+        Thus, distance computation is a standard QP in the variable $z$.</p>
+      </div>
     </section>
 
     <!-- NEW SECTION 4: Linear-Fractional Programming -->
@@ -411,6 +476,35 @@
           </li>
           <li><strong>Conclusion:</strong> If $z^*=0$, the LFP optimal value is finite but <strong>not attained</strong>.</li>
       </ul>
+
+      <h3>4.5 Generalized Linear-Fractional Programming (GLFP)</h3>
+      <p>The "LP trick" above relies on having a <strong>single denominator</strong>. What if we have multiple ratios?</p>
+      <p>Consider the <strong>Generalized Linear-Fractional Program (GLFP)</strong>:</p>
+      $$ f_0(x) = \max_{i=1,\dots,r} \frac{c_i^\top x + d_i}{e_i^\top x + f_i} $$
+      <p>subject to linear constraints. The domain is the intersection of the domains of each ratio ($e_i^\top x + f_i > 0$).</p>
+
+      <h4>Properties</h4>
+      <ul>
+          <li><strong>Quasiconvexity:</strong> Each ratio is quasiconvex. The maximum of quasiconvex functions is quasiconvex. Thus, GLFP is a <strong>quasiconvex optimization problem</strong>.</li>
+          <li><strong>No LP Reduction:</strong> Unlike the single ratio case, we cannot use a single variable transformation $z = 1/(e^\top x + f)$ because each term has a <strong>different denominator</strong>. There is no universal "scaling" that linearizes all terms simultaneously.</li>
+          <li><strong>Solution Method:</strong> These are typically solved via <strong>bisection</strong> on the optimal value. Determining if the optimal value is $\le t$ is a feasibility problem for a system of linear inequalities:
+          $$ \frac{c_i^\top x + d_i}{e_i^\top x + f_i} \le t \iff c_i^\top x + d_i \le t(e_i^\top x + f_i) \quad (\forall i) $$
+          </li>
+      </ul>
+
+      <div class="example">
+        <h4>Case Study: Von Neumann Growth Model</h4>
+        <p>Consider an economy with $n$ sectors.
+        <ul>
+            <li>$x \in \mathbb{R}^n$: Current activity levels.</li>
+            <li>$x^+ \in \mathbb{R}^n$: Next period activity levels.</li>
+            <li>$Ax$: Goods produced now. $Bx^+$: Goods required for next period.</li>
+            <li>Constraint: $Bx^+ \le Ax$ (Consumption cannot exceed production).</li>
+        </ul>
+        The growth rate of sector $i$ is $x_i^+ / x_i$. We want to maximize the growth rate of the slowest growing sector (max-min fairness):
+        $$ \max_{x, x^+} \min_{i} \frac{x_i^+}{x_i} $$
+        This is a GLFP. It cannot be reduced to a single LP, but it is quasiconvex and efficiently solvable.</p>
+      </div>
     </section>
 
     <!-- NEW SECTION 5: Summary Pattern Library -->
@@ -440,10 +534,40 @@
       </div>
     </section>
 
-    <!-- SECTION 6: Reformulation (Old Section 5) -->
+    <!-- NEW SECTION 6: Matrix Viewpoint -->
     <section class="section-card" id="section-6">
-      <h2>6. Problem Reformulation</h2>
-      <h3>6.1 Equivalent Problems</h3>
+      <h2>6. Matrix Viewpoint: The Algebra of QPs</h2>
+      <p>Throughout this lecture, we've used block matrices and quadratic forms to construct optimization problems. Let's formalize the linear algebra that makes this work.</p>
+
+      <h3>6.1 Congruence and PSD Matrices</h3>
+      <p>When we write a quadratic form in a new coordinate system $x = Bz$ (where $B$ is invertible), the expression transforms as:</p>
+      $$ x^\top A x = (Bz)^\top A (Bz) = z^\top (B^\top A B) z $$
+      <p>The transformation $A \mapsto B^\top A B$ is called a <strong>congruence transform</strong>.</p>
+      <div class="insight">
+        <h4>Key Property: Preservation of Definiteness</h4>
+        <p><strong>Sylvester's Law of Inertia:</strong> Congruence transforms preserve the number of positive, negative, and zero eigenvalues.
+        <br>Specifically, $A \succeq 0 \iff B^\top A B \succeq 0$.
+        <br>This is why we can build complex QPs using block matrices. For example, the distance matrix $Q = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix}$ represents squared distance $\|x-y\|^2$. Since squared distance is non-negative in <em>any</em> coordinate system, $Q$ must be PSD.</p>
+      </div>
+
+      <h3>6.2 Similarity and Eigenvalues</h3>
+      <p>Contrast congruence with <strong>similarity transforms</strong> $A \mapsto B^{-1} A B$, which arise in eigen-analysis.</p>
+      $$ Ax = \lambda x \iff (B^{-1}AB)(B^{-1}x) = \lambda (B^{-1}x) $$
+      <ul>
+          <li><strong>Similarity</strong> preserves the <strong>values</strong> of the eigenvalues (spectrum).</li>
+          <li><strong>Congruence</strong> preserves the <strong>signs</strong> of the eigenvalues (inertia).</li>
+      </ul>
+      <p>In Convex Optimization:</p>
+      <ul>
+          <li>We use <strong>Congruence</strong> to check if a problem formulation is convex (is the Hessian PSD?).</li>
+          <li>We use <strong>Similarity</strong> (diagonalization) to understand the geometry (shape of ellipsoids) and conditioning of the problem.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 7: Reformulation -->
+    <section class="section-card" id="section-7">
+      <h2>7. Problem Reformulation</h2>
+      <h3>7.1 Equivalent Problems</h3>
       <p>Two optimization problems are equivalent if the solution of one can be readily obtained from the solution of the other, and vice versa. Common techniques include:</p>
       <ul>
         <li><strong>Change of variables:</strong> $x = \phi(y)$.</li>
@@ -461,12 +585,12 @@
       </div>
     </section>
 
-    <!-- SECTION 7: EXERCISES -->
-    <section class="section-card" id="section-7">
-      <h2><i data-feather="edit-3"></i> 7. Exercises</h2>
+    <!-- SECTION 8: EXERCISES -->
+    <section class="section-card" id="section-8">
+      <h2><i data-feather="edit-3"></i> 8. Exercises</h2>
 
       <div class="problem">
-        <h3>P7.1 — Diet Problem (LP)</h3>
+        <h3>P8.1 — Diet Problem (LP)</h3>
         <p>Formulate the classic diet problem as an LP. (See Example 2.1 for the derivation).
         Is the feasible set bounded?</p>
         <div class="solution-box">
@@ -477,7 +601,7 @@
       </div>
 
       <div class="problem">
-        <h3>P7.2 — Transportation Problem (LP)</h3>
+        <h3>P8.2 — Transportation Problem (LP)</h3>
         <p>Supply $s_i$ at sources, demand $d_j$ at destinations. Cost $C_{ij}$. Formulate as LP.</p>
         <div class="solution-box">
           <h4>Solution</h4>
@@ -486,16 +610,21 @@
       </div>
 
       <div class="problem">
-        <h3>P7.3 — Distance between Polyhedra (QP)</h3>
-        <p>Formulate finding the distance between two polyhedra $\mathcal{P}_1$ and $\mathcal{P}_2$ as a QP.</p>
+        <h3>P8.3 — PSD Block Matrix (Matrix Viewpoint)</h3>
+        <p>Verify that the matrix $Q = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix}$ is positive semidefinite by explicitly factoring it as $B^\top B$. What is $B$?</p>
         <div class="solution-box">
           <h4>Solution</h4>
-          <p>$\min \|x_1 - x_2\|_2^2$ s.t. $A_1 x_1 \le b_1, A_2 x_2 \le b_2$. The objective is quadratic in $(x_1, x_2)$.</p>
+          <p>We want $z^\top Q z = \|Bz\|^2$.
+          We know $z^\top Q z = \|x - y\|^2$ where $z = (x, y)$.
+          Also $\|x - y\|^2 = \|\begin{bmatrix} I & -I \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix}\|^2$.
+          So $B = \begin{bmatrix} I & -I \end{bmatrix}$.
+          Check: $B^\top B = \begin{bmatrix} I \\ -I \end{bmatrix} \begin{bmatrix} I & -I \end{bmatrix} = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix} = Q$.
+          Since $Q = B^\top B$, $Q \succeq 0$.</p>
         </div>
       </div>
 
       <div class="problem">
-        <h3>P7.4 — L1 Reformulation</h3>
+        <h3>P8.4 — L1 Reformulation</h3>
         <p>Reformulate $\min \|Ax - b\|_1$ subject to $\|x\|_\infty \le 1$ as an LP.</p>
         <div class="solution-box">
           <h4>Solution</h4>
@@ -504,7 +633,7 @@
       </div>
 
       <div class="problem">
-        <h3>P7.5 — LP Reformulation: Piecewise Linear Objective</h3>
+        <h3>P8.5 — LP Reformulation: Piecewise Linear Objective</h3>
         <p>Consider the problem of minimizing the sum of hinge losses:</p>
         $$ \min_{x} \quad c^\top x + \sum_{i=1}^m \max(0, a_i^\top x + b_i) $$
         <p>Formulate this as a Linear Program.</p>
@@ -538,9 +667,9 @@
         </div>
     </section>
 
-    <!-- SECTION 8: READINGS -->
-    <section class="section-card" id="section-8">
-      <h2>8. Readings & Resources</h2>
+    <!-- SECTION 9: READINGS -->
+    <section class="section-card" id="section-9">
+      <h2>9. Readings & Resources</h2>
       <ul class="link-list">
         <li><strong>Required Reading:</strong> Boyd & Vandenberghe, Chapter 4.</li>
       </ul>
