@@ -1176,29 +1176,6 @@
           <b>Result:</b> If $g_i$ are concave and positive, then the geometric mean $f(x)$ is concave.</p>
         </div>
 
-        <div class="example">
-          <h4>Example 3: $p$-Means ($h(z) = (\sum z_i^p)^{1/p}$)</h4>
-          <p>Consider $f(x) = (\sum_{i=1}^k g_i(x)^p)^{1/p}$ where $g_i(x) \ge 0$.</p>
-          <ul>
-            <li><b>Case $p \ge 1$:</b> The outer function $h(z) = (\sum z_i^p)^{1/p}$ is <b>convex</b> (Minkowski inequality) and <b>non-decreasing</b> ($z \ge 0$).
-            <br>Thus, if $g_i$ are convex, $f$ is convex.</li>
-            <li><b>Case $0 < p \le 1$:</b> The outer function $h(z)$ is <b>concave</b> (Reverse Minkowski) and <b>non-decreasing</b>.
-            <br>Thus, if $g_i$ are concave, $f$ is concave.</li>
-          </ul>
-        </div>
-
-        <div class="example">
-          <h4>Example 4: Geometric Mean ($h(z) = (\prod z_i)^{1/k}$)</h4>
-          <p>Consider $f(x) = (\prod_{i=1}^k g_i(x))^{1/k}$ where $g_i(x) > 0$.
-          <br>The outer function $h(z) = (\prod z_i)^{1/k}$ is <b>concave</b> and <b>non-decreasing</b> on $\mathbb{R}_{++}^k$.
-          <br><b>Proof check:</b>
-          <ul>
-              <li>Monotonicity: $\partial h/\partial z_j = (1/k) (\prod z_i)^{1/k} z_j^{-1} > 0$.</li>
-              <li>Concavity: $\nabla^2 h \preceq 0$ (see Section 4 for deep dive).</li>
-          </ul>
-          <b>Result:</b> If $g_i$ are concave, then the geometric mean $f(x)$ is concave.</p>
-        </div>
-
         <h3>5.6 Perspective Function</h3>
         <div class="theorem-box">
           <h4>Definition and Property</h4>

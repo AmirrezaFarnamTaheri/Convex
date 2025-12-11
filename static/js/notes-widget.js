@@ -508,6 +508,8 @@ class KnowledgeWidget {
             .kw-note { border: 1px solid var(--border-subtle); border-radius: 8px; padding: 10px; background: var(--surface); }
             .kw-note-meta { font-size: 0.75em; color: var(--text-tertiary); display: flex; justify-content: space-between; margin-bottom: 6px; }
             .kw-note textarea { width: 100%; border: none; resize: vertical; font-family: var(--font-mono); font-size: 0.9em; outline: none; min-height: 60px; }
+            .kw-note-tags { margin-top: 8px; font-size: 0.8em; }
+            .kw-note-tags input { width: 100%; border: none; border-bottom: 1px solid var(--border-subtle); padding: 4px; font-size: 0.9em; background: transparent; }
 
             /* Highlights */
             .kw-highlight { border-radius: 2px; cursor: pointer; transition: background 0.2s; }
@@ -546,6 +548,7 @@ class KnowledgeWidget {
                 display: flex; justify-content: space-between; align-items: center;
             }
             .kw-bookmark:hover { border-color: var(--primary-500); }
+            .kw-tag { display: inline-block; padding: 2px 6px; border-radius: 4px; background: var(--surface-alt); font-size: 0.75em; margin-right: 4px; border: 1px solid var(--border-subtle); }
         `;
         document.head.appendChild(style);
     }
@@ -573,6 +576,7 @@ class KnowledgeWidget {
         const note = {
             id: Date.now(),
             text: '',
+            tags: [],
             timestamp: new Date().toISOString()
         };
         this.notes.unshift(note);
@@ -584,6 +588,14 @@ class KnowledgeWidget {
         const note = this.notes.find(n => n.id === id);
         if (note) {
             note.text = text;
+            this.saveData();
+        }
+    }
+
+    updateNoteTags(id, tagsString) {
+        const note = this.notes.find(n => n.id === id);
+        if (note) {
+            note.tags = tagsString.split(',').map(t => t.trim()).filter(t => t);
             this.saveData();
         }
     }
@@ -626,12 +638,37 @@ class KnowledgeWidget {
                 preview.style.fontSize = '0.9em';
                 preview.innerHTML = typeof marked !== 'undefined' ? marked.parse(note.text) : note.text;
                 el.appendChild(preview);
+
+                // Show tags in preview
+                if (note.tags && note.tags.length > 0) {
+                    const tagsDiv = document.createElement('div');
+                    tagsDiv.className = 'kw-note-tags';
+                    note.tags.forEach(tag => {
+                        const tagSpan = document.createElement('span');
+                        tagSpan.className = 'kw-tag';
+                        tagSpan.textContent = tag;
+                        tagsDiv.appendChild(tagSpan);
+                    });
+                    el.appendChild(tagsDiv);
+                }
+
             } else {
                 const textarea = document.createElement('textarea');
                 textarea.value = note.text;
                 textarea.placeholder = 'Write your note...';
                 textarea.oninput = (e) => this.updateNote(note.id, e.target.value);
                 el.appendChild(textarea);
+
+                // Tags Input
+                const tagsDiv = document.createElement('div');
+                tagsDiv.className = 'kw-note-tags';
+                const tagsInput = document.createElement('input');
+                tagsInput.type = 'text';
+                tagsInput.placeholder = 'Tags (comma separated)';
+                tagsInput.value = note.tags ? note.tags.join(', ') : '';
+                tagsInput.oninput = (e) => this.updateNoteTags(note.id, e.target.value);
+                tagsDiv.appendChild(tagsInput);
+                el.appendChild(tagsDiv);
             }
 
             list.appendChild(el);
@@ -653,7 +690,14 @@ class KnowledgeWidget {
         const results = this.searchIndex.filter(item => item.text.toLowerCase().includes(q)).slice(0, 10);
 
         // Search Notes
-        const noteResults = this.notes.filter(n => n.text.toLowerCase().includes(q));
+        const noteResults = this.notes.filter(n => {
+            const inText = n.text.toLowerCase().includes(q);
+            const inTags = n.tags && n.tags.some(t => t.toLowerCase().includes(q));
+            return inText || inTags;
+        });
+
+        // Search Bookmarks
+        const bookmarkResults = this.bookmarks.filter(b => b.title.toLowerCase().includes(q));
 
         // Render Content Results
         if (results.length > 0) {
@@ -680,13 +724,36 @@ class KnowledgeWidget {
             noteResults.forEach(note => {
                 const el = document.createElement('div');
                 el.className = 'kw-result-item';
+                const tagsHtml = note.tags && note.tags.length ? `<div style="font-size:0.8em; color:var(--primary-600); margin-top:2px;">Tags: ${note.tags.join(', ')}</div>` : '';
                 el.innerHTML = `
                     <div class="kw-result-title">Note from ${new Date(note.timestamp).toLocaleDateString()}</div>
                     <div class="kw-result-snippet">${this.getSnippet(note.text, q)}</div>
+                    ${tagsHtml}
                 `;
                 el.onclick = () => {
                     this.switchTab('notes');
                     // Scroll to note? (Needs ID ref in DOM)
+                };
+                list.appendChild(el);
+            });
+        }
+
+        // Render Bookmark Results
+        if (bookmarkResults.length > 0) {
+            list.innerHTML += `<div style="padding: 4px 8px; font-weight:bold; font-size:0.8em; color:var(--text-tertiary); margin-top: 8px;">BOOKMARKS</div>`;
+             bookmarkResults.forEach(b => {
+                const el = document.createElement('div');
+                el.className = 'kw-result-item';
+                el.innerHTML = `
+                    <div class="kw-result-title">${b.title}</div>
+                    <div class="kw-result-snippet">Bookmark</div>
+                `;
+                el.onclick = () => {
+                   const target = document.getElementById(b.targetId);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                        this.togglePanel();
+                    }
                 };
                 list.appendChild(el);
             });

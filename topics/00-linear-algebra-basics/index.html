@@ -176,30 +176,30 @@
         <br>
         <div class="proof-box">
           <h4>Derivation: Gradient of Log Determinant</h4>
-        <p>We derive the gradient by identifying the linear term in the Taylor expansion of $f(X+\Delta)$ around $X$. This derivation relies on the connection between determinant, trace, and eigenvalues.</p>
+          <p>We derive the gradient by identifying the linear term in the Taylor expansion of $f(X+\Delta)$ around $X$. This derivation relies on the connection between determinant, trace, and eigenvalues.</p>
           <div class="proof-step">
             <strong>Step 1: Factor out X.</strong>
-          Assuming $X$ is invertible and $\Delta$ is small enough:
+            Assuming $X$ is invertible and $\Delta$ is small enough:
             $$ \log \det (X + \Delta) = \log \det (X(I + X^{-1}\Delta)) = \log (\det X \cdot \det(I + X^{-1}\Delta)) $$
-          Using the property $\log(ab) = \log a + \log b$:
+            Using the property $\log(ab) = \log a + \log b$:
             $$ = \log \det X + \log \det(I + X^{-1}\Delta) $$
           </div>
           <div class="proof-step">
-          <strong>Step 2: Relate Determinant to Trace.</strong>
-          Let $E = X^{-1}\Delta$ and let $\lambda_i$ be the eigenvalues of $E$. The eigenvalues of $I+E$ are then $1+\lambda_i$. Thus:
-          $$ \det(I + E) = \prod_{i=1}^n (1 + \lambda_i) $$
-          Taking the natural logarithm:
-          $$ \log \det(I + E) = \sum_{i=1}^n \log(1 + \lambda_i) $$
-        </div>
-        <div class="proof-step">
-          <strong>Step 3: Linearize via Taylor Series.</strong>
-          We use the first-order Taylor expansion of the logarithm, $\log(1+z) \approx z$ for small $z$. For small $\Delta$, the eigenvalues $\lambda_i$ of $X^{-1}\Delta$ are small.
-          $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i $$
-          Recall that the sum of the eigenvalues of a matrix equals its trace:
-          $$ \sum_{i=1}^n \lambda_i = \mathrm{tr}(X^{-1}\Delta) $$
+            <strong>Step 2: Relate Determinant to Trace.</strong>
+            Let $E = X^{-1}\Delta$. Let $\lambda_i$ be the eigenvalues of $E$. The eigenvalues of $I+E$ are then $1+\lambda_i$. Thus:
+            $$ \det(I + E) = \prod_{i=1}^n (1 + \lambda_i) $$
+            Taking the natural logarithm:
+            $$ \log \det(I + E) = \sum_{i=1}^n \log(1 + \lambda_i) $$
           </div>
           <div class="proof-step">
-          <strong>Step 4: Identify the Gradient.</strong>
+            <strong>Step 3: Linearize via Taylor Series.</strong>
+            We use the first-order Taylor expansion of the logarithm, $\log(1+z) = z - \frac{z^2}{2} + \dots \approx z$ for small $z$. For small $\Delta$, the eigenvalues $\lambda_i$ of $E = X^{-1}\Delta$ are close to 0.
+            $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i $$
+            Recall that the sum of the eigenvalues of a matrix equals its trace:
+            $$ \sum_{i=1}^n \lambda_i = \mathrm{tr}(E) = \mathrm{tr}(X^{-1}\Delta) $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 4: Identify the Gradient.</strong>
             Substituting back into the expression for the perturbation:
             $$ \log \det(X+\Delta) \approx \log \det X + \mathrm{tr}(X^{-1}\Delta) $$
             To extract the gradient, we rewrite the linear term using the trace inner product $\langle A, B \rangle = \mathrm{tr}(A^\top B)$.
@@ -327,19 +327,19 @@
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Extend to a basis for $\mathbb{R}^n$.</strong> By the Basis Extension Theorem, we extend this set to a basis for the entire space $\mathbb{R}^n$: $\{v_1, \dots, v_k, w_1, \dots, w_{n-k}\}$. Let $r = n-k$ be the number of added vectors.
+          <strong>Step 2: Extend to a basis for $\mathbb{R}^n$.</strong> By the Basis Extension Theorem, we can always extend a linearly independent set (like the nullspace basis) to a full basis for the vector space. We add $r = n-k$ vectors $\{w_1, \dots, w_r\}$ such that the full set $B = \{v_1, \dots, v_k, w_1, \dots, w_r\}$ is a basis for $\mathbb{R}^n$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Analyze the image of the basis vectors.</strong> Consider the image of an arbitrary vector $x \in \mathbb{R}^n$. We can write $x$ as a linear combination of basis elements:
+          <strong>Step 3: Analyze the image of the basis vectors.</strong> Consider the image of an arbitrary vector $x \in \mathbb{R}^n$. Since $B$ is a basis, we can write $x$ uniquely as:
           $$ x = \sum_{i=1}^k c_i v_i + \sum_{j=1}^{r} d_j w_j $$
           Applying the linear map $A$:
           $$ Ax = \sum_{i=1}^k c_i \underbrace{A v_i}_{0} + \sum_{j=1}^{r} d_j A w_j = \sum_{j=1}^{r} d_j A w_j $$
-          This shows that the vectors $\{Aw_1, \dots, Aw_r\}$ span the column space $\mathcal{R}(A)$.
+          This equation shows that any vector in the column space ($Ax$) can be written as a linear combination of the vectors $\{Aw_1, \dots, Aw_r\}$. Thus, these $r$ vectors span the column space $\mathcal{R}(A)$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 4: Prove Linear Independence in the Range.</strong> We must show that $\{Aw_1, \dots, Aw_r\}$ are linearly independent. Suppose we have a linear combination summing to zero:
+          <strong>Step 4: Prove Linear Independence in the Range.</strong> To verify that $\{Aw_1, \dots, Aw_r\}$ form a basis for $\mathcal{R}(A)$, we must show they are linearly independent. Suppose we have a linear combination summing to zero:
           $$ \sum_{j=1}^{r} \alpha_j A w_j = 0 $$
           By linearity, this implies $A \left( \sum_{j=1}^{r} \alpha_j w_j \right) = 0$.
           Let $u = \sum_{j=1}^{r} \alpha_j w_j$. Since $Au = 0$, the vector $u$ must lie in the nullspace $\mathcal{N}(A)$.
@@ -356,8 +356,9 @@
 
         <div class="proof-step">
           <strong>Step 6: Count Dimensions.</strong> Since $\{Aw_1, \dots, Aw_r\}$ is a linearly independent spanning set for $\mathcal{R}(A)$, it is a basis.
-          Thus, $\dim(\mathcal{R}(A)) = r = n - k$.
-          Rearranging gives the theorem: $\dim(\mathcal{R}(A)) + \dim(\mathcal{N}(A)) = n$.
+          Thus, the dimension of the column space (rank) is exactly $r$.
+          From Step 2, we defined $r = n - k$. Rearranging gives the theorem:
+          $$ \dim(\mathcal{R}(A)) + \dim(\mathcal{N}(A)) = r + k = n $$
         </div>
       </div>
 
@@ -963,9 +964,12 @@
 
         <div class="proof-step">
           <strong>Proof ($\Rightarrow$):</strong> Assume $M \succeq 0$.
-          Consider test vectors $z = [x^\top, -(D^{-1}B^\top x)^\top]^\top$. Then:
-          $$ z^\top M z = x^\top (A - B D^{-1} B^\top) x = x^\top S x $$
-          Since $M \succeq 0$, $z^\top M z \ge 0$ for all $z$, which implies $x^\top S x \ge 0$ for all $x$. Thus $S \succeq 0$.
+          We need to show $x^\top S x \ge 0$ for any $x$. To isolate $S$, we intelligently choose a test vector $z$ that minimizes the quadratic form with respect to the second block.
+          <br>Consider $z = [x^\top, y^\top]^\top$. The quadratic form is $x^\top A x + 2 x^\top B y + y^\top D y$. Minimizing this w.r.t. $y$ (by setting gradient to zero: $2B^\top x + 2Dy = 0$) gives $y = -D^{-1}B^\top x$.
+          <br>Substitute this specific $y$ into the test vector $z = [x^\top, -(D^{-1}B^\top x)^\top]^\top$:
+          $$ z^\top M z = x^\top A x - x^\top B (D^{-1}B^\top x) - (x^\top B D^{-1}) B^\top x + (x^\top B D^{-1}) D (D^{-1} B^\top x) $$
+          $$ = x^\top A x - 2 x^\top B D^{-1} B^\top x + x^\top B D^{-1} B^\top x = x^\top (A - B D^{-1} B^\top) x = x^\top S x $$
+          Since $M \succeq 0$, we have $z^\top M z \ge 0$ for any $z$, and thus $x^\top S x \ge 0$ for all $x$. Therefore, $S \succeq 0$.
         </div>
 
         <div class="proof-step">

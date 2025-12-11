@@ -62,6 +62,7 @@
               For any $\theta \in \mathbb{R}$:
               $$
               \theta x_1 + (1-\theta)x_2 = \theta(x_0 + v_1) + (1-\theta)(x_0 + v_2)
+            = \theta x_0 + (1-\theta)x_0 + \theta v_1 + (1-\theta)v_2
               = x_0 + [\theta v_1 + (1-\theta)v_2]
               $$
               Since $V$ is a subspace, it is closed under linear combinations, so the bracketed term is in $V$. Thus the combination is in $x_0 + V = C$.
@@ -70,7 +71,10 @@
               <strong>($\Rightarrow$):</strong> Suppose $C$ is affine. Pick any $x_0 \in C$ and define $V = C - x_0 = \{x - x_0 \mid x \in C\}$. We show $V$ is a subspace.
               <ul>
                 <li>$0 \in V$ since $x_0 \in C$.</li>
-                <li>Let $v_1, v_2 \in V$ and $\alpha, \beta \in \mathbb{R}$. We want $\alpha v_1 + \beta v_2 \in V$. This follows from the affine property of $C$ (specifically, closure under affine sums leads to closure of difference vectors under linear combinations).</li>
+              <li>To show $V$ is closed under scalar multiplication and addition:
+                <br>Let $v \in V$ and $\alpha \in \mathbb{R}$. Then $v+x_0 \in C$. Since $C$ is affine, $\alpha(v+x_0) + (1-\alpha)x_0 = \alpha v + x_0 \in C$. Thus $\alpha v \in V$.
+                <br>Let $u, v \in V$. Then $u+x_0, v+x_0 \in C$. Since $C$ is affine, $\frac{1}{2}(u+x_0) + \frac{1}{2}(v+x_0) = \frac{1}{2}(u+v) + x_0 \in C$. Thus $\frac{1}{2}(u+v) \in V$. By scaling (proven above), $u+v \in V$.
+              </li>
               </ul>
               Thus $C = x_0 + V$.
             </div>
