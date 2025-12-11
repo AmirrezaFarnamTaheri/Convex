@@ -86,7 +86,9 @@
           <p>Let $S = \{x_1, \dots, x_m\} \subset \mathbb{R}^n$. Prove that the convex hull $\text{conv}(S)$ is a convex set.</p>
           <div class="recap-box">
             <h4>Recap</h4>
-            <p>The convex hull is the set of all convex combinations. To prove a set defined by a type of combination is convex, we show that a convex combination of convex combinations is still a convex combination (weights are products of sums, still summing to 1).</p>
+            <p><b>Definition:</b> $\mathrm{conv}(S) = \{\sum \theta_i x_i \mid \theta \ge 0, \sum \theta_i = 1\}$.
+            <br><b>Strategy:</b> Prove that a convex combination of convex combinations is still a convex combination.
+            <br><b>Key Algebra:</b> If $z = \theta u + (1-\theta)v$ where $u,v$ are combinations with weights $\alpha, \beta$, then $z$ uses weights $\gamma = \theta \alpha + (1-\theta)\beta$. Since $\alpha, \beta$ are probability vectors, their mixture $\gamma$ is also a probability vector.</p>
           </div>
           <div class="solution-box">
             <h4>Solution</h4>
@@ -167,28 +169,38 @@
         </div>
 
         <div class="proof-box">
-          <h4>Proof</h4>
+          <h4>Proof of Carathéodory's Theorem</h4>
           <div class="proof-step">
-            <strong>Step 1: Linear Dependence.</strong> Let $x \in \mathrm{conv}(S)$. By definition, $x$ is a convex combination of $k$ points $x_1, \dots, x_k$ with strictly positive coefficients $\theta_i > 0$. Suppose $k > n+1$.
-            Consider the vectors $v_2 = x_2 - x_1, \dots, v_k = x_k - x_1$. There are $k-1$ such vectors. Since $k-1 > n$, these vectors must be linearly dependent in $\mathbb{R}^n$.
+            <strong>Step 1: Affine Dependence from Linear Dependence.</strong>
+            Let $x \in \mathrm{conv}(S)$. By definition, $x$ is a convex combination of $k$ points $x_1, \dots, x_k$ with strictly positive coefficients $\theta_i > 0$. Suppose $k > n+1$.
+            The $k$ points $x_1, \dots, x_k$ must be <b>affinely dependent</b> because there are more than $n+1$ of them in $\mathbb{R}^n$.
+            (Recall: $k$ points are affinely dependent iff $k-1$ difference vectors are linearly dependent. Here $k-1 > n$, so dependence is guaranteed).
           </div>
           <div class="proof-step">
-            <strong>Step 2: Constructing an Affine Dependency.</strong> There exist scalars $\alpha_2, \dots, \alpha_k$, not all zero, such that $\sum_{i=2}^k \alpha_i (x_i - x_1) = 0$.
-            Let $\alpha_1 = -\sum_{i=2}^k \alpha_i$. Then:
-            $$ \sum_{i=1}^k \alpha_i x_i = \alpha_1 x_1 + \sum_{i=2}^k \alpha_i x_i = -\left(\sum_{i=2}^k \alpha_i\right) x_1 + \sum_{i=2}^k \alpha_i x_i = \sum_{i=2}^k \alpha_i (x_i - x_1) = 0 $$
-            Additionally, $\sum_{i=1}^k \alpha_i = \alpha_1 + \sum_{i=2}^k \alpha_i = 0$.
-            Thus, we have a non-trivial linear combination summing to zero with weights summing to zero.
+            <strong>Step 2: Constructing a Zero Sum.</strong>
+            Affine dependence means there exist scalars $\alpha_1, \dots, \alpha_k$, not all zero, such that:
+            $$ \sum_{i=1}^k \alpha_i x_i = 0 \quad \text{and} \quad \sum_{i=1}^k \alpha_i = 0 $$
+            Since the $\alpha_i$ sum to 0 and are not all zero, at least one must be positive.
           </div>
           <div class="proof-step">
-            <strong>Step 3: Reducing the Count.</strong> We modify the original weights $\theta_i$ by subtracting a multiple of $\alpha_i$:
-            $$ \theta'_i = \theta_i - \beta \alpha_i $$
-            Note that $\sum \theta'_i = \sum \theta_i - \beta \sum \alpha_i = 1 - 0 = 1$. Also $\sum \theta'_i x_i = \sum \theta_i x_i - \beta \sum \alpha_i x_i = x - 0 = x$.
-            We choose $\beta$ to make at least one $\theta'_i$ zero while keeping the rest non-negative.
-            Let $\beta = \min \{ \theta_i / \alpha_i \mid \alpha_i > 0 \}$. Such an index exists because not all $\alpha_i$ can be non-positive (since they sum to 0 and are not all 0).
-            For the index $j$ achieving the minimum, $\theta'_j = 0$. For all other $i$, $\theta'_i \ge 0$.
+            <strong>Step 3: Perturbing the Weights.</strong>
+            We want to reduce the number of points in the combination. Consider new weights $\theta'_i = \theta_i - \lambda \alpha_i$.
+            Note that for any $\lambda$:
+            $$ \sum \theta'_i = \sum \theta_i - \lambda \sum \alpha_i = 1 - 0 = 1 $$
+            $$ \sum \theta'_i x_i = \sum \theta_i x_i - \lambda \sum \alpha_i x_i = x - 0 = x $$
+            So $x$ is still an affine combination. We need to choose $\lambda$ such that all $\theta'_i \ge 0$ and at least one $\theta'_j = 0$.
           </div>
           <div class="proof-step">
-            <strong>Conclusion:</strong> We have expressed $x$ as a convex combination of $k-1$ points. We can repeat this process as long as $k > n+1$. The recursion stops when $k \le n+1$.
+            <strong>Step 4: Finding the Step Size.</strong>
+            To ensure $\theta'_i \ge 0$, we need $\theta_i - \lambda \alpha_i \ge 0$, or $\lambda \alpha_i \le \theta_i$.
+            If $\alpha_i \le 0$, this holds for any $\lambda \ge 0$.
+            If $\alpha_i > 0$, we need $\lambda \le \theta_i / \alpha_i$.
+            To eliminate one coefficient, we choose the largest possible $\lambda$:
+            $$ \lambda^* = \min \{ \theta_i / \alpha_i \mid \alpha_i > 0 \} $$
+            Let $j$ be an index achieving this minimum. Then $\theta'_j = 0$, and $\theta'_i \ge 0$ for all $i$.
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion:</strong> We have expressed $x$ as a convex combination of at most $k-1$ points (since the $j$-th coefficient is zero). We can repeat this reduction process as long as $k > n+1$. The recursion stops when we have at most $n+1$ points.
           </div>
         </div>
 
@@ -819,36 +831,6 @@
           <p><b>Problem:</b> Let $x_1, \dots, x_k \in \mathbb{R}^n$ be a set of points. The Voronoi region associated with $x_i$ is defined as:
           $$ V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2, \ \forall j \neq i\} $$
           Prove that $V_i$ is a polyhedron (and thus a convex set).</p>
-
-          <div class="recap-box">
-            <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-            <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-                <li><b>Halfspaces as Decision Boundaries:</b> The set of points closer to $A$ than $B$ is a halfspace separated by the perpendicular bisector of the segment $AB$.</li>
-                <li><b>Polyhedra as Intersections:</b> Since the Voronoi region is the intersection of these "closer-to-me" conditions (one for each neighbor), it is an intersection of halfspaces, which defines a polyhedron.</li>
-            </ul>
-          </div>
-
-          <div class="solution-box">
-            <h4>Solution</h4>
-            <div class="proof-step">
-              <strong>Step 1: Analyze pairwise condition.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ is equivalent to squaring both sides:
-              $$ \|x - x_i\|_2^2 \le \|x - x_j\|_2^2 $$
-            </div>
-            <div class="proof-step">
-              <strong>Step 2: Expand.</strong>
-              $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
-            </div>
-            <div class="proof-step">
-              <strong>Step 3: Simplify to linear inequality.</strong> The quadratic terms $x^\top x$ cancel out. Rearranging:
-              $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$
-              This is a linear inequality of the form $a_{ij}^\top x \le b_{ij}$.
-            </div>
-            <div class="proof-step">
-              <strong>Step 4: Intersection.</strong>
-              $V_i$ is the intersection of $k-1$ such halfspaces (one for each $j \neq i$). Therefore, $V_i$ is a polyhedron. Since polyhedra are convex, $V_i$ is convex.
-            </div>
-          </div>
-        </div>
 
         <div class="problem">
           <h3>P3.2 — Midpoint Convexity</h3>

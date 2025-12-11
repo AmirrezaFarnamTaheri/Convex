@@ -40,9 +40,9 @@
         <span>Tags: prerequisites, review, linear-algebra, foundational</a>
       </div>
       <div class="lecture-summary">
-        <p>This lecture establishes the linear algebra foundations required for convex optimization. We begin with vectors and matrices, then progress to inner products, norms, orthogonality, projections, and least squares, building the mathematical background necessary for optimization theory.</p>
-        <p><strong>Prerequisites:</strong> None.</p>
-        <p><strong>Forward Connections:</strong> Projection techniques introduced here underpin least squares methods. Positive Semidefinite (PSD) matrices form the basis for convex quadratic programs and semidefinite programming. The four fundamental subspaces provide the geometric understanding of feasible sets. Advanced topics (QR, SVD, pseudoinverse) are covered in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</p>
+        <p>This lecture establishes the linear algebra foundations required for convex optimization. We begin with vectors and matrices, then progress to inner products, norms, orthogonality, projections, and least squares, building the mathematical background necessary for optimization theory. This material provides the rigorous language needed to describe convex sets, functions, and optimization problems.</p>
+        <p><strong>Prerequisites:</strong> Basic calculus and familiarity with matrix notation.</p>
+        <p><strong>Forward Connections:</strong> Projection techniques introduced here are essential for least squares methods and constrained optimization. Positive Semidefinite (PSD) matrices are the cornerstone of convex quadratic programs and semidefinite programming (<a href="../08-convex-problems-conic/index.html">Lecture 08</a>). The four fundamental subspaces provide the geometric understanding of feasible sets and duality. Advanced topics (QR, SVD, pseudoinverse) are covered in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</p>
       </div>
     </header>
 
@@ -50,12 +50,12 @@
       <h2><i data-feather="target"></i> Learning Objectives</h2>
       <p>After this lecture, you will be able to:</p>
       <ul>
-        <li><b>Analyze Fundamental Subspaces:</b> Identify and compute the dimensions of the four fundamental subspaces of a matrix using the Rank-Nullity Theorem.</li>
+        <li><b>Analyze Fundamental Subspaces:</b> Identify and compute the dimensions of the four fundamental subspaces of a matrix ($\mathcal{R}(A), \mathcal{N}(A), \mathcal{R}(A^\top), \mathcal{N}(A^\top)$) using the Rank-Nullity Theorem.</li>
         <li><b>Manipulate Norms and Inner Products:</b> Apply standard and generalized inner products, vector norms ($\ell_1, \ell_2, \ell_\infty$), and their duals to establish inequalities like Cauchy-Schwarz and Hölder.</li>
-        <li><b>Perform Geometric Operations:</b> Construct orthonormal bases via Gram-Schmidt and compute projections onto subspaces and affine sets.</li>
-        <li><b>Characterize PSD Matrices:</b> Determine positive semidefiniteness using eigenvalues, variational forms ($x^\top Ax \ge 0$), and the Schur Complement.</li>
-        <li><b>Solve Least Squares:</b> Derive and solve the normal equations for overdetermined systems and interpret the solution as an orthogonal projection.</li>
-        <li><b>Apply Matrix Calculus:</b> Compute gradients and Hessians for linear, quadratic, and log-determinant functions.</li>
+        <li><b>Perform Geometric Operations:</b> Construct orthonormal bases via Gram-Schmidt and compute orthogonal projections onto subspaces and affine sets.</li>
+        <li><b>Characterize PSD Matrices:</b> Determine positive semidefiniteness using eigenvalues, variational forms ($x^\top Ax \ge 0$), and the Schur Complement lemma.</li>
+        <li><b>Solve Least Squares:</b> Derive and solve the normal equations for overdetermined systems and interpret the solution geometrically as an orthogonal projection.</li>
+        <li><b>Apply Matrix Calculus:</b> Compute gradients and Hessians for linear, quadratic, and log-determinant functions, which are essential for first- and second-order optimization algorithms.</li>
       </ul>
     </section>
 
@@ -915,15 +915,15 @@
         $$ S := A - B D^{-1} C $$
 
         <h4>2. Constructing the Elimination Matrix</h4>
-        <p>To analyze $M$, we perform block Gaussian elimination. Define the elimination matrix $R$ (often denoted as $E$ in elimination contexts):</p>
-        $$ R = \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} $$
-        <p>This matrix is block lower-triangular with unit diagonal blocks, so $\det(R) = 1$. Multiplying $M$ by $R$ on the right yields the factorization:</p>
-        $$ MR = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} = \begin{bmatrix} A - BD^{-1}C & B \\ 0 & D \end{bmatrix} = \begin{bmatrix} S & B \\ 0 & D \end{bmatrix} $$
+        <p>To analyze $M$, we perform block Gaussian elimination. Define the elimination matrix $E$:</p>
+        $$ E = \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} $$
+        <p>This matrix is block lower-triangular with unit diagonal blocks, so $\det(E) = 1$. Multiplying $M$ by $E$ on the right yields the factorization:</p>
+        $$ ME = \begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} I_p & 0 \\ -D^{-1}C & I_q \end{bmatrix} = \begin{bmatrix} A - BD^{-1}C & B \\ 0 & D \end{bmatrix} = \begin{bmatrix} S & B \\ 0 & D \end{bmatrix} $$
 
         <div class="proof-box">
           <h4>Line-by-Line Verification of Block Multiplication</h4>
-          <p>Let's verify this multiplication explicitly using the block multiplication rule $\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} E & F \\ G & H \end{bmatrix} = \begin{bmatrix} AE+BG & AF+BH \\ CE+DG & CF+DH \end{bmatrix}$.</p>
-          <p>Here $E=I_p, F=0, G=-D^{-1}C, H=I_q$.</p>
+          <p>Let's verify this multiplication explicitly using the block multiplication rule $\begin{bmatrix} A & B \\ C & D \end{bmatrix} \begin{bmatrix} X & Y \\ Z & W \end{bmatrix} = \begin{bmatrix} AX+BZ & AY+BW \\ CX+DZ & CY+DW \end{bmatrix}$.</p>
+          <p>Here $X=I_p, Y=0, Z=-D^{-1}C, W=I_q$.</p>
           <ul>
             <li><b>Top-left:</b> $A(I_p) + B(-D^{-1}C) = A - BD^{-1}C = S$.</li>
             <li><b>Top-right:</b> $A(0) + B(I_q) = B$.</li>
@@ -935,7 +935,7 @@
         <div class="insight">
           <h4>💡 Choice of Elimination Matrix</h4>
           <p>The goal is to eliminate the bottom-left block $C$, analogous to Gaussian elimination. We require the $(2,1)$ block of the product to be zero:
-          $$ C \cdot I_p + D \cdot X = 0 \implies D X = -C \implies X = -D^{-1}C $$
+          $$ C \cdot I_p + D \cdot Z = 0 \implies D Z = -C \implies Z = -D^{-1}C $$
           This determines the entry $-D^{-1}C$ in the elimination matrix $E$.</p>
         </div>
 
@@ -1346,7 +1346,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>To check linear independence, form a linear combination summing to zero. If the only solution is the zero coefficient vector, they are independent. Geometrically, dependent vectors lie in a lower-dimensional flat (e.g., three vectors on a plane).</p>
+        <p><b>Definition:</b> Vectors $\{v_i\}$ are linearly independent if $\sum c_i v_i = 0 \implies c = 0$.
+        <br><b>Matrix View:</b> The matrix $A = [v_1 \dots v_k]$ has independent columns iff $\mathcal{N}(A) = \{0\}$ (full column rank).
+        <br><b>Determinant Test:</b> For $n$ vectors in $\mathbb{R}^n$, they are independent iff $\det([v_1 \dots v_n]) \neq 0$.
+        <br><b>Geometry:</b> Dependent vectors collapse into a lower-dimensional subspace (e.g., 3 vectors on a 2D plane).</p>
       </div>
 
       <h3>P0.2 — The Rank-Nullity Theorem</h3>
@@ -1366,7 +1369,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The Rank-Nullity Theorem ($\dim \mathcal{R}(A) + \dim \mathcal{N}(A) = n$) acts as a conservation law for dimensions: every input dimension must either land in the range or be crushed to zero. Full column rank implies injectivity (zero nullspace).</p>
+        <p><b>Theorem (Rank-Nullity):</b> For $A \in \mathbb{R}^{m \times n}$, $\dim \mathcal{R}(A) + \dim \mathcal{N}(A) = n$ (conservation of dimension).
+        <br><b>Rank Bounds:</b> $\mathrm{rank}(A) \le \min(m, n)$.
+        <br><b>Invertibility:</b> A square matrix is invertible iff it has full rank (rank $n$) iff its nullspace is trivial ($\{0\}$).</p>
       </div>
 
       <h3>P0.3 — Trace and Determinant</h3>
@@ -1396,7 +1401,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Trace is cyclic ($\mathrm{tr}(ABC) = \mathrm{tr}(BCA)$) but not multiplicative. Determinant is multiplicative ($\det(AB) = \det A \det B$) but not additive. Skew-symmetric matrices ($A^\top = -A$) always have zero trace and, if the dimension is odd, zero determinant.</p>
+        <p><b>Trace Properties:</b> Linear ($\mathrm{tr}(A+B) = \mathrm{tr}A + \mathrm{tr}B$) and Cyclic ($\mathrm{tr}(ABC) = \mathrm{tr}(BCA)$).
+        <br><b>Determinant Properties:</b> Multiplicative ($\det(AB) = \det A \det B$). $\det(A^\top) = \det A$.
+        <br><b>Skew-Symmetric Matrices:</b> $A^\top = -A$. Implies $x^\top A x = 0$ for all $x$. Eigenvalues are purely imaginary or zero.</p>
       </div>
 
       <h3>P0.4 — Norm Equivalence</h3>
@@ -1419,7 +1426,13 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>In finite-dimensional spaces, all norms are equivalent, meaning they bound each other up to constants depending on dimension $n$. Geometrically, this means any norm ball can be sandwiched between two scaled balls of another norm. $\ell_1$ is the largest (sum), $\ell_\infty$ is the smallest (max), and $\ell_2$ is in between.</p>
+        <p><b>Norm Equivalence:</b> In $\mathbb{R}^n$, any two norms $\|\cdot\|_a, \|\cdot\|_b$ satisfy $c \|x\|_a \le \|x\|_b \le C \|x\|_a$.
+        <br><b>Key Inequalities:</b>
+        <ul>
+            <li>$\|x\|_\infty \le \|x\|_2 \le \sqrt{n} \|x\|_\infty$</li>
+            <li>$\|x\|_2 \le \|x\|_1 \le \sqrt{n} \|x\|_2$</li>
+        </ul>
+        <br><b>Geometry:</b> The unit ball of $\ell_1$ is inscribed in $\ell_2$, which is inscribed in $\ell_\infty$ (up to scaling factors).</p>
       </div>
 
       <h3>P0.5 — Least Squares from Scratch</h3>
@@ -1457,7 +1470,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Least squares minimizes the Euclidean norm of the residual error. The optimality condition ($\nabla f = 0$) yields the Normal Equations $A^\top Ax = A^\top b$, which express that the optimal residual is orthogonal to the column space of $A$. A positive definite Hessian ensures the solution is a unique global minimum.</p>
+        <p><b>Normal Equations:</b> $A^\top A x = A^\top b$. Derived by setting $\nabla \|Ax-b\|^2 = 2A^\top(Ax-b) = 0$.
+        <br><b>Geometry:</b> The residual $r = b - Ax^*$ is orthogonal to $\mathcal{R}(A)$ (column space).
+        <br><b>Convexity:</b> $\nabla^2 f(x) = 2A^\top A$. Since $A^\top A \succeq 0$, the problem is convex. If $\mathcal{N}(A)=\{0\}$, $A^\top A \succ 0$ (strict convexity $\implies$ unique solution).</p>
       </div>
 
       <h3>P0.6 — Matrix Calculus Practice</h3>
@@ -1487,7 +1502,13 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Matrix calculus relies heavily on the trace operator. The trace acts as an inner product for matrices ($\langle A, B \rangle = \mathrm{tr}(A^\top B)$). The identities $\nabla \mathrm{tr}(A^\top X) = A$ and $\nabla \mathrm{tr}(X^\top X) = 2X$ are the matrix analogs of derivatives for $ax$ and $x^2$.</p>
+        <p><b>Matrix Gradient Rules:</b>
+        <ul>
+            <li>$\nabla_X \mathrm{tr}(A^\top X) = A$ (Linear)</li>
+            <li>$\nabla_X \mathrm{tr}(X^\top X) = 2X$ (Quadratic)</li>
+            <li>$\nabla_X \mathrm{tr}(X^\top A X) = (A + A^\top)X$</li>
+        </ul>
+        <br><b>Trick:</b> Use the cyclic property of trace to isolate $X$ on the right side of the inner product $\langle G, dX \rangle = \mathrm{tr}(G^\top dX)$.</p>
       </div>
 
       <h3>P0.7 — Hessian of a Cubic</h3>
@@ -1519,7 +1540,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Local convexity is determined by the Hessian matrix being Positive Semidefinite (PSD). For small matrices (like $2 \times 2$), we can check PSD status using determinants and traces (Sylvester's criterion relates to principal minors).</p>
+        <p><b>Second-Order Condition:</b> A function is locally convex where $\nabla^2 f(x) \succeq 0$.
+        <br><b>2x2 PSD Test:</b> $A = \begin{bmatrix} a & b \\ b & c \end{bmatrix} \succeq 0$ iff $a \ge 0, c \ge 0$ and $\det(A) = ac - b^2 \ge 0$.
+        <br><b>Sylvester's Criterion:</b> $A \succ 0$ iff all leading principal minors are positive.</p>
       </div>
 
       <h3>P0.8 — Testing Positive Semidefiniteness</h3>
@@ -1539,11 +1562,13 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>To classify a symmetric matrix:
-        <br>• <b>PD ($A \succ 0$):</b> All $\lambda_i > 0$.
-        <br>• <b>PSD ($A \succeq 0$):</b> All $\lambda_i \ge 0$.
-        <br>• <b>Indefinite:</b> Some $\lambda_i > 0$, some $\lambda_i < 0$.
-        <br>Eigenvalues tell the whole story of the quadratic form's curvature.</p>
+        <p><b>Spectral Characterization:</b> The definiteness of a symmetric matrix depends entirely on the signs of its eigenvalues.
+        <br><b>Tests:</b>
+        <ul>
+            <li>PD: $\lambda_i > 0$ or Cholesky factorization exists.</li>
+            <li>PSD: $\lambda_i \ge 0$ or $x^\top A x \ge 0$ for all $x$.</li>
+            <li>Indefinite: $\det(A) < 0$ (if $n=2$ or odd negative eigenvalues).</li>
+        </ul></p>
       </div>
 
       <h3>P0.9 — Schur Complement Application</h3>
@@ -1569,7 +1594,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The Schur Complement provides a way to check positive definiteness of block matrices without computing all eigenvalues. It reduces a matrix condition to scalar or lower-dimensional conditions, which is extremely useful in Semidefinite Programming.</p>
+        <p><b>Schur Complement Lemma:</b> $M = \begin{bmatrix} A & B \\ B^\top & C \end{bmatrix} \succeq 0$ is equivalent to:
+        <br>$A \succ 0$ and $S = C - B^\top A^{-1} B \succeq 0$.
+        <br><b>Application:</b> Converts block LMI constraints into nonlinear convex constraints on sub-blocks (or vice versa).</p>
       </div>
 
       <h3>P0.10 — Projection onto a Line</h3>
@@ -1585,7 +1612,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Projection onto a line spanned by $a$ is simply scaling $a$ by the coefficient $\frac{a^\top b}{a^\top a}$. The key feature is that the error (residual) vector is perpendicular to the line.</p>
+        <p><b>Projection Formula:</b> The projection of $b$ onto the line spanned by $a$ is $p = \frac{a^\top b}{a^\top a} a$.
+        <br><b>Orthogonality:</b> The error $e = b - p$ satisfies $a^\top e = 0$.
+        <br><b>Matrix Form:</b> $p = P b$ where $P = \frac{a a^\top}{a^\top a}$ is the projection matrix ($P^2=P, P^\top=P$).</p>
       </div>
 
       <h3>P0.11 — Projection onto a Hyperplane</h3>
@@ -1601,7 +1630,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Projection onto a hyperplane $a^\top x = b$ is done by moving from the point $y$ in the direction of the normal vector $a$. The distance moved is exactly the perpendicular distance from the point to the plane.</p>
+        <p><b>Hyperplane Projection:</b> To project $y$ onto $\{x \mid a^\top x = b\}$:
+        $$ p = y - \frac{a^\top y - b}{\|a\|^2} a $$
+        <b>Intuition:</b> Move against the gradient (normal $a$) until the constraint is satisfied.
+        <br><b>Distance:</b> The distance is $\frac{|a^\top y - b|}{\|a\|}$.</p>
       </div>
 
       <h3>P0.12 — Orthogonal Complements</h3>
@@ -1629,7 +1661,14 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The orthogonal complement $S^\perp$ consists of all vectors perpendicular to every vector in subspace $S$. It is always a subspace, and $S \cap S^\perp = \{0\}$. In $\mathbb{R}^3$, the complement of a plane is its normal line.</p>
+        <p><b>Definition:</b> $S^\perp = \{y \mid y^\top x = 0, \forall x \in S\}$.
+        <br><b>Properties:</b>
+        <ul>
+            <li>$\dim(S) + \dim(S^\perp) = n$.</li>
+            <li>$(S^\perp)^\perp = S$.</li>
+            <li>$\mathbb{R}^n = S \oplus S^\perp$ (Direct Sum).</li>
+        </ul>
+        </p>
       </div>
 
       <h3>P0.13 — Frobenius Norm Submultiplicativity</h3>
@@ -1661,7 +1700,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The Frobenius norm ($\|A\|_F$) behaves like an "L2 norm for matrices" and is compatible with matrix multiplication ($\|AB\| \le \|A\|\|B\|$). The proof relies on relating the trace to eigenvalues and using Cauchy-Schwarz or spectral bounds.</p>
+        <p><b>Frobenius Norm:</b> $\|A\|_F = \sqrt{\mathrm{tr}(A^\top A)} = \sqrt{\sum \sigma_i^2}$.
+        <br><b>Submultiplicativity:</b> $\|AB\|_F \le \|A\|_F \|B\|_F$ (and also $\le \|A\|_2 \|B\|_F$).
+        <br><b>Trace Inequality:</b> $\mathrm{tr}(AB) \le \sum \sigma_i(A)\sigma_i(B)$ (Von Neumann).</p>
       </div>
 
       <h3>P0.14 — Spectral Norm Properties</h3>
@@ -1680,7 +1721,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The spectral norm $\|A\|_2$ measures the maximum amplification of a vector's length by the matrix. Since orthogonal matrices $Q$ just rotate/reflect vectors without changing their length, they do not affect the spectral norm when multiplied ($ \|QA\|_2 = \|A\|_2 $).</p>
+        <p><b>Spectral Norm:</b> $\|A\|_2 = \sigma_{\max}(A) = \sqrt{\lambda_{\max}(A^\top A)}$.
+        <br><b>Orthogonal Invariance:</b> $\|Q A\|_2 = \|A\|_2$ and $\|A Q\|_2 = \|A\|_2$ for $Q \in O_n$.
+        <br><b>Interpretation:</b> The "operator norm" induced by the Euclidean vector norm.</p>
       </div>
 
       <h3>P0.15 — Isometries</h3>
@@ -1709,7 +1752,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>A linear map that preserves distances between all points must be orthogonal ($Q^\top Q = I$). This confirms that the only linear isometries in Euclidean space are rotations and reflections (represented by orthogonal matrices).</p>
+        <p><b>Concept:</b> An isometry preserves Euclidean norms ($\|Qx\| = \|x\|$).
+        <br><b>Trick:</b> The <b>Polarization Identity</b> relates norms to inner products: $\langle x, y \rangle = \frac{1}{4}(\|x+y\|^2 - \|x-y\|^2)$.
+        <br><b>Theorem:</b> Preserving norms implies preserving inner products ($\langle Qx, Qy \rangle = \langle x, y \rangle$), which implies orthogonality ($Q^\top Q = I$).</p>
       </div>
 
       <h3>P0.16 — Loewner Order Transitivity</h3>
@@ -1725,7 +1770,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The Loewner order $A \succeq B$ is a valid partial ordering of symmetric matrices. It behaves transitively like real numbers ($a \ge b \ge c \implies a \ge c$), but relies on the PSD property of the difference $A-B$.</p>
+        <p><b>Loewner Order:</b> $A \succeq B \iff A - B \succeq 0$.
+        <br><b>Properties:</b> Transitive, Reflexive, Antisymmetric.
+        <br><b>Congruence:</b> $A \succeq B \implies T^\top A T \succeq T^\top B T$ for any $T$.
+        <br><b>Warning:</b> $A \succeq B \not\implies A^2 \succeq B^2$ in general.</p>
       </div>
 
       <h3>P0.17 — Weighted Inner Product</h3>
@@ -1746,7 +1794,9 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Any symmetric positive definite (PD) matrix $A$ can define a new geometry on $\mathbb{R}^n$ via the weighted inner product $\langle x, y \rangle_A = x^\top A y$. This distorts space (scaling/rotating axes) but preserves the fundamental axioms of geometry, including the Cauchy-Schwarz inequality.</p>
+        <p><b>Generalized Inner Product:</b> $\langle x, y \rangle_P = x^\top P y$ is an inner product iff $P \succ 0$.
+        <br><b>Induced Norm:</b> $\|x\|_P = \sqrt{x^\top P x}$.
+        <br><b>Generalized Cauchy-Schwarz:</b> $|x^\top P y| \le \sqrt{x^\top P x} \sqrt{y^\top P y}$.</p>
       </div>
 
       <h3>P0.18 — Characterization of Projectors</h3>
@@ -1775,7 +1825,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>Orthogonal projectors are exactly the matrices that are both symmetric ($P=P^\top$) and idempotent ($P=P^2$). Symmetry ensures orthogonality of the projection, while idempotence ensures that projecting twice is the same as projecting once.</p>
+        <p><b>Projector Characterization:</b> $P$ is an orthogonal projector onto $\mathcal{R}(P)$ iff:
+        <br>1. <b>Idempotent:</b> $P^2 = P$ (Projection property).
+        <br>2. <b>Symmetric:</b> $P = P^\top$ (Orthogonality property).
+        <br><b>Complement:</b> $I - P$ is the orthogonal projector onto $\mathcal{R}(P)^\perp = \mathcal{N}(P)$.</p>
       </div>
 
       <h3>P0.19 — PSD Cone in 2D</h3>
@@ -1794,7 +1847,10 @@
       </div>
       <div class="recap-box">
         <h4>Recap</h4>
-        <p>The set of Positive Semidefinite matrices forms a convex cone. In 2D (mapped to $\mathbb{R}^3$), this cone looks like the familiar ice-cream cone (Lorentz cone). The constraints are defined by the non-negativity of the trace and determinant.</p>
+        <p><b>PSD Cone $\mathbb{S}^n_+$:</b> The set $\{X \in \mathbb{S}^n \mid X \succeq 0\}$.
+        <br><b>2x2 Case:</b> Defined by $x \ge 0, z \ge 0, xz \ge y^2$ (where $X = \begin{smallmatrix} x & y \\ y & z \end{smallmatrix}$).
+        <br><b>Properties:</b> Convex cone, pointed, closed, solid (non-empty interior).
+        <br><b>Boundary:</b> Singular PSD matrices (where $\det X = 0$).</p>
       </div>
     </section>
 

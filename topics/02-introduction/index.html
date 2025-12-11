@@ -40,7 +40,7 @@
         <span>Tags: intro, motivation, overview, modeling, fundamentals</span>
       </div>
       <div class="lecture-summary">
-        <p>This lecture introduces convex optimization by defining what makes a problem "convex" and proving the fundamental theorem that any local minimum is also global. We examine the canonical problem families (LP, QP, SOCP, SDP), present the "loss + regularizer + constraints" modeling framework, and develop practical techniques for reformulating problems into standard convex forms.</p>
+        <p>This lecture introduces convex optimization by defining what makes a problem "convex" and proving the fundamental theorem that any local minimum is also global. We examine the canonical problem families (LP, QP, SOCP, SDP), present the "loss + regularizer + constraints" modeling framework, and develop practical techniques for reformulating problems into standard convex forms. We also discuss why convexity is the watershed between tractable and intractable problems in optimization.</p>
         <p><strong>Prerequisites:</strong> <a href="../00-linear-algebra-basics/index.html">Lecture 00: Linear Algebra Basics</a> and <a href="../01-linear-algebra-advanced/index.html">Lecture 01: Linear Algebra Advanced</a> are recommended, particularly projections, PSD matrices, norms, and the fundamental subspaces.</p>
         <p><strong>Forward Connections:</strong> The definition of convex problems relies on convex functions and sets (Lectures 03-06). The modeling techniques introduced here are used throughout the course. Duality theory (Lecture 13) generalizes the optimality conditions proven here.</p>
       </div>
@@ -50,13 +50,13 @@
       <h2><i data-feather="target"></i> Learning Objectives</h2>
       <p>After this lecture, you will be able to:</p>
       <ul>
-        <li><b>Define Convex Optimization Problems:</b> State the precise three-part definition and distinguish convex from nonconvex problems at a glance.</li>
-        <li><b>Prove the Fundamental Theorem:</b> Show that every local minimum of a convex problem is a global minimum, and understand why this property is essential.</li>
-        <li><b>Understand the Problem Hierarchy:</b> Identify LP, QP, SOCP, and SDP by their structure and know which solvers and complexity classes apply to each.</li>
-        <li><b>Apply the Loss + Regularizer Paradigm:</b> Formulate machine learning and statistical problems using the "loss + regularizer + constraints" template.</li>
-        <li><b>Transform to Standard Forms:</b> Use safe rewrites to convert norms, absolute values, and max functions into equivalent standard convex forms.</li>
-        <li><b>Verify Problem Convexity:</b> Check feasibility, recognize unboundedness, and apply sanity checks before invoking solvers.</li>
-        <li><b>Understand Solver Architecture:</b> Grasp the "model → transform → canonicalize → solve → verify" pipeline used by CVX, CVXPY, and JuMP.</li>
+        <li><b>Define Convex Optimization Problems:</b> State the precise three-part definition (convex objective, convex inequality constraints, affine equality constraints) and distinguish convex from nonconvex problems.</li>
+        <li><b>Prove the Fundamental Theorem:</b> Show that every local minimum of a convex problem is a global minimum, providing the geometric intuition behind this powerful guarantee.</li>
+        <li><b>Understand the Problem Hierarchy:</b> Identify and classify problems as Linear Programs (LP), Quadratic Programs (QP), Second-Order Cone Programs (SOCP), or Semidefinite Programs (SDP).</li>
+        <li><b>Apply the Loss + Regularizer Paradigm:</b> Formulate machine learning and statistical problems using the "loss + regularizer + constraints" template (e.g., LASSO, Ridge Regression).</li>
+        <li><b>Transform to Standard Forms:</b> Apply systematic reformulation techniques to convert non-standard terms (norms, absolute values, max functions) into standard convex forms.</li>
+        <li><b>Verify Problem Convexity:</b> Perform sanity checks for feasibility and unboundedness, and verify convexity using the definition or composition rules.</li>
+        <li><b>Understand Solver Architecture:</b> Grasp the "model → transform → canonicalize → solve → verify" pipeline used by modern convex optimization tools like CVX, CVXPY, and JuMP.</li>
       </ul>
     </section>
 
@@ -1386,6 +1386,32 @@
     <p><b>Example 2:</b> $f(x) = e^x$.
     <br><b>Strictly Convex:</b> $f''(x) = e^x > 0$ for all $x$.
     <br><b>Not Strongly Convex:</b> As $x \to -\infty$, $f''(x) \to 0$. There is no lower bound $m > 0$ that holds for all $x$.</p>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P2.9 — Voronoi Regions</h3>
+  <p>Let $x_1, \dots, x_k \in \mathbb{R}^n$ be a set of points (seeds). The Voronoi region associated with $x_i$ is defined as $V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2, \forall j \neq i\}$. Prove that $V_i$ is a convex set.</p>
+
+  <div class="recap-box">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Polyhedra:</b> A polyhedron is the intersection of a finite number of halfspaces.</li><li><b>Geometric Locus:</b> The set of points closer to A than B is a halfspace defined by the perpendicular bisector of segment AB.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step"><strong>Step 1: Analyze the inequality.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ can be squared (since norms are non-negative):
+    $$ \|x - x_i\|_2^2 \le \|x - x_j\|_2^2 $$
+    Expanding this:
+    $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
+    Canceling $x^\top x$ from both sides:
+    $$ -2x_i^\top x + \|x_i\|_2^2 \le -2x_j^\top x + \|x_j\|_2^2 $$
+    Rearranging terms to isolate $x$:
+    $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$</div>
+    <div class="proof-step"><strong>Step 2: Identify the geometric object.</strong> The inequality $a^\top x \le b$ with $a = 2(x_j - x_i)$ and $b = \|x_j\|_2^2 - \|x_i\|_2^2$ defines a <b>closed halfspace</b>. The boundary is the perpendicular bisector of the segment connecting $x_i$ and $x_j$.</div>
+    <div class="proof-step"><strong>Step 3: Intersection of convex sets.</strong> The Voronoi region $V_i$ is the intersection of $k-1$ such halfspaces (one for each $j \neq i$). Since halfspaces are convex sets, and the intersection of any number of convex sets is convex, $V_i$ is a convex set (specifically, a polyhedron).</div>
   </div>
 </div>
 

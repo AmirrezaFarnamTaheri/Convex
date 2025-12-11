@@ -402,12 +402,12 @@
 
         <div class="proof-step">
           <strong>Step 3: Apply the Lemma.</strong>
-          Identifying blocks: $A = tI$, $B = y$, $C = t$.
+          Identifying blocks: $A = tI$, $B = y$, $C = t$. The Schur complement of $A$ is $C - B^\top A^{-1} B$.
           The condition $M \succeq 0$ is equivalent to:
           $$ t - y^\top (tI)^{-1} y \ge 0 $$
           $$ t - \frac{1}{t} y^\top y \ge 0 $$
-          Multiplying by $t$ (since $t > 0$):
-          $$ t^2 - y^\top y \ge 0 \implies \|y\|_2^2 \le t^2 $$
+          Multiplying by $t$ (since $t > 0$, we can do this without reversing inequality):
+          $$ t^2 - y^\top y \ge 0 \implies y^\top y \le t^2 \implies \|y\|_2^2 \le t^2 $$
           Since $t > 0$, this is equivalent to $\|y\|_2 \le t$.
         </div>
 

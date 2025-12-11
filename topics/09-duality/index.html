@@ -258,18 +258,31 @@
 
         <div class="proof-box">
           <h4>Derivation from Strong Duality</h4>
-          <p>If strong duality holds ($p^* = d^*$):
-          $$
-          \begin{aligned}
-          f_0(x^*) &= g(\lambda^*, \nu^*) \\
-          &= \inf_x \left( f_0(x) + \sum \lambda_i^* f_i(x) + \sum \nu_j^* h_j(x) \right) \\
-          &\le f_0(x^*) + \sum \lambda_i^* f_i(x^*) + \sum \nu_j^* h_j(x^*) \\
-          &\le f_0(x^*)
-          \end{aligned}
-          $$
-          Since the LHS equals the RHS, all inequalities must be equalities.
-          <br><b>Equality 1 (Stationarity):</b> The infimum of the Lagrangian with respect to $x$ is attained at $x^*$. For differentiable functions, this implies $\nabla_x L(x^*, \lambda^*, \nu^*) = 0$.
-          <br><b>Equality 2 (Complementary Slackness):</b> The term $\sum \lambda_i^* f_i(x^*)$ must be 0. Since $\lambda_i^* \ge 0$ and $f_i(x^*) \le 0$, the sum is non-positive. For it to be zero, each term must be zero: $\lambda_i^* f_i(x^*) = 0$.</p>
+          <p>Assume strong duality holds ($p^* = d^*$) and let $x^*$ and $(\lambda^*, \nu^*)$ be primal and dual optimal.</p>
+          <div class="proof-step">
+            <strong>The Duality Sandwich:</strong>
+            $$
+            \begin{aligned}
+            f_0(x^*) &= g(\lambda^*, \nu^*) \quad \text{(Strong Duality)} \\
+            &= \inf_x \left( f_0(x) + \sum \lambda_i^* f_i(x) + \sum \nu_j^* h_j(x) \right) \quad \text{(Def of Dual)} \\
+            &\le f_0(x^*) + \sum \lambda_i^* f_i(x^*) + \sum \nu_j^* h_j(x^*) \quad \text{(Plug in } x^*) \\
+            &\le f_0(x^*) \quad \text{(Since } \lambda \ge 0, f \le 0, h=0)
+            \end{aligned}
+            $$
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion 1: Stationarity.</strong>
+            The inequality $\inf_x L(x, \lambda^*, \nu^*) \le L(x^*, \lambda^*, \nu^*)$ is actually an equality. Thus, $x^*$ minimizes $L(x, \lambda^*, \nu^*)$ over $\mathbb{R}^n$.
+            If the functions are differentiable, the gradient must vanish at the minimizer:
+            $$ \nabla_x L(x^*, \lambda^*, \nu^*) = 0 $$
+          </div>
+          <div class="proof-step">
+            <strong>Conclusion 2: Complementary Slackness.</strong>
+            The inequality $L(x^*, \lambda^*, \nu^*) \le f_0(x^*)$ is also an equality. This means:
+            $$ \sum_{i=1}^m \lambda_i^* f_i(x^*) = 0 $$
+            Since every term $\lambda_i^* f_i(x^*)$ is non-positive (product of $\ge 0$ and $\le 0$), the sum can only be zero if <b>every single term is zero</b>.
+            $$ \lambda_i^* f_i(x^*) = 0, \quad \forall i $$
+          </div>
         </div>
 
         <div class="example">
@@ -408,8 +421,11 @@
   <br>(c) Verify weak duality directly for any feasible $x$ and $\lambda$.</p>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The dual of a strictly convex QP is another QP. Minimizing the primal quadratic is related to maximizing a concave quadratic in the dual variables. Weak duality can be verified algebraically by completing the square.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Algebraic Completion:</b> The derivation of the QP dual ($x^\top x \to \lambda^\top A A^\top \lambda$) is essentially completing the square in the Lagrangian.</li>
+        <li><b>Geometric Insight:</b> The term $A A^\top$ in the dual objective reflects the geometry of the constraint boundaries. If $A A^\top$ is ill-conditioned, the dual is hard to solve.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
@@ -440,8 +456,11 @@
   <br>Derive the KKT conditions. Show that the optimal solution has the form $x_i = e^{-\nu - 1 - (A^\top \lambda)_i}$.</p>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>Entropy maximization naturally leads to exponential family distributions. The dual variables in the exponent correspond to the constraints (Gibbs distribution). This is the foundation of Maximum Entropy modeling.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Exponential Families:</b> The solution form $x_i \propto e^{-(A^\top \lambda)_i}$ shows that linear constraints on the probability mass function lead to exponential family distributions.</li>
+        <li><b>Partition Function:</b> The Lagrange multiplier $\nu$ associated with normalization ($\sum x_i = 1$) becomes the log-partition function (normalizing constant) in the solution.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
@@ -460,8 +479,11 @@
   <br>Find the dual optimal $\lambda^*$ of the original problem and verify $p^*(u) \approx p^*(0) - \lambda^* u$.</p>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The optimal dual variable $\lambda^*$ acts as a sensitivity coefficient (shadow price). It tells you how much the optimal value improves if you relax the constraint by one unit. Here, relaxing the constraint to $x \le 0$ reduces the cost significantly.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Shadow Prices:</b> $\lambda^*$ quantifies the "marginal cost" of the constraint. If $\lambda^* = 2$, relaxing the bound by $\epsilon$ saves $2\epsilon$.</li>
+        <li><b>Local vs Global:</b> For convex problems, $p^*(u) \ge p^*(0) - \lambda^* u$ is a global lower bound, offering a guarantee on the best possible improvement.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
@@ -479,8 +501,11 @@
   Show it is $\max -b^\top \nu$ s.t. $A^\top \nu + c \ge 0$ (or equivalently $\max b^\top y$ s.t. $A^\top y \le c$ via reparameterization).</p>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>The dual of an LP is another LP. The variables of the dual correspond to the constraints of the primal. This symmetric relationship is unique to Linear Programming.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Symmetry:</b> The dual of the dual is the primal. For standard LP ($\min c^\top x, Ax=b, x \ge 0$), the dual is ($\max b^\top y, A^\top y \le c$).</li>
+        <li><b>Economic Interpretation:</b> If primal variables are production quantities, dual variables are prices of resources ($Ax=b$). The dual constraint $A^\top y \le c$ means "value of resources consumed $\le$ cost/profit".</li>
+    </ul>
   </div>
 
   <div class="solution-box">
@@ -516,8 +541,11 @@
   </p>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>Farkas' Lemma is a theorem of alternatives. It says that if a linear system is infeasible, there is a certificate (hyperplane) proving it. Strong duality provides the mechanism to find this certificate (an unbounded dual ray).</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Theorems of Alternatives:</b> Farkas' Lemma is the linear instance of a broad class of theorems (Gordan, Stiemke) relating feasibility of one system to infeasibility of another.</li>
+        <li><b>Duality Proof:</b> The proof relies on Strong Duality: if the primal is infeasible ($p^*=\infty$), the dual must be unbounded ($d^*=\infty$), implying the existence of an improving direction (the certificate).</li>
+    </ul>
   </div>
 
   <div class="solution-box">
@@ -559,8 +587,11 @@
   <p>Solve $\min \sum_{i=1}^n -\log(\alpha_i + x_i)$ subject to $x \ge 0, \mathbf{1}^\top x = 1$. Assume $\alpha_i > 0$. Derive the water-filling solution.</p>
 
   <div class="recap-box">
-    <h4>Recap</h4>
-    <p>Water-filling is the analytic solution to allocating a limited resource to maximize the sum of concave utility functions. The KKT conditions reveal that the marginal gain must be equal for all active channels, up to a threshold.</p>
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Marginal Utility:</b> Optimality requires equalizing marginal utility ($1/(\alpha_i+x_i)$) across all active allocations.</li>
+        <li><b>Active Set:</b> The "water level" $\nu$ determines which channels are active. Channels with high noise ($\alpha_i > 1/\nu$) receive zero power.</li>
+    </ul>
   </div>
 
   <div class="solution-box">
