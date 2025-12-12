@@ -990,6 +990,27 @@ pre code {
 
 
 /* ====================
+   RESIZABLE HANDLES
+   ==================== */
+.resize-handle {
+    position: absolute;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.resize-handle:hover,
+*:hover > .resize-handle {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.resize-se {
+    cursor: nwse-resize;
+    border-bottom-right-radius: var(--radius-lg);
+}
+
+/* ====================
    WIDGET STYLES
    ==================== */
 .widget-controls {

@@ -380,6 +380,12 @@ class KnowledgeWidget {
         this.panel.className = 'kw-panel hidden';
         // Note: CSS will position this fixed relative to viewport, usually top-right or overlay
 
+        // Add resizable to the panel
+        if (typeof Resizable !== 'undefined') {
+            // Need to append it to DOM first or pass element directly
+             // We do panel innerHTML then append, then init Resizable
+        }
+
         this.panel.innerHTML = `
             <div class="kw-header">
                 <div class="kw-title">
@@ -422,6 +428,19 @@ class KnowledgeWidget {
 
         this.container.appendChild(this.panel);
         document.body.appendChild(this.container);
+
+        // Initialize Resizable for Notes Widget
+        if (typeof Resizable !== 'undefined') {
+             // We want the panel itself to be resizable, but the container logic here seems mixed.
+             // The original CSS puts .kw-panel fixed. Let's make .kw-panel resizable.
+             // However, Resizable sets position: fixed. .kw-panel already is fixed.
+             new Resizable(this.panel, {
+                 saveKey: 'notes-widget',
+                 handles: ['s', 'w', 'sw'], // Resize from bottom-left since it is top-right aligned
+                 minWidth: 300,
+                 minHeight: 400
+             });
+        }
 
         this.injectStyles();
 
