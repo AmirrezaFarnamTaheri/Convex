@@ -720,11 +720,16 @@
         <div class="subsection">
           <h4>Pattern 2: $\ell_1$ Norm in Objective</h4>
           <p><b>Original:</b> $\min \|x\|_1 = \min \sum_{i=1}^n |x_i|$</p>
-          <p><b>Reformulation:</b> Introduce slack variables $t_i \ge 0$:</p>
+          <p><b>Reformulation:</b> The absolute value function $|u|$ is not linear, but its epigraph is polyhedral. We handle this term-by-term.</p>
+          <ol>
+            <li><b>Introduce Slack Variables:</b> For each term $|x_i|$, introduce a new variable $t_i$ that acts as an upper bound: $|x_i| \le t_i$.</li>
+            <li><b>Split the Absolute Value:</b> The inequality $|x_i| \le t_i$ is equivalent to the pair of linear inequalities $-t_i \le x_i \le t_i$ (or $x_i \le t_i$ and $-x_i \le t_i$).</li>
+            <li><b>Minimize the Upper Bound:</b> Minimizing the sum of absolute values is equivalent to minimizing the sum of these upper bounds $\sum t_i$, subject to the constraints.</li>
+          </ol>
           $$
           \min \sum_{i=1}^n t_i \quad \text{s.t.} \quad -t_i \le x_i \le t_i
           $$
-          <p>Now it's an LP with $2n$ variables and $2n$ inequality constraints.</p>
+          <p>Now it is a standard Linear Program (LP) with $2n$ variables ($x$ and $t$) and $2n$ linear inequality constraints.</p>
         </div>
 
         <div class="example">

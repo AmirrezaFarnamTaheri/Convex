@@ -129,6 +129,7 @@
         $$
         \mathrm{conv}(S) = \left\{\sum_{i=1}^k \theta_i x_i \ \bigg| \ x_i \in S, \ \theta_i \ge 0, \ \sum_{i=1}^k \theta_i = 1, \ k \in \mathbb{N}\right\}
         $$
+        <p>Think of this definition as creating "mixtures" of the points in $S$. If $S$ represents pure ingredients, $\mathrm{conv}(S)$ represents all possible mixtures (all possible percentages summing to 100%).</p>
 
         <div class="theorem-box">
           <h4>Theorem (Carathéodory's Theorem)</h4>
@@ -232,7 +233,9 @@
         <div class="theorem-box">
           <h4>Fundamental Bridge Theorem</h4>
           <p>A function $f$ is <b>convex</b> if and only if its <b>epigraph</b> $\mathrm{epi}(f)$ is a <b>convex set</b>.</p>
-          <p>This equivalence allows us to translate analytic properties of functions into geometric properties of sets. For example, the fact that the pointwise maximum of convex functions is convex follows immediately from the fact that the intersection of convex sets (their epigraphs) is convex.</p>
+          <p><b>Why is this useful?</b> This equivalence allows us to translate analytic properties of functions into geometric properties of sets. For example, why is the maximum of two convex functions also convex?
+          <br> Analytically, proving $f(x) = \max(f_1(x), f_2(x))$ is convex requires checking inequalities.
+          <br> Geometrically, $\mathrm{epi}(f) = \mathrm{epi}(f_1) \cap \mathrm{epi}(f_2)$. Since the intersection of convex sets is convex, the result is immediate.</p>
         </div>
 
         <h3>1.5 Key Properties</h3>
