@@ -24,14 +24,9 @@ class KnowledgeWidget {
         this.searchIndex = []; // { type: 'content'|'note', text: string, id: string, element: DOMElement }
 
         // UI State
-        this.activeTab = 'notes'; // notes, search, bookmarks
+        this.activeTab = 'notes'; // notes, bookmarks
         this.selectedColor = 'yellow'; // yellow, green, blue, red
         this.isPreviewMode = false;
-
-        // Autocomplete
-        this.vocabulary = new Set();
-        this.suggestions = [];
-        this.activeSuggestionIndex = 0;
 
         this.init();
     }
@@ -39,8 +34,6 @@ class KnowledgeWidget {
     async init() {
         await this.loadDependencies();
         this.loadData();
-        this.buildSearchIndex();
-        this.buildVocabulary();
         this.createUI();
         this.renderNotes(); // Render initial tab content
         this.restoreHighlights();
@@ -78,56 +71,6 @@ class KnowledgeWidget {
         localStorage.setItem(`kw-notes-${this.lectureId}`, JSON.stringify(this.notes));
         localStorage.setItem(`kw-highlights-${this.lectureId}`, JSON.stringify(this.highlights));
         localStorage.setItem(`kw-bookmarks-${this.lectureId}`, JSON.stringify(this.bookmarks));
-    }
-
-    // --- Search Indexing ---
-
-    buildSearchIndex() {
-        this.searchIndex = [];
-
-        // 1. Index Page Content
-        const content = document.querySelector('.lecture-content');
-        if (content) {
-            const elements = content.querySelectorAll('h1, h2, h3, p, li, .definition-term');
-            elements.forEach((el, idx) => {
-                if (!el.innerText.trim()) return;
-                // Assign a temporary ID if missing for scrolling
-                if (!el.id) el.id = `kw-content-${idx}`;
-
-                this.searchIndex.push({
-                    type: 'content',
-                    text: el.innerText,
-                    element: el,
-                    id: el.id,
-                    title: this.findNearestHeader(el)
-                });
-            });
-        }
-
-        // 2. Index Notes (Dynamic, done during search execution or updated on save)
-    }
-
-    findNearestHeader(el) {
-        let curr = el;
-        while (curr && curr !== document.body) {
-            const header = curr.previousElementSibling;
-            if (header && /^H[1-6]$/.test(header.tagName)) return header.innerText;
-            if (/^H[1-6]$/.test(curr.tagName)) return curr.innerText;
-            curr = curr.parentElement;
-        }
-        return 'Section';
-    }
-
-    buildVocabulary() {
-        // Scrape technical terms
-        this.searchIndex.forEach(item => {
-            if (item.type === 'content') {
-                const words = item.text.match(/\b[A-Za-z]{4,}\b/g);
-                if (words) words.forEach(w => this.vocabulary.add(w.toLowerCase()));
-            }
-        });
-        // Core terms
-        ['convex', 'optimization', 'linear', 'matrix', 'vector', 'duality', 'gradient', 'hessian'].forEach(w => this.vocabulary.add(w));
     }
 
     // --- Highlighting Logic ---
@@ -395,7 +338,6 @@ class KnowledgeWidget {
             </div>
             <div class="kw-tabs">
                 <button class="kw-tab active" data-tab="notes">Notes</button>
-                <button class="kw-tab" data-tab="search">Search</button>
                 <button class="kw-tab" data-tab="bookmarks">Bookmarks</button>
             </div>
             <div class="kw-body">
@@ -406,14 +348,6 @@ class KnowledgeWidget {
                         <button class="btn btn-sm btn-ghost" id="kw-add-note" title="Add Note"><i data-feather="plus"></i> Add</button>
                     </div>
                     <div id="kw-notes-list" class="kw-list"></div>
-                </div>
-
-                <!-- Search View -->
-                <div id="kw-view-search" class="kw-view">
-                    <div class="kw-search-box">
-                        <input type="text" id="kw-search-input" placeholder="Search current lecture...">
-                    </div>
-                    <div id="kw-search-results" class="kw-list"></div>
                 </div>
 
                 <!-- Bookmarks View -->
@@ -453,7 +387,6 @@ class KnowledgeWidget {
 
         this.panel.querySelector('#kw-add-note').onclick = () => this.addNote();
         this.panel.querySelector('#kw-toggle-preview').onclick = () => this.togglePreview();
-        this.panel.querySelector('#kw-search-input').addEventListener('input', (e) => this.handleSearch(e.target.value));
         this.panel.querySelector('#kw-add-bookmark').onclick = () => this.addBookmark();
 
         if (typeof feather !== 'undefined') feather.replace();
