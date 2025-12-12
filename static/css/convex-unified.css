@@ -639,7 +639,7 @@ pre code {
    .example-enhanced -> .example-box
    .solution-enhanced -> .solution-box
 */
-.proof-box, .example-box, .solution-box, .recap-box {
+.proof-box, .example, .example-box, .solution-box, .recap-box, .theorem-box, .intuition-box, .interpretation-box {
   position: relative;
   padding: var(--space-8);
   margin: var(--space-8) 0;
@@ -652,6 +652,9 @@ pre code {
 .proof-box {
   border-left: 4px solid var(--primary-500);
 }
+.example {
+  border-left: 4px solid var(--accent-300);
+}
 .example-box {
   border-left: 4px solid var(--accent-300);
 }
@@ -661,12 +664,25 @@ pre code {
 .recap-box {
     border-left: 4px solid var(--neutral-400);
 }
+.theorem-box {
+  border-left: 4px solid var(--primary-400);
+}
+.intuition-box {
+  border-left: 4px solid var(--accent-300);
+}
+.interpretation-box {
+  border-left: 4px solid var(--neutral-300);
+}
 
 
 .proof-box::before,
+.example::before,
 .example-box::before,
 .solution-box::before,
-.recap-box::before {
+.recap-box::before,
+.theorem-box::before,
+.intuition-box::before,
+.interpretation-box::before {
   position: absolute;
   top: -12px;
   left: var(--space-6);
@@ -691,6 +707,11 @@ pre code {
   color: var(--accent-300);
   border-color: rgba(95, 250, 173, 0.3);
 }
+.example::before {
+  content: 'Example';
+  color: var(--accent-300);
+  border-color: rgba(95, 250, 173, 0.3);
+}
 .solution-box::before {
   content: 'Solution';
   color: var(--warning);
@@ -699,6 +720,20 @@ pre code {
 .recap-box::before {
     content: 'Recap';
     color: var(--text-secondary);
+}
+.theorem-box::before {
+  content: 'Theorem';
+  color: var(--primary-300);
+  border-color: rgba(24, 144, 255, 0.25);
+}
+.intuition-box::before {
+  content: 'Intuition';
+  color: var(--accent-300);
+  border-color: rgba(95, 250, 173, 0.25);
+}
+.interpretation-box::before {
+  content: 'Interpretation';
+  color: var(--text-secondary);
 }
 
 /* Collapsible Content */

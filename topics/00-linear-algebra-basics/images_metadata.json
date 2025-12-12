@@ -2,5 +2,29 @@
   {
     "filename": "schur_complement_block.png",
     "description": "A visualization of the Schur complement process as a transformation of matrix structure. Left: A large square matrix M partitioned into blocks A (top-left, red), B (top-right, blue), C (bottom-left, blue), and D (bottom-right, green). The determinant of the whole block matrix is represented as the volume of a parallelpiped formed by its column vectors. Center: An 'Elimination Matrix' E (block lower triangular) acting on M. Right: The result ME which is block upper triangular. The bottom-right block is still D, but the top-left block has transformed into the Schur complement S = A - BD^{-1}C. The determinant is now clearly det(S) * det(D), visualized as the product of the 'volumes' of the diagonal blocks."
+  },
+  {
+    "filename": "determinant-volume-scaling.png",
+    "description": "A 2D determinant-as-area visualization. Left: the unit square spanned by standard basis vectors e1 and e2 with area 1. Right: the image of the square under a linear map A, forming a parallelogram spanned by Ae1 and Ae2. The parallelogram area is labeled |det(A)|, and an orientation arrow indicates that the sign of det(A) captures whether orientation is preserved or flipped."
+  },
+  {
+    "filename": "operator-norm-geometry.png",
+    "description": "A geometric visualization of the spectral/operator norm ||A||2 as maximum stretch. Left: a unit circle in R^2. Right: its image under A is an ellipse. The longest semi-axis (corresponding to the largest singular value σ_max) is highlighted, illustrating ||A||2 = max_{||x||=1} ||Ax||."
+  },
+  {
+    "filename": "l1-vs-linf-duality.png",
+    "description": "A 2D visualization of ℓ1/ℓ∞ duality via inner products. The ℓ1 unit ball is drawn as a diamond. A vector y is shown, and level sets of x^T y are shifted until they touch the diamond at a vertex. The maximizing x selects the coordinate of y with largest magnitude, illustrating sup_{||x||1≤1} x^T y = ||y||∞."
+  },
+  {
+    "filename": "least-squares-orthogonal-projection.png",
+    "description": "A 3D geometry picture of least squares as orthogonal projection. A plane through the origin represents the column space R(A). A target vector b lies off the plane. The projection p = Ax* lies on the plane, and the residual r = b − p is drawn as a perpendicular (right angle) to the plane, visualizing the normal-equation condition A^T r = 0."
+  },
+  {
+    "filename": "projection-onto-affine-set.png",
+    "description": "A visualization of projection onto an affine set (a translated subspace). The affine constraint set is shown as a plane not passing through the origin. A point y is projected perpendicularly onto the plane. The diagram highlights the translation trick: subtract a particular solution x0 to reduce to projecting (y − x0) onto the parallel linear subspace, then shift back by x0."
+  },
+  {
+    "filename": "gram-schmidt-orthogonalization.png",
+    "description": "A step-by-step geometric illustration of Gram–Schmidt orthogonalization. Starting from linearly independent vectors (v1, v2, v3), the construction subtracts successive projections to produce orthogonal vectors (u1, u2, u3), then normalizes to obtain an orthonormal basis (q1, q2, q3)."
   }
 ]

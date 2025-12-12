@@ -1,318 +1,338 @@
 {
   "affine": {
     "definition": "A function f(x) = Ax + b is affine. It represents a line, plane, or hyperplane.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-0"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-1"
   },
   "affine combination": {
     "definition": "A linear combination of points where the coefficients sum to 1.",
-    "url": "../../topics/02-convex-sets/index.html#section-1"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-1"
   },
   "affine hull": {
     "definition": "The smallest affine set containing a set S. The set of all affine combinations of points in S.",
-    "url": "../../topics/02-convex-sets/index.html#section-1"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-1"
   },
   "affine set": {
     "definition": "A set that contains the line passing through any two distinct points in the set. Equivalently, a translated linear subspace.",
-    "url": "../../topics/02-convex-sets/index.html#section-1"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-1"
   },
   "basis pursuit": {
     "definition": "An optimization problem minimizing the L1 norm subject to linear equality constraints, encouraging sparsity.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-2"
+    "url": "../../topics/07-convex-problems-standard/index.html#section-8"
   },
   "caratheodory's theorem": {
     "definition": "A theorem stating that any point in the convex hull of a set S in R^n can be expressed as a convex combination of at most n+1 points from S.",
-    "url": "topics/02-convex-sets/index.html#section-1"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-1"
   },
   "column space": {
     "definition": "The set of all possible linear combinations of the columns of a matrix A. Also known as the image or range.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-1"
+    "url": "../../topics/00-linear-algebra-basics/index.html#section-subspaces"
   },
   "complementary slackness": {
     "definition": "A KKT condition stating that for each inequality constraint, either the Lagrange multiplier is zero or the constraint is active.",
-    "url": "../../topics/05-duality/index.html#section-4"
+    "url": "../../topics/09-duality/index.html#section-4"
   },
   "concave": {
     "definition": "A function f is concave if -f is convex.",
-    "url": "../../topics/03-convex-functions/index.html#section-1"
+    "url": "../../topics/05-convex-functions-basics/index.html#section-1"
   },
   "condition number": {
     "definition": "The ratio of the largest to smallest singular value. Measures sensitivity of linear system solutions to errors.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-7"
+    "url": "../../topics/01-linear-algebra-advanced/index.html#section-pseudoinverse"
   },
   "cone": {
     "definition": "A set closed under non-negative scaling: if x in K, then \u03b8x in K for \u03b8 \u2265 0.",
-    "url": "../../topics/02-convex-sets/index.html#section-2"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-2"
   },
   "convex combination": {
     "definition": "A linear combination of points where coefficients sum to 1 and are non-negative.",
-    "url": "../../topics/02-convex-sets/index.html#section-1"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-1"
   },
   "convex cone": {
     "definition": "A cone that is also a convex set. Equivalently, closed under positive linear combinations.",
-    "url": "../../topics/02-convex-sets/index.html#section-2"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-2"
   },
   "convex conjugate": {
     "definition": "The function f*(y) = sup(y\u1d40x - f(x)). It is always convex.",
-    "url": "../../topics/03-convex-functions/index.html#section-7"
+    "url": "../../topics/06-convex-functions-advanced/index.html#section-1"
   },
   "convex function": {
     "definition": "A function f is convex if its domain is a convex set and f(\u03b8x + (1-\u03b8)y) \u2264 \u03b8f(x) + (1-\u03b8)f(y).",
-    "url": "../../topics/03-convex-functions/index.html#section-1"
+    "url": "../../topics/05-convex-functions-basics/index.html#section-1"
   },
   "convex hull": {
     "definition": "The set of all convex combinations of points in S. It is the smallest convex set containing S.",
-    "url": "../../topics/02-convex-sets/index.html#section-1"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-1"
   },
   "convex optimization problem": {
     "definition": "An optimization problem where the objective is convex, inequality constraints are convex, and equality constraints are affine.",
-    "url": "../../topics/01-introduction/index.html#section-1"
+    "url": "../../topics/07-convex-problems-standard/index.html#section-1"
+  },
+  "convex set": {
+    "definition": "A set C is convex if it contains the line segment between any two points in C.",
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-1"
   },
   "dual cone": {
     "definition": "The set of vectors y such that y\u1d40x \u2265 0 for all x in K.",
-    "url": "../../topics/02-convex-sets/index.html#section-5"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-2"
   },
   "duality gap": {
     "definition": "The difference p* - d*. It is always non-negative. Zero implies strong duality.",
-    "url": "../../topics/05-duality/index.html#section-2"
+    "url": "../../topics/09-duality/index.html#section-2"
+  },
+  "ellipsoid": {
+    "definition": "A set of the form {x | (x-x0)^\u1d40P^{-1}(x-x0) \u2264 1} with P \u227b 0. It generalizes balls under affine transformations.",
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-2"
   },
   "epigraph": {
     "definition": "The set of points lying on or above the graph of a function. epi(f) = {(x,t) | f(x) \u2264 t}.",
-    "url": "../../topics/03-convex-functions/index.html#section-2"
+    "url": "../../topics/05-convex-functions-basics/index.html#section-2"
   },
   "farkas' lemma": {
     "definition": "A theorem of alternatives for systems of linear inequalities, fundamental to linear programming duality.",
-    "url": "../../topics/05-duality/index.html#section-5"
+    "url": "../../topics/09-duality/index.html#section-5"
   },
   "feasible set": {
     "definition": "The set of all points x that satisfy all the constraints of the optimization problem.",
-    "url": "../../topics/01-introduction/index.html#section-1"
+    "url": "../../topics/02-introduction/index.html#section-1"
+  },
+  "fenchel conjugate": {
+    "definition": "Another name for the convex conjugate: f*(y) = sup_x (y^\u1d40x - f(x)).",
+    "url": "../../topics/06-convex-functions-advanced/index.html#section-1"
   },
   "generalized inequality": {
     "definition": "A partial ordering defined by a proper cone K: x <=_K y if y - x is in K.",
-    "url": "topics/02-convex-sets/index.html#section-5"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-2"
   },
   "geometric mean": {
     "definition": "The function f(x) = (product x_i)^(1/n). It is concave on the positive orthant.",
-    "url": "../../topics/03-convex-functions/index.html#section-3"
+    "url": "../../topics/05-convex-functions-basics/index.html#section-5"
   },
   "geometric programming": {
     "definition": "Optimization of posynomials. Can be transformed into a convex problem via logarithmic change of variables.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-6"
+    "url": "../../topics/07-convex-problems-standard/index.html#section-5"
   },
   "halfspace": {
     "definition": "A set {x | a\u1d40x \u2264 b}. It is a convex set bounded by a hyperplane.",
-    "url": "../../topics/02-convex-sets/index.html#section-2"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-2"
   },
   "hyperbolic cone": {
     "definition": "A type of convex cone defined by a hyperbolic quadratic inequality, generalizing the second-order cone.",
-    "url": "topics/02-convex-sets/index.html#section-5"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-2"
   },
   "hyperplane": {
     "definition": "A set {x | a\u1d40x = b}. It divides the space into two halfspaces.",
-    "url": "../../topics/02-convex-sets/index.html#section-2"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-2"
   },
   "indicator function": {
     "definition": "A function that is 0 on a set C and infinity outside. It is convex if and only if C is convex.",
-    "url": "topics/02-convex-sets/index.html#section-1"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-2"
   },
   "inner product": {
     "definition": "A function that takes two vectors and returns a scalar, generalizing the dot product. It allows defining angles and lengths.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-2"
+    "url": "../../topics/00-linear-algebra-basics/index.html#section-norms"
   },
   "jensen's inequality": {
     "definition": "The inequality f(E[X]) \u2264 E[f(X)] for a convex function f.",
-    "url": "../../topics/03-convex-functions/index.html#section-1"
+    "url": "../../topics/05-convex-functions-basics/index.html#section-1"
   },
   "kkt conditions": {
     "definition": "Karush-Kuhn-Tucker conditions: Necessary conditions for optimality. Sufficient for convex problems with Slater's condition.",
-    "url": "../../topics/05-duality/index.html#section-4"
+    "url": "../../topics/09-duality/index.html#section-4"
   },
   "lagrangian": {
     "definition": "The function L(x,\u03bb,\u03bd) = f\u2080(x) + \u03a3\u03bb\u1d62f\u1d62(x) + \u03a3\u03bd\u2c7ch\u2c7c(x), augmenting the objective with weighted constraints.",
-    "url": "../../topics/05-duality/index.html#section-1"
+    "url": "../../topics/09-duality/index.html#section-1"
   },
   "lasso": {
     "definition": "Least Absolute Shrinkage and Selection Operator. Minimizes least squares error plus an L1 regularization term.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-3"
+    "url": "../../topics/07-convex-problems-standard/index.html#section-8"
   },
   "linear program": {
     "definition": "An optimization problem with a linear objective function and linear equality and inequality constraints.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-2"
+    "url": "../../topics/07-convex-problems-standard/index.html#section-2"
   },
   "linear subspace": {
     "definition": "A subset of a vector space that is closed under vector addition and scalar multiplication.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-1"
+    "url": "../../topics/00-linear-algebra-basics/index.html#section-subspaces"
   },
   "linear-fractional function": {
     "definition": "A function of the form f(x) = (Ax+b) / (c\u1d40x+d). Preimages and images of convex sets under this map are convex.",
-    "url": "../../topics/02-convex-sets/index.html#section-3"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-3"
   },
   "log-concave": {
     "definition": "A function f is log-concave if log(f) is concave. Implies f is unimodal.",
-    "url": "../../topics/03-convex-functions/index.html#section-6"
+    "url": "../../topics/06-convex-functions-advanced/index.html#section-3"
   },
   "log-sum-exp": {
     "definition": "The function f(x) = log(sum(exp(x_i))). It is convex and serves as a smooth approximation to the max function.",
-    "url": "../../topics/03-convex-functions/index.html#section-3"
+    "url": "../../topics/05-convex-functions-basics/index.html#section-5"
   },
   "lorentz cone": {
     "definition": "The second-order cone Q = {(x,t) | ||x||\u2082 \u2264 t}. Also known as the ice-cream cone.",
-    "url": "../../topics/02-convex-sets/index.html#section-2"
+    "url": "../../topics/08-convex-problems-conic/index.html#section-1"
   },
   "lp": {
     "definition": "Linear Program: Optimization problem with a linear objective function and linear equality and inequality constraints.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-2"
+    "url": "../../topics/07-convex-problems-standard/index.html#section-2"
   },
   "matrix norm": {
     "definition": "A norm on the vector space of matrices. Examples include the spectral norm (induced) and Frobenius norm (entrywise).",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-2"
+    "url": "../../topics/00-linear-algebra-basics/index.html#section-norms"
   },
   "minimal element": {
     "definition": "An element x in a set S such that no other element y in S satisfies y <=_K x (except x itself).",
-    "url": "topics/02-convex-sets/index.html#section-5"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-2"
   },
   "minimum element": {
     "definition": "An element x in a set S such that x <=_K y for all y in S. Unique if it exists.",
-    "url": "topics/02-convex-sets/index.html#section-5"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-2"
   },
   "minkowski sum": {
     "definition": "The set sum A + B = {a + b | a \u2208 A, b \u2208 B}. Preserves convexity.",
-    "url": "../../topics/02-convex-sets/index.html#section-3"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-3"
   },
   "norm": {
     "definition": "A function assigning a non-negative length to a vector, satisfying triangle inequality and homogeneity.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-2"
+    "url": "../../topics/00-linear-algebra-basics/index.html#section-norms"
+  },
+  "norm ball": {
+    "definition": "The set {x | ||x|| \u2264 1} for a given norm ||\u22c5||. These balls encode geometry and often become constraints.",
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-2"
   },
   "nullspace": {
     "definition": "The set of all vectors x such that Ax = 0.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-1"
+    "url": "../../topics/00-linear-algebra-basics/index.html#section-subspaces"
   },
   "perspective function": {
     "definition": "The map P(x,t) = x/t for t > 0. It preserves convexity.",
-    "url": "../../topics/02-convex-sets/index.html#section-3"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-3"
   },
   "polyhedron": {
     "definition": "A set defined by the intersection of a finite number of linear inequalities and equalities.",
-    "url": "../../topics/02-convex-sets/index.html#section-2"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-2"
   },
   "polytope": {
     "definition": "A bounded polyhedron. It is the convex hull of a finite set of points.",
-    "url": "../../topics/02-convex-sets/index.html#section-2"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-2"
   },
   "positive semidefinite": {
     "definition": "A symmetric matrix A is PSD if x\u1d40Ax \u2265 0 for all vectors x. Equivalently, all its eigenvalues are non-negative.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-4"
+    "url": "../../topics/00-linear-algebra-basics/index.html#section-psd"
   },
   "proper cone": {
     "definition": "A convex cone that is closed, pointed (contains no lines), and solid (has interior). Used to define generalized inequalities.",
-    "url": "../../topics/02-convex-sets/index.html#section-5"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-2"
   },
   "psd cone": {
     "definition": "The set of positive semidefinite matrices, S\u207f\u208a = {X \u2208 S\u207f | X \u2ab0 0}.",
-    "url": "../../topics/02-convex-sets/index.html#section-2"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-2"
   },
   "pseudoinverse": {
     "definition": "The Moore-Penrose inverse of a matrix, providing a best-fit solution to linear systems in the least-squares sense.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-7"
+    "url": "../../topics/01-linear-algebra-advanced/index.html#section-pseudoinverse"
   },
   "qp": {
     "definition": "Quadratic Program: Optimization problem with a convex quadratic objective function and linear constraints.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-3"
+    "url": "../../topics/07-convex-problems-standard/index.html#section-3"
   },
   "quadratic program": {
     "definition": "An optimization problem with a convex quadratic objective function and linear constraints.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-3"
+    "url": "../../topics/07-convex-problems-standard/index.html#section-3"
   },
   "quasi-convex": {
     "definition": "A function where all sublevel sets {x | f(x) \u2264 \u03b1} are convex.",
-    "url": "../../topics/03-convex-functions/index.html#section-8"
+    "url": "../../topics/06-convex-functions-advanced/index.html#section-2"
+  },
+  "quasiconvex": {
+    "definition": "A function where all sublevel sets {x | f(x) \u2264 \u03b1} are convex.",
+    "url": "../../topics/06-convex-functions-advanced/index.html#section-2"
   },
   "rank-nullity theorem": {
     "definition": "Theorem stating that for a linear map, the dimension of the domain equals the rank plus the nullity.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-1"
+    "url": "../../topics/00-linear-algebra-basics/index.html#section-subspaces"
   },
   "recession cone": {
     "definition": "The set of directions in which a convex set extends infinitely without leaving the set.",
-    "url": "../../topics/02-convex-sets/index.html#section-2"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-2"
   },
   "relative interior": {
     "definition": "The interior of a convex set relative to its affine hull.",
-    "url": "../../topics/02-convex-sets/index.html#section-1"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-4"
   },
   "robust optimization": {
     "definition": "An approach to optimization where constraints must hold for all uncertainty realizations in a given set.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-6"
+    "url": "../../topics/08-convex-problems-conic/index.html#section-2"
   },
   "schur complement": {
     "definition": "For a block matrix, the Schur complement characterizes positive definiteness and invertibility via sub-blocks.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-5"
+    "url": "../../topics/00-linear-algebra-basics/index.html#section-psd"
   },
   "sdp": {
     "definition": "Semidefinite Program: Optimization problem with linear objective and Linear Matrix Inequality (LMI) constraints involving symmetric matrices.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-5"
+    "url": "../../topics/08-convex-problems-conic/index.html#section-3"
   },
   "self-dual": {
     "definition": "A cone that is equal to its own dual cone.",
-    "url": "topics/02-convex-sets/index.html#section-5"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-2"
   },
   "separating hyperplane theorem": {
     "definition": "Theorem stating that any two disjoint convex sets can be separated by a hyperplane.",
-    "url": "topics/02-convex-sets/index.html#section-4"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-1"
   },
   "shadow prices": {
     "definition": "The optimal dual variables, representing the rate of change of the optimal value with respect to constraint perturbations.",
-    "url": "../../topics/05-duality/index.html#section-2"
+    "url": "../../topics/09-duality/index.html#section-2"
   },
   "slater's condition": {
     "definition": "A sufficient condition for strong duality: existence of a strictly feasible point in the relative interior of the domain.",
-    "url": "../../topics/05-duality/index.html#section-3"
+    "url": "../../topics/09-duality/index.html#section-3"
   },
   "socp": {
     "definition": "Second-Order Cone Program: Optimization problem with linear objective and second-order cone constraints ||Ax+b||\u2082 \u2264 c\u1d40x+d.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-4"
+    "url": "../../topics/08-convex-problems-conic/index.html#section-1"
   },
   "spectrahedron": {
     "definition": "The intersection of the PSD cone with an affine subspace; the feasible set of a semidefinite program.",
-    "url": "topics/02-convex-sets/index.html#section-2"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-2"
   },
   "standard form": {
     "definition": "Minimize convex f\u2080(x) subject to convex inequality constraints f\u1d62(x) \u2264 0 and affine equality constraints Ax=b.",
-    "url": "../../topics/04-convex-opt-problems/index.html#section-1"
+    "url": "../../topics/07-convex-problems-standard/index.html#section-1"
   },
   "strict separation": {
     "definition": "Two disjoint convex sets can be separated by a hyperplane such that one set is strictly greater than the threshold and the other strictly less.",
-    "url": "../../topics/02-convex-sets/index.html#section-4"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-1"
   },
   "strictly convex": {
     "definition": "A function where Jensen's inequality is strict for distinct points. Implies unique global minimum.",
-    "url": "../../topics/03-convex-functions/index.html#section-1"
+    "url": "../../topics/05-convex-functions-basics/index.html#section-1"
   },
   "strong duality": {
     "definition": "The condition where the optimal primal and dual values are equal: p* = d*.",
-    "url": "../../topics/05-duality/index.html#section-3"
+    "url": "../../topics/09-duality/index.html#section-3"
   },
   "strongly convex": {
     "definition": "A function that is at least as convex as a quadratic: f(x) - (m/2)||x||\u00b2 is convex.",
-    "url": "../../topics/03-convex-functions/index.html#section-1"
+    "url": "../../topics/05-convex-functions-basics/index.html#section-1"
   },
   "supporting hyperplane": {
     "definition": "A hyperplane that touches a convex set at the boundary and contains the set on one side.",
-    "url": "../../topics/02-convex-sets/index.html#section-4"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-1"
   },
   "supporting hyperplane theorem": {
     "definition": "Theorem stating that at any boundary point of a convex set, there exists a hyperplane that contains the point and has the set on one side.",
-    "url": "topics/02-convex-sets/index.html#section-4"
+    "url": "../../topics/04-convex-sets-cones/index.html#section-1"
   },
   "svd": {
     "definition": "Singular Value Decomposition: Factorization of a matrix into A = U\u03a3V\u1d40, representing rotation, scaling, and rotation.",
-    "url": "../../topics/00-linear-algebra-primer/index.html#section-7"
+    "url": "../../topics/01-linear-algebra-advanced/index.html#section-svd"
   },
   "translated subspace": {
     "definition": "A set of the form {x\u2080 + v | v \u2208 V} where V is a linear subspace. This is the geometric characterization of an affine set.",
-    "url": "../../topics/02-convex-sets/index.html#section-1"
+    "url": "../../topics/03-convex-sets-geometry/index.html#section-1"
   },
   "weak duality": {
     "definition": "The optimal value of the dual problem d* is always less than or equal to the primal optimal value p*.",
-    "url": "../../topics/05-duality/index.html#section-2"
+    "url": "../../topics/09-duality/index.html#section-2"
   }
 }

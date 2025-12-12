@@ -79,6 +79,10 @@
         </ul>
       </div>
 
+      <div class="interpretation-box">
+        <p><b>Economic interpretation (value/profit function):</b> The expression $y^\top x - f(x)$ is “revenue minus cost” if $y$ is a price vector and $f(x)$ is a cost (or disutility). The conjugate $f^*(y)$ is the <i>best achievable net value</i> at prices $y$. This is exactly the object that appears in duality: dual variables act like prices that score primal decisions via inner products.</p>
+      </div>
+
       <h3>1.2 Why $f^*$ is Always Convex</h3>
       <p>A crucial property is that $f^*$ is convex <b>regardless</b> of whether $f$ is convex.</p>
       <div class="proof-box">
@@ -1065,11 +1069,25 @@
 </div>
 
 </section>
+
+    <section class="section-card" id="section-6">
+      <h2>6. Recap &amp; What's Next</h2>
+      <div class="recap-box">
+        <ul style="margin: 0 0 0 20px;">
+          <li><b>Conjugates:</b> $f^*(y)=\sup_x (y^\top x - f(x))$ packages all supporting hyperplanes of $f$ into a single convex function.</li>
+          <li><b>Quasiconvexity:</b> sublevel sets are convex even when the function is not; fractional and max-type objectives often land here.</li>
+          <li><b>Log-concavity/log-convexity:</b> turns multiplicative structure into additive structure via $\log$, which is why it appears in probability and geometry.</li>
+        </ul>
+      </div>
+      <div class="interpretation-box">
+        <p style="margin: 0;"><b>Forward look:</b> In <a href="../07-convex-problems-standard/index.html">Lecture 07</a> you will translate modeling statements into “standard form.” In <a href="../08-convex-problems-conic/index.html">Lecture 08</a> you will see how many nonlinear-looking constraints become SOC/SDP constraints. In <a href="../09-duality/index.html">Lecture 09</a>, conjugates and separation become dual problems and optimality certificates.</p>
+      </div>
+    </section>
     </article>
 
     <footer class="site-footer">
       <div class="container">
-        <p>© <span id="year"></a> Convex Optimization Course</p>
+        <p>© <span id="year"></span> Convex Optimization Course</p>
       </div>
     </footer>
   </main></div>

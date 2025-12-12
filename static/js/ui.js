@@ -23,11 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
    ========================================= */
 function initCollapsibleEnvironments() {
     const collapsibleSelectors = [
+        { selector: '.theorem-box', defaultCollapsed: false, label: 'Theorem' },
         { selector: '.proof-box', defaultCollapsed: true, label: 'Proof' },
         { selector: '.solution-box', defaultCollapsed: true, label: 'Solution' },
         { selector: '.answer', defaultCollapsed: true, label: 'Answer' },
         { selector: '.recap-box', defaultCollapsed: true, label: 'Recap' },
-        { selector: '.example-box', defaultCollapsed: false, label: 'Example' }
+        { selector: '.example', defaultCollapsed: false, label: 'Example' },
+        { selector: '.example-box', defaultCollapsed: false, label: 'Example' },
+        { selector: '.intuition-box', defaultCollapsed: false, label: 'Intuition' },
+        { selector: '.interpretation-box', defaultCollapsed: false, label: 'Interpretation' }
     ];
 
     collapsibleSelectors.forEach(config => {

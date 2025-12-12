@@ -25,6 +25,27 @@
     </div>
   </header>
 
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+    <header class="lecture-header section-card">
+      <h1>03. Convex Sets: Geometry</h1>
+      <div class="lecture-summary">
+        <p>This lecture builds the geometric foundation of convex optimization. We formalize affine and convex sets, construct key examples (halfspaces, norm balls, polyhedra, and the PSD cone), and learn a small set of operations that generate most convex sets used in practice. We end with a topological toolkit (closure, interior, relative interior) that becomes essential later for constraint qualifications and duality.</p>
+        <p><strong>Prerequisites:</strong> <a href="../00-linear-algebra-basics/index.html">Lecture 00</a> (vectors, inner products, norms) and <a href="../02-introduction/index.html">Lecture 02</a> (convexity motivation).</p>
+        <p><strong>Forward Connections:</strong> Cone geometry and separation (<a href="../04-convex-sets-cones/index.html">Lecture 04</a>) and convex functions (<a href="../05-convex-functions-basics/index.html">Lecture 05</a>) build directly on these set constructions. Standard and conic problem classes (<a href="../07-convex-problems-standard/index.html">Lecture 07</a>, <a href="../08-convex-problems-conic/index.html">Lecture 08</a>) are largely “recognize the set.”</p>
+      </div>
+    </header>
+
+    <section class="section-card">
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
+      <p>After this lecture, you will be able to:</p>
+      <ul>
+        <li><b>Distinguish affine vs. convex geometry:</b> Tell apart affine hulls, convex hulls, and their geometric meaning (lines vs. line segments).</li>
+        <li><b>Recognize canonical convex sets:</b> Identify halfspaces, hyperplanes, norm balls, ellipsoids, polyhedra/polytopes, and the PSD cone as “building blocks.”</li>
+        <li><b>Generate new convex sets:</b> Use intersection, affine images/preimages, perspective, and linear-fractional maps to prove convexity quickly.</li>
+        <li><b>Use relative interior correctly:</b> Work with $\mathrm{ri}(C)$ when $\mathrm{int}(C)$ is empty and connect this to feasibility notions used in duality.</li>
+      </ul>
+    </section>
+
     <article>
       <section class="section-card" id="section-1">
         <h2>1. Affine and Convex Sets: Definitions and Basic Properties</h2>
@@ -109,11 +130,11 @@
 
         <div class="theorem-box">
           <h4>Definition (Convex Set)</h4>
-          <p>A set $C \subseteq \mathbb{R}^n$ is <a href="#" class="definition-link" data-term="convex function">convex</a> if for any two points $x, y \in C$ and any $\theta \in [0,1]$:</p>
+          <p>A set $C \subseteq \mathbb{R}^n$ is <a href="#" class="definition-link" data-term="convex set">convex</a> if for any two points $x, y \in C$ and any $\theta \in [0,1]$:</p>
           $$
           \theta x + (1-\theta)y \in C
           $$
-          <p><b>Geometric meaning:</b> The line segment connecting any two points in the set lies entirely within the set—no "dents" or "holes."</p>
+          <p><b>Geometric meaning:</b> The line segment connecting any two points in the set lies entirely within the set-no "dents" or "holes."</p>
         </div>
 
         <figure style="text-align: center; margin: 24px 0;">
@@ -406,7 +427,7 @@
 
         <h3>2.4 The Positive Semidefinite (PSD) Cone</h3>
 
-        <p>The set of symmetric positive semidefinite matrices is a central object in modern convex optimization, forming the domain for <b>Semidefinite Programming (SDP)</b> (<a href="../07-convex-problems-standard/index.html">Lecture 08</a>). Its properties rely on the eigenvalue characterizations from <a href="../00-linear-algebra-basics/index.html">Lecture 00-01</a>.</p>
+        <p>The set of symmetric positive semidefinite matrices is a central object in modern convex optimization, forming the feasible region for <b>Semidefinite Programming (SDP)</b> (<a href="../08-convex-problems-conic/index.html">Lecture 08</a>). Its geometry relies on eigenvalue and quadratic-form characterizations from <a href="../00-linear-algebra-basics/index.html">Lecture 00</a> (and the SVD viewpoint in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>).</p>
         $$
         \mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}
         $$
@@ -667,6 +688,15 @@
         <p>The <a href="#" class="definition-link">Minkowski sum</a> of two sets $C, D \subseteq \mathbb{R}^n$ is the set of all vector sums:</p>
         $$ C + D = \{x + y \mid x \in C, y \in D\} $$
 
+        <div class="intuition-box">
+          <p><b>Geometric picture:</b> Build $C+D$ by taking every point $c \in C$, shifting the whole set $D$ by $c$, and then taking the union of all these shifted copies: $C+D=\bigcup_{c\in C}(c+D)$. The result is a “thickened” version of $C$ whose boundary is smoothed/expanded according to the shape of $D$.</p>
+          <p><b>Special case:</b> If $D$ is a ball of radius $\varepsilon$, then $C + D$ is the $\varepsilon$-offset of $C$: all points within distance $\varepsilon$ of $C$.</p>
+        </div>
+
+        <div class="interpretation-box">
+          <p><b>Modeling view:</b> Minkowski sum is “resource aggregation.” If $C$ is what you can do with resource bundle 1 and $D$ is what you can do with resource bundle 2, then $C+D$ is what you can do with both. In robust modeling, adding an uncertainty set $U$ often turns “nominal” constraints into constraints that hold for all perturbations in $U$; geometrically this corresponds to offsetting or shrinking feasible sets (sum/difference).</p>
+        </div>
+
         <div class="theorem-box">
           <h4>Theorem</h4>
           <p>If $C$ and $D$ are convex, then $C+D$ is convex.</p>
@@ -682,6 +712,35 @@
           $$
           <p>Since $C$ is convex, the first bracket is in $C$. Since $D$ is convex, the second is in $D$. Thus the sum is in $C+D$.</p>
         </div>
+
+        <h4>3.4.1 Minkowski Difference (Erosion)</h4>
+        <p>There is a related operation that “shrinks” a set. The <b>Minkowski difference</b> (also called <b>erosion</b>) of $C$ by $D$ is defined as:</p>
+        $$
+        C \ominus D := \{x \in \mathbb{R}^n \mid x + D \subseteq C\}
+        $$
+        <p>In words: $x$ is in $C \ominus D$ if, when you place a translated copy of $D$ centered at $x$, it still fits entirely inside $C$. This makes “safety margins” precise.</p>
+        <p>A useful equivalent form is an intersection of translations:</p>
+        $$
+        C \ominus D = \bigcap_{d \in D} (C - d)
+        $$
+        <p>because $x+D \subseteq C \iff x \in C-d$ for every $d\in D$.</p>
+
+        <div class="theorem-box">
+          <h4>Convexity of Minkowski Difference (when nonempty)</h4>
+          <p>If $C$ and $D$ are convex, then $C \ominus D$ is convex (and it may be empty if $D$ is “too large” to fit inside $C$ anywhere).</p>
+        </div>
+
+        <div class="proof-box">
+          <h4>Proof</h4>
+          <p>For each fixed $d \in D$, the translate $C-d = \{x \mid x+d \in C\}$ is convex because translation preserves convexity. Since $C\ominus D$ is the intersection $\bigcap_{d\in D}(C-d)$, and intersections of convex sets are convex, $C\ominus D$ is convex.</p>
+        </div>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/minkowski-sum-difference.png"
+               alt="Minkowski sum and Minkowski difference (erosion) of two convex sets"
+               style="max-width: 90%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 3.12:</i> Left: Minkowski sum $S_1+S_2$ “adds” shapes by combining all pointwise sums. Right: Minkowski difference $S_1\ominus S_2$ keeps the points where a translated copy of $S_2$ still fits inside $S_1$.</figcaption>
+        </figure>
 
         <h3>3.5 Cartesian Product</h3>
         <p>The product of convex sets $C \subseteq \mathbb{R}^n$ and $D \subseteq \mathbb{R}^m$ is convex in $\mathbb{R}^{n+m}$:</p>
@@ -1303,20 +1362,64 @@
 
           <div class="solution-box">
             <h4>Solution</h4>
-            <ul>
-              <li><b>Halfspace:</b> Maps to a halfspace (intersected with domain).</li>
-              <li><b>Polyhedron:</b> Intersection of halfspaces $\to$ Intersection of halfspaces $\to$ Polyhedron.</li>
-              <li><b>Ellipsoid:</b> Maps to a set defined by a quadratic inequality (convex).</li>
-            </ul>
+            <div class="proof-step">
+              <strong>Setup (multiply by the positive denominator).</strong>
+              Let $f(x) = \dfrac{Ax+b}{c^\top x + d}$ with domain $\{x \mid c^\top x + d > 0\}$.
+              For any target set $S$ in the output space,
+              $$ f^{-1}(S) = \{x \mid f(x)\in S,\; c^\top x + d > 0\}. $$
+              The key simplification is that on the domain $c^\top x + d$ is strictly positive, so multiplying an inequality by $c^\top x + d$ does not flip the inequality direction.
+            </div>
+
+            <div class="proof-step">
+              <strong>(a) Halfspace.</strong>
+              Let $H = \{y \mid a^\top y \le \beta\}$. Then $f(x)\in H$ iff
+              $$ a^\top \frac{Ax+b}{c^\top x + d} \le \beta. $$
+              Multiply by $c^\top x + d > 0$ and rearrange:
+              $$ a^\top(Ax+b) \le \beta(c^\top x + d)\;\;\Longleftrightarrow\;\;(a^\top A - \beta c^\top)x \le \beta d - a^\top b. $$
+              Therefore $f^{-1}(H)$ is a halfspace intersected with the domain constraint $c^\top x + d > 0$.
+            </div>
+
+            <div class="proof-step">
+              <strong>(b) Polyhedron.</strong>
+              Any polyhedron can be written as $P = \{y \mid My \le h\}$, i.e., an intersection of finitely many halfspaces.
+              Apply the halfspace computation to each row inequality $m_i^\top y \le h_i$.
+              The preimage is an intersection of finitely many halfspaces in $x$ (plus $c^\top x + d > 0$), hence a polyhedron.
+            </div>
+
+            <div class="proof-step">
+              <strong>(c) Ellipsoid (SOC form).</strong>
+              Write the ellipsoid as $E = \{y \mid \|P^{-1/2}(y-y_0)\|_2 \le 1\}$ with $P \succ 0$.
+              Then $f(x)\in E$ iff
+              $$ \left\|P^{-1/2}\left(\frac{Ax+b}{c^\top x+d}-y_0\right)\right\|_2 \le 1,\qquad c^\top x + d > 0. $$
+              Let $t := c^\top x + d$ (so $t>0$) and multiply both sides by $t$:
+              $$ \|P^{-1/2}(Ax+b - t y_0)\|_2 \le t,\qquad t = c^\top x + d,\qquad t>0. $$
+              This is a second-order cone constraint in the lifted variables $(x,t)$ plus one affine equality.
+              In particular, the preimage of an ellipsoid under a linear-fractional map is convex and SOCP-representable.
+            </div>
           </div>
         </div>
 
+      </section>
+
+      <section class="section-card" id="section-7">
+        <h2>7. Recap &amp; What's Next</h2>
+        <div class="recap-box">
+          <ul style="margin: 0 0 0 20px;">
+            <li><b>Affine vs. convex:</b> affine sets contain whole lines; convex sets contain line segments.</li>
+            <li><b>Canonical convex sets:</b> halfspaces/hyperplanes, norm balls, ellipsoids, polyhedra/polytopes, and the PSD cone appear repeatedly as feasible regions.</li>
+            <li><b>Convexity-preserving operations:</b> intersections, affine images/preimages, perspective, and linear-fractional maps are the fastest way to prove a set is convex.</li>
+            <li><b>Topology that matters:</b> when $\mathrm{int}(C)=\emptyset$ (common in constrained problems), the right notion is $\mathrm{ri}(C)$, the interior inside the affine hull.</li>
+          </ul>
+        </div>
+        <div class="interpretation-box">
+          <p style="margin: 0;"><b>Forward look:</b> In <a href="../04-convex-sets-cones/index.html">Lecture 04</a>, cones and separating hyperplanes explain why convex problems admit powerful certificates (duals). In <a href="../05-convex-functions-basics/index.html">Lecture 05</a>, convex functions are introduced largely by studying the geometry of sets like epigraphs and sublevel sets.</p>
+        </div>
       </section>
     </article>
 
     <footer class="site-footer">
       <div class="container">
-        <p>© <span id="year"></a> Convex Optimization Course</p>
+        <p>© <span id="year"></span> Convex Optimization Course</p>
       </div>
     </footer>
   </main></div>

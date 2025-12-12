@@ -2,5 +2,29 @@
   {
     "filename": "schur_complement_block.png",
     "description": "A visualization of the Schur complement process as a transformation of matrix structure. Left: A large square matrix M partitioned into blocks A (top-left, red), B (top-right, blue), C (bottom-left, blue), and D (bottom-right, green). The determinant of the whole block matrix is represented as the volume of a parallelpiped formed by its column vectors. Center: An 'Elimination Matrix' E (block lower triangular) acting on M. Right: The result ME which is block upper triangular. The bottom-right block is still D, but the top-left block has transformed into the Schur complement S = A - BD^{-1}C. The determinant is det(S) * det(D), visualized as the product of the 'volumes' of the diagonal blocks."
+  },
+  {
+    "filename": "svd-ellipsoid-2d.png",
+    "description": "A geometric interpretation of the SVD. The unit circle (input space) is mapped by A to an ellipse (output space). The ellipse axes are aligned with the left singular vectors u1, u2 and have lengths σ1, σ2. This illustrates that singular values are semi-axis lengths and singular vectors provide the principal directions of the transformation."
+  },
+  {
+    "filename": "svd-transformation-sequence.png",
+    "description": "A step-by-step breakdown of A = U Σ V^T. First V^T rotates/reflects the input (circle stays a circle). Then Σ stretches along orthogonal coordinate axes into an axis-aligned ellipse (with factors σ1, σ2). Finally U rotates/reflects the ellipse to its final orientation in the output space."
+  },
+  {
+    "filename": "svd-vs-eigendecomposition.png",
+    "description": "A conceptual comparison between eigendecomposition and SVD. Eigendecomposition seeks invariant directions v with Av parallel to v (which may fail to be orthogonal for non-symmetric matrices). SVD instead maps an orthonormal input basis {v_i} to an orthonormal output basis {u_i} with gains σ_i via Av_i = σ_i u_i."
+  },
+  {
+    "filename": "conditioning-geometry.png",
+    "description": "A two-panel geometry of conditioning and error amplification for Ax=b. Left (well-conditioned): a small uncertainty ball around b maps under A^{-1} to a similarly sized uncertainty region around x. Right (ill-conditioned): the same input uncertainty maps to a highly elongated uncertainty region in solution space, illustrating that relative solution error can be magnified by κ(A)."
+  },
+  {
+    "filename": "zig-zag-ill-conditioning.png",
+    "description": "A comparison of gradient descent paths for well-conditioned vs. ill-conditioned objectives. With near-circular contours (κ≈1) the path moves directly to the minimizer. With elongated contours (κ≫1) the gradient is nearly orthogonal to the valley direction, producing a zig-zagging trajectory and slow convergence."
+  },
+  {
+    "filename": "low-rank-image-approximation.png",
+    "description": "A visual demonstration of truncated SVD for data compression. The same image is reconstructed using decreasing ranks (many singular values vs. few): higher rank retains detail, while very low rank preserves only coarse structure, illustrating the tradeoff between compression and fidelity."
   }
 ]

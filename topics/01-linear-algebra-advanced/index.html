@@ -129,6 +129,13 @@
       </ol>
       <p>This decomposition reveals that the image of the unit sphere under any linear map is a hyperellipse. The singular values are the lengths of the hyperellipse's semi-axes, and the columns of $U$ are the directions of these axes.</p>
 
+      <figure style="text-align: center; margin: 24px 0;">
+        <img src="assets/svd-ellipsoid-2d.png"
+             alt="A unit circle mapped to an ellipse with singular vectors showing axis directions and singular values showing axis lengths"
+             style="max-width: 90%; height: auto; border-radius: 8px;" />
+        <figcaption><i>Figure 1.1:</i> Geometric meaning of SVD: the unit circle maps to an ellipse; singular values are semi-axis lengths and singular vectors give the axis directions.</figcaption>
+      </figure>
+
       <div class="example">
         <h4>Numerical Example: SVD in 2D</h4>
         <p>Consider the matrix $A = \begin{bmatrix} 3 & 0 \\ 0 & -2 \end{bmatrix}$. It stretches the x-axis by 3 and the y-axis by 2, while reflecting the y-axis.</p>
@@ -146,6 +153,13 @@
              alt="SVD Geometric Interpretation"
              style="max-width: 80%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
         <figcaption><i>Figure 2.1:</i> SVD decomposes a transformation into Rotation ($V^\top$) $\to$ Stretch ($\Sigma$) $\to$ Rotation ($U$).</figcaption>
+      </figure>
+
+      <figure style="text-align: center; margin: 24px 0;">
+        <img src="assets/svd-transformation-sequence.png"
+             alt="Step-by-step visualization of the SVD transformation sequence V^T then Sigma then U"
+             style="max-width: 95%; height: auto; border-radius: 8px;" />
+        <figcaption><i>Figure 2.2:</i> SVD as a transformation pipeline: rotate/reflect ($V^\top$), stretch along orthogonal axes ($\Sigma$), then rotate/reflect again ($U$).</figcaption>
       </figure>
 
       <h3>Theorem: Existence of SVD</h3>
@@ -197,6 +211,20 @@
         </div>
       </div>
 
+      <h3>SVD vs. Eigendecomposition (Conceptual Contrast)</h3>
+      <p>Eigendecomposition asks for <i>invariant directions</i> ($Av=\lambda v$) and is tied to square matrices; for non-symmetric matrices it may require complex eigenvalues/eigenvectors and the eigenvectors need not be orthogonal. The SVD always exists (for any rectangular matrix) and instead describes how $A$ maps one <i>orthonormal</i> basis to another:</p>
+      <ul>
+        <li><b>Input frame:</b> right singular vectors $\{v_i\}$ are orthonormal directions in the domain.</li>
+        <li><b>Output frame:</b> left singular vectors $\{u_i\}$ are orthonormal directions in the range.</li>
+        <li><b>Gains:</b> singular values $\sigma_i$ are nonnegative stretch factors linking them: $Av_i = \sigma_i u_i$.</li>
+      </ul>
+      <figure style="text-align: center; margin: 24px 0;">
+        <img src="assets/svd-vs-eigendecomposition.png"
+             alt="Comparison of eigendecomposition and SVD showing invariant directions versus orthonormal input/output frames"
+             style="max-width: 90%; height: auto; border-radius: 8px;" />
+        <figcaption><i>Figure 2.3:</i> SVD maps one orthonormal frame to another ($Av_i=\sigma_i u_i$), while eigendecomposition looks for directions that stay parallel under $A$.</figcaption>
+      </figure>
+
       <h3>Matrix Norms via SVD</h3>
       <p>The SVD provides the most natural characterization of matrix norms:</p>
       <ul>
@@ -228,6 +256,13 @@
           <li>Frobenius Error: $\|A - A_k\|_F = \sqrt{\sum_{i=k+1}^r \sigma_i^2}$</li>
         </ul>
       </div>
+
+      <figure style="text-align: center; margin: 24px 0;">
+        <img src="assets/low-rank-image-approximation.png"
+             alt="Image reconstructed at different ranks using truncated SVD"
+             style="max-width: 95%; height: auto; border-radius: 8px;" />
+        <figcaption><i>Figure 2.4:</i> Low-rank approximation via truncated SVD: keeping more singular values preserves more visual detail, while very small ranks keep only coarse structure.</figcaption>
+      </figure>
 
       <div class="proof-box">
         <h4>Sketch of Proof (Spectral Norm)</h4>
@@ -331,6 +366,21 @@
         <li><b>$\kappa \approx 1$:</b> Well-conditioned. Errors are not amplified. Orthogonal matrices have $\kappa = 1$.</li>
         <li><b>$\kappa \gg 1$:</b> Ill-conditioned. Small errors in $b$ can lead to massive errors in $x$.</li>
       </ul>
+
+      <div class="row" style="display: flex; gap: 20px; justify-content: center; align-items: flex-start; margin: 24px 0; flex-wrap: wrap;">
+        <figure style="text-align: center; flex: 1; min-width: 280px;">
+          <img src="assets/conditioning-geometry.png"
+               alt="Well-conditioned versus ill-conditioned error amplification geometry"
+               style="width: 100%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 3.1:</i> Condition number as error magnification: the same small uncertainty in $b$ can map to a small or huge uncertainty in $x$ depending on $\kappa(A)$.</figcaption>
+        </figure>
+        <figure style="text-align: center; flex: 1; min-width: 280px;">
+          <img src="assets/zig-zag-ill-conditioning.png"
+               alt="Gradient descent zig-zagging on elongated contours in an ill-conditioned problem"
+               style="width: 100%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 3.2:</i> Ill-conditioning creates elongated level sets; first-order methods like gradient descent can zig-zag across the valley, slowing convergence.</figcaption>
+        </figure>
+      </div>
 
       <div class="widget-container" style="margin: 24px 0;">
         <h3 style="margin-top: 0;">Interactive: Condition Number & Stability</h3>

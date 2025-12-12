@@ -392,6 +392,13 @@
         </ul>
       </div>
 
+      <figure style="text-align: center; margin: 24px 0;">
+        <img src="assets/determinant-volume-scaling.png"
+             alt="A unit square mapped by a linear transformation to a parallelogram with area |det(A)|"
+             style="max-width: 90%; height: auto; border-radius: 8px;" />
+        <figcaption><i>Figure 0.3:</i> Determinant as volume scaling: a unit square maps to a parallelogram of area $|\det(A)|$; the sign of $\det(A)$ tracks whether orientation is preserved or flipped.</figcaption>
+      </figure>
+
 
       <h3>3.2 The "Isotropic Scaling" Lemma</h3>
       <p>A classic result connects the geometry of eigenvectors to the structure of the matrix. We ask: what if <i>every</i> vector is an eigenvector?</p>
@@ -622,20 +629,26 @@
       $$ \cos \angle(x, y) = \frac{x^\top y}{\|x\|_2 \|y\|_2} $$
       Since the magnitude of the right-hand side is guaranteed to be between -1 and 1. Two vectors are <b>orthogonal</b> if their inner product is zero, $x^\top y = 0$, which corresponds to a 90-degree angle.</p>
 
-      <h3>Dual Norms and Hölder's Inequality</h3>
+      <h3>Dual Norms and H&ouml;lder's Inequality</h3>
       <p>The concept of duality is central to optimization. For any norm $\|\cdot\|$, we can define a corresponding <b>dual norm</b>, denoted $\|\cdot\|_*$, as:
       $$ \|y\|_* = \sup_{\|x\| \le 1} x^\top y $$
       The dual norm measures the maximum "stretch" of a vector $y$ when applied to unit-norm vectors $x$. This definition leads to some important pairings:</p>
 
-      <div class="insight">
-        <h4>💡 Geometric Intuition for Dual Norms</h4>
-        <p>Think of the dual norm as measuring how "aligned" a vector $y$ can be with vectors in the unit ball of the primal norm.</p>
+      <div class="intuition-box">
+        <p><b>Geometric intuition:</b> Think of the dual norm as measuring how "aligned" a vector $y$ can be with vectors in the unit ball of the primal norm.</p>
         <ul>
           <li><b>$\ell_2$ is self-dual:</b> The unit ball is a sphere. The direction of maximum inner product with $y$ is $y$ itself (normalized). Thus $\|y\|_{2,*} = \|y\|_2$.</li>
           <li><b>$\ell_1$ dual is $\ell_\infty$:</b> The $\ell_1$ unit ball is a diamond with corners at coordinate axes. To maximize $x^\top y$ over this diamond, you pick the corner $e_i$ (or $-e_i$) corresponding to the largest component of $y$. Thus, the maximum value is $\max_i |y_i| = \|y\|_\infty$.</li>
           <li><b>$\ell_\infty$ dual is $\ell_1$:</b> The $\ell_\infty$ unit ball is a box (corners at $(\pm 1, \dots, \pm 1)$). To maximize $x^\top y$ over the box, you choose each $x_i$ to match the sign of $y_i$. The result is $\sum y_i \mathrm{sign}(y_i) = \sum |y_i| = \|y\|_1$.</li>
         </ul>
       </div>
+
+      <figure style="text-align: center; margin: 24px 0;">
+        <img src="assets/l1-vs-linf-duality.png"
+             alt="Maximizing an inner product over the l1 unit ball illustrates duality with the linfinity norm"
+             style="max-width: 90%; height: auto; border-radius: 8px;" />
+        <figcaption><i>Figure 0.4:</i> Dual-norm geometry in 2D: maximizing $x^\top y$ over the $\ell_1$ unit ball (diamond) selects an extreme point, revealing $\|y\|_\infty$ as the dual norm.</figcaption>
+      </figure>
 
       <div class="proof-box">
         <h4>Proof: $(\|\cdot\|_2)^* = \|\cdot\|_2$ (Self-Duality of Euclidean Norm)</h4>
@@ -669,11 +682,11 @@
         </div>
       </div>
 
-      <h3>Hölder's Inequality (Dual-Norm Cauchy–Schwarz)</h3>
+      <h3>H&ouml;lder's Inequality (Dual-Norm Cauchy&ndash;Schwarz)</h3>
       <p>For all $x, y \in \mathbb{R}^n$ and any norm $\|\cdot\|$:</p>
       $$ x^\top y \le \|x\| \cdot \|y\|_* $$
       <div class="proof-box">
-        <h4>Proof of Hölder's Inequality</h4>
+        <h4>Proof of H&ouml;lder's Inequality</h4>
         <div class="proof-step">
           <strong>Case 1: $x = 0$.</strong> The inequality holds since $0 \le 0$.
         </div>
@@ -695,6 +708,13 @@
       It turns out this equals the maximum singular value:
       $$ \|X\|_2 = \sigma_{\max}(X) = \sqrt{\lambda_{\max}(X^\top X)} $$
       Since $X^\top X$ is always Positive Semidefinite ($v^\top X^\top X v = \|Xv\|_2^2 \ge 0$), its eigenvalues are non-negative.</p>
+
+      <figure style="text-align: center; margin: 24px 0;">
+        <img src="assets/operator-norm-geometry.png"
+             alt="A unit circle mapped to an ellipse illustrating the spectral norm as maximum stretch"
+             style="max-width: 90%; height: auto; border-radius: 8px;" />
+        <figcaption><i>Figure 0.5:</i> Operator-norm geometry: $\|A\|_2$ is the maximum stretch of the unit circle under $A$, equal to the longest semi-axis length (the largest singular value).</figcaption>
+      </figure>
 
       <div class="proof-box">
         <h4>Proof: $\|X\|_2 = \sqrt{\lambda_{\max}(X^\top X)}$</h4>
@@ -800,12 +820,19 @@
         </ul>
       </div>
 
-      <h3>The Gram–Schmidt Process</h3>
+      <h3>The Gram-Schmidt Process</h3>
       <p>The Gram-Schmidt process is an algorithm for constructing an orthonormal basis from a set of linearly independent vectors. Starting with a vector, it iteratively subtracts the components that lie in the direction of the previously processed vectors, leaving a new, orthogonal vector that is then normalized.
       $$
       \tilde{q}_k = a_k - \sum_{i=1}^{k-1} (q_i^\top a_k) q_i, \quad q_k = \frac{\tilde{q}_k}{\|\tilde{q}_k\|_2}
       $$
       </p>
+
+      <figure style="text-align: center; margin: 24px 0;">
+        <img src="assets/gram-schmidt-orthogonalization.png"
+             alt="Step-by-step geometric illustration of the Gram-Schmidt orthogonalization process"
+             style="max-width: 95%; height: auto; border-radius: 8px;" />
+        <figcaption><i>Figure 0.6:</i> Gram-Schmidt orthogonalization: subtract projections to remove components in previously constructed directions, then normalize to get an orthonormal basis.</figcaption>
+      </figure>
 
       <h3>The QR Decomposition</h3>
       <p>The QR decomposition expresses a matrix $A$ as the product of an orthonormal matrix $Q$ and an upper triangular matrix $R$. This decomposition is a direct outcome of the Gram-Schmidt process and is fundamental to numerical linear algebra. For a matrix $A \in \mathbb{R}^{m \times n}$ with full column rank, we can write $A = QR$, where $Q \in \mathbb{R}^{m \times n}$ has orthonormal columns and $R \in \mathbb{R}^{n \times n}$ is upper-triangular.
@@ -1170,6 +1197,13 @@
       <h3>Projection onto an Affine Set</h3>
       <p>Consider an affine set defined by $\mathcal{A} = \{ x \in \mathbb{R}^n \mid Fx = g \}$, where $F \in \mathbb{R}^{p \times n}$ has full row rank and $g \in \mathbb{R}^p$. Projecting onto this set reduces to subspace projection by translating. This concept is generalized in <a href="../03-convex-sets-geometry/index.html">Lecture 01</a> to <b>projection onto convex sets</b> (POCS).</p>
 
+      <figure style="text-align: center; margin: 24px 0;">
+        <img src="assets/projection-onto-affine-set.png"
+             alt="Projection onto an affine set visualized as translation to a subspace, projection, then translation back"
+             style="max-width: 95%; height: auto; border-radius: 8px;" />
+        <figcaption><i>Figure 0.7:</i> Projection onto an affine set: translate to a parallel subspace, project orthogonally, then shift back by a particular solution.</figcaption>
+      </figure>
+
       <h4>Parametric Representation</h4>
       <p>Every point in $\mathcal{A}$ can be written as $x = x_0 + Zt$, where:</p>
       <ul>
@@ -1236,6 +1270,13 @@
       <p>The solution to the least squares problem has a clean geometric interpretation. The vector $Ax$ lies in the column space of $A$, denoted $\mathcal{R}(A)$. The problem $\min_x \|Ax - b\|_2$ is therefore equivalent to finding the point $p \in \mathcal{R}(A)$ that is closest to $b$ in Euclidean distance.</p>
 
       <p>By the Pythagorean theorem, the closest point $p$ must satisfy a specific geometric condition: the error vector $b - p$ must be orthogonal to the subspace $\mathcal{R}(A)$. <b>Think of dropping a perpendicular:</b> The shortest path from a point to a plane (subspace) is the straight line perpendicular to that plane. If the error vector were not orthogonal, we could project it onto the subspace to find a "correction" that brings us closer to $b$, contradicting the optimality of $p$. Thus, the optimal $p = Ax^\star$ is the <b>orthogonal projection</b> of $b$ onto $\mathcal{R}(A)$.</p>
+
+      <figure style="text-align: center; margin: 24px 0;">
+        <img src="assets/least-squares-orthogonal-projection.png"
+             alt="Least squares as orthogonal projection of b onto the column space of A with residual orthogonal to the subspace"
+             style="max-width: 95%; height: auto; border-radius: 8px;" />
+        <figcaption><i>Figure 0.8:</i> Least squares geometry: the fitted vector $p=Ax^\star$ is the projection of $b$ onto $\mathcal{R}(A)$, and the residual $r=b-p$ is orthogonal to the subspace.</figcaption>
+      </figure>
 
       <h3>The Normal Equations</h3>
       <p>The orthogonality condition, $(b - Ax^\star) \perp \mathcal{R}(A)$, implies that the residual vector must be orthogonal to every basis vector of the subspace. Since the columns of $A$ span $\mathcal{R}(A)$, the residual must be orthogonal to each column of $A$. This can be expressed compactly as:

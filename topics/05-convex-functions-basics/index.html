@@ -460,7 +460,7 @@
           $$
           \nabla f(x^*)^\top (y - x^*) \ge 0 \quad \forall y \in C
           $$
-          <p>This is the <b>first-order optimality condition</b>. For unconstrained problems ($C = \mathbb{R}^n$), this reduces to $\nabla f(x^*) = 0$ (the gradient vanishes). This variational inequality is the basis for the <b>stationarity condition</b> in KKT theory (<a href="../09-duality/index.html">Lecture 13</a>).</p>
+          <p>This is the <b>first-order optimality condition</b>. For unconstrained problems ($C = \mathbb{R}^n$), this reduces to $\nabla f(x^*) = 0$ (the gradient vanishes). This variational inequality is the basis for the <b>stationarity condition</b> in KKT theory (<a href="../09-duality/index.html">Lecture 09</a>).</p>
         </div>
 
       </section>
@@ -1636,6 +1636,14 @@
     </ul>
   </div>
 
+  <div class="intuition-box">
+    <p><b>Geometric picture:</b> A function is $m$-strongly convex if, after subtracting the tangent plane at any point, what remains is at least a quadratic bowl of curvature $m$. For quadratics, the Hessian <i>is</i> the curvature everywhere, so the smallest eigenvalue of $P$ sets the weakest direction of curvature.</p>
+  </div>
+
+  <div class="interpretation-box">
+    <p><b>Why you care:</b> Strong convexity implies a <i>unique</i> minimizer and rules out “flat valleys.” In algorithms, larger $m$ typically means better conditioning and faster convergence (connect this to conditioning geometry in Lecture 01).</p>
+  </div>
+
   <div class="solution-box">
     <h4>Solution</h4>
     <p>The Hessian is $\nabla^2 f(x) = P$ (assuming $P$ is symmetric).
@@ -1830,11 +1838,7 @@
     <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
     <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
         <li><b>Structural Analysis:</b> Don't differentiate blindly! Decompose complex functions into layers ($h(g(x))$).</li>
-        <li><b>The Four Rules:</b>
-            1. Convex + Incr $\to$ Convex.
-            2. Convex + Decr $\to$ ??? (No).
-            3. Concave + Decr $\to$ Convex.
-            4. Affine inner always works.</li>
+        <li><b>Core composition patterns (scalar inner):</b> (i) convex + nondecreasing $\circ$ convex $\Rightarrow$ convex; (ii) convex + nonincreasing $\circ$ concave $\Rightarrow$ convex; (iii) concave + nondecreasing $\circ$ concave $\Rightarrow$ concave; (iv) concave + nonincreasing $\circ$ convex $\Rightarrow$ concave. (Affine inner functions are always safe.)</li>
     </ul>
   </div>
 
@@ -1966,11 +1970,27 @@
         </div>
 
       </section>
+
+      <section class="section-card" id="section-8">
+        <h2>8. Recap &amp; What's Next</h2>
+        <div class="recap-box">
+          <ul style="margin: 0 0 0 20px;">
+            <li><b>Definition-first mindset:</b> convexity is Jensen's inequality plus a convex domain.</li>
+            <li><b>Geometry:</b> epigraphs convert function questions into set questions (intersections and projections).</li>
+            <li><b>Differentiable tests:</b> first-order (supporting hyperplanes) and second-order (Hessian PSD) conditions give fast convexity checks.</li>
+            <li><b>Construction rules:</b> sums, pointwise maxima, affine precomposition, and perspectives generate new convex functions reliably.</li>
+            <li><b>Strong convexity:</b> adds curvature, giving uniqueness of minimizers and stability guarantees.</li>
+          </ul>
+        </div>
+        <div class="interpretation-box">
+          <p style="margin: 0;"><b>Forward look:</b> <a href="../06-convex-functions-advanced/index.html">Lecture 06</a> introduces the convex conjugate (the algebra of supporting hyperplanes) and quasiconvexity/log-concavity. These become the main tools for duality (<a href="../09-duality/index.html">Lecture 09</a>) and for recognizing standard problem classes (<a href="../07-convex-problems-standard/index.html">Lecture 07</a>).</p>
+        </div>
+      </section>
     </article>
 
     <footer class="site-footer">
       <div class="container">
-        <p>© <span id="year"></a> Convex Optimization Course</p>
+        <p>© <span id="year"></span> Convex Optimization Course</p>
       </div>
     </footer>
   </main></div>

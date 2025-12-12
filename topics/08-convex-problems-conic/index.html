@@ -46,7 +46,7 @@
       <p>After this lecture, you will be able to:</p>
       <ul>
         <li>Define and recognize SOCP and SDP problems</li>
-        <li>Understand the containment hierarchy: LP ⊂ QP ⊂ SOCP ⊂ SDP</li>
+        <li>Understand the containment hierarchy: LP &subseteq; QP &subseteq; SOCP &subseteq; SDP</li>
         <li>Formulate problems using conic constraints</li>
         <li>Understand quasiconvex optimization and its relationship to convex optimization</li>
         <li>Apply DCP rules to construct convex optimization problems</li>
@@ -185,16 +185,15 @@
       <p>Note: The inequality constraints must define a convex set, so we typically require $f_i$ to be convex, not merely quasiconvex (since sublevel sets of individual quasiconvex functions are convex, but their intersection might not have nice properties without stronger assumptions, though technically intersection of convex sets is convex. Standard form usually requires convex constraints).</p>
       <p>The constraints $\|x - p_i\|_2 \le t_i$ are standard second-order cone constraints $(x - p_i, t_i) \in \mathcal{L}^{n+1}$.</p>
 
-      <h3>1.5 Hierarchy: LP ⊂ QP ⊂ SOCP</h3>
+      <h3>1.5 Hierarchy: LP &subseteq; QP &subseteq; SOCP</h3>
       <p>The problem classes form a nested hierarchy of expressiveness:</p>
       <ul>
-        <li><b>LP ⊂ QP:</b> A Linear Program is a Quadratic Program with a zero quadratic term ($P=0$).</li>
-        <li><b>QP ⊂ SOCP:</b> A convex Quadratic Program can be cast as an SOCP. The quadratic constraint $x^\top P x + q^\top x + r \le 0$ (with $P = L L^\top$) is equivalent to $\|L^\top x + \frac{1}{2}L^{-1}q\|_2 \le \text{affine}(x)$, which is an SOC constraint.</li>
+        <li><b>LP &subseteq; QP:</b> A Linear Program is a Quadratic Program with a zero quadratic term ($P=0$).</li>
+        <li><b>QP &subseteq; SOCP:</b> A convex Quadratic Program can be cast as an SOCP. The quadratic constraint $x^\top P x + q^\top x + r \le 0$ (with $P = L L^\top$) is equivalent to $\|L^\top x + \frac{1}{2}L^{-1}q\|_2 \le \text{affine}(x)$, which is an SOC constraint.</li>
       </ul>
     </section>
 
-    <!-- Section 5: Semidefinite Programs (SDP) -->
-        <!-- NEW SECTION 2: Robust Linear Programming -->
+    <!-- Section 2: Robust Linear Programming -->
     <section class="section-card" id="section-2">
       <h2>2. Robust Linear Programming</h2>
       <p>Standard Linear Programming assumes exact data. In practice, data $(a_i, b_i, c)$ is often uncertain. <strong>Robust Optimization</strong> seeks a solution that remains feasible for all possible realizations of the data within an uncertainty set.</p>
@@ -253,10 +252,11 @@
       <p><strong>Conclusion:</strong> Both deterministic (worst-case) and stochastic (Gaussian) robustifications of LP lead to SOCP formulations.</p>
     </section>
 
-<section class="section-card" id="section-3">
+    <!-- Section 3: Semidefinite Programs (SDP) -->
+    <section class="section-card" id="section-3">
       <h2>3. Semidefinite Programs (SDP)</h2>
 
-      <h3>2.1 Definition</h3>
+      <h3>3.1 Definition</h3>
       <p>A <strong>Semidefinite Program (<a href="#" class="definition-link" data-term="sdp">SDP</a>)</strong> has the form:</p>
 
       <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
@@ -279,7 +279,7 @@
         <li>$A \in \mathbb{R}^{p \times n}$, $b \in \mathbb{R}^p$ define additional affine constraints</li>
       </ul>
 
-      <h3>2.2 The PSD Cone</h3>
+      <h3>3.2 The PSD Cone</h3>
       <p>The constraint $F(x) \succeq 0$ means $F(x)$ lies in the cone of positive semidefinite matrices:</p>
       <p style="text-align: center;">
         $
@@ -288,7 +288,7 @@
       </p>
       <p>Recall from Lecture 04 that $\mathbb{S}_+^m$ is a proper cone (convex, closed, pointed, solid).</p>
 
-      <h3>2.3 Key Properties</h3>
+      <h3>3.3 Key Properties</h3>
       <ul>
         <li><strong>Generality:</strong> SDP subsumes LP, QP, and SOCP</li>
         <li><strong>Complexity:</strong> Polynomial-time solvable using interior-point methods</li>
@@ -296,7 +296,7 @@
         <li><strong>Applications:</strong> Combinatorial optimization relaxations, control theory (LMI), matrix completion</li>
       </ul>
 
-      <h3>2.4 Standard SDP Examples</h3>
+      <h3>3.4 Standard SDP Examples</h3>
 
             <h4>Example 3.1: Eigenvalue Minimization</h4>
       <p>Minimize the maximum eigenvalue of a symmetric matrix affine in $x$: $A(x) = A_0 + \sum x_i A_i$.</p>
@@ -369,12 +369,12 @@
         </div>
       </div>
 
-      <h3>2.5 The Hierarchy: LP ⊂ QP ⊂ SOCP ⊂ SDP</h3>
+      <h3>3.5 The Hierarchy: LP &subseteq; QP &subseteq; SOCP &subseteq; SDP</h3>
       <p>This inclusion hierarchy is strict and fundamental to choosing the right solver:</p>
       <ul>
-        <li><b>LP ⊂ QP:</b> A Linear Program is a Quadratic Program with a zero quadratic term ($P=0$).</li>
-        <li><b>QP ⊂ SOCP:</b> A convex Quadratic Program can be cast as an SOCP. The quadratic constraint $x^\top P x + q^\top x + r \le 0$ (with $P = L L^\top$) is equivalent to $\|L^\top x + \frac{1}{2}L^{-1}q\|_2 \le \text{affine}(x)$, which is an SOC constraint.</li>
-        <li><b>SOCP ⊂ SDP:</b> Every SOCP can be formulated as an SDP using the Schur complement lemma (as shown below).</li>
+        <li><b>LP &subseteq; QP:</b> A Linear Program is a Quadratic Program with a zero quadratic term ($P=0$).</li>
+        <li><b>QP &subseteq; SOCP:</b> A convex Quadratic Program can be cast as an SOCP. The quadratic constraint $x^\top P x + q^\top x + r \le 0$ (with $P = L L^\top$) is equivalent to $\|L^\top x + \frac{1}{2}L^{-1}q\|_2 \le \text{affine}(x)$, which is an SOC constraint.</li>
+        <li><b>SOCP &subseteq; SDP:</b> Every SOCP can be formulated as an SDP using the Schur complement lemma (as shown below).</li>
       </ul>
       <p><b>Why not always use SDP?</b> While SDP is the most general, its solvers ($O(n^6)$ complexity or similar) are significantly slower than dedicated LP/QP solvers ($O(n^3)$). Always use the most specific class possible.</p>
 
@@ -402,13 +402,13 @@
       </div>
     </section>
 
-    <!-- Section 3: Quasiconvex Optimization -->
+    <!-- Section 4: Quasiconvex Optimization -->
 
 
       <section class="section-card" id="section-4">
       <h2>4. Quasiconvex Optimization</h2>
 
-      <h3>3.1 Quasiconvex Functions</h3>
+       <h3>4.1 Quasiconvex Functions</h3>
       <p>A function $f: \mathbb{R}^n \to \mathbb{R}$ is <strong>quasiconvex</strong> if its domain and all sublevel sets $\{x \mid f(x) \le \alpha\}$ are convex.</p>
 
       <p><strong>Examples:</strong></p>
@@ -418,7 +418,7 @@
         <li>$x^3$ on $\mathbb{R}$ (not quasiconvex; sublevel sets are not convex)</li>
       </ul>
 
-      <h3>3.2 Quasiconvex Optimization Problems</h3>
+      <h3>4.2 Quasiconvex Optimization Problems</h3>
       <p>A problem is <strong>quasiconvex</strong> if the objective is quasiconvex and the feasible set is convex:</p>
       <p style="text-align: center;">
         $
@@ -430,7 +430,7 @@
         $
       </p>
 
-      <h3>3.3 Solution via Bisection (Convex Feasibility)</h3>
+      <h3>4.3 Solution via Bisection (Convex Feasibility)</h3>
       <p>Quasiconvex optimization can be solved by solving a sequence of convex feasibility problems. This algorithm relies on the fact that for a fixed $t$, the set of $x$ such that $f_0(x) \le t$ is a convex set (by definition of quasiconvexity).</p>
       <p>The algorithm finds the optimal value $p^*$ by performing a binary search (bisection) on the range of possible values.</p>
       <ol>
@@ -450,28 +450,32 @@
       <p>This method allows us to solve any quasiconvex problem using a standard convex solver, at the cost of solving multiple (logarithmically many) instances.</p>
     </section>
 
-    <!-- Section 4: Disciplined Convex Programming (DCP) -->
+    <!-- Section 5: Disciplined Convex Programming (DCP) -->
     <section class="section-card" id="section-5">
       <h2>5. Disciplined Convex Programming (DCP)</h2>
 
-      <h3>4.1 Motivation</h3>
+      <h3>5.1 Motivation</h3>
       <p>While we can recognize many convex problems, it's often unclear whether a complex formulation is convex. <strong>Disciplined Convex Programming</strong> is a system of rules for constructing convex optimization problems from basic atoms.</p>
 
-      <h3>4.2 DCP Rules</h3>
-      <ul>
-        <li><strong>Atoms:</strong> A set of basic convex/concave/affine functions with known curvature</li>
-        <li><strong>Composition rules:</strong>
-          <ul>
-            <li>A convex function of a convex function is convex</li>
-            <li>A convex function of a concave function is NOT necessarily convex</li>
-            <li>A concave function of an affine function is concave</li>
-          </ul>
-        </li>
-        <li><strong>Objective:</strong> Minimize a convex function or maximize a concave function</li>
-        <li><strong>Constraints:</strong> Convex constraints of the form $f(x) \le 0$ where $f$ is convex</li>
-      </ul>
+      <div class="intuition-box">
+        <p><b>Intuition:</b> DCP is a “type system” for convexity. You build an expression tree; each atom (like $\|\cdot\|_2$, $\log$, $\max$) has known curvature and monotonicity rules. If the whole expression type-checks, the model is guaranteed convex (or concave/affine) and the solver can safely transform it into a standard conic form.</p>
+      </div>
 
-      <h3>4.3 DCP in Practice: CVXPY</h3>
+      <h3>5.2 DCP Rules (a practical checklist)</h3>
+      <div class="theorem-box">
+        <ul style="margin: 0 0 0 20px;">
+          <li><b>Every atom has metadata:</b> curvature (convex/concave/affine), monotonicity in each argument, and domain/sign requirements.</li>
+          <li><b>Affine arguments are always safe:</b> composing with an affine expression preserves curvature (convex stays convex, concave stays concave).</li>
+          <li><b>Monotone composition is the key:</b> if an outer atom is convex and nondecreasing in an argument, you may plug a convex expression into that argument; if it is convex and nonincreasing, you may plug a concave expression into that argument (and similarly with “convex” replaced by “concave”).</li>
+          <li><b>Objectives &amp; constraints:</b> minimize a convex objective (or maximize a concave one); allow constraints of the form $f(x)\le 0$ with $f$ convex, and equalities with affine expressions.</li>
+          <li><b>Sufficient, not necessary:</b> some convex problems fail DCP because they are written in a form that hides convexity; algebraic rewriting can make the structure visible.</li>
+        </ul>
+      </div>
+      <div class="interpretation-box">
+        <p><b>Interpretation:</b> When a model satisfies DCP, you are providing a mechanically checkable convexity proof. This reduces modeling errors and makes solver behavior more predictable because transformations are justified by the expression structure.</p>
+      </div>
+
+      <h3>5.3 DCP in Practice: CVXPY</h3>
       <p>Tools like CVXPY verify DCP compliance and automatically transform problems to standard solver forms (LP, SOCP, SDP).</p>
 
       <!-- Widget 8: Solver Selection Guide -->
@@ -546,7 +550,7 @@
 
       <h3>Hierarchy</h3>
       <p style="text-align: center; font-size: 1.2em;">
-        <strong>LP ⊂ QP ⊂ SOCP ⊂ SDP</strong>
+        <strong>LP &subseteq; QP &subseteq; SOCP &subseteq; SDP</strong>
       </p>
       <ul>
         <li>Every LP is a QP (with $P=0$).</li>
@@ -1118,26 +1122,28 @@
       </ul>
     </section>
 
-    <!-- SECTION 5: SUMMARY -->
+    <section class="section-card" id="section-9">
+      <h2>9. Recap &amp; What's Next</h2>
+      <div class="recap-box">
+        <ul style="margin: 0 0 0 20px;">
+          <li><b>Conic viewpoint:</b> many constraints can be written as “(expression) $\in K$” for a cone $K$ (SOC, PSD cone, etc.).</li>
+          <li><b>SOCP/SDP are modeling languages:</b> they capture norms, quadratic forms, and matrix inequalities while remaining convex.</li>
+          <li><b>Robustness via geometry:</b> uncertainty sets turn into conic constraints that enforce worst-case feasibility.</li>
+          <li><b>DCP is a proof system:</b> composition rules guarantee convexity so you can model safely at scale.</li>
+        </ul>
+      </div>
+      <div class="interpretation-box">
+        <p style="margin: 0;"><b>Forward look:</b> In <a href="../09-duality/index.html">Lecture 09</a>, these conic forms gain optimality certificates: dual cones appear as dual constraints, and strong duality explains when the primal and dual solutions match.</p>
+      </div>
+    </section>
 
-
-    <!-- READINGS -->
-
-
-    <!-- SECTION 6: EXERCISES -->
-
-  
     </article>
-  </main></div>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p style="margin: 0;">
-        © <span id="year"></a> Convex Optimization Course ·
-        <a href="../../README.md" style="color: var(--brand);">About</a>
-      </p>
-    </div>
-  </footer>
+    <footer class="site-footer">
+      <div class="container">
+        <p style="margin: 0;">&copy; <span id="year"></span> Convex Optimization Course &middot; <a href="../../README.md" style="color: var(--brand);">About</a></p>
+      </div>
+    </footer>
   </main></div>
 
   <!-- Load Pyodide for Python widgets (optional) -->
@@ -1145,32 +1151,12 @@
 
   <!-- Widget loaders -->
   <script type="module">
-    import { initProblemRecognizer } from './widgets/js/problem-form-recognizer.js';
-    initProblemRecognizer('widget-1');
-  </script>
-  <script type="module">
-    import { initLPVisualizer } from './widgets/js/lp-visualizer.js';
-    initLPVisualizer('widget-2');
-  </script>
-  <script type="module">
-    import { initQPSandbox } from './widgets/js/qp-sandbox.js';
-    initQPSandbox('widget-4');
-  </script>
-  <script type="module">
     import { initSDPVisualizer } from './widgets/js/sdp-visualizer.js';
-    initSDPVisualizer('widget-5');
-  </script>
-  <script type="module">
-    import { initProblemReformulationTool } from './widgets/js/reformulation-tool.js';
-    initProblemReformulationTool('widget-6');
-  </script>
-  <script type="module">
-    import { initSOCPExplorer } from './widgets/js/socp-explorer.js';
-    initSOCPExplorer('widget-7');
+    if (document.getElementById('widget-5')) initSDPVisualizer('widget-5');
   </script>
   <script type="module">
     import { initSolverGuide } from './widgets/js/solver-guide.js';
-    initSolverGuide('widget-8');
+    if (document.getElementById('widget-solver-guide')) initSolverGuide('widget-solver-guide');
   </script>
 
   <!-- Global utilities -->

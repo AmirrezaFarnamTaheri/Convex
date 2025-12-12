@@ -121,6 +121,10 @@
             <strong>Proof:</strong> This is a consequence of the convexity of $f_0$ and $\mathcal{F}$, as established in <a href="../02-introduction/index.html">Lecture 02</a>. If $x$ is locally optimal but not globally optimal, there exists a better point $y$. By convexity, the entire line segment connecting $x$ to $y$ lies in the feasible set, and the objective decreases along this segment. This means points arbitrarily close to $x$ are better than $x$, contradicting local optimality.
         </div>
       </div>
+
+      <div class="intuition-box">
+        <p><b>Intuition:</b> In a convex problem, “going halfway” is always allowed and never worse. If there were a better point $y$ somewhere, then the line segment from your current point $x$ toward $y$ stays feasible, and the objective must drop immediately as you move away from $x$. So a point can’t be locally best unless it’s globally best.</p>
+      </div>
     </section>
 
     <!-- Section 2: Linear Programs (LP) -->
@@ -1046,17 +1050,28 @@
       </ul>
     </section>
 
-    </article>
-  </main></div>
+    <section class="section-card" id="section-11">
+      <h2>11. Recap &amp; What's Next</h2>
+      <div class="recap-box">
+        <ul style="margin: 0 0 0 20px;">
+          <li><b>Standard form is a checklist:</b> convex objective, convex inequalities, affine equalities.</li>
+          <li><b>LP geometry:</b> linear objectives push level sets until they hit a face/vertex of a polyhedron.</li>
+          <li><b>Reformulation patterns:</b> epigraph variables, slack variables, and perspective/linear-fractional transforms turn “weird” models into standard form.</li>
+          <li><b>Problem classes are reusable:</b> once you can recognize LP/QP/LFP/GP structure, you can model faster and solve reliably.</li>
+        </ul>
+      </div>
+      <div class="interpretation-box">
+        <p style="margin: 0;"><b>Forward look:</b> <a href="../08-convex-problems-conic/index.html">Lecture 08</a> shows how many constraints can be written as membership in a cone (SOCP/SDP), expanding what you can model while keeping convexity. <a href="../09-duality/index.html">Lecture 09</a> explains why solvers can certify optimality and how dual variables interpret constraints.</p>
+      </div>
+    </section>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p style="margin: 0;">
-        © <span id="year"></a> Convex Optimization Course ·
-        <a href="../../README.md" style="color: var(--brand);">About</a>
-      </p>
-    </div>
-  </footer>
+    </article>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p style="margin: 0;">© <span id="year"></span> Convex Optimization Course · <a href="../../README.md" style="color: var(--brand);">About</a></p>
+      </div>
+    </footer>
   </main></div>
 
   <!-- Load Pyodide for Python widgets (optional) -->

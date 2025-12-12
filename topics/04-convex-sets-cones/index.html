@@ -25,6 +25,27 @@
     </div>
   </header>
 
+  <div class="lecture-container"><aside class="sidebar"><div id="toc-container"><h2><i data-feather="list"></i> Table of Contents</h2><nav id="toc"></nav></div></aside><main class="lecture-content">
+    <header class="lecture-header section-card">
+      <h1>04. Convex Sets: Cones and Separation</h1>
+      <div class="lecture-summary">
+        <p>This lecture introduces the two geometric ideas that power much of modern convex optimization: (1) separation/support by hyperplanes and (2) convex cones and the generalized inequalities they induce. Separation theorems explain why convex problems admit certificates of optimality (duality), while cones provide the unified language behind SOCPs and SDPs.</p>
+        <p><strong>Prerequisites:</strong> <a href="../03-convex-sets-geometry/index.html">Lecture 03</a> (convex sets and operations) and <a href="../00-linear-algebra-basics/index.html">Lecture 00</a> (inner products, orthogonality).</p>
+        <p><strong>Forward Connections:</strong> Conic formulations (<a href="../08-convex-problems-conic/index.html">Lecture 08</a>) are built from cones, and duality/KKT theory (<a href="../09-duality/index.html">Lecture 09</a>) is built from separation.</p>
+      </div>
+    </header>
+
+    <section class="section-card">
+      <h2><i data-feather="target"></i> Learning Objectives</h2>
+      <p>After this lecture, you will be able to:</p>
+      <ul>
+        <li><b>Use separation correctly:</b> State and apply separating and supporting hyperplane theorems, including when strict separation is possible.</li>
+        <li><b>Connect projection to separation:</b> Use the nearest-point (projection) characterization to derive a separating hyperplane.</li>
+        <li><b>Work with cones:</b> Recognize proper cones, define generalized inequalities, and compute/interpret dual cones.</li>
+        <li><b>See conic optimization coming:</b> Recognize how SOCP/SDP constraints are just “membership in a cone.”</li>
+      </ul>
+    </section>
+
     <article>
       <section class="section-card" id="section-1">
         <h2>1. Separating and Supporting Hyperplane Theorems</h2>
@@ -47,6 +68,13 @@
                alt="Illustration of the Separating Hyperplane Theorem"
                style="max-width: 80%; height: auto; border-radius: 8px;" />
           <figcaption><i>Figure 1.1:</i> A hyperplane separating two disjoint convex sets $C$ and $D$. For closed sets, we can construct the separator using the projection of 0 onto their difference set $C-D$.</figcaption>
+        </figure>
+
+        <figure style="text-align: center; margin: 24px 0;">
+          <img src="assets/projection-onto-convex-set.png"
+               alt="Projection of a point outside a convex set onto the closest point in the set"
+               style="max-width: 70%; height: auto; border-radius: 8px;" />
+          <figcaption><i>Figure 1.2:</i> Nearest-point projection onto a convex set. The closest point $x_0=\Pi_C(y)$ is unique, and the residual $y-x_0$ defines a normal direction for a supporting/separating hyperplane at $x_0$.</figcaption>
         </figure>
 
         <div class="proof-box">
@@ -209,6 +237,14 @@
 
         <p>Proper cones are geometrically "sharp" (pointed) and "full-dimensional" (solid). They are used to define generalized inequalities.</p>
 
+        <div class="intuition-box">
+          <p><b>Why these three conditions?</b> They make “$\preceq_K$” behave like a sensible notion of “$\le$”. <b>Pointed</b> prevents cycles (otherwise you could have $x \preceq_K y$ and $y \preceq_K x$ with $x\neq y$). <b>Solid</b> ensures there are truly “positive” directions (so strict inequality using $\mathrm{int}(K)$ is meaningful). <b>Closed</b> ensures the order is stable under limits (important in optimization where solutions arise as limits of approximations).</p>
+        </div>
+
+        <div class="interpretation-box">
+          <p><b>Decision/economic view:</b> Think of $K$ as the set of “acceptable improvements” (e.g., more output, less cost, lower risk). Then $x \preceq_K y$ means “$y$ dominates $x$ up to an improvement in $K$.” Properness ensures this dominance relation is non-degenerate and supports optimization and “Pareto” style comparisons.</p>
+        </div>
+
         <figure style="text-align: center; margin: 24px 0;">
              <img src="assets/cone-zoo.png"
                   alt="Examples of proper and improper cones"
@@ -260,6 +296,14 @@
         K^* = \{y \in \mathbb{R}^n \mid y^\top x \ge 0 \ \forall x \in K\}
         $$
         <p>The dual cone $K^*$ is always a closed convex cone, regardless of whether $K$ is convex or closed.</p>
+
+        <div class="intuition-box">
+          <p><b>Geometric test:</b> A vector $y$ is in $K^*$ if it can serve as an “outward normal” at the origin: the halfspace $\{x \mid y^\top x \ge 0\}$ contains the cone $K$. In 2D, if $K$ is a wedge, then $K^*$ is the wedge of normals that still form an acute angle with every direction in $K$.</p>
+        </div>
+
+        <div class="interpretation-box">
+          <p><b>Prices/supporting weights:</b> If $K$ represents “nonnegative” directions (improvements), then $K^*$ is the set of linear functionals that assign <i>nonnegative value</i> to every improvement: $y^\top x \ge 0$ for all $x\in K$. A key consequence used later in duality is: if $x \preceq_K y$ then $w^\top x \le w^\top y$ for every $w \in K^*$ (dual cone weights turn vector dominance into scalar inequalities).</p>
+        </div>
 
         <figure style="text-align: center; margin: 24px 0;">
              <img src="assets/dual-cone-geometry.png"
@@ -728,11 +772,26 @@
       </ul>
     </section>
 
+    <section class="section-card" id="section-6">
+      <h2>6. Recap &amp; What's Next</h2>
+      <div class="recap-box">
+        <ul style="margin: 0 0 0 20px;">
+          <li><b>Separation:</b> convex sets can be separated from disjoint convex sets by a hyperplane; boundary points admit supporting hyperplanes.</li>
+          <li><b>Projection viewpoint:</b> projecting onto a closed convex set produces a normal direction that defines a separating/supporting hyperplane.</li>
+          <li><b>Cones:</b> a cone is closed under nonnegative scaling; a proper cone is closed, pointed, and solid and induces a generalized inequality.</li>
+          <li><b>Dual cones:</b> $K^* = \{y \mid y^\top x \ge 0 \ \forall x \in K\}$ encodes which linear functionals are “nonnegative” on $K$.</li>
+        </ul>
+      </div>
+      <div class="interpretation-box">
+        <p style="margin: 0;"><b>Forward look:</b> In <a href="../08-convex-problems-conic/index.html">Lecture 08</a> you will see constraints written as “$(x,t)\in K$,” where $K$ is a cone like the SOC or PSD cone. In <a href="../09-duality/index.html">Lecture 09</a> you will see separation reappear as dual variables and optimality certificates.</p>
+      </div>
+    </section>
+
     </article>
 
     <footer class="site-footer">
       <div class="container">
-        <p>© <span id="year"></a> Convex Optimization Course</p>
+        <p>© <span id="year"></span> Convex Optimization Course</p>
       </div>
     </footer>
   </main></div>
