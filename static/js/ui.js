@@ -190,6 +190,23 @@ function groupSubsections(container) {
    3. PAGE SETTINGS (Font Size, Global Toggles)
    ========================================= */
 function initHeaderFontSize() {
+    const header = document.querySelector('.site-header');
+    if (header && typeof Resizable !== 'undefined') {
+        new Resizable(header, {
+            saveKey: 'site-header',
+            handles: ['s'],
+            minHeight: 60,
+            onResize: () => {
+                // Adjust main content padding to match header height
+                // Default padding is 32px 0 60px.
+                // But sticky sidebar logic relies on top offset.
+                // .sidebar top: 100px.
+                // We should probably update that dynamically if we were thorough.
+                // For now, visual resizing is the main goal.
+            }
+        });
+    }
+
     const nav = document.querySelector('.site-header .nav');
     if (!nav) return;
     if (document.getElementById('header-font-controls')) return;
@@ -276,6 +293,7 @@ function initPageSettings() {
     const panel = document.createElement('div');
     panel.id = 'page-settings-panel';
     panel.className = 'page-settings-panel';
+
     panel.innerHTML = `
         <div class="page-settings-header">
             <span>Page Settings</span>
@@ -317,6 +335,17 @@ function initPageSettings() {
             </div>
         </div>
     `;
+
+    // Resizable (Initialize AFTER innerHTML)
+    if (typeof Resizable !== 'undefined') {
+        new Resizable(panel, {
+            saveKey: 'page-settings-panel',
+            handles: ['n', 'e', 'ne'],
+            minWidth: 260,
+            minHeight: 200
+        });
+    }
+
     document.body.appendChild(panel);
 
     // 3. Event Listeners

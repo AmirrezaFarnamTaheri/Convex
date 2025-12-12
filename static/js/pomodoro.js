@@ -115,6 +115,14 @@ class PomodoroWidget {
         // Dragging Logic
         this.initDragging();
 
+        // Resizing Logic
+        if (typeof Resizable !== 'undefined') {
+            new Resizable(this.container, {
+                saveKey: 'pomodoro',
+                handles: ['se', 'e', 's', 'w', 'n']
+            });
+        }
+
         // Load minimized state
         if (localStorage.getItem('pomodoro-minimized') === 'true') {
             this.toggleMinimize(false);
@@ -191,19 +199,31 @@ class PomodoroWidget {
         localStorage.setItem('pomodoro-prefs', JSON.stringify(prefs));
     }
 
-    toggleMinimize(save = true) {
-        const isMinimized = this.body.classList.toggle('hidden');
-        this.minimizeBtn.innerHTML = isMinimized ? '<i data-feather="maximize-2"></i>' : '<i data-feather="minus"></i>';
+    toggleMinimize(save = true, forceMinimize = null) {
+        if (forceMinimize !== null) {
+            if (forceMinimize) {
+                this.body.classList.add('hidden');
+            } else {
+                this.body.classList.remove('hidden');
+            }
+        } else {
+            this.body.classList.toggle('hidden');
+        }
+
+        // Re-check status
+        const currentlyHidden = this.body.classList.contains('hidden');
+
+        this.minimizeBtn.innerHTML = currentlyHidden ? '<i data-feather="maximize-2"></i>' : '<i data-feather="minus"></i>';
 
         // Compact header when minimized
-        if (isMinimized) {
+        if (currentlyHidden) {
             this.statusText.textContent = this.formatTime(this.timeLeft);
         } else {
             this.statusText.textContent = this.mode === 'work' ? 'Focus' : 'Break';
         }
 
         if (save) {
-            localStorage.setItem('pomodoro-minimized', isMinimized);
+            localStorage.setItem('pomodoro-minimized', currentlyHidden);
         }
         if (typeof feather !== 'undefined') feather.replace();
     }
