@@ -1105,6 +1105,59 @@
   </div>
 </div>
 
+<div class="problem">
+  <h3>P6.16 — Convex Hull of a Function</h3>
+  <p>The convex envelope of $f$ is defined as the function $g$ whose epigraph is the convex hull of $\mathrm{epi}(f)$. Prove that $g(x) = \inf \{ \sum \theta_i f(x_i) \mid \sum \theta_i x_i = x, \theta \ge 0, \sum \theta_i = 1 \}$.</p>
+  <div class="recap-box">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Epigraph Hull:</b> Convexifying the geometric object (epigraph) corresponds to convexifying the function values via mixtures.</li>
+        <li><b>Lower Semicontinuity:</b> $g$ is also the biconjugate $f^{**}$ (if we take the closure).</li>
+    </ul>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      A point $(x, t)$ is in $\mathrm{conv}(\mathrm{epi}(f))$ iff it is a convex combination of points $(x_i, t_i) \in \mathrm{epi}(f)$.
+      $(x, t) = \sum \theta_i (x_i, t_i)$ where $t_i \ge f(x_i)$.
+      To find the value of the function $g(x)$, we minimize $t$ for a fixed $x$.
+      $g(x) = \inf \{ t \mid (x, t) \in \mathrm{conv}(\mathrm{epi}(f)) \} = \inf \{ \sum \theta_i t_i \mid \sum \theta_i x_i = x, t_i \ge f(x_i) \}$.
+      Since we minimize $t$, we should choose $t_i$ as small as possible, i.e., $t_i = f(x_i)$.
+      Thus $g(x) = \inf \{ \sum \theta_i f(x_i) \mid \sum \theta_i x_i = x \}$.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.17 — Log-Concavity Characterization (Breakdown of 3.47)</h3>
+  <p>Let $f > 0$ be differentiable on a convex domain. Prove that $f$ is log-concave if and only if $f(y) \le f(x) \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right)$ for all $x, y$.</p>
+  <div class="recap-box">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>First-Order Condition:</b> A differentiable function $h$ is concave iff $h(y) \le h(x) + \nabla h(x)^\top (y-x)$.</li>
+        <li><b>Chain Rule:</b> $\nabla (\log f(x)) = \frac{\nabla f(x)}{f(x)}$.</li>
+    </ul>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Transform to Log-Space.</strong>
+      Take the logarithm of the inequality (monotonicity preserves direction):
+      $\log f(y) \le \log f(x) + \frac{\nabla f(x)}{f(x)}^\top (y-x)$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Identify Gradients.</strong>
+      Let $h(x) = \log f(x)$. Then $\nabla h(x) = \frac{\nabla f(x)}{f(x)}$.
+      The inequality becomes $h(y) \le h(x) + \nabla h(x)^\top (y-x)$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Equivalence.</strong>
+      This is exactly the first-order condition for the concavity of $h(x)$.
+      Thus, the inequality holds iff $\log f$ is concave, i.e., $f$ is log-concave.
+    </div>
+  </div>
+</div>
+
 </section>
 
     <section class="section-card" id="section-6">

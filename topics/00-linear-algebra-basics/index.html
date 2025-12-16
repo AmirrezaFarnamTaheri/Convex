@@ -61,7 +61,16 @@
 
     <!-- SECTION 1: NOTATION -->
     <section class="section-card" id="section-notation">
-      <h2>1. Notation and Basic Objects</h2>
+      <h2>1. Mathematical Atoms: Sets, Functions, and Combinations</h2>
+
+      <h3>0. The Meta-Skill: Mixing, Measuring, and Pullback</h3>
+      <p>In convex optimization, you will repeatedly perform three fundamental moves:</p>
+      <ol>
+        <li><b>Mixing:</b> Understanding what "combining points" means (linear, affine, convex combinations) and what shapes these operations preserve.</li>
+        <li><b>Measuring:</b> Using norms and inner products to quantify "size" and "alignment," translating geometry into algebra.</li>
+        <li><b>Pullback:</b> Understanding constraints and functions via <b>preimages</b>. A constraint $f(x) \le 0$ is a statement that $x$ belongs to the preimage $f^{-1}((-\infty, 0])$.</li>
+      </ol>
+      <p>Mastering these atoms transforms optimization from symbol manipulation into inevitable geometry.</p>
 
       <h3>Preliminaries: Lines and Line Segments</h3>
       <p>We work in the vector space $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$ and the induced Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are the building blocks of convexity.</p>
@@ -87,29 +96,16 @@
         <figcaption><i>Figure 0.1:</i> The line segment (solid blue, $0 \le \theta \le 1$) is a subset of the infinite affine line (dashed grey, $\theta \in \mathbb{R}$).</figcaption>
       </figure>
 
-      <h3>Scalars, Vectors, Matrices</h3>
+      <h3>1. Scalars, Vectors, and Matrices</h3>
       <ul>
         <li><b>Scalars:</b> Real numbers $a \in \mathbb{R}$.</li>
-        <li><b>Column vectors:</b> $x \in \mathbb{R}^n$ are $n \times 1$ matrices with entries $x_i$.
-          <br><i>Equality:</i> Two vectors $x, y$ are equal if and only if their components are equal: $x = y \iff x_i = y_i$ for all $i$.
-          <br><i>Note on convention:</i> We treat vectors as columns to maintain algebraic consistency with matrix-vector multiplication $Ax$ representing linear maps $T(x)$. Throughout this course, unless specified otherwise, any vector $x$ is a column vector.</li>
-        <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$; entry $a_{ij}$ lies in row $i$, column $j$. The first dimension $m$ is the number of rows, and $n$ is the number of columns.
-          <br><i>Equality:</i> $A = B \iff a_{ij} = b_{ij}$ for all $i, j$.
+        <li><b>Vectors:</b> A vector $x \in \mathbb{R}^n$ is formally a function $\{1,\dots,n\} \to \mathbb{R}$. We represent it as an ordered $n$-tuple (column vector).
+          <br><i>Equality:</i> $x = y \iff x_i = y_i$ for all $i$.
         </li>
-        <li><b>Transpose:</b> $A^\top \in \mathbb{R}^{n \times m}$ satisfies $(A^\top)_{ij} = a_{ji}$. It flips the matrix across its main diagonal.</li>
-        <li><b>Identity:</b> $I_n$ is the $n \times n$ square matrix with ones on the diagonal and zeros elsewhere; it satisfies $I_n x = x$ for all $x \in \mathbb{R}^n$.</li>
-        <li><b>Standard basis:</b> $e_1, \dots, e_n$ where $e_i$ has a 1 in position $i$ and zeros elsewhere. These are the columns of $I_n$. Every $x \in \mathbb{R}^n$ can be uniquely decomposed as $x = \sum_{i=1}^n x_i e_i$.</li>
-      </ul>
-
-      <h3>Function Anatomy: Domain, Range, and Preimage</h3>
-      <p>Understanding the precise definitions of function components is crucial for convexity, where domain constraints are often implicit.</p>
-      <ul>
-        <li><b>Function:</b> A map $f: \mathcal{X} \to \mathcal{Y}$ assigns exactly one output in the codomain $\mathcal{Y}$ to each input in the domain $\mathcal{X}$.</li>
-        <li><b>Range (Image):</b> The set of actual outputs: $f(\mathcal{X}) = \{f(x) : x \in \mathcal{X}\} \subseteq \mathcal{Y}$. Note that the range is a subset of the codomain.</li>
-        <li><b>Preimage:</b> For a set $B \subseteq \mathcal{Y}$, the preimage is $f^{-1}(B) = \{x \in \mathcal{X} : f(x) \in B\}$.
-          <br><i>Important:</i> This exists even if $f$ is not invertible. For example, sublevel sets $\{x : f(x) \le \alpha\}$ are preimages of $(-\infty, \alpha]$.
-          <br>Preimages preserve set operations:
-          $$ f^{-1}(A \cup B) = f^{-1}(A) \cup f^{-1}(B), \quad f^{-1}(A \cap B) = f^{-1}(A) \cap f^{-1}(B) $$
+        <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$.
+          <br><i>Matrix-Vector Product:</i> The definition $(Ax)_i = \sum_{j=1}^n A_{ij} x_j$ is chosen specifically to enforce <b>linearity</b>: $A(\alpha x + \beta y) = \alpha Ax + \beta Ay$.
+          <br><i>Column View:</i> $Ax = \sum_{j=1}^n x_j A_{:j}$. $Ax$ is a linear combination of the columns of $A$.
+          <br><i>Row View:</i> $(Ax)_i = A_{i:}^\top x$. The $i$-th entry is the dot product of the $i$-th row with $x$.
         </li>
       </ul>
 
@@ -117,30 +113,74 @@
         <img src="../../static/assets/topics/00-linear-algebra-basics/matrix-multiplication.svg"
              alt="Matrix multiplication diagram showing how rows and columns combine"
              style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: white;" />
-        <figcaption><i>Figure 0.2:</i> Matrix multiplication visualized—how rows of the first matrix combine with columns of the second.</figcaption>
+        <figcaption><i>Figure 0.2:</i> Matrix multiplication visualized—how rows and columns combine.</figcaption>
       </figure>
 
-      <h3>Matrix Operations and Linearity</h3>
-      <ul>
-        <li><b>Matrix-Vector Product:</b> For $A \in \mathbb{R}^{m \times n}$ and $x \in \mathbb{R}^n$, the product $Ax$ is defined by $(Ax)_i = \sum_{j=1}^n a_{ij} x_j$.
-          <br>This definition forces linearity: $A(\alpha x + \beta y) = \alpha Ax + \beta Ay$.
-          <br><i>Column View:</i> $Ax = \sum_{j=1}^n x_j A_{:j}$ (linear combination of columns).
-          <br><i>Row View:</i> $(Ax)_i = A_{i:}^\top x$ (dot product with rows).
-        </li>
-        <li><b>Matrix Multiplication:</b> $(AB)_{ij} = \sum_k a_{ik} b_{kj}$. This corresponds to composition of linear maps.</li>
-      </ul>
+      <h3>2. Functions and Preimages</h3>
+      <p>A function $f: \mathcal{X} \to \mathcal{Y}$ maps domain $\mathcal{X}$ to codomain $\mathcal{Y}$. The <b>range</b> (or image) is the set of actual outputs: $\mathrm{range}(f) = \{f(x) : x \in \mathcal{X}\} \subseteq \mathcal{Y}$.</p>
 
-      <h3>Linear Maps</h3>
-      <p>A function $T: \mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if and only if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$. Every linear map between finite-dimensional vector spaces can be represented by a matrix multiplication $T(x) = Ax$.</p>
+      <h4>The Preimage Laws</h4>
+      <p>For a set $B \subseteq \mathcal{Y}$, the <b>preimage</b> is $f^{-1}(B) = \{x \in \mathcal{X} : f(x) \in B\}$. This exists even if $f$ is not invertible. Preimages respect all set operations perfectly:</p>
+      <div class="proof-box">
+        <h4>Proof: Preimage Laws</h4>
+        <div class="proof-step">
+          <strong>1. Union:</strong> $x \in f^{-1}(A \cup B) \iff f(x) \in A \cup B \iff f(x) \in A \text{ or } f(x) \in B \iff x \in f^{-1}(A) \cup f^{-1}(B)$.
+        </div>
+        <div class="proof-step">
+          <strong>2. Intersection:</strong> Similarly, $f^{-1}(A \cap B) = f^{-1}(A) \cap f^{-1}(B)$.
+        </div>
+        <div class="proof-step">
+          <strong>3. Complement:</strong> $f^{-1}(B^c) = (f^{-1}(B))^c$.
+          <br><i>Proof:</i> $x \in f^{-1}(B^c) \iff f(x) \notin B \iff x \notin f^{-1}(B) \iff x \in (f^{-1}(B))^c$.
+        </div>
+      </div>
+      <p><i>Why this matters:</i> Constraints like $g(x) \le 0$ define the set $g^{-1}((-\infty, 0])$. If $g$ is convex, the preimage of the convex set $(-\infty, 0]$ is convex.</p>
 
-      <h3>Componentwise Order Notation</h3>
-      <p>A notation used throughout optimization is the componentwise order. For vectors $x, y \in \mathbb{R}^n$:</p>
-      <ul>
-        <li><b>$x \ge 0$</b> means $x_i \ge 0$ for all $i = 1, \dots, n$ (nonnegative).</li>
-        <li><b>$x > 0$</b> means $x_i > 0$ for all $i = 1, \dots, n$ (strictly positive).</li>
-        <li><b>$x \le y$</b> means $x_i \le y_i$ for all $i = 1, \dots, n$.</li>
-      </ul>
-      <p>This is the <b>standard partial order</b> on $\mathbb{R}^n$ induced by the nonnegative orthant $\mathbb{R}^n_+ = \{x \mid x \ge 0\}$. The vector $\mathbf{1}$ denotes the vector of all ones. This notation is essential for <a href="../03-convex-sets-geometry/index.html">Lecture 03</a>'s treatment of polyhedra and cones.</p>
+      <figure style="text-align: center;">
+        <img src="../../static/assets/topics/00-linear-algebra-basics/vector-addition-parallelogram.png"
+             alt="Parallelogram law for vector addition"
+             style="max-width: 70%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: white;" />
+        <figcaption><i>Figure 0.3:</i> The parallelogram law of vector addition, a geometric reflection of the algebraic properties of inner products.</figcaption>
+      </figure>
+
+      <h3>3. Combinations and Hulls</h3>
+      <p>Different rules for "mixing" vectors generate different geometric objects.</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Coefficients $\theta_i$</th>
+            <th>Generated Object</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Linear</b></td>
+            <td>Arbitrary</td>
+            <td><b>Subspace</b> (Span)</td>
+          </tr>
+          <tr>
+            <td><b>Affine</b></td>
+            <td>$\sum \theta_i = 1$</td>
+            <td><b>Affine Set</b> (Line, Plane)</td>
+          </tr>
+          <tr>
+            <td><b>Convex</b></td>
+            <td>$\sum \theta_i = 1, \theta_i \ge 0$</td>
+            <td><b>Convex Set</b> (Polygon, Solid)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Translation Invariance of Affine Combinations</h4>
+      <p>Affine combinations are "origin-independent". If $y = \sum \theta_i x_i$ with $\sum \theta_i = 1$, then shifting all points by $v$ shifts the result by $v$:</p>
+      $$ \sum \theta_i (x_i + v) = \sum \theta_i x_i + \left(\sum \theta_i\right) v = y + v $$
+
+      <h4>The 2-Point Convex Hull is a Segment</h4>
+      <p>The set of convex combinations of $x$ and $y$ is $S = \{\theta x + (1-\theta)y : \theta \in [0, 1]\}$.
+      <br>This matches the geometric definition of the segment $[x, y]$: start at $y$, move towards $x$ by fraction $\theta$.
+      $$ \theta x + (1-\theta)y = y + \theta(x-y) $$
+      A set is <b>convex</b> if it contains the line segment between any pair of its points.</p>
 
       <h3>Matrix Calculus Basics</h3>
       <p>Gradient-based optimization relies on the computation of gradients and Hessians. Computing derivatives with respect to vectors and matrices is therefore a core skill.</p>
@@ -571,82 +611,68 @@
     <section class="section-card" id="section-norms">
       <h2>4. Inner Products, Norms, and Angles</h2>
 
-      <h3>Inner Product</h3>
-      <p>An <a href="#" class="definition-link">inner product</a> on $\mathbb{R}^n$ is a mapping $\langle \cdot, \cdot \rangle: \mathbb{R}^n \times \mathbb{R}^n \to \mathbb{R}$ that satisfies three axioms for all vectors $x, y, z$ and scalars $\alpha, \beta$:</p>
+      <h3>Inner Products</h3>
+      <p>An <a href="#" class="definition-link">inner product</a> on $\mathbb{R}^n$ is a function $\langle \cdot, \cdot \rangle: \mathbb{R}^n \times \mathbb{R}^n \to \mathbb{R}$ satisfying three axioms for all $x, y, z$ and scalars $\alpha, \beta$:</p>
       <ol>
-        <li><b>Linearity</b> in the first argument: $\langle \alpha x + \beta z, y \rangle = \alpha\langle x, y \rangle + \beta\langle z, y \rangle$.</li>
+        <li><b>Linearity:</b> $\langle \alpha x + \beta z, y \rangle = \alpha\langle x, y \rangle + \beta\langle z, y \rangle$.</li>
         <li><b>Symmetry:</b> $\langle x, y \rangle = \langle y, x \rangle$.</li>
         <li><b>Positive Definiteness:</b> $\langle x, x \rangle \ge 0$, and $\langle x, x \rangle = 0 \iff x = 0$.</li>
       </ol>
       <p>These axioms ensure that "lengths" and "angles" behave as expected. The <b>standard (Euclidean) inner product</b> is defined as $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$.</p>
+
       <div class="proof-box">
         <h4>Proof: Dot Product is an Inner Product</h4>
-        <p>Checking the axioms for $x^\top y$:</p>
         <div class="proof-step">
-          <strong>1. Linearity:</strong>
-          Let $u = \alpha x + \beta z$. Then $\langle u, y \rangle = \sum_i (\alpha x_i + \beta z_i) y_i = \alpha \sum_i x_i y_i + \beta \sum_i z_i y_i = \alpha \langle x, y \rangle + \beta \langle z, y \rangle$.
+          <strong>1. Linearity:</strong> $\langle \alpha x + \beta z, y \rangle = \sum_i (\alpha x_i + \beta z_i) y_i = \alpha \sum x_i y_i + \beta \sum z_i y_i = \alpha \langle x, y \rangle + \beta \langle z, y \rangle$.
         </div>
         <div class="proof-step">
-          <strong>2. Symmetry:</strong>
-          $\langle x, y \rangle = \sum_i x_i y_i = \sum_i y_i x_i = \langle y, x \rangle$.
+          <strong>2. Symmetry:</strong> $\sum x_i y_i = \sum y_i x_i$.
         </div>
         <div class="proof-step">
-          <strong>3. Positive Definiteness:</strong>
-          $\langle x, x \rangle = \sum_i x_i^2$. Since squares are non-negative, the sum is $\ge 0$.
-          If $\sum_i x_i^2 = 0$, then each $x_i^2 = 0$ (since non-negative terms sum to zero only if each is zero), so $x_i = 0$ for all $i$, meaning $x=0$.
+          <strong>3. Positive Definiteness:</strong> $\langle x, x \rangle = \sum x_i^2 \ge 0$. If $\sum x_i^2 = 0$, then each $x_i^2=0$ (nonnegative sum is zero $\implies$ terms are zero), so $x=0$.
         </div>
       </div>
 
-      <figure style="text-align: center;">
-        <img src="../../static/assets/topics/00-linear-algebra-basics/vector-addition-parallelogram.png"
-             alt="Parallelogram law for vector addition"
-             style="max-width: 70%; height: auto; border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: white;" />
-        <figcaption><i>Figure 3.1:</i> The parallelogram law of vector addition, a geometric reflection of the algebraic properties of inner products.</figcaption>
-      </figure>
+      <h4>Weighted Inner Products</h4>
+      <p>For any symmetric positive definite matrix $P \in \mathbb{S}^n_{++}$, we can define a weighted inner product:
+      $$ \langle x, y \rangle_P := x^\top P y $$
+      This induces the <b>P-norm</b> $\|x\|_P = \sqrt{x^\top P x}$, which measures distance in a skewed coordinate system (related to ellipsoids).</p>
 
-
-      <h3>The Adjoint: Moving Matrices Across Inner Products</h3>
-      <p>A fundamental property connecting matrices and inner products is the definition of the <b>transpose</b> (or adjoint). For any $A \in \mathbb{R}^{m \times n}$, $x \in \mathbb{R}^n$, and $y \in \mathbb{R}^m$:
-      $$ \boxed{\langle Ax, y \rangle = \langle x, A^\top y \rangle} $$
-      or in dot product notation, $(Ax)^\top y = x^\top (A^\top y)$. This identity allows us to "move" the matrix $A$ from one side of the inner product to the other by taking its transpose. It is the workhorse behind gradients of quadratic forms (essential for <a href="../05-convex-functions-basics/index.html">Lecture 05</a>) and the definition of orthogonality.
-      </p>
-
-      <h3>Norms</h3>
-      <p>A <a href="#" class="definition-link">norm</a> is a function $\|\cdot\|: \mathbb{R}^n \to \mathbb{R}$ that assigns a length to each vector. It must satisfy three axioms:</p>
+      <h3>Norms and Convexity</h3>
+      <p>A <a href="#" class="definition-link">norm</a> is a function $\|\cdot\|: \mathbb{R}^n \to \mathbb{R}$ assigning a length to each vector. Axioms:</p>
       <ol>
         <li><b>Definiteness:</b> $\|x\| \ge 0$, and $\|x\| = 0 \iff x=0$.</li>
-        <li><b>Homogeneity:</b> $\|\alpha x\| = |\alpha| \|x\|$ for any scalar $\alpha$. (Scaling geometry scales space).</li>
-        <li><b>Triangle Inequality:</b> $\|x+y\| \le \|x\| + \|y\|$. (The straight path is the shortest).</li>
+        <li><b>Homogeneity:</b> $\|\alpha x\| = |\alpha| \|x\|$.</li>
+        <li><b>Triangle Inequality:</b> $\|x+y\| \le \|x\| + \|y\|$.</li>
       </ol>
-      <p>The standard $\ell_p$ norms are defined for $p \ge 1$. We provide rigorous proofs that they satisfy the triangle inequality.</p>
 
-      <h4>1. The $\ell_1$ Norm (Manhattan)</h4>
-      $$ \|x\|_1 = \sum_{i=1}^n |x_i| $$
+      <h4>The $\ell_1$ and $\ell_\infty$ Norms (Rigorous Proofs)</h4>
+      <ul>
+        <li><b>$\ell_1$ (Manhattan):</b> $\|x\|_1 = \sum_{i=1}^n |x_i|$.</li>
+        <li><b>$\ell_\infty$ (Chebyshev):</b> $\|x\|_\infty = \max_{i} |x_i|$.</li>
+      </ul>
+
       <div class="proof-box">
-        <h4>Proof: $\ell_1$ Triangle Inequality</h4>
-        <p>Using the scalar triangle inequality $|a+b| \le |a| + |b|$:</p>
-        $$ \|x+y\|_1 = \sum_i |x_i + y_i| \le \sum_i (|x_i| + |y_i|) = \sum_i |x_i| + \sum_i |y_i| = \|x\|_1 + \|y\|_1 $$
+        <h4>Proof: Triangle Inequalities for $\ell_1$ and $\ell_\infty$</h4>
+        <div class="proof-step">
+          <strong>For $\ell_1$:</strong> Using scalar triangle inequality $|a+b|\le |a|+|b|$:
+          $$ \|x+y\|_1 = \sum_i |x_i+y_i| \le \sum_i (|x_i|+|y_i|) = \sum_i |x_i| + \sum_i |y_i| = \|x\|_1 + \|y\|_1. $$
+        </div>
+        <div class="proof-step">
+          <strong>For $\ell_\infty$:</strong> For any index $k$:
+          $$ |x_k+y_k| \le |x_k|+|y_k| \le \|x\|_\infty + \|y\|_\infty $$
+          Taking the maximum over $k$ on the LHS gives $\|x+y\|_\infty \le \|x\|_\infty + \|y\|_\infty$.
+        </div>
       </div>
 
-      <h4>2. The $\ell_\infty$ Norm (Max)</h4>
-      $$ \|x\|_\infty = \max_{i} |x_i| $$
+      <h4>Unit Balls are Convex</h4>
+      <p>A crucial geometric property: <b>The unit ball $B = \{x : \|x\| \le 1\}$ of any norm is a convex set.</b></p>
       <div class="proof-box">
-        <h4>Proof: $\ell_\infty$ Triangle Inequality</h4>
-        <p>For any component $i$:</p>
-        $$ |x_i + y_i| \le |x_i| + |y_i| \le \|x\|_\infty + \|y\|_\infty $$
-        <p>Since this upper bound holds for all $i$, it holds for the maximum:</p>
-        $$ \max_i |x_i + y_i| \le \|x\|_\infty + \|y\|_\infty $$
+        <h4>Proof: Unit Ball Convexity</h4>
+        <p>Let $x, y \in B$, so $\|x\| \le 1, \|y\| \le 1$. For any $\theta \in [0, 1]$:</p>
+        $$ \|\theta x + (1-\theta)y\| \le \|\theta x\| + \|(1-\theta)y\| = \theta\|x\| + (1-\theta)\|y\| \le \theta(1) + (1-\theta)(1) = 1 $$
+        <p>Thus $\theta x + (1-\theta)y \in B$. This means norm constraints $f(x) = \|Ax-b\| \le t$ define convex feasible sets.</p>
       </div>
-
-      <h4>3. The $\ell_2$ Norm (Euclidean)</h4>
-      $$ \|x\|_2 = \sqrt{x^\top x} = \sqrt{\sum_{i=1}^n x_i^2} $$
-      <p>The triangle inequality for $\ell_2$ is proved using the Cauchy-Schwarz inequality below.</p>
-
-      <h4>Unit Balls and Convexity</h4>
-      <p>A crucial geometric property is that <b>all norm balls are convex</b>.
-      <br>Let $B = \{x : \|x\| \le 1\}$. For any $x, y \in B$ and $\theta \in [0, 1]$:
-      $$ \|\theta x + (1-\theta)y\| \le \|\theta x\| + \|(1-\theta)y\| = \theta\|x\| + (1-\theta)\|y\| \le \theta(1) + (1-\theta)(1) = 1 $$
-      Thus $\theta x + (1-\theta)y \in B$. This connects norms directly to convex sets.</p>
 
       <figure style="text-align: center;">
         <img src="assets/norm-balls.png"
@@ -667,148 +693,87 @@
         <div id="widget-norm-geometry" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <h3>Foundational Scalar Lemmas</h3>
-      <p>Before proving the main geometric theorems, we establish two key scalar lemmas.</p>
-      <div class="proof-box">
-        <h4>Lemma A: 1D Triangle Inequality</h4>
-        <p>For $a, b \in \mathbb{R}$, $|a+b| \le |a| + |b|$.</p>
-        <p><i>Proof:</i> Square both sides (valid since both are non-negative).
-        $$ (|a|+|b|)^2 = |a|^2 + 2|a||b| + |b|^2 = a^2 + 2|a||b| + b^2 $$
-        $$ (a+b)^2 = a^2 + 2ab + b^2 $$
-        The difference is $2(|a||b| - ab)$. Since $|ab| \ge ab$, this difference is $\ge 0$. Thus $(|a|+|b|)^2 \ge (a+b)^2$. Taking roots yields the result.</p>
-      </div>
-      <div class="proof-box">
-        <h4>Lemma B: Quadratic Non-negativity</h4>
-        <p>Let $q(t) = At^2 + Bt + C$ with $A > 0$. Then $q(t) \ge 0$ for all $t$ if and only if the discriminant $\Delta = B^2 - 4AC \le 0$.
-        <br><i>Proof:</i> By completing the square, $q(t) = A(t + \frac{B}{2A})^2 + (C - \frac{B^2}{4A})$. The first term is $\ge 0$. The minimum value is $C - \frac{B^2}{4A}$. For this to be non-negative, we need $4AC - B^2 \ge 0 \iff B^2 - 4AC \le 0$.</p>
-      </div>
+      <h3>The Euclidean Geometry ($\ell_2$)</h3>
+      <p>The Euclidean norm $\|x\|_2 = \sqrt{x^\top x}$ is special because it arises from an inner product.</p>
 
-      <h3>Cauchy–Schwarz and Triangle Inequality</h3>
+      <h4>Foundational Scalar Lemmas</h4>
+      <ol>
+        <li><b>1D Triangle Inequality:</b> $|a+b| \le |a| + |b|$.
+          <br><i>Proof:</i> Squaring both sides (non-negative) gives $(a+b)^2 \le (|a|+|b|)^2 \iff a^2+2ab+b^2 \le a^2+2|a||b|+b^2 \iff ab \le |ab|$, which is always true.
+        </li>
+        <li><b>Quadratic Non-negativity:</b> If $q(t) = at^2 + bt + c \ge 0$ for all $t$ (with $a > 0$), then the discriminant $b^2 - 4ac \le 0$.
+          <br><i>Reason:</i> If the discriminant were positive, the quadratic would have two real roots and dip below zero between them.
+        </li>
+      </ol>
 
       <div class="proof-box">
-        <h4>Proof of Cauchy–Schwarz: $|x^\top y| \le \|x\|_2 \|y\|_2$</h4>
-
+        <h4>Proof: Cauchy-Schwarz Inequality ($|x^\top y| \le \|x\|_2 \|y\|_2$)</h4>
         <div class="proof-step">
-          <strong>Case 1: $y = 0$.</strong> Trivial ($0 \le 0$).
+          <strong>Step 1: Construct a quadratic.</strong> For any $t \in \mathbb{R}$, $\|x - ty\|_2^2 \ge 0$.
+          $$ 0 \le \langle x - ty, x - ty \rangle = \|x\|_2^2 - 2t\langle x, y \rangle + t^2 \|y\|_2^2. $$
         </div>
-
         <div class="proof-step">
-          <strong>Case 2: $y \neq 0$.</strong> Define the function $f(t) = \|x - ty\|_2^2$. By definiteness of the norm, $f(t) \ge 0$ for all $t$.
-          Expanding:
-          $$ f(t) = (x - ty)^\top(x - ty) = \|x\|_2^2 - 2t(x^\top y) + t^2 \|y\|_2^2 $$
+          <strong>Step 2: Discriminant condition.</strong> This is a quadratic $At^2 + Bt + C \ge 0$ with $A=\|y\|_2^2$.
+          Assuming $y \neq 0$ (otherwise trivial), we must have $B^2 - 4AC \le 0$:
+          $$ (-2\langle x, y \rangle)^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$
         </div>
-
         <div class="proof-step">
-          <strong>Discriminant Analysis.</strong> $f(t)$ is a quadratic in $t$ with $A=\|y\|_2^2 > 0$, $B=-2x^\top y$, $C=\|x\|_2^2$.
-          Since $f(t) \ge 0$ always, by Lemma B, the discriminant must be non-positive:
-          $$ \Delta = (-2x^\top y)^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$
-        </div>
-
-        <div class="proof-step">
-          <strong>Conclusion.</strong>
-          $$ 4(x^\top y)^2 \le 4\|x\|_2^2 \|y\|_2^2 \implies (x^\top y)^2 \le (\|x\|_2 \|y\|_2)^2 $$
-          Taking square roots: $|x^\top y| \le \|x\|_2 \|y\|_2$.
-          <br><i>Equality Condition:</i> Equality holds iff the discriminant is 0, which means there exists a $t$ such that $\|x-ty\|=0$, i.e., $x$ and $y$ are collinear.
+          <strong>Step 3: Conclusion.</strong>
+          $$ 4\langle x, y \rangle^2 \le 4\|x\|_2^2 \|y\|_2^2 \implies |\langle x, y \rangle| \le \|x\|_2 \|y\|_2. $$
+          <i>Equality holds</i> iff the quadratic touches zero, i.e., $x = ty$ (collinear).
         </div>
       </div>
 
       <div class="proof-box">
-        <h4>Proof of the Triangle Inequality ($\ell_2$): $\|x+y\|_2 \le \|x\|_2 + \|y\|_2$</h4>
-
-        <div class="proof-step">
-          <strong>Step 1: Expand squared norm.</strong>
-          $$ \|x+y\|_2^2 = \|x\|_2^2 + 2x^\top y + \|y\|_2^2 $$
-        </div>
-
-        <div class="proof-step">
-          <strong>Step 2: Apply Cauchy-Schwarz.</strong>
-          $$ x^\top y \le |x^\top y| \le \|x\|_2 \|y\|_2 $$
-          $$ \|x+y\|_2^2 \le \|x\|_2^2 + 2\|x\|_2 \|y\|_2 + \|y\|_2^2 $$
-        </div>
-
-        <div class="proof-step">
-          <strong>Step 3: Factor and Root.</strong>
-          $$ \|x+y\|_2^2 \le (\|x\|_2 + \|y\|_2)^2 \implies \|x+y\|_2 \le \|x\|_2 + \|y\|_2 $$
-        </div>
+        <h4>Proof: Triangle Inequality for $\ell_2$</h4>
+        <p>Using Cauchy-Schwarz:</p>
+        $$ \|x+y\|_2^2 = \|x\|_2^2 + 2\langle x, y \rangle + \|y\|_2^2 \le \|x\|_2^2 + 2\|x\|_2\|y\|_2 + \|y\|_2^2 = (\|x\|_2 + \|y\|_2)^2 $$
+        <p>Taking square roots gives $\|x+y\|_2 \le \|x\|_2 + \|y\|_2$.</p>
       </div>
 
-      <h3>Angles and Orthogonality</h3>
-      <p>The Cauchy-Schwarz inequality allows us to define the angle between two vectors:
-      $$ \cos \angle(x, y) = \frac{x^\top y}{\|x\|_2 \|y\|_2} $$
-      Since the magnitude of the right-hand side is guaranteed to be between -1 and 1. Two vectors are <b>orthogonal</b> if their inner product is zero, $x^\top y = 0$, which corresponds to a 90-degree angle.</p>
+      <h4>Projection as Optimization</h4>
+      <p>The orthogonal projection of $x$ onto the line spanned by $y \neq 0$ is the solution to $\min_t \|x - ty\|_2^2$.
+      <br>Setting the derivative of the quadratic (from Cauchy-Schwarz proof) to zero gives $t^* = \frac{x^\top y}{\|y\|_2^2}$.
+      <br>The error $r = x - t^* y$ is orthogonal to $y$:
+      $$ \langle r, y \rangle = \langle x, y \rangle - t^* \langle y, y \rangle = x^\top y - \frac{x^\top y}{\|y\|^2} \|y\|^2 = 0. $$
+      This geometric "orthogonality of residual" principle generalizes to all least squares problems.</p>
 
-      <h3>Dual Norms and H&ouml;lder's Inequality</h3>
-      <p>The concept of duality is central to optimization. For any norm $\|\cdot\|$, we can define a corresponding <b>dual norm</b>, denoted $\|\cdot\|_*$, as:
+      <h3>Dual Norms and Polar Sets</h3>
+      <p>The <b>dual norm</b> provides a variational definition of size. For any norm $\|\cdot\|$, its dual $\|\cdot\|_*$ is:
       $$ \|y\|_* = \sup_{\|x\| \le 1} x^\top y $$
-      The dual norm measures the maximum "stretch" of a vector $y$ when applied to unit-norm vectors $x$. This definition leads to some important pairings:</p>
-
-      <div class="intuition-box">
-        <p><b>Geometric intuition:</b> Think of the dual norm as measuring how "aligned" a vector $y$ can be with vectors in the unit ball of the primal norm.</p>
-        <ul>
-          <li><b>$\ell_2$ is self-dual:</b> The unit ball is a sphere. The direction of maximum inner product with $y$ is $y$ itself (normalized). Thus $\|y\|_{2,*} = \|y\|_2$.</li>
-          <li><b>$\ell_1$ dual is $\ell_\infty$:</b> The $\ell_1$ unit ball is a diamond with corners at coordinate axes. To maximize $x^\top y$ over this diamond, you pick the corner $e_i$ (or $-e_i$) corresponding to the largest component of $y$. Thus, the maximum value is $\max_i |y_i| = \|y\|_\infty$.</li>
-          <li><b>$\ell_\infty$ dual is $\ell_1$:</b> The $\ell_\infty$ unit ball is a box (corners at $(\pm 1, \dots, \pm 1)$). To maximize $x^\top y$ over the box, you choose each $x_i$ to match the sign of $y_i$. The result is $\sum y_i \mathrm{sign}(y_i) = \sum |y_i| = \|y\|_1$.</li>
-        </ul>
-      </div>
-
-      <figure style="text-align: center; margin: 24px 0;">
-        <img src="assets/l1-vs-linf-duality.png"
-             alt="Maximizing an inner product over the l1 unit ball illustrates duality with the linfinity norm"
-             style="max-width: 90%; height: auto; border-radius: 8px;" />
-        <figcaption><i>Figure 0.4:</i> Dual-norm geometry in 2D: maximizing $x^\top y$ over the $\ell_1$ unit ball (diamond) selects an extreme point, revealing $\|y\|_\infty$ as the dual norm.</figcaption>
-      </figure>
+      This measures the maximum "correlation" $y$ can have with any unit vector.</p>
 
       <div class="proof-box">
-        <h4>Proof: $(\|\cdot\|_2)^* = \|\cdot\|_2$ (Self-Duality of Euclidean Norm)</h4>
+        <h4>Theorem: The Dual Norm is a Norm</h4>
         <div class="proof-step">
-          <strong>Step 1: Upper bound.</strong> By Cauchy-Schwarz, for $\|x\|_2 \le 1$:
-          $$ x^\top y \le |x^\top y| \le \|x\|_2 \|y\|_2 \le \|y\|_2 $$
-          Thus $\|y\|_* \le \|y\|_2$.
+          <strong>1. Positive Definiteness:</strong> $\|y\|_* \ge y^\top 0 = 0$. If $\|y\|_*=0$, then $\sup x^\top y = 0$. By taking $x = y/\|y\|$ (if norm exists) or coordinate vectors, we see $y$ must be 0.
         </div>
         <div class="proof-step">
-          <strong>Step 2: Achieve equality.</strong> Choose $x = y/\|y\|_2$ (assuming $y \neq 0$). Then $\|x\|_2 = 1$ and:
-          $$ x^\top y = \frac{y^\top y}{\|y\|_2} = \frac{\|y\|_2^2}{\|y\|_2} = \|y\|_2 $$
-          Hence $\|y\|_* \ge \|y\|_2$.
+          <strong>2. Homogeneity:</strong> $\|\alpha y\|_* = \sup_{\|x\|\le 1} x^\top (\alpha y) = \alpha \sup x^\top y$ (if $\alpha \ge 0$). Symmetry of the unit ball handles $\alpha < 0$.
         </div>
         <div class="proof-step">
-          <strong>Conclusion:</strong> Therefore $\|y\|_* = \|y\|_2$.
+          <strong>3. Triangle Inequality:</strong>
+          $$ \|y+z\|_* = \sup_{\|x\|\le 1} (y+z)^\top x \le \sup_{\|x\|\le 1} y^\top x + \sup_{\|x\|\le 1} z^\top x = \|y\|_* + \|z\|_*. $$
         </div>
       </div>
 
-      <div class="proof-box">
-        <h4>Proof: $(\|\cdot\|_1)^* = \|\cdot\|_\infty$</h4>
-        <div class="proof-step">
-          <strong>Step 1: Upper bound.</strong> For $\|x\|_1 \le 1$:
-          $$ x^\top y = \sum_i x_i y_i \le \sum_i |x_i| |y_i| \le \max_i |y_i| \sum_i |x_i| \le \|y\|_\infty $$
-        </div>
-        <div class="proof-step">
-          <strong>Step 2: Achieve equality.</strong> Let $j = \arg\max_i |y_i|$. Choose $x = \mathrm{sign}(y_j) e_j$. Then $\|x\|_1 = 1$ and:
-          $$ x^\top y = \mathrm{sign}(y_j) y_j = |y_j| = \|y\|_\infty $$
-        </div>
-        <div class="proof-step">
-          <strong>Conclusion:</strong> $\|y\|_* = \|y\|_\infty$.
-        </div>
-      </div>
+      <h4>Generalized Hölder's Inequality</h4>
+      <p>From the definition, we immediately get the fundamental inequality:
+      $$ x^\top y \le \|x\| \|y\|_* $$
+      <i>Proof:</i> If $x=0$, trivial. If $x \neq 0$, let $u = x/\|x\|$. Then $\|u\|=1$, so $u^\top y \le \|y\|_* \implies (x/\|x\|)^\top y \le \|y\|_* \implies x^\top y \le \|x\| \|y\|_*$.</p>
 
-      <h3>H&ouml;lder's Inequality (Dual-Norm Cauchy&ndash;Schwarz)</h3>
-      <p>For all $x, y \in \mathbb{R}^n$ and any norm $\|\cdot\|$:</p>
-      $$ x^\top y \le \|x\| \cdot \|y\|_* $$
-      <div class="proof-box">
-        <h4>Proof of H&ouml;lder's Inequality</h4>
-        <div class="proof-step">
-          <strong>Case 1: $x = 0$.</strong> The inequality holds since $0 \le 0$.
-        </div>
-        <div class="proof-step">
-          <strong>Case 2: $x \neq 0$.</strong> Write:
-          $$ x^\top y = \|x\| \cdot \frac{x^\top y}{\|x\|} = \|x\| \cdot \left(\frac{x}{\|x\|}\right)^\top y $$
-          Note that $\left\|\frac{x}{\|x\|}\right\| = 1$, so by the definition of dual norm:
-          $$ \left(\frac{x}{\|x\|}\right)^\top y \le \sup_{\|z\| \le 1} z^\top y = \|y\|_* $$
-          Combining: $x^\top y \le \|x\| \cdot \|y\|_*$.
-        </div>
-      </div>
+      <h4>Canonical Dual Pairs</h4>
+      <ul>
+        <li><b>$\ell_2$ is self-dual:</b> $\|y\|_{2,*} = \|y\|_2$. (Aligned by $x = y/\|y\|_2$).</li>
+        <li><b>$\ell_1$ dual is $\ell_\infty$:</b> $\|y\|_{1,*} = \|y\|_\infty$. (Maximize $x^\top y$ on diamond $\to$ pick corner).</li>
+        <li><b>$\ell_\infty$ dual is $\ell_1$:</b> $\|y\|_{\infty,*} = \|y\|_1$. (Maximize $x^\top y$ on box $\to$ match signs).</li>
+      </ul>
 
-      <h3>Generalized (Weighted) Inner Product</h3>
-      <p>If $Q \in \mathbb{R}^{n \times n}$ is symmetric positive definite (SPD), then $\langle x, y \rangle_Q := x^\top Q y$ is an inner product with induced norm $\|x\|_Q = \sqrt{x^\top Q x}$. This yields <b>quadratic forms</b> and ellipsoidal distance.</p>
+      <h4>Polar Sets</h4>
+      <p>The <b>polar</b> of a convex set $C$ is $C^\circ = \{y : y^\top x \le 1 \ \forall x \in C\}$.
+      <br>For a unit ball $B = \{x : \|x\| \le 1\}$, the polar is exactly the dual unit ball:
+      $$ B^\circ = \{y : \|y\|_* \le 1\} $$
+      This geometric duality underpins the duality of optimization problems.</p>
 
       <h3>Spectral Norm and Convexity</h3>
 
