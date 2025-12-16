@@ -522,7 +522,19 @@
       </div>
 
       <div class="problem">
-        <h3>Problem 4: Support Vector Machine (Hinge Loss)</h3>
+        <h3>Problem 4: Basis Pursuit</h3>
+        <p><b>Primal:</b> $\min \|x\|_1$ s.t. $Ax = b$.</p>
+        <p><b>Lagrangian:</b> $L(x, \nu) = \|x\|_1 + \nu^\top(b - Ax) = b^\top \nu + (\|x\|_1 - (A^\top \nu)^\top x)$.</p>
+        <p><b>Dual Function:</b>
+        <br>The term $\inf_x (\|x\|_1 - z^\top x)$ is finite (zero) iff the dual norm constraint holds: $\|z\|_\infty \le 1$.
+        <br>Here $z = A^\top \nu$.
+        <br><b>Dual Problem:</b> $\max b^\top \nu$ s.t. $\|A^\top \nu\|_\infty \le 1$.
+        <br><b>KKT Insight:</b> At optimum, $A^\top \nu \in \partial \|x\|_1$. Dual variables certify the support of the sparse solution.
+        </p>
+      </div>
+
+      <div class="problem">
+        <h3>Problem 5: Support Vector Machine (Hinge Loss)</h3>
         <p><b>Primal:</b> $\min \frac{1}{2}\|w\|^2 + C \sum \max(0, 1 - y_i w^\top x_i)$.
         <br>Rewrite: $\min \frac{1}{2}\|w\|^2 + C \sum \xi_i$ s.t. $\xi_i \ge 1 - y_i w^\top x_i, \xi_i \ge 0$.</p>
         <p><b>Dual Derivation:</b>
@@ -533,11 +545,36 @@
       </div>
 
       <div class="problem">
-        <h3>Problem 5: Matrix Completion (Nuclear Norm)</h3>
-        <p><b>Primal:</b> $\min \|X\|_*$ s.t. $X_{ij} = M_{ij}$ for $(i,j) \in \Omega$.
-        <br>Rewrite: $\min \|X\|_* + \mathbb{I}_\Omega(X - M)$ where $\mathbb{I}$ forces equality on $\Omega$.</p>
-        <p><b>Dual Norm:</b> The dual of the nuclear norm $\|\cdot\|_*$ is the spectral norm $\|\cdot\|_2$.
-        <br><b>Dual Problem:</b> $\max \langle Y, M \rangle$ s.t. $\|Y\|_2 \le 1$ and $Y_{ij} = 0$ for $(i,j) \notin \Omega$.
+        <h3>Problem 6: Trust-Region QCQP</h3>
+        <p><b>Primal:</b> $\min \frac{1}{2}x^\top P x + q^\top x + r$ s.t. $x^\top x \le 1$. ($P \succ 0$).</p>
+        <p><b>Lagrangian:</b> $L(x, \lambda) = \frac{1}{2}x^\top (P + 2\lambda I) x + q^\top x + r - \lambda$ ($\lambda \ge 0$).</p>
+        <p><b>Dual Function:</b>
+        <br>Minimize quadratic in $x$: $x^* = -(P + 2\lambda I)^{-1}q$.
+        <br>Value: $r - \lambda - \frac{1}{2}q^\top (P + 2\lambda I)^{-1} q$.
+        <br><b>Dual Problem:</b> $\max_{\lambda \ge 0} r - \lambda - \frac{1}{2}q^\top (P + 2\lambda I)^{-1} q$.
+        <br>This is a 1D concave maximization, easily solvable (finding the root of the secular equation).
+        </p>
+      </div>
+
+      <div class="problem">
+        <h3>Problem 7: Simplex Projection</h3>
+        <p><b>Primal:</b> $\min \frac{1}{2}\|x-z\|_2^2$ s.t. $\mathbf{1}^\top x = 1, x \ge 0$.</p>
+        <p><b>KKT Approach (No explicit dual needed for solution):</b>
+        <br>Stationarity: $x - z - \lambda + \nu \mathbf{1} = 0 \implies x = z + \lambda - \nu \mathbf{1}$.
+        <br>Complementary Slackness: $\lambda \ge 0, x \ge 0, \lambda_i x_i = 0$.
+        <br>If $x_i > 0$, $\lambda_i=0 \implies x_i = z_i - \nu$.
+        <br>If $x_i = 0$, $\lambda_i = \nu - z_i \ge 0 \implies z_i \le \nu$.
+        <br>Unified: $x_i = \max(0, z_i - \nu)$.
+        <br><b>Algorithm:</b> Find $\nu$ such that $\sum \max(0, z_i - \nu) = 1$ via sorting.
+        </p>
+      </div>
+
+      <div class="problem">
+        <h3>Problem 8: Logistic Regression</h3>
+        <p><b>Primal:</b> $\min \sum \log(1 + e^{x_i^\top w}) - y_i x_i^\top w + \frac{\lambda}{2}\|w\|^2$.</p>
+        <p><b>Dual:</b> Uses the conjugate of the logistic loss (binary entropy).
+        <br>The dual involves maximizing entropy subject to correlation constraints with data.
+        <br>This duality is the basis for Maximum Entropy models.
         </p>
       </div>
     </section>

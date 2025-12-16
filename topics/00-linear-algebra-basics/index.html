@@ -314,6 +314,17 @@
           Since the quadratic form is always non-negative, the Hessian is Positive Semidefinite (PSD). Thus, the least squares objective is always <b>convex</b>.
         </div>
       </div>
+
+      <div class="theorem-box">
+        <h4>Lemma: Quadratic Minimization (Completion of the Square)</h4>
+        <p>This result is the "workhorse" of convex optimization derivation. Let $H \in \mathbb{S}_{++}^n$ (symmetric positive definite) and $g \in \mathbb{R}^n$. Then the unique minimizer of the quadratic form:
+        $$ \inf_{x\in\mathbb R^n}\left\{\frac12 x^\top Hx + g^\top x\right\} $$
+        is given by $\boxed{x^\star = -H^{-1}g}$, and the optimal value is $\boxed{-\frac12 g^\top H^{-1}g}$.</p>
+        <p><i>Proof:</i> Complete the square. Let $x = z - H^{-1}g$.
+        $$ \frac12 (z - H^{-1}g)^\top H (z - H^{-1}g) + g^\top (z - H^{-1}g) $$
+        Expanding this yields $\frac12 z^\top H z - \frac12 g^\top H^{-1}g$. Since $H \succ 0$, the minimum is at $z=0$.
+        </p>
+      </div>
     </section>
 
     <!-- SECTION 2: SUBSPACES -->
@@ -559,33 +570,7 @@
       </div>
 
       <h3>3.4 Similarity and Basis Independence</h3>
-      <p>Two matrices $A$ and $B$ are <b>similar</b> if $B = P A P^{-1}$ for some invertible $P$. This represents the same linear operator in a different basis. Understanding <i>why</i> this formula represents a basis change is crucial for intuition.</p>
-
-      <h4>Diagonalization as Change of Coordinates</h4>
-      <p>The equation $A = V \Lambda V^{-1}$ (diagonalization) is often memorized but not understood. Let's analyze it as a coordinate transformation. We are not transforming the vector space itself; we are changing the <b>language</b> (coordinates) we use to describe it.</p>
-      <p><b>The Mechanism:</b> Think of $A$ as being performed in three stages: $x \xrightarrow{V^{-1}} y \xrightarrow{\Lambda} y' \xrightarrow{V} x'$.</p>
-      <ol>
-        <li><b>$y = V^{-1}x$ (Input Change):</b> Convert the vector $x$ from the standard coordinates into the "special coordinates" (the eigenvector coordinate system).</li>
-        <li><b>$y' = \Lambda y$ (The Action):</b> Scale each coordinate independently (no mixing) by the corresponding eigenvalue.</li>
-        <li><b>$x' = V y'$ (Output Change):</b> Convert the result back to the original standard coordinates.</li>
-      </ol>
-      <p>Thus, $\Lambda = V^{-1} A V$ is the matrix representing the <b>same linear map</b>, but acting on coordinates expressed in the eigenbasis.</p>
-      <div class="insight">
-        <h4>Why Columns of $V$ are Eigenvectors</h4>
-        <p>The columns of $V$ are chosen to be eigenvectors because diagonalization <i>means</i> "use an eigenvector basis". The algebra forces it:
-        $$ A = V \Lambda V^{-1} \iff AV = V\Lambda $$
-        Writing $V$ as columns $[v_1 \dots v_n]$:
-        $$ A[v_1 \dots v_n] = [v_1 \dots v_n] \mathrm{diag}(\lambda_1 \dots \lambda_n) $$
-        $$ [Av_1 \dots Av_n] = [\lambda_1 v_1 \dots \lambda_n v_n] $$
-        Equating columns gives exactly $Av_i = \lambda_i v_i$.
-        </p>
-      </div>
-
-      <div class="insight">
-        <h4>💡 "Same Vectors, Different Coordinates"</h4>
-        <p>A good slogan: <b>Same vectors, same linear map, different coordinates.</b>
-        <br>Imagine a point on Earth. You can describe its location using latitude/longitude or a rotated grid. The point (vector) hasn't moved, but its numerical description (coordinates) and the description of operations on it (matrices) have changed.</p>
-      </div>
+      <p>Two matrices $A$ and $B$ are <b>similar</b> if $B = P A P^{-1}$ for some invertible $P$. This represents the same linear operator in a different basis. The detailed mechanics of this coordinate transformation and its connection to diagonalization are covered in depth in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>.</p>
 
       <div class="theorem-box">
         <h4>Theorem: Invariance under Similarity</h4>
@@ -768,6 +753,14 @@
         <li><b>$\ell_1$ dual is $\ell_\infty$:</b> $\|y\|_{1,*} = \|y\|_\infty$. (Maximize $x^\top y$ on diamond $\to$ pick corner).</li>
         <li><b>$\ell_\infty$ dual is $\ell_1$:</b> $\|y\|_{\infty,*} = \|y\|_1$. (Maximize $x^\top y$ on box $\to$ match signs).</li>
       </ul>
+
+      <div class="theorem-box">
+        <h4>Lemma: Conjugate of a Norm</h4>
+        <p>This lemma is crucial for dual derivations. Let $\|\cdot\|$ be any norm and $\|\cdot\|_*$ its dual norm. The conjugate of the scaled norm $f(x) = \rho \|x\|$ is the indicator function of the dual ball:
+        $$ (\rho\|x\|)^*(z) = I_{\{\|z\|_* \le \rho\}}(z) = \begin{cases} 0 & \|z\|_* \le \rho \\ \infty & \text{otherwise} \end{cases} $$
+        <i>Proof sketch:</i> If $\|z\|_* \le \rho$, then $z^\top x - \rho\|x\| \le \|z\|_*\|x\| - \rho\|x\| \le 0$ (max is 0 at $x=0$). If $\|z\|_* > \rho$, we can align $x$ with $z$ to make the expression go to $+\infty$.
+        </p>
+      </div>
 
       <h4>Polar Sets</h4>
       <p>The <b>polar</b> of a convex set $C$ is $C^\circ = \{y : y^\top x \le 1 \ \forall x \in C\}$.
@@ -2078,6 +2071,26 @@
         <br><b>Geometry (2x2):</b> In the 3D space of entries $(x, y, z)$, the PSD cone is defined by $x \ge 0, z \ge 0, xz \ge y^2$. This looks like an "ice cream cone" with a non-circular cross-section.
         <br><b>Boundary:</b> The boundary of the cone consists of singular PSD matrices (rank deficient, $\det(X)=0$).
         <br><b>Interior:</b> The interior consists of Positive Definite (PD) matrices ($\det(X)>0, x>0$).</p>
+      </div>
+
+      <h3>P0.20 — General Quadratic Minimization</h3>
+      <p>Solve the unconstrained minimization problem for a general quadratic function:
+      $$ \min_{x \in \mathbb{R}^n} f(x) := \frac{1}{2} x^\top H x + g^\top x + c $$
+      where $H \in \mathbb{S}_{++}^n$ (Positive Definite).</p>
+      <div class="solution-box">
+        <h4>Solution</h4>
+        <p>By Lemma A2 (Quadratic Minimization), the minimizer is obtained by setting the gradient to zero.
+        $$ \nabla f(x) = Hx + g = 0 \implies x^\star = -H^{-1}g $$
+        Substituting this back into the objective to find the optimal value:
+        $$ f(x^\star) = \frac{1}{2} (-H^{-1}g)^\top H (-H^{-1}g) + g^\top (-H^{-1}g) + c $$
+        $$ = \frac{1}{2} g^\top H^{-1} H H^{-1} g - g^\top H^{-1} g + c $$
+        $$ = \frac{1}{2} g^\top H^{-1} g - g^\top H^{-1} g + c = c - \frac{1}{2} g^\top H^{-1} g $$
+        This formula is the foundation for almost all dual derivations (where we minimize the Lagrangian w.r.t $x$).</p>
+      </div>
+      <div class="recap-box">
+        <h4>Recap</h4>
+        <p><b>Quadratic Forms:</b> Every convex quadratic problem reduces to solving a linear system ($Hx = -g$).
+        <br><b>Completing the Square:</b> The minimum value is always "constant minus quadratic form of the gradient inverse".</p>
       </div>
     </section>
 

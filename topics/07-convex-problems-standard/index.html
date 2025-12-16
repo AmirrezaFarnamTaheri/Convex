@@ -696,7 +696,7 @@
       <h3>4.6 Convex-Concave Fractional Programming</h3>
       <p>The perspective transform trick extends beyond linear functions (Exercise 4.7). Consider minimizing:</p>
       $$ f_0(x) = \frac{f(x)}{h(x)}, \quad h(x) > 0 $$
-      <p>where $f$ is convex and $h$ is <strong>concave</strong>. (Note: standard LFP has affine $f, h$).</p>
+      <p>where $f$ is convex ($f(x) \ge 0$) and $h$ is <strong>concave</strong>. (Note: standard LFP has affine $f, h$).</p>
 
       <div class="insight">
         <h4>Practical Approach: Quasiconvex Bisection</h4>
@@ -708,6 +708,7 @@
 
       <div class="proof-box">
         <h4>Convex Reformulation (Single Shot)</h4>
+        <p>Alternatively, we can solve it in a single convex optimization pass using the perspective transform.</p>
         <div class="proof-step">
             <strong>Variable Transformation:</strong>
             Let $t = 1/h(x)$ and $y = tx$.
@@ -717,7 +718,7 @@
         <div class="proof-step">
             <strong>The Relaxation Trick:</strong>
             The equality constraint $t h(y/t) = 1$ is not convex (boundary of a convex set).
-            However, we can relax it to $t h(y/t) \ge 1$. Since we minimize the objective (which scales with $t$), the solver will push $t$ to be as small as possible, making the constraint tight at optimum.
+            However, we can relax it to $t h(y/t) \ge 1$. Since we minimize the objective (which scales with $t$), the solver will push $t$ to be as small as possible, making the constraint tight at optimum (provided $f \ge 0$).
             The set $\{(y,t) \mid t h(y/t) \ge 1\}$ is convex (superlevel set of a concave function).
         </div>
         <div class="proof-step">
@@ -740,7 +741,7 @@
           <li>Numerator $f(x) = \frac{1}{m}\text{tr}(F(x))$ is affine (convex).</li>
           <li>Denominator $h(x) = \det(F(x))^{1/m}$ is concave (Recall Lecture 05).</li>
       </ul>
-      <p>This fits the convex-concave framework perfectly and can be solved efficiently.</p>
+      <p>This fits the convex-concave framework perfectly and can be solved efficiently either via bisection or the perspective formulation.</p>
     </section>
 
         <!-- NEW SECTION 5: Geometric Programming -->
@@ -1054,6 +1055,43 @@
               <strong>Optimal Set:</strong> $f_0$ is constant along any direction $v$ in the nullspace of $A$ ($Av=0$).
               If $x^*$ is optimal, the set of all optimal points is the affine subspace $x^* + \operatorname{null}(A)$.
           </div>
+        </div>
+      </div>
+
+      <div class="problem">
+        <h3>P7.7 — LASSO Primal</h3>
+        <p>Formulate the LASSO problem as a QP:
+        $$ \min_x \frac{1}{2}\|Ax - b\|_2^2 + \lambda \|x\|_1 $$
+        </p>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <p>Introduce $t$ such that $|x_i| \le t_i$.
+          The problem becomes:
+          $$
+          \begin{aligned}
+          \min_{x, t} \quad & \frac{1}{2}\|Ax - b\|_2^2 + \lambda \sum t_i \\
+          \text{subject to} \quad & -t_i \le x_i \le t_i
+          \end{aligned}
+          $$
+          The objective is quadratic in $x$ and linear in $t$. Constraints are linear.
+          This is a QP.</p>
+        </div>
+      </div>
+
+      <div class="problem">
+        <h3>P7.8 — Soft-Margin SVM Primal</h3>
+        <p>Formulate the Soft-Margin SVM as a QP:
+        $$
+        \min_{w, b, \xi} \frac{1}{2}\|w\|_2^2 + C \sum_{i=1}^m \xi_i
+        $$
+        subject to $y_i(w^\top x_i + b) \ge 1 - \xi_i$ and $\xi_i \ge 0$.
+        </p>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <p>The objective is quadratic (in $w$) plus linear (in $\xi$).
+          The constraints are affine inequalities.
+          $$ \frac{1}{2} \begin{bmatrix} w \\ b \\ \xi \end{bmatrix}^\top \begin{bmatrix} I & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix} \begin{bmatrix} w \\ b \\ \xi \end{bmatrix} + \begin{bmatrix} 0 \\ 0 \\ C\mathbf{1} \end{bmatrix}^\top \begin{bmatrix} w \\ b \\ \xi \end{bmatrix} $$
+          This is a standard QP.</p>
         </div>
       </div>
     </section>
