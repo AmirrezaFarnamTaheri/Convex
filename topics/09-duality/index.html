@@ -368,7 +368,7 @@
 
         <p>Duality provides powerful insights into how the optimal value changes when constraints are perturbed.</p>
 
-        <h3>6.1 Perturbed Problem</h3>
+        <h3>6.1 The Value Function (Perturbation Function)</h3>
         <p>Consider the perturbed primal problem with optimal value $p^*(u, v)$:</p>
         $$
         \begin{aligned}
@@ -377,33 +377,62 @@
         & h_j(x) = v_j, \quad j=1\dots p
         \end{aligned}
         $$
-        <p>Note: $p^*(0, 0)$ is the original optimal value. $p^*(u, v)$ is a convex function of $(u, v)$.</p>
+        <p>Here $u \in \mathbb{R}^m$ relaxes the inequalities, and $v \in \mathbb{R}^p$ shifts the equalities. The original optimal value is $p^*(0, 0)$.
+        <br><b>Domain Honesty:</b> This is an extended-real function $p^*: \mathbb{R}^{m+p} \to \mathbb{R} \cup \{+\infty, -\infty\}$. If perturbations make the problem infeasible, $p^*(u, v) = +\infty$.</p>
 
-        <h3>6.2 Global Inequality</h3>
-        <div class="theorem-box">
-          <h4>Theorem</h4>
-          <p>If strong duality holds for the unperturbed problem with dual optimum $(\lambda^*, \nu^*)$, then for any $u, v$:</p>
-          $$ p^*(u, v) \ge p^*(0, 0) - \sum \lambda_i^* u_i - \sum \nu_j^* v_j $$
-          <p><b>Interpretation:</b> The optimal dual variables define a supporting hyperplane to the perturbation function $p^*(u, v)$ at $(0, 0)$.
-          <br>$\lambda_i^*$ is the rate of improvement in objective per unit relaxation of constraint $i$.
-          <br>This is why dual variables are called <b>shadow prices</b>.</p>
-        </div>
-
+        <h3>6.2 Convexity of the Value Function</h3>
+        <p>If the original problem is convex (convex $f_0, f_i$, affine $h_j$), then $p^*(u, v)$ is a <b>convex function</b> of $(u, v)$.</p>
         <div class="proof-box">
-          <h4>Proof</h4>
-          <p>Let $x$ be feasible for the perturbed problem.
-          $$
-          \begin{aligned}
-          p^*(0, 0) &= g(\lambda^*, \nu^*) \\
-          &\le f_0(x) + \sum \lambda_i^* f_i(x) + \sum \nu_j^* h_j(x) \\
-          &\le f_0(x) + \sum \lambda_i^* u_i + \sum \nu_j^* v_j
-          \end{aligned}
-          $$
-          Rearranging: $f_0(x) \ge p^*(0, 0) - \sum \lambda_i^* u_i - \sum \nu_j^* v_j$.
-          Minimizing over feasible $x$ gives the result.</p>
+          <h4>Proof: Epigraph as Projection</h4>
+          <p>The epigraph of $p^*$ is defined as $\text{epi } p^* = \{(u, v, t) \mid p^*(u, v) \le t\}$.
+          <br>By definition of the infimum, $p^*(u, v) \le t$ if and only if there exists some $x$ such that:
+          $$ f_0(x) \le t, \quad f_i(x) \le u_i, \quad Ax - b = v $$
+          Thus, the epigraph is the <b>projection</b> onto $(u, v, t)$ of the set:
+          $$ \mathcal{S} = \{(x, u, v, t) \mid f_0(x) \le t, \ f_i(x) \le u_i, \ Ax - b = v\} $$
+          Since $f_i$ are convex, the inequalities define convex sets. The equality is affine. Thus $\mathcal{S}$ is a convex set.
+          <br>Since the projection of a convex set is convex, $\text{epi } p^*$ is convex. Therefore $p^*(u, v)$ is a convex function.</p>
         </div>
 
-        <h3>6.3 Local Sensitivity</h3>
+        <h3>6.3 Global Inequality (Subgradient Interpretation)</h3>
+        <p>We derive a global lower bound on the value function using the dual function of the perturbed problem.</p>
+        <div class="proof-box">
+          <h4>Derivation via Perturbed Lagrangian</h4>
+          <div class="proof-step">
+            <strong>Step 1: Perturbed Lagrangian.</strong>
+            $$ L(x, \lambda, \nu; u, v) = f_0(x) + \sum \lambda_i (f_i(x) - u_i) + \sum \nu_j (h_j(x) - v_j) $$
+            $$ = L(x, \lambda, \nu) - \lambda^\top u - \nu^\top v $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Perturbed Dual Function.</strong>
+            Taking the infimum over $x$:
+            $$ g(\lambda, \nu; u, v) = g(\lambda, \nu) - \lambda^\top u - \nu^\top v $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Weak Duality.</strong>
+            For any dual feasible $(\lambda, \nu)$ ($\lambda \ge 0$), weak duality applies to the perturbed problem:
+            $$ p^*(u, v) \ge g(\lambda, \nu; u, v) = g(\lambda, \nu) - \lambda^\top u - \nu^\top v $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 4: Strong Duality.</strong>
+            If strong duality holds for the original problem at $u=0, v=0$, then $p^*(0, 0) = g(\lambda^*, \nu^*)$.
+            Substituting the optimal dual variables into the inequality:
+            $$ p^*(u, v) \ge p^*(0, 0) - \lambda^{*\top} u - \nu^{*\top} v $$
+          </div>
+        </div>
+
+        <div class="theorem-box">
+          <h4>Theorem: Optimal Multipliers as Subgradients</h4>
+          <p>The inequality derived above is exactly the definition of a subgradient for the convex function $p^*(u, v)$ at $(0, 0)$. Thus:</p>
+          $$ \boxed{ (-\lambda^*, -\nu^*) \in \partial p^*(0, 0) } $$
+          <p><b>Shadow Price Interpretation:</b>
+          <ul>
+            <li>$\lambda_i^* \ge 0$ measures the rate of improvement (decrease in $p^*$) per unit relaxation (increase in $u_i$).</li>
+            <li>If $p^*$ is differentiable, then $\frac{\partial p^*}{\partial u_i} = -\lambda_i^*$ and $\frac{\partial p^*}{\partial v_j} = -\nu_j^*$.</li>
+          </ul>
+          </p>
+        </div>
+
+        <h3>6.4 Local Sensitivity</h3>
         <p>If $p^*(u, v)$ is differentiable at $(0, 0)$, then:</p>
         $$ \frac{\partial p^*(0, 0)}{\partial u_i} = -\lambda_i^*, \quad \frac{\partial p^*(0, 0)}{\partial v_j} = -\nu_j^* $$
         <p>Relaxing constraint $i$ ($u_i > 0$) improves the objective by approximately $\lambda_i^* u_i$. Tightening it ($u_i < 0$) worsens it.</p>
@@ -911,7 +940,50 @@
 </div>
 
 
-      </section>
+
+<div class="problem">
+  <h3>P9.9 — The Gap Certificate Cookbook</h3>
+  <p>For each of the following problems, determine the dual variables, the dual objective function $d(\lambda, \nu)$, and the formula for the duality gap $\text{gap} = p(x) - d(\lambda, \nu)$.</p>
+  <ol>
+    <li><b>Least Squares:</b> $\min_x \frac{1}{2}\|Ax-b\|_2^2$ (Use the equivalent constrained form $\min \frac{1}{2}\|y\|_2^2$ s.t. $y=Ax-b$)</li>
+    <li><b>Ridge Regression:</b> $\min_x \frac{1}{2}\|Ax-b\|_2^2 + \frac{\lambda}{2}\|x\|_2^2$</li>
+    <li><b>LASSO:</b> $\min_x \frac{1}{2}\|Ax-b\|_2^2 + \rho \|x\|_1$</li>
+    <li><b>Basis Pursuit:</b> $\min_x \|x\|_1$ s.t. $Ax=b$</li>
+  </ol>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>1. Least Squares:</strong>
+      Primal: $\min_x \frac{1}{2}\|Ax-b\|^2$. No explicit dual usually, but using $y=Ax-b$:
+      Dual Feasibility: $A^\top \nu = 0$.
+      Dual Objective: $d(\nu) = -\frac{1}{2}\|\nu\|^2 - \nu^\top b$.
+      Gap: $\frac{1}{2}\|Ax-b\|^2 + \frac{1}{2}\|\nu\|^2 + \nu^\top b$.
+    </div>
+    <div class="proof-step">
+      <strong>2. Ridge Regression:</strong>
+      Primal: $\min \frac{1}{2}\|Ax-b\|^2 + \frac{\lambda}{2}\|x\|^2$.
+      Dual Variable: $y$ (unconstrained).
+      Dual Objective: $d(y) = -\frac{1}{2}\|y\|^2 - y^\top b - \frac{1}{2\lambda}\|A^\top y\|^2$.
+      Gap: $\frac{1}{2}\|Ax-b\|^2 + \frac{\lambda}{2}\|x\|^2 + \frac{1}{2}\|y\|^2 + y^\top b + \frac{1}{2\lambda}\|A^\top y\|^2$.
+    </div>
+    <div class="proof-step">
+      <strong>3. LASSO:</strong>
+      Primal: $\min \frac{1}{2}\|Ax-b\|^2 + \rho\|x\|_1$.
+      Dual Variable: $y$. Constraint: $\|A^\top y\|_\infty \le \rho$.
+      Dual Objective: $d(y) = -\frac{1}{2}\|y\|^2 - y^\top b$.
+      Gap: $\frac{1}{2}\|Ax-b\|^2 + \rho\|x\|_1 + \frac{1}{2}\|y\|^2 + y^\top b$.
+    </div>
+    <div class="proof-step">
+      <strong>4. Basis Pursuit:</strong>
+      Primal: $\min \|x\|_1$ s.t. $Ax=b$.
+      Dual Variable: $y$. Constraint: $\|A^\top y\|_\infty \le 1$.
+      Dual Objective: $d(y) = b^\top y$.
+      Gap: $\|x\|_1 - b^\top y$.
+    </div>
+  </div>
+</div>
+
+</section>
     </article>
 
     <footer class="site-footer">
