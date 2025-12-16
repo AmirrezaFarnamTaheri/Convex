@@ -509,6 +509,17 @@
           Since the exponential function is monotonically increasing, we can exponentiate both sides to get the result.</p>
         </div>
 
+        <div class="theorem-box">
+          <h4>Second-Order Characterization</h4>
+          <p>If $f$ is twice differentiable, we can check log-concavity via the Hessian of $\log f(x)$.
+          Using the chain rule and quotient rule, the Hessian of $h(x) = \log f(x)$ is:
+          $$ \nabla^2 \log f(x) = \frac{1}{f(x)}\nabla^2 f(x) - \frac{1}{f(x)^2}\nabla f(x)\nabla f(x)^\top $$
+          Since $f$ is log-concave if and only if $\nabla^2 \log f(x) \preceq 0$, this yields the condition:
+          $$ f(x)\nabla^2 f(x) \preceq \nabla f(x)\nabla f(x)^\top $$
+          This matrix inequality ($A \preceq bb^\top$) is a standard test for log-concavity.
+          </p>
+        </div>
+
         <div class="insight">
           <h4>Property: Shifting Down (3.48)</h4>
           <p>If $f$ is log-concave and $f(x) > a \ge 0$, then the shifted function $g(x) = f(x) - a$ is log-concave on its domain $\{x \mid f(x) > a\}$.

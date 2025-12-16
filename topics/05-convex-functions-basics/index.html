@@ -383,9 +383,35 @@
         </div>
 
         <h3>2.3 Convex Hull of a Function</h3>
-        <p>Similar to how we can define the convex hull of a set, we can define the convex hull (or convex envelope) of a function $f: \mathbb{R}^n \to \mathbb{R}$ via its epigraph.</p>
+        <p>Similar to how we can define the convex hull of a set, we can define the <a href="#" class="definition-link" data-term="convex envelope">convex hull (or convex envelope)</a> of a function $f: \mathbb{R}^n \to \mathbb{R}$ via its epigraph.</p>
         $$ g(x) = \inf \{ t \mid (x, t) \in \text{conv epi } f \} $$
         <p><b>Geometric Intuition:</b> Imagine "shrink-wrapping" the graph of $f$ from below. The function $g$ is the <b>greatest convex underestimator</b> of $f$. This concept is crucial in relaxation techniques for non-convex optimization (e.g., replacing a non-convex constraint with its convex hull).</p>
+
+        <div class="proof-box">
+          <h4>Proof: Largest Convex Underestimator</h4>
+          <p>We prove that $g$ defined above is indeed the largest convex function satisfying $g(x) \le f(x)$ for all $x$.</p>
+          <div class="proof-step">
+            <strong>Step 1: $g$ is an underestimator.</strong>
+            For any $x$, $(x, f(x)) \in \mathrm{epi}\, f \subseteq \text{conv epi } f$.
+            Since $(x, f(x))$ is in the set over which we take the infimum, $g(x) \le f(x)$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: $g$ is convex.</strong>
+            The epigraph of $g$ is (up to closure) the set $E = \text{conv epi } f$. Since the convex hull of any set is convex, $\mathrm{epi}\, g$ is a convex set. A function with a convex epigraph is a convex function.
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Maximality.</strong>
+            Let $h$ be any convex function such that $h(x) \le f(x)$ for all $x$.
+            This inequality implies $\mathrm{epi}\, f \subseteq \mathrm{epi}\, h$.
+            Since $h$ is convex, $\mathrm{epi}\, h$ is a convex set.
+            The convex hull of a set is the smallest convex set containing it. Therefore:
+            $$ \text{conv epi } f \subseteq \mathrm{epi}\, h $$
+            Now, take any $x$. By definition of $g$, $(x, g(x))$ is on the boundary of $\text{conv epi } f$.
+            Since this set is contained in $\mathrm{epi}\, h$, we have $(x, g(x)) \in \mathrm{epi}\, h$.
+            This means $g(x) \ge h(x)$.
+            Thus, $g$ is the largest convex underestimator.
+          </div>
+        </div>
 
         <div class="proof-box">
           <h4>Example: Homogeneous Envelope (Exercise 3.31)</h4>

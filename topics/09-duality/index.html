@@ -440,8 +440,76 @@
         </ol>
       </section>
 
-      <section class="section-card" id="section-9">
-        <h2><i data-feather="edit-3"></i> 9. Exercises</h2>
+    <section class="section-card" id="section-canonical-duals">
+      <h2>9. Canonical Duals: A Problem Pack</h2>
+      <p>This section provides a "micro-toolbox" of derivations for standard problems. Mastering these specific derivations builds the pattern-matching skills needed for general duality.</p>
+
+      <div class="insight">
+        <h4>Micro-Toolbox</h4>
+        <ul>
+          <li><b>Lemma A1 (Linear Term):</b> $\inf_x a^\top x = 0$ if $a=0$, else $-\infty$. This generates equality constraints ($A^\top \nu + c = 0$).</li>
+          <li><b>Lemma A2 (Quadratic Min):</b> $\inf_x (\frac{1}{2}x^\top P x + q^\top x) = -\frac{1}{2}q^\top P^{-1} q$ (if $P \succ 0$). This handles QP terms.</li>
+          <li><b>Lemma A3 (Conjugate of Norm):</b> $\sup_x (y^\top x - \|x\|) = 0$ if $\|y\|_* \le 1$, else $\infty$. This generates dual norm constraints.</li>
+        </ul>
+      </div>
+
+      <div class="problem">
+        <h3>Problem 1: Least Squares (Residual Form)</h3>
+        <p><b>Primal:</b> $\min \|Ax - b\|_2^2$. Rewrite as $\min \frac{1}{2}\|y\|_2^2$ s.t. $y = Ax - b$.</p>
+        <p><b>Lagrangian:</b> $L(x, y, \nu) = \frac{1}{2}\|y\|^2 + \nu^\top (Ax - b - y) = (\frac{1}{2}\|y\|^2 - \nu^\top y) + (A^\top \nu)^\top x - b^\top \nu$.</p>
+        <p><b>Dual Function:</b>
+        <br>1. Min over $x$: Requires $A^\top \nu = 0$ (Lemma A1).
+        <br>2. Min over $y$: $\inf (\frac{1}{2}\|y\|^2 - \nu^\top y) = -\frac{1}{2}\|\nu\|^2$ (Lemma A2 with $P=I$).
+        <br><b>Dual Problem:</b> $\max -\frac{1}{2}\|\nu\|^2 - b^\top \nu$ s.t. $A^\top \nu = 0$.
+        </p>
+      </div>
+
+      <div class="problem">
+        <h3>Problem 2: Ridge Regression</h3>
+        <p><b>Primal:</b> $\min \frac{1}{2}\|Ax - b\|_2^2 + \frac{\lambda}{2}\|x\|_2^2$. Rewrite with $y = Ax - b$.</p>
+        <p><b>Lagrangian:</b> $L(x, y, \nu) = \frac{1}{2}\|y\|^2 + \frac{\lambda}{2}\|x\|^2 + \nu^\top(Ax - b - y)$.</p>
+        <p><b>Dual Function:</b>
+        <br>1. Min over $y$: same as above, $-\frac{1}{2}\|\nu\|^2$.
+        <br>2. Min over $x$: $\inf (\frac{\lambda}{2}\|x\|^2 + (A^\top \nu)^\top x) = -\frac{1}{2\lambda}\|A^\top \nu\|^2$.
+        <br><b>Dual Problem:</b> $\max -b^\top \nu - \frac{1}{2}\|\nu\|^2 - \frac{1}{2\lambda}\|A^\top \nu\|^2$. (Unconstrained!)
+        </p>
+      </div>
+
+      <div class="problem">
+        <h3>Problem 3: LASSO</h3>
+        <p><b>Primal:</b> $\min \frac{1}{2}\|Ax - b\|_2^2 + \lambda \|x\|_1$. Rewrite with $y = Ax - b$.</p>
+        <p><b>Lagrangian:</b> $L(x, y, \nu) = \frac{1}{2}\|y\|^2 + \lambda \|x\|_1 + \nu^\top(Ax - b - y)$.</p>
+        <p><b>Dual Function:</b>
+        <br>1. Min over $y$: $-\frac{1}{2}\|\nu\|^2$.
+        <br>2. Min over $x$: $\inf_x (\lambda \|x\|_1 + (A^\top \nu)^\top x) = -\sup_x (-(A^\top \nu)^\top x - \lambda \|x\|_1)$.
+        This is finite (0) only if $\|A^\top \nu\|_\infty \le \lambda$ (Lemma A3 scaled).
+        <br><b>Dual Problem:</b> $\max -b^\top \nu - \frac{1}{2}\|\nu\|^2$ s.t. $\|A^\top \nu\|_\infty \le \lambda$.
+        </p>
+      </div>
+
+      <div class="problem">
+        <h3>Problem 4: Support Vector Machine (Hinge Loss)</h3>
+        <p><b>Primal:</b> $\min \frac{1}{2}\|w\|^2 + C \sum \max(0, 1 - y_i w^\top x_i)$.
+        <br>Rewrite: $\min \frac{1}{2}\|w\|^2 + C \sum \xi_i$ s.t. $\xi_i \ge 1 - y_i w^\top x_i, \xi_i \ge 0$.</p>
+        <p><b>Dual Derivation:</b>
+        <br>Lagrangian involves multipliers $\alpha_i, \mu_i$. Minimizing over $w$ gives $w = \sum \alpha_i y_i x_i$.
+        <br>Minimizing over $\xi$ gives constraint $0 \le \alpha_i \le C$.
+        <br><b>Dual Problem:</b> $\max \sum \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j x_i^\top x_j$ s.t. $0 \le \alpha_i \le C, \sum \alpha_i y_i = 0$.
+        </p>
+      </div>
+
+      <div class="problem">
+        <h3>Problem 5: Matrix Completion (Nuclear Norm)</h3>
+        <p><b>Primal:</b> $\min \|X\|_*$ s.t. $X_{ij} = M_{ij}$ for $(i,j) \in \Omega$.
+        <br>Rewrite: $\min \|X\|_* + \mathbb{I}_\Omega(X - M)$ where $\mathbb{I}$ forces equality on $\Omega$.</p>
+        <p><b>Dual Norm:</b> The dual of the nuclear norm $\|\cdot\|_*$ is the spectral norm $\|\cdot\|_2$.
+        <br><b>Dual Problem:</b> $\max \langle Y, M \rangle$ s.t. $\|Y\|_2 \le 1$ and $Y_{ij} = 0$ for $(i,j) \notin \Omega$.
+        </p>
+      </div>
+    </section>
+
+    <section class="section-card" id="section-10">
+      <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
 
       <div class="insight">
         <h4>Recap & Key Concepts</h4>
