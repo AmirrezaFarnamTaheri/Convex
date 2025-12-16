@@ -62,33 +62,140 @@
     <!-- SECTION 1: QR DECOMPOSITION -->
     <!-- SECTION 1: BASES AND COORDINATES -->
     <section class="section-card" id="section-bases">
-      <h2>1. Bases, Coordinates, and Linear Maps</h2>
-      <p>Before diving into factorizations, we establish the fundamental language of "changing perspective." Linear algebra becomes powerful when we choose the <i>right</i> coordinate system (basis) where a matrix becomes simple (e.g., diagonal).</p>
+      <h2>1. Bases, Coordinates, and Change of Basis</h2>
 
-      <h3>1.1 Bases and Dimension</h3>
-      <p>Let $V$ be a subspace of $\mathbb{R}^n$. A set of vectors $\mathcal{B} = \{b_1, \dots, b_k\} \subset V$ is a <b>basis</b> for $V$ if:</p>
+      <h3>0. The Meta-Move: Changing Perspective</h3>
+      <p>Almost all advanced linear algebra (Eigenvalues, SVD, PCA) relies on one idea: <b>pick coordinates where the operator looks simple</b>.</p>
+      <ul>
+        <li><b>Eigen-decomposition:</b> Choose a basis of eigenvectors $\to$ matrix becomes diagonal.</li>
+        <li><b>SVD:</b> Choose orthonormal bases for domain and codomain $\to$ matrix becomes diagonal.</li>
+      </ul>
+      <p>This module formalizes the "change of coordinates" machinery.</p>
+
+      <h3>1. Span and Independence</h3>
+      <p>Given vectors $v_1, \dots, v_k \in \mathbb{R}^n$:</p>
+      <ul>
+        <li><b>Span:</b> The set of all linear combinations $\sum \alpha_i v_i$. It is always a subspace.</li>
+        <li><b>Independence:</b> $\sum \alpha_i v_i = 0 \implies \alpha_i = 0$ for all $i$.</li>
+      </ul>
+      <p><i>Key Equivalence:</i> Vectors are dependent if and only if one of them is in the span of the others (redundancy).</p>
+
+      <h3>2. Basis and Dimension</h3>
+      <p>A <b>basis</b> for a subspace $V$ is a list of vectors $B = (b_1, \dots, b_m)$ that is:</p>
       <ol>
-        <li><b>Span:</b> $\text{span}(\mathcal{B}) = V$ (they cover the space).</li>
-        <li><b>Independence:</b> $\sum c_i b_i = 0 \implies c_i = 0$ (no redundancy).</li>
+        <li><b>Spanning:</b> $\mathrm{span}(B) = V$.</li>
+        <li><b>Independent:</b> No redundancy.</li>
       </ol>
-      <div class="theorem-box">
-        <h4>Theorem: Dimension is Well-Defined</h4>
-        <p>Any two bases for a subspace $V$ have the same number of elements. This number is the <b>dimension</b> of $V$, denoted $\dim(V)$.</p>
+
+      <h4>Theorem: Dimension is Well-Defined</h4>
+      <p>All bases for $V$ have the same number of elements. This number is $\dim(V)$.
+      <br>This relies on the <b>Steinitz Exchange Lemma</b>:</p>
+      <div class="proof-box">
+        <h4>Steinitz Exchange Lemma</h4>
+        <p>If $S = \{s_1, \dots, s_m\}$ spans $V$ and $L = \{\ell_1, \dots, \ell_k\}$ is independent in $V$, then $k \le m$.
+        <br>Moreover, we can replace $k$ vectors from $S$ with the vectors in $L$ to form a new spanning set.</p>
+        <p><i>Logic:</i> We swap in $\ell_1$ for some $s_i$ (essential for spanning $\ell_1$). We repeat $k$ times. If $k > m$, we would run out of $s$'s to swap, leaving some $\ell$'s dependent on the previous ones.</p>
       </div>
 
-      <h3>1.2 Coordinates and Change of Basis</h3>
-      <p>If $\mathcal{B} = \{b_1, \dots, b_n\}$ is a basis for $\mathbb{R}^n$, any vector $x \in \mathbb{R}^n$ has a unique expansion $x = \sum_{i=1}^n c_i b_i$. The coefficients $c = (c_1, \dots, c_n)^\top$ are the <b>coordinates</b> of $x$ in basis $\mathcal{B}$, denoted $[x]_{\mathcal{B}}$.</p>
-      <p>Let $B = [b_1 \dots b_n]$ be the matrix with basis vectors as columns. Then $x = B [x]_{\mathcal{B}}$, or equivalently $[x]_{\mathcal{B}} = B^{-1}x$.
-      <br><b>Change of Basis:</b> If we have two bases $B$ and $C$, the coordinates transform via:
-      $$ [x]_C = C^{-1} x = C^{-1} (B [x]_B) = (C^{-1}B) [x]_B $$
-      The matrix $P = C^{-1}B$ is the change-of-basis matrix from $B$ to $C$.
-      </p>
+      <h3>3. Coordinates: The Dictionary</h3>
+      <p>A basis $B = (b_1, \dots, b_m)$ provides a bijection between abstract vectors $v \in V$ and coordinate lists $\alpha \in \mathbb{R}^m$.</p>
+      <p><b>Coordinate Theorem:</b> For every $v \in V$, there exists a <b>unique</b> $\alpha$ such that $v = \sum_{i=1}^m \alpha_i b_i$.
+      <br>We write $[v]_B = \alpha$.
+      <br>If we form the matrix $B = [b_1 \dots b_m] \in \mathbb{R}^{n \times m}$, then $v = B [v]_B$.</p>
 
-      <h3>1.3 Linear Maps and Matrices</h3>
-      <p>A matrix $A$ represents a linear map $T: \mathbb{R}^n \to \mathbb{R}^m$ in the standard basis. If we change bases in the domain ($x = V [x]_V$) and codomain ($y = U [y]_U$), the matrix representing $T$ changes to:
-      $$ \tilde{A} = U^{-1} A V $$
-      <b>Diagonalization</b> is simply finding a basis $V$ such that $V^{-1}AV = \Lambda$ is diagonal.
-      <b>SVD</b> is finding two orthonormal bases $U, V$ such that $U^\top A V = \Sigma$ is diagonal.</p>
+      <div class="insight">
+        <h4>Computing Coordinates</h4>
+        <p>To find $\alpha = [v]_B$, we solve $B\alpha = v$.
+        <br><b>Case 1: Full Space ($m=n$).</b> $B$ is square and invertible. $\alpha = B^{-1}v$.
+        <br><b>Case 2: Subspace ($m < n$).</b> $B$ is tall with independent columns. $B^{-1}$ does not exist. We solve the overdetermined system (guaranteed to have a solution since $v \in V$) using Gaussian elimination or $B^\dagger v$.
+        </p>
+      </div>
+
+      <h3>4. Change of Basis</h3>
+      <p>How do coordinates change when we swap basis $B$ for basis $C$?</p>
+
+      <h4>Case A: Bases of $\mathbb{R}^n$ (Square Matrices)</h4>
+      <p>Let $B, C \in \mathbb{R}^{n \times n}$ be invertible basis matrices. For any $v$:
+      $$ v = B[v]_B = C[v]_C \implies [v]_C = C^{-1}B [v]_B $$
+      The matrix $P_{C \leftarrow B} = C^{-1}B$ converts $B$-coords to $C$-coords.</p>
+
+      <h4>Case B: Bases of a Subspace (Tall Matrices)</h4>
+      <p>Let $B, C \in \mathbb{R}^{n \times m}$ be bases for subspace $V$.
+      <br>We cannot write $C^{-1}$. However, since columns of $B$ are in $V = \mathrm{span}(C)$, each $b_j$ has unique coordinates in $C$.
+      $$ b_j = C [b_j]_C $$
+      Stacking these into a matrix $P \in \mathbb{R}^{m \times m}$:
+      $$ B = C P \implies P = P_{C \leftarrow B} $$
+      Then $v = B[v]_B = C P [v]_B$, so $[v]_C = P [v]_B$.
+      <br>This $P$ is the unique invertible $m \times m$ matrix satisfying $B = CP$.</p>
+
+      <h3>5. Orthonormal Bases</h3>
+      <p>If basis $Q$ has orthonormal columns ($Q^\top Q = I_m$), geometry becomes algebra.
+      <br><b>Coordinates:</b> $\alpha_i = q_i^\top v$. So $[v]_Q = Q^\top v$.
+      <br><b>Norms:</b> $\|v\|_2 = \|Q\alpha\|_2 = \|\alpha\|_2$. (Parseval's Identity).
+      <br>This is why we love SVD: it diagonalizes matrices using only orthonormal bases, preserving geometry.</p>
+    </section>
+
+    <!-- SECTION 2: LINEAR MAPS AND RANK-NULLITY -->
+    <section class="section-card" id="section-linear-maps">
+      <h2>2. Linear Maps, Image/Kernel, and Rank-Nullity</h2>
+
+      <h3>1. Linear Maps vs. Matrices</h3>
+      <p>A function $T: \mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$.
+      <br>Every linear map is represented by a matrix $A$ such that $T(x) = Ax$. The $j$-th column of $A$ is simply $T(e_j)$.</p>
+
+      <h3>2. The Four Fundamental Subspaces</h3>
+      <ul>
+        <li><b>Image (Column Space):</b> $\mathrm{im}(A) = \{Ax : x \in \mathbb{R}^n\}$. The set of reachable outputs.</li>
+        <li><b>Kernel (Nullspace):</b> $\ker(A) = \{x : Ax = 0\}$. The set of inputs collapsed to zero.</li>
+      </ul>
+      <p>They are subspaces (closed under linear combinations).</p>
+
+      <h3>3. The Rank-Nullity Theorem</h3>
+      <p>The "Conservation of Dimension" for linear maps.
+      $$ \dim(\ker(A)) + \dim(\mathrm{im}(A)) = n $$
+      <br><i>Intuition:</i> The input space dimension $n$ is split into dimensions that survive (rank) and dimensions that die (nullity).</p>
+
+      <div class="proof-box">
+        <h4>Proof of Rank-Nullity</h4>
+        <div class="proof-step">
+          <strong>Step 1: Basis for Kernel.</strong> Let $\{v_1, \dots, v_k\}$ be a basis for $\ker(A)$. So nullity is $k$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Extend to Full Basis.</strong> Extend to a basis for $\mathbb{R}^n$: $\{v_1, \dots, v_k, w_1, \dots, w_r\}$ where $r = n-k$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Map to Image.</strong> Consider $\{Aw_1, \dots, Aw_r\}$. These certainly span $\mathrm{im}(A)$ because $Av_i = 0$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 4: Independence.</strong> Suppose $\sum c_j Aw_j = 0$. Then $A(\sum c_j w_j) = 0$.
+          So $\sum c_j w_j \in \ker(A)$.
+          Thus $\sum c_j w_j = \sum d_i v_i$.
+          Rearranging: $\sum c_j w_j - \sum d_i v_i = 0$.
+          By independence of the full basis, all coefficients $c_j, d_i$ must be zero.
+          Thus $\{Aw_j\}$ are independent.
+        </div>
+        <div class="proof-step">
+          <strong>Conclusion.</strong> $\{Aw_1, \dots, Aw_r\}$ is a basis for $\mathrm{im}(A)$.
+          Rank is $r$.
+          Total dimension $n = k + r = \text{nullity} + \text{rank}$.
+        </div>
+      </div>
+
+      <h3>4. Anatomy of $Ax=b$</h3>
+      <p>The solvability of linear systems is geometric:</p>
+      <ul>
+        <li><b>Existence:</b> $Ax=b$ has a solution $\iff b \in \mathrm{im}(A)$.</li>
+        <li><b>Uniqueness:</b> If solvable, the solution is unique $\iff \ker(A) = \{0\}$.</li>
+        <li><b>Structure:</b> If $x_p$ is a particular solution ($Ax_p=b$), the full solution set is the affine space $x_p + \ker(A)$.</li>
+      </ul>
+      <p><b>Dimension of Solution Set:</b> If solvable, the solution set is an affine subspace of dimension $\text{nullity}(A) = n - \mathrm{rank}(A)$. Each independent constraint reduces the freedom by 1.</p>
+
+      <h3>5. Injective, Surjective, Bijective</h3>
+      <ul>
+        <li><b>Injective (One-to-One):</b> $\ker(A) = \{0\}$ (Full column rank).</li>
+        <li><b>Surjective (Onto):</b> $\mathrm{im}(A) = \mathbb{R}^m$ (Full row rank).</li>
+        <li><b>Bijective (Invertible):</b> Both (Square, Full rank).</li>
+      </ul>
     </section>
 
     <!-- SECTION 2: EIGENVALUES -->

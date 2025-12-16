@@ -52,10 +52,32 @@
     </section>
 
     <article>
-      <section class="section-card" id="section-1">
-        <h2>1. The Lagrangian</h2>
+      <section class="section-card" id="section-conjugates">
+        <h2>1. The Engine of Duality: Conjugates and Support Functions</h2>
+        <p>Before building the Lagrangian, we introduce the algebraic machinery that makes duality work: the <b>convex conjugate</b>. This tool automatically converts geometric objects (supporting hyperplanes) into algebraic dual objectives.</p>
 
-        <h3>1.1 Standard Form Primal Problem</h3>
+        <h3>1.1 The Fenchel Conjugate</h3>
+        <p>For a function $f: \mathbb{R}^n \to \mathbb{R} \cup \{+\infty\}$, the conjugate $f^*$ is defined as:</p>
+        $$ f^*(y) = \sup_{x} (y^\top x - f(x)) $$
+        <p><b>Interpretation:</b> $f^*(y)$ measures the maximum gap between the linear function $y^\top x$ and $f(x)$. It encodes the family of all affine underestimators of $f$.
+        <br><b>Key Property:</b> $f^*$ is always convex (pointwise supremum of affine functions).</p>
+
+        <h3>1.2 The Fenchel-Young Inequality</h3>
+        <p>Directly from the definition:</p>
+        $$ f(x) + f^*(y) \ge x^\top y $$
+        <p>Equality holds if and only if $y \in \partial f(x)$. This inequality is the source of all weak duality results.</p>
+
+        <h3>1.3 Support Functions and Indicator Functions</h3>
+        <p>Constraints are modeled by indicator functions $I_C(x) = 0$ if $x \in C$, $+\infty$ else.
+        <br>The conjugate of an indicator is the <b>support function</b> of the set:</p>
+        $$ I_C^*(y) = \sup_x (y^\top x - I_C(x)) = \sup_{x \in C} y^\top x = \sigma_C(y) $$
+        <p>This explains why dual problems involve maximizing linear functions over convex sets.</p>
+      </section>
+
+      <section class="section-card" id="section-1">
+        <h2>2. The Lagrangian</h2>
+
+        <h3>2.1 Standard Form Primal Problem</h3>
         <p>We consider an optimization problem in standard form (not necessarily convex):</p>
         <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
           <p style="margin: 0;">
@@ -70,7 +92,7 @@
         </div>
         <p>Variable $x \in \mathbb{R}^n$, domain $\mathcal{D} = \bigcap \mathrm{dom}\, f_i \cap \bigcap \mathrm{dom}\, h_j$. Optimal value $p^*$.</p>
 
-        <h3>1.2 The Lagrangian Function</h3>
+        <h3>2.2 The Lagrangian Function</h3>
         <p>The <a href="#" class="definition-link">Lagrangian</a> $L: \mathbb{R}^n \times \mathbb{R}^m \times \mathbb{R}^p \to \mathbb{R}$ augments the objective with a weighted sum of constraints:</p>
         $$
         L(x, \lambda, \nu) = f_0(x) + \sum_{i=1}^m \lambda_i f_i(x) + \sum_{j=1}^p \nu_j h_j(x)
@@ -85,7 +107,7 @@
           Thus, $L(x, \lambda, \nu) \le f_0(x)$. The Lagrangian is a <b>pointwise underestimator</b> of the objective function on the feasible set.</p>
         </div>
 
-        <h3>1.3 The Minimax (Saddle Point) Interpretation</h3>
+        <h3>2.3 The Minimax (Saddle Point) Interpretation</h3>
         <p>We can recover the primal problem from the Lagrangian by maximizing over the dual variables. Define the function:</p>
         $$
         \sup_{\lambda \succeq 0, \nu} L(x, \lambda, \nu) = \sup_{\lambda \succeq 0, \nu} \left( f_0(x) + \sum \lambda_i f_i(x) + \sum \nu_j h_j(x) \right)
@@ -110,9 +132,9 @@
       </section>
 
       <section class="section-card" id="section-2">
-        <h2>2. The Lagrange Dual Function</h2>
+        <h2>3. The Lagrange Dual Function</h2>
 
-        <h3>2.1 Definition</h3>
+        <h3>3.1 Definition</h3>
         <p>The <a href="#" class="definition-link">Lagrange dual function</a> $g: \mathbb{R}^m \times \mathbb{R}^p \to \mathbb{R}$ is the minimum value of the Lagrangian over $x$:
         $$
         g(\lambda, \nu) = \inf_{x \in \mathcal{D}} L(x, \lambda, \nu) = \inf_{x \in \mathcal{D}} \left( f_0(x) + \sum_{i=1}^m \lambda_i f_i(x) + \sum_{j=1}^p \nu_j h_j(x) \right)
@@ -130,7 +152,7 @@
           </div>
         </div>
 
-        <h3>2.2 Lower Bound on Optimal Value</h3>
+        <h3>3.2 Lower Bound on Optimal Value</h3>
         <p>For any $\lambda \succeq 0$ and any $\nu$, we have:</p>
         $$ g(\lambda, \nu) \le p^* $$
         <div class="proof-box">
@@ -144,7 +166,7 @@
           Combining the inequalities gives $g(\lambda, \nu) \le p^*$.</p>
         </div>
 
-        <h3>2.3 Examples of Dual Functions</h3>
+        <h3>3.3 Examples of Dual Functions</h3>
 
         <div class="example">
           <h4>1. Least Squares (Quadratic)</h4>
@@ -180,9 +202,9 @@
       </section>
 
       <section class="section-card" id="section-3">
-        <h2>3. The Dual Problem</h2>
+        <h2>4. The Dual Problem</h2>
 
-        <h3>3.1 Definition</h3>
+        <h3>4.1 Definition</h3>
         <p>The <a href="#" class="definition-link">Lagrange dual problem</a> is to find the best lower bound on $p^*$:</p>
         <div style="padding: 16px; background: var(--panel); border-left: 4px solid var(--brand); margin: 16px 0;">
           <p style="margin: 0;">
@@ -196,7 +218,7 @@
         </div>
         <p>This is a <b>convex optimization problem</b> (concave maximization is equivalent to convex minimization), regardless of the primal's properties.</p>
 
-        <h3>3.2 Weak Duality</h3>
+        <h3>4.2 Weak Duality</h3>
         <p>Let $d^*$ be the optimal value of the dual problem. The weak duality theorem states:</p>
         $$ \boxed{ d^* \le p^* } $$
         <p>This holds for <b>any</b> optimization problem. The difference $p^* - d^*$ is called the <b>duality gap</b>.</p>
@@ -222,7 +244,7 @@
             <p><b>Result:</b> $p^* - d^* = \infty - 0.5 = \infty$. The duality gap is infinite, demonstrating that strong duality can fail for non-convex problems.</p>
         </div>
 
-        <h3>3.3 Strong Duality and Slater's Condition</h3>
+        <h3>4.3 Strong Duality and Slater's Condition</h3>
         <p>Strong duality means $d^* = p^*$ (zero duality gap). It does not hold generally but usually holds for convex problems under mild conditions.</p>
 
         <div class="theorem-box">
@@ -270,7 +292,7 @@
       </section>
 
       <section class="section-card" id="section-4">
-        <h2>4. KKT Conditions</h2>
+        <h2>5. KKT Conditions</h2>
 
         <p>The Karush-Kuhn-Tucker (KKT) conditions provide a unified framework for optimality. For convex problems, they are necessary and sufficient.</p>
 
@@ -285,6 +307,13 @@
               $$ \nabla f_0(x^*) + \sum \lambda_i^* \nabla f_i(x^*) + \sum \nu_j^* \nabla h_j(x^*) = 0 $$
             </li>
           </ol>
+        </div>
+
+        <div class="insight">
+          <h4>Geometric Interpretation via Normal Cones</h4>
+          <p>The stationarity condition $0 \in \nabla f_0(x^*) + \sum \lambda_i \nabla f_i(x^*) + \sum \nu_j \nabla h_j(x^*)$ has a deep geometric meaning:
+          $$ -\nabla f_0(x^*) \in N_{\mathcal{F}}(x^*) $$
+          The negative gradient of the objective must lie in the <b>normal cone</b> of the feasible set at the optimal point. KKT simply expresses this normal vector as a linear combination of constraint gradients.</p>
         </div>
 
         <div class="proof-box">
@@ -335,11 +364,11 @@
       </section>
 
       <section class="section-card" id="section-5">
-        <h2>5. Perturbation and Sensitivity Analysis</h2>
+        <h2>6. Perturbation and Sensitivity Analysis</h2>
 
         <p>Duality provides powerful insights into how the optimal value changes when constraints are perturbed.</p>
 
-        <h3>5.1 Perturbed Problem</h3>
+        <h3>6.1 Perturbed Problem</h3>
         <p>Consider the perturbed primal problem with optimal value $p^*(u, v)$:</p>
         $$
         \begin{aligned}
@@ -350,7 +379,7 @@
         $$
         <p>Note: $p^*(0, 0)$ is the original optimal value. $p^*(u, v)$ is a convex function of $(u, v)$.</p>
 
-        <h3>5.2 Global Inequality</h3>
+        <h3>6.2 Global Inequality</h3>
         <div class="theorem-box">
           <h4>Theorem</h4>
           <p>If strong duality holds for the unperturbed problem with dual optimum $(\lambda^*, \nu^*)$, then for any $u, v$:</p>
@@ -374,20 +403,20 @@
           Minimizing over feasible $x$ gives the result.</p>
         </div>
 
-        <h3>5.3 Local Sensitivity</h3>
+        <h3>6.3 Local Sensitivity</h3>
         <p>If $p^*(u, v)$ is differentiable at $(0, 0)$, then:</p>
         $$ \frac{\partial p^*(0, 0)}{\partial u_i} = -\lambda_i^*, \quad \frac{\partial p^*(0, 0)}{\partial v_j} = -\nu_j^* $$
         <p>Relaxing constraint $i$ ($u_i > 0$) improves the objective by approximately $\lambda_i^* u_i$. Tightening it ($u_i < 0$) worsens it.</p>
       </section>
 
       <section class="section-card" id="section-6">
-        <h2>6. Examples of Dual Problems</h2>
+        <h2>7. Examples of Dual Problems</h2>
 
         <h3>6.1 Linear Programming</h3>
         <p>Primal: $\min c^\top x$ s.t. $Ax \le b, x \ge 0$.
         <br>Dual: $\max -b^\top \lambda$ s.t. $A^\top \lambda + c \ge 0, \lambda \ge 0$. (See Sec 2.3).</p>
 
-        <h3>6.2 Quadratic Programming</h3>
+        <h3>7.2 Quadratic Programming</h3>
         <p>Primal: $\min \frac{1}{2}x^\top P x + q^\top x$ s.t. $Ax \le b$. ($P \succ 0$).
         <br>Lagrangian: $L(x, \lambda) = \frac{1}{2}x^\top P x + q^\top x + \lambda^\top (Ax - b)$.
         <br>Minimize over $x$: $Px + q + A^\top \lambda = 0 \implies x = -P^{-1}(q + A^\top \lambda)$.
@@ -395,7 +424,7 @@
         $$ g(\lambda) = -\frac{1}{2} \lambda^\top (A P^{-1} A^\top) \lambda - (b + A P^{-1} q)^\top \lambda - \frac{1}{2} q^\top P^{-1} q $$
         This is a concave quadratic maximization.</p>
 
-        <h3>6.3 Semidefinite Programming</h3>
+        <h3>7.3 Semidefinite Programming</h3>
         <p>Primal: $\min \mathrm{tr}(CX)$ s.t. $\mathrm{tr}(A_i X) = b_i, X \succeq 0$.
         <br>We derive the dual using the generalized Lagrangian with matrix inner product.
         <br>Lagrangian: $L(X, \nu) = \mathrm{tr}(CX) + \sum \nu_i (b_i - \mathrm{tr}(A_i X))$. We minimize this over the cone $X \succeq 0$.
@@ -413,16 +442,21 @@
       </section>
 
       <section class="section-card" id="section-7">
-        <h2>7. Generalized Inequalities</h2>
+        <h2>8. Generalized Inequalities and Conic Duality</h2>
         <p>Duality extends to proper cones $K$.
         <br>Primal constraint: $g(x) \preceq_K 0$ (i.e., $g(x) \in -K$).
         <br>Lagrangian term: $\lambda^\top g(x)$ where $\lambda \in K^*$ (dual cone).
         <br>Dual constraint: $\lambda \succeq_{K^*} 0$.
         <br>Complementary slackness: $\lambda^\top g(x) = 0$.</p>
+
+        <h3>8.1 The Standard Conic Form</h3>
+        <p>Primal: $\min c^\top x$ s.t. $Ax=b, x \in K$.
+        <br>Dual: $\max b^\top y$ s.t. $c - A^\top y = s, s \in K^*$.
+        <br>This unifies LP ($K=\mathbb{R}_+$), SOCP ($K=\mathcal{Q}$), and SDP ($K=\mathbb{S}_+$).</p>
       </section>
 
       <section class="section-card" id="section-8">
-        <h2>8. Review & Cheat Sheet</h2>
+        <h2>9. Review & Cheat Sheet</h2>
         <h3>Key Definitions</h3>
         <ul>
           <li><b>Lagrangian:</b> $L(x, \lambda, \nu) = f_0(x) + \lambda^\top f(x) + \nu^\top h(x)$.</li>
@@ -441,7 +475,7 @@
       </section>
 
     <section class="section-card" id="section-canonical-duals">
-      <h2>9. Canonical Duals: A Problem Pack</h2>
+      <h2>10. Canonical Duals: A Problem Pack</h2>
       <p>This section provides a "micro-toolbox" of derivations for standard problems. Mastering these specific derivations builds the pattern-matching skills needed for general duality.</p>
 
       <div class="insight">
@@ -508,8 +542,8 @@
       </div>
     </section>
 
-    <section class="section-card" id="section-10">
-      <h2><i data-feather="edit-3"></i> 10. Exercises</h2>
+    <section class="section-card" id="section-exercises">
+      <h2><i data-feather="edit-3"></i> 11. Exercises</h2>
 
       <div class="insight">
         <h4>Recap & Key Concepts</h4>
