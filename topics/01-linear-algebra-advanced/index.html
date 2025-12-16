@@ -170,63 +170,22 @@
     <!-- SECTION 2: LINEAR MAPS AND RANK-NULLITY -->
     <section class="section-card" id="section-linear-maps">
       <h2>2. Linear Maps, Image/Kernel, and Rank-Nullity</h2>
+      <p><i>Note: The basic definitions of subspace, nullspace, and rank are covered in <a href="../00-linear-algebra-basics/index.html">Lecture 00</a>. Here, we revisit them briefly to emphasize their role in understanding linear maps as geometric transformations.</i></p>
 
-      <h3>1. Linear Maps vs. Matrices</h3>
-      <p>A function $T: \mathbb{R}^n \to \mathbb{R}^m$ is <b>linear</b> if $T(\alpha x + \beta y) = \alpha T(x) + \beta T(y)$.
-      <br>Every linear map is represented by a matrix $A$ such that $T(x) = Ax$. The $j$-th column of $A$ is simply $T(e_j)$.</p>
+      <h3>1. The Geometry of Linear Maps</h3>
+      <p>A linear map $T: \mathbb{R}^n \to \mathbb{R}^m$ distorts space. It can collapse dimensions (singular) or preserve them (nonsingular). The Rank-Nullity theorem is the conservation law governing this distortion.</p>
 
-      <h3>2. The Four Fundamental Subspaces</h3>
+      <h3>2. The "Conservation of Dimension"</h3>
+      <p>The Rank-Nullity Theorem states that every input dimension must either be preserved (mapped to the range) or destroyed (mapped to zero).
+      $$ \underbrace{n}_{\text{Inputs}} = \underbrace{\dim(\ker(A))}_{\text{Collapsed}} + \underbrace{\dim(\mathrm{im}(A))}_{\text{Preserved}} $$
+      </p>
+
+      <h3>3. Anatomy of $Ax=b$ (Geometric View)</h3>
+      <p>This theorem dictates the structure of solutions to linear systems:</p>
       <ul>
-        <li><b>Image (Column Space):</b> $\mathrm{im}(A) = \{Ax : x \in \mathbb{R}^n\}$. The set of reachable outputs.</li>
-        <li><b>Kernel (Nullspace):</b> $\ker(A) = \{x : Ax = 0\}$. The set of inputs collapsed to zero.</li>
-      </ul>
-      <p>They are subspaces (closed under linear combinations).</p>
-
-      <h3>3. The Rank-Nullity Theorem</h3>
-      <p>The "Conservation of Dimension" for linear maps.
-      $$ \dim(\ker(A)) + \dim(\mathrm{im}(A)) = n $$
-      <br><i>Intuition:</i> The input space dimension $n$ is split into dimensions that survive (rank) and dimensions that die (nullity).</p>
-
-      <div class="proof-box">
-        <h4>Proof of Rank-Nullity</h4>
-        <div class="proof-step">
-          <strong>Step 1: Basis for Kernel.</strong> Let $\{v_1, \dots, v_k\}$ be a basis for $\ker(A)$. So nullity is $k$.
-        </div>
-        <div class="proof-step">
-          <strong>Step 2: Extend to Full Basis.</strong> Extend to a basis for $\mathbb{R}^n$: $\{v_1, \dots, v_k, w_1, \dots, w_r\}$ where $r = n-k$.
-        </div>
-        <div class="proof-step">
-          <strong>Step 3: Map to Image.</strong> Consider $\{Aw_1, \dots, Aw_r\}$. These certainly span $\mathrm{im}(A)$ because $Av_i = 0$.
-        </div>
-        <div class="proof-step">
-          <strong>Step 4: Independence.</strong> Suppose $\sum c_j Aw_j = 0$. Then $A(\sum c_j w_j) = 0$.
-          So $\sum c_j w_j \in \ker(A)$.
-          Thus $\sum c_j w_j = \sum d_i v_i$.
-          Rearranging: $\sum c_j w_j - \sum d_i v_i = 0$.
-          By independence of the full basis, all coefficients $c_j, d_i$ must be zero.
-          Thus $\{Aw_j\}$ are independent.
-        </div>
-        <div class="proof-step">
-          <strong>Conclusion.</strong> $\{Aw_1, \dots, Aw_r\}$ is a basis for $\mathrm{im}(A)$.
-          Rank is $r$.
-          Total dimension $n = k + r = \text{nullity} + \text{rank}$.
-        </div>
-      </div>
-
-      <h3>4. Anatomy of $Ax=b$</h3>
-      <p>The solvability of linear systems is geometric:</p>
-      <ul>
-        <li><b>Existence:</b> $Ax=b$ has a solution $\iff b \in \mathrm{im}(A)$.</li>
-        <li><b>Uniqueness:</b> If solvable, the solution is unique $\iff \ker(A) = \{0\}$.</li>
-        <li><b>Structure:</b> If $x_p$ is a particular solution ($Ax_p=b$), the full solution set is the affine space $x_p + \ker(A)$.</li>
-      </ul>
-      <p><b>Dimension of Solution Set:</b> If solvable, the solution set is an affine subspace of dimension $\text{nullity}(A) = n - \mathrm{rank}(A)$. Each independent constraint reduces the freedom by 1.</p>
-
-      <h3>5. Injective, Surjective, Bijective</h3>
-      <ul>
-        <li><b>Injective (One-to-One):</b> $\ker(A) = \{0\}$ (Full column rank).</li>
-        <li><b>Surjective (Onto):</b> $\mathrm{im}(A) = \mathbb{R}^m$ (Full row rank).</li>
-        <li><b>Bijective (Invertible):</b> Both (Square, Full rank).</li>
+        <li><b>Existence (Range):</b> $Ax=b$ is solvable if $b$ lies in the "preserved" subspace.</li>
+        <li><b>Uniqueness (Kernel):</b> If solvable, the solution is unique only if no dimensions were collapsed ($\ker(A) = \{0\}$). Otherwise, we can add any vector from the "collapsed" space to our solution without changing the output.</li>
+        <li><b>Affine Structure:</b> The solution set is $S = x_p + \ker(A)$. It is a "shifted subspace" parallel to the kernel.</li>
       </ul>
     </section>
 
@@ -631,6 +590,17 @@
                style="width: 100%; height: auto; border-radius: 8px;" />
           <figcaption><i>Figure 3.2:</i> Ill-conditioning creates elongated level sets; first-order methods like gradient descent can zig-zag across the valley, slowing convergence.</figcaption>
         </figure>
+      </div>
+
+      <div class="insight">
+        <h4>Impact on Optimization Algorithms</h4>
+        <p>The condition number is not just a numerical nuisance; it fundamentally limits the speed of optimization algorithms.
+        For a quadratic function $f(x) = \frac{1}{2}x^\top A x$, Gradient Descent converges at a rate determined by $\frac{\kappa-1}{\kappa+1}$.
+        <ul>
+            <li>If $\kappa=1$ (spherical), convergence is instant.</li>
+            <li>If $\kappa \gg 1$ (valley), convergence is arbitrarily slow.</li>
+        </ul>
+        This motivates <b>Newton's Method</b> and preconditioning, which effectively transform the problem to make $\kappa \approx 1$. We will study this in <a href="../13-unconstrained-minimization/index.html">Lecture 13</a>.</p>
       </div>
 
       <div class="widget-container" style="margin: 24px 0;">
