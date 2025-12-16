@@ -355,6 +355,11 @@
           <p>Thus the convex combination is in the ball.</p>
         </div>
 
+        <h4>Support Functions of Norm Balls = Dual Norms</h4>
+        <p>The geometry of a convex set $C$ is fully described by its support function $\sigma_C(y) = \sup_{x \in C} y^\top x$. For a norm ball $B = \{x : \|x\| \le 1\}$, this supremum is exactly the definition of the <b>dual norm</b>:</p>
+        $$ \|y\|_* = \sup_{\|x\| \le 1} y^\top x = \sigma_B(y) $$
+        <p>This establishes a fundamental duality: the support function of the primal unit ball is the dual norm.</p>
+
         <figure style="text-align: center; margin: 24px 0;">
           <img src="assets/norm-balls.png"
                alt="Comparison of unit balls for L1, L2, and L-infinity norms"
@@ -1350,7 +1355,23 @@
         </div>
 
         <div class="problem">
-          <h3>P3.19 — Preimages under Linear-Fractional Maps</h3>
+          <h3>P3.19 — Projection onto a Convex Set</h3>
+          <p>Let $C$ be a closed convex set. The projection $P_C(x)$ is the unique point in $C$ minimizing $\|z-x\|_2$. Prove the optimality condition: $\langle x - P_C(x), z - P_C(x) \rangle \le 0$ for all $z \in C$.</p>
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              Let $y = P_C(x)$. The function $f(z) = \frac{1}{2}\|z-x\|_2^2$ is convex.
+              The optimality condition for minimizing a convex function over a convex set is $\langle \nabla f(y), z-y \rangle \ge 0$ for all feasible $z$.
+              $\nabla f(y) = y-x$.
+              So $\langle y-x, z-y \rangle \ge 0$.
+              Multiplying by -1 reverses the inequality: $\langle x-y, z-y \rangle \le 0$.
+              Geometrically, the angle between the residual vector $x-y$ and any vector $z-y$ into the set is obtuse ( $\ge 90^\circ$ ).
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.20 — Preimages under Linear-Fractional Maps</h3>
           <p>Find the inverse image of a halfspace, polyhedron, and ellipsoid under a linear-fractional map.</p>
 
           <div class="recap-box">
@@ -1395,6 +1416,19 @@
               $$ \|P^{-1/2}(Ax+b - t y_0)\|_2 \le t,\qquad t = c^\top x + d,\qquad t>0. $$
               This is a second-order cone constraint in the lifted variables $(x,t)$ plus one affine equality.
               In particular, the preimage of an ellipsoid under a linear-fractional map is convex and SOCP-representable.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem">
+          <h3>P3.21 — Projection onto the Probability Simplex</h3>
+          <p>The probability simplex is $\Delta_n = \{x \in \mathbb{R}^n \mid x \ge 0, \mathbf{1}^\top x = 1\}$. Find the projection of a vector $z \in \mathbb{R}^n$ onto $\Delta_n$. This is the solution to $\min_x \frac{1}{2}\|x-z\|_2^2$ s.t. $x \in \Delta_n$.</p>
+          <div class="solution-box">
+            <h4>Solution</h4>
+            <div class="proof-step">
+              This is a classic problem solvable via KKT conditions (we will cover this fully in later lectures, but the geometry is relevant here).
+              The solution structure is $x_i = \max(z_i - \nu, 0)$, where $\nu$ is a scalar chosen such that $\sum x_i = 1$.
+              This corresponds to a "water-filling" algorithm: finding a threshold $\nu$ to chop off values of $z$.
             </div>
           </div>
         </div>

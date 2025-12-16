@@ -91,11 +91,26 @@
       <ul>
         <li><b>Scalars:</b> Real numbers $a \in \mathbb{R}$.</li>
         <li><b>Column vectors:</b> $x \in \mathbb{R}^n$ are $n \times 1$ matrices with entries $x_i$.
+          <br><i>Equality:</i> Two vectors $x, y$ are equal if and only if their components are equal: $x = y \iff x_i = y_i$ for all $i$.
           <br><i>Note on convention:</i> We treat vectors as columns to maintain algebraic consistency with matrix-vector multiplication $Ax$ representing linear maps $T(x)$. Throughout this course, unless specified otherwise, any vector $x$ is a column vector.</li>
-        <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$; entry $a_{ij}$ lies in row $i$, column $j$. The first dimension $m$ is the number of rows, and $n$ is the number of columns.</li>
+        <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$; entry $a_{ij}$ lies in row $i$, column $j$. The first dimension $m$ is the number of rows, and $n$ is the number of columns.
+          <br><i>Equality:</i> $A = B \iff a_{ij} = b_{ij}$ for all $i, j$.
+        </li>
         <li><b>Transpose:</b> $A^\top \in \mathbb{R}^{n \times m}$ satisfies $(A^\top)_{ij} = a_{ji}$. It flips the matrix across its main diagonal.</li>
         <li><b>Identity:</b> $I_n$ is the $n \times n$ square matrix with ones on the diagonal and zeros elsewhere; it satisfies $I_n x = x$ for all $x \in \mathbb{R}^n$.</li>
         <li><b>Standard basis:</b> $e_1, \dots, e_n$ where $e_i$ has a 1 in position $i$ and zeros elsewhere. These are the columns of $I_n$. Every $x \in \mathbb{R}^n$ can be uniquely decomposed as $x = \sum_{i=1}^n x_i e_i$.</li>
+      </ul>
+
+      <h3>Function Anatomy: Domain, Range, and Preimage</h3>
+      <p>Understanding the precise definitions of function components is crucial for convexity, where domain constraints are often implicit.</p>
+      <ul>
+        <li><b>Function:</b> A map $f: \mathcal{X} \to \mathcal{Y}$ assigns exactly one output in the codomain $\mathcal{Y}$ to each input in the domain $\mathcal{X}$.</li>
+        <li><b>Range (Image):</b> The set of actual outputs: $f(\mathcal{X}) = \{f(x) : x \in \mathcal{X}\} \subseteq \mathcal{Y}$. Note that the range is a subset of the codomain.</li>
+        <li><b>Preimage:</b> For a set $B \subseteq \mathcal{Y}$, the preimage is $f^{-1}(B) = \{x \in \mathcal{X} : f(x) \in B\}$.
+          <br><i>Important:</i> This exists even if $f$ is not invertible. For example, sublevel sets $\{x : f(x) \le \alpha\}$ are preimages of $(-\infty, \alpha]$.
+          <br>Preimages preserve set operations:
+          $$ f^{-1}(A \cup B) = f^{-1}(A) \cup f^{-1}(B), \quad f^{-1}(A \cap B) = f^{-1}(A) \cap f^{-1}(B) $$
+        </li>
       </ul>
 
       <figure style="text-align: center;">
@@ -105,10 +120,14 @@
         <figcaption><i>Figure 0.2:</i> Matrix multiplication visualized—how rows of the first matrix combine with columns of the second.</figcaption>
       </figure>
 
-      <h3>Matrix Operations</h3>
+      <h3>Matrix Operations and Linearity</h3>
       <ul>
-        <li>$Ax$ is the <b>linear combination of columns of $A$</b> with coefficients from $x$.</li>
-        <li>$(AB)_{ij} = \sum_k a_{ik} b_{kj}$.</li>
+        <li><b>Matrix-Vector Product:</b> For $A \in \mathbb{R}^{m \times n}$ and $x \in \mathbb{R}^n$, the product $Ax$ is defined by $(Ax)_i = \sum_{j=1}^n a_{ij} x_j$.
+          <br>This definition forces linearity: $A(\alpha x + \beta y) = \alpha Ax + \beta Ay$.
+          <br><i>Column View:</i> $Ax = \sum_{j=1}^n x_j A_{:j}$ (linear combination of columns).
+          <br><i>Row View:</i> $(Ax)_i = A_{i:}^\top x$ (dot product with rows).
+        </li>
+        <li><b>Matrix Multiplication:</b> $(AB)_{ij} = \sum_k a_{ik} b_{kj}$. This corresponds to composition of linear maps.</li>
       </ul>
 
       <h3>Linear Maps</h3>
@@ -526,13 +545,30 @@
       <h2>4. Inner Products, Norms, and Angles</h2>
 
       <h3>Inner Product</h3>
-      <p>An <a href="#" class="definition-link">inner product</a> on $\mathbb{R}^n$ is a mapping $\langle x, y \rangle$ that is bilinear, symmetric, and positive definite:</p>
-      <ul>
-        <li>$\langle ax + by, z \rangle = a\langle x, z \rangle + b\langle y, z \rangle$</li>
-        <li>$\langle x, y \rangle = \langle y, x \rangle$</li>
-        <li>$\langle x, x \rangle > 0$ for $x \neq 0$</li>
-      </ul>
-      <p>The <b>standard (Euclidean) inner product</b> is the most common example: $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$.</p>
+      <p>An <a href="#" class="definition-link">inner product</a> on $\mathbb{R}^n$ is a mapping $\langle \cdot, \cdot \rangle: \mathbb{R}^n \times \mathbb{R}^n \to \mathbb{R}$ that satisfies three axioms for all vectors $x, y, z$ and scalars $\alpha, \beta$:</p>
+      <ol>
+        <li><b>Linearity</b> in the first argument: $\langle \alpha x + \beta z, y \rangle = \alpha\langle x, y \rangle + \beta\langle z, y \rangle$.</li>
+        <li><b>Symmetry:</b> $\langle x, y \rangle = \langle y, x \rangle$.</li>
+        <li><b>Positive Definiteness:</b> $\langle x, x \rangle \ge 0$, and $\langle x, x \rangle = 0 \iff x = 0$.</li>
+      </ol>
+      <p>These axioms ensure that "lengths" and "angles" behave as expected. The <b>standard (Euclidean) inner product</b> is defined as $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$.</p>
+      <div class="proof-box">
+        <h4>Proof: Dot Product is an Inner Product</h4>
+        <p>Checking the axioms for $x^\top y$:</p>
+        <div class="proof-step">
+          <strong>1. Linearity:</strong>
+          Let $u = \alpha x + \beta z$. Then $\langle u, y \rangle = \sum_i (\alpha x_i + \beta z_i) y_i = \alpha \sum_i x_i y_i + \beta \sum_i z_i y_i = \alpha \langle x, y \rangle + \beta \langle z, y \rangle$.
+        </div>
+        <div class="proof-step">
+          <strong>2. Symmetry:</strong>
+          $\langle x, y \rangle = \sum_i x_i y_i = \sum_i y_i x_i = \langle y, x \rangle$.
+        </div>
+        <div class="proof-step">
+          <strong>3. Positive Definiteness:</strong>
+          $\langle x, x \rangle = \sum_i x_i^2$. Since squares are non-negative, the sum is $\ge 0$.
+          If $\sum_i x_i^2 = 0$, then each $x_i^2 = 0$ (since non-negative terms sum to zero only if each is zero), so $x_i = 0$ for all $i$, meaning $x=0$.
+        </div>
+      </div>
 
       <figure style="text-align: center;">
         <img src="../../static/assets/topics/00-linear-algebra-basics/vector-addition-parallelogram.png"
@@ -549,16 +585,41 @@
       </p>
 
       <h3>Norms</h3>
-      <p>A <a href="#" class="definition-link">norm</a> is a function that assigns a strictly positive length or size to each vector in a vector space, except for the zero vector. A norm $\|\cdot\|$ must satisfy:</p>
+      <p>A <a href="#" class="definition-link">norm</a> is a function $\|\cdot\|: \mathbb{R}^n \to \mathbb{R}$ that assigns a length to each vector. It must satisfy three axioms:</p>
       <ol>
-        <li><b>Non-negativity:</b> $\|x\| \ge 0$, and $\|x\| = 0$ if and only if $x=0$.</li>
-        <li><b>Absolute homogeneity:</b> $\|\alpha x\| = |\alpha| \|x\|$ for any scalar $\alpha$.</li>
-        <li><b>Triangle inequality:</b> $\|x+y\| \le \|x\| + \|y\|$.</li>
+        <li><b>Definiteness:</b> $\|x\| \ge 0$, and $\|x\| = 0 \iff x=0$.</li>
+        <li><b>Homogeneity:</b> $\|\alpha x\| = |\alpha| \|x\|$ for any scalar $\alpha$. (Scaling geometry scales space).</li>
+        <li><b>Triangle Inequality:</b> $\|x+y\| \le \|x\| + \|y\|$. (The straight path is the shortest).</li>
       </ol>
-      <p>Three of the most widely used norms are:</p>
-      $$
-      \|x\|_2 = \sqrt{\sum_i x_i^2} \quad (\text{Euclidean norm}), \quad \|x\|_1 = \sum_i |x_i| \quad (\text{L1 norm}), \quad \|x\|_\infty = \max_i |x_i| \quad (\text{Infinity norm})
-      $$
+      <p>The standard $\ell_p$ norms are defined for $p \ge 1$. We provide rigorous proofs that they satisfy the triangle inequality.</p>
+
+      <h4>1. The $\ell_1$ Norm (Manhattan)</h4>
+      $$ \|x\|_1 = \sum_{i=1}^n |x_i| $$
+      <div class="proof-box">
+        <h4>Proof: $\ell_1$ Triangle Inequality</h4>
+        <p>Using the scalar triangle inequality $|a+b| \le |a| + |b|$:</p>
+        $$ \|x+y\|_1 = \sum_i |x_i + y_i| \le \sum_i (|x_i| + |y_i|) = \sum_i |x_i| + \sum_i |y_i| = \|x\|_1 + \|y\|_1 $$
+      </div>
+
+      <h4>2. The $\ell_\infty$ Norm (Max)</h4>
+      $$ \|x\|_\infty = \max_{i} |x_i| $$
+      <div class="proof-box">
+        <h4>Proof: $\ell_\infty$ Triangle Inequality</h4>
+        <p>For any component $i$:</p>
+        $$ |x_i + y_i| \le |x_i| + |y_i| \le \|x\|_\infty + \|y\|_\infty $$
+        <p>Since this upper bound holds for all $i$, it holds for the maximum:</p>
+        $$ \max_i |x_i + y_i| \le \|x\|_\infty + \|y\|_\infty $$
+      </div>
+
+      <h4>3. The $\ell_2$ Norm (Euclidean)</h4>
+      $$ \|x\|_2 = \sqrt{x^\top x} = \sqrt{\sum_{i=1}^n x_i^2} $$
+      <p>The triangle inequality for $\ell_2$ is proved using the Cauchy-Schwarz inequality below.</p>
+
+      <h4>Unit Balls and Convexity</h4>
+      <p>A crucial geometric property is that <b>all norm balls are convex</b>.
+      <br>Let $B = \{x : \|x\| \le 1\}$. For any $x, y \in B$ and $\theta \in [0, 1]$:
+      $$ \|\theta x + (1-\theta)y\| \le \|\theta x\| + \|(1-\theta)y\| = \theta\|x\| + (1-\theta)\|y\| \le \theta(1) + (1-\theta)(1) = 1 $$
+      Thus $\theta x + (1-\theta)y \in B$. This connects norms directly to convex sets.</p>
 
       <figure style="text-align: center;">
         <img src="assets/norm-balls.png"
@@ -579,48 +640,68 @@
         <div id="widget-norm-geometry" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
+      <h3>Foundational Scalar Lemmas</h3>
+      <p>Before proving the main geometric theorems, we establish two key scalar lemmas.</p>
+      <div class="proof-box">
+        <h4>Lemma A: 1D Triangle Inequality</h4>
+        <p>For $a, b \in \mathbb{R}$, $|a+b| \le |a| + |b|$.</p>
+        <p><i>Proof:</i> Square both sides (valid since both are non-negative).
+        $$ (|a|+|b|)^2 = |a|^2 + 2|a||b| + |b|^2 = a^2 + 2|a||b| + b^2 $$
+        $$ (a+b)^2 = a^2 + 2ab + b^2 $$
+        The difference is $2(|a||b| - ab)$. Since $|ab| \ge ab$, this difference is $\ge 0$. Thus $(|a|+|b|)^2 \ge (a+b)^2$. Taking roots yields the result.</p>
+      </div>
+      <div class="proof-box">
+        <h4>Lemma B: Quadratic Non-negativity</h4>
+        <p>Let $q(t) = At^2 + Bt + C$ with $A > 0$. Then $q(t) \ge 0$ for all $t$ if and only if the discriminant $\Delta = B^2 - 4AC \le 0$.
+        <br><i>Proof:</i> By completing the square, $q(t) = A(t + \frac{B}{2A})^2 + (C - \frac{B^2}{4A})$. The first term is $\ge 0$. The minimum value is $C - \frac{B^2}{4A}$. For this to be non-negative, we need $4AC - B^2 \ge 0 \iff B^2 - 4AC \le 0$.</p>
+      </div>
+
       <h3>Cauchy–Schwarz and Triangle Inequality</h3>
 
       <div class="proof-box">
         <h4>Proof of Cauchy–Schwarz: $|x^\top y| \le \|x\|_2 \|y\|_2$</h4>
 
         <div class="proof-step">
-          <strong>Case 1: $y = 0$.</strong> If $y$ is the zero vector, then $x^\top 0 = 0$ and $\|x\|_2 \|0\|_2 = 0$. The inequality $0 \le 0$ holds trivially.
+          <strong>Case 1: $y = 0$.</strong> Trivial ($0 \le 0$).
         </div>
 
         <div class="proof-step">
-          <strong>Case 2: $y \neq 0$.</strong> Consider the function $f(t) = \|x - ty\|_2^2$. By the non-negativity of norms, $f(t) \ge 0$ for all $t \in \mathbb{R}$. Expanding the squared norm:
+          <strong>Case 2: $y \neq 0$.</strong> Define the function $f(t) = \|x - ty\|_2^2$. By definiteness of the norm, $f(t) \ge 0$ for all $t$.
+          Expanding:
           $$ f(t) = (x - ty)^\top(x - ty) = \|x\|_2^2 - 2t(x^\top y) + t^2 \|y\|_2^2 $$
         </div>
 
         <div class="proof-step">
-          <strong>Discriminant Analysis.</strong> The function $f(t) = A t^2 + B t + C$ is a quadratic in $t$, with coefficients $A=\|y\|_2^2$, $B=-2x^\top y$, and $C=\|x\|_2^2$. Since $y \neq 0$, we have $A > 0$, so the parabola opens upwards. For the quadratic to remain non-negative for all $t$, it can have at most one real root (it either sits above the axis or touches it). This requires the discriminant $\Delta = B^2 - 4AC$ to be non-positive:
+          <strong>Discriminant Analysis.</strong> $f(t)$ is a quadratic in $t$ with $A=\|y\|_2^2 > 0$, $B=-2x^\top y$, $C=\|x\|_2^2$.
+          Since $f(t) \ge 0$ always, by Lemma B, the discriminant must be non-positive:
           $$ \Delta = (-2x^\top y)^2 - 4(\|y\|_2^2)(\|x\|_2^2) \le 0 $$
         </div>
 
         <div class="proof-step">
           <strong>Conclusion.</strong>
-          $$ 4(x^\top y)^2 \le 4\|x\|_2^2 \|y\|_2^2 \implies (x^\top y)^2 \le \|x\|_2^2 \|y\|_2^2 $$
-          Taking the square root of both sides yields $|x^\top y| \le \|x\|_2 \|y\|_2$.
+          $$ 4(x^\top y)^2 \le 4\|x\|_2^2 \|y\|_2^2 \implies (x^\top y)^2 \le (\|x\|_2 \|y\|_2)^2 $$
+          Taking square roots: $|x^\top y| \le \|x\|_2 \|y\|_2$.
+          <br><i>Equality Condition:</i> Equality holds iff the discriminant is 0, which means there exists a $t$ such that $\|x-ty\|=0$, i.e., $x$ and $y$ are collinear.
         </div>
       </div>
 
       <div class="proof-box">
-        <h4>Proof of the Triangle Inequality: $\|x+y\|_2 \le \|x\|_2 + \|y\|_2$</h4>
+        <h4>Proof of the Triangle Inequality ($\ell_2$): $\|x+y\|_2 \le \|x\|_2 + \|y\|_2$</h4>
 
         <div class="proof-step">
-          <strong>Step 1: Expand the squared norm.</strong> Starting with the left side:
-          $$ \|x+y\|_2^2 = (x+y)^\top(x+y) = \|x\|_2^2 + 2x^\top y + \|y\|_2^2 $$
+          <strong>Step 1: Expand squared norm.</strong>
+          $$ \|x+y\|_2^2 = \|x\|_2^2 + 2x^\top y + \|y\|_2^2 $$
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Apply Cauchy-Schwarz.</strong> By the Cauchy-Schwarz inequality, $x^\top y \le |x^\top y| \le \|x\|_2 \|y\|_2$. Substituting:
-          $$ \|x+y\|_2^2 \le \|x\|_2^2 + 2\|x\|_2 \|y\|_2 + \|y\|_2^2 = (\|x\|_2 + \|y\|_2)^2 $$
+          <strong>Step 2: Apply Cauchy-Schwarz.</strong>
+          $$ x^\top y \le |x^\top y| \le \|x\|_2 \|y\|_2 $$
+          $$ \|x+y\|_2^2 \le \|x\|_2^2 + 2\|x\|_2 \|y\|_2 + \|y\|_2^2 $$
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Take square roots.</strong> Taking the square root of both sides yields the triangle inequality:
-          $$ \|x+y\|_2 \le \|x\|_2 + \|y\|_2 $$
+          <strong>Step 3: Factor and Root.</strong>
+          $$ \|x+y\|_2^2 \le (\|x\|_2 + \|y\|_2)^2 \implies \|x+y\|_2 \le \|x\|_2 + \|y\|_2 $$
         </div>
       </div>
 
@@ -1268,6 +1349,16 @@
 
       <h3>Geometric Interpretation: Projection</h3>
       <p>The solution to the least squares problem has a clean geometric interpretation. The vector $Ax$ lies in the column space of $A$, denoted $\mathcal{R}(A)$. The problem $\min_x \|Ax - b\|_2$ is therefore equivalent to finding the point $p \in \mathcal{R}(A)$ that is closest to $b$ in Euclidean distance.</p>
+
+      <h4>The 1D Case: Projection onto a Vector</h4>
+      <p>Before solving the general case, consider projecting $x$ onto the line spanned by a vector $y \neq 0$. We want to find $t$ to minimize $\|x - ty\|_2^2$.
+      $$ \phi(t) = \|x - ty\|_2^2 = \|x\|_2^2 - 2t(x^\top y) + t^2 \|y\|_2^2 $$
+      Taking the derivative with respect to $t$:
+      $$ \phi'(t) = -2(x^\top y) + 2t \|y\|_2^2 $$
+      Setting $\phi'(t) = 0$ gives the optimal scaling:
+      $$ t^\star = \frac{x^\top y}{\|y\|_2^2} $$
+      The projection is $p = t^\star y$.
+      <br><i>Orthogonality Check:</i> Let the residual be $r = x - p$. Then $y^\top r = y^\top x - t^\star y^\top y = y^\top x - \frac{x^\top y}{\|y\|^2} \|y\|^2 = 0$. The residual is orthogonal to $y$. This intuition generalizes to subspaces.</p>
 
       <p>By the Pythagorean theorem, the closest point $p$ must satisfy a specific geometric condition: the error vector $b - p$ must be orthogonal to the subspace $\mathcal{R}(A)$. <b>Think of dropping a perpendicular:</b> The shortest path from a point to a plane (subspace) is the straight line perpendicular to that plane. If the error vector were not orthogonal, we could project it onto the subspace to find a "correction" that brings us closer to $b$, contradicting the optimality of $p$. Thus, the optimal $p = Ax^\star$ is the <b>orthogonal projection</b> of $b$ onto $\mathcal{R}(A)$.</p>
 
