@@ -519,7 +519,24 @@
       </div>
 
       <h3>3.4 Similarity and Basis Independence</h3>
-      <p>Two matrices $A$ and $B$ are <b>similar</b> if $B = P A P^{-1}$ for some invertible $P$. This represents the same linear operator in a different basis.</p>
+      <p>Two matrices $A$ and $B$ are <b>similar</b> if $B = P A P^{-1}$ for some invertible $P$. This represents the same linear operator in a different basis. Understanding <i>why</i> this formula represents a basis change is crucial for intuition.</p>
+
+      <h4>Diagonalization as Change of Coordinates</h4>
+      <p>The equation $A = V \Lambda V^{-1}$ (diagonalization) is often memorized but not understood. Let's unpack it as a coordinate transformation. We are not transforming the vector space itself; we are changing the <b>language</b> (coordinates) we use to describe it.</p>
+      <p><b>The Mechanism:</b> Consider the transformation steps in $V^{-1} A V = \Lambda$:</p>
+      <ol>
+        <li><b>$V$ (Input Change):</b> The matrix $V$ maps coefficients in the eigenbasis to the standard basis ($x_{\text{std}} = V x_{\text{eigen}}$).</li>
+        <li><b>$A$ (The Action):</b> The matrix $A$ applies the linear map in the standard basis.</li>
+        <li><b>$V^{-1}$ (Output Change):</b> The matrix $V^{-1}$ maps the result back from the standard basis to the eigenbasis.</li>
+      </ol>
+      <p>Thus, $\Lambda = V^{-1} A V$ is the matrix representing the <b>same linear map</b>, but acting on coordinates expressed in the eigenbasis. Since the eigenvectors are the "natural axes" of the map, the matrix becomes diagonal—it simply scales each coordinate independently.</p>
+
+      <div class="insight">
+        <h4>💡 "Same Vectors, Different Coordinates"</h4>
+        <p>A good slogan: <b>Same vectors, same linear map, different coordinates.</b>
+        <br>Imagine a point on Earth. You can describe its location using latitude/longitude or a rotated grid. The point (vector) hasn't moved, but its numerical description (coordinates) and the description of operations on it (matrices) have changed.</p>
+      </div>
+
       <div class="theorem-box">
         <h4>Theorem: Invariance under Similarity</h4>
         <p>If $A$ and $B$ are similar, they share the same algebraic invariants:</p>
@@ -786,6 +803,7 @@
       <h3>Spectral Norm and Convexity</h3>
       <p>The <b>spectral norm</b> (or operator norm) of a matrix $X \in \mathbb{R}^{m \times n}$ is induced by the Euclidean vector norm:
       $$ \|X\|_2 = \sup_{v \neq 0} \frac{\|Xv\|_2}{\|v\|_2} $$
+      <p><b>Intuition: Worst-Case Stretch.</b> The operator norm measures the maximum factor by which the matrix $X$ can "stretch" a vector. It corresponds to the "Lipschitz constant" of the linear map. Geometrically, it is the length of the longest semi-axis of the ellipsoid formed by mapping the unit sphere.</p>
       It turns out this equals the maximum singular value:
       $$ \|X\|_2 = \sigma_{\max}(X) = \sqrt{\lambda_{\max}(X^\top X)} $$
       Since $X^\top X$ is always Positive Semidefinite ($v^\top X^\top X v = \|Xv\|_2^2 \ge 0$), its eigenvalues are non-negative.</p>

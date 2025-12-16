@@ -448,6 +448,33 @@
         <p>These exercises consolidate your understanding of Lagrangian duality. We move from deriving duals of standard problems (QP, LP) to applying KKT conditions for analytic solutions (Water-filling), and finally using Strong Duality to prove fundamental theorems like Farkas' Lemma.</p>
       </div>
 
+      <div class="proof-box">
+        <h4>Appendix: Gap Certificate Cookbook</h4>
+        <p>How to construct primal-dual certificates for common problems. In each case, $\text{gap} = p(x) - d(\text{dual vars})$.</p>
+
+        <h5>1. Least Squares: $\min \frac{1}{2}\|Ax - b\|_2^2$</h5>
+        <ul>
+          <li><b>Primal:</b> Any $x$.</li>
+          <li><b>Dual:</b> Any $y$ such that $A^\top y = 0$ (orthogonal to range).</li>
+          <li><b>Dual Objective:</b> $b^\top y - \frac{1}{2}\|y\|_2^2$.</li>
+          <li><b>Gap:</b> $\frac{1}{2}\|Ax - b\|_2^2 - (b^\top y - \frac{1}{2}\|y\|_2^2)$.</li>
+          <li><b>Recipe:</b> Let $r = b - Ax$. Project $r$ onto $\mathcal{N}(A^\top)$ to get $y$.</li>
+        </ul>
+
+        <h5>2. LASSO: $\min \frac{1}{2}\|Ax - b\|_2^2 + \lambda \|x\|_1$</h5>
+        <ul>
+          <li><b>Dual Feasibility:</b> $\|A^\top y\|_\infty \le \lambda$.</li>
+          <li><b>Dual Objective:</b> $b^\top y - \frac{1}{2}\|y\|_2^2$.</li>
+          <li><b>Recipe:</b> Let $r = b - Ax$. Scale $r$ to be feasible: $y = \min(1, \lambda / \|A^\top r\|_\infty) r$.</li>
+        </ul>
+
+        <h5>3. SVM: $\min \frac{1}{2}\|w\|_2^2 + C \sum \xi_i$</h5>
+        <ul>
+          <li><b>Dual Variable:</b> $0 \le \alpha \le C \mathbf{1}, \alpha^\top y_{labels} = 0$.</li>
+          <li><b>Gap:</b> Standard primal-dual gap from SMO algorithm.</li>
+        </ul>
+      </div>
+
 <div class="problem">
   <h3>P9.1 — Deriving the Dual of a Quadratic Program</h3>
   <p>Consider the QP: $\min x^\top x$ subject to $Ax \preceq b$.

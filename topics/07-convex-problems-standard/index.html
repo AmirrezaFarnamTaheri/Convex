@@ -326,14 +326,14 @@
         <h4>LP Formulation</h4>
         <div class="proof-step">
             <strong>Step 1: Epigraph of Cost.</strong>
-            We can express the fuel cost as the maximum of 4 affine functions:
-            $$ f(a) = \max\{a, -a, 2a-1, -2a-1\} $$
-            <em>Check:</em>
+            We can express the fuel cost as the maximum of 2 convex functions of $|a|$.
+            Let $s = |a|$. Then $f(a) = \max(s, 2s-1)$.
+            Since $s$ is the pointwise max of $a$ and $-a$, we can characterize the epigraph of $f$ using:
             <ul>
-                <li>If $|a| \le 1$: Then $2|a|-1 \le |a|$ (since $|a| \le 1$), so the max is $|a|$.</li>
-                <li>If $|a| > 1$: Then $2|a|-1 > |a|$, so the max is $2|a|-1$.</li>
+              <li>$p \ge s$ and $s \ge |a| \iff s \ge a, s \ge -a$.</li>
+              <li>$p \ge 2s - 1$.</li>
             </ul>
-            We introduce slack variables $s(t)$ and enforce $s(t) \ge \text{each of the 4 lines}$.
+            Here $p$ is the cost variable and $s$ is the magnitude variable.
         </div>
         <div class="proof-step">
             <strong>Step 2: Dynamics.</strong>
@@ -343,12 +343,13 @@
             <strong>Step 3: Full LP.</strong>
             $$
             \begin{aligned}
-            \text{minimize} \quad & \sum_{t=0}^{N-1} s(t) \\
+            \text{minimize} \quad & \sum_{t=0}^{N-1} p_t \\
             \text{subject to} \quad & x(t+1) = Ax(t) + bu(t) \\
-            & s(t) \ge u(t), \quad s(t) \ge -u(t) \\
-            & s(t) \ge 2u(t)-1, \quad s(t) \ge -2u(t)-1
+            & s_t \ge u_t, \quad s_t \ge -u_t, \quad s_t \ge 0 \\
+            & p_t \ge s_t, \quad p_t \ge 2s_t-1
             \end{aligned}
             $$
+            This separates the "absolute value" logic from the "piecewise cost" logic, making it cleaner than listing 4 affine inequalities for $u$.
         </div>
 
         <div class="example">
@@ -697,8 +698,16 @@
       $$ f_0(x) = \frac{f(x)}{h(x)}, \quad h(x) > 0 $$
       <p>where $f$ is convex and $h$ is <strong>concave</strong>. (Note: standard LFP has affine $f, h$).</p>
 
+      <div class="insight">
+        <h4>Practical Approach: Quasiconvex Bisection</h4>
+        <p>Before jumping to the full reformulation, note that $f_0(x)$ is quasiconvex.
+        <br>The sublevel set condition $f(x)/h(x) \le \alpha$ rearranges to $f(x) - \alpha h(x) \le 0$ (for $\alpha \ge 0$).
+        <br>This is a convex inequality ($f$ convex, $-h$ convex, $\alpha \ge 0$).
+        <br>Thus, we can solve the problem by <strong>bisection on $\alpha$</strong>, solving a sequence of convex feasibility problems.</p>
+      </div>
+
       <div class="proof-box">
-        <h4>Convex Reformulation</h4>
+        <h4>Convex Reformulation (Single Shot)</h4>
         <div class="proof-step">
             <strong>Variable Transformation:</strong>
             Let $t = 1/h(x)$ and $y = tx$.

@@ -498,6 +498,7 @@
           <h4>Gradient Condition (3.47)</h4>
           <p>If $f$ is differentiable and $f(x) > 0$, then $f$ is log-concave if and only if for all $x, y \in \mathrm{dom}\, f$:</p>
           $$ \frac{f(y)}{f(x)} \le \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right) $$
+          <p><b>Interpretation:</b> Log-concavity means $f$ grows at most exponentially, with a rate controlled by the tangent of the log. In log-space, this is simply the statement that the tangent hyperplane is a global upper bound.</p>
           <p><b>Proof:</b> Let $u(x) = \log f(x)$. $f$ is log-concave $\iff u$ is concave.
           <br>Concavity of $u$ is equivalent to the first-order condition:
           $$ u(y) \le u(x) + \nabla u(x)^\top (y-x) $$
