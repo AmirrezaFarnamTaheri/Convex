@@ -373,36 +373,6 @@
             </ul></p>
         </div>
         <div class="example">
-            <h4>5. Cardinality on $\mathbb{R}_+^n$ (A Warning)</h4>
-            <p>For $x \in \mathbb{R}_+^n$, let $\operatorname{card}(x)$ be the number of nonzero components.
-            <br>Is it quasiconvex? (i.e., is $\operatorname{card}(\theta x + (1-\theta)y) \le \max(\operatorname{card}(x), \operatorname{card}(y))$?)
-            <br><b>False.</b> Consider $x=(1,0)$ and $y=(0,1)$.
-            <br>$\operatorname{card}(x)=1, \operatorname{card}(y)=1$.
-            <br>The convex combination $z = 0.5x + 0.5y = (0.5, 0.5)$ has $\operatorname{card}(z)=2$.
-            <br>Since $2 \not\le \max(1, 1)$, it is not quasiconvex.
-            <br><b>Logic:</b> If $z = \theta x + (1-\theta)y$ with positive weights, then $z_i > 0$ if $x_i > 0$ OR $y_i > 0$.
-            <br>Thus $\operatorname{supp}(z) = \operatorname{supp}(x) \cup \operatorname{supp}(y)$.
-            <br>The cardinality is $| \operatorname{supp}(x) \cup \operatorname{supp}(y) |$, which is bounded by $\operatorname{card}(x) + \operatorname{card}(y)$, but generally larger than $\max(\operatorname{card}(x), \operatorname{card}(y))$.
-            <br><b>Conclusion:</b> Cardinality is <b>not quasiconvex</b> on $\mathbb{R}^n_+$. It is only quasiconvex on restricted sets (e.g., chains of nested supports).</p>
-        </div>
-        <div class="example">
-            <h4>6. Rank on PSD Cone (Rigorous Proof)</h4>
-            <p>For $X \in \mathbb{S}^n_+$, the function $f(X) = \operatorname{rank}(X)$ is <b>quasiconcave</b>.
-            <br><i>Proof:</i> Let $X, Y \succeq 0$ and $Z = \theta X + (1-\theta)Y$ with $\theta \in (0,1)$.
-            <br><b>Step 1: Kernel Intersection.</b> If $v \in \ker(Z)$, then $v^\top Z v = 0$.
-            $$ \theta v^\top X v + (1-\theta) v^\top Y v = 0 $$
-            Since $X, Y \succeq 0$, terms are non-negative. A sum of non-negative terms is zero only if each term is zero.
-            $v^\top X v = 0 \implies Xv = 0$ (for PSD matrices, $\ker(X^{1/2}) = \ker(X)$). Similarly $Yv=0$.
-            Thus $v \in \ker(X) \cap \ker(Y)$. So $\ker(Z) \subseteq \ker(X) \cap \ker(Y)$.
-            <br><b>Step 2: Dimension Bound.</b>
-            $\dim \ker(Z) \le \dim (\ker(X) \cap \ker(Y)) \le \min(\dim \ker X, \dim \ker Y)$.
-            <br><b>Step 3: Rank-Nullity.</b>
-            Using $\operatorname{rank}(A) = n - \dim\ker(A)$:
-            $$ n - \operatorname{rank}(Z) \le n - \max(\operatorname{rank}(X), \operatorname{rank}(Y)) $$
-            $$ \operatorname{rank}(Z) \ge \max(\operatorname{rank}(X), \operatorname{rank}(Y)) $$
-            This implies the superlevel sets $\{X \in \mathbb{S}^n_+ \mid \operatorname{rank}(X) \ge k\}$ are convex.</p>
-        </div>
-        <div class="example">
             <h4>7. Internal Rate of Return (IRR)</h4>
             <p>Let $x = (x_0, \dots, x_n)$ be a cash flow stream.
             <br>Present value at rate $r$: $PV(x, r) = \sum_{i=0}^n x_i (1+r)^{-i}$.
@@ -1174,6 +1144,277 @@
       <strong>Step 3: Equivalence.</strong>
       This is exactly the first-order condition for the concavity of $h(x)$.
       Thus, the inequality holds iff $\log f$ is concave, i.e., $f$ is log-concave.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.18 — Convexity of Maximum Eigenvalue (3.10)</h3>
+  <p>Define $f(X) = \lambda_{\max}(X)$ for symmetric matrices $X \in \mathbb{S}^n$. Show that $f$ is convex.</p>
+  <div class="recap-box">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Variational Form:</b> $\lambda_{\max}(X)$ is the supremum of the linear function $u^\top X u$ over the unit sphere.</li>
+        <li><b>Pointwise Supremum:</b> The pointwise supremum of a family of convex (or linear) functions is convex. This is the "meta-theorem" for proving convexity of spectral functions.</li>
+    </ul>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Rayleigh Quotient Representation.</strong>
+      For a symmetric matrix $X$, the largest eigenvalue is given by the maximum value of the quadratic form on the unit sphere:
+      $$ \lambda_{\max}(X) = \sup_{\|u\|_2 = 1} u^\top X u $$
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Linearity in $X$.</strong>
+      For a fixed vector $u$, the function $g_u(X) = u^\top X u = \mathrm{tr}(u u^\top X)$ is a linear function of the matrix $X$.
+      Linear functions are convex.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Supremum Property.</strong>
+      $f(X)$ is the pointwise supremum of the family of linear functions $\{g_u(X) \mid \|u\|_2 = 1\}$.
+      Since the pointwise supremum of any collection of convex functions is convex, $f(X)$ is convex.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.19 — Convexity of Induced Matrix Norms (3.11)</h3>
+  <p>Let $\|\cdot\|_a$ and $\|\cdot\|_b$ be norms on $\mathbb{R}^m$ and $\mathbb{R}^n$. The induced norm (operator norm) is defined as:
+  $$ \|X\|_{a,b} = \sup_{v \ne 0} \frac{\|Xv\|_a}{\|v\|_b} = \sup_{\|v\|_b=1} \|Xv\|_a $$
+  Show that $f(X) = \|X\|_{a,b}$ is convex.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Dual Norm Representation.</strong>
+      Recall that any norm can be written as a supremum over the dual ball: $\|z\|_a = \sup_{\|u\|_{a^*} \le 1} u^\top z$.
+      Substitute $z = Xv$:
+      $$ \|Xv\|_a = \sup_{\|u\|_{a^*} \le 1} u^\top (Xv) $$
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Bilinear Supremum.</strong>
+      Substitute this back into the definition of the operator norm:
+      $$ \|X\|_{a,b} = \sup_{\|v\|_b=1} \left( \sup_{\|u\|_{a^*} \le 1} u^\top X v \right) = \sup \{ u^\top X v \mid \|v\|_b=1, \|u\|_{a^*} \le 1 \} $$
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Convexity via Linearity.</strong>
+      For fixed $u$ and $v$, the mapping $X \mapsto u^\top X v$ is linear in $X$.
+      The function $f(X)$ is the pointwise supremum of these linear functions.
+      Therefore, the induced norm is convex.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.20 — Vector Composition Rules (3.14)</h3>
+  <p>Use the composition rules to prove convexity/concavity for the following functions constructed from convex/concave components $g_i(x)$.
+  <br><strong>(a)</strong> $f(x) = \sum_{i=1}^r g_{[i]}(x)$ (sum of $r$ largest), where $g_i$ are convex.
+  <br><strong>(b)</strong> $f(x) = \log(\sum e^{g_i(x)})$, where $g_i$ are convex.
+  <br><strong>(c)</strong> $f(x) = (\prod g_i(x))^{1/k}$, where $g_i$ are concave and non-negative.
+  </p>
+  <div class="recap-box">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>General Rule:</b> $h(g_1(x), \dots, g_k(x))$ is convex if $h$ is convex and non-decreasing in each argument (for convex $g_i$).</li>
+        <li><b>Concave Rule:</b> If $h$ is concave and non-decreasing, and $g_i$ are concave, the composition is concave.</li>
+    </ul>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>(a) Sum of $r$ Largest.</strong>
+      Let $h(z) = \sum_{i=1}^r z_{[i]}$. This function is convex and non-decreasing in every argument $z_i$ (increasing one component cannot decrease the sum of the top $r$).
+      Since $g_i(x)$ are convex, the composition $h(g(x))$ is convex.
+    </div>
+    <div class="proof-step">
+      <strong>(b) Log-Sum-Exp Composition.</strong>
+      Let $h(z) = \log(\sum e^{z_i})$. We know $h$ is convex.
+      Check monotonicity: $\frac{\partial h}{\partial z_i} = \frac{e^{z_i}}{\sum e^{z_k}} > 0$.
+      Since $h$ is convex and non-decreasing, and $g_i$ are convex, the composition is convex.
+    </div>
+    <div class="proof-step">
+      <strong>(c) Geometric Mean Composition.</strong>
+      Let $h(z) = (\prod z_i)^{1/k}$ on $\mathbb{R}^k_+$.
+      We know $h$ is concave.
+      Check monotonicity: $\frac{\partial h}{\partial z_i} = \frac{1}{k} \frac{h(z)}{z_i} \ge 0$ (for $z \ge 0$).
+      Since $h$ is concave and non-decreasing, and $g_i$ are concave, the composition is concave.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.21 — Perspective of Affine Composition (3.20)</h3>
+  <p>Let $f: \mathbb{R}^m \to \mathbb{R}$ be convex. Show that $g(x) = (c^\top x + d) f\left( \frac{Ax+b}{c^\top x + d} \right)$ is convex on $\{x \mid c^\top x + d > 0\}$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Perspective Transform.</strong>
+      The perspective of $f$ is $\tilde{f}(y, t) = t f(y/t)$, which is convex for $t > 0$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Affine Mapping.</strong>
+      Define the affine map $\mathcal{A}(x) = (Ax+b, c^\top x + d)$.
+      The function $g(x)$ is the composition of the convex function $\tilde{f}$ with the affine map $\mathcal{A}$:
+      $$ g(x) = \tilde{f}(\mathcal{A}(x)) $$
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Conclusion.</strong>
+      Since affine pre-composition preserves convexity, $g(x)$ is convex on the domain where $t(x) > 0$.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.22 — Convexity Drills (3.22)</h3>
+  <p>Determine the convexity of the following functions using composition rules.</p>
+  <p><strong>(a)</strong> $f(x) = -\log(-\log(\sum e^{a_i^\top x + b_i}))$ on domain where sum $< 1$.
+  <br><strong>(b)</strong> $f(x, u, v) = -\sqrt{uv - x^\top x}$ on $uv > x^\top x, u,v > 0$.
+  <br><strong>(c)</strong> $f(x, t) = -\log(t^p - \|x\|_p^p)$ for $p > 1, t > \|x\|_p$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>(a) Double Log.</strong>
+      Let $s(x) = \log(\sum e^{a_i^\top x + b_i})$. This is convex (Log-Sum-Exp of affine).
+      The domain restricts $s(x) < 0$.
+      The outer function is $h(u) = -\log(-u)$ for $u < 0$.
+      $h'(u) = -1/u > 0$, $h''(u) = 1/u^2 > 0$. So $h$ is convex and increasing.
+      Composition: $h(s(x))$ is convex.
+    </div>
+    <div class="proof-step">
+      <strong>(b) Rotated Lorentz.</strong>
+      Rewrite as $-\sqrt{u(v - x^\top x/u)}$.
+      The term $g(x, u) = x^\top x/u$ is convex (quadratic-over-linear).
+      So $h(x, u, v) = v - g(x, u)$ is concave.
+      The outer function is $\phi(a, b) = -\sqrt{ab}$, which is convex (negative geometric mean) and decreasing in $a, b$.
+      Wait, monotonicity must match. $\phi(u, h)$ is decreasing in $h$. $h$ is concave. This fits the rule: Convex Decreasing $\circ$ Concave $\implies$ Convex.
+      Actually, let's view it as perspective. $f(x, u, v) = -\sqrt{u} \sqrt{v - x^\top x/u}$.
+      Alternative: The epigraph is $t \le -\sqrt{uv - x^\top x} \iff t^2 \ge uv - x^\top x, t \le 0 \iff x^\top x + t^2 \le uv$.
+      This is a rotated second-order cone constraint, which defines a convex set. Thus $f$ is convex.
+    </div>
+    <div class="proof-step">
+      <strong>(c) Log p-Norm Barrier.</strong>
+      $t^p - \|x\|_p^p = t^p (1 - (\|x\|_p/t)^p)$.
+      $-\log(t^p - \|x\|_p^p) = -p \log t - \log(1 - (\|x\|_p/t)^p)$.
+      Let $u = \|x\|_p/t$. This is a convex function (perspective of norm) on $t>0$.
+      Let $h(u) = -\log(1-u^p)$. We need to check if $h(u)$ is convex and increasing.
+      For $p \ge 1$, $u^p$ is convex on $u \ge 0$. $-\log(1-y)$ is convex increasing.
+      Composition holds.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.23 — Perspective Practice (3.23)</h3>
+  <p>Show that $f(x, t) = \frac{\|x\|_p^p}{t^{p-1}}$ is convex for $t > 0, p \ge 1$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      Let $g(x) = \|x\|_p^p = \sum |x_i|^p$.
+      For $p \ge 1$, $z \mapsto |z|^p$ is convex, so $g(x)$ is convex.
+      The function $f(x, t)$ is exactly the perspective of $g$:
+      $$ t g(x/t) = t \sum |x_i/t|^p = t \sum \frac{|x_i|^p}{t^p} = \frac{1}{t^{p-1}} \sum |x_i|^p = \frac{\|x\|_p^p}{t^{p-1}} $$
+      Since the perspective of a convex function is convex, $f(x, t)$ is convex.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.24 — Shifting Log-Concavity (3.48)</h3>
+  <p>If $f$ is log-concave and $a \ge 0$, show that $g(x) = f(x) - a$ is log-concave on its domain $\{x \mid f(x) > a\}$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      We need to show $\log(f(x) - a)$ is concave.
+      Let $h(y) = \log(e^y - a)$ for $y > \log a$.
+      Calculate derivatives w.r.t $y$:
+      $h'(y) = \frac{e^y}{e^y - a}$.
+      $h''(y) = \frac{e^y(e^y - a) - e^y(e^y)}{(e^y - a)^2} = \frac{-a e^y}{(e^y - a)^2}$.
+      Since $a \ge 0$, $h''(y) \le 0$, so $h(y)$ is concave.
+      Also $h'(y) > 0$, so $h$ is non-decreasing.
+    </div>
+    <div class="proof-step">
+      Now write $\log g(x) = \log(f(x) - a) = h(\log f(x))$.
+      We know $\log f(x)$ is concave (definition of log-concave).
+      We have $h$ is concave and non-decreasing.
+      By composition rules, $h(\log f(x))$ is concave.
+      Thus $f(x) - a$ is log-concave.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.25 — Cardinality on $\mathbb{R}_+^n$ (3.35)</h3>
+  <p>Show that $\operatorname{card}(x)$ (number of nonzeros) is not quasiconvex on $\mathbb{R}_+^n$, but is quasiconcave.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Not Quasiconvex:</strong> Consider $x=(1,0)$ and $y=(0,1)$. Both have cardinality 1.
+      Their midpoint $z=(0.5, 0.5)$ has cardinality 2.
+      Quasiconvexity requires $\operatorname{card}(z) \le \max(\operatorname{card}(x), \operatorname{card}(y)) = 1$. Since $2 > 1$, it fails.
+    </div>
+    <div class="proof-step">
+      <strong>Quasiconcave:</strong> We need to show superlevel sets $S_k = \{x \ge 0 \mid \operatorname{card}(x) \ge k\}$ are convex.
+      Consider $z = \theta x + (1-\theta)y$ with $\theta \in (0,1)$.
+      If $x_i > 0$ or $y_i > 0$, then $z_i > 0$ (since $x, y \ge 0$).
+      Thus $\operatorname{supp}(z) = \operatorname{supp}(x) \cup \operatorname{supp}(y)$.
+      Cardinality is $|\operatorname{supp}(x) \cup \operatorname{supp}(y)|$.
+      Since $|A \cup B| \ge \max(|A|, |B|)$, we have $\operatorname{card}(z) \ge \max(\operatorname{card}(x), \operatorname{card}(y))$.
+      Thus $\operatorname{card}(z) \ge \min(\operatorname{card}(x), \operatorname{card}(y))$ (actually stronger).
+      So it is quasiconcave.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.26 — Rank on PSD Cone (3.36)</h3>
+  <p>Show that $f(X) = \operatorname{rank}(X)$ is quasiconcave on $\mathbb{S}_+^n$.
+  <br>Specifically, show $\operatorname{rank}(\theta X + (1-\theta)Y) \ge \min(\operatorname{rank}(X), \operatorname{rank}(Y))$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Nullspace Intersection.</strong>
+      Let $Z = \theta X + (1-\theta)Y$ with $\theta \in (0,1)$.
+      If $v \in \ker(Z)$, then $v^\top Z v = 0$. Since $X, Y \succeq 0$, this implies $v^\top X v = 0$ and $v^\top Y v = 0$.
+      For PSD matrices, $v^\top A v = 0 \iff Av = 0$.
+      Thus $v \in \ker(X) \cap \ker(Y)$.
+      So $\ker(Z) = \ker(X) \cap \ker(Y)$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Rank-Nullity.</strong>
+      $\dim \ker(Z) = \dim(\ker(X) \cap \ker(Y)) \le \min(\dim \ker X, \dim \ker Y)$.
+      $\operatorname{rank}(Z) = n - \dim \ker(Z) \ge n - \min(\dim \ker X, \dim \ker Y) = \max(n - \dim \ker X, n - \dim \ker Y)$.
+      $\operatorname{rank}(Z) \ge \max(\operatorname{rank}(X), \operatorname{rank}(Y))$.
+    </div>
+    <div class="proof-step">
+      <strong>Conclusion:</strong>
+      Since the rank of a convex combination is at least the maximum of the ranks (which is $\ge$ the minimum), the function is quasiconcave.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.27 — Homogenization (3.31)</h3>
+  <p>Let $f$ be convex with $f(0)=0$. Define $g(x) = \inf_{\alpha > 0} \frac{f(\alpha x)}{\alpha}$.
+  Show that $g$ is convex, homogeneous, and the largest homogeneous underestimator of $f$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>(a) Homogeneity:</strong>
+      $g(tx) = \inf_\alpha \frac{f(\alpha t x)}{\alpha}$. Let $\beta = \alpha t$. Then $\alpha = \beta/t$.
+      $g(tx) = \inf_\beta \frac{f(\beta x)}{\beta/t} = t \inf_\beta \frac{f(\beta x)}{\beta} = t g(x)$.
+    </div>
+    <div class="proof-step">
+      <strong>(b) Underestimator:</strong>
+      Set $\alpha=1$ in the infimum: $g(x) \le f(x)/1 = f(x)$.
+      If $h$ is homogeneous and $h \le f$, then $h(\alpha x) \le f(\alpha x) \implies \alpha h(x) \le f(\alpha x) \implies h(x) \le f(\alpha x)/\alpha$.
+      Taking infimum over $\alpha$, $h(x) \le g(x)$.
+    </div>
+    <div class="proof-step">
+      <strong>(c) Convexity:</strong>
+      Since $f(0)=0$ and $f$ is convex, the function $\phi(\alpha) = f(\alpha x)/\alpha$ is non-decreasing in $\alpha$ (slope of secant from 0).
+      Thus the infimum is the limit as $\alpha \to 0$: $g(x) = \lim_{\alpha \to 0} \frac{f(\alpha x) - f(0)}{\alpha} = f'(0; x)$ (directional derivative).
+      The directional derivative of a convex function is sublinear (convex).
+      Proof: $g(x+y) = \lim \frac{f(t(x+y))}{t} \le \lim \frac{t/2 f(2tx) + t/2 f(2ty)}{t} = g(x) + g(y)$ (using convexity with weights $1/2$).
     </div>
   </div>
 </div>

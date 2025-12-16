@@ -983,6 +983,86 @@
   </div>
 </div>
 
+<div class="problem">
+  <h3>P9.10 — SDP Duality: Max Cut Relaxation</h3>
+  <p>The Max Cut problem can be relaxed to the following SDP:
+  $$ \max_X \quad \frac{1}{4} \mathrm{tr}(W X) \quad \text{s.t.} \quad X_{ii} = 1, \quad X \succeq 0 $$
+  where $W$ is the weighted adjacency matrix. Derive the dual problem.</p>
+  <div class="recap-box">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Matrix Lagrange Multipliers:</b> For the constraint $X \succeq 0$, the multiplier is a matrix $Z \succeq 0$, and the term is $-\mathrm{tr}(ZX)$.</li>
+        <li><b>Diagonal Constraints:</b> The constraints $X_{ii} = 1$ can be written as $\mathrm{diag}(X) = \mathbf{1}$. The multiplier is a vector $\nu$.</li>
+    </ul>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Lagrangian.</strong>
+      We want to minimize the negative objective: $\min -\frac{1}{4}\mathrm{tr}(WX)$.
+      Constraints: $X_{ii} = 1$ (multiplier $\nu_i$) and $X \succeq 0$ (multiplier $Z \succeq 0$).
+      $$ L(X, \nu, Z) = -\frac{1}{4}\mathrm{tr}(WX) + \sum_{i=1}^n \nu_i (X_{ii} - 1) - \mathrm{tr}(ZX) $$
+      Note: $\sum \nu_i X_{ii} = \mathrm{tr}(\mathrm{diag}(\nu) X)$.
+      $$ L(X, \nu, Z) = \mathrm{tr}\left( \left( \mathrm{diag}(\nu) - \frac{1}{4}W - Z \right) X \right) - \sum \nu_i $$
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Dual Function.</strong>
+      Minimizing $L$ over $X$ (unconstrained symmetric matrix) requires the gradient to vanish.
+      $$ \mathrm{diag}(\nu) - \frac{1}{4}W - Z = 0 $$
+      If this holds, the minimum is $-\sum \nu_i$. Otherwise $-\infty$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Dual Problem.</strong>
+      Maximize $-\sum \nu_i$ subject to $Z \succeq 0$ and $Z = \mathrm{diag}(\nu) - \frac{1}{4}W$.
+      Substituting $Z$: $\mathrm{diag}(\nu) - \frac{1}{4}W \succeq 0$.
+      Equivalent Dual: $\min \sum \nu_i$ s.t. $\mathrm{diag}(\nu) \succeq \frac{1}{4}W$.
+      (Usually written as $\min \mathbf{1}^\top \nu$ s.t. $4 \mathrm{diag}(\nu) \succeq W$).
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P9.11 — SOCP Duality: Robust Least Squares</h3>
+  <p>Derive the dual of the Robust Least Squares problem:
+  $$ \min_x \|Ax - b\|_2 + \rho \|x\|_2 $$
+  Formulate the primal as an SOCP first.</p>
+  <div class="recap-box">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>SOCP Standard Form:</b> $\min c^\top x$ s.t. $\|A_i x + b_i\|_2 \le c_i^\top x + d_i$.</li>
+        <li><b>Conic Duality:</b> The dual variables for second-order cone constraints lie in the second-order cone (self-dual).</li>
+    </ul>
+  </div>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Primal SOCP.</strong>
+      Introduce $t_1, t_2$. Minimize $t_1 + \rho t_2$ subject to:
+      $$ \|Ax - b\|_2 \le t_1 \iff (Ax - b, t_1) \in \mathcal{Q}_{m+1} $$
+      $$ \|x\|_2 \le t_2 \iff (x, t_2) \in \mathcal{Q}_{n+1} $$
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Lagrangian.</strong>
+      Dual variables $(z_1, \mu_1) \in \mathcal{Q}_{m+1}$ and $(z_2, \mu_2) \in \mathcal{Q}_{n+1}$.
+      $$ L = t_1 + \rho t_2 - [z_1^\top(Ax - b) + \mu_1 t_1] - [z_2^\top x + \mu_2 t_2] $$
+      Minimizing over $t_1$: $1 - \mu_1 = 0 \implies \mu_1 = 1$.
+      Minimizing over $t_2$: $\rho - \mu_2 = 0 \implies \mu_2 = \rho$.
+      Minimizing over $x$: $-A^\top z_1 - z_2 = 0 \implies z_2 = -A^\top z_1$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Dual Constraints.</strong>
+      From $(z_1, \mu_1) \in \mathcal{Q}$: $\|z_1\|_2 \le \mu_1 = 1$.
+      From $(z_2, \mu_2) \in \mathcal{Q}$: $\|z_2\|_2 \le \mu_2 = \rho$.
+      Substitute $z_2$: $\| -A^\top z_1 \|_2 \le \rho$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 4: Dual Problem.</strong>
+      Objective term is $z_1^\top b$. We maximize this.
+      $$ \max_{z_1} \quad b^\top z_1 \quad \text{s.t.} \quad \|z_1\|_2 \le 1, \quad \|A^\top z_1\|_2 \le \rho $$
+    </div>
+  </div>
+</div>
+
 </section>
     </article>
 

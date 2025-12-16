@@ -1094,6 +1094,149 @@
           This is a standard QP.</p>
         </div>
       </div>
+
+      <div class="problem">
+        <h3>P7.9 — Robust Least Squares (Huber Penalty) Formulation</h3>
+        <p>The Huber penalty function is defined as:
+        $$ \phi(u) = \begin{cases} u^2 & |u| \le M \\ M(2|u| - M) & |u| > M \end{cases} $$
+        We minimize $\sum \phi(a_i^\top x - b_i)$. Show that the following three formulations are equivalent.</p>
+        <p><strong>(A) Unconstrained:</strong> $\min_x \sum \phi(r_i(x))$.</p>
+        <p><strong>(B) Weighted LS:</strong> $\min_{x, w \succeq 0} \sum \left( \frac{r_i(x)^2}{1+w_i} + M^2 w_i \right)$.</p>
+        <p><strong>(C) Quadratic Program:</strong> $\min_{x, u, v} \sum (u_i^2 + 2M v_i)$ subject to $|r_i(x)| \le u_i + v_i, 0 \le u_i \le M, v_i \ge 0$.</p>
+
+        <div class="recap-box">
+          <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+          <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+              <li><b>Inliers vs Outliers:</b> The formulations explicitly separate "small errors" (inliers, handled by quadratic terms) from "large errors" (outliers, handled by linear terms or weights).</li>
+              <li><b>Infimal Convolution:</b> The structure of Huber is exactly the infimal convolution of $f(x)=x^2$ and $g(x)=|x|$, which smooths the corner of the absolute value.</li>
+          </ul>
+        </div>
+
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="proof-step">
+            <strong>Equivalence of (A) and (B):</strong>
+            Consider the scalar function $g(u) = \inf_{w \ge 0} \left( \frac{u^2}{1+w} + M^2 w \right)$.
+            Differentiating w.r.t $w$: $-\frac{u^2}{(1+w)^2} + M^2 = 0 \implies (1+w)^2 = u^2/M^2 \implies w = |u|/M - 1$.
+            Constraint $w \ge 0$ implies we use this root only if $|u| \ge M$.
+            <ul>
+              <li>If $|u| \le M$, optimal $w=0$. Value is $u^2$.</li>
+              <li>If $|u| > M$, optimal $w = |u|/M - 1$. Value is $\frac{u^2}{|u|/M} + M^2(|u|/M - 1) = M|u| + M|u| - M^2 = 2M|u| - M^2$.</li>
+            </ul>
+            This matches $\phi(u)$. Since the sum is separable, the equivalence holds.
+          </div>
+          <div class="proof-step">
+            <strong>Equivalence of (A) and (C):</strong>
+            Fix $x$ (and thus $r_i$). We minimize $u_i^2 + 2M v_i$ subject to $u_i + v_i \ge |r_i|, 0 \le u_i \le M, v_i \ge 0$.
+            To minimize cost, we should make $u_i + v_i = |r_i|$ (tight constraint). So $v_i = |r_i| - u_i$.
+            Since $v_i \ge 0$, we need $u_i \le |r_i|$. Combined with $0 \le u_i \le M$, the feasible range for $u_i$ is $[0, \min(M, |r_i|)]$.
+            The objective becomes $u_i^2 + 2M(|r_i| - u_i)$ in terms of $u_i$.
+            This is a convex parabola opening up, with vertex at $u_i = M$.
+            <ul>
+              <li>If $|r_i| \le M$: The interval is $[0, |r_i|]$. The vertex $M$ is to the right. Minimum is at $u_i = |r_i|$. Value: $|r_i|^2 + 2M(0) = r_i^2$.</li>
+              <li>If $|r_i| > M$: The interval is $[0, M]$. The vertex is at the boundary $u_i = M$. Minimum is at $u_i = M$. Value: $M^2 + 2M(|r_i| - M) = M(2|r_i| - M)$.</li>
+            </ul>
+            This matches $\phi(u)$.
+          </div>
+          <div class="proof-step">
+            <strong>Interpretation:</strong>
+            In (C), $u_i$ represents the "inlier" portion of the residual (up to $M$), and $v_i$ represents the "outlier" portion (excess).
+            In (B), $w_i > 0$ flags an outlier, reducing the effective weight of the squared error to dampen its influence.
+          </div>
+        </div>
+      </div>
+
+      <div class="problem">
+        <h3>P7.10 — Matrix Norm Approximation (4.14)</h3>
+        <p>Let $\|A\|_\infty = \max_i \sum_j |a_{ij}|$ be the induced infinity norm.
+        We want to minimize $\|A_0 + \sum x_k A_k\|_\infty$. Formulate this as an LP.</p>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="proof-step">
+            <strong>Step 1: Epigraph Form.</strong>
+            Minimize $t$ subject to $\|A(x)\|_\infty \le t$.
+            This is equivalent to: $\sum_{j=1}^n |A_{ij}(x)| \le t$ for all $i = 1, \dots, m$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Linearize Absolute Values.</strong>
+            Introduce auxiliary variables $Y_{ij}$ to bound the absolute values.
+            $$ -Y_{ij} \le A_{ij}(x) \le Y_{ij} $$
+            This implies $Y_{ij} \ge |A_{ij}(x)|$.
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Sum Constraint.</strong>
+            Replace the sum of absolute values with the sum of upper bounds:
+            $$ \sum_{j=1}^n Y_{ij} \le t, \quad i=1,\dots,m $$
+            Since we minimize $t$, which pushes down on the sums, and the sums push down on $Y_{ij}$, the variables $Y_{ij}$ will be tight at optimality ($Y_{ij} = |A_{ij}(x)|$).
+          </div>
+          <div class="proof-step">
+            <strong>Step 4: Final LP.</strong>
+            Variables: $x \in \mathbb{R}^k, Y \in \mathbb{R}^{m \times n}, t \in \mathbb{R}$.
+            $$
+            \begin{aligned}
+            \min \quad & t \\
+            \text{s.t.} \quad & -Y_{ij} \le (A_0)_{ij} + \sum_k x_k (A_k)_{ij} \le Y_{ij} \\
+            & \sum_j Y_{ij} \le t
+            \end{aligned}
+            $$
+          </div>
+        </div>
+      </div>
+
+      <div class="problem">
+        <h3>P7.11 — Minimum Fuel Optimal Control (4.16)</h3>
+        <p>Minimize fuel consumption $\sum_{t=0}^{N-1} f(u(t))$ for a linear system $x(t+1) = Ax(t) + bu(t)$, where the fuel cost is piecewise linear:
+        $$ f(a) = \begin{cases} |a| & |a| \le 1 \\ 2|a| - 1 & |a| > 1 \end{cases} $$
+        Formulate as an LP.</p>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="proof-step">
+            <strong>Step 1: Characterize Cost Function.</strong>
+            Let $s = |a|$. Then $f(a) = s$ if $s \le 1$ and $2s-1$ if $s > 1$.
+            Notice that for $s \ge 0$, $f(a) = \max(s, 2s-1)$.
+            (Check: if $s \le 1$, $s \ge 2s-1$. If $s > 1$, $2s-1 > s$).
+          </div>
+          <div class="proof-step">
+            <strong>Step 2: Epigraph Variables.</strong>
+            Introduce $z_t$ for the cost $f(u_t)$ and $s_t$ for the magnitude $|u_t|$.
+            $$ s_t \ge u_t, \quad s_t \ge -u_t $$
+            $$ z_t \ge s_t, \quad z_t \ge 2s_t - 1 $$
+          </div>
+          <div class="proof-step">
+            <strong>Step 3: Final LP.</strong>
+            Minimize $\sum z_t$ subject to dynamics $x(t+1)=Ax(t)+bu(t)$, boundary conditions, and the inequalities above.
+            This avoids casework or binary variables by using the convexity of $f$.
+          </div>
+        </div>
+      </div>
+
+      <div class="problem">
+        <h3>P7.12 — Convex-Concave Fractional Programming (4.7)</h3>
+        <p>Minimize $f_0(x) = \frac{f(x)}{h(x)}$ subject to $Ax \le b$, where $f$ is convex, $h$ is concave, $f \ge 0, h > 0$.
+        <br>Show this is quasiconvex and derive the convex reformulation.</p>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="proof-step">
+            <strong>(a) Quasiconvexity:</strong>
+            Sublevel sets $S_\alpha = \{x \mid f(x)/h(x) \le \alpha\}$.
+            If $\alpha < 0$, empty (since $f \ge 0, h > 0$).
+            If $\alpha \ge 0$, $f(x) \le \alpha h(x) \iff f(x) - \alpha h(x) \le 0$.
+            Since $f$ is convex and $h$ is concave (so $-h$ is convex), the function $f - \alpha h$ is convex.
+            Thus $S_\alpha$ is a convex set. The problem is quasiconvex.
+          </div>
+          <div class="proof-step">
+            <strong>(b) Convex Reformulation (Perspective Trick):</strong>
+            Introduce variables $y = x/h(x)$ and $t = 1/h(x)$. Then $x = y/t$.
+            Objective: $f(x)/h(x) = f(y/t) \cdot t$. This is the <b>perspective</b> function of $f$, which is convex.
+            Constraint $h(x) = 1/t \implies h(y/t) = 1/t \implies t h(y/t) = 1$.
+            The function $g(y, t) = t h(y/t)$ is the perspective of a concave function, so it is concave.
+            The constraint is $g(y, t) = 1$. This is not convex.
+            <br><b>Relaxation:</b> Replace with $g(y, t) \ge 1$ (or $-g \le -1$, convex).
+            Since the objective $t f(y/t)$ is monotonic in $t$ (for $f \ge 0$), the optimizer will push $t$ to be as small as possible, making the constraint tight ($g(y,t)=1$).
+            <br><b>Result:</b> Min $t f(y/t)$ s.t. $A(y/t) \le b \implies Ay - bt \le 0$, and $t h(y/t) \ge 1$. All convex constraints.
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- SECTION 9: READINGS -->
