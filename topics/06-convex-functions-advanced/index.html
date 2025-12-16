@@ -495,28 +495,36 @@
         Log-concavity is crucial in probability (unimodality, tail bounds).</p>
 
         <div class="theorem-box">
-          <h4>Gradient Condition (3.47)</h4>
-          <p>If $f$ is differentiable and $f(x) > 0$, then $f$ is log-concave if and only if for all $x, y \in \mathrm{dom}\, f$:</p>
-          $$ \frac{f(y)}{f(x)} \le \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right) $$
-          <p><b>Interpretation:</b> Log-concavity means $f$ grows at most exponentially, with a rate controlled by the tangent of the log. In log-space, this is simply the statement that the tangent hyperplane is a global upper bound.</p>
-          <p><b>Proof:</b> Let $u(x) = \log f(x)$. $f$ is log-concave $\iff u$ is concave.
-          <br>Concavity of $u$ is equivalent to the first-order condition:
-          $$ u(y) \le u(x) + \nabla u(x)^\top (y-x) $$
-          By the chain rule, $\nabla u(x) = \frac{1}{f(x)}\nabla f(x)$. Substituting this:
-          $$ \log f(y) \le \log f(x) + \frac{\nabla f(x)^\top (y-x)}{f(x)} $$
-          Subtracting $\log f(x)$ from both sides:
-          $$ \log \frac{f(y)}{f(x)} \le \frac{\nabla f(x)^\top (y-x)}{f(x)} $$
-          Since the exponential function is monotonically increasing, we can exponentiate both sides to get the result.</p>
+          <h4>Gradient Condition (Exercise 3.47 Breakdown)</h4>
+          <p>Let $f: \mathbb{R}^n \to \mathbb{R}_{++}$ be differentiable with a convex domain. Then $f$ is log-concave if and only if:</p>
+          $$ \frac{f(y)}{f(x)} \le \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right) \quad \forall x, y \in \mathrm{dom}\, f $$
+
+          <p><b>Step-by-Step Derivation:</b></p>
+          <ol>
+            <li><b>Log-Transform:</b> Define $h(x) = \log f(x)$. Log-concavity of $f$ means $h$ is concave.</li>
+            <li><b>First-Order Concavity:</b> A differentiable function $h$ is concave iff it lies below its tangent:
+            $$ h(y) \le h(x) + \nabla h(x)^\top (y-x) $$</li>
+            <li><b>Chain Rule:</b> Compute the gradient of $h$:
+            $$ \nabla h(x) = \nabla (\log f(x)) = \frac{1}{f(x)} \nabla f(x) $$</li>
+            <li><b>Substitution:</b> Plug this back into the inequality:
+            $$ \log f(y) \le \log f(x) + \frac{\nabla f(x)^\top (y-x)}{f(x)} $$</li>
+            <li><b>Exponentiation:</b> Since $e^z$ is increasing, exponentiate both sides:
+            $$ f(y) \le f(x) \exp\left( \frac{\nabla f(x)^\top (y-x)}{f(x)} \right) $$
+            Dividing by $f(x)$ yields the result.</li>
+          </ol>
+          <p><b>Interpretation:</b> In log-space, $f$ cannot grow faster than its tangent hyperplane. This bounds the multiplicative growth of $f$.</p>
         </div>
 
         <div class="theorem-box">
-          <h4>Second-Order Characterization</h4>
-          <p>If $f$ is twice differentiable, we can check log-concavity via the Hessian of $\log f(x)$.
-          Using the chain rule and quotient rule, the Hessian of $h(x) = \log f(x)$ is:
+          <h4>Second-Order Characterization (Derivation Details)</h4>
+          <p>If $f$ is twice differentiable, we can check log-concavity via the Hessian of $h(x) = \log f(x)$.</p>
+          <p><b>Gradient:</b> $\nabla h(x) = \frac{1}{f(x)}\nabla f(x)$.</p>
+          <p><b>Hessian:</b> Differentiating component-wise using the quotient rule:
+          $$ \frac{\partial^2 h}{\partial x_i \partial x_j} = \frac{f \cdot f_{ij} - f_i \cdot f_j}{f^2} $$
+          In matrix notation:
           $$ \nabla^2 \log f(x) = \frac{1}{f(x)}\nabla^2 f(x) - \frac{1}{f(x)^2}\nabla f(x)\nabla f(x)^\top $$
-          Since $f$ is log-concave if and only if $\nabla^2 \log f(x) \preceq 0$, this yields the condition:
+          Log-concavity requires $\nabla^2 h(x) \preceq 0$. Multiplying by $f(x)^2$ (which is positive) gives the condition:
           $$ f(x)\nabla^2 f(x) \preceq \nabla f(x)\nabla f(x)^\top $$
-          This matrix inequality ($A \preceq bb^\top$) is a standard test for log-concavity.
           </p>
         </div>
 

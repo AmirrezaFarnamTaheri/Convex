@@ -368,24 +368,30 @@
 
         <div class="proof-box">
           <h4>Appendix 1: Proof that the SOC is self-dual ($\mathcal{Q}^* = \mathcal{Q}$)</h4>
-          <p>We prove that the Second-Order Cone $\mathcal{Q} = \{(t,z) \in \mathbb{R} \times \mathbb{R}^n \mid t \ge \|z\|_2\}$ is self-dual.</p>
+          <p>We prove that the Second-Order Cone $\mathcal{Q}^{m+1} = \{(t,z) \in \mathbb{R} \times \mathbb{R}^m \mid t \ge \|z\|_2\}$ is self-dual under the standard dot product $(s,y)\cdot(t,z) = st + y^\top z$. This property is crucial because it means SOCP dual variables live in the <i>same type</i> of cone as the primal variables.</p>
+
           <div class="proof-step">
-            <strong>Part 1: $\mathcal{Q} \subseteq \mathcal{Q}^*$</strong>
-            <br>Take any $(s,y) \in \mathcal{Q}$ (so $s \ge \|y\|$). We must show that for all $(t,z) \in \mathcal{Q}$ (so $t \ge \|z\|$), the inner product is non-negative:
-            $$ (s,y)^\top (t,z) = st + y^\top z \ge 0 $$
-            By Cauchy-Schwarz, $y^\top z \ge -\|y\|\|z\|$.
-            <br>Thus $st + y^\top z \ge st - \|y\|\|z\|$.
-            <br>Since $s \ge \|y\|$ and $t \ge \|z\|$, we have $st \ge \|y\|\|z\|$.
-            <br>Therefore $st + y^\top z \ge 0$.
+            <strong>Part 1: $\mathcal{Q}^{m+1} \subseteq (\mathcal{Q}^{m+1})^*$ (Primal $\subseteq$ Dual)</strong>
+            <p>Take any $(s,y) \in \mathcal{Q}^{m+1}$ (so $s \ge \|y\|$). We must show that for all $(t,z) \in \mathcal{Q}^{m+1}$ (where $t \ge \|z\|$), the inner product is non-negative.</p>
+            <p>By Cauchy-Schwarz: $y^\top z \ge -\|y\|\|z\|$.</p>
+            <p>Combine bounds: $st + y^\top z \ge st - \|y\|\|z\|$.</p>
+            <p>Since $s \ge \|y\|$ and $t \ge \|z\|$, we have $st \ge \|y\|\|z\|$. Thus $st - \|y\|\|z\| \ge 0$, which implies $st + y^\top z \ge 0$.</p>
+            <p>Since this holds for all $(t,z) \in \mathcal{Q}^{m+1}$, we have $(s,y) \in (\mathcal{Q}^{m+1})^*$.</p>
+          </div>
+
+          <div class="proof-step">
+            <strong>Part 2: $(\mathcal{Q}^{m+1})^* \subseteq \mathcal{Q}^{m+1}$ (Dual $\subseteq$ Primal)</strong>
+            <p>Assume $(s,y) \in (\mathcal{Q}^{m+1})^*$. This means $st + y^\top z \ge 0$ for all $(t,z)$ with $t \ge \|z\|$. We must show $s \ge \|y\|$.</p>
+            <p><b>Step 1: Show $s \ge 0$.</b> Take $(t,z) = (1,0) \in \mathcal{Q}^{m+1}$. The dual condition gives $s(1) + y^\top 0 = s \ge 0$.</p>
+            <p><b>Step 2: Force a condition involving $\|y\|$.</b> If $y=0$, then $s \ge 0 = \|y\|$ holds. Assume $y \ne 0$. Choose a test vector $(t,z)$ designed to make the inner product as negative as possible.</p>
+            <p>Let $z = -\alpha \frac{y}{\|y\|}$ for some $\alpha > 0$, and let $t = \|z\| = \alpha$. This $(t,z)$ is on the boundary of the cone.</p>
+            <p>Compute inner product: $st + y^\top z = s\alpha + y^\top(-\alpha \frac{y}{\|y\|}) = s\alpha - \alpha \frac{\|y\|^2}{\|y\|} = \alpha(s - \|y\|)$.</p>
+            <p>The dual condition requires $\alpha(s - \|y\|) \ge 0$. Since $\alpha > 0$, we must have $s - \|y\| \ge 0$, i.e., $s \ge \|y\|$.</p>
+            <p>Thus $(s,y) \in \mathcal{Q}^{m+1}$.</p>
           </div>
           <div class="proof-step">
-            <strong>Part 2: $\mathcal{Q}^* \subseteq \mathcal{Q}$</strong>
-            <br>Assume $(s,y) \in \mathcal{Q}^*$. This means $st + y^\top z \ge 0$ for all $(t,z)$ such that $t \ge \|z\|$.
-            <br>We must show $s \ge \|y\|$.
-            <br>First, take $(t,z) = (1,0) \in \mathcal{Q}$. Then $s(1) + 0 \ge 0 \implies s \ge 0$.
-            <br>Second, if $y \ne 0$, choose $z = -\frac{y}{\|y\|}$ and $t = 1$. Note $\|z\|=1 \le t$, so $(t,z) \in \mathcal{Q}$.
-            <br>The condition becomes $s(1) + y^\top (-\frac{y}{\|y\|}) \ge 0 \implies s - \frac{\|y\|^2}{\|y\|} \ge 0 \implies s - \|y\| \ge 0 \implies s \ge \|y\|$.
-            <br>Thus $(s,y) \in \mathcal{Q}$.
+            <strong>Conclusion:</strong> Both inclusions hold, so the Second-Order Cone is self-dual.
+            <br><b>Geometric Punchline:</b> The SOC is exactly the set of vectors having non-negative dot product with every SOC vector.
           </div>
         </div>
 

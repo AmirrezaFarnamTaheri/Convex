@@ -414,17 +414,22 @@
         </div>
 
         <div class="proof-box">
-          <h4>Example: Homogeneous Envelope (Exercise 3.31)</h4>
-          <p>A specific type of envelope is the <b>homogeneous envelope</b> of a convex function $f$ (with $f(0)=0$). It is defined as:
+          <h4>Example: Homogeneous Envelope (Exercise 3.31 Breakdown)</h4>
+          <p>The <b>homogeneous envelope</b> of a convex function $f$ (with $f(0)=0$) is defined as:
           $$ g(x) = \inf_{\alpha > 0} \frac{f(\alpha x)}{\alpha} $$
-          This function represents the "best linear approximation" from the origin in the direction $x$.
-          </p>
-          <p><b>Properties:</b></p>
-          <ul>
-            <li><b>Homogeneity:</b> $g(tx) = t g(x)$ for $t \ge 0$. (Proof via substitution $\beta = \alpha t$).</li>
-            <li><b>Underestimator:</b> $g(x) \le f(x)$ (set $\alpha=1$). It is the largest homogeneous underestimator.</li>
-            <li><b>Convexity:</b> $g(x)$ is convex. This follows because $g(x) = \lim_{t \to 0^+} \frac{f(tx)}{t}$, which is the directional derivative $f'(0; x)$. The directional derivative of a convex function is a sublinear (convex) function of the direction.</li>
-          </ul>
+          Intuitively, $g(x)$ measures the smallest "average cost per unit size" along the ray direction $x$.</p>
+
+          <p><b>1. Positive Homogeneity:</b> We want $g(tx) = t g(x)$ for $t > 0$.
+          $$ g(tx) = \inf_{\alpha > 0} \frac{f(\alpha t x)}{\alpha} $$
+          Let $\beta = \alpha t \implies \alpha = \beta/t$.
+          $$ g(tx) = \inf_{\beta > 0} \frac{f(\beta x)}{\beta/t} = t \inf_{\beta > 0} \frac{f(\beta x)}{\beta} = t g(x) $$</p>
+
+          <p><b>2. Convexity:</b>
+          Since $f$ is convex with $f(0)=0$, the function $\phi_x(\alpha) = f(\alpha x)/\alpha$ is non-decreasing in $\alpha$.
+          Thus the infimum is the limit as $\alpha \to 0^+$:
+          $$ g(x) = \lim_{t \to 0^+} \frac{f(tx)}{t} $$
+          This is exactly the directional derivative $f'(0; x)$.
+          Since the directional derivative of a convex function is sublinear (homogeneous + subadditive), $g(x)$ is convex.</p>
         </div>
 
       </section>
@@ -900,12 +905,17 @@
         </div>
 
         <div class="example">
-          <h4>4. Induced Matrix Norms</h4>
-          <p>Let $\|X\|_{a,b} = \sup_{\|v\|_b=1} \|Xv\|_a$ be the operator norm induced by vector norms $\|\cdot\|_a$ and $\|\cdot\|_b$.
-          <br>Using the definition of the dual norm $\|\cdot\|_{a^*}$, we can write $\|z\|_a = \sup_{\|u\|_{a^*} \le 1} u^\top z$.
-          $$ \|X\|_{a,b} = \sup_{\|v\|_b=1} \left( \sup_{\|u\|_{a^*} \le 1} u^\top X v \right) = \sup_{\|v\|_b=1, \ \|u\|_{a^*} \le 1} u^\top X v $$
-          For fixed $u, v$, the function $X \mapsto u^\top X v = \langle X, uv^\top \rangle$ is linear in $X$.
-          Thus, the induced norm is a supremum of linear functions, hence convex.</p>
+          <h4>Example 4: Convexity of Matrix Norms (Detailed Breakdown)</h4>
+          <p>Consider the spectral norm $f(X) = \|X\|_2 = \sigma_{\max}(X)$.
+          <br>We can express it as:
+          $$ f(X) = \sup \{ u^\top X v \mid \|u\|_2 = 1, \|v\|_2 = 1 \} $$
+          <b>Why?</b> This follows from SVD. Let $X = U \Sigma V^\top$. Then $u^\top X v = u^\top U \Sigma V^\top v = \tilde{u}^\top \Sigma \tilde{v}$. This is maximized when $\tilde{u}, \tilde{v}$ align with the largest singular value component.</p>
+          <p><b>Generalization to Induced Norms:</b>
+          Let $\|X\|_{a,b} = \sup_{v \ne 0} \frac{\|Xv\|_a}{\|v\|_b}$.
+          <br>Using the dual norm $\|\cdot\|_{a^*}$, we write $\|z\|_a = \sup_{\|u\|_{a^*} \le 1} u^\top z$.
+          <br>Substitute $z = Xv$:
+          $$ \|X\|_{a,b} = \sup_{\|v\|_b=1} \sup_{\|u\|_{a^*} \le 1} u^\top X v $$
+          The term $u^\top X v$ is linear in $X$. Thus, the induced norm is the pointwise supremum of a family of linear functions, making it <b>convex</b>.</p>
         </div>
 
         <h3>5.4 Partial Minimization</h3>

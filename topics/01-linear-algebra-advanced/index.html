@@ -89,6 +89,36 @@
       $$ \tilde{A} = U^{-1} A V $$
       <b>Diagonalization</b> is simply finding a basis $V$ such that $V^{-1}AV = \Lambda$ is diagonal.
       <b>SVD</b> is finding two orthonormal bases $U, V$ such that $U^\top A V = \Sigma$ is diagonal.</p>
+
+      <h3>1.4 Geometric Intuition of Diagonalization</h3>
+      <div class="insight">
+        <h4>Same Map, Different Coordinates</h4>
+        <p>Let's slow down and make the idea of diagonalization feel inevitable. We are not transforming the "space" itself, but rather the <b>coordinate system</b> we use to describe it.</p>
+        <p><strong>1. Why are the columns of $V$ eigenvectors?</strong></p>
+        <p>Diagonalization means $A = V\Lambda V^{-1}$. This equation has a concrete meaning: there exists a basis where the linear map acts by independent scaling.
+        Multiplying by $V$ gives $AV = V\Lambda$. If we write $V$ as columns $[v_1 \dots v_n]$ and $\Lambda = \text{diag}(\lambda_1, \dots, \lambda_n)$, this becomes:
+        $$ [Av_1 \dots Av_n] = [\lambda_1 v_1 \dots \lambda_n v_n] $$
+        Equating columns gives $Av_i = \lambda_i v_i$. The algebra <i>forces</i> the columns of the basis change matrix to be eigenvectors.</p>
+
+        <p><strong>2. The Three-Step Process</strong></p>
+        <p>Think of $A = V \Lambda V^{-1}$ as a pipeline:</p>
+        <ol>
+          <li><b>$y = V^{-1}x$:</b> Convert the input vector $x$ from standard coordinates to "eigen-coordinates" $y$.</li>
+          <li><b>$y' = \Lambda y$:</b> Scale each coordinate $y_i$ independently by $\lambda_i$. No mixing occurs here.</li>
+          <li><b>$x' = V y'$:</b> Convert the result back to standard coordinates.</li>
+        </ol>
+        <p>A good slogan: <b>Same vectors, same linear map, different coordinates.</b></p>
+      </div>
+
+      <div class="example">
+        <h4>Concrete 2D Example</h4>
+        <p>Suppose eigenvectors are $v_1 = (1, 1)^\top$ and $v_2 = (1, -1)^\top$. Then $V = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}$.
+        A vector with new coordinates $y = (2, 3)^\top$ corresponds to the geometric vector:
+        $$ x = Vy = 2v_1 + 3v_2 = 2\begin{pmatrix}1\\1\end{pmatrix} + 3\begin{pmatrix}1\\-1\end{pmatrix} = \begin{pmatrix}5\\-1\end{pmatrix} $$
+        Applying $A$ (with eigenvalues e.g., $\lambda_1=3, \lambda_2=1$) simply scales the coefficients:
+        $$ x' = 2(3v_1) + 3(1v_2) = 6v_1 + 3v_2 $$
+        In the $V$-basis, the operation is diagonal: $\text{diag}(3, 1)$.</p>
+      </div>
     </section>
 
     <!-- SECTION 2: EIGENVALUES -->

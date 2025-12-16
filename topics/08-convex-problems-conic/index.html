@@ -1110,6 +1110,35 @@
   </div>
 </div>
 
+<div class="problem">
+  <h3>P8.13 — Drills: Identify and Formulate</h3>
+  <p>For each of the following problems, identify the type (LP, QP, SOCP, SDP) and write down the standard form formulation.</p>
+
+  <h4>(a) Trust Region Subproblem</h4>
+  <p>Minimize $\frac{1}{2} x^\top P x + q^\top x + r$ s.t. $\|x\|_2 \le 1$. ($P$ may be indefinite).</p>
+  <div class="solution-box">
+    <p><b>Type:</b> QCQP (non-convex if $P$ indefinite). Dual is SDP.</p>
+    <p><b>Primal (QCQP):</b> $\min \frac{1}{2}x^\top P x + q^\top x + r$ s.t. $x^\top x \le 1$.</p>
+    <p><b>Dual (SDP):</b> Maximize $r - \lambda - \gamma$ subject to:
+    $$ \begin{bmatrix} P + 2\lambda I & q \\ q^\top & 2\gamma \end{bmatrix} \succeq 0, \quad \lambda \ge 0 $$
+    This uses the S-Lemma result that strong duality holds for 1 quadratic constraint.</p>
+  </div>
+
+  <h4>(b) SOCP via Conic Constraints</h4>
+  <p>Minimize $c^\top x$ subject to $Ax=b$ and $\|D_i x + d_i\|_2 \le f_i^\top x + g_i$.</p>
+  <div class="solution-box">
+    <p><b>Type:</b> SOCP (Definition).</p>
+    <p><b>Form:</b> Already in standard SOCP form. The constraints define membership in the second-order cone: $(f_i^\top x + g_i, D_i x + d_i) \in \mathcal{Q}$.</p>
+  </div>
+
+  <h4>(c) Simplex Projection</h4>
+  <p>Minimize $\|x - z\|_2^2$ subject to $x \succeq 0, \mathbf{1}^\top x = 1$.</p>
+  <div class="solution-box">
+    <p><b>Type:</b> QP (Strictly Convex).</p>
+    <p><b>Form:</b> $\min x^\top I x - 2z^\top x$ s.t. $-x \le 0, \mathbf{1}^\top x = 1$. Can be solved efficiently via sorting ($O(n \log n)$) rather than generic QP solvers.</p>
+  </div>
+</div>
+
     </section>
 
 <section class="section-card" id="section-8" style="margin-bottom: 32px;">

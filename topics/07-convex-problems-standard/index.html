@@ -283,61 +283,48 @@
       </div>
 
       <h3>2.5 Matrix Norm Approximation (LP)</h3>
-      <p>We can extend the $\ell_\infty$ norm minimization to matrices (Exercise 4.14). Let $A(x) = A_0 + \sum_{i=1}^k x_i A_i$. We want to minimize the induced $\ell_\infty$ norm (max row sum):</p>
+      <p>We can extend the $\ell_\infty$ norm minimization to matrices. Let $A(x) = A_0 + \sum_{i=1}^k x_i A_i$. We want to minimize the induced $\ell_\infty$ norm (max row sum):</p>
       $$ \text{minimize} \quad \|A(x)\|_\infty = \max_{i=1,\dots,m} \sum_{j=1}^n |a_{ij}(x)| $$
 
       <div class="proof-box">
-        <h4>LP Formulation via Epigraph</h4>
-        <p>This looks nonlinear, but we can decompose it.
-        <br>Minimize $t$ subject to $\sum_j |a_{ij}(x)| \le t$ for all rows $i$.
-        <br>To handle the absolute values, introduce $y_{ij} \ge |a_{ij}(x)|$.
-        </p>
-        <p style="text-align: center;">
-            $
+        <h4>LP Formulation (Two-Stage Lifting)</h4>
+        <div class="proof-step">
+            <strong>Step 1: Row Sum Bound.</strong>
+            Minimize $t$ subject to $\sum_{j=1}^n |a_{ij}(x)| \le t$ for all $i$.
+        </div>
+        <div class="proof-step">
+            <strong>Step 2: Absolute Value Lifting.</strong>
+            Introduce variables $y_{ij} \ge |a_{ij}(x)|$. This is equivalent to $y_{ij} \ge a_{ij}(x)$ and $y_{ij} \ge -a_{ij}(x)$.
+        </div>
+        <div class="proof-step">
+            <strong>Final LP:</strong>
+            $$
             \begin{aligned}
             \text{minimize} \quad & t \\
-            \text{subject to} \quad & -y_{ij} \le a_{ij}(x) \le y_{ij}, \quad \forall i,j \\
-            & \sum_{j=1}^n y_{ij} \le t, \quad \forall i
+            \text{subject to} \quad & y_{ij} \ge a_{ij}(x), \quad y_{ij} \ge -a_{ij}(x) \\
+            & \sum_{j=1}^n y_{ij} \le t
             \end{aligned}
-            $
-        </p>
-        <div class="proof-step">
-            <strong>Significance of Auxiliary Variables:</strong>
-            The variables $y_{ij}$ serve as the "epigraph representation" of the absolute values $|a_{ij}(x)|$.
-            <ul>
-                <li>For any feasible $x$, the smallest feasible $y_{ij}$ satisfying the constraints is exactly $y_{ij} = |a_{ij}(x)|$.</li>
-                <li>Any larger $y_{ij}$ would satisfy the constraints but could only increase the sum $\sum y_{ij}$, potentially violating the upper bound $t$ or requiring a larger $t$.</li>
-                <li>Since we minimize $t$, the solver drives $y_{ij}$ down to its lower bound $|a_{ij}(x)|$ at optimality.</li>
-            </ul>
+            $$
+            <strong>Logic:</strong> At the minimum, $t$ will be pushed down to the max row sum, which forces $\sum y_{ij}$ to be minimized, which forces $y_{ij}$ to be exactly $|a_{ij}(x)|$.
         </div>
-        <p>This is a standard LP. It demonstrates how to lift complex norm objectives into higher-dimensional linear spaces.</p>
       </div>
 
       <h3>2.6 Minimum Fuel Optimal Control (LP)</h3>
-      <p>Consider a dynamic system $x(t+1) = A x(t) + b u(t)$ driving the state from $0$ to $x_{\text{des}}$ in $N$ steps (Exercise 4.16). We want to minimize fuel consumption.</p>
-      $$ \text{minimize} \quad \sum_{t=0}^{N-1} f(u(t)) $$
-      <p>where the fuel cost $f(u)$ is the piecewise-linear function:
-      $
-      f(a) = \begin{cases} |a| & |a| \le 1 \\ 2|a| - 1 & |a| > 1 \end{cases}
-      $
-      </p>
+      <p>Consider minimizing fuel consumption $\sum_{t=0}^{N-1} f(u(t))$ where the fuel cost is piecewise linear:
+      $$ f(a) = \begin{cases} |a| & |a| \le 1 \\ 2|a| - 1 & |a| > 1 \end{cases} $$
+      Note that $f(a) = \max(|a|, 2|a|-1)$. This is a convex function (max of convex functions).</p>
 
       <div class="proof-box">
-        <h4>LP Formulation</h4>
+        <h4>LP Formulation via Epigraph</h4>
         <div class="proof-step">
-            <strong>Step 1: Epigraph of Cost.</strong>
-            We can express the fuel cost as the maximum of 2 convex functions of $|a|$.
-            Let $s = |a|$. Then $f(a) = \max(s, 2s-1)$.
-            Since $s$ is the pointwise max of $a$ and $-a$, we can characterize the epigraph of $f$ using:
-            <ul>
-              <li>$p \ge s$ and $s \ge |a| \iff s \ge a, s \ge -a$.</li>
-              <li>$p \ge 2s - 1$.</li>
-            </ul>
-            Here $p$ is the cost variable and $s$ is the magnitude variable.
+            <strong>Step 1: Cost Epigraph.</strong>
+            Introduce cost variable $p_t \ge f(u_t)$.
+            $p_t \ge |u_t|$ and $p_t \ge 2|u_t| - 1$.
         </div>
         <div class="proof-step">
-            <strong>Step 2: Dynamics.</strong>
-            The state constraints $x(t+1) = Ax(t) + bu(t)$ are linear equalities.
+            <strong>Step 2: Magnitude Variable.</strong>
+            Introduce $s_t \ge |u_t|$, i.e., $s_t \ge u_t, s_t \ge -u_t$.
+            Then the cost becomes $p_t \ge s_t$ and $p_t \ge 2s_t - 1$.
         </div>
         <div class="proof-step">
             <strong>Step 3: Full LP.</strong>
@@ -349,7 +336,7 @@
             & p_t \ge s_t, \quad p_t \ge 2s_t-1
             \end{aligned}
             $$
-            This separates the "absolute value" logic from the "piecewise cost" logic, making it cleaner than listing 4 affine inequalities for $u$.
+            This formulation correctly models the "kink" in the cost function without integer variables.
         </div>
 
         <div class="example">
@@ -707,29 +694,35 @@
       </div>
 
       <div class="proof-box">
-        <h4>Convex Reformulation (Single Shot)</h4>
+        <h4>Convex Reformulation (Two Approaches)</h4>
+
+        <h5>Method 1: Quasiconvex Bisection</h5>
+        <p>The sublevel sets $f(x)/h(x) \le \alpha$ are equivalent to $f(x) - \alpha h(x) \le 0$ (for $\alpha \ge 0$). Since $f$ is convex and $h$ is concave, this is a convex constraint. We can solve the problem by bisection on $\alpha$, solving a convex feasibility problem at each step.</p>
+
+        <h5>Method 2: Perspective Transformation (Exercise 4.7)</h5>
         <div class="proof-step">
-            <strong>Variable Transformation:</strong>
-            Let $t = 1/h(x)$ and $y = tx$.
-            Since $h$ is concave, its perspective function $\tilde{h}(y,t) = t h(y/t)$ is concave.
-            The condition $h(x) = 1/t$ becomes $t h(y/t) = 1$.
+            <strong>Step 1: Change of Variables.</strong>
+            Let $t = 1/h(x)$ and $y = x/h(x) = tx$.
+            Since $h(x)$ is concave, $t > 0$.
         </div>
         <div class="proof-step">
-            <strong>The Relaxation Trick:</strong>
-            The equality constraint $t h(y/t) = 1$ is not convex (boundary of a convex set).
-            However, we can relax it to $t h(y/t) \ge 1$. Since we minimize the objective (which scales with $t$), the solver will push $t$ to be as small as possible, making the constraint tight at optimum.
-            The set $\{(y,t) \mid t h(y/t) \ge 1\}$ is convex (superlevel set of a concave function).
+            <strong>Step 2: Objective.</strong>
+            The objective becomes $t f(y/t)$, which is the perspective of the convex function $f$, hence convex.
         </div>
         <div class="proof-step">
-            <strong>Transformed Problem:</strong>
-            $$
-            \begin{aligned}
-            \text{minimize} \quad & t f(y/t) \quad \text{(Perspective of } f, \text{ convex)} \\
-            \text{subject to} \quad & t h(y/t) \ge 1 \quad \text{(Perspective of } h, \text{ concave)} \\
-            & Ay = bt, \quad t > 0
-            \end{aligned}
-            $$
-            This is a standard convex optimization problem.
+            <strong>Step 3: Constraint.</strong>
+            The condition $h(x) = 1/t$ transforms to $t h(y/t) = 1$.
+            Equality is not convex, but we can relax it to $t h(y/t) \ge 1$.
+            The function $G(y,t) = t h(y/t)$ is the perspective of a concave function, so it is concave.
+            The constraint $G(y,t) \ge 1$ defines a convex set (superlevel set of concave function).
+        </div>
+        <div class="proof-step">
+            <strong>Step 4: Tightness.</strong>
+            Since we minimize $t f(y/t)$, and $f$ is typically non-negative (or shifted to be), the solver will reduce $t$ until the constraint binds, ensuring $t h(y/t) = 1$ at optimality.
+        </div>
+        <div class="proof-step">
+            <strong>Final Convex Problem:</strong>
+            $$ \min_{y, t} \ t f(y/t) \quad \text{s.t.} \quad t h(y/t) \ge 1, \ Ay = bt, \ t > 0 $$
         </div>
       </div>
 
