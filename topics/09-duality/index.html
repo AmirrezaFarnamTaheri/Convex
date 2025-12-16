@@ -84,6 +84,29 @@
           $$ \sum \lambda_i f_i(x) \le 0 \quad \text{and} \quad \sum \nu_j h_j(x) = 0 $$
           Thus, $L(x, \lambda, \nu) \le f_0(x)$. The Lagrangian is a <b>pointwise underestimator</b> of the objective function on the feasible set.</p>
         </div>
+
+        <h3>1.3 The Minimax (Saddle Point) Interpretation</h3>
+        <p>We can recover the primal problem from the Lagrangian by maximizing over the dual variables. Define the function:</p>
+        $$
+        \sup_{\lambda \succeq 0, \nu} L(x, \lambda, \nu) = \sup_{\lambda \succeq 0, \nu} \left( f_0(x) + \sum \lambda_i f_i(x) + \sum \nu_j h_j(x) \right)
+        $$
+        <ul>
+          <li><strong>If $x$ is feasible:</strong> $f_i(x) \le 0$ and $h_j(x)=0$. To maximize the sum, the best we can do is set $\lambda_i=0$ (since $\lambda_i \ge 0$ and $f_i(x) \le 0$, any positive $\lambda$ would make the term negative). The $\nu$ term is always 0. Thus, the supremum is $f_0(x)$.</li>
+          <li><strong>If $x$ is infeasible:</strong>
+            <ul>
+              <li>If $f_i(x) > 0$, we can let $\lambda_i \to \infty$, making the sum $\infty$.</li>
+              <li>If $h_j(x) \ne 0$, we can let $\nu_j \to \text{sign}(h_j(x)) \cdot \infty$, making the sum $\infty$.</li>
+            </ul>
+          </li>
+        </ul>
+        <p>Thus, the unconstrained problem $\min_x \sup_{\lambda \succeq 0, \nu} L(x, \lambda, \nu)$ is exactly equivalent to the original constrained primal problem.</p>
+        <div class="intuition-box">
+          <p><b>Duality as a Game:</b>
+          <br><b>Primal:</b> $\min_x \max_{\lambda, \nu} L(x, \lambda, \nu)$ (Minimizer moves first, Maximizer exploits violations).
+          <br><b>Dual:</b> $\max_{\lambda, \nu} \min_x L(x, \lambda, \nu)$ (Maximizer moves first, setting prices; Minimizer optimizes given prices).
+          <br><b>Weak Duality</b> is simply the max-min inequality: $\max \min \le \min \max$.
+          <br><b>Strong Duality</b> implies the existence of a <b>Saddle Point</b> where the order of play doesn't matter.</p>
+        </div>
       </section>
 
       <section class="section-card" id="section-2">
@@ -629,6 +652,94 @@
       Combining the cases:
       $$ x_i = \max\left(0, \frac{1}{\nu} - \alpha_i\right) $$
       Here $\mu = 1/\nu$ acts as the "water level". We choose the water level such that the total amount of water poured equals the budget: $\sum x_i = 1$.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P9.7 — KKT for Standard QP</h3>
+  <p>Consider the Quadratic Program:</p>
+  $$ \min_x \frac{1}{2} x^\top P x + q^\top x \quad \text{s.t.} \quad Ax \le b $$
+  <p>where $P \in \mathbb{S}^n_{++}$ (positive definite).</p>
+  <p><strong>(a)</strong> Write down the KKT conditions for this problem.</p>
+  <p><strong>(b)</strong> Combine them to show that solving the KKT system is equivalent to solving a system of equations involving the active set.</p>
+
+  <div class="recap-box">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Linear KKT Systems:</b> For QPs, the stationarity condition is linear in $x$ and $\lambda$. If we knew which constraints were active (the "active set"), the KKT conditions would reduce to a single system of linear equations.</li>
+        <li><b>Active Set Methods:</b> Many QP solvers work by iteratively guessing the active set and solving the resulting linear system.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Part (a): KKT Conditions.</strong>
+      <ol>
+        <li><b>Primal Feasibility:</b> $Ax \le b$.</li>
+        <li><b>Dual Feasibility:</b> $\lambda \ge 0$.</li>
+        <li><b>Complementary Slackness:</b> $\lambda_i (a_i^\top x - b_i) = 0$ for all $i$.</li>
+        <li><b>Stationarity:</b> $\nabla f_0(x) + \sum \lambda_i \nabla f_i(x) = 0 \implies Px + q + A^\top \lambda = 0$.</li>
+      </ol>
+    </div>
+    <div class="proof-step">
+      <strong>Part (b): Active Set Interpretation.</strong>
+      Let $I \subseteq \{1, \dots, m\}$ be the set of indices where $a_i^\top x = b_i$ (active constraints).
+      Complementary slackness implies $\lambda_i = 0$ for $i \notin I$.
+      The stationarity equation becomes:
+      $$ Px + q + \sum_{i \in I} \lambda_i a_i = 0 $$
+      Combined with $a_i^\top x = b_i$ for $i \in I$, we have a square linear system (assuming $|I| \le n$ and independence):
+      $$
+      \begin{bmatrix} P & A_I^\top \\ A_I & 0 \end{bmatrix} \begin{bmatrix} x \\ \lambda_I \end{bmatrix} = \begin{bmatrix} -q \\ b_I \end{bmatrix}
+      $$
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P9.8 — Certificates of Infeasibility (Gordan's Theorem)</h3>
+  <p>A system of inequalities is <b>infeasible</b> if no solution exists. A <b>certificate of infeasibility</b> is a dual vector that proves this fact.
+  <br><strong>Gordan's Theorem</strong> states that exactly one of the following systems has a solution:</p>
+  <ol>
+    <li>$Ax < 0$ (Strict homogeneous inequalities)</li>
+    <li>$A^\top y = 0, y \ge 0, y \ne 0$ (Dual certificate)</li>
+  </ol>
+  <p>Prove this using the separation of convex sets.</p>
+
+  <div class="recap-box">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Theorems of Alternatives:</b> Gordan's Theorem is another variant of Farkas' Lemma. It deals with strict inequalities.</li>
+        <li><b>Separation Argument:</b> If the set $K = \{Ax \mid x \in \mathbb{R}^n\}$ (a subspace) does not intersect the open negative orthant $\mathbb{R}^m_{--}$, we can separate them with a hyperplane. This hyperplane normal gives the certificate $y$.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>Step 1: Set definitions.</strong>
+      Let $S = \{Ax \mid x \in \mathbb{R}^n\}$ be the range space of $A$. This is a convex set (a subspace).
+      Let $C = \{z \in \mathbb{R}^m \mid z < 0\}$ be the open negative orthant. This is a convex cone.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: Mutual Exclusivity.</strong>
+      System (1) has a solution iff $S \cap C \ne \emptyset$.
+      Suppose both have solutions. There exists $x$ such that $Ax < 0$, and $y \ge 0, y \ne 0$ such that $A^\top y = 0$.
+      Consider the inner product $y^\top (Ax)$.
+      On one hand, $y^\top A x = (A^\top y)^\top x = 0^\top x = 0$.
+      On the other hand, $y \ge 0, y \ne 0$ and $Ax < 0$ (strictly negative components). The dot product of a non-negative non-zero vector and a strictly negative vector must be strictly negative.
+      $y^\top (Ax) < 0$.
+      Contradiction ($0 < 0$). Thus, both cannot be true.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: Covering all cases (Separating Hyperplane).</strong>
+      If (1) has no solution, then $S \cap C = \emptyset$.
+      Since $C$ is open and convex and $S$ is convex, there exists a separating hyperplane defined by normal $y \ne 0$ such that:
+      $y^\top z \le y^\top w$ for all $z \in C, w \in S$.
+      Since $S$ is a subspace, $y^\top w$ must be bounded below, which implies $y^\top w = 0$ for all $w \in S$ (otherwise it goes to $-\infty$). Thus $y \perp \text{range}(A) \implies A^\top y = 0$.
+      The condition becomes $y^\top z \le 0$ for all $z < 0$. This implies $y \ge 0$.
+      Thus we found $y \ge 0, y \ne 0$ with $A^\top y = 0$. This is a solution to (2).
     </div>
   </div>
 </div>

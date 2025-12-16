@@ -350,6 +350,13 @@
             \end{aligned}
             $$
         </div>
+
+        <div class="example">
+          <h4>Example: Trust-Region QCQP</h4>
+          <p>Minimize a quadratic over the unit ball (trust region):</p>
+          $$ \min_x \frac{1}{2}x^\top P x + q^\top x + r \quad \text{s.t.} \quad x^\top x \le 1 $$
+          <p>This is a QP if $P \succeq 0$. If $P$ is indefinite, it is non-convex, but its dual is an SDP (strong duality holds by S-lemma).</p>
+        </div>
       </div>
 
       <h3>2.7 Hierarchy of Convex Problems</h3>

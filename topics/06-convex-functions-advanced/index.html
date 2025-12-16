@@ -1068,6 +1068,31 @@
   </div>
 </div>
 
+<div class="problem">
+  <h3>P6.14 — Log-Sum-Exp Conjugate</h3>
+  <p>Derive the conjugate of $f(x) = \log(\sum_{i=1}^n e^{x_i})$. Show that $f^*(y) = \sum y_i \log y_i$ if $y \in \Delta$ (simplex), else $\infty$.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      $f^*(y) = \sup_x (y^\top x - \log \sum e^{x_i})$.
+      Setting gradient to zero: $y_i = e^{x_i} / (\sum e^{x_k})$.
+      This implies $y_i > 0$ and $\sum y_i = 1$. If not, supremum is $\infty$ (scaling argument).
+      Substitute $x_i = \log y_i + C$ back into objective to get negative entropy.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P6.15 — Norm Conjugate</h3>
+  <p>Let $\|\cdot\|$ be a norm. Show that its conjugate is the indicator function of the dual norm unit ball: $f^*(y) = 0$ if $\|y\|_* \le 1$, else $\infty$. Use Lemma A3 from the Drill.</p>
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      See Lemma A3 in Drill.md for the rigorous proof. Key idea: if $\|y\|_* > 1$, align $x$ with $y$ and scale to infinity. If $\|y\|_* \le 1$, Hölder implies $y^\top x - \|x\| \le 0$, max is 0.
+    </div>
+  </div>
+</div>
+
 </section>
 
     <section class="section-card" id="section-6">

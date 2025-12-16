@@ -130,6 +130,15 @@
         $$
         <p>This is the set of all points satisfying all constraints. For a convex problem, $\mathcal{F}$ is convex—a property we'll prove in <a href="../03-convex-sets-geometry/index.html">Lecture 03</a> using operations preserving convexity.</p>
 
+        <h3>1.4 The Meta-Skill: Converting Language</h3>
+        <p>A core skill in convex optimization is translating between three languages:</p>
+        <ol>
+          <li><b>Algebra:</b> Expressions like $Ax=b$, $\|x\|\le 1$, $f(x) \le t$.</li>
+          <li><b>Geometry:</b> "Point lies in subspace," "inside a ball," "below a surface."</li>
+          <li><b>Logic/Set Membership:</b> $x \in \{z : Az=b\}$, $x \in B$, $x \in f^{-1}((-\infty, t])$.</li>
+        </ol>
+        <p>The core move is to turn every constraint into "$x \in \text{SomeSet}$" and understand how that set behaves under mixing (convexity) and transformations.</p>
+
         <h3>1.4 Optimal Value and Optimal Points</h3>
         <ul>
           <li><b>Optimal value:</b> $p^* = \inf\{f_0(x) \mid x \in \mathcal{F}\}$ (can be $-\infty$ if unbounded, $+\infty$ if infeasible).</li>

@@ -1469,7 +1469,7 @@
             <li>$f(x) = |x|^p$ on $\mathbb{R}$ for $p \ge 1$.</li>
             <li>$f(x) = x \log x$ on $\mathbb{R}_{++}$.</li>
             <li>$u_\alpha(x) = \frac{x^\alpha - 1}{\alpha}$ for $\alpha \in (0,1]$ (CRRA Utility).</li>
-
+            <li>$f(x) = \frac{1}{2}x^\top P x + q^\top x + r$ (Unconstrained Quadratic). Find the minimizer if $P \in \mathbb{S}^n_{++}$.</li>
           </ol>
 
           <div class="recap-box">
@@ -1493,6 +1493,7 @@
               <li><b>(c) Convex:</b> Composition of convex $g(u)=u^p$ ($p \ge 1$) and convex $h(x)=|x|$. Since $g$ is increasing on $\mathbb{R}_+$, convexity is preserved.</li>
               <li><b>(d) Convex:</b> $f'(x) = 1 + \log x$, $f''(x) = 1/x > 0$. (Negative entropy).</li>
               <li><b>(e) Concave:</b> $u' = x^{\alpha-1} > 0$, $u'' = (\alpha-1)x^{\alpha-2}$. Since $\alpha \le 1$, $u'' \le 0$. Note: As $\alpha \to 0$, this approaches $\log x$.</li>
+              <li><b>(f) Quadratic Minimization:</b> $\nabla f(x) = Px + q$. If $P \succ 0$, $\nabla^2 f(x) = P \succ 0$, so $f$ is strictly convex. Minimizer: $x^\star = -P^{-1}q$.</li>
             </ul>
           </div>
         </div>
