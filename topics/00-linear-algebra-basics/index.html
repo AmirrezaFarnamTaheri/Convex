@@ -522,14 +522,24 @@
       <p>Two matrices $A$ and $B$ are <b>similar</b> if $B = P A P^{-1}$ for some invertible $P$. This represents the same linear operator in a different basis. Understanding <i>why</i> this formula represents a basis change is crucial for intuition.</p>
 
       <h4>Diagonalization as Change of Coordinates</h4>
-      <p>The equation $A = V \Lambda V^{-1}$ (diagonalization) is often memorized but not understood. Let's unpack it as a coordinate transformation. We are not transforming the vector space itself; we are changing the <b>language</b> (coordinates) we use to describe it.</p>
-      <p><b>The Mechanism:</b> Consider the transformation steps in $V^{-1} A V = \Lambda$:</p>
+      <p>The equation $A = V \Lambda V^{-1}$ (diagonalization) is often memorized but not understood. Let's analyze it as a coordinate transformation. We are not transforming the vector space itself; we are changing the <b>language</b> (coordinates) we use to describe it.</p>
+      <p><b>The Mechanism:</b> Think of $A$ as being performed in three stages: $x \xrightarrow{V^{-1}} y \xrightarrow{\Lambda} y' \xrightarrow{V} x'$.</p>
       <ol>
-        <li><b>$V$ (Input Change):</b> The matrix $V$ maps coefficients in the eigenbasis to the standard basis ($x_{\text{std}} = V x_{\text{eigen}}$).</li>
-        <li><b>$A$ (The Action):</b> The matrix $A$ applies the linear map in the standard basis.</li>
-        <li><b>$V^{-1}$ (Output Change):</b> The matrix $V^{-1}$ maps the result back from the standard basis to the eigenbasis.</li>
+        <li><b>$y = V^{-1}x$ (Input Change):</b> Convert the vector $x$ from the standard coordinates into the "special coordinates" (the eigenvector coordinate system).</li>
+        <li><b>$y' = \Lambda y$ (The Action):</b> Scale each coordinate independently (no mixing) by the corresponding eigenvalue.</li>
+        <li><b>$x' = V y'$ (Output Change):</b> Convert the result back to the original standard coordinates.</li>
       </ol>
-      <p>Thus, $\Lambda = V^{-1} A V$ is the matrix representing the <b>same linear map</b>, but acting on coordinates expressed in the eigenbasis. Since the eigenvectors are the "natural axes" of the map, the matrix becomes diagonal—it simply scales each coordinate independently.</p>
+      <p>Thus, $\Lambda = V^{-1} A V$ is the matrix representing the <b>same linear map</b>, but acting on coordinates expressed in the eigenbasis.</p>
+      <div class="insight">
+        <h4>Why Columns of $V$ are Eigenvectors</h4>
+        <p>The columns of $V$ are chosen to be eigenvectors because diagonalization <i>means</i> "use an eigenvector basis". The algebra forces it:
+        $$ A = V \Lambda V^{-1} \iff AV = V\Lambda $$
+        Writing $V$ as columns $[v_1 \dots v_n]$:
+        $$ A[v_1 \dots v_n] = [v_1 \dots v_n] \mathrm{diag}(\lambda_1 \dots \lambda_n) $$
+        $$ [Av_1 \dots Av_n] = [\lambda_1 v_1 \dots \lambda_n v_n] $$
+        Equating columns gives exactly $Av_i = \lambda_i v_i$.
+        </p>
+      </div>
 
       <div class="insight">
         <h4>💡 "Same Vectors, Different Coordinates"</h4>
@@ -801,6 +811,29 @@
       <p>If $Q \in \mathbb{R}^{n \times n}$ is symmetric positive definite (SPD), then $\langle x, y \rangle_Q := x^\top Q y$ is an inner product with induced norm $\|x\|_Q = \sqrt{x^\top Q x}$. This yields <b>quadratic forms</b> and ellipsoidal distance.</p>
 
       <h3>Spectral Norm and Convexity</h3>
+
+      <h4>Induced Matrix Norms</h4>
+      <p>The spectral norm is a specific instance of an <b>induced norm</b> (or operator norm). For any vector norms $\|\cdot\|_a$ on the domain and $\|\cdot\|_b$ on the codomain, the induced norm of a matrix $X$ is:
+      $$ \|X\|_{a,b} = \sup_{v \neq 0} \frac{\|Xv\|_b}{\|v\|_a} = \sup_{\|v\|_a = 1} \|Xv\|_b $$
+      This measures the maximum amplification of the $b$-norm of the output relative to the $a$-norm of the input.</p>
+
+      <h4>Common Operator Norms</h4>
+      <p>When the domain and codomain are equipped with the same $\ell_p$ norm ($a=b=p$), we write $\|X\|_p$.</p>
+      <ul>
+        <li><b>Spectral Norm ($p=2$):</b> $\|X\|_2 = \sigma_{\max}(X)$. (Max stretch of Euclidean length).</li>
+        <li><b>Max Column Sum Norm ($p=1$):</b> The operator norm induced by the $\ell_1$ norm is the maximum absolute column sum.
+        $$ \|X\|_1 = \max_{j} \sum_{i} |X_{ij}| $$
+        <i>Intuition:</i> The unit ball of $\ell_1$ is a diamond with vertices at $e_j$. The maximum stretch occurs at one of these vertices $X e_j$ (the $j$-th column).
+        </li>
+        <li><b>Max Row Sum Norm ($p=\infty$):</b> The operator norm induced by the $\ell_\infty$ norm is the maximum absolute row sum.
+        $$ \|X\|_\infty = \max_{i} \sum_{j} |X_{ij}| $$
+        <i>Intuition:</i> This is the dual of the 1-norm case.
+        </li>
+      </ul>
+
+      <p><b>Convexity:</b> All induced norms are convex functions of the matrix $X$. This follows because $\|X\|_{a,b} = \sup_{\|u\|_{b^*} \le 1, \|v\|_a \le 1} u^\top X v$, which is a pointwise supremum of linear functions.</p>
+
+      <h4>Spectral Norm Details</h4>
       <p>The <b>spectral norm</b> (or operator norm) of a matrix $X \in \mathbb{R}^{m \times n}$ is induced by the Euclidean vector norm:
       $$ \|X\|_2 = \sup_{v \neq 0} \frac{\|Xv\|_2}{\|v\|_2} $$
       <p><b>Intuition: Worst-Case Stretch.</b> The operator norm measures the maximum factor by which the matrix $X$ can "stretch" a vector. It corresponds to the "Lipschitz constant" of the linear map. Geometrically, it is the length of the longest semi-axis of the ellipsoid formed by mapping the unit sphere.</p>
