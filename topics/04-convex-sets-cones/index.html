@@ -366,6 +366,29 @@
           </div>
         </div>
 
+        <div class="proof-box">
+          <h4>Appendix 1: Proof that the SOC is self-dual ($\mathcal{Q}^* = \mathcal{Q}$)</h4>
+          <p>We prove that the Second-Order Cone $\mathcal{Q} = \{(t,z) \in \mathbb{R} \times \mathbb{R}^n \mid t \ge \|z\|_2\}$ is self-dual.</p>
+          <div class="proof-step">
+            <strong>Part 1: $\mathcal{Q} \subseteq \mathcal{Q}^*$</strong>
+            <br>Take any $(s,y) \in \mathcal{Q}$ (so $s \ge \|y\|$). We must show that for all $(t,z) \in \mathcal{Q}$ (so $t \ge \|z\|$), the inner product is non-negative:
+            $$ (s,y)^\top (t,z) = st + y^\top z \ge 0 $$
+            By Cauchy-Schwarz, $y^\top z \ge -\|y\|\|z\|$.
+            <br>Thus $st + y^\top z \ge st - \|y\|\|z\|$.
+            <br>Since $s \ge \|y\|$ and $t \ge \|z\|$, we have $st \ge \|y\|\|z\|$.
+            <br>Therefore $st + y^\top z \ge 0$.
+          </div>
+          <div class="proof-step">
+            <strong>Part 2: $\mathcal{Q}^* \subseteq \mathcal{Q}$</strong>
+            <br>Assume $(s,y) \in \mathcal{Q}^*$. This means $st + y^\top z \ge 0$ for all $(t,z)$ such that $t \ge \|z\|$.
+            <br>We must show $s \ge \|y\|$.
+            <br>First, take $(t,z) = (1,0) \in \mathcal{Q}$. Then $s(1) + 0 \ge 0 \implies s \ge 0$.
+            <br>Second, if $y \ne 0$, choose $z = -\frac{y}{\|y\|}$ and $t = 1$. Note $\|z\|=1 \le t$, so $(t,z) \in \mathcal{Q}$.
+            <br>The condition becomes $s(1) + y^\top (-\frac{y}{\|y\|}) \ge 0 \implies s - \frac{\|y\|^2}{\|y\|} \ge 0 \implies s - \|y\| \ge 0 \implies s \ge \|y\|$.
+            <br>Thus $(s,y) \in \mathcal{Q}$.
+          </div>
+        </div>
+
         <div class="row" style="display: flex; gap: 20px; justify-content: center; margin: 24px 0;">
              <figure style="text-align: center; flex: 1;">
                <img src="assets/self-dual-cones.png"

@@ -145,6 +145,30 @@
       <h3>3.3 The $\ell_2$ Operator Norm (Spectral Norm)</h3>
       <p>$$ \|A\|_2 = \max_{\|x\|_2=1} \|Ax\|_2 = \sqrt{\lambda_{\max}(A^\top A)} = \sigma_{\max}(A) $$</p>
       <p>This is the square root of the maximum eigenvalue of $A^\top A$, which is the largest <b>singular value</b> of $A$. It represents the maximum stretch of the matrix in the Euclidean sense.</p>
+
+      <h3>3.4 Convexity of Induced Norms (Deep Dive)</h3>
+      <p>Why are induced norms convex functions of the matrix $A$? We can prove this using the property that the pointwise supremum of linear functions is convex.</p>
+      <div class="proof-box">
+        <h4>Proof: Convexity via Dual Norms</h4>
+        <div class="proof-step">
+          <strong>Step 1: Definition.</strong> The induced norm is defined as:
+          $$ \|X\|_{a,b} = \sup_{v \ne 0} \frac{\|Xv\|_a}{\|v\|_b} = \sup_{\|v\|_b = 1} \|Xv\|_a $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Dual Norm Representation.</strong> Recall that any norm $\|z\|_a$ can be expressed as a supremum over its dual norm ball: $\|z\|_a = \sup_{\|u\|_{a^*} \le 1} u^\top z$.
+          Substituting this into the definition:
+          $$ \|X\|_{a,b} = \sup_{\|v\|_b = 1} \left( \sup_{\|u\|_{a^*} \le 1} u^\top (Xv) \right) $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Linear Structure.</strong>
+          $$ \|X\|_{a,b} = \sup \{ u^\top X v \mid \|u\|_{a^*} \le 1, \|v\|_b = 1 \} $$
+          Notice that for fixed vectors $u$ and $v$, the function $f_{u,v}(X) = u^\top X v$ is <b>linear</b> in the entries of $X$.
+        </div>
+        <div class="proof-step">
+          <strong>Conclusion:</strong>
+          The induced norm $\|X\|_{a,b}$ is the <b>pointwise supremum</b> of a family of linear functions. Since the supremum of convex (specifically linear) functions is convex, the induced norm is a convex function of $X$.
+        </div>
+      </div>
     </section>
 
     <!-- SECTION 4: QR DECOMPOSITION -->

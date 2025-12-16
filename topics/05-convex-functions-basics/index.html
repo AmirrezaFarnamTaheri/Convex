@@ -387,6 +387,20 @@
         $$ g(x) = \inf \{ t \mid (x, t) \in \text{conv epi } f \} $$
         <p><b>Geometric Intuition:</b> Imagine "shrink-wrapping" the graph of $f$ from below. The function $g$ is the <b>greatest convex underestimator</b> of $f$. This concept is crucial in relaxation techniques for non-convex optimization (e.g., replacing a non-convex constraint with its convex hull).</p>
 
+        <div class="proof-box">
+          <h4>Example: Homogeneous Envelope (Exercise 3.31)</h4>
+          <p>A specific type of envelope is the <b>homogeneous envelope</b> of a convex function $f$ (with $f(0)=0$). It is defined as:
+          $$ g(x) = \inf_{\alpha > 0} \frac{f(\alpha x)}{\alpha} $$
+          This function represents the "best linear approximation" from the origin in the direction $x$.
+          </p>
+          <p><b>Properties:</b></p>
+          <ul>
+            <li><b>Homogeneity:</b> $g(tx) = t g(x)$ for $t \ge 0$. (Proof via substitution $\beta = \alpha t$).</li>
+            <li><b>Underestimator:</b> $g(x) \le f(x)$ (set $\alpha=1$). It is the largest homogeneous underestimator.</li>
+            <li><b>Convexity:</b> $g(x)$ is convex. This follows because $g(x) = \lim_{t \to 0^+} \frac{f(tx)}{t}$, which is the directional derivative $f'(0; x)$. The directional derivative of a convex function is a sublinear (convex) function of the direction.</li>
+          </ul>
+        </div>
+
       </section>
 
       <section class="section-card" id="section-3">
