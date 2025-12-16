@@ -111,22 +111,54 @@
         </p>
       </div>
 
-      <h3>4. Change of Basis</h3>
-      <p>How do coordinates change when we swap basis $B$ for basis $C$?</p>
+      <h3>4. Change of Basis: The Deep Dive</h3>
+      <p>How do coordinates change when we swap basis $B$ for basis $C$? And more importantly, how does the <i>matrix of a linear map</i> change? This is the core mechanic behind Diagonalization and SVD.</p>
 
-      <h4>Case A: Bases of $\mathbb{R}^n$ (Square Matrices)</h4>
-      <p>Let $B, C \in \mathbb{R}^{n \times n}$ be invertible basis matrices. For any $v$:
-      $$ v = B[v]_B = C[v]_C \implies [v]_C = C^{-1}B [v]_B $$
-      The matrix $P_{C \leftarrow B} = C^{-1}B$ converts $B$-coords to $C$-coords.</p>
+      <h4>4.1 Coordinate Transformation (The Dictionary)</h4>
+      <p>Let $B$ and $C$ be two bases for $\mathbb{R}^n$. A vector $x$ has different coordinate representations in each:</p>
+      <ul>
+        <li>$x = B [x]_B$ (coords in $B$)</li>
+        <li>$x = C [x]_C$ (coords in $C$)</li>
+      </ul>
+      <p>Since it's the <b>same vector</b>, we have $B [x]_B = C [x]_C$.
+      <br>To convert from $B$-coordinates to $C$-coordinates, we solve for $[x]_C$:
+      $$ [x]_C = \underbrace{C^{-1}B}_{P} [x]_B $$
+      The matrix $P = C^{-1}B$ is the <b>change-of-basis matrix</b>.</p>
 
-      <h4>Case B: Bases of a Subspace (Tall Matrices)</h4>
-      <p>Let $B, C \in \mathbb{R}^{n \times m}$ be bases for subspace $V$.
-      <br>We cannot write $C^{-1}$. However, since columns of $B$ are in $V = \mathrm{span}(C)$, each $b_j$ has unique coordinates in $C$.
-      $$ b_j = C [b_j]_C $$
-      Stacking these into a matrix $P \in \mathbb{R}^{m \times m}$:
-      $$ B = C P \implies P = P_{C \leftarrow B} $$
-      Then $v = B[v]_B = C P [v]_B$, so $[v]_C = P [v]_B$.
-      <br>This $P$ is the unique invertible $m \times m$ matrix satisfying $B = CP$.</p>
+      <h4>4.2 Transformation of the Matrix Map</h4>
+      <p>Suppose we have a linear map $T(x) = Ax$ (where $A$ is the matrix in the standard basis). How do we represent this same map in a new basis $V$?</p>
+      <p><b>The Mechanism:</b> Think of the operation in three stages: $x_{in} \to x_{out}$.</p>
+      <ol>
+        <li><b>Input Change ($V \to \text{Standard}$):</b> We are given input coordinates $y_{in}$ in the basis $V$. The actual vector is $x_{in} = V y_{in}$.</li>
+        <li><b>The Action ($A$):</b> Apply the linear map in the standard basis: $x_{out} = A x_{in} = A V y_{in}$.</li>
+        <li><b>Output Change ($\text{Standard} \to V$):</b> We want the output coordinates $y_{out}$ in the basis $V$. So we invert the basis matrix: $y_{out} = V^{-1} x_{out}$.</li>
+      </ol>
+      <p>Chaining these together gives the formula for the matrix $\tilde{A}$ in the new basis:</p>
+      $$ y_{out} = (V^{-1} A V) y_{in} \implies \boxed{\tilde{A} = V^{-1} A V} $$
+
+      <div class="insight">
+        <h4>💡 "Same Vectors, Same Map, Different Coordinates"</h4>
+        <p>This formula $\tilde{A} = V^{-1} A V$ (similarity) is the algebraic expression of a geometric truth: we are performing the <b>same linear transformation</b> on the <b>same physical vectors</b>, but describing inputs and outputs using a <b>different coordinate system</b>.</p>
+      </div>
+
+      <h4>4.3 Diagonalization as the Ultimate Simplification</h4>
+      <p>Diagonalization is simply finding a basis $V$ such that the new matrix $\Lambda = V^{-1} A V$ is diagonal.
+      <br>Why does this force the columns of $V$ to be eigenvectors?
+      <br>Rearrange the equation to $AV = V\Lambda$.
+      <br>If $\Lambda$ is diagonal, the $i$-th column of the RHS is $\lambda_i v_i$.
+      <br>The $i$-th column of the LHS is $A v_i$.
+      <br>Thus, $A v_i = \lambda_i v_i$. The basis vectors <b>must</b> be eigenvectors.</p>
+
+      <div class="example">
+        <h4>A Tiny 2D Concrete Picture</h4>
+        <p>Suppose $A$ has eigenvectors $v_1=(1,1)^\top$ and $v_2=(1,-1)^\top$ with eigenvalues $3$ and $1$.
+        <br>Let $V = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}$. Then $\Lambda = V^{-1}AV = \begin{bmatrix} 3 & 0 \\ 0 & 1 \end{bmatrix}$.
+        <br>Consider a vector with new coordinates $y = (2, 3)^\top$.
+        <br><b>Physical Vector:</b> $x = 2v_1 + 3v_2 = (5, -1)^\top$.
+        <br><b>Action in Eigen-coords:</b> The map scales the first component by 3 and the second by 1.
+        $$ y_{out} = \Lambda y = \begin{bmatrix} 3 & 0 \\ 0 & 1 \end{bmatrix} \begin{bmatrix} 2 \\ 3 \end{bmatrix} = \begin{bmatrix} 6 \\ 3 \end{bmatrix} $$
+        <br><b>Result:</b> The output vector is $6v_1 + 3v_2$. The mixing is gone; the axes act independently.</p>
+      </div>
 
       <h3>5. Orthonormal Bases</h3>
       <p>If basis $Q$ has orthonormal columns ($Q^\top Q = I_m$), geometry becomes algebra.

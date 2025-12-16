@@ -615,6 +615,29 @@
   </div>
 </div>
 
+      <div class="problem">
+        <h3>P8.13 — SOCP Canonical Form (Primal)</h3>
+        <p>Formulate the general SOCP with constraints $\|A_i x + b_i\|_2 \le d_i^\top x + e_i$ as a conic program over the product of second-order cones. Specifically, write it as $\min c^\top x$ s.t. $\mathcal{A}x + \beta \in K$ where $K = Q^{m_1+1} \times \dots \times Q^{m_k+1}$.</p>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <p>Define the cone $K = Q^{m_1+1} \times \dots \times Q^{m_k+1}$.
+          The constraint $i$ is $(d_i^\top x + e_i, A_i x + b_i) \in Q^{m_i+1}$.
+          We can stack these conditions. Let the linear map $\mathcal{A}x + \beta$ produce the stacked vector:
+          $$ \begin{bmatrix} d_1^\top x + e_1 \\ A_1 x + b_1 \\ \vdots \\ d_k^\top x + e_k \\ A_k x + b_k \end{bmatrix} \in K $$
+          This is exactly the canonical conic form.</p>
+        </div>
+      </div>
+
+      <div class="problem">
+        <h3>P8.14 — SDP Canonical Form (Primal)</h3>
+        <p>Write the SDP $\min \text{tr}(CX)$ s.t. $\langle A_i, X \rangle = b_i$, $X \succeq 0$ in the standard conic form $\min \langle C, X \rangle$ s.t. $\mathcal{A}(X) = b, X \in K$. Identify $K$.</p>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <p>$K = \mathbb{S}_+^n$ (the PSD cone). The linear operator $\mathcal{A}: \mathbb{S}^n \to \mathbb{R}^m$ is defined by $\mathcal{A}(X) = (\langle A_1, X \rangle, \dots, \langle A_m, X \rangle)^\top$.
+          This matches the standard form.</p>
+        </div>
+      </div>
+
 <div class="problem">
   <h3>P8.2 — QP Formulation: Constrained Least Squares</h3>
   <p>Consider the problem of finding $x \in \mathbb{R}^n$ that minimizes $\|Ax - b\|_2^2$ subject to $l \preceq x \preceq u$ (box constraints).</p>
