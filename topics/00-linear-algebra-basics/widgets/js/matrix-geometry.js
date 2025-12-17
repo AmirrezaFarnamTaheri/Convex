@@ -2,13 +2,9 @@
  * Widget: Matrix & Geometry Explorer
  *
  * Description: An interactive explorer for 2x2 matrices.
- *              Merges functionality of Matrix Explorer and Eigen-PSD.
- *              Features:
- *              - General 2x2 matrix input
- *              - Symmetric constraint toggle
- *              - Visualizations: Linear Transformation (Unit Circle -> Ellipse), Quadratic Form (Contours), Eigenvectors
- *              - Analysis: Determinant, Trace, Eigenvalues, Definiteness
- * Version: 3.0.0
+ *              Visualizes: Linear Transformation (Unit Circle -> Ellipse), Quadratic Form (Contours), Eigenvectors
+ *              Analysis: Determinant, Trace, Eigenvalues, Definiteness
+ * Version: 3.1.0 (Styled)
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
@@ -33,34 +29,34 @@ export async function initMatrixGeometry(containerId) {
     container.innerHTML = `
         <div class="widget-container">
             <div class="widget-controls">
-                <div class="widget-control-group" style="flex-basis: 100%; flex-direction: row; justify-content: space-between; align-items: center;">
-                     <h4 style="margin: 0; color: var(--color-text-main); font-size: 1rem;">Matrix A = [[a, b], [c, d]]</h4>
+                <div class="control-group" style="flex-basis: 100%; flex-direction: row; justify-content: space-between; align-items: center;">
+                     <h4 style="margin: 0; color: var(--text-primary); font-size: 1rem;">Matrix $A = \\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}$</h4>
                      <div style="display: flex; align-items: center; gap: 8px;">
                         <input type="checkbox" id="symmetric-toggle">
-                        <label for="symmetric-toggle" class="widget-label" style="margin: 0; cursor: pointer;">Force Symmetric (c = b)</label>
+                        <label for="symmetric-toggle" style="margin:0; cursor:pointer; font-size:var(--text-sm); color:var(--text-secondary);">Force Symmetric ($c = b$)</label>
                      </div>
                 </div>
-                <div id="sliders-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; width: 100%;"></div>
+                <div id="sliders-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; width: 100%; margin-top:var(--space-4);"></div>
             </div>
 
-            <div id="vis-area" style="display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--color-border);">
-                 <div id="linear-plot" style="flex: 1; min-width: 300px; height: 350px; position: relative; border-right: 1px solid var(--color-border);">
+            <div id="vis-area" style="display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--border-subtle);">
+                 <div id="linear-plot" style="flex: 1; min-width: 300px; height: 350px; position: relative; border-right: 1px solid var(--border-subtle);">
                     <div style="position: absolute; top: 10px; left: 10px; z-index: 5; pointer-events: none;">
-                        <span style="background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); border: 1px solid var(--color-border);">
-                            Linear Map: y = Ax
+                        <span style="background: var(--bg-surface-2); padding: 4px 8px; border-radius: 4px; font-size: var(--text-xs); color: var(--text-primary); border: 1px solid var(--border-subtle);">
+                            Linear Map: $y = Ax$
                         </span>
-                        <div style="margin-top:4px; font-size: 0.75rem; color: var(--color-text-muted);">
-                            Shows <span style="color: var(--color-primary);">Unit Circle</span> transformed
+                        <div style="margin-top:4px; font-size: 0.7rem; color: var(--text-secondary);">
+                            Shows <span style="color: var(--primary-400);">Unit Circle</span> transformed
                         </div>
                     </div>
                  </div>
-                 <div id="quad-plot" style="flex: 1; min-width: 300px; height: 350px; position: relative; background: var(--surface-1);">
+                 <div id="quad-plot" style="flex: 1; min-width: 300px; height: 350px; position: relative; background: var(--bg-surface-1);">
                     <div style="position: absolute; top: 10px; left: 10px; z-index: 5; pointer-events: none;">
-                        <span style="background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: var(--color-text-main); border: 1px solid var(--color-border);">
-                            Quadratic Form: z = xᵀAx
+                        <span style="background: var(--bg-surface-2); padding: 4px 8px; border-radius: 4px; font-size: var(--text-xs); color: var(--text-primary); border: 1px solid var(--border-subtle);">
+                            Quadratic Form: $z = x^\\top A x$
                         </span>
-                        <div style="margin-top:4px; font-size: 0.75rem; color: var(--color-text-muted);">
-                            Contours of curvature
+                        <div style="margin-top:4px; font-size: 0.7rem; color: var(--text-secondary);">
+                            Contours of curvature (Red+, Blue-)
                         </div>
                     </div>
                  </div>
@@ -75,12 +71,10 @@ export async function initMatrixGeometry(containerId) {
     const analysisOutput = container.querySelector("#analysis-output");
 
     let A = { a: 1.5, b: 0.5, c: 0.5, d: 1.0 };
-    let isSymmetric = true; // Start symmetric as in the lecture context
+    let isSymmetric = true;
 
-    // Initialize checkbox state
     symmetricToggle.checked = isSymmetric;
 
-    // Sliders UI
     const sliders = {};
     const config = [
         { id: 'a', label: 'a (0,0)' },
@@ -91,10 +85,12 @@ export async function initMatrixGeometry(containerId) {
 
     config.forEach(param => {
         const div = document.createElement('div');
-        div.className = "widget-control-group";
+        div.style.marginBottom = "0"; // Override default
         div.innerHTML = `
-            <label class="widget-label">${param.label}: <span id="val-${param.id}" class="widget-value-display">${A[param.id].toFixed(1)}</span></label>
-            <input type="range" id="slider-${param.id}" min="-2" max="2" step="0.1" value="${A[param.id]}" class="widget-slider">
+            <label style="display:flex; justify-content:space-between; font-size:var(--text-xs); color:var(--text-tertiary); margin-bottom:4px;">
+                ${param.label} <span id="val-${param.id}" style="color:var(--primary-400); font-weight:600;">${A[param.id].toFixed(1)}</span>
+            </label>
+            <input type="range" id="slider-${param.id}" min="-2" max="2" step="0.1" value="${A[param.id]}" style="width:100%;">
         `;
         slidersGrid.appendChild(div);
         const input = div.querySelector('input');
@@ -126,7 +122,6 @@ export async function initMatrixGeometry(containerId) {
     symmetricToggle.onchange = (e) => {
         isSymmetric = e.target.checked;
         if (isSymmetric) {
-            // Enforce symmetry immediately
             const avg = (A.b + A.c) / 2;
             A.b = avg;
             A.c = avg;
@@ -134,16 +129,13 @@ export async function initMatrixGeometry(containerId) {
             sliders.b.display.textContent = avg.toFixed(1);
             sliders.c.input.value = avg;
             sliders.c.display.textContent = avg.toFixed(1);
-            // Disable 'c' slider visually?
             sliders.c.input.disabled = true;
         } else {
             sliders.c.input.disabled = false;
         }
         update();
     };
-    // Initial state for disabled c slider
     if(isSymmetric) sliders.c.input.disabled = true;
-
 
     // --- PYODIDE LOGIC ---
     const pythonUpdate = pyodide.runPython(`
@@ -153,10 +145,8 @@ export async function initMatrixGeometry(containerId) {
             det = np.linalg.det(A)
             trace = np.trace(A)
 
-            # Eigen decomposition
             try:
                 eigvals, eigvecs = np.linalg.eig(A)
-                # Sort by real part descending
                 idx = np.argsort(np.real(eigvals))[::-1]
                 eigvals = eigvals[idx]
                 eigvecs = eigvecs[:, idx]
@@ -164,7 +154,6 @@ export async function initMatrixGeometry(containerId) {
                 ev_real = np.real(eigvals).tolist()
                 ev_imag = np.imag(eigvals).tolist()
 
-                # Only send real eigenvectors if eigenvalues are real
                 if np.all(np.abs(np.imag(eigvals)) < 1e-5):
                     vecs_real = np.real(eigvecs).T.tolist()
                 else:
@@ -172,10 +161,8 @@ export async function initMatrixGeometry(containerId) {
             except:
                 ev_real, ev_imag, vecs_real = [], [], []
 
-            # Symmetric part for Quadratic Form
             S = (A + A.T) / 2
             s_vals, s_vecs = np.linalg.eigh(S)
-            # Sort descending
             idx_s = np.argsort(s_vals)[::-1]
             s_vals = s_vals[idx_s]
             s_vecs = s_vecs[:, idx_s]
@@ -187,8 +174,6 @@ export async function initMatrixGeometry(containerId) {
             elif np.all(s_vals <= tol): def_type = "Negative Semidefinite"
             else: def_type = "Indefinite"
 
-            # Contours for quadratic form z = xT A x
-            # Actually we plot z = xT S x because xT A x = xT S x
             nx, ny = 40, 40
             x = np.linspace(-2.5, 2.5, nx)
             y = np.linspace(-2.5, 2.5, ny)
@@ -214,16 +199,6 @@ export async function initMatrixGeometry(containerId) {
 
     function createBasePlot(selector) {
         const div = container.querySelector(selector);
-
-        // Ensure header exists (if wiped by previous innerHTML clearing, though we avoided that now, safety first)
-        // Actually, since we removed the innerHTML clear, the header should be safe.
-        // But the review suggested checking for it.
-        // The header is hardcoded in initMatrixGeometry.
-        // If we want to be safe, we can check if it exists, but we don't have the headerHTML string here easily available
-        // unless we duplicate it.
-        // Given I'm not clearing innerHTML anymore, the header PRESENCE is guaranteed by initMatrixGeometry.
-
-        // Remove existing SVG to rebuild
         const existingSvg = div.querySelector('.widget-svg');
         if (existingSvg) existingSvg.remove();
 
@@ -237,16 +212,14 @@ export async function initMatrixGeometry(containerId) {
             .attr("viewBox", `0 0 ${w} ${h}`);
 
         const g = svg.append("g").attr("transform", `translate(${w/2}, ${h/2})`);
-
-        // Scale: map [-3, 3] to width/2 - margin
         const scale = d3.scaleLinear().domain([-3, 3]).range([-(w-margin.left-margin.right)/2, (w-margin.left-margin.right)/2]);
 
         // Axes
         g.append("g").attr("class", "grid").call(d3.axisBottom(scale).ticks(5).tickSize(-h+margin.top+margin.bottom).tickFormat(""));
         g.append("g").attr("class", "grid").call(d3.axisLeft(scale).ticks(5).tickSize(-w+margin.left+margin.right).tickFormat(""));
 
-        g.append("line").attr("x1", scale(-10)).attr("x2", scale(10)).attr("y1", 0).attr("y2", 0).attr("stroke", "var(--color-border)").attr("stroke-width", 2);
-        g.append("line").attr("y1", scale(-10)).attr("y2", scale(10)).attr("x1", 0).attr("x2", 0).attr("stroke", "var(--color-border)").attr("stroke-width", 2);
+        g.append("line").attr("x1", scale(-10)).attr("x2", scale(10)).attr("y1", 0).attr("y2", 0).attr("stroke", "var(--border-default)").attr("stroke-width", 2);
+        g.append("line").attr("y1", scale(-10)).attr("y2", scale(10)).attr("x1", 0).attr("x2", 0).attr("stroke", "var(--border-default)").attr("stroke-width", 2);
 
         return { svg: g, scale, w, h };
     }
@@ -254,78 +227,63 @@ export async function initMatrixGeometry(containerId) {
     function setupPlots() {
         linPlot = createBasePlot("#linear-plot");
         quadPlot = createBasePlot("#quad-plot");
-
-        // Add unit circle to linear plot (faint reference)
-        linPlot.svg.append("circle").attr("r", linPlot.scale(1) - linPlot.scale(0))
-            .attr("fill", "none").attr("stroke", "var(--color-text-muted)").attr("stroke-dasharray", "4 4");
+        // Unit circle reference
+        linPlot.svg.append("circle").attr("r", linPlot.scale(1) - linPlot.scale(0)).attr("fill", "none").attr("stroke", "var(--text-tertiary)").attr("stroke-dasharray", "4 4");
     }
 
     function update() {
         const res = pythonUpdate(A.a, A.b, A.c, A.d).toJs({create_proxies: false});
 
         // --- Update Linear Plot ---
-        // Draw transformed unit circle
         const circlePts = d3.range(0, 2*Math.PI + 0.1, 0.1).map(t => {
             const x = Math.cos(t);
             const y = Math.sin(t);
-            // Apply A
             return [A.a*x + A.b*y, A.c*x + A.d*y];
         });
 
-        const lineGen = d3.line().x(d => linPlot.scale(d[0])).y(d => -linPlot.scale(d[1])); // Flip Y for screen coords
+        const lineGen = d3.line().x(d => linPlot.scale(d[0])).y(d => -linPlot.scale(d[1]));
 
         linPlot.svg.selectAll(".transformed-shape").remove();
         linPlot.svg.append("path")
             .datum(circlePts)
             .attr("class", "transformed-shape")
             .attr("d", lineGen)
-            .attr("fill", "rgba(124, 197, 255, 0.15)")
-            .attr("stroke", "var(--color-primary)")
+            .attr("fill", "rgba(96, 165, 250, 0.15)") // primary-400
+            .attr("stroke", "var(--primary-500)")
             .attr("stroke-width", 2.5);
 
-        // Draw Eigenvectors (Real A)
+        // Eigenvectors
         linPlot.svg.selectAll(".eigenvector").remove();
         if (res.eigvecs.length > 0) {
             res.eigvecs.forEach((v, i) => {
                 const val = res.eigvals_real[i];
-                // Draw line from origin to eigenvalue * eigenvector
-                // v is normalized
                 const endX = v[0] * val;
                 const endY = v[1] * val;
-
                 linPlot.svg.append("line")
                     .attr("class", "eigenvector")
                     .attr("x1", 0).attr("y1", 0)
                     .attr("x2", linPlot.scale(endX)).attr("y2", -linPlot.scale(endY))
-                    .attr("stroke", i === 0 ? "var(--color-accent)" : "#ff6b6b")
+                    .attr("stroke", i === 0 ? "var(--accent-400)" : "#ef4444")
                     .attr("stroke-width", 2)
                     .attr("marker-end", i === 0 ? "url(#arrow-accent)" : "url(#arrow-error)");
             });
         }
 
         // --- Update Quadratic Plot ---
-        // Draw Contours
         const Z = res.Z;
-        const n = Z.length;
-        const m = Z[0].length;
+        const n = Z.length, m = Z[0].length;
         const values = new Float64Array(n * m);
-        for (let j = 0; j < n; ++j) {
-            for (let k = 0; k < m; ++k) {
-                values[j * m + k] = Z[j][k];
-            }
-        }
+        for (let j = 0; j < n; ++j) for (let k = 0; k < m; ++k) values[j * m + k] = Z[j][k];
 
         const contours = d3.contours().size([n, m]).thresholds(d3.range(-5, 5.1, 0.5))(values);
         const transform = d3.geoTransform({
             point: function(px, py) {
-                // Grid [0,n] -> [-2.5, 2.5] -> Scale
                 const x = px / n * 5 - 2.5;
                 const y = py / m * 5 - 2.5;
                 this.stream.point(quadPlot.scale(x), -quadPlot.scale(y));
             }
         });
         const path = d3.geoPath().projection(transform);
-        // Use color scale: Red for positive, Blue for negative
         const colorScale = d3.scaleSequential(d3.interpolateRdBu).domain([5, -5]);
 
         quadPlot.svg.selectAll(".contour").remove();
@@ -339,22 +297,20 @@ export async function initMatrixGeometry(containerId) {
             .attr("stroke-width", 1.5)
             .attr("opacity", 0.7);
 
-        // Draw Principal Axes (Eigenvectors of Symmetric Part)
+        // Principal Axes
         quadPlot.svg.selectAll(".principal-axis").remove();
         res.S_eigvecs.forEach((v, i) => {
-             // Draw lines indicating axes
              const len = 3;
              quadPlot.svg.append("line")
                 .attr("class", "principal-axis")
                 .attr("x1", quadPlot.scale(-v[0]*len)).attr("y1", -quadPlot.scale(-v[1]*len))
                 .attr("x2", quadPlot.scale(v[0]*len)).attr("y2", -quadPlot.scale(v[1]*len))
-                .attr("stroke", "var(--color-text-muted)")
+                .attr("stroke", "var(--text-tertiary)")
                 .attr("stroke-dasharray", "2 2")
                 .attr("stroke-width", 1);
         });
 
-
-        // --- Update Text Analysis ---
+        // --- Analysis Output ---
         let eigStr = res.eigvals_real.map((r, i) => {
             const im = res.eigvals_imag[i];
             return im === 0 ? r.toFixed(2) : `${r.toFixed(2)}${im > 0 ? '+' : ''}${im.toFixed(2)}i`;
@@ -363,24 +319,22 @@ export async function initMatrixGeometry(containerId) {
         analysisOutput.innerHTML = `
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;">
                 <div>
-                    <div style="font-size: 0.8rem; color: var(--color-text-muted);">PROPERTIES</div>
+                    <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom:4px;">PROPERTIES</div>
                     <div><strong>Determinant:</strong> ${res.det.toFixed(2)}</div>
                     <div><strong>Trace:</strong> ${res.trace.toFixed(2)}</div>
                 </div>
                 <div>
-                    <div style="font-size: 0.8rem; color: var(--color-text-muted);">SPECTRAL</div>
+                    <div style="font-size: 0.75rem; color: var(--text-tertiary); margin-bottom:4px;">SPECTRAL</div>
                     <div><strong>Eigenvalues:</strong> ${eigStr}</div>
-                    <div><strong>Definiteness:</strong> <span style="color: var(--color-primary); font-weight: bold;">${res.def_type}</span></div>
+                    <div><strong>Definiteness:</strong> <span style="color: var(--primary-500); font-weight: 600;">${res.def_type}</span></div>
                 </div>
             </div>
         `;
     }
 
-    // Define markers
     const defs = d3.select(container).append("svg").attr("width", 0).attr("height", 0).append("defs");
-    defs.append("marker").attr("id", "arrow-accent").attr("viewBox", "0 -5 10 10").attr("refX", 8).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--color-accent)");
-    defs.append("marker").attr("id", "arrow-error").attr("viewBox", "0 -5 10 10").attr("refX", 8).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "#ff6b6b");
-
+    defs.append("marker").attr("id", "arrow-accent").attr("viewBox", "0 -5 10 10").attr("refX", 8).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--accent-400)");
+    defs.append("marker").attr("id", "arrow-error").attr("viewBox", "0 -5 10 10").attr("refX", 8).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "#ef4444");
 
     new ResizeObserver(() => {
         setupPlots();

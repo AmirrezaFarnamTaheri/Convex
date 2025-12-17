@@ -21,6 +21,7 @@ class GlobalSearch {
 
     init() {
         this.injectSearchBar();
+        // Wait briefly for content to render? Or trust DOMContentLoaded
         this.buildIndex();
         this.bindEvents();
     }
@@ -29,6 +30,9 @@ class GlobalSearch {
         const headerContainer = document.querySelector('.site-header .container');
         if (!headerContainer) return;
 
+        // Check if already injected
+        if (headerContainer.querySelector('.header-search')) return;
+
         // Create Search Container
         const searchContainer = document.createElement('div');
         searchContainer.className = 'header-search';
@@ -36,7 +40,7 @@ class GlobalSearch {
         searchContainer.innerHTML = `
             <div class="search-input-wrapper">
                 <i data-feather="search" class="search-icon"></i>
-                <input type="text" placeholder="Search... (Ctrl+K)" id="global-search-input" autocomplete="off">
+                <input type="text" placeholder="Search... (Cmd+K)" id="global-search-input" autocomplete="off" aria-label="Search">
                 <div class="search-shortcut">⌘K</div>
             </div>
             <div class="search-results-dropdown hidden" id="search-results"></div>
@@ -56,27 +60,28 @@ class GlobalSearch {
         this.searchIndex = [];
 
         // 1. Index Page Content
-        // We prioritize headers, then definitions, then normal text
         const content = document.querySelector('.lecture-content') || document.querySelector('main');
         if (content) {
             // Headers
-            content.querySelectorAll('h1, h2, h3, h4').forEach((el, idx) => {
+            content.querySelectorAll('h1, h2, h3, h4').forEach((el) => {
                 this.addToIndex(el, 'header', 10);
             });
 
-            // Definitions
-            content.querySelectorAll('.definition-term, strong, b').forEach((el) => {
+            // Definitions & Important Terms
+            content.querySelectorAll('.definition-term, strong, b, .definition-link').forEach((el) => {
                 this.addToIndex(el, 'term', 5);
             });
 
-            // Text blocks
+            // Text blocks (Paragraphs, List Items)
             content.querySelectorAll('p, li').forEach((el) => {
-                this.addToIndex(el, 'content', 1);
+                // Avoid indexing short nav items or controls
+                if (el.innerText.length > 20) {
+                    this.addToIndex(el, 'content', 1);
+                }
             });
         }
 
         // 2. Index Notes (from LocalStorage)
-        // Format: kw-notes-{lectureId}
         const lectureId = window.location.pathname;
         const notesJson = localStorage.getItem(`kw-notes-${lectureId}`);
         if (notesJson) {
@@ -90,7 +95,8 @@ class GlobalSearch {
                         weight: 3,
                         id: note.id,
                         timestamp: note.timestamp,
-                        element: null // No direct DOM element, will handle differently
+                        element: null,
+                        context: 'My Note'
                     });
                 });
             } catch (e) {
@@ -119,7 +125,7 @@ class GlobalSearch {
     }
 
     findContext(el) {
-        // Find the nearest preceding header
+        // Find the nearest preceding header to give context
         let curr = el;
         while (curr && curr !== document.body) {
             if (/^H[1-6]$/.test(curr.tagName)) return curr.innerText;
@@ -131,6 +137,8 @@ class GlobalSearch {
     }
 
     bindEvents() {
+        if (!this.input) return;
+
         // Input events
         this.input.addEventListener('input', (e) => this.handleSearch(e.target.value));
         this.input.addEventListener('focus', () => {
@@ -178,7 +186,7 @@ class GlobalSearch {
                 if (text.includes(term)) score += (item.weight * 10);
                 if (tags.includes(term)) score += (item.weight * 15);
 
-                // Boost for exact match or starts with
+                // Boost for starts with
                 if (text.startsWith(term)) score += 5;
             });
 
@@ -188,7 +196,18 @@ class GlobalSearch {
         // Sort by score
         scored.sort((a, b) => b.score - a.score);
 
-        this.results = scored.slice(0, this.options.maxResults).map(r => r.item);
+        // De-duplicate (if multiple p tags are same content)
+        // Not strictly necessary but good for quality.
+        const seen = new Set();
+        this.results = [];
+        for (let r of scored) {
+            if (this.results.length >= this.options.maxResults) break;
+            if (!seen.has(r.item.id)) { // using ID or text hash
+                 seen.add(r.item.id);
+                 this.results.push(r.item);
+            }
+        }
+
         this.selectedIndex = -1; // Reset selection
         this.renderResults(query);
         this.showResults();
@@ -198,29 +217,41 @@ class GlobalSearch {
         this.resultsContainer.innerHTML = '';
 
         if (this.results.length === 0) {
-            this.resultsContainer.innerHTML = '<div class="search-empty">No results found.</div>';
+            this.resultsContainer.innerHTML = '<div style="padding:12px; text-align:center; color:var(--text-tertiary); font-size:var(--text-sm);">No results found.</div>';
             return;
         }
 
         const ul = document.createElement('ul');
+        ul.style.listStyle = 'none';
+        ul.style.padding = '0';
+        ul.style.margin = '0';
+
         this.results.forEach((res, idx) => {
             const li = document.createElement('li');
-            li.className = 'search-result-item';
+            li.className = 'search-result-item'; // CSS handles styling (hover, selected)
+            li.style.padding = '10px';
+            li.style.borderBottom = '1px solid var(--border-subtle)';
+            li.style.cursor = 'pointer';
+            li.style.display = 'flex';
+            li.style.gap = '10px';
             li.dataset.index = idx;
 
             const icon = this.getIconForType(res.type);
             const snippet = this.highlightText(this.getSnippet(res.text, query), query);
-            const title = res.type === 'note' ? 'My Note' : res.context;
+            
+            // Badge logic
+            let badge = '';
+            if (res.type === 'header') badge = '<span style="font-size:0.65rem; padding:2px 6px; border-radius:4px; background:rgba(255,255,255,0.1); margin-left:8px;">SECTION</span>';
+            if (res.type === 'note') badge = '<span style="font-size:0.65rem; padding:2px 6px; border-radius:4px; background:rgba(59,130,246,0.1); color:var(--primary-400); margin-left:8px;">NOTE</span>';
 
             li.innerHTML = `
-                <div class="result-icon">${icon}</div>
-                <div class="result-content">
-                    <div class="result-title">
-                        ${title}
-                        ${res.type === 'header' ? '<span class="badge">Section</span>' : ''}
-                        ${res.type === 'note' ? '<span class="badge badge-note">Note</span>' : ''}
+                <div style="color:var(--text-tertiary); padding-top:2px;">${icon}</div>
+                <div style="flex:1; min-width:0;">
+                    <div style="font-size:0.85rem; font-weight:600; color:var(--text-primary); margin-bottom:2px; display:flex; align-items:center;">
+                        ${res.context}
+                        ${badge}
                     </div>
-                    <div class="result-snippet">${snippet}</div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary); line-height:1.4;">${snippet}</div>
                 </div>
             `;
 
@@ -233,17 +264,16 @@ class GlobalSearch {
     }
 
     getIconForType(type) {
-        if (type === 'note') return '<i data-feather="edit-3"></i>';
-        if (type === 'header') return '<i data-feather="hash"></i>';
-        if (type === 'term') return '<i data-feather="book"></i>';
-        return '<i data-feather="align-left"></i>';
+        if (type === 'note') return '<i data-feather="edit-3" style="width:16px; height:16px;"></i>';
+        if (type === 'header') return '<i data-feather="hash" style="width:16px; height:16px;"></i>';
+        if (type === 'term') return '<i data-feather="book" style="width:16px; height:16px;"></i>';
+        return '<i data-feather="align-left" style="width:16px; height:16px;"></i>';
     }
 
     getSnippet(text, query) {
         if (this.options.snippetLength > text.length) return text;
 
         // Find first occurrence of query
-        // Simple case: use first term
         const term = query.toLowerCase().split(' ')[0];
         const idx = text.toLowerCase().indexOf(term);
 
@@ -257,18 +287,16 @@ class GlobalSearch {
 
     highlightText(text, query) {
         const terms = query.toLowerCase().split(/\s+/).filter(t => t);
-        let html = text;
-
-        // Very basic highlighting (warning: not HTML safe if text contains HTML, but text usually plain here)
-        // Ideally use a safer approach or escape text first.
-        // Assuming text is plain text from innerText.
+        let html = text; // Assumed safe plain text
 
         // Sort terms by length desc to handle overlapping
         terms.sort((a, b) => b.length - a.length);
 
         terms.forEach(term => {
-            const regex = new RegExp(`(${term})`, 'gi');
-            html = html.replace(regex, '<mark>$1</mark>');
+            // Escape special regex chars
+            const safeTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`(${safeTerm})`, 'gi');
+            html = html.replace(regex, '<mark style="background:rgba(251,191,36,0.2); color:var(--warning); padding:0 1px; border-radius:2px;">$1</mark>');
         });
         return html;
     }
@@ -296,29 +324,33 @@ class GlobalSearch {
         const items = this.resultsContainer.querySelectorAll('.search-result-item');
         items.forEach((item, idx) => {
             if (idx === this.selectedIndex) {
-                item.classList.add('selected');
+                item.style.background = 'var(--bg-surface-2)';
                 item.scrollIntoView({ block: 'nearest' });
             } else {
-                item.classList.remove('selected');
+                item.style.background = 'transparent';
             }
         });
     }
 
     selectResult(res) {
         if (res.type === 'note') {
-            // Open Notes Widget
             if (window.knowledgeWidget) {
-                window.knowledgeWidget.panel.classList.remove('hidden');
+                if (window.knowledgeWidget.panel.style.display === 'none') {
+                    window.knowledgeWidget.togglePanel();
+                }
                 window.knowledgeWidget.switchTab('notes');
-                // Could scroll to note if implemented
             } else {
                 alert('Notes widget not available.');
             }
         } else if (res.element) {
             res.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // Flash effect
-            res.element.classList.add('highlight-flash');
-            setTimeout(() => res.element.classList.remove('highlight-flash'), 2000);
+            // Visual Flash
+            const originalBg = res.element.style.backgroundColor;
+            res.element.style.transition = 'background-color 0.5s';
+            res.element.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
+            setTimeout(() => {
+                res.element.style.backgroundColor = originalBg;
+            }, 1500);
         }
 
         this.hideResults();
@@ -338,5 +370,8 @@ class GlobalSearch {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.globalSearch = new GlobalSearch();
+    // Only init if header exists
+    if (document.querySelector('.site-header')) {
+        window.globalSearch = new GlobalSearch();
+    }
 });

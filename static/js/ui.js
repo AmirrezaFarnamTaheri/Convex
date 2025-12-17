@@ -14,9 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initPageSettings();
     initHeaderFontSize();
     initSidebarToggle();
-    initBackToTop(); // Added Back to Top
-    // initThemeSwitcher(); // Moved to theme-switcher.js
-    feather.replace();
+    initBackToTop();
+    if (typeof feather !== 'undefined') feather.replace();
 });
 
 /* =========================================
@@ -48,7 +47,9 @@ function makeCollapsible(box, defaultCollapsed, label) {
     // Wrap content
     const contentWrapper = document.createElement('div');
     contentWrapper.className = 'env-collapsible-content';
-
+    // Initially explicit height handling often helps smooth transitions,
+    // but CSS typically handles max-height: 0 vs scrollHeight.
+    
     while (box.firstChild) {
         contentWrapper.appendChild(box.firstChild);
     }
@@ -57,21 +58,35 @@ function makeCollapsible(box, defaultCollapsed, label) {
     // Toggle Button
     const btn = document.createElement('button');
     btn.className = 'env-toggle-btn';
+    // Use feather icons if available, else text fallback
     btn.innerHTML = defaultCollapsed ? '<i data-feather="chevron-down"></i>' : '<i data-feather="chevron-up"></i>';
     btn.setAttribute('aria-label', 'Toggle ' + label);
     btn.setAttribute('title', 'Toggle ' + label);
+    // Style adjustments for the button are in CSS (absolute top-right)
 
     box.appendChild(btn);
 
     if (defaultCollapsed) {
         box.classList.add('env-collapsed');
+        contentWrapper.style.display = 'none'; // Hard hide initially to prevent layout jumps
+    } else {
+        contentWrapper.style.display = 'block';
     }
 
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const isCollapsed = box.classList.toggle('env-collapsed');
-        btn.innerHTML = isCollapsed ? '<i data-feather="chevron-down"></i>' : '<i data-feather="chevron-up"></i>';
-        feather.replace();
+        
+        // Handling display for animation
+        if (isCollapsed) {
+            contentWrapper.style.display = 'none';
+            btn.innerHTML = '<i data-feather="chevron-down"></i>';
+        } else {
+            contentWrapper.style.display = 'block';
+            btn.innerHTML = '<i data-feather="chevron-up"></i>';
+        }
+        
+        if (typeof feather !== 'undefined') feather.replace();
     });
 }
 
@@ -103,22 +118,29 @@ function initHierarchicalSections() {
         card.appendChild(contentWrapper);
 
         // Setup H2 Toggle
-        card.classList.add('hierarchical-section'); // For styling hooks
+        card.classList.add('hierarchical-section'); 
         h2.style.cursor = 'pointer';
         h2.classList.add('section-toggle');
-
+        
         const originalText = h2.innerHTML;
         // Check if icon already exists to avoid duplication on re-run
         if (!h2.querySelector('.toggle-icon')) {
-            h2.innerHTML = `<span class="toggle-icon" style="margin-right:8px;"><i data-feather="chevron-down"></i></span><span class="header-text">${originalText}</span>`;
+            h2.innerHTML = `<span class="toggle-icon" style="margin-right:8px; display:inline-block;"><i data-feather="chevron-down"></i></span><span class="header-text">${originalText}</span>`;
         }
 
         h2.addEventListener('click', () => {
             const isCollapsed = card.classList.toggle('collapsed');
             const icon = h2.querySelector('.toggle-icon');
+            
+            if (isCollapsed) {
+                 contentWrapper.classList.add('hidden');
+            } else {
+                 contentWrapper.classList.remove('hidden');
+            }
+
             if (icon) {
                 icon.innerHTML = isCollapsed ? '<i data-feather="chevron-right"></i>' : '<i data-feather="chevron-down"></i>';
-                feather.replace();
+                if (typeof feather !== 'undefined') feather.replace();
             }
         });
 
@@ -151,7 +173,7 @@ function groupSubsections(container) {
             // Setup H3 Toggle
             h3.style.cursor = 'pointer';
             const originalText = h3.innerHTML;
-            h3.innerHTML = `<span class="toggle-icon" style="margin-right:8px;"><i data-feather="chevron-down"></i></span>${originalText}`;
+            h3.innerHTML = `<span class="toggle-icon" style="margin-right:8px; display:inline-block;"><i data-feather="chevron-down"></i></span>${originalText}`;
 
             currentContent = document.createElement('div');
             currentContent.className = 'hierarchical-content';
@@ -159,10 +181,17 @@ function groupSubsections(container) {
             h3.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const isCollapsed = currentSubsection.classList.toggle('collapsed');
+                
+                if (isCollapsed) {
+                    currentContent.classList.add('hidden');
+                } else {
+                    currentContent.classList.remove('hidden');
+                }
+
                 const icon = h3.querySelector('.toggle-icon');
                 if (icon) {
                     icon.innerHTML = isCollapsed ? '<i data-feather="chevron-right"></i>' : '<i data-feather="chevron-down"></i>';
-                    feather.replace();
+                    if (typeof feather !== 'undefined') feather.replace();
                 }
             });
 
@@ -191,81 +220,8 @@ function groupSubsections(container) {
    3. PAGE SETTINGS (Font Size, Global Toggles)
    ========================================= */
 function initHeaderFontSize() {
-    const header = document.querySelector('.site-header');
-    if (header && typeof Resizable !== 'undefined') {
-        new Resizable(header, {
-            saveKey: 'site-header',
-            handles: ['s'],
-            minHeight: 60,
-            onResize: () => {
-                // Adjust main content padding to match header height
-                // Default padding is 32px 0 60px.
-                // But sticky sidebar logic relies on top offset.
-                // .sidebar top: 100px.
-                // We should probably update that dynamically if we were thorough.
-                // For now, visual resizing is the main goal.
-            }
-        });
-    }
-
-    const nav = document.querySelector('.site-header .nav');
-    if (!nav) return;
-    if (document.getElementById('header-font-controls')) return;
-
-    const container = document.createElement('div');
-    container.id = 'header-font-controls';
-    container.className = 'header-font-controls';
-    container.style.display = 'flex';
-    container.style.alignItems = 'center';
-    container.style.marginLeft = '16px';
-    container.style.gap = '8px';
-
-    const btnDec = document.createElement('button');
-    btnDec.className = 'btn btn-ghost btn-sm';
-    btnDec.innerHTML = '<i data-feather="minus"></i>';
-    btnDec.title = 'Decrease Font Size';
-    btnDec.style.padding = '4px 8px';
-
-    const btnInc = document.createElement('button');
-    btnInc.className = 'btn btn-ghost btn-sm';
-    btnInc.innerHTML = '<i data-feather="plus"></i>';
-    btnInc.title = 'Increase Font Size';
-    btnInc.style.padding = '4px 8px';
-
-    // Logic
-    const root = document.documentElement;
-    const sizes = ['0.875rem', '0.9375rem', '1rem', '1.125rem', '1.25rem', '1.375rem', '1.5rem'];
-    let currentIndex = 2; // Default 1rem
-
-    // Sync with existing settings if any
-    const saved = localStorage.getItem('font-size-index');
-    if (saved !== null) {
-        currentIndex = parseInt(saved, 10);
-        root.style.setProperty('--font-size-base', sizes[currentIndex]);
-    }
-
-    const update = () => {
-        root.style.setProperty('--font-size-base', sizes[currentIndex]);
-        localStorage.setItem('font-size-index', currentIndex);
-    };
-
-    btnDec.addEventListener('click', () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            update();
-        }
-    });
-
-    btnInc.addEventListener('click', () => {
-        if (currentIndex < sizes.length - 1) {
-            currentIndex++;
-            update();
-        }
-    });
-
-    container.appendChild(btnDec);
-    container.appendChild(btnInc);
-    nav.appendChild(container);
+    // Deprecated in new design - font size control moved to settings panel
+    // Keeping function structure if called, but implementation merged into initPageSettings
 }
 
 function initPageSettings() {
@@ -293,83 +249,84 @@ function initPageSettings() {
     // 2. Create Panel
     const panel = document.createElement('div');
     panel.id = 'page-settings-panel';
-    panel.className = 'page-settings-panel';
+    panel.className = 'section-card'; // Reusing card style for consistent look
+    panel.style.position = 'fixed';
+    panel.style.bottom = '80px';
+    panel.style.left = '20px';
+    panel.style.width = '300px';
+    panel.style.zIndex = '1032';
+    panel.style.display = 'none';
+    panel.style.padding = 'var(--space-4)';
+    panel.style.margin = '0';
 
     panel.innerHTML = `
-        <div class="page-settings-header">
-            <span>Page Settings</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-4); border-bottom:1px solid var(--border-subtle); padding-bottom:var(--space-2);">
+            <h4 style="margin:0; font-size:var(--text-base);">Settings</h4>
             <button class="btn btn-ghost btn-xs" id="close-settings"><i data-feather="x"></i></button>
         </div>
 
-        <div class="setting-group">
-            <span class="setting-label">Font Size</span>
-            <div class="setting-controls">
-                <button class="setting-btn" id="font-dec"><i data-feather="minus"></i></button>
-                <button class="setting-btn" id="font-reset">Default</button>
-                <button class="setting-btn" id="font-inc"><i data-feather="plus"></i></button>
+        <div class="control-group" style="margin-bottom: var(--space-4);">
+            <label>Font Size</label>
+            <div style="display:flex; gap:8px;">
+                <button class="btn btn-secondary btn-sm" id="font-dec" style="flex:1;"><i data-feather="minus"></i></button>
+                <button class="btn btn-ghost btn-sm" id="font-reset" style="flex:1;">Reset</button>
+                <button class="btn btn-secondary btn-sm" id="font-inc" style="flex:1;"><i data-feather="plus"></i></button>
             </div>
         </div>
 
-        <div class="setting-group">
-            <span class="setting-label">Sidebar Width (<span id="sidebar-width-label">85%</span>)</span>
-            <input type="range" id="toc-width-slider" min="70" max="115" value="85" style="width: 100%">
+        <div class="control-group" style="margin-bottom: var(--space-4);">
+            <label>View Mode</label>
+            <button class="btn btn-secondary btn-sm" id="toggle-fullscreen" style="width: 100%;"><i data-feather="maximize"></i> Full Screen</button>
         </div>
 
-        <div class="setting-group">
-            <span class="setting-label">View</span>
-            <button class="setting-btn" id="toggle-fullscreen" style="width: 100%; margin-bottom: 8px;"><i data-feather="maximize"></i> Full Screen</button>
-        </div>
-
-        <div class="setting-group">
-            <span class="setting-label">Sections</span>
-            <div class="setting-controls">
-                <button class="setting-btn" id="sections-expand">Expand All</button>
-                <button class="setting-btn" id="sections-collapse">Collapse All</button>
-            </div>
-        </div>
-
-        <div class="setting-group">
-            <span class="setting-label">Proofs & Solutions</span>
-            <div class="setting-controls">
-                <button class="setting-btn" id="proofs-expand">Show All</button>
-                <button class="setting-btn" id="proofs-collapse">Hide All</button>
+        <div class="control-group" style="margin-bottom: var(--space-4);">
+            <label>Content Expansion</label>
+            <div style="display:flex; gap:8px;">
+                <button class="btn btn-secondary btn-sm" id="sections-expand" style="flex:1;">Expand All</button>
+                <button class="btn btn-secondary btn-sm" id="sections-collapse" style="flex:1;">Collapse</button>
             </div>
         </div>
     `;
 
-    // Resizable (Initialize AFTER innerHTML)
-    if (typeof Resizable !== 'undefined') {
-        new Resizable(panel, {
-            saveKey: 'page-settings-panel',
-            handles: ['n', 'e', 'ne'],
-            minWidth: 260,
-            minHeight: 200
-        });
-    }
-
+    // Resizable logic could be added here if needed, but fixed width is cleaner for settings
+    
     document.body.appendChild(panel);
 
     // 3. Event Listeners
 
     // Toggle Panel
     triggerBtn.addEventListener('click', () => {
-        panel.classList.toggle('active');
+        if (panel.style.display === 'none') {
+            panel.style.display = 'block';
+            triggerBtn.classList.add('active');
+        } else {
+            panel.style.display = 'none';
+            triggerBtn.classList.remove('active');
+        }
     });
+    
     document.getElementById('close-settings').addEventListener('click', () => {
-        panel.classList.remove('active');
+        panel.style.display = 'none';
+        triggerBtn.classList.remove('active');
     });
 
     // Font Size Logic
     const root = document.documentElement;
-    let currentSizeLevel = 0; // 0 = Default (1rem)
     const sizes = ['0.875rem', '0.9375rem', '1rem', '1.125rem', '1.25rem', '1.375rem', '1.5rem'];
     const defaultIndex = 2; // 1rem
     let currentIndex = defaultIndex;
 
+    // Load saved font size
+    const savedFont = localStorage.getItem('font-size-index');
+    if (savedFont !== null) {
+        currentIndex = parseInt(savedFont, 10);
+        root.style.setProperty('--text-base', sizes[currentIndex]);
+    }
+
     const updateFont = () => {
-        root.style.setProperty('--font-size-base', sizes[currentIndex]);
-        // Visual feedback
-        document.getElementById('font-reset').textContent = (currentIndex === defaultIndex) ? 'Default' : sizes[currentIndex];
+        root.style.setProperty('--text-base', sizes[currentIndex]);
+        localStorage.setItem('font-size-index', currentIndex);
+        document.getElementById('font-reset').textContent = (currentIndex === defaultIndex) ? 'Reset' : sizes[currentIndex];
     };
 
     document.getElementById('font-dec').addEventListener('click', () => {
@@ -391,78 +348,6 @@ function initPageSettings() {
         updateFont();
     });
 
-    // Sidebar Resizer
-    initTocResizer();
-
-    // Global Toggles: Sections
-    const toggleSections = (expand) => {
-        document.querySelectorAll('.hierarchical-section').forEach(sec => {
-            if (expand) {
-                sec.classList.remove('collapsed');
-            } else {
-                sec.classList.add('collapsed');
-            }
-            // Update icon
-            const h = sec.querySelector('h2, h3');
-            const icon = h ? h.querySelector('.toggle-icon') : null;
-            if (icon) {
-                icon.innerHTML = expand ? '<i data-feather="chevron-down"></i>' : '<i data-feather="chevron-right"></i>';
-            }
-        });
-        feather.replace();
-    };
-
-    document.getElementById('sections-expand').addEventListener('click', () => toggleSections(true));
-    document.getElementById('sections-collapse').addEventListener('click', () => toggleSections(false));
-
-    // Global Toggles: Proofs/Environments
-    const toggleEnvs = (expand) => {
-        const selector = '.proof-box, .solution-box, .recap-box, .answer';
-        document.querySelectorAll(selector).forEach(box => {
-            if (expand) {
-                box.classList.remove('env-collapsed');
-            } else {
-                box.classList.add('env-collapsed');
-            }
-            // Update icon btn
-            const btn = box.querySelector('.env-toggle-btn');
-            if (btn) {
-                btn.innerHTML = expand ? '<i data-feather="chevron-up"></i>' : '<i data-feather="chevron-down"></i>';
-            }
-        });
-        feather.replace();
-    };
-
-    document.getElementById('proofs-expand').addEventListener('click', () => toggleEnvs(true));
-    document.getElementById('proofs-collapse').addEventListener('click', () => toggleEnvs(false));
-}
-
-
-function initTocResizer() {
-    const slider = document.getElementById('toc-width-slider');
-    const label = document.getElementById('sidebar-width-label');
-    if (!slider) return;
-
-    // Load saved width
-    const savedWidth = localStorage.getItem('toc-width-percent');
-    if (savedWidth) {
-        slider.value = savedWidth;
-        updateTocWidth(savedWidth);
-    } else {
-        // Default 85%
-        slider.value = 85;
-        updateTocWidth(85);
-    }
-
-    if (label) label.textContent = slider.value + '%';
-
-    slider.addEventListener('input', (e) => {
-        const percent = e.target.value;
-        if (label) label.textContent = percent + '%';
-        updateTocWidth(percent);
-        localStorage.setItem('toc-width-percent', percent);
-    });
-
     // Fullscreen toggle
     const fsBtn = document.getElementById('toggle-fullscreen');
     if (fsBtn) {
@@ -476,23 +361,55 @@ function initTocResizer() {
                     fsBtn.innerHTML = '<i data-feather="maximize"></i> Full Screen';
                 }
             }
-            feather.replace();
+            if (typeof feather !== 'undefined') feather.replace();
         });
     }
-}
 
-function updateTocWidth(percent) {
-    // Base width is approx 330px (280px + padding/margins) or we define 100% as 330px
-    // Let's assume 100% = 330px.
-    // Actually, user said "70% of current version to 115%". Current is 280px.
-    const baseWidth = 330; // 280px roughly
-    const newWidth = (percent / 100) * baseWidth;
-    document.documentElement.style.setProperty('--sidebar-width', `${newWidth}px`);
+    // Global Toggles
+    const toggleSections = (expand) => {
+        document.querySelectorAll('.hierarchical-section').forEach(sec => {
+            const h = sec.querySelector('h2, h3');
+            const icon = h ? h.querySelector('.toggle-icon') : null;
+            const content = sec.querySelector('.hierarchical-content');
+
+            if (expand) {
+                sec.classList.remove('collapsed');
+                if (content) content.classList.remove('hidden');
+                if (icon) icon.innerHTML = '<i data-feather="chevron-down"></i>';
+            } else {
+                sec.classList.add('collapsed');
+                if (content) content.classList.add('hidden');
+                if (icon) icon.innerHTML = '<i data-feather="chevron-right"></i>';
+            }
+        });
+        
+        // Also toggle Proofs/Boxes
+        const selector = '.proof-box, .solution-box, .recap-box, .answer';
+        document.querySelectorAll(selector).forEach(box => {
+            const btn = box.querySelector('.env-toggle-btn');
+            const content = box.querySelector('.env-collapsible-content');
+            
+            if (expand) {
+                box.classList.remove('env-collapsed');
+                if (content) content.style.display = 'block';
+                if (btn) btn.innerHTML = '<i data-feather="chevron-up"></i>';
+            } else {
+                box.classList.add('env-collapsed');
+                if (content) content.style.display = 'none';
+                if (btn) btn.innerHTML = '<i data-feather="chevron-down"></i>';
+            }
+        });
+
+        if (typeof feather !== 'undefined') feather.replace();
+    };
+
+    document.getElementById('sections-expand').addEventListener('click', () => toggleSections(true));
+    document.getElementById('sections-collapse').addEventListener('click', () => toggleSections(false));
 }
 
 
 /* =========================================
-   4. SIDEBAR & THEME (Legacy/Existing)
+   4. SIDEBAR TOGGLE
    ========================================= */
 function initSidebarToggle() {
     const sidebar = document.querySelector('.sidebar');
@@ -502,35 +419,55 @@ function initSidebarToggle() {
 
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'sidebar-toggle';
-    toggleBtn.className = 'btn btn-ghost';
+    toggleBtn.className = 'btn btn-secondary';
     toggleBtn.style.position = 'fixed';
-    toggleBtn.style.bottom = '80px'; // Shifted up
+    toggleBtn.style.bottom = '80px'; 
     toggleBtn.style.left = '20px';
     toggleBtn.style.zIndex = '1030';
-    toggleBtn.style.backgroundColor = 'var(--surface-1)';
-    toggleBtn.style.boxShadow = 'var(--shadow-md)';
     toggleBtn.style.borderRadius = '50%';
-    toggleBtn.style.width = '40px';
-    toggleBtn.style.height = '40px';
+    toggleBtn.style.width = '48px';
+    toggleBtn.style.height = '48px';
     toggleBtn.style.padding = '0';
-    toggleBtn.style.display = 'flex';
+    toggleBtn.style.display = 'none'; // Hidden by default, shown via media query typically
     toggleBtn.style.alignItems = 'center';
     toggleBtn.style.justifyContent = 'center';
     toggleBtn.title = 'Toggle Sidebar';
 
-    toggleBtn.innerHTML = '<i data-feather="layout"></i>'; // Changed icon to distinguish from sidebar icon
+    toggleBtn.innerHTML = '<i data-feather="menu"></i>';
 
     document.body.appendChild(toggleBtn);
 
-    const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-    if (isCollapsed) {
-        sidebar.classList.add('collapsed');
-    }
+    // Show button only on smaller screens via JS check
+    const checkSize = () => {
+        if (window.innerWidth <= 1024) {
+            toggleBtn.style.display = 'flex';
+        } else {
+            toggleBtn.style.display = 'none';
+            sidebar.classList.remove('active'); // Reset sidebar on large screens
+        }
+    };
+    
+    window.addEventListener('resize', checkSize);
+    checkSize();
 
     toggleBtn.addEventListener('click', () => {
-        const collapsed = sidebar.classList.toggle('collapsed');
-        localStorage.setItem('sidebar-collapsed', collapsed);
-        window.dispatchEvent(new Event('resize'));
+        sidebar.classList.toggle('active');
+        // We might need CSS to handle .sidebar.active for mobile slide-in
+        if (sidebar.classList.contains('active')) {
+             sidebar.style.position = 'fixed';
+             sidebar.style.top = '70px';
+             sidebar.style.left = '0';
+             sidebar.style.height = 'calc(100vh - 70px)';
+             sidebar.style.width = '80%';
+             sidebar.style.maxWidth = '300px';
+             sidebar.style.zIndex = '2000';
+             sidebar.style.background = 'var(--bg-surface-1)';
+             sidebar.style.borderRight = '1px solid var(--border-subtle)';
+             sidebar.style.padding = 'var(--space-4)';
+             sidebar.style.display = 'block';
+        } else {
+             sidebar.style = ''; // Reset inline styles
+        }
     });
 }
 

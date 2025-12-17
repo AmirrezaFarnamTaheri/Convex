@@ -4,17 +4,14 @@
  * Description: Compares the convergence of Gradient Descent, Momentum, and Newton's method
  *              on a quadratic function with a user-adjustable condition number.
  *              Visualizes the "zig-zag" behavior of GD on ill-conditioned problems.
- * Version: 3.0.0
+ * Version: 3.1.0 (Styled)
  */
 import { getPyodide } from "../../../../static/js/pyodide-manager.js";
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export async function initConditionNumber(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
     // Initial loading
     container.innerHTML = `
@@ -34,43 +31,45 @@ export async function initConditionNumber(containerId) {
         <div class="widget-container">
             <div class="widget-controls">
                  <div class="control-group" style="flex: 1; min-width: 200px;">
-                    <label>Condition Number (κ): <span id="kappa-value" class="widget-value-display">10</span></label>
-                    <input type="range" id="kappa-slider" min="1" max="50" step="1" value="10" class="widget-slider">
-                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;">
-                        Controls the "stretch" of the elliptical contours. High κ = Narrow Valley.
+                    <label style="display:flex; justify-content:space-between; font-size:var(--text-xs); color:var(--text-tertiary);">
+                        Condition Number (κ) <span id="kappa-value" style="font-weight:600; color:var(--text-primary);">10</span>
+                    </label>
+                    <input type="range" id="kappa-slider" min="1" max="50" step="1" value="10" style="width:100%;">
+                    <div style="font-size: 0.7rem; color: var(--text-tertiary); margin-top: 4px;">
+                        Controls elliptical "stretch". High κ = Narrow Valley.
                     </div>
                 </div>
                 <div class="control-group">
-                    <label>Simulation Speed</label>
-                    <select id="speed-select" class="widget-select">
+                    <label style="font-size:var(--text-xs); color:var(--text-tertiary);">Simulation Speed</label>
+                    <select id="speed-select" style="width:100%; padding:4px;">
                         <option value="200">Normal</option>
                         <option value="500" selected>Slow (See Zig-Zag)</option>
                         <option value="1000">Very Slow</option>
                     </select>
                 </div>
-                <div class="control-group">
-                    <button id="run-button" class="btn btn-primary">Run Simulation</button>
+                <div class="control-group" style="align-self: flex-end;">
+                    <button id="run-button" class="btn btn-primary btn-sm" style="width:100%;">Run Simulation</button>
                 </div>
             </div>
 
-            <div class="widget-canvas-container" id="plot-container" style="height: 400px;"></div>
+            <div class="widget-canvas-container" id="plot-container" style="height: 400px; background: var(--bg-surface-1);"></div>
 
             <div id="output-container" class="widget-output">
-                <div style="display: flex; gap: 24px; justify-content: center; text-align: center;">
+                <div style="display: flex; gap: 24px; justify-content: center; text-align: center; margin-bottom:12px;">
                     <div>
-                        <div style="color: var(--primary-500); font-weight: bold; font-size: 1.2rem;" id="gd-steps">-</div>
-                        <div style="color: var(--text-secondary); font-size: 0.8rem;">Gradient Descent</div>
+                        <div style="color: var(--primary-500); font-weight: 700; font-size: 1.25rem;" id="gd-steps">-</div>
+                        <div style="color: var(--text-secondary); font-size: 0.75rem; text-transform:uppercase; letter-spacing:0.5px;">Gradient Descent</div>
                     </div>
                     <div>
-                        <div style="color: var(--accent-500); font-weight: bold; font-size: 1.2rem;" id="mom-steps">-</div>
-                        <div style="color: var(--text-secondary); font-size: 0.8rem;">Momentum</div>
+                        <div style="color: var(--accent-500); font-weight: 700; font-size: 1.25rem;" id="mom-steps">-</div>
+                        <div style="color: var(--text-secondary); font-size: 0.75rem; text-transform:uppercase; letter-spacing:0.5px;">Momentum</div>
                     </div>
                     <div>
-                        <div style="color: #ff6b6b; font-weight: bold; font-size: 1.2rem;" id="newton-steps">-</div>
-                        <div style="color: var(--text-secondary); font-size: 0.8rem;">Newton's Method</div>
+                        <div style="color: #ef4444; font-weight: 700; font-size: 1.25rem;" id="newton-steps">-</div>
+                        <div style="color: var(--text-secondary); font-size: 0.75rem; text-transform:uppercase; letter-spacing:0.5px;">Newton's Method</div>
                     </div>
                 </div>
-                <div id="explanation-text" style="margin-top: 12px; font-size: 0.85rem; color: var(--text-main); border-top: 1px solid var(--border-default); padding-top: 8px;">
+                <div id="explanation-text" style="font-size: 0.85rem; color: var(--text-secondary); border-top: 1px solid var(--border-subtle); padding-top: 8px; line-height:1.5;">
                     Adjust <strong>Condition Number</strong> and click <strong>Run</strong>. Observe how Gradient Descent struggles with high curvature.
                 </div>
             </div>
@@ -92,21 +91,10 @@ export async function initConditionNumber(containerId) {
 import numpy as np
 
 def solve(kappa, max_iter=100):
-    # Problem: Minimize f(x, y) = 0.5 * (x^2 + kappa * y^2)
-    # This corresponds to A = diag(1, kappa).
-    # Condition number = kappa / 1 = kappa.
-    # Target optimum is (0, 0).
-
-    # Start point: intentionally off-axis to provoke zig-zag
     x_start = np.array([3.5, 2.5])
+    alpha = 1.9 / (kappa + 1) # Conservative step size
 
-    # --- Gradient Descent ---
-    # Step size alpha. Ideally 1/L to 2/L. L = kappa.
-    # To show stable but slow convergence, we pick alpha slightly less than 2/kappa.
-    # Let's use alpha = 1.8 / (kappa + 1) for guaranteed convergence but slow.
-    # Actually, optimal constant step is 2/(L+mu) = 2/(kappa+1).
-    alpha = 1.9 / (kappa + 1)
-
+    # GD
     x_gd = x_start.copy()
     path_gd = [x_gd.tolist()]
     for _ in range(max_iter):
@@ -115,12 +103,10 @@ def solve(kappa, max_iter=100):
         x_gd = x_gd - alpha * grad
         path_gd.append(x_gd.tolist())
 
-    # --- Momentum (Polyak) ---
-    # Parameters from theory for quadratics
+    # Momentum
     sqrt_k = np.sqrt(kappa)
     beta = ((sqrt_k - 1) / (sqrt_k + 1))**2
     alpha_mom = 4 / (sqrt_k + 1)**2
-
     v_mom = np.zeros(2)
     x_mom = x_start.copy()
     path_mom = [x_mom.tolist()]
@@ -131,25 +117,16 @@ def solve(kappa, max_iter=100):
         x_mom = x_mom - v_mom
         path_mom.append(x_mom.tolist())
 
-    # --- Newton's Method ---
-    # Converges in 1 step for quadratics
-    # x_new = x_old - H_inv @ grad
-    # H = diag(1, kappa), H_inv = diag(1, 1/kappa)
+    # Newton (1 step for quadratic)
     path_newton = [x_start.tolist(), [0.0, 0.0]]
 
-    return {
-        "gd": path_gd,
-        "momentum": path_mom,
-        "newton": path_newton
-    }
+    return { "gd": path_gd, "momentum": path_mom, "newton": path_newton }
 
 def get_contours(kappa):
-    # Generate grid for contour plot
     nx, ny = 50, 50
     x = np.linspace(-4, 4, nx)
     y = np.linspace(-4, 4, ny)
     X, Y = np.meshgrid(x, y)
-    # f(x,y) = 0.5 * (x^2 + kappa * y^2)
     Z = 0.5 * (X**2 + kappa * Y**2)
     return Z.tolist()
 `;
@@ -175,22 +152,24 @@ def get_contours(kappa):
         xScale = d3.scaleLinear().domain([-4, 4]).range([0, width]);
         yScale = d3.scaleLinear().domain([-4, 4]).range([height, 0]);
 
-        svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xScale));
-        svg.append("g").attr("class", "axis").call(d3.axisLeft(yScale));
+        // Axes
+        svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xScale).ticks(5));
+        svg.append("g").attr("class", "axis").call(d3.axisLeft(yScale).ticks(5));
 
+        // Layers
         svg.append("g").attr("class", "contours");
         svg.append("g").attr("class", "paths");
-        svg.append("g").attr("class", "points"); // For dots at each step
+        svg.append("g").attr("class", "points"); 
 
         // Legend
-        const legend = svg.append("g").attr("transform", `translate(${width - 140}, 20)`);
+        const legend = svg.append("g").attr("transform", `translate(${width - 120}, 10)`);
         const addItem = (color, label, y) => {
-            legend.append("rect").attr("x", 0).attr("y", y).attr("width", 12).attr("height", 12).attr("fill", color).attr("rx", 2);
-            legend.append("text").attr("x", 20).attr("y", y + 10).text(label).style("font-size", "12px").style("fill", "var(--text-main)");
+            legend.append("rect").attr("x", 0).attr("y", y).attr("width", 10).attr("height", 10).attr("fill", color).attr("rx", 2);
+            legend.append("text").attr("x", 16).attr("y", y + 9).text(label).style("font-size", "10px").style("fill", "var(--text-secondary)").style("font-family", "var(--font-sans)");
         }
         addItem("var(--primary-500)", "Gradient Descent", 0);
-        addItem("var(--accent-500)", "Momentum", 20);
-        addItem("#ff6b6b", "Newton", 40);
+        addItem("var(--accent-500)", "Momentum", 16);
+        addItem("#ef4444", "Newton", 32);
     }
 
     function drawContours(kappa) {
@@ -198,26 +177,18 @@ def get_contours(kappa):
         const n = contoursData.length;
         const m = contoursData[0].length;
         const values = new Float64Array(n * m);
-        for (let j = 0; j < n; ++j) {
-            for (let k = 0; k < m; ++k) values[j * m + k] = contoursData[j][k];
-        }
+        for (let j = 0; j < n; ++j) for (let k = 0; k < m; ++k) values[j * m + k] = contoursData[j][k];
 
-        const contours = d3.contours().size([n, m]).thresholds(d3.range(0, 20, 1))(values);
+        const contours = d3.contours().size([n, m]).thresholds(d3.range(0, 20, 1.5))(values);
         const transform = d3.geoTransform({
-            point: function(px, py) {
-                this.stream.point(xScale(px / n * 8 - 4), yScale(py / m * 8 - 4));
-            }
+            point: function(px, py) { this.stream.point(xScale(px / n * 8 - 4), yScale(py / m * 8 - 4)); }
         });
         const path = d3.geoPath().projection(transform);
 
         svg.select(".contours").selectAll("path").remove();
         svg.select(".contours").selectAll("path").data(contours)
-            .enter().append("path")
-            .attr("d", path)
-            .attr("fill", "none")
-            .attr("stroke", "var(--border-default)")
-            .attr("stroke-width", 1)
-            .attr("opacity", 0.4);
+            .enter().append("path").attr("d", path)
+            .attr("fill", "none").attr("stroke", "var(--border-strong)").attr("stroke-width", 1).attr("opacity", 0.3);
     }
 
     function animatePath(pathData, color, className, stepDuration) {
@@ -225,64 +196,40 @@ def get_contours(kappa):
         const pathGroup = svg.select(".paths");
         const pointsGroup = svg.select(".points");
 
-        // Draw full path initially invisible
-        const p = pathGroup.append("path")
-            .datum(pathData)
-            .attr("class", className)
-            .attr("d", line)
-            .attr("fill", "none")
-            .attr("stroke", color)
-            .attr("stroke-width", 2)
-            .attr("stroke-opacity", 0) // Hidden start
-            .attr("stroke-linejoin", "round")
-            .attr("stroke-linecap", "round");
-
-        // Animate point by point
         let currentStep = 0;
         const totalSteps = pathData.length;
 
         function step() {
             if (currentStep >= totalSteps) return;
-
-            // Show path up to current index
             const partialPath = pathData.slice(0, currentStep + 1);
+            
+            // Remove old partial path
             pathGroup.select(`.${className}-partial`).remove();
+            
             pathGroup.append("path")
-                .datum(partialPath)
-                .attr("class", `${className}-partial`)
-                .attr("d", line)
-                .attr("fill", "none")
-                .attr("stroke", color)
-                .attr("stroke-width", 2)
-                .attr("stroke-linejoin", "round");
+                .datum(partialPath).attr("class", `${className}-partial`)
+                .attr("d", line).attr("fill", "none")
+                .attr("stroke", color).attr("stroke-width", 2).attr("stroke-linejoin", "round");
 
-            // Draw dot at current head
             pointsGroup.selectAll(`.${className}-head`).remove();
             pointsGroup.append("circle")
                 .attr("class", `${className}-head`)
-                .attr("cx", xScale(pathData[currentStep][0]))
-                .attr("cy", yScale(pathData[currentStep][1]))
-                .attr("r", 4)
-                .attr("fill", color)
-                .attr("stroke", "var(--surface-1)")
-                .attr("stroke-width", 1);
+                .attr("cx", xScale(pathData[currentStep][0])).attr("cy", yScale(pathData[currentStep][1]))
+                .attr("r", 3).attr("fill", color).attr("stroke", "var(--bg-surface-1)").attr("stroke-width", 1);
 
             currentStep++;
-            if (currentStep < totalSteps) {
-                setTimeout(step, stepDuration);
-            }
+            if (currentStep < totalSteps) setTimeout(step, stepDuration);
         }
         step();
     }
 
     async function run() {
         runButton.disabled = true;
+        runButton.textContent = "Running...";
         const kappa = parseFloat(kappaSlider.value);
         const delay = parseInt(speedSelect.value);
 
         kappaValueSpan.textContent = kappa;
-
-        // Clear previous
         svg.select(".paths").selectAll("*").remove();
         svg.select(".points").selectAll("*").remove();
         gdStepsDisplay.textContent = "-";
@@ -290,39 +237,32 @@ def get_contours(kappa):
         newtonStepsDisplay.textContent = "-";
 
         drawContours(kappa);
-
         const results = pyodideSolve(kappa).toJs({ create_proxies: false });
 
-        // Animate concurrently
         animatePath(results.gd, "var(--primary-500)", "gd", delay);
         animatePath(results.momentum, "var(--accent-500)", "mom", delay);
-        animatePath(results.newton, "#ff6b6b", "newton", delay);
+        animatePath(results.newton, "#ef4444", "newton", delay);
 
-        // Update texts after animation roughly finishes? Or immediately?
-        // Let's update immediately so user sees the final count
         gdStepsDisplay.textContent = results.gd.length - 1;
         momStepsDisplay.textContent = results.momentum.length - 1;
         newtonStepsDisplay.textContent = results.newton.length - 1;
 
-        // Update explanation
         if (kappa > 15) {
-            explanationText.innerHTML = `At high condition number (κ=${kappa}), <strong>Gradient Descent</strong> oscillates ("zig-zags") because the gradient is nearly orthogonal to the direction of the minimum. <strong>Momentum</strong> dampens these oscillations. <strong>Newton's method</strong> rescales the space and jumps straight to the solution.`;
+            explanationText.innerHTML = `At high condition number (κ=${kappa}), <strong style="color:var(--primary-500)">Gradient Descent</strong> oscillates ("zig-zags") because the gradient is nearly orthogonal to the optimal direction. <strong style="color:var(--accent-500)">Momentum</strong> dampens these oscillations. <strong style="color:#ef4444">Newton</strong> jumps straight to the solution.`;
         } else {
-            explanationText.innerHTML = `At low condition number (κ=${kappa}), the problem is "round" (well-conditioned). All methods perform relatively well, though Newton is still exact in one step.`;
+            explanationText.innerHTML = `At low condition number (κ=${kappa}), the problem is "round" (well-conditioned). All methods perform relatively well.`;
         }
 
-        // Re-enable button after estimated time
         const maxSteps = Math.max(results.gd.length, results.momentum.length, results.newton.length);
-        setTimeout(() => { runButton.disabled = false; }, maxSteps * delay + 500);
+        setTimeout(() => { 
+            runButton.disabled = false; 
+            runButton.textContent = "Run Simulation";
+        }, maxSteps * delay + 500);
     }
 
-    // --- INITIALIZATION ---
     setupPlot();
-
     const resizeObserver = new ResizeObserver(() => {
         setupPlot();
-        // If we wanted to retain the last run state we'd need to store it.
-        // For now just redraw contours at current kappa
         drawContours(parseFloat(kappaSlider.value));
     });
     resizeObserver.observe(plotContainer);
@@ -333,10 +273,5 @@ def get_contours(kappa):
     });
 
     runButton.addEventListener("click", run);
-
-    // Run once on load
     drawContours(10);
-    // Small delay to let layout settle before auto-running or just wait for user?
-    // Let's just wait for user to click run, or run once quickly.
-    // run(); // Let's wait for user to preserve "Race" feel.
 }

@@ -3,17 +3,14 @@
  *
  * Description: Interactively displays the unit balls for ℓ_p norms and allows users
  *              to explore the norm of a point in 2D space.
- * Version: 2.0.0
+ * Version: 2.1.0 (Styled & Interactive)
  */
 
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 export function initNormGeometryVisualizer(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
     let p = 2; // Default to L2 norm
     let userPoint = { x: 0.8, y: 0.8 };
@@ -23,11 +20,11 @@ export function initNormGeometryVisualizer(containerId) {
         <div class="widget-container">
             <div class="widget-canvas-container" id="plot-container"></div>
             <div class="widget-controls">
-                <div class="widget-control-group">
-                    <label class="widget-label" for="p-slider">p-value: <span id="p-value-label" class="widget-value-display">2.0</span></label>
-                    <input type="range" id="p-slider" min="1" max="10" step="0.1" value="2" class="widget-slider">
+                <div class="control-group">
+                    <label>Norm Parameter ($p$): <span id="p-value-label" style="color:var(--primary-400); font-weight:bold;">2.0</span></label>
+                    <input type="range" id="p-slider" min="1" max="10" step="0.1" value="2" style="width:100%;">
                 </div>
-                <div id="p-buttons" class="widget-control-group" style="flex-direction: row; gap: 8px;"></div>
+                <div id="p-buttons" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
             </div>
             <div id="output-container" class="widget-output"></div>
         </div>
@@ -40,15 +37,15 @@ export function initNormGeometryVisualizer(containerId) {
     const outputContainer = container.querySelector("#output-container");
 
     const buttons = [
-        { label: "L¹ (p=1)", value: 1 },
-        { label: "L² (p=2)", value: 2 },
-        { label: "L¹⁰ (p=10)", value: 10 },
-        { label: "L∞ (Infinity)", value: Infinity }
+        { label: "L¹ (Diamond)", value: 1 },
+        { label: "L² (Circle)", value: 2 },
+        { label: "L⁴ (Squircle)", value: 4 },
+        { label: "L∞ (Square)", value: Infinity }
     ];
 
     buttons.forEach(btnInfo => {
         const button = document.createElement("button");
-        button.className = "widget-btn";
+        button.className = "btn btn-sm btn-secondary";
         button.textContent = btnInfo.label;
         button.onclick = () => {
             p = btnInfo.value;
@@ -57,25 +54,34 @@ export function initNormGeometryVisualizer(containerId) {
                 pValueLabel.textContent = p.toFixed(1);
                 pSlider.disabled = false;
             } else {
-                pValueLabel.textContent = "Infinity";
+                pValueLabel.textContent = "∞";
                 pSlider.disabled = true;
             }
             // Update active state
-            Array.from(pButtonsContainer.children).forEach(btn => btn.classList.remove('primary'));
-            button.classList.add('primary');
+            Array.from(pButtonsContainer.children).forEach(b => {
+                b.classList.remove('btn-primary');
+                b.classList.add('btn-secondary');
+            });
+            button.classList.remove('btn-secondary');
+            button.classList.add('btn-primary');
 
             update();
         };
-        if (btnInfo.value === 2) button.classList.add('primary');
+        if (btnInfo.value === 2) {
+            button.classList.remove('btn-secondary');
+            button.classList.add('btn-primary');
+        }
         pButtonsContainer.appendChild(button);
     });
 
     pSlider.oninput = () => {
         p = parseFloat(pSlider.value);
         pValueLabel.textContent = p.toFixed(1);
-        // Deselect infinity button if manually sliding
         Array.from(pButtonsContainer.children).forEach(btn => {
-            if (btn.textContent.includes("Infinity")) btn.classList.remove('primary');
+            if (btn.textContent.includes("∞")) {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            }
         });
         update();
     };
@@ -85,7 +91,7 @@ export function initNormGeometryVisualizer(containerId) {
 
     function setupChart() {
         plotContainer.innerHTML = '';
-        const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+        const margin = { top: 20, right: 20, bottom: 20, left: 20 };
         const width = plotContainer.clientWidth - margin.left - margin.right;
         const height = plotContainer.clientHeight - margin.top - margin.bottom;
 
@@ -97,116 +103,88 @@ export function initNormGeometryVisualizer(containerId) {
             .append("g")
             .attr("transform", `translate(${margin.left + width / 2}, ${margin.top + height / 2})`);
 
-        const domain = 1.6;
+        const domain = 1.5;
         x = d3.scaleLinear().domain([-domain, domain]).range([-width / 2, width / 2]);
         y = d3.scaleLinear().domain([-domain, domain]).range([height / 2, -height / 2]);
 
-        // Grid lines
-        svg.append("g").attr("class", "grid-line x-grid").call(d3.axisBottom(x).ticks(5).tickSize(-height).tickFormat(""));
-        svg.append("g").attr("class", "grid-line y-grid").call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(""));
-
         // Axes
-        svg.append("g").attr("class", "axis x-axis").attr("transform", `translate(0, ${height / 2})`).call(d3.axisBottom(x).ticks(5));
-        svg.append("g").attr("class", "axis y-axis").attr("transform", `translate(${-width/2}, 0)`).call(d3.axisLeft(y).ticks(5));
+        svg.append("line").attr("x1", x(-domain)).attr("x2", x(domain)).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "var(--border-default)");
+        svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", y(-domain)).attr("y2", y(domain)).attr("stroke", "var(--border-default)");
 
+        // Unit Ball Path
         svg.append("path").attr("class", "unit-ball")
-            .attr("fill", "rgba(124, 197, 255, 0.2)")
-            .attr("stroke", "var(--color-primary)")
+            .attr("fill", "rgba(59, 130, 246, 0.15)")
+            .attr("stroke", "var(--primary-500)")
             .attr("stroke-width", 2);
 
-        // Group for the user point and its projection
-        svg.append("g").attr("class", "user-point-group");
+        // User Point Group
+        const pointGroup = svg.append("g").attr("class", "user-point-group");
+        
+        pointGroup.append("line").attr("class", "connector").attr("stroke-dasharray", "4,4").attr("stroke", "var(--text-tertiary)");
+        pointGroup.append("circle").attr("class", "handle")
+            .attr("r", 8)
+            .attr("fill", "var(--accent-400)")
+            .attr("stroke", "white")
+            .attr("stroke-width", 2)
+            .style("cursor", "grab")
+            .call(d3.drag()
+                .on("drag", function(event) {
+                    const [mx, my] = d3.pointer(event, svg.node());
+                    userPoint.x = x.invert(mx);
+                    userPoint.y = y.invert(my);
+                    update();
+                }));
     }
-
-    const drag = d3.drag()
-        .on("start", (event) => d3.select(event.sourceEvent.target).raise().classed("active", true))
-        .on("drag", function(event) {
-            const [mx, my] = d3.pointer(event, svg.node());
-            userPoint.x = x.invert(mx);
-            userPoint.y = y.invert(my);
-            update();
-        })
-        .on("end", () => d3.select(event.sourceEvent.target).classed("active", false));
 
     function update() {
-        drawUnitBall();
-        drawUserPoint();
-        updateOutput();
-    }
-
-    function calculateNorm(point) {
-        if (p === Infinity) {
-            return Math.max(Math.abs(point.x), Math.abs(point.y));
-        }
-        return Math.pow(Math.pow(Math.abs(point.x), p) + Math.pow(Math.abs(point.y), p), 1 / p);
-    }
-
-    function drawUnitBall() {
+        // Draw Unit Ball
         const points = [];
         const numPoints = 200;
         for (let i = 0; i <= numPoints; i++) {
             const angle = (i / numPoints) * 2 * Math.PI;
-            const cos_a = Math.cos(angle);
-            const sin_a = Math.sin(angle);
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
             let r;
-
-            if (p === Infinity) {
-                r = 1 / Math.max(Math.abs(cos_a), Math.abs(sin_a));
-            } else {
-                r = Math.pow(Math.pow(Math.abs(cos_a), p) + Math.pow(Math.abs(sin_a), p), -1 / p);
-            }
-            points.push({ x: r * cos_a, y: r * sin_a });
+            if (p === Infinity) r = 1 / Math.max(Math.abs(cos), Math.abs(sin));
+            else r = Math.pow(Math.pow(Math.abs(cos), p) + Math.pow(Math.abs(sin), p), -1 / p);
+            points.push({ x: r * cos, y: r * sin });
         }
+        svg.select(".unit-ball").datum(points).attr("d", d3.line().x(d => x(d.x)).y(d => y(d.y)));
 
-        const lineGenerator = d3.line().x(d => x(d.x)).y(d => y(d.y)).curve(d3.curveLinearClosed);
-        svg.select(".unit-ball").datum(points).attr("d", lineGenerator);
+        // Update Point
+        const pg = svg.select(".user-point-group");
+        pg.select(".connector")
+            .attr("x1", x(0)).attr("y1", y(0))
+            .attr("x2", x(userPoint.x)).attr("y2", y(userPoint.y));
+        pg.select(".handle")
+            .attr("cx", x(userPoint.x)).attr("cy", y(userPoint.y));
+
+        updateOutput();
     }
 
-    function drawUserPoint() {
-        const pointGroup = svg.select(".user-point-group");
-        pointGroup.selectAll("*").remove();
-
-        // Dashed line to origin
-        pointGroup.append("line")
-            .attr("x1", x(0)).attr("y1", y(0))
-            .attr("x2", x(userPoint.x)).attr("y2", y(userPoint.y))
-            .attr("stroke", "var(--color-accent)")
-            .attr("stroke-width", 1.5)
-            .attr("stroke-dasharray", "4 4");
-
-        // The point
-        pointGroup.append("circle")
-            .attr("class", "handle")
-            .attr("cx", x(userPoint.x)).attr("cy", y(userPoint.y))
-            .attr("r", 6)
-            .attr("fill", "var(--color-accent)")
-            .call(drag);
+    function calculateNorm(pt) {
+        if (p === Infinity) return Math.max(Math.abs(pt.x), Math.abs(pt.y));
+        return Math.pow(Math.pow(Math.abs(pt.x), p) + Math.pow(Math.abs(pt.y), p), 1 / p);
     }
 
     function updateOutput() {
         const norm = calculateNorm(userPoint);
-        const pDisplay = p === Infinity ? "∞" : p.toFixed(1);
-        const isInside = norm <= 1.001;
-
+        const pStr = p === Infinity ? "∞" : p;
+        const color = norm <= 1.05 ? "var(--success)" : "var(--error)"; // Slight tolerance for visual feedback
+        
         outputContainer.innerHTML = `
-            <p><strong>Point x:</strong> [${userPoint.x.toFixed(2)}, ${userPoint.y.toFixed(2)}]</p>
-            <p><strong>Norm ||x||<sub>${pDisplay}</sub>:</strong> <span style="color: ${isInside ? 'var(--color-success)' : 'var(--color-error)'}">${norm.toFixed(3)}</span></p>
-            <p style="color: var(--color-text-muted); font-size: 0.9em;">
-                ${isInside ? "✓ Point is inside the unit ball." : "✕ Point is outside the unit ball."}
-            </p>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Point: <code>(${userPoint.x.toFixed(2)}, ${userPoint.y.toFixed(2)})</code></span>
+                <span>Norm ||x||<sub>${pStr}</sub>: <strong style="color:${color}">${norm.toFixed(3)}</strong></span>
+            </div>
         `;
     }
 
-    // --- RESPONSIVENESS ---
     const resizeObserver = new ResizeObserver(entries => {
-        if (entries[0].target === plotContainer) {
-            setupChart();
-            update();
-        }
+        if (entries[0].target === plotContainer) { setupChart(); update(); }
     });
     resizeObserver.observe(plotContainer);
 
-    // Initial setup
     setupChart();
     update();
 }

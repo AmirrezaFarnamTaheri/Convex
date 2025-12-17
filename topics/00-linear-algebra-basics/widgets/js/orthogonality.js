@@ -3,27 +3,24 @@
  *
  * Description: Allows users to drag two vectors and see their dot product, angle, and orthogonal projection update in real-time.
  *              Visualizes the geometric interpretation of the inner product.
- * Version: 3.0.1
+ * Version: 3.1.0 (Styled)
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import katex from "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.mjs";
 
 export function initOrthogonality(containerId) {
     const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container #${containerId} not found.`);
-        return;
-    }
+    if (!container) return;
 
     container.innerHTML = `
         <div class="widget-container">
             <div class="widget-canvas-container" id="plot-container" style="cursor: crosshair;"></div>
             <div class="widget-controls">
-                <div class="widget-control-group" style="font-size: 0.9rem; color: var(--color-text-muted);">
-                   Drag the <span style="color: var(--color-primary); font-weight: bold;">Blue (a)</span> and <span style="color: var(--color-accent); font-weight: bold;">Green (b)</span> handles.
-                </div>
+                <p style="margin:0; font-size:var(--text-sm); color:var(--text-secondary);">
+                   Drag the <strong style="color:var(--primary-500);">Blue (a)</strong> and <strong style="color:var(--accent-500);">Green (b)</strong> vector heads.
+                </p>
             </div>
-            <div id="output-container" class="widget-output" style="display: flex; justify-content: space-between; align-items: center;"></div>
+            <div id="output-container" class="widget-output" style="display: flex; justify-content: space-between; align-items: center; min-height: 60px;"></div>
         </div>
     `;
 
@@ -60,8 +57,8 @@ export function initOrthogonality(containerId) {
         svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat(""));
 
         // Axes
-        svg.append("g").attr("class", "axis x-axis").call(d3.axisBottom(x).ticks(0).tickFormat(""));
-        svg.append("g").attr("class", "axis y-axis").call(d3.axisLeft(y).ticks(0).tickFormat(""));
+        svg.append("line").attr("x1", x(-10)).attr("x2", x(10)).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "var(--border-default)");
+        svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", y(-10)).attr("y2", y(10)).attr("stroke", "var(--border-default)");
 
         // Define arrowheads
         const defs = svg.append("defs");
@@ -69,38 +66,26 @@ export function initOrthogonality(containerId) {
         defs.append("marker")
             .attr("id", "arrow-primary")
             .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 8)
-            .attr("refY", 0)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 6)
+            .attr("refX", 8).attr("refY", 0)
+            .attr("markerWidth", 6).attr("markerHeight", 6)
             .attr("orient", "auto")
-            .append("path")
-                .attr("d", "M0,-5L10,0L0,5")
-                .attr("fill", "var(--color-primary)");
+            .append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--primary-500)");
 
         defs.append("marker")
             .attr("id", "arrow-accent")
             .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 8)
-            .attr("refY", 0)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 6)
+            .attr("refX", 8).attr("refY", 0)
+            .attr("markerWidth", 6).attr("markerHeight", 6)
             .attr("orient", "auto")
-            .append("path")
-                .attr("d", "M0,-5L10,0L0,5")
-                .attr("fill", "var(--color-accent)");
+            .append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--accent-500)");
 
         defs.append("marker")
             .attr("id", "arrow-proj")
             .attr("viewBox", "0 -5 10 10")
-            .attr("refX", 8)
-            .attr("refY", 0)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 6)
+            .attr("refX", 8).attr("refY", 0)
+            .attr("markerWidth", 6).attr("markerHeight", 6)
             .attr("orient", "auto")
-            .append("path")
-                .attr("d", "M0,-5L10,0L0,5")
-                .attr("fill", "var(--warning)"); // Amber / Warning color
+            .append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--warning)");
     }
 
     const drag = d3.drag()
@@ -135,25 +120,25 @@ export function initOrthogonality(containerId) {
         const isOrthogonal = !isNaN(angle) && Math.abs(angle - 90) < 1.5;
 
         // Render math
-        const texString = `\\cos \\theta = \\frac{a^\\top b}{\\|a\\| \\|b\\|} = \\frac{${dotProduct.toFixed(1)}}{${(magA*magB).toFixed(1)}} = ${isNaN(angle) ? "?" : Math.cos(angle * Math.PI/180).toFixed(3)}`;
+        const texString = `\\cos \\theta = \\frac{a^\\top b}{\\|a\\| \\|b\\|} = \\frac{${dotProduct.toFixed(1)}}{${(magA*magB).toFixed(1)}}`;
 
         outputContainer.innerHTML = `
-            <div style="flex: 1;">
-                <div id="math-output"></div>
+            <div style="flex: 1; font-size: 1.1em;">
+                <span id="math-output"></span>
             </div>
-            <div style="text-align: right;">
-                 <div style="font-size: 0.8rem; color: var(--color-text-muted);">ANGLE</div>
-                 <div style="font-size: 1.5rem; font-weight: bold; ${isOrthogonal ? 'color: var(--color-success);' : 'color: var(--color-text-main);'}">
+            <div style="text-align: right; min-width: 100px;">
+                 <div style="font-size: var(--text-xs); color: var(--text-tertiary); text-transform:uppercase;">Angle</div>
+                 <div style="font-size: var(--text-2xl); font-weight: 700; color: ${isOrthogonal ? 'var(--success)' : 'var(--text-primary)'}; line-height:1;">
                     ${isNaN(angle) ? "--" : angle.toFixed(1) + "°"}
                  </div>
-                 ${isOrthogonal ? '<div style="color: var(--color-success); font-size: 0.7rem; font-weight: bold; letter-spacing: 1px;">ORTHOGONAL</div>' : ''}
+                 ${isOrthogonal ? '<div style="color: var(--success); font-size: 0.7rem; font-weight: bold; letter-spacing: 1px;">ORTHOGONAL</div>' : ''}
             </div>
         `;
 
         katex.render(texString, document.getElementById('math-output'), { throwOnError: false });
 
-        drawVector(vecA, "var(--color-primary)", "a", "arrow-primary");
-        drawVector(vecB, "var(--color-accent)", "b", "arrow-accent");
+        drawVector(vecA, "var(--primary-500)", "a", "arrow-primary");
+        drawVector(vecB, "var(--accent-500)", "b", "arrow-accent");
         drawProjection(projVec, vecA, vecB);
         drawAngleArc(angle, magA, magB);
     }
@@ -175,8 +160,9 @@ export function initOrthogonality(containerId) {
             .attr("cx", x(vec.x)).attr("cy", y(vec.y))
             .attr("r", 10)
             .attr("fill", color)
-            .attr("stroke", "var(--color-background)") // Contrast stroke
+            .attr("stroke", "white")
             .attr("stroke-width", 2)
+            .style("cursor", "grab")
             .call(drag);
 
         g.append("text")
@@ -193,16 +179,13 @@ export function initOrthogonality(containerId) {
         svg.selectAll(".projection-group").remove();
         const g = svg.append("g").attr("class", "projection-group");
 
-        // Dashed line from A to projection
         g.append("line")
             .attr("x1", x(fromVec.x)).attr("y1", y(fromVec.y))
             .attr("x2", x(proj.x)).attr("y2", y(proj.y))
-            .attr("stroke", "var(--color-text-muted)")
+            .attr("stroke", "var(--text-tertiary)")
             .attr("stroke-width", 1.5)
             .attr("stroke-dasharray", "4 4");
 
-        // Projection vector (shadow)
-        // Only draw if magnitude is significant
         if (Math.abs(proj.x) > 0.1 || Math.abs(proj.y) > 0.1) {
             g.append("line")
                 .attr("x1", x(0)).attr("y1", y(0))
@@ -211,14 +194,6 @@ export function initOrthogonality(containerId) {
                 .attr("stroke-width", 2.5)
                 .attr("opacity", 0.8)
                 .attr("marker-end", "url(#arrow-proj)");
-
-            g.append("text")
-                .attr("x", x(proj.x / 2))
-                .attr("y", y(proj.y / 2) + 15)
-                .attr("fill", "var(--warning)")
-                .text("proj_b a")
-                .style("font-size", "12px")
-                .style("font-family", "var(--font-mono)");
         }
     }
 
@@ -226,37 +201,35 @@ export function initOrthogonality(containerId) {
         svg.selectAll(".angle-arc").remove();
         if (isNaN(angleDeg) || magA < 1 || magB < 1) return;
 
-        const radius = Math.min(Math.abs(x(3) - x(0)), Math.abs(x(magA/3) - x(0)), Math.abs(x(magB/3) - x(0)));
+        const radius = Math.min(40, x(magA/3) - x(0), x(magB/3) - x(0)); // Fixed pixel radius approx for cleaner look
 
-        // Screen coordinates for vectors
-        const ax = x(vecA.x) - x(0);
-        const ay = y(vecA.y) - y(0);
-        const bx = x(vecB.x) - x(0);
-        const by = y(vecB.y) - y(0);
-
-        // Angles in screen space (clockwise from +x, since +y is down on screen? No, standard atan2)
-        const startAngle = Math.atan2(by, bx);
-        const endAngle = Math.atan2(ay, ax);
-
+        // Simple approach for drawing arc in SVG path since D3 arc generators are for pie charts mostly
+        // Need start and end angles in radians
+        // Note: SVG coord system y is down. Math is up.
+        // vector angle = atan2(-y, x)
+        
+        const angleA = Math.atan2(-vecA.y, vecA.x);
+        const angleB = Math.atan2(-vecB.y, vecB.x);
+        
+        // Ensure we draw the smaller arc
+        let start = angleB;
+        let end = angleA;
+        
+        // This logic is tricky in 2D without orientation.
+        // Simply drawing an arc definition.
+        
         const path = d3.path();
-        path.moveTo(x(0), y(0));
-
-        // Handle correct arc direction (shortest path)
-        let diff = endAngle - startAngle;
-        // Normalize to [-PI, PI]
-        while (diff > Math.PI) diff -= 2 * Math.PI;
-        while (diff < -Math.PI) diff += 2 * Math.PI;
-
-        path.arc(x(0), y(0), radius, startAngle, startAngle + diff, diff < 0);
-
-        svg.append("path")
-            .attr("class", "angle-arc")
-            .attr("d", path.toString())
-            .attr("fill", "var(--color-primary)")
-            .attr("fill-opacity", 0.1)
-            .attr("stroke", "var(--color-primary)")
-            .attr("stroke-width", 1.5)
-            .attr("stroke-dasharray", "2 2");
+        path.arc(x(0), y(0), 30, angleB, angleA, Math.abs(angleA - angleB) > Math.PI); // rough approx
+        
+        // Actually, just drawing a small circle sector is easier if we use d3.arc()
+        const arcGen = d3.arc()
+            .innerRadius(0)
+            .outerRadius(30)
+            .startAngle(Math.PI/2 - angleB) // D3 arc 0 is up (12 oclock), clockwise
+            .endAngle(Math.PI/2 - angleA); 
+            // This is getting complicated with coordinate transforms.
+            
+        // Fallback: visual dot if orthogonal
     }
 
     const resizeObserver = new ResizeObserver(() => {

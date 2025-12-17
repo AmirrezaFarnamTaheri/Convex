@@ -28,73 +28,68 @@ class PomodoroWidget {
 
     init() {
         this.createUI();
-        // Request notification permission
         if ('Notification' in window && Notification.permission !== 'granted') {
             Notification.requestPermission();
         }
     }
 
     createUI() {
-        // Remove existing if any
-        const existing = document.querySelector('.pomodoro-widget');
-        if (existing) existing.remove();
+        if (document.querySelector('.pomodoro-widget')) return;
 
         const container = document.createElement('div');
         container.className = 'pomodoro-widget glass';
-        // Set initial position
         Object.assign(container.style, {
+            position: 'fixed',
             bottom: this.position.bottom,
             left: this.position.left,
-            right: 'auto', // Ensure left/bottom positioning
-            top: 'auto'
+            zIndex: '5000',
+            width: '240px',
+            background: 'var(--bg-surface-1)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-lg)',
+            boxShadow: 'var(--shadow-lg)'
         });
 
         container.innerHTML = `
-            <div class="pomodoro-header" style="cursor: grab;">
-                <div class="pomodoro-status">
-                    <i data-feather="${this.mode === 'work' ? 'briefcase' : 'coffee'}"></i>
+            <div class="pomodoro-header" style="cursor: grab; background: var(--bg-surface-2); padding: 10px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; display:flex; justify-content:space-between; align-items:center;">
+                <div class="pomodoro-status" style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:0.85em; color:var(--text-secondary);">
+                    <i data-feather="${this.mode === 'work' ? 'briefcase' : 'coffee'}" style="width:14px; height:14px;"></i>
                     <span class="status-text">${this.mode === 'work' ? 'Focus' : 'Break'}</span>
                 </div>
-                <div class="pomodoro-actions">
-                    <button class="btn btn-ghost btn-xs" id="pomo-minimize-btn" title="Minimize">
-                        <i data-feather="minus"></i>
-                    </button>
-                    <button class="btn btn-ghost btn-xs" id="pomo-settings-btn" title="Settings">
-                        <i data-feather="settings"></i>
-                    </button>
+                <div class="pomodoro-actions" style="display:flex; gap:4px;">
+                    <button class="btn btn-ghost btn-xs" id="pomo-minimize-btn" title="Minimize" style="padding:2px;"><i data-feather="minus" style="width:14px;"></i></button>
+                    <button class="btn btn-ghost btn-xs" id="pomo-settings-btn" title="Settings" style="padding:2px;"><i data-feather="settings" style="width:14px;"></i></button>
                 </div>
             </div>
 
-            <div class="pomodoro-body">
-                <div class="pomodoro-time">${this.formatTime(this.timeLeft)}</div>
+            <div class="pomodoro-body" style="padding:16px; text-align:center;">
+                <div class="pomodoro-time" style="font-family:var(--font-mono); font-size:2.5rem; font-weight:700; margin-bottom:12px; color:var(--text-heading);">${this.formatTime(this.timeLeft)}</div>
 
-                <div class="pomodoro-controls">
-                    <button class="btn btn-primary btn-sm" id="pomo-toggle">
-                        <i data-feather="play"></i> Start
+                <div class="pomodoro-controls" style="display:flex; justify-content:center; gap:8px;">
+                    <button class="btn btn-primary btn-sm" id="pomo-toggle" style="width:80px;">
+                        <i data-feather="play" style="width:14px;"></i> Start
                     </button>
                     <button class="btn btn-ghost btn-sm" id="pomo-reset" title="Reset">
-                        <i data-feather="rotate-ccw"></i>
+                        <i data-feather="rotate-ccw" style="width:14px;"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Settings Panel (Hidden) -->
-            <div class="pomodoro-settings hidden">
-                <div class="control-group">
-                    <label>Focus (min)</label>
-                    <input type="number" id="pomo-work-input" value="${this.workDuration}" min="1" max="60">
+            <div class="pomodoro-settings hidden" style="padding:16px; border-top:1px solid var(--border-subtle);">
+                <div class="control-group" style="margin-bottom:8px;">
+                    <label style="font-size:0.8em; color:var(--text-tertiary);">Focus (min)</label>
+                    <input type="number" id="pomo-work-input" value="${this.workDuration}" min="1" max="60" style="width:100%; padding:4px; background:var(--bg-surface-3); border:1px solid var(--border-subtle); color:var(--text-primary);">
                 </div>
-                <div class="control-group">
-                    <label>Break (min)</label>
-                    <input type="number" id="pomo-break-input" value="${this.breakDuration}" min="1" max="30">
+                <div class="control-group" style="margin-bottom:8px;">
+                    <label style="font-size:0.8em; color:var(--text-tertiary);">Break (min)</label>
+                    <input type="number" id="pomo-break-input" value="${this.breakDuration}" min="1" max="30" style="width:100%; padding:4px; background:var(--bg-surface-3); border:1px solid var(--border-subtle); color:var(--text-primary);">
                 </div>
-                <button class="btn btn-secondary btn-sm" id="pomo-save-settings" style="width: 100%; margin-top: 8px;">Save</button>
+                <button class="btn btn-secondary btn-sm" id="pomo-save-settings" style="width:100%;">Save</button>
             </div>
         `;
 
         document.body.appendChild(container);
 
-        // Bind Elements
         this.container = container;
         this.header = container.querySelector('.pomodoro-header');
         this.display = container.querySelector('.pomodoro-time');
@@ -105,30 +100,22 @@ class PomodoroWidget {
         this.body = container.querySelector('.pomodoro-body');
         this.minimizeBtn = container.querySelector('#pomo-minimize-btn');
 
-        // Event Listeners
         this.toggleBtn.onclick = () => this.toggle();
         container.querySelector('#pomo-reset').onclick = () => this.reset();
         container.querySelector('#pomo-settings-btn').onclick = () => this.toggleSettings();
         container.querySelector('#pomo-save-settings').onclick = () => this.saveSettings();
         this.minimizeBtn.onclick = () => this.toggleMinimize();
 
-        // Dragging Logic
         this.initDragging();
 
-        // Resizing Logic
         if (typeof Resizable !== 'undefined') {
-            new Resizable(this.container, {
-                saveKey: 'pomodoro',
-                handles: ['se', 'e', 's', 'w', 'n']
-            });
+            new Resizable(this.container, { saveKey: 'pomodoro', handles: [] }); // No resize needed really
         }
 
-        // Load minimized state
         if (localStorage.getItem('pomodoro-minimized') === 'true') {
             this.toggleMinimize(false);
         }
 
-        // Render Icons
         if (typeof feather !== 'undefined') feather.replace();
     }
 
@@ -137,20 +124,11 @@ class PomodoroWidget {
         let startX, startY, initialLeft, initialBottom;
 
         this.header.addEventListener('mousedown', (e) => {
-            // Prevent drag if clicking buttons
             if (e.target.closest('button')) return;
-
             isDragging = true;
             this.header.style.cursor = 'grabbing';
-
-            // Get current computed position
-            const rect = this.container.getBoundingClientRect();
-            // We use bottom/left for positioning
-            // Calculate offsets relative to bottom-left
             startX = e.clientX;
             startY = e.clientY;
-
-            // Convert current style to pixels if possible, or use computed style
             const style = window.getComputedStyle(this.container);
             initialLeft = parseInt(style.left, 10);
             initialBottom = parseInt(style.bottom, 10);
@@ -158,24 +136,13 @@ class PomodoroWidget {
 
         document.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
-
             const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-
-            // Update Left (easy)
+            const dy = e.clientY - startY; // dy > 0 means mouse moved down
+            
             let newLeft = initialLeft + dx;
-
-            // Update Bottom (dy is positive downwards, so bottom decreases as mouse goes down)
-            // wait, if mouse goes down (y increases), bottom should decrease.
-            // dy > 0 -> y increased -> moved down. newBottom = initial - dy.
-            let newBottom = initialBottom - dy;
-
-            // Boundaries (keep somewhat on screen)
-            const maxLeft = window.innerWidth - this.container.offsetWidth;
-            const maxBottom = window.innerHeight - this.container.offsetHeight;
-
-            newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-            newBottom = Math.max(0, Math.min(newBottom, maxBottom));
+            // Since bottom is fixed, increasing bottom moves UP.
+            // If mouse moves down (dy > 0), bottom should decrease.
+            let newBottom = initialBottom - dy; 
 
             this.container.style.left = `${newLeft}px`;
             this.container.style.bottom = `${newBottom}px`;
@@ -199,32 +166,19 @@ class PomodoroWidget {
         localStorage.setItem('pomodoro-prefs', JSON.stringify(prefs));
     }
 
-    toggleMinimize(save = true, forceMinimize = null) {
-        if (forceMinimize !== null) {
-            if (forceMinimize) {
-                this.body.classList.add('hidden');
-            } else {
-                this.body.classList.remove('hidden');
-            }
-        } else {
-            this.body.classList.toggle('hidden');
-        }
-
-        // Re-check status
-        const currentlyHidden = this.body.classList.contains('hidden');
-
-        this.minimizeBtn.innerHTML = currentlyHidden ? '<i data-feather="maximize-2"></i>' : '<i data-feather="minus"></i>';
-
-        // Compact header when minimized
-        if (currentlyHidden) {
+    toggleMinimize(save = true) {
+        this.body.classList.toggle('hidden');
+        const isHidden = this.body.classList.contains('hidden');
+        
+        if (isHidden) {
+            this.minimizeBtn.innerHTML = '<i data-feather="maximize-2" style="width:14px;"></i>';
             this.statusText.textContent = this.formatTime(this.timeLeft);
         } else {
+            this.minimizeBtn.innerHTML = '<i data-feather="minus" style="width:14px;"></i>';
             this.statusText.textContent = this.mode === 'work' ? 'Focus' : 'Break';
         }
 
-        if (save) {
-            localStorage.setItem('pomodoro-minimized', currentlyHidden);
-        }
+        if (save) localStorage.setItem('pomodoro-minimized', isHidden);
         if (typeof feather !== 'undefined') feather.replace();
     }
 
@@ -235,44 +189,35 @@ class PomodoroWidget {
     }
 
     toggle() {
-        if (this.isRunning) {
-            this.pause();
-        } else {
-            this.start();
-        }
+        if (this.isRunning) this.pause();
+        else this.start();
     }
 
     start() {
         this.isRunning = true;
-        this.toggleBtn.innerHTML = '<i data-feather="pause"></i> Pause';
+        this.toggleBtn.innerHTML = '<i data-feather="pause" style="width:14px;"></i> Pause';
         this.toggleBtn.classList.replace('btn-primary', 'btn-secondary');
         if (typeof feather !== 'undefined') feather.replace();
 
         this.timerId = setInterval(() => {
             this.timeLeft--;
-            const timeStr = this.formatTime(this.timeLeft);
-            this.display.textContent = timeStr;
-
-            // Update title
-            document.title = `(${timeStr}) Convex Opt`;
-
-            // Update minimized status text if needed
+            this.display.textContent = this.formatTime(this.timeLeft);
+            document.title = `(${this.formatTime(this.timeLeft)}) Convex Opt`;
+            
             if (this.body.classList.contains('hidden')) {
-                this.statusText.textContent = timeStr;
+                this.statusText.textContent = this.formatTime(this.timeLeft);
             }
 
-            if (this.timeLeft <= 0) {
-                this.complete();
-            }
+            if (this.timeLeft <= 0) this.complete();
         }, 1000);
     }
 
     pause() {
         this.isRunning = false;
         clearInterval(this.timerId);
-        this.toggleBtn.innerHTML = '<i data-feather="play"></i> Resume';
+        this.toggleBtn.innerHTML = '<i data-feather="play" style="width:14px;"></i> Resume';
         this.toggleBtn.classList.replace('btn-secondary', 'btn-primary');
-        document.title = 'Convex Optimization'; // Reset title
+        document.title = 'Convex Optimization';
         if (typeof feather !== 'undefined') feather.replace();
     }
 
@@ -280,17 +225,13 @@ class PomodoroWidget {
         this.pause();
         this.timeLeft = (this.mode === 'work' ? this.workDuration : this.breakDuration) * 60;
         this.display.textContent = this.formatTime(this.timeLeft);
-        this.toggleBtn.innerHTML = '<i data-feather="play"></i> Start';
+        this.toggleBtn.innerHTML = '<i data-feather="play" style="width:14px;"></i> Start';
         if (typeof feather !== 'undefined') feather.replace();
     }
 
     complete() {
         this.pause();
-
-        // Notify
         this.sendNotification();
-
-        // Switch mode
         if (this.mode === 'work') {
             this.mode = 'break';
             this.timeLeft = this.breakDuration * 60;
@@ -302,9 +243,8 @@ class PomodoroWidget {
             this.statusText.textContent = 'Focus Time';
             this.statusIcon.setAttribute('data-feather', 'briefcase');
         }
-
         this.display.textContent = this.formatTime(this.timeLeft);
-        this.toggleBtn.innerHTML = '<i data-feather="play"></i> Start';
+        this.toggleBtn.innerHTML = '<i data-feather="play" style="width:14px;"></i> Start';
         if (typeof feather !== 'undefined') feather.replace();
     }
 
@@ -315,17 +255,13 @@ class PomodoroWidget {
     saveSettings() {
         const work = parseInt(document.getElementById('pomo-work-input').value);
         const brk = parseInt(document.getElementById('pomo-break-input').value);
-
         if (work > 0 && brk > 0) {
             this.workDuration = work;
             this.breakDuration = brk;
-
             const prefs = JSON.parse(localStorage.getItem('pomodoro-prefs') || '{}');
             prefs.workDuration = work;
             prefs.breakDuration = brk;
-
             localStorage.setItem('pomodoro-prefs', JSON.stringify(prefs));
-
             this.reset();
             this.toggleSettings();
         }
@@ -335,23 +271,12 @@ class PomodoroWidget {
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification(this.mode === 'work' ? 'Focus Session Complete!' : 'Break Over!', {
                 body: this.mode === 'work' ? 'Time for a break.' : 'Time to focus.',
-                icon: '/static/images/logo.svg'
             });
-        } else {
-            // Fallback audio or alert
-            try {
-                const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-simple-tone-571.mp3');
-                audio.play();
-            } catch(e) {
-                console.log('Audio playback failed');
-            }
         }
     }
 }
 
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    // Only init if not on print view
     if (!window.matchMedia('print').matches) {
         new PomodoroWidget();
     }
