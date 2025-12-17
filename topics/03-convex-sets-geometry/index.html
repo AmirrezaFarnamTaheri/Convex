@@ -58,7 +58,7 @@
         $$
         \sum_{i=1}^k \theta_i x_i \quad \text{where} \quad \sum_{i=1}^k \theta_i = 1
         $$
-        <p>The coefficients $\theta_i$ may be negative, allowing the combination to extend beyond the region spanned by the points (e.g., the infinite line passing through two points, rather than only the segment between them).</p>
+        <p><b>Intuition (Infinite Sheet):</b> The coefficients $\theta_i$ may be negative. For two points $x_1, x_2$, the combination $x = \theta x_1 + (1-\theta)x_2$ traces the <b>infinite line</b> through them. For three points, it traces the infinite plane. Think of affine sets as "infinite sheets" that extend forever.</p>
 
         <div class="theorem-box">
           <h4>Definition (Affine Set)</h4>
@@ -126,7 +126,7 @@
         $$
         \sum_{i=1}^k \theta_i x_i \quad \text{where} \quad \theta_i \ge 0, \ \sum_{i=1}^k \theta_i = 1
         $$
-        <p>This describes "filled-in" shapes like line segments, triangles, and convex polytopes.</p>
+        <p><b>Intuition (Elastic Sheet):</b> The constraints $\theta_i \ge 0$ prevent us from "extrapolating" beyond the points. We are restricted to "interpolating" between them. Think of a rubber band stretched around nails; the convex hull is the area inside the band. Unlike affine sets, convex sets are "bounded" by their generating points.</p>
 
         <div class="theorem-box">
           <h4>Definition (Convex Set)</h4>
@@ -436,7 +436,7 @@
         $$
         \mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}
         $$
-        <p>where $X \succeq 0$ means $z^\top X z \ge 0$ for all vectors $z \in \mathbb{R}^n$.</p>
+        <p><b>Connection to Lecture 00:</b> Recall that PSD matrices generalize non-negative numbers. Just as the non-negative orthant $\mathbb{R}^n_+$ generalizes the ray $[0, \infty)$, the PSD cone $\mathbb{S}^n_+$ generalizes non-negativity to matrix space. The condition $X \succeq 0$ means that $X$ has "non-negative energy" in every direction $z$.</p>
 
         <figure style="text-align: center; margin: 24px 0;">
           <img src="assets/psd-cone-3d.png"
@@ -644,24 +644,44 @@
         </div>
 
         <div class="proof-box">
-          <h4>Proof</h4>
+          <h4>Proof: Perspective Preserves Convexity (Step-by-Step)</h4>
+          <p>We want to show that if $u, v$ are in the perspective image $P(C)$, then the entire line segment connecting them is also in $P(C)$.</p>
+
           <div class="proof-step">
-            Let $u, v \in P(C)$. Then there exist $(y, t) \in C$ and $(y', t') \in C$ such that $u = y/t$ and $v = y'/t'$.
-            Let $\alpha \in [0,1]$. We want to show $\alpha u + (1-\alpha)v \in P(C)$.
+            <strong>Step 1: Lift to the source set.</strong>
+            Since $u \in P(C)$, there is a preimage point $(y, t) \in C$ such that $u = y/t$.
+            Since $v \in P(C)$, there is a preimage point $(y', t') \in C$ such that $v = y'/t'$.
           </div>
+
           <div class="proof-step">
-            Consider the convex combination of the points in $C$:
-            $$ z = \mu (y, t) + (1-\mu) (y', t') = (\mu y + (1-\mu)y', \mu t + (1-\mu)t') $$
-            where $\mu \in [0,1]$. Since $C$ is convex, $z \in C$.
+            <strong>Step 2: Construct a target point in the image.</strong>
+            Pick any $\alpha \in [0, 1]$. We want to show the point $w = \alpha u + (1-\alpha)v$ is in $P(C)$.
+            $$ w = \alpha \frac{y}{t} + (1-\alpha) \frac{y'}{t'} $$
           </div>
+
           <div class="proof-step">
-            The image of $z$ under $P$ is:
+            <strong>Step 3: Find a convex combination in the domain.</strong>
+            We need to find a $\mu \in [0, 1]$ such that the perspective of the combination $z = \mu(y,t) + (1-\mu)(y', t')$ equals $w$.
             $$ P(z) = \frac{\mu y + (1-\mu)y'}{\mu t + (1-\mu)t'} $$
-            We want this to equal $\alpha (y/t) + (1-\alpha)(y'/t')$.
-            Setting the coefficients proportional matches the terms. We choose $\mu$ such that:
-            $$ \frac{\mu t}{\mu t + (1-\mu)t'} = \alpha $$
-            Solving for $\mu$ gives $\mu = \frac{\alpha t'}{\alpha t' + (1-\alpha)t}$. As $\alpha$ varies from 0 to 1, $\mu$ varies from 0 to 1.
-            Thus, every point on the line segment $[u, v]$ is the image of some point on the line segment $[(y,t), (y',t')]$.
+            We equate $P(z) = w$. This requires matching the relative weights of the terms $y/t$ and $y'/t'$.
+            Let the denominator be $D = \mu t + (1-\mu)t'$. We require:
+            $$ \frac{\mu}{D} = \frac{\alpha}{t} \quad \text{and} \quad \frac{1-\mu}{D} = \frac{1-\alpha}{t'} $$
+          </div>
+
+          <div class="proof-step">
+            <strong>Step 4: Solve for the mixing weight $\mu$.</strong>
+            From $\mu t = \alpha D$, we get $\mu = \alpha D / t$.
+            Substitute $D = \mu t + (1-\mu)t'$ and solve for $\mu$.
+            Algebraically, this yields:
+            $$ \mu = \frac{\alpha t'}{\alpha t' + (1-\alpha)t} $$
+            Since $t, t' > 0$ and $\alpha \in [0,1]$, this $\mu$ is always in $[0,1]$.
+          </div>
+
+          <div class="proof-step">
+            <strong>Conclusion:</strong>
+            Since $C$ is convex, the point $z$ formed by $\mu$ is in $C$.
+            By construction, $P(z) = w$.
+            Thus $w \in P(C)$. Therefore, $P(C)$ is convex.
           </div>
         </div>
 
@@ -794,13 +814,14 @@
         </div>
 
         <div class="example">
-          <h4>Example 1b: A Flat Disk in 3D</h4>
-          <p>Consider a flat circular disk floating in 3D space: $C = \{(x, y, 0) \mid x^2 + y^2 \le 1\}$.</p>
+          <h4>Example 1b: A Flat Disk in 3D (The "Frisbee" Intuition)</h4>
+          <p>Imagine a Frisbee floating in the air. Mathematically, this is the set $C = \{(x, y, 0) \mid x^2 + y^2 \le 1\} \subset \mathbb{R}^3$.</p>
           <ul>
-            <li><b>Interior:</b> Empty ($\emptyset$). A 3D ball has volume, but this disk is flat, so no 3D ball fits inside it.</li>
-            <li><b>Affine Hull:</b> The $xy$-plane ($z=0$).</li>
-            <li><b>Relative Interior:</b> The disk without its boundary circle: $\{(x, y, 0) \mid x^2 + y^2 < 1\}$. Viewed "relative" to the plane it lives in, it has an interior!</li>
+            <li><b>Interior $\mathrm{int}(C) = \emptyset$:</b> If you try to fit a solid 3D ball inside the Frisbee, you fail because the Frisbee has zero thickness. Thus, strictly speaking, it has no interior points in $\mathbb{R}^3$.</li>
+            <li><b>Affine Hull $\mathrm{aff}(C)$:</b> The "minimal universe" containing the Frisbee is the flat 2D plane $z=0$. This is its affine hull.</li>
+            <li><b>Relative Interior $\mathrm{ri}(C)$:</b> If we restrict our view to just that 2D plane, the Frisbee <i>does</i> have an interior! It is the set of points strictly inside the rim: $\{(x, y, 0) \mid x^2 + y^2 < 1\}$. This is the relative interior.</li>
           </ul>
+          <p><i>Why this matters:</i> Optimization solvers (like interior-point methods) move through the <i>relative</i> interior of the feasible set. They don't care that the set has no volume in the full space, as long as it has volume in its "native" subspace.</p>
         </div>
 
         <div class="example">

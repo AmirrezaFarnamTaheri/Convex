@@ -337,13 +337,16 @@
         </div>
 
         <h3>3.3 When Convexity is Lost</h3>
-        <p>Certain problem features immediately destroy convexity:</p>
+        <p>Certain problem features immediately destroy convexity. Recognizing these "red flags" saves time:</p>
         <ul>
-          <li><b>Integer constraints:</b> $x_i \in \{0,1\}$ makes the feasible set non-convex.</li>
-          <li><b>Equality constraints with convex functions:</b> $f(x) = c$ where $f$ is convex (not affine).</li>
-          <li><b>Maximizing a convex function:</b> Equivalent to minimizing a concave function.</li>
-          <li><b>Products of variables:</b> Bilinear or quadratic terms with indefinite Hessian.</li>
-          <li><b>Non-monotone compositions:</b> $f(g(x))$ where $g$ is convex but $f$ is non-monotone.</li>
+          <li><b>Integer constraints:</b> $x_i \in \{0,1\}$.
+            <br><i>Why?</i> The set $\{0, 1\}$ is not convex (doesn't contain the interval $[0,1]$). This turns the problem into a combinatorial one (NP-hard).</li>
+          <li><b>Equality constraints with nonlinear functions:</b> $h(x) = 0$ where $h$ is convex but not affine.
+            <br><i>Why?</i> The set $x^2 = 1$ consists of two points $\{-1, 1\}$. It is the boundary of the convex set $x^2 \le 1$. Boundaries of convex sets are generally non-convex.</li>
+          <li><b>Maximizing a convex function:</b> $\max \|x\|_2$.
+            <br><i>Why?</i> The maximum is achieved at the boundary, not the interior. We want to find the point <i>furthest</i> from the center, which is a global search problem.</li>
+          <li><b>Products of variables:</b> $x \cdot y \ge 1$.
+            <br><i>Why?</i> The set $\{(x,y) \mid xy \ge 1\}$ (hyperbola) is non-convex. Its Hessian $\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}$ has eigenvalues $\pm 1$ (indefinite).</li>
         </ul>
 
         <div class="insight">
@@ -527,6 +530,45 @@
           </ul>
         </div>
 
+        <h3>4.5 Summary: The Complexity Hierarchy</h3>
+        <p>It is useful to view these problems as a hierarchy of increasing expressiveness (and computational cost).</p>
+        <table class="data-table" style="width: 100%; margin-top: 16px;">
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>Objective</th>
+              <th>Constraints</th>
+              <th>Typical Scale (Vars)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>LP</b></td>
+              <td>Linear ($c^\top x$)</td>
+              <td>Linear inequalities ($Ax \le b$)</td>
+              <td>$10^6 - 10^7$</td>
+            </tr>
+            <tr>
+              <td><b>QP</b></td>
+              <td>Convex Quadratic ($\frac{1}{2}x^\top Qx$)</td>
+              <td>Linear inequalities</td>
+              <td>$10^4 - 10^6$</td>
+            </tr>
+            <tr>
+              <td><b>SOCP</b></td>
+              <td>Linear</td>
+              <td>Norm balls ($\|Ax+b\|_2 \le c^\top x + d$)</td>
+              <td>$10^4 - 10^5$</td>
+            </tr>
+            <tr>
+              <td><b>SDP</b></td>
+              <td>Linear</td>
+              <td>PSD Matrices (LMIs: $\sum x_i A_i \succeq B$)</td>
+              <td>$10^3 - 10^4$</td>
+            </tr>
+          </tbody>
+        </table>
+
         <div class="example">
           <h4>Example: Minimum Volume Enclosing Ellipsoid (Löwner-John)</h4>
           <p>Find the ellipsoid of minimum volume that contains a set of points $\{x_1, \dots, x_N\}$.</p>
@@ -708,7 +750,7 @@
             <li>Convex (sum of two convex functions).</li>
             <li>Produces sparse solutions (automatic feature selection).</li>
             <li>Can be reformulated as a QP.</li>
-            <li>Widely used in high-dimensional statistics and compressed sensing (covered in <a href="../10-approximation-fitting/index.html">Lecture 14</a>).</li>
+            <li>Widely used in high-dimensional statistics (see <a href="../11-statistical-estimation/index.html">Lecture 11</a>) and compressed sensing (see <a href="../10-approximation-fitting/index.html">Lecture 10</a>).</li>
           </ul>
         </div>
       </section>
@@ -784,60 +826,60 @@
         </div>
 
         <div class="example">
-          <h4>Example: Robust Least Squares</h4>
-          <p>Minimize worst-case residual norm subject to ellipsoidal uncertainty. Suppose the matrix $A$ is uncertain, modeled as $A + U$ where the uncertainty matrix $U$ has bounded spectral norm $\|U\|_2 \le \varepsilon$. A simplified but common version considers row-wise uncertainty or a structured uncertainty.</p>
-          <p>Let's consider the specific form where the uncertainty is in the matrix $A$, bounded by a norm. A standard formulation is:</p>
+          <h4>Example: Robust Least Squares (Walkthrough)</h4>
+          <p>We want to minimize the residual $\|Ax - b\|_2$, but we are uncertain about the matrix $A$. We model this uncertainty by assuming the true matrix is $A + \Delta$, where $\Delta$ is a perturbation with spectral norm bounded by $\rho$ (i.e., $\|\Delta\|_2 \le \rho$). Our goal is to minimize the <b>worst-case</b> error:</p>
           $$
-          \min_{x} \max_{\|\Delta\|_2 \le \rho} \|(A + \Delta)x - b\|_2
+          \min_{x} \left( \max_{\|\Delta\|_2 \le \rho} \|(A + \Delta)x - b\|_2 \right)
           $$
-          <p>We derive the reformulation as follows.</p>
+          <p>This looks like a complicated minimax problem. Let's transform it step-by-step into a standard SOCP.</p>
 
           <div class="proof-box">
             <h4>Derivation of Robust Least Squares SOCP</h4>
 
             <div class="proof-step">
-              <strong>Step 1: Expand the term.</strong>
-              The objective is to minimize the worst-case error. Let $r(x) = \max_{\|\Delta\|_2 \le \rho} \|(A + \Delta)x - b\|_2$.
-              Notice that $(A + \Delta)x - b = (Ax - b) + \Delta x$.
-              So we want to maximize $\|(Ax - b) + \Delta x\|_2$ over $\|\Delta\|_2 \le \rho$.
+              <strong>Step 1: Isolate the perturbation.</strong>
+              Let's analyze the objective function $f(x) = \max_{\|\Delta\|_2 \le \rho} \|(Ax - b) + \Delta x\|_2$.
+              Let $r = Ax - b$ be the nominal residual. We want to maximize $\|r + \Delta x\|_2$ by choosing $\Delta$.
             </div>
 
             <div class="proof-step">
-              <strong>Step 2: Apply Triangle Inequality.</strong>
-              By the triangle inequality:
-              $$ \|(Ax - b) + \Delta x\|_2 \le \|Ax - b\|_2 + \|\Delta x\|_2 $$
-              Also, $\|\Delta x\|_2 \le \|\Delta\|_2 \|x\|_2 \le \rho \|x\|_2$.
-              Thus, $\|(A + \Delta)x - b\|_2 \le \|Ax - b\|_2 + \rho \|x\|_2$.
+              <strong>Step 2: Find the upper bound (Triangle Inequality).</strong>
+              Using the triangle inequality $\|u+v\| \le \|u\| + \|v\|$:
+              $$ \|r + \Delta x\|_2 \le \|r\|_2 + \|\Delta x\|_2 $$
+              From the definition of the spectral norm, $\|\Delta x\|_2 \le \|\Delta\|_2 \|x\|_2$.
+              Since $\|\Delta\|_2 \le \rho$, we have $\|\Delta x\|_2 \le \rho \|x\|_2$.
+              Combining these gives an upper bound:
+              $$ \max_{\|\Delta\| \le \rho} \|r + \Delta x\|_2 \le \|Ax - b\|_2 + \rho \|x\|_2 $$
             </div>
 
             <div class="proof-step">
-              <strong>Step 3: Show the bound is tight.</strong>
-              We need to find a perturbation $\Delta$ with $\|\Delta\|_2 \le \rho$ that achieves this upper bound.
-              Let $u = Ax - b$. If $x=0$, the term is $\|b\|_2$, which matches the formula.
-              If $x \ne 0$, we choose $\Delta$ to align the perturbation $\Delta x$ with the residual $u$. Define the rank-1 matrix:
-              $$ \Delta = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2} $$
-              The spectral norm is $\|\Delta\|_2 = \rho \|\frac{u}{\|u\|_2}\|_2 \|\frac{x}{\|x\|_2}\|_2 = \rho \cdot 1 \cdot 1 = \rho$, so it is feasible.
-              Now, computing $\Delta x$:
-              $$ \Delta x = \rho \frac{u}{\|u\|_2} \frac{x^\top x}{\|x\|_2} = \rho \frac{u}{\|u\|_2} \|x\|_2 = \left( \frac{\rho \|x\|_2}{\|u\|_2} \right) u $$
-              This vector is a positive scalar multiple of $u = Ax - b$. Since $\|u + ku\|_2 = (1+k)\|u\|_2 = \|u\|_2 + k\|u\|_2$ for $k \ge 0$, the norms add linearly:
-              $$ \|(Ax - b) + \Delta x\|_2 = \|u\|_2 + \|\Delta x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2 $$
+              <strong>Step 3: Prove the bound is achievable (Tightness).</strong>
+              We need to show there exists a specific "worst-case" $\Delta$ that hits this bound.
+              We want $\Delta x$ to point in the same direction as $r$ (to maximize the sum) and have the maximum possible length.
+              <br>Construct $\Delta$ as a rank-1 outer product: $\Delta = \rho \frac{r}{\|r\|_2} \frac{x^\top}{\|x\|_2}$.
+              <br>1. Check norm constraint: $\|\Delta\|_2 = \rho \cdot 1 \cdot 1 = \rho$. (Feasible).
+              <br>2. Check effect on $x$: $\Delta x = \rho \frac{r}{\|r\|} \frac{x^\top x}{\|x\|} = \rho \frac{r}{\|r\|} \|x\| = (\rho \|x\|) \frac{r}{\|r\|}$.
+              This vector is parallel to $r$ with length $\rho \|x\|$.
+              Thus, $\|r + \Delta x\| = \|r\| + \rho \|x\|$. The bound is tight.
             </div>
 
             <div class="proof-step">
-              <strong>Step 4: Formulate as Optimization.</strong>
-              The problem becomes:
+              <strong>Step 4: Reformulate the Optimization.</strong>
+              The minimax problem is exactly equivalent to:
               $$ \min_x \left( \|Ax - b\|_2 + \rho \|x\|_2 \right) $$
-            This is a regularized least squares problem, specifically with $\ell_2$ regularization (but on the norm itself, not squared). This is sometimes called "square-root LASSO" or similar variants in statistics.
+              This is a sum of two norms (convex). To make it a standard SOCP, we introduce slack variables $t_1, t_2$.
             </div>
 
             <div class="proof-step">
-              <strong>Step 5: Convert to SOCP Standard Form.</strong>
-              Introduce auxiliary variables $t_1, t_2$:
-              $$ \min_{x, t_1, t_2} \quad t_1 + \rho t_2 $$
-              Subject to:
-              $$ \|Ax - b\|_2 \le t_1 $$
-              $$ \|x\|_2 \le t_2 $$
-            These are two second-order cone constraints (of the form $\|y\|_2 \le t$). Thus, Robust Least Squares is an SOCP.
+              <strong>Step 5: Final SOCP Form.</strong>
+              $$
+              \begin{aligned}
+              \min_{x, t_1, t_2} \quad & t_1 + \rho t_2 \\
+              \text{s.t.} \quad & \|Ax - b\|_2 \le t_1 \quad (\text{SOC constraint 1}) \\
+              & \|x\|_2 \le t_2 \quad (\text{SOC constraint 2})
+              \end{aligned}
+              $$
+              We have transformed a scary minimax problem into a standard convex problem solvable by off-the-shelf software!
             </div>
           </div>
         </div>

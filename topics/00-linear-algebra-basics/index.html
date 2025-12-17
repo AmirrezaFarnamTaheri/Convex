@@ -63,16 +63,16 @@
     <section class="section-card" id="section-notation">
       <h2>1. Mathematical Atoms: Sets, Functions, and Combinations</h2>
 
-      <h3>0. The Meta-Skill: Mixing, Measuring, and Pullback</h3>
-      <p>In convex optimization, you will repeatedly perform three fundamental moves:</p>
+      <h3>1.1 The Meta-Skill: Mixing, Measuring, and Pullback</h3>
+      <p>In convex optimization, we view problems through a geometric lens. You will repeatedly perform three fundamental moves, which we call the "Atoms" of the subject:</p>
       <ol>
-        <li><b>Mixing:</b> Understanding what "combining points" means (linear, affine, convex combinations) and what shapes these operations preserve.</li>
-        <li><b>Measuring:</b> Using norms and inner products to quantify "size" and "alignment," translating geometry into algebra.</li>
-        <li><b>Pullback:</b> Understanding constraints and functions via <b>preimages</b>. A constraint $f(x) \le 0$ is a statement that $x$ belongs to the preimage $f^{-1}((-\infty, 0])$.</li>
+        <li><b>Mixing (Combinations):</b> Optimization is fundamentally about "averaging" or "combining" solutions. We use <b>convex combinations</b> to interpolate between points. If two strategies are good, is their average also good? (Yes, for convex problems). This operation defines the geometry of <i>convex sets</i>.</li>
+        <li><b>Measuring (Norms & Inner Products):</b> We need precise "rulers" and "protractors" to quantify errors and directions. <b>Norms</b> measure the size of the residual (how far are we from a solution?), while <b>inner products</b> measure alignment (is this descent direction valid?). These tools translate geometry into algebra.</li>
+        <li><b>Pullback (Preimages):</b> We often define sets implicitly via functions, such as "the set of all $x$ where energy is below a threshold." Understanding constraints as <b>preimages</b> ($f^{-1}(S)$) allows us to determine the shape of a feasible set based on the properties of the constraint function $f$.</li>
       </ol>
       <p>Mastering these atoms transforms optimization from symbol manipulation into inevitable geometry.</p>
 
-      <h3>Preliminaries: Lines and Line Segments</h3>
+      <h3>1.2 Preliminaries: Lines and Line Segments</h3>
       <p>We work in the vector space $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$ and the induced Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are the building blocks of convexity.</p>
 
       <h4>Line through two points</h4>
@@ -96,7 +96,7 @@
         <figcaption><i>Figure 0.1:</i> The line segment (solid blue, $0 \le \theta \le 1$) is a subset of the infinite affine line (dashed grey, $\theta \in \mathbb{R}$).</figcaption>
       </figure>
 
-      <h3>1. Scalars, Vectors, and Matrices</h3>
+      <h3>1.3 Scalars, Vectors, and Matrices</h3>
       <ul>
         <li><b>Scalars:</b> Real numbers $a \in \mathbb{R}$.</li>
         <li><b>Vectors:</b> A vector $x \in \mathbb{R}^n$ is formally a function $\{1,\dots,n\} \to \mathbb{R}$. We represent it as an ordered $n$-tuple (column vector).
@@ -104,8 +104,8 @@
         </li>
         <li><b>Matrices:</b> $A \in \mathbb{R}^{m \times n}$.
           <br><i>Matrix-Vector Product:</i> The definition $(Ax)_i = \sum_{j=1}^n A_{ij} x_j$ is chosen specifically to enforce <b>linearity</b>: $A(\alpha x + \beta y) = \alpha Ax + \beta Ay$.
-          <br><i>Column View:</i> $Ax = \sum_{j=1}^n x_j A_{:j}$. $Ax$ is a linear combination of the columns of $A$.
-          <br><i>Row View:</i> $(Ax)_i = A_{i:}^\top x$. The $i$-th entry is the dot product of the $i$-th row with $x$.
+          <br><i>Column View:</i> $Ax = \sum_{j=1}^n x_j A_{:j}$. $Ax$ is a linear combination of the columns of $A$. This is the "synthesis" view: $A$ builds a new vector from its columns.
+          <br><i>Row View:</i> $(Ax)_i = A_{i:}^\top x$. The $i$-th entry is the dot product of the $i$-th row with $x$. This is the "analysis" view: each row "measures" the input vector $x$.
         </li>
       </ul>
 
@@ -116,7 +116,7 @@
         <figcaption><i>Figure 0.2:</i> Matrix multiplication visualized—how rows and columns combine.</figcaption>
       </figure>
 
-      <h3>2. Functions and Preimages</h3>
+      <h3>1.4 Functions and Preimages</h3>
       <p>A function $f: \mathcal{X} \to \mathcal{Y}$ maps domain $\mathcal{X}$ to codomain $\mathcal{Y}$. The <b>range</b> (or image) is the set of actual outputs: $\mathrm{range}(f) = \{f(x) : x \in \mathcal{X}\} \subseteq \mathcal{Y}$.</p>
 
       <h4>The Preimage Laws</h4>
@@ -143,7 +143,7 @@
         <figcaption><i>Figure 0.3:</i> The parallelogram law of vector addition, a geometric reflection of the algebraic properties of inner products.</figcaption>
       </figure>
 
-      <h3>3. Combinations and Hulls</h3>
+      <h3>1.5 Combinations and Hulls</h3>
       <p>Different rules for "mixing" vectors generate different geometric objects.</p>
       <table class="data-table">
         <thead>
@@ -182,8 +182,8 @@
       $$ \theta x + (1-\theta)y = y + \theta(x-y) $$
       A set is <b>convex</b> if it contains the line segment between any pair of its points.</p>
 
-      <h3>Matrix Calculus Basics</h3>
-      <p>Gradient-based optimization relies on the computation of gradients and Hessians. Computing derivatives with respect to vectors and matrices is therefore a core skill.</p>
+      <h3>1.6 Matrix Calculus Basics</h3>
+      <p>Gradient-based optimization relies on the computation of gradients and Hessians. Computing derivatives with respect to vectors and matrices is therefore a core skill. Unlike scalar calculus, where order doesn't matter, in matrix calculus we must preserve non-commutativity and track dimensions carefully.</p>
 
       <h4>Gradients of Linear and Quadratic Forms</h4>
       <p>For $x \in \mathbb{R}^n$, $A \in \mathbb{R}^{n \times n}$, and $b \in \mathbb{R}^n$:</p>
@@ -336,10 +336,11 @@
         <li><a href="#" class="definition-link" data-term="column space">Column Space (Range)</a>: $\mathcal{R}(A) = \{Ax \mid x \in \mathbb{R}^n\} \subseteq \mathbb{R}^m$. This is the set of all possible outputs of the linear map, i.e., the span of the columns of $A$.</li>
         <li><a href="#" class="definition-link" data-term="nullspace">Nullspace (Kernel)</a>: $\mathcal{N}(A) = \{x \in \mathbb{R}^n \mid Ax = 0\}$. This is the set of all input vectors that are mapped to the zero vector.</li>
         <li><b>Row Space:</b> $\mathcal{R}(A^\top) \subseteq \mathbb{R}^n$. This is the span of the rows of $A$.</li>
-        <li><b>Left Nullspace:</b> $\mathcal{N}(A^\top) = \{y \in \mathbb{R}^m \mid A^\top y = 0\}$. This is the nullspace of the transpose of $A$.</li>
+        <li><b>Left Nullspace:</b> $\mathcal{N}(A^\top) = \{y \in \mathbb{R}^m \mid A^\top y = 0\}$. This is the nullspace of the transpose of $A$.
+        <br><i>Why do we care?</i> The Left Nullspace defines the <b>constraints on solvability</b>. The system $Ax=b$ has a solution if and only if $b$ is orthogonal to every vector in the Left Nullspace ($b \perp \mathcal{N}(A^\top)$). This is the <b>Fredholm Alternative</b>.</li>
       </ul>
 
-      <p>These subspaces are linked by two crucial orthogonality relationships:</p>
+      <p>These subspaces are linked by two crucial orthogonality relationships (Fundamental Theorem of Linear Algebra):</p>
       <ul>
         <li>$\mathcal{R}(A) \perp \mathcal{N}(A^\top)$ in $\mathbb{R}^m$</li>
         <li>$\mathcal{R}(A^\top) \perp \mathcal{N}(A)$ in $\mathbb{R}^n$</li>
@@ -458,6 +459,7 @@
         <h4>Geometric Interpretation</h4>
         <ul>
           <li><b>Determinant as Volume:</b> $|\det(A)|$ is the factor by which the linear map scales volume. If $S$ is a set with volume $V$, then $A(S)$ has volume $|\det(A)| V$. The sign indicates orientation (preservation vs. reversal).</li>
+          <li><b>Trace as Derivative:</b> The trace is the "infinitesimal change in volume." Specifically, $\det(I + \epsilon A) \approx 1 + \epsilon \mathrm{tr}(A)$ for small $\epsilon$. This connects the trace to the derivative of the determinant, a fact we used in the matrix calculus derivation.</li>
           <li><b>Eigenvalues as Stretch Factors:</b> If $Ax = \lambda x$, the map scales the vector $x$ by $\lambda$. If a matrix has a full set of eigenvectors, it maps a unit circle to an ellipse whose semiaxes are aligned with the eigenvectors and have lengths $|\lambda_i|$.</li>
         </ul>
       </div>
@@ -987,7 +989,8 @@
       <h4>Definition A: The Variational Definition</h4>
       <p>A symmetric matrix $A \in \mathbb{S}^n$ is <a href="#" class="definition-link" data-term="positive semidefinite">Positive Semidefinite (PSD)</a>, denoted as $A \succeq 0$, if:</p>
       $$ x^\top A x \ge 0 \quad \text{for all } x \in \mathbb{R}^n $$
-      <p><b>Geometric Intuition (Curvature):</b> If $A$ represents the curvature of a function (the Hessian), the term $x^\top A x$ represents the <b>curvature in the direction of vector $x$</b>. If $x^\top A x \ge 0$ for all directions $x$, the function curves upward in every direction (it is a "bowl").</p>
+      <p><b>Geometric Intuition (Generalized Non-Negative Numbers):</b> Just as a non-negative number $a \ge 0$ allows us to define convex quadratic functions like $f(x) = ax^2$, a PSD matrix allows us to define convex quadratic forms in higher dimensions. If $A \succeq 0$, the function $f(x) = x^\top A x$ looks like a bowl. If $A$ has a negative eigenvalue, the function looks like a saddle (curves down in some directions), breaking convexity.</p>
+      <p><b>Curvature:</b> If $A$ is the Hessian $\nabla^2 f(x)$, the term $x^\top A x$ is the second derivative along the line defined by vector $x$. $A \succeq 0$ means the function has non-negative curvature in <i>every</i> possible direction.</p>
 
       <h4>Definition B: The Eigenvalue Definition</h4>
       <p>A symmetric matrix $A \in \mathbb{S}^n$ is PSD if and only if all its eigenvalues are non-negative:</p>
@@ -1261,8 +1264,8 @@
       <p>The Loewner order is the language of:</p>
       <ul>
         <li><b>Ellipsoids</b> (defined by PSD matrices in quadratic forms)</li>
-        <li><b>PSD cone</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$ in <a href="../03-convex-sets-geometry/index.html">Lecture 01</a></li>
-        <li><b>Semidefinite programs (SDPs)</b> in <a href="../07-convex-problems-standard/index.html">Lecture 08</a></li>
+        <li><b>PSD cone</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$ in <a href="../03-convex-sets-geometry/index.html">Lecture 03</a></li>
+        <li><b>Semidefinite programs (SDPs)</b> in <a href="../08-convex-problems-conic/index.html">Lecture 08</a></li>
       </ul>
     </section>
 
@@ -1353,7 +1356,7 @@
 
       <div class="insight">
         <h4>Forward Connection: Optimization Formulation</h4>
-        <p>This problem is an instance of <b>Quadratic Programming</b> (discussed in <a href="../07-convex-problems-standard/index.html">Lecture 07</a>). It minimizes a convex quadratic loss function over $\mathbb{R}^n$. This formulation is the starting point for more complex models, such as regularized regression (LASSO, Ridge) or constrained least squares ($x \ge 0$), which we explore in later lectures.</p>
+        <p>This problem is an instance of <b>Unconstrained Convex Optimization</b>. It minimizes a convex quadratic loss function. The solution methods we derive here (analytical gradients) generalize to the iterative descent methods (Gradient Descent, Newton's Method) covered in <a href="../13-unconstrained-minimization/index.html">Lecture 13</a>. Furthermore, it is a specific case of <b>Quadratic Programming (QP)</b> (<a href="../07-convex-problems-standard/index.html">Lecture 07</a>), which adds linear constraints to the problem.</p>
       </div>
 
       <h3>Geometric Interpretation: Projection</h3>
