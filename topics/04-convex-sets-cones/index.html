@@ -302,6 +302,10 @@
         x \prec_K y \iff y - x \in \text{int}(K)
         $$
 
+        <h4>Vector Optimization (Pareto Optimality)</h4>
+        <p>This partial order allows us to define optimization for vector-valued functions. A point $x^*$ is <b>Pareto optimal</b> (or efficient) with respect to a cone $K$ if there is no feasible $y$ such that $f(y) \preceq_K f(x^*)$ and $f(y) \neq f(x^*)$. In other words, you cannot improve any component of the objective (in the cone sense) without degrading another.
+        <br>For $K = \mathbb{R}^n_+$, this recovers standard multi-objective optimization.</p>
+
         <div class="row" style="display: flex; gap: 20px; justify-content: center; margin: 24px 0;">
              <figure style="text-align: center; flex: 1;">
                <img src="assets/generalized-inequality-cone.png"
@@ -419,25 +423,32 @@
         </div>
 
         <div class="proof-box">
-          <h4>Appendix 1: Proof that the SOC is self-dual ($\mathcal{Q}^* = \mathcal{Q}$)</h4>
-          <p>We prove that the Second-Order Cone $\mathcal{Q} = \{(t,z) \in \mathbb{R} \times \mathbb{R}^n \mid t \ge \|z\|_2\}$ is self-dual.</p>
+          <h4>Appendix 1: Rigorous Proof that the SOC is self-dual ($\mathcal{Q}^* = \mathcal{Q}$)</h4>
+          <p>We prove that the Second-Order Cone $\mathcal{Q} = \{(z, t) \in \mathbb{R}^n \times \mathbb{R} \mid \|z\|_2 \le t\}$ is self-dual under the standard inner product $\langle (z,t), (y,s) \rangle = z^\top y + ts$.</p>
+
           <div class="proof-step">
-            <strong>Part 1: $\mathcal{Q} \subseteq \mathcal{Q}^*$</strong>
-            <br>Take any $(s,y) \in \mathcal{Q}$ (so $s \ge \|y\|$). We must show that for all $(t,z) \in \mathcal{Q}$ (so $t \ge \|z\|$), the inner product is non-negative:
-            $$ (s,y)^\top (t,z) = st + y^\top z \ge 0 $$
-            By Cauchy-Schwarz, $y^\top z \ge -\|y\|\|z\|$.
-            <br>Thus $st + y^\top z \ge st - \|y\|\|z\|$.
-            <br>Since $s \ge \|y\|$ and $t \ge \|z\|$, we have $st \ge \|y\|\|z\|$.
-            <br>Therefore $st + y^\top z \ge 0$.
+            <strong>Part 1: $\mathcal{Q} \subseteq \mathcal{Q}^*$ (Self-Polarity)</strong>
+            <br>Let $(y,s) \in \mathcal{Q}$. This means $\|y\|_2 \le s$.
+            <br>Let $(z,t) \in \mathcal{Q}$ be any vector in the cone. So $\|z\|_2 \le t$.
+            <br>We compute the inner product:
+            $$ \langle (z,t), (y,s) \rangle = z^\top y + ts $$
+            Using Cauchy-Schwarz: $z^\top y \ge -\|z\|_2 \|y\|_2$.
+            <br>Thus $z^\top y + ts \ge ts - \|z\|_2 \|y\|_2$.
+            <br>Since $t \ge \|z\|_2$ and $s \ge \|y\|_2$, we have $ts \ge \|z\|_2 \|y\|_2$.
+            <br>Therefore, the sum is non-negative. Since $(z,t)$ was arbitrary, $(y,s) \in \mathcal{Q}^*$.
           </div>
+
           <div class="proof-step">
             <strong>Part 2: $\mathcal{Q}^* \subseteq \mathcal{Q}$</strong>
-            <br>Assume $(s,y) \in \mathcal{Q}^*$. This means $st + y^\top z \ge 0$ for all $(t,z)$ such that $t \ge \|z\|$.
-            <br>We must show $s \ge \|y\|$.
-            <br>First, take $(t,z) = (1,0) \in \mathcal{Q}$. Then $s(1) + 0 \ge 0 \implies s \ge 0$.
-            <br>Second, if $y \ne 0$, choose $z = -\frac{y}{\|y\|}$ and $t = 1$. Note $\|z\|=1 \le t$, so $(t,z) \in \mathcal{Q}$.
-            <br>The condition becomes $s(1) + y^\top (-\frac{y}{\|y\|}) \ge 0 \implies s - \frac{\|y\|^2}{\|y\|} \ge 0 \implies s - \|y\| \ge 0 \implies s \ge \|y\|$.
-            <br>Thus $(s,y) \in \mathcal{Q}$.
+            <br>Let $(y,s) \in \mathcal{Q}^*$. By definition, $z^\top y + ts \ge 0$ for all $(z,t) \in \mathcal{Q}$.
+            <br>1. <b>Non-negativity of s:</b> Choose $(z,t) = (0,1) \in \mathcal{Q}$. The condition gives $0^\top y + 1\cdot s = s \ge 0$.
+            <br>2. <b>Norm bound:</b> If $y=0$, then $0 \le s$ implies $(0,s) \in \mathcal{Q}$ trivially.
+            <br>If $y \neq 0$, choose a specific test vector designed to "oppose" $y$. Let $z = -\frac{y}{\|y\|_2}$. Let $t=1$.
+            <br>Since $\|z\|_2 = 1 \le t$, this vector $(z,t)$ is in $\mathcal{Q}$.
+            <br>The dual condition implies:
+            $$ z^\top y + ts = -\frac{y^\top y}{\|y\|_2} + s \ge 0 \implies -\frac{\|y\|_2^2}{\|y\|_2} + s \ge 0 \implies s \ge \|y\|_2 $$
+            <br>Thus $\|y\|_2 \le s$, which means $(y,s) \in \mathcal{Q}$.
+            <br>Since both inclusions hold, $\mathcal{Q}^* = \mathcal{Q}$.
           </div>
         </div>
 

@@ -149,6 +149,11 @@
         $$
         <p>Think of this definition as creating "mixtures" of the points in $S$. If $S$ represents pure ingredients, $\mathrm{conv}(S)$ represents all possible mixtures (all possible percentages summing to 100%).</p>
 
+        <h4>Recession Cone (Asymptotic Directions)</h4>
+        <p>For unbounded convex sets, it is useful to characterize directions in which the set extends infinitely. The <b>recession cone</b> of a convex set $C$ is defined as:</p>
+        $$ R_C = \{v \in \mathbb{R}^n \mid x + tv \in C \text{ for all } x \in C, t \ge 0\} $$
+        <p>Intuitively, if you look at $C$ from "infinitely far away", it looks like $R_C$. A closed convex set is bounded if and only if its recession cone is $\{0\}$. This concept is crucial for proving existence of solutions in optimization problems.</p>
+
         <div class="theorem-box">
           <h4>Theorem (Carathéodory's Theorem)</h4>
           <p>If $S \subseteq \mathbb{R}^n$, then every point in $\mathrm{conv}(S)$ can be written as a convex combination of at most $n+1$ points from $S$.</p>
@@ -299,6 +304,11 @@
         H^- = \{x \in \mathbb{R}^n \mid a^\top x \le b\}
         $$
         <p>This is the region on one side of the hyperplane. The complement halfspace is $H^+ = \{x \mid a^\top x \ge b\}$.</p>
+
+        <h4>Normal Cones (Geometry at the Boundary)</h4>
+        <p>For a convex set $C$ and a point $x \in C$, the <b>normal cone</b> $N_C(x)$ describes the "outward" directions at $x$. It is defined as:</p>
+        $$ N_C(x) = \{g \in \mathbb{R}^n \mid g^\top (y - x) \le 0 \text{ for all } y \in C\} $$
+        <p>If $x$ is in the interior of $C$, then $N_C(x) = \{0\}$. If $x$ is on the boundary, $N_C(x)$ contains the normal vectors to all supporting hyperplanes at $x$. This geometric object is fundamental to optimality conditions: $x^*$ minimizes a differentiable function $f$ over $C$ if and only if $-\nabla f(x^*) \in N_C(x^*)$.</p>
 
         <div class="proof-box">
           <h4>Proof: Hyperplanes and Halfspaces are Convex</h4>

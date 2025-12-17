@@ -126,8 +126,8 @@
           <p><b>Duality as a Game:</b>
           <br><b>Primal:</b> $\min_x \max_{\lambda, \nu} L(x, \lambda, \nu)$ (Minimizer moves first, Maximizer exploits violations).
           <br><b>Dual:</b> $\max_{\lambda, \nu} \min_x L(x, \lambda, \nu)$ (Maximizer moves first, setting prices; Minimizer optimizes given prices).
-          <br><b>Weak Duality</b> is simply the max-min inequality: $\max_{\lambda, \nu} \min_x L(x, \lambda, \nu) \le \min_x \max_{\lambda, \nu} L(x, \lambda, \nu)$.
-          <br><b>Strong Duality</b> implies the existence of a <b>Saddle Point</b> where the order of play doesn't matter.</p>
+          <br><b>Weak Duality</b> is simply the max-min inequality: $\max_{\lambda, \nu} \min_x L(x, \lambda, \nu) \le \min_x \max_{\lambda, \nu} L(x, \lambda, \nu)$. This inequality holds for <em>any</em> function, not just Lagrangians.
+          <br><b>Strong Duality</b> implies the existence of a <b>Saddle Point</b> where the order of play doesn't matter, i.e., we can swap min and max.</p>
         </div>
       </section>
 
@@ -284,9 +284,9 @@
           <div class="proof-step">
             <strong>Step 4: Recovering Strong Duality.</strong>
             Divide the separation inequality by $\mu$. Let $\tilde{\lambda} = \lambda/\mu, \tilde{\nu} = \nu/\mu$.
-            $$ f_0(x) + \sum \tilde{\lambda}_i f_i(x) + \sum \tilde{\nu}_j h_j(x) \ge p^* \quad \forall x $$
+            $$ f_0(x) + \sum \tilde{\lambda}_i f_i(x) + \sum \tilde{\nu}_j h_j(x) \ge p^* \quad \forall x \in \mathcal{D} $$
             Taking the infimum over $x$, we get $g(\tilde{\lambda}, \tilde{\nu}) \ge p^*$.
-            Thus $d^* \ge p^*$. Since $d^* \le p^*$ always, we have $d^* = p^*$.
+            Thus the dual optimal value $d^*$ is at least $p^*$. Since $d^* \le p^*$ always (weak duality), we conclude $d^* = p^*$.
           </div>
         </div>
       </section>
@@ -426,8 +426,9 @@
           $$ \boxed{ (-\lambda^*, -\nu^*) \in \partial p^*(0, 0) } $$
           <p><b>Shadow Price Interpretation:</b>
           <ul>
-            <li>$\lambda_i^* \ge 0$ measures the rate of improvement (decrease in $p^*$) per unit relaxation (increase in $u_i$).</li>
-            <li>If $p^*$ is differentiable, then $\frac{\partial p^*}{\partial u_i} = -\lambda_i^*$ and $\frac{\partial p^*}{\partial v_j} = -\nu_j^*$.</li>
+            <li>Since $p^*(u, v)$ is convex, a subgradient gives a global lower bound.</li>
+            <li>$\lambda_i^* \ge 0$. Relaxing constraint $i$ ($u_i > 0$) lowers the optimal value. $\lambda_i^*$ is the rate of this improvement.</li>
+            <li>If $p^*$ is differentiable, then $\frac{\partial p^*}{\partial u_i} = -\lambda_i^*$ and $\frac{\partial p^*}{\partial v_j} = -\nu_j^*$. The Lagrange multipliers are exactly the <strong>sensitivity</strong> of the optimal value to constraint perturbations.</li>
           </ul>
           </p>
         </div>
@@ -451,7 +452,7 @@
         <br>Minimize over $x$: $Px + q + A^\top \lambda = 0 \implies x = -P^{-1}(q + A^\top \lambda)$.
         <br>Dual Function (after algebra):
         $$ g(\lambda) = -\frac{1}{2} \lambda^\top (A P^{-1} A^\top) \lambda - (b + A P^{-1} q)^\top \lambda - \frac{1}{2} q^\top P^{-1} q $$
-        This is a concave quadratic maximization.</p>
+        This is a concave quadratic maximization (since $A P^{-1} A^\top \succeq 0$).</p>
 
         <h3>7.3 Semidefinite Programming</h3>
         <p>Primal: $\min \mathrm{tr}(CX)$ s.t. $\mathrm{tr}(A_i X) = b_i, X \succeq 0$.
@@ -555,7 +556,7 @@
         <p><b>Primal:</b> $\min \|x\|_1$ s.t. $Ax = b$.</p>
         <p><b>Lagrangian:</b> $L(x, \nu) = \|x\|_1 + \nu^\top(b - Ax) = b^\top \nu + (\|x\|_1 - (A^\top \nu)^\top x)$.</p>
         <p><b>Dual Function:</b>
-        <br>The term $\inf_x (\|x\|_1 - z^\top x)$ is finite (zero) iff the dual norm constraint holds: $\|z\|_\infty \le 1$.
+        <br>The term $\inf_x (\|x\|_1 - z^\top x)$ is related to the conjugate of the L1 norm. It is finite (zero) iff the dual norm condition holds: $\|z\|_\infty \le 1$.
         <br>Here $z = A^\top \nu$.
         <br><b>Dual Problem:</b> $\max b^\top \nu$ s.t. $\|A^\top \nu\|_\infty \le 1$.
         <br><b>KKT Insight:</b> At optimum, $A^\top \nu \in \partial \|x\|_1$. Dual variables certify the support of the sparse solution.
@@ -1038,27 +1039,31 @@
     <div class="proof-step">
       <strong>Step 1: Primal SOCP.</strong>
       Introduce $t_1, t_2$. Minimize $t_1 + \rho t_2$ subject to:
-      $$ \|Ax - b\|_2 \le t_1 \iff (Ax - b, t_1) \in \mathcal{Q}_{m+1} $$
+      $$ \|Ax - b\|_2 \le t_1 \iff (b - Ax, t_1) \in \mathcal{Q}_{m+1} $$
       $$ \|x\|_2 \le t_2 \iff (x, t_2) \in \mathcal{Q}_{n+1} $$
+      (Note: we use $b-Ax$ to align with standard form $Ax=b$, but inside the norm signs matter less).
     </div>
     <div class="proof-step">
       <strong>Step 2: Lagrangian.</strong>
-      Dual variables $(z_1, \mu_1) \in \mathcal{Q}_{m+1}$ and $(z_2, \mu_2) \in \mathcal{Q}_{n+1}$.
+      We associate dual variables $(z_1, \mu_1) \in \mathcal{Q}_{m+1}$ and $(z_2, \mu_2) \in \mathcal{Q}_{n+1}$.
+      The Lagrangian term for a conic constraint $y \in K$ is $-s^\top y$ where $s \in K^*$. Here $K=K^*$.
       $$ L = t_1 + \rho t_2 - [z_1^\top(Ax - b) + \mu_1 t_1] - [z_2^\top x + \mu_2 t_2] $$
-      Minimizing over $t_1$: $1 - \mu_1 = 0 \implies \mu_1 = 1$.
-      Minimizing over $t_2$: $\rho - \mu_2 = 0 \implies \mu_2 = \rho$.
-      Minimizing over $x$: $-A^\top z_1 - z_2 = 0 \implies z_2 = -A^\top z_1$.
+      Minimizing over $t_1 \implies 1 - \mu_1 = 0 \implies \mu_1 = 1$.
+      Minimizing over $t_2 \implies \rho - \mu_2 = 0 \implies \mu_2 = \rho$.
+      Minimizing over $x \implies -A^\top z_1 - z_2 = 0 \implies z_2 = -A^\top z_1$.
     </div>
     <div class="proof-step">
       <strong>Step 3: Dual Constraints.</strong>
-      From $(z_1, \mu_1) \in \mathcal{Q}$: $\|z_1\|_2 \le \mu_1 = 1$.
-      From $(z_2, \mu_2) \in \mathcal{Q}$: $\|z_2\|_2 \le \mu_2 = \rho$.
-      Substitute $z_2$: $\| -A^\top z_1 \|_2 \le \rho$.
+      From conic feasibility of dual vars:
+      $\|z_1\|_2 \le \mu_1 \implies \|z_1\|_2 \le 1$.
+      $\|z_2\|_2 \le \mu_2 \implies \|z_2\|_2 \le \rho$.
+      Substituting $z_2 = -A^\top z_1$, we get $\|A^\top z_1\|_2 \le \rho$.
     </div>
     <div class="proof-step">
       <strong>Step 4: Dual Problem.</strong>
-      Objective term is $z_1^\top b$. We maximize this.
+      The remaining term in Lagrangian is $z_1^\top b$.
       $$ \max_{z_1} \quad b^\top z_1 \quad \text{s.t.} \quad \|z_1\|_2 \le 1, \quad \|A^\top z_1\|_2 \le \rho $$
+      This is the dual of Robust Least Squares. It is a maximization of a linear function over the intersection of a ball and an ellipsoidal cylinder.
     </div>
   </div>
 </div>

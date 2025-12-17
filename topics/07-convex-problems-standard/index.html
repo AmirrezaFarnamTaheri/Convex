@@ -158,12 +158,34 @@
 
       <h4>Geometry of the Objective: Sliding Hyperplanes</h4>
         <p>Minimizing $c^\top x$ corresponds to moving the hyperplane $H_\alpha = \{x \mid c^\top x = \alpha\}$ in the direction of $-c$ (the direction of steepest descent).
-        Imagine "pushing the objective down" by sliding this supporting hyperplane until it just touches the feasible polyhedron. The point where it makes contact is the optimal solution.
+        Imagine "pushing the objective down" by sliding this supporting hyperplane until it just touches the feasible polyhedron. The point where it makes contact is the optimal solution.</p>
       <ul>
             <li><strong>Why Vertices?</strong> If the optimum is unique, it must be at a vertex (extreme point). If it is not unique (e.g., the hyperplane is parallel to a face), then an entire face is optimal, but at least one vertex on that face is also optimal.</li>
             <li><strong>The Fundamental Theorem of LP:</strong> If an LP has an optimal solution, it has an optimal solution at a vertex of the feasible set. This geometric fact underpins the Simplex method.</li>
       </ul>
-      </p>
+
+      <div class="proof-box">
+        <h4>Proof Sketch: Why Vertices?</h4>
+        <p>This property relies on the fact that the objective function is linear (and thus both convex and concave).</p>
+        <div class="proof-step">
+          <strong>Step 1: Representation.</strong>
+          A bounded polyhedron (polytope) is the convex hull of its vertices $\{v_1, \dots, v_k\}$. Any point $x$ in the feasible set can be written as a convex combination $x = \sum_{i=1}^k \theta_i v_i$, where $\theta_i \ge 0, \sum \theta_i = 1$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Linearity.</strong>
+          Evaluate the cost at $x$:
+          $$ c^\top x = c^\top \left( \sum_{i=1}^k \theta_i v_i \right) = \sum_{i=1}^k \theta_i (c^\top v_i) $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Bounding.</strong>
+          Let $v_{min}$ be the vertex with the smallest cost, so $c^\top v_{min} \le c^\top v_i$ for all $i$.
+          $$ c^\top x = \sum_{i=1}^k \theta_i (c^\top v_i) \ge \sum_{i=1}^k \theta_i (c^\top v_{min}) = (c^\top v_{min}) \sum_{i=1}^k \theta_i = c^\top v_{min} $$
+        </div>
+        <div class="proof-step">
+          <strong>Conclusion.</strong>
+          No point $x$ can have a lower cost than the best vertex $v_{min}$. Thus, $v_{min}$ is an optimal solution.
+        </div>
+      </div>
 
       <figure style="margin: 16px 0; text-align: center;">
         <img src="assets/linear-programming-feasible-region.svg" alt="An example of a feasible region in a Linear Program" style="max-width: 450px; height: auto;" />
@@ -233,7 +255,9 @@
             <strong>Step 2: Support Function of the Ball.</strong>
             Substitute $x = x_c + u$ where $\|u\|_2 \le r$.
             $$ \sup_{\|u\|_2 \le r} a_i^\top (x_c + u) = a_i^\top x_c + \sup_{\|u\|_2 \le r} a_i^\top u $$
-            By definition of the dual norm (where the dual of $\ell_2$ is $\ell_2$), $\sup_{\|u\| \le r} a_i^\top u = r \|a_i\|_2$.
+            Recall the definition of the dual norm: $\|v\|_* = \sup \{v^\top u \mid \|u\| \le 1\}$. Scaling the variable $u$ by $r$, we get $\sup \{v^\top u \mid \|u\| \le r\} = r \|v\|_*$.
+            For the Euclidean norm, the dual is the Euclidean norm itself ($\|\cdot\|_2^* = \|\cdot\|_2$). Thus:
+            $$ \sup_{\|u\| \le r} a_i^\top u = r \|a_i\|_2 $$
         </div>
         <div class="proof-step">
             <strong>Step 3: Linear Constraints.</strong>
@@ -801,6 +825,30 @@
           $$
       </p>
       <p>This is a convex optimization problem. We can solve it for $y^*$ and recover $x^* = e^{y^*}$.</p>
+
+      <div class="example">
+        <h4>Example: Box Volume Maximization</h4>
+        <p>We want to maximize the volume of a box with dimensions $x, y, z$ (so maximize $xyz$), subject to:
+        <ul>
+          <li><strong>Wall Area Limit:</strong> The total area of the walls (excluding top/bottom) is at most $A_{wall}$. ($2xz + 2yz \le A_{wall}$)</li>
+          <li><strong>Floor Area Limit:</strong> The floor area is at most $A_{floor}$. ($xy \le A_{floor}$)</li>
+          <li><strong>Aspect Ratio:</strong> The height cannot be more than twice the width. ($z/x \le 2$)</li>
+        </ul>
+        </p>
+        <p><strong>GP Formulation:</strong>
+        Minimize the inverse volume $x^{-1} y^{-1} z^{-1}$ (a monomial).
+        Constraints must be in the form (Posynomial $\le 1$).
+        $$
+        \begin{aligned}
+        \text{minimize} \quad & x^{-1} y^{-1} z^{-1} \\
+        \text{subject to} \quad & \frac{2}{A_{wall}} x z + \frac{2}{A_{wall}} y z \le 1 \\
+        & \frac{1}{A_{floor}} x y \le 1 \\
+        & 0.5 x^{-1} z \le 1
+        \end{aligned}
+        $$
+        All constraints are posynomials (or monomials). This is a standard GP.
+        </p>
+      </div>
     </section>
 
 <!-- NEW SECTION 5: Summary Pattern Library -->
@@ -816,10 +864,10 @@
       </div>
 
       <div class="proof-box">
-        <h4>Pattern 2: Robustness via Cauchy-Schwarz</h4>
+        <h4>Pattern 2: Robustness via Dual Norms</h4>
         <p><strong>Problem:</strong> Constraints must hold for all perturbations in a ball ("Ball inside Polyhedron").</p>
         <p><strong>Transformation:</strong> The condition $\sup_{\|u\| \le r} a^\top u \le b$ becomes $r\|a\|_* \le b$.</p>
-        <p><strong>Result:</strong> Turns semi-infinite constraints into standard norm constraints (LP or SOCP).</p>
+        <p><strong>Result:</strong> Turns semi-infinite constraints into standard norm constraints (LP or SOCP). This generalizes Cauchy-Schwarz (where the dual of L2 is L2).</p>
       </div>
 
       <div class="proof-box">
@@ -843,7 +891,7 @@
       <h2>7. Matrix Viewpoint: The Algebra of QPs</h2>
       <p>Throughout this lecture, we've used block matrices and quadratic forms to construct optimization problems. Let's formalize the linear algebra that makes this work.</p>
 
-      <h3>6.1 Congruence and PSD Matrices</h3>
+      <h3>7.1 Congruence and PSD Matrices</h3>
       <p>When we write a quadratic form in a new coordinate system $x = Bz$ (where $B$ is invertible), the expression transforms as:</p>
       $$ x^\top A x = (Bz)^\top A (Bz) = z^\top (B^\top A B) z $$
       <p>The transformation $A \mapsto B^\top A B$ is called a <strong>congruence transform</strong>.</p>
@@ -854,7 +902,7 @@
         <br>This is why we can build complex QPs using block matrices. For example, the distance matrix $Q = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix}$ represents squared distance $\|x-y\|^2$. Since squared distance is non-negative in <em>any</em> coordinate system, $Q$ must be PSD.</p>
       </div>
 
-      <h3>6.2 Similarity and Eigenvalues</h3>
+      <h3>7.2 Similarity and Eigenvalues</h3>
       <p>Contrast congruence with <strong>similarity transforms</strong> $A \mapsto B^{-1} A B$, which arise in eigen-analysis.</p>
       $$ Ax = \lambda x \iff (B^{-1}AB)(B^{-1}x) = \lambda (B^{-1}x) $$
       <ul>
@@ -871,7 +919,7 @@
     <!-- SECTION 7: Reformulation -->
     <section class="section-card" id="section-8">
       <h2>8. Problem Reformulation</h2>
-      <h3>7.1 Equivalent Problems</h3>
+      <h3>8.1 Equivalent Problems</h3>
       <p>Two optimization problems are equivalent if the solution of one can be readily obtained from the solution of the other, and vice versa. Common techniques include:</p>
       <ul>
         <li><strong>Change of variables:</strong> $x = \phi(y)$.</li>
@@ -939,12 +987,18 @@
         </div>
         <div class="solution-box">
           <h4>Solution</h4>
-          <p>We want $z^\top Q z = \|Bz\|^2$.
-          We know $z^\top Q z = \|x - y\|^2$ where $z = (x, y)$.
-          Also $\|x - y\|^2 = \|\begin{bmatrix} I & -I \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix}\|^2$.
+          <p>We want to find $B$ such that $z^\top Q z = \|Bz\|^2$.
+          <br>Recall the objective function for distance: $f(x,y) = \|x - y\|^2$.
+          Let $z = (x, y)$. Then:
+          $$ \|x - y\|^2 = \|\begin{bmatrix} I & -I \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix}\|^2 = \|B z\|^2 $$
           So $B = \begin{bmatrix} I & -I \end{bmatrix}$.
-          Check: $B^\top B = \begin{bmatrix} I \\ -I \end{bmatrix} \begin{bmatrix} I & -I \end{bmatrix} = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix} = Q$.
-          Since $Q = B^\top B$, $Q \succeq 0$.</p>
+          <br><strong>Verification:</strong>
+          $$ B^\top B = \begin{bmatrix} I \\ -I \end{bmatrix} \begin{bmatrix} I & -I \end{bmatrix} = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix} = Q $$
+          Since $Q$ can be written as $B^\top B$, it is Positive Semidefinite.
+          <br><strong>Schur Complement Connection:</strong>
+          Alternatively, we can use the Schur complement. For $Q = \begin{bmatrix} A & B_{block} \\ B_{block}^\top & C \end{bmatrix} = \begin{bmatrix} I & -I \\ -I & I \end{bmatrix}$:
+          $$ S = C - B_{block}^\top A^{-1} B_{block} = I - (-I)^\top (I)^{-1} (-I) = I - I = 0 $$
+          Since $A=I \succ 0$ and $S=0 \succeq 0$, the matrix $Q$ is PSD.</p>
         </div>
       </div>
 

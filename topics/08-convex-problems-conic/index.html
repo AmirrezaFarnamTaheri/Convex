@@ -185,12 +185,6 @@
       <p>Note: The inequality constraints must define a convex set, so we typically require $f_i$ to be convex, not merely quasiconvex (since sublevel sets of individual quasiconvex functions are convex, but their intersection might not have nice properties without stronger assumptions, though technically intersection of convex sets is convex. Standard form usually requires convex constraints).</p>
       <p>The constraints $\|x - p_i\|_2 \le t_i$ are standard second-order cone constraints $(x - p_i, t_i) \in \mathcal{L}^{n+1}$.</p>
 
-      <h3>1.5 Hierarchy: LP &subseteq; QP &subseteq; SOCP</h3>
-      <p>The problem classes form a nested hierarchy of expressiveness:</p>
-      <ul>
-        <li><b>LP &subseteq; QP:</b> A Linear Program is a Quadratic Program with a zero quadratic term ($P=0$).</li>
-        <li><b>QP &subseteq; SOCP:</b> A convex Quadratic Program can be cast as an SOCP. The quadratic constraint $x^\top P x + q^\top x + r \le 0$ (with $P = L L^\top$) is equivalent to $\|L^\top x + \frac{1}{2}L^{-1}q\|_2 \le \text{affine}(x)$, which is an SOC constraint.</li>
-      </ul>
     </section>
 
     <!-- Section 2: Robust Linear Programming -->
@@ -208,15 +202,20 @@
       <div class="proof-box">
         <h4>Derivation: Robust to SOCP</h4>
         <div class="proof-step">
-          <strong>Supremum over Ellipsoid:</strong>
-          $$ \sup_{\|u\|_2 \le 1} (\bar{a}_i + P_i u)^\top x = \bar{a}_i^\top x + \sup_{\|u\|_2 \le 1} u^\top P_i^\top x $$
+          <strong>Step 1: Expand the Term.</strong>
+          We want to maximize the LHS over the uncertainty set $u$:
+          $$ \sup_{\|u\|_2 \le 1} (\bar{a}_i + P_i u)^\top x = \bar{a}_i^\top x + \sup_{\|u\|_2 \le 1} (P_i u)^\top x = \bar{a}_i^\top x + \sup_{\|u\|_2 \le 1} u^\top (P_i^\top x) $$
         </div>
         <div class="proof-step">
-          <strong>Cauchy-Schwarz:</strong> The sup is achieved when $u$ aligns with $P_i^\top x$. The value is $\|P_i^\top x\|_2$.
+          <strong>Step 2: Dual Norm Representation.</strong>
+          The term $\sup_{\|u\|_2 \le 1} u^\top v$ is the definition of the dual norm $\|v\|_*$.
+          For the Euclidean norm (L2), the dual is also L2. Thus, $\sup_{\|u\|_2 \le 1} u^\top (P_i^\top x) = \|P_i^\top x\|_2$.
         </div>
         <div class="proof-step">
-          <strong>Result:</strong> The constraint becomes $\bar{a}_i^\top x + \|P_i^\top x\|_2 \le b_i$.
-          This is exactly a <strong>Second-Order Cone constraint</strong>.
+          <strong>Step 3: Resulting Constraint.</strong>
+          Substituting back, the robust constraint is equivalent to:
+          $$ \bar{a}_i^\top x + \|P_i^\top x\|_2 \le b_i $$
+          This is a deterministic constraint on $x$ involving a linear term and a Euclidean norm term—exactly the form of a Second-Order Cone constraint.
         </div>
       </div>
       <p>Thus, Robust LP with ellipsoidal uncertainty is an SOCP.</p>
@@ -370,36 +369,47 @@
       </div>
 
       <h3>3.5 The Hierarchy: LP &subseteq; QP &subseteq; SOCP &subseteq; SDP</h3>
-      <p>This inclusion hierarchy is strict and fundamental to choosing the right solver:</p>
-      <ul>
-        <li><b>LP &subseteq; QP:</b> A Linear Program is a Quadratic Program with a zero quadratic term ($P=0$).</li>
-        <li><b>QP &subseteq; SOCP:</b> A convex Quadratic Program can be cast as an SOCP. The quadratic constraint $x^\top P x + q^\top x + r \le 0$ (with $P = L L^\top$) is equivalent to $\|L^\top x + \frac{1}{2}L^{-1}q\|_2 \le \text{affine}(x)$, which is an SOC constraint.</li>
-        <li><b>SOCP &subseteq; SDP:</b> Every SOCP can be formulated as an SDP using the Schur complement lemma (as shown below).</li>
-      </ul>
-      <p><b>Why not always use SDP?</b> While SDP is the most general, its solvers ($O(n^6)$ complexity or similar) are significantly slower than dedicated LP/QP solvers ($O(n^3)$). Always use the most specific class possible.</p>
+      <p>The standard convex problem classes form a strict hierarchy of expressiveness. Understanding this hierarchy helps in selecting the most efficient solver for a given problem.</p>
+
+      <div class="insight">
+        <h4>The Inclusion Chain</h4>
+        <ul>
+            <li><strong>LP &subseteq; QP:</strong> A Linear Program is a Quadratic Program with a zero quadratic term ($P=0$).</li>
+            <li><strong>QP &subseteq; SOCP:</strong> A convex Quadratic Program can be cast as an SOCP.
+                <br>The constraint $x^\top P x + q^\top x + r \le 0$ (with $P \succeq 0$) can be factored using $P = L L^\top$.
+                <br>Rearranging: $\|L^\top x\|_2^2 + q^\top x + r \le 0$. This can be handled by rotating the cone or using the hyperbolic constraint form.
+                <br>More directly, any convex quadratic level set is an intersection of an SOC with an affine subspace.
+            </li>
+            <li><strong>SOCP &subseteq; SDP:</strong> Every Second-Order Cone constraint can be written as a Linear Matrix Inequality (LMI).</li>
+        </ul>
+      </div>
 
       <div class="proof-box">
-        <h4>SOCP to SDP: The Embedding Proof</h4>
+        <h4>Proof: Embedding SOCP into SDP</h4>
+        <p>We want to encode the Lorentz cone constraint $\|y\|_2 \le t$ (where $y \in \mathbb{R}^k, t \in \mathbb{R}$) as a matrix inequality.</p>
         <div class="proof-step">
-          <strong>Step 1: Scalar to Matrix.</strong>
-          We want to encode $\|y\|_2 \le t$ as a matrix inequality.
-          This is equivalent to $t^2 - y^\top y \ge 0$ (assuming $t \ge 0$).
-          Rewriting: $t - y^\top (tI)^{-1} y \ge 0$.
+          <strong>Step 1: Schur Complement Logic.</strong>
+          The inequality $\|y\|_2 \le t$ is equivalent to $t^2 - y^\top y \ge 0$ (assuming $t \ge 0$).
+          Dividing by $t$ (for $t > 0$), this is $t - y^\top (tI)^{-1} y \ge 0$.
         </div>
         <div class="proof-step">
-          <strong>Step 2: Schur Complement.</strong>
-          The expression $t - y^\top (tI)^{-1} y$ is exactly the Schur complement of the top-left block $tI$ in the matrix:
-          $$ M = \begin{bmatrix} tI & y \\ y^\top & t \end{bmatrix} $$
-          By the Schur Complement Lemma, $M \succeq 0 \iff tI \succ 0$ and $t - y^\top(tI)^{-1}y \ge 0$.
+          <strong>Step 2: Constructing the Matrix.</strong>
+          Consider the block matrix:
+          $$ A = \begin{bmatrix} tI & y \\ y^\top & t \end{bmatrix} \in \mathbb{S}^{k+1} $$
+          By the Schur Complement Lemma, $A \succeq 0$ if and only if:
+          <ol>
+              <li>$tI \succ 0$ (which means $t > 0$)</li>
+              <li>The Schur complement $t - y^\top (tI)^{-1} y \ge 0$</li>
+          </ol>
         </div>
         <div class="proof-step">
-          <strong>Step 3: Linear Matrix Inequality.</strong>
-          The matrix $M$ is linear in $y$ and $t$.
-          $$ M(y,t) = t \begin{bmatrix} I & 0 \\ 0 & 1 \end{bmatrix} + \sum y_i \begin{bmatrix} 0 & e_i \\ e_i^\top & 0 \end{bmatrix} $$
-          Since $y$ and $t$ are affine functions of $x$, the constraint becomes an LMI in $x$.
-          Thus, every SOCP constraint can be written as an SDP constraint.
+          <strong>Step 3: Conclusion.</strong>
+          The condition $\|y\|_2 \le t$ is equivalent to the LMI $\begin{bmatrix} tI & y \\ y^\top & t \end{bmatrix} \succeq 0$.
+          Since the matrix entries are linear in $(y, t)$, this is a valid SDP constraint.
         </div>
       </div>
+
+      <p><b>Computational Trade-off:</b> While SDP is the most general, its solvers (typically $O(n^6)$ or $O(n^4)$ depending on structure) are significantly slower than dedicated SOCP ($O(n^3)$) or LP/QP solvers. <strong>Rule of Thumb:</strong> Always use the most specific problem class that fits your model.</p>
     </section>
 
     <!-- Section 4: Quasiconvex Optimization -->
@@ -1128,8 +1138,24 @@
   <p>Write the SDP $\min \text{tr}(CX)$ s.t. $\langle A_i, X \rangle = b_i$, $X \succeq 0$ in the standard conic form $\min \langle C, X \rangle$ s.t. $\mathcal{A}(X) = b, X \in K$. Identify $K$.</p>
   <div class="solution-box">
     <h4>Solution</h4>
-    <p>$K = \mathbb{S}_+^n$ (the PSD cone). The linear operator $\mathcal{A}: \mathbb{S}^n \to \mathbb{R}^m$ is defined by $\mathcal{A}(X) = (\langle A_1, X \rangle, \dots, \langle A_m, X \rangle)^\top$.
-    This matches the standard form.</p>
+    <div class="proof-step">
+      <strong>Step 1: The Cone.</strong>
+      The constraint $X \succeq 0$ means $X \in \mathbb{S}_+^n$. So $K = \mathbb{S}_+^n$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 2: The Linear Operator.</strong>
+      The equality constraints are $\text{tr}(A_i X) = b_i$ for $i=1,\dots,m$.
+      We can define a linear operator $\mathcal{A}: \mathbb{S}^n \to \mathbb{R}^m$ that maps a matrix $X$ to the vector of these inner products:
+      $$ \mathcal{A}(X) = \begin{bmatrix} \langle A_1, X \rangle \\ \vdots \\ \langle A_m, X \rangle \end{bmatrix} $$
+      Then the constraints become $\mathcal{A}(X) = b$.
+    </div>
+    <div class="proof-step">
+      <strong>Step 3: The Adjoint Operator (Bonus).</strong>
+      The dual problem involves the adjoint operator $\mathcal{A}^*: \mathbb{R}^m \to \mathbb{S}^n$.
+      By definition, $\langle y, \mathcal{A}(X) \rangle_{\mathbb{R}^m} = \langle \mathcal{A}^*(y), X \rangle_{\mathbb{S}^n}$.
+      $$ \sum_{i=1}^m y_i \langle A_i, X \rangle = \left\langle \sum_{i=1}^m y_i A_i, X \right\rangle $$
+      Thus, $\mathcal{A}^*(y) = \sum_{i=1}^m y_i A_i$. This operator constructs the LMI in the dual SDP.
+    </div>
   </div>
 </div>
 

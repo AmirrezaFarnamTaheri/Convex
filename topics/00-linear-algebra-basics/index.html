@@ -1375,6 +1375,13 @@
         <figcaption><i>Figure 0.7:</i> Projection onto an affine set: translate to a parallel subspace, project orthogonally, then shift back by a particular solution.</figcaption>
       </figure>
 
+      <h4>Explicit Formula via Least Norm</h4>
+      <p>We solve the problem $\min \|x - y\|_2^2$ s.t. $Fx = g$. The KKT conditions yield the linear system:
+      $$ \begin{bmatrix} I & F^\top \\ F & 0 \end{bmatrix} \begin{bmatrix} x \\ \nu \end{bmatrix} = \begin{bmatrix} y \\ g \end{bmatrix} $$
+      Solving for $x$ gives the explicit projection formula:
+      $$ \Pi_{\mathcal{A}}(y) = y - F^\top (F F^\top)^{-1} (F y - g) $$
+      This is often more practical than constructing a nullspace basis $Z$.</p>
+
       <h4>Parametric Representation</h4>
       <p>Every point in $\mathcal{A}$ can be written as $x = x_0 + Zt$, where:</p>
       <ul>
@@ -1383,8 +1390,8 @@
         <li>$t \in \mathbb{R}^k$ where $k = n - p$ (dimension of the nullspace).</li>
       </ul>
 
-      <h4>Euclidean Projection Formula</h4>
-      <p>The <b>Euclidean projection</b> of any point $y \in \mathbb{R}^n$ onto $\mathcal{A}$ is given by:</p>
+      <h4>Euclidean Projection Formula (Nullspace)</h4>
+      <p>The <b>Euclidean projection</b> of any point $y \in \mathbb{R}^n$ onto $\mathcal{A}$ can also be computed via the nullspace basis:</p>
       $$
       \Pi_{\mathcal{A}}(y) = x_0 + Z(Z^\top Z)^{-1} Z^\top (y - x_0)
       $$

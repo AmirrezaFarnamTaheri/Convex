@@ -254,11 +254,14 @@
           $$
           f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) - \frac{m}{2} \theta(1-\theta) \|x - y\|_2^2
           $$
-          <p>Equivalently, the function $g(x) = f(x) - \frac{m}{2}\|x\|_2^2$ is convex. For differentiable functions, this implies a <b>quadratic lower bound</b>:</p>
+          <p>Equivalently, the function $g(x) = f(x) - \frac{m}{2}\|x\|_2^2$ is convex. For twice differentiable functions, this is equivalent to:</p>
+          $$ \nabla^2 f(x) \succeq mI $$
+          <p>For differentiable functions, this implies a <b>quadratic lower bound</b>:</p>
           $$ f(y) \ge f(x) + \nabla f(x)^\top (y - x) + \frac{m}{2}\|y - x\|_2^2 $$
           <p><b>Optimization Significance:</b>
           <ul>
             <li><b>Condition Number:</b> If $f$ is $m$-strongly convex and has $L$-Lipschitz gradients ($mI \preceq \nabla^2 f \preceq LI$), the condition number is $\kappa = L/m$. Gradient descent converges at a linear rate determined by $(1 - 1/\kappa)$.</li>
+            <li><b>Upper Bound:</b> Lipschitz gradients ($\nabla^2 f(x) \preceq LI$) imply a quadratic upper bound: $f(y) \le f(x) + \nabla f(x)^\top (y - x) + \frac{L}{2}\|y - x\|_2^2$.</li>
             <li><b>Stability:</b> The solution is stable to perturbations in the objective. A small change $\epsilon$ in the gradient moves the minimizer by at most $\epsilon/m$.</li>
           </ul></p>
         </div>

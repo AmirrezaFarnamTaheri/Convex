@@ -566,8 +566,10 @@
         </div>
         <div class="theorem-box">
             <h4>(b) Integrals of Log-Concave Functions (Prékopa-Leindler)</h4>
-            <p>If $f(x, y)$ is <b>jointly</b> log-concave in $(x, y)$, then the marginal $g(x) = \int f(x, y) dy$ is log-concave.
-            <br><b>Geometric Intuition (Volume):</b> The probability density $f(x,y)$ represents mass. Log-concavity means this mass is concentrated in a "unimodal lump." Integrating out $y$ is like projecting the mass onto the x-axis (computing marginals). The theorem says that the "shadow" of a log-concave lump is still log-concave—it doesn't develop multiple peaks or weird skews.</p>
+            <p>If $f(x, y)$ is <b>jointly</b> log-concave in $(x, y)$, then the marginal $g(x) = \int f(x, y) dy$ is log-concave.</p>
+            <p>This is a consequence of the <b>Prékopa-Leindler Theorem</b>, which relates integrals of functions satisfying log-concave-like conditions:
+            $$ \int h(z) dz \ge \left( \int f(x) dx \right)^\lambda \left( \int g(y) dy \right)^{1-\lambda} $$
+            whenever $h(\lambda x + (1-\lambda)y) \ge f(x)^\lambda g(y)^{1-\lambda}$.</p>
             <p><b>Consequence:</b> Convolution of log-concave functions is log-concave. If $f, g$ are log-concave, so is $(f*g)(x) = \int f(x-y)g(y) dy$.</p>
         </div>
 
