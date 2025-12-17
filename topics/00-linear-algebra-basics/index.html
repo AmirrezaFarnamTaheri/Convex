@@ -63,14 +63,17 @@
     <section class="section-card" id="section-notation">
       <h2>1. Mathematical Atoms: Sets, Functions, and Combinations</h2>
 
-      <h3>1.1 The Meta-Skill: Mixing, Measuring, and Pullback</h3>
-      <p>In convex optimization, we view problems through a geometric lens. You will repeatedly perform three fundamental moves, which we call the "Atoms" of the subject:</p>
+      <h3>1.1 The Geometric "Atoms" of Optimization</h3>
+      <p>In convex optimization, we view algebraic problems through a geometric lens. Throughout this course, you will repeatedly perform three fundamental operations. Recognizing these "atoms" allows you to parse complex problems into simple, manageable geometric components:</p>
       <ol>
-        <li><b>Mixing (Combinations):</b> Optimization is fundamentally about "averaging" or "combining" solutions. We use <b>convex combinations</b> to interpolate between points. If two strategies are good, is their average also good? (Yes, for convex problems). This operation defines the geometry of <i>convex sets</i>.</li>
-        <li><b>Measuring (Norms & Inner Products):</b> We need precise "rulers" and "protractors" to quantify errors and directions. <b>Norms</b> measure the size of the residual (how far are we from a solution?), while <b>inner products</b> measure alignment (is this descent direction valid?). These tools translate geometry into algebra.</li>
-        <li><b>Pullback (Preimages):</b> We often define sets implicitly via functions, such as "the set of all $x$ where energy is below a threshold." Understanding constraints as <b>preimages</b> ($f^{-1}(S)$) allows us to determine the shape of a feasible set based on the properties of the constraint function $f$.</li>
+        <li><b>Mixing (Convex Combinations):</b> Optimization often involves "averaging" or interpolating between candidate solutions.
+          <br><i>Example:</i> In a portfolio optimization problem, if you have two valid asset allocations, any weighted average of them is also a valid allocation. This operation of "mixing" defines the geometry of <b>convex sets</b>.</li>
+        <li><b>Measuring (Norms & Inner Products):</b> We need precise tools to quantify "error" and "similarity".
+          <br><i>Example:</i> The objective function often measures the size of the residual vector (how far is our prediction from the data?). <b>Norms</b> act as rulers to measure these lengths, while <b>inner products</b> act as protractors to measure angles (e.g., is the gradient pointing towards the optimum?).</li>
+        <li><b>Pullback (Preimages):</b> Constraints are typically defined by functions, such as $g(x) \le 0$. This defines a set implicitly: the set of all $x$ that map to non-positive values.
+          <br><i>Example:</i> Understanding constraints as <b>preimages</b> ($g^{-1}((-\infty, 0])$) allows us to deduce the shape of the feasible region directly from the properties of the function $g$.</li>
       </ol>
-      <p>Mastering these atoms transforms optimization from symbol manipulation into inevitable geometry.</p>
+      <p>Mastering these three operations transforms optimization from abstract symbol manipulation into concrete geometric reasoning.</p>
 
       <h3>1.2 Preliminaries: Lines and Line Segments</h3>
       <p>We work in the vector space $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$ and the induced Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are the building blocks of convexity.</p>
@@ -252,9 +255,12 @@
           </div>
           <div class="proof-step">
             <strong>Step 3: Linearize via Taylor Series.</strong>
-            We use the first-order Taylor expansion of the logarithm, $\log(1+z) = z - \frac{z^2}{2} + \dots \approx z$ for small $z$. Here, the eigenvalues $\lambda_i$ of the perturbation matrix $E$ are small numbers (since $\Delta$ is small), so we can approximate $\log(1+\lambda_i) \approx \lambda_i$. This is the crucial linearization step.
+            We need to approximate $\sum \log(1 + \lambda_i)$ for small $\lambda_i$.
+            <br>Recall the scalar Taylor series for the natural logarithm near 1:
+            $$ \log(1+x) = x - \frac{x^2}{2} + O(x^3) $$
+            Applying this to each eigenvalue:
             $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i $$
-            Recall that the sum of the eigenvalues of a matrix equals its trace:
+            This sum of eigenvalues is exactly the definition of the <b>trace</b> of the matrix $E$.
             $$ \sum_{i=1}^n \lambda_i = \mathrm{tr}(E) = \mathrm{tr}(X^{-1}\Delta) $$
           </div>
           <div class="proof-step">
@@ -494,9 +500,11 @@
         </div>
         <div class="proof-step">
             <strong>Step 2: Linearly Dependent Vectors Share Eigenvalues.</strong>
-            Suppose $v = cu$ for some scalar $c \neq 0$. We cannot use the independence argument directly.
-            However, for $n \ge 2$, we can choose a third vector $z$ that is linearly independent of $u$ (and thus of $v$).
-            From Step 1, $\lambda_u = \lambda_z$ and $\lambda_v = \lambda_z$. By transitivity, $\lambda_u = \lambda_v$.
+            Suppose $v$ and $u$ are linearly dependent, meaning $v = cu$ for some scalar $c \neq 0$. We cannot use the independence argument directly on the pair $(u, v)$.
+            <br>However, assuming the dimension $n \ge 2$, the space is not just a line. We can choose a third vector $z$ that is linearly independent of $u$. Since $v$ is a multiple of $u$, $z$ is also linearly independent of $v$.
+            <br>Applying the result from Step 1 to the pair $(u, z)$, we get $\lambda_u = \lambda_z$.
+            <br>Applying it to the pair $(v, z)$, we get $\lambda_v = \lambda_z$.
+            <br>By transitivity, $\lambda_u = \lambda_v$.
         </div>
         <div class="proof-step">
             <strong>Step 3: Conclusion.</strong>
@@ -1034,7 +1042,12 @@
 
       <div class="insight">
         <h4>💡 Intuition: Completing the Square</h4>
-        <p>In scalar algebra, the quadratic $ax^2 + 2bxy + cy^2$ can be minimized or analyzed by "completing the square". The Schur complement is the matrix generalization of the term $c - b^2/a$ that appears when we eliminate one variable from a coupled system.</p>
+        <p>The Schur Complement is the matrix generalization of "completing the square". Consider a scalar quadratic form in two variables $x, y$:</p>
+        $$ q(x, y) = ax^2 + 2bxy + cy^2 $$
+        <p>To determine if this is non-negative for all $x, y$, we complete the square with respect to $x$ (assuming $a > 0$):</p>
+        $$ a(x + \frac{b}{a}y)^2 + (c - \frac{b^2}{a})y^2 $$
+        <p>The first term is always non-negative. The sign of the entire expression depends on the second term coefficient: $S = c - b^2/a$.
+        <br>In the matrix case $\begin{bmatrix} A & B \\ B^\top & C \end{bmatrix}$, the term $S = C - B^\top A^{-1} B$ plays exactly the same role. The block diagonal decomposition $ME$ derived below is the matrix equivalent of this algebraic rearrangement.</p>
       </div>
 
       <div class="insight">

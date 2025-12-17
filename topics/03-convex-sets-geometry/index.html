@@ -1431,12 +1431,15 @@
             <div class="proof-step">
               <strong>(c) Ellipsoid (SOC form).</strong>
               Write the ellipsoid as $E = \{y \mid \|P^{-1/2}(y-y_0)\|_2 \le 1\}$ with $P \succ 0$.
-              Then $f(x)\in E$ iff
-              $$ \left\|P^{-1/2}\left(\frac{Ax+b}{c^\top x+d}-y_0\right)\right\|_2 \le 1,\qquad c^\top x + d > 0. $$
-              Let $t := c^\top x + d$ (so $t>0$) and multiply both sides by $t$:
-              $$ \|P^{-1/2}(Ax+b - t y_0)\|_2 \le t,\qquad t = c^\top x + d,\qquad t>0. $$
-              This is a second-order cone constraint in the lifted variables $(x,t)$ plus one affine equality.
-              In particular, the preimage of an ellipsoid under a linear-fractional map is convex and SOCP-representable.
+              Then $x \in f^{-1}(E)$ if and only if:
+              $$ \left\|P^{-1/2}\left(\frac{Ax+b}{c^\top x+d}-y_0\right)\right\|_2 \le 1 \quad \text{and} \quad c^\top x + d > 0 $$
+              Since the denominator $t = c^\top x + d$ is positive, we can multiply the inequality by $t$ without changing its direction.
+              Inside the norm, we multiply by $t$:
+              $$ \|P^{-1/2}(Ax+b) - P^{-1/2}y_0(c^\top x + d)\|_2 \le c^\top x + d $$
+              Let $A' = P^{-1/2}A$, $b' = P^{-1/2}b$, and $v = P^{-1/2}y_0$. The condition becomes:
+              $$ \|A'x + b' - v(c^\top x + d)\|_2 \le c^\top x + d $$
+              This inequality describes a convex set. Specifically, it is the intersection of a <b>second-order cone constraint</b> (of the form $\|Mz + q\|_2 \le \ell^\top z + r$) and the open halfspace $c^\top x + d > 0$.
+              Thus, the preimage of an ellipsoid under a linear-fractional map is convex.
             </div>
           </div>
         </div>

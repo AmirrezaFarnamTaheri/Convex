@@ -854,13 +854,22 @@
 
             <div class="proof-step">
               <strong>Step 3: Prove the bound is achievable (Tightness).</strong>
-              We need to show there exists a specific "worst-case" $\Delta$ that hits this bound.
-              We want $\Delta x$ to point in the same direction as $r$ (to maximize the sum) and have the maximum possible length.
-              <br>Construct $\Delta$ as a rank-1 outer product: $\Delta = \rho \frac{r}{\|r\|_2} \frac{x^\top}{\|x\|_2}$.
-              <br>1. Check norm constraint: $\|\Delta\|_2 = \rho \cdot 1 \cdot 1 = \rho$. (Feasible).
-              <br>2. Check effect on $x$: $\Delta x = \rho \frac{r}{\|r\|} \frac{x^\top x}{\|x\|} = \rho \frac{r}{\|r\|} \|x\| = (\rho \|x\|) \frac{r}{\|r\|}$.
-              This vector is parallel to $r$ with length $\rho \|x\|$.
-              Thus, $\|r + \Delta x\| = \|r\| + \rho \|x\|$. The bound is tight.
+              We need to construct a specific "worst-case" perturbation $\Delta$ that achieves the upper bound.
+              We want the vector $\Delta x$ to align perfectly with the residual $r$ (to maximize the vector sum) and for $\Delta$ to have the maximum allowed "gain" in the direction of $x$.
+              <br>We construct $\Delta$ as a rank-1 outer product:
+              $$ \Delta = \rho u v^\top $$
+              where $u = \frac{r}{\|r\|_2}$ is the direction of the residual, and $v = \frac{x}{\|x\|_2}$ is the direction of the input.
+              <br><b>Verification:</b>
+              <ul>
+                <li><b>Norm Constraint:</b> The spectral norm of a rank-1 matrix $uv^\top$ is $\|u\|_2 \|v\|_2$. Thus $\|\Delta\|_2 = \rho(1)(1) = \rho$. The perturbation is feasible.</li>
+                <li><b>Worst-Case Alignment:</b> Apply $\Delta$ to $x$:
+                  $$ \Delta x = (\rho u v^\top) x = \rho u (v^\top x) = \rho u \left( \frac{x^\top x}{\|x\|_2} \right) = \rho u \|x\|_2 = \rho \|x\|_2 \frac{r}{\|r\|_2} $$
+                  This vector points exactly in the direction of $r$ and has magnitude $\rho \|x\|_2$.
+                </li>
+              </ul>
+              Substituting this back:
+              $$ \|r + \Delta x\|_2 = \|r + \rho \|x\|_2 \frac{r}{\|r\|_2} \|_2 = \| r (1 + \frac{\rho \|x\|_2}{\|r\|_2}) \|_2 = \|r\|_2 + \rho \|x\|_2 $$
+              The bound is tight.
             </div>
 
             <div class="proof-step">
@@ -1502,32 +1511,6 @@
         <h4>Forward Pointer</h4>
         <p>This lecture focuses on the definition and classification of convex problems. For exercises specifically regarding the geometry of convex sets (e.g., Voronoi regions, cones, separation theorems), please see <a href="../03-convex-sets-geometry/index.html">Lecture 03</a> and <a href="../04-convex-sets-cones/index.html">Lecture 04</a>.</p>
       </div>
-
-<div class="problem">
-  <h3>P2.9 — Voronoi Regions</h3>
-  <p>Let $x_1, \dots, x_k \in \mathbb{R}^n$ be a set of points (seeds). The Voronoi region associated with $x_i$ is defined as $V_i = \{x \in \mathbb{R}^n \mid \|x - x_i\|_2 \le \|x - x_j\|_2, \forall j \neq i\}$. Prove that $V_i$ is a convex set.</p>
-
-  <div class="recap-box">
-    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-        <li><b>Polyhedra:</b> A polyhedron is the intersection of a finite number of halfspaces.</li><li><b>Geometric Locus:</b> The set of points closer to A than B is a halfspace defined by the perpendicular bisector of segment AB.</li>
-    </ul>
-  </div>
-
-  <div class="solution-box">
-    <h4>Solution</h4>
-    <div class="proof-step"><strong>Step 1: Analyze the inequality.</strong> The condition $\|x - x_i\|_2 \le \|x - x_j\|_2$ can be squared (since norms are non-negative):
-    $$ \|x - x_i\|_2^2 \le \|x - x_j\|_2^2 $$
-    Expanding this:
-    $$ x^\top x - 2x_i^\top x + x_i^\top x_i \le x^\top x - 2x_j^\top x + x_j^\top x_j $$
-    Canceling $x^\top x$ from both sides:
-    $$ -2x_i^\top x + \|x_i\|_2^2 \le -2x_j^\top x + \|x_j\|_2^2 $$
-    Rearranging terms to isolate $x$:
-    $$ 2(x_j - x_i)^\top x \le \|x_j\|_2^2 - \|x_i\|_2^2 $$</div>
-    <div class="proof-step"><strong>Step 2: Identify the geometric object.</strong> The inequality $a^\top x \le b$ with $a = 2(x_j - x_i)$ and $b = \|x_j\|_2^2 - \|x_i\|_2^2$ defines a <b>closed halfspace</b>. The boundary is the perpendicular bisector of the segment connecting $x_i$ and $x_j$.</div>
-    <div class="proof-step"><strong>Step 3: Intersection of convex sets.</strong> The Voronoi region $V_i$ is the intersection of $k-1$ such halfspaces (one for each $j \neq i$). Since halfspaces are convex sets, and the intersection of any number of convex sets is convex, $V_i$ is a convex set (specifically, a polyhedron).</div>
-  </div>
-</div>
 
       </section>
 
