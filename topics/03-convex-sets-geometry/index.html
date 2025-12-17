@@ -400,7 +400,7 @@
         $$
         \mathcal{P} = \{x \in \mathbb{R}^n \mid Ax \le b, \ Cx = d\}
         $$
-        <p>Geometrically, a polyhedron is the intersection of a finite number of halfspaces and hyperplanes.</p>
+        <p>Geometrically, a polyhedron is the intersection of a finite number of halfspaces and hyperplanes. This description is known as the <b>H-representation</b> (Hyperplane representation).</p>
 
         <figure style="text-align: center; margin: 24px 0;">
           <img src="assets/polyhedron-construction.png"
@@ -414,7 +414,18 @@
           <p>Since halfspaces and hyperplanes are convex sets, and the intersection of any collection of convex sets is convex (see Section 3), a polyhedron is convex.</p>
         </div>
 
-        <p>A <a href="#" class="definition-link">polytope</a> is a bounded polyhedron. Equivalently, it is the convex hull of a finite set of points.</p>
+        <h3>Polytope vs. Polyhedron: H-Rep and V-Rep</h3>
+        <p>A <a href="#" class="definition-link">polytope</a> is a bounded polyhedron.</p>
+        <ul>
+            <li><b>H-Representation (Intersection):</b> $\mathcal{P} = \{x \mid Ax \le b\}$. This describes the set by its "walls" (facets). It is efficient for checking if a point is in the set ($Ax \le b$?) but hard for generating points.</li>
+            <li><b>V-Representation (Hull):</b> $\mathcal{P} = \mathrm{conv}\{v_1, \dots, v_k\}$. This describes the set by its "corners" (vertices). It is efficient for generating points (just mix the vertices) but hard for checking membership.</li>
+        </ul>
+        <div class="theorem-box">
+            <h4>Minkowski-Weyl Theorem</h4>
+            <p>A set $\mathcal{P}$ is a polyhedron if and only if it is the sum of a convex hull of a finite set of points and a conical hull of a finite set of directions (rays):
+            $$ \mathcal{P} = \mathrm{conv}\{v_1, \dots, v_k\} + \mathrm{cone}\{r_1, \dots, r_m\} $$
+            If the set is bounded (a polytope), the conical part is zero, and $\mathcal{P} = \mathrm{conv}\{v_1, \dots, v_k\}$.</p>
+        </div>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Visualizer: Polyhedron Builder</h3>
@@ -446,16 +457,16 @@
           <h4>Proof: The PSD Cone is Convex</h4>
           <p>We need to show that if $A, B \in \mathbb{S}^n_+$ and $\theta \in [0,1]$, then $\theta A + (1-\theta)B \in \mathbb{S}^n_+$.</p>
           <div class="proof-step">
-            <strong>Definition Check:</strong> Let $z \in \mathbb{R}^n$ be any vector.
+            <strong>Definition Check:</strong> Let $z \in \mathbb{R}^n$ be any vector. We examine the quadratic form of the convex combination:
             $$
             z^\top (\theta A + (1-\theta)B) z = \theta (z^\top A z) + (1-\theta) (z^\top B z)
             $$
           </div>
           <div class="proof-step">
-            <strong>Sign Analysis:</strong> Since $A, B \succeq 0$, we know $z^\top A z \ge 0$ and $z^\top B z \ge 0$. Since $\theta \in [0,1]$, both coefficients are non-negative.
+            <strong>Sign Analysis:</strong> Since $A, B \succeq 0$, we know $z^\top A z \ge 0$ and $z^\top B z \ge 0$ for all $z$. Since $\theta \in [0,1]$, both coefficients $\theta$ and $1-\theta$ are non-negative.
           </div>
           <div class="proof-step">
-            <strong>Conclusion:</strong> The sum is non-negative, so $z^\top (\theta A + (1-\theta)B) z \ge 0$ for all $z$. Thus the combination is PSD.
+            <strong>Conclusion:</strong> The sum of non-negative terms is non-negative, so $z^\top (\theta A + (1-\theta)B) z \ge 0$ for all $z$. Thus the combination is PSD.
           </div>
         </div>
 

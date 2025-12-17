@@ -65,7 +65,7 @@
       <h2>1. Bases, Coordinates, and Change of Basis</h2>
 
       <h3>0. The Core Strategy: Change of Coordinates</h3>
-      <p>Advanced linear algebra for optimization boils down to a single strategy: <b>simplify the operator by changing the coordinate system</b>. Instead of solving a problem in the standard basis (where variables are coupled), we transform to a basis that decouples the interactions.</p>
+      <p>Advanced linear algebra for optimization often relies on a single strategy: <b>simplify the operator by changing the coordinate system</b>. Instead of solving a problem in the standard basis (where variables are coupled), we transform to a basis that decouples the interactions.</p>
       <ul>
         <li><b>Eigendecomposition:</b> Finds a basis where the operator acts as simple scaling along independent axes ($Av_i = \lambda_i v_i$). This transforms the matrix into a diagonal one.</li>
         <li><b>SVD:</b> Generalizes this to rectangular matrices by allowing different bases for the input and output spaces. It reveals the fundamental geometry of the map: rotation $\to$ scaling $\to$ rotation.</li>
@@ -94,7 +94,7 @@
         <h4>Steinitz Exchange Lemma</h4>
         <p>If $S = \{s_1, \dots, s_m\}$ spans $V$ and $L = \{\ell_1, \dots, \ell_k\}$ is independent in $V$, then $k \le m$.
         <br>Moreover, we can replace $k$ vectors from $S$ with the vectors in $L$ to form a new spanning set.</p>
-        <p><i>Logic:</i> We swap in $\ell_1$ for some $s_i$ (essential for spanning $\ell_1$). We repeat $k$ times. If $k > m$, we would run out of $s$'s to swap, leaving some $\ell$'s dependent on the previous ones.</p>
+        <p><i>Logic:</i> We swap in $\ell_1$ for some $s_i$ (essential for spanning $\ell_1$). We repeat $k$ times. If $k > m$, we would run out of $s$'s to swap, forcing a linear dependence among the $\ell$'s.</p>
       </div>
 
       <h3>3. Coordinates: The Dictionary</h3>
@@ -138,7 +138,7 @@
 
       <div class="insight">
         <h4>💡 "Same Vectors, Same Map, Different Coordinates"</h4>
-        <p>This formula $\tilde{A} = V^{-1} A V$ (similarity) is the algebraic expression of a geometric truth: we are performing the <b>same linear transformation</b> on the <b>same physical vectors</b>, but describing inputs and outputs using a <b>different coordinate system</b>.</p>
+        <p>This formula $\tilde{A} = V^{-1} A V$ (similarity) is the algebraic expression of a geometric truth: we are performing the <b>same linear transformation</b> on the <b>same vectors</b>, but describing inputs and outputs using a <b>different coordinate system</b>.</p>
       </div>
 
       <h4>4.3 Diagonalization as the Ultimate Simplification</h4>
@@ -242,7 +242,7 @@
 
       <h3>4.3 The $\ell_2$ Operator Norm (Spectral Norm)</h3>
       <p>$$ \|A\|_2 = \max_{\|x\|_2=1} \|Ax\|_2 = \sqrt{\lambda_{\max}(A^\top A)} = \sigma_{\max}(A) $$</p>
-      <p>This is the square root of the maximum eigenvalue of $A^\top A$, which is the largest <b>singular value</b> of $A$. It represents the maximum stretch of the matrix in the Euclidean sense.</p>
+      <p>This is the square root of the maximum eigenvalue of $A^\top A$, which is the largest <b>singular value</b> of $A$. It represents the maximum stretch of the matrix in the Euclidean sense. This norm plays a crucial role in convergence analysis, as it dictates the worst-case amplification of errors.</p>
 
       <h3>4.4 Convexity of Induced Norms (Deep Dive)</h3>
       <p>Why are induced norms convex functions of the matrix $A$? We can prove this using the property that the pointwise supremum of linear functions is convex.</p>
@@ -574,7 +574,7 @@
       </ul>
 
       <h3>7.2 Condition Number</h3>
-      <p>The condition number $\kappa(A)$ measures the sensitivity of the solution of a linear system to perturbations in the data.</p>
+      <p>The condition number $\kappa(A)$ measures the sensitivity of the solution of a linear system to perturbations in the data. Formally, it is defined as:</p>
       $$ \kappa(A) = \|A\|_2 \|A^+\|_2 = \frac{\sigma_{\max}(A)}{\sigma_{\min}(A)} $$
       <p>where $\sigma_{\min}$ is the smallest <i>non-zero</i> singular value.</p>
 

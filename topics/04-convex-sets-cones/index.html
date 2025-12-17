@@ -337,6 +337,18 @@
         <p><b>Geometric Intuition (Non-Negative Normals):</b> If $K$ is the set of "allowable directions," $K^*$ is the set of "allowable gradients" that don't decrease the objective as you move along $K$. It generalizes the concept of the non-negative orthant. If $K$ is a "sharp" cone (pointed), $K^*$ is a "wide" cone (solid). If $K$ is a subspace (flat), $K^*$ is its orthogonal complement (normal).</p>
         <p>The dual cone $K^*$ is always a closed convex cone, regardless of whether $K$ is convex or closed.</p>
 
+        <div class="theorem-box">
+          <h4>Theorem (Bipolar Theorem)</h4>
+          <p>If $K$ is a convex cone, then its second dual (bipolar) is its closure:</p>
+          $$ K^{**} = \mathrm{cl}(K) $$
+          <p>Consequently, if $K$ is a <b>closed convex cone</b>, then $K^{**} = K$. This is the "reflexive" property of cones, analogous to $(V^\perp)^\perp = V$ for subspaces.</p>
+          <div class="proof-box">
+            <h4>Proof Sketch</h4>
+            <p>1. $K \subseteq K^{**}$: If $x \in K$, then for all $y \in K^*$, $y^\top x \ge 0$. Thus $x$ makes a non-negative angle with everything in $K^*$, so $x \in K^{**}$.</p>
+            <p>2. $K^{**} \subseteq \mathrm{cl}(K)$: If $x \notin \mathrm{cl}(K)$, by the Separating Hyperplane Theorem, there exists $y$ strictly separating $x$ from $\mathrm{cl}(K)$. This $y$ can be shown to lie in $K^*$ while $y^\top x < 0$, proving $x \notin K^{**}$.</p>
+          </div>
+        </div>
+
       <h4>The Polar Cone</h4>
       <p>The <a href="#" class="definition-link">polar cone</a> is the negative of the dual cone:</p>
       $$ K^\circ = -K^* = \{y \in \mathbb{R}^n \mid y^\top x \le 0 \ \forall x \in K\} $$

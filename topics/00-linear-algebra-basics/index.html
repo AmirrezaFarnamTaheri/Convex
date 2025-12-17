@@ -73,7 +73,7 @@
         <li><b>Pullback (Preimages):</b> Constraints are typically defined by functions, such as $g(x) \le 0$. This defines a set implicitly: the set of all $x$ that map to non-positive values.
           <br><i>Example:</i> Understanding constraints as <b>preimages</b> ($g^{-1}((-\infty, 0])$) allows us to deduce the shape of the feasible region directly from the properties of the function $g$.</li>
       </ol>
-      <p>Mastering these three operations transforms optimization from abstract symbol manipulation into concrete geometric reasoning.</p>
+      <p>Understanding these three operations transforms optimization from abstract symbol manipulation into concrete geometric reasoning.</p>
 
       <h3>1.2 Preliminaries: Lines and Line Segments</h3>
       <p>We work in the vector space $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$ and the induced Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are the building blocks of convexity.</p>
@@ -189,12 +189,13 @@
       <p>Gradient-based optimization relies heavily on the computation of gradients and Hessians. Computing derivatives with respect to vectors and matrices is therefore a core skill. Unlike scalar calculus, where order doesn't matter, in matrix calculus we must carefully preserve non-commutativity and track dimensions. The "master key" to matrix calculus is the <b>differential</b>.</p>
 
       <p>For a function $f: \mathbb{R}^{n \times m} \to \mathbb{R}$, the gradient $\nabla f(X)$ is defined as the unique matrix satisfying the first-order approximation:
-      $$ f(X + \Delta) \approx f(X) + \langle \nabla f(X), \Delta \rangle $$
-      where $\langle A, B \rangle = \mathrm{tr}(A^\top B)$. This gives us a foolproof algorithm for finding gradients:</p>
+      $$ f(X + \Delta) = f(X) + \langle \nabla f(X), \Delta \rangle + o(\|\Delta\|) $$
+      where $\langle A, B \rangle = \mathrm{tr}(A^\top B)$ is the standard trace inner product. This definition provides a systematic algorithm for finding gradients:</p>
       <ol>
         <li>Perturb $X$ by a small direction $\Delta$.</li>
-        <li>Expand $f(X + \Delta)$ and isolate the term <i>linear</i> in $\Delta$.</li>
-        <li>Rewrite that term as $\langle G, \Delta \rangle$. Then $G$ is the gradient.</li>
+        <li>Expand $f(X + \Delta)$ using Taylor series or algebraic properties.</li>
+        <li>Isolate the term that is <i>linear</i> in $\Delta$.</li>
+        <li>Rewrite that linear term in the form $\langle G, \Delta \rangle = \mathrm{tr}(G^\top \Delta)$. Then $G$ is the gradient.</li>
       </ol>
 
       <h4>Gradients of Linear and Quadratic Forms</h4>
@@ -292,10 +293,9 @@
           <div class="proof-step">
             <strong>Step 3: Linearize via Taylor Series.</strong>
             We need to approximate $\sum \log(1 + \lambda_i)$ for small $\lambda_i$.
-            <br>Recall the scalar Taylor series for the natural logarithm near 1:
-            $$ \log(1+x) = x - \frac{x^2}{2} + O(x^3) $$
-            Applying this to each eigenvalue:
-            $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i $$
+          <br>Recall the scalar Taylor series for the natural logarithm near 1: $\log(1+x) = x - \frac{x^2}{2} + O(x^3)$.
+          Applying this to each eigenvalue and neglecting higher-order terms:
+          $$ \sum_{i=1}^n \log(1 + \lambda_i) = \sum_{i=1}^n \lambda_i + O(\|\Delta\|^2) $$
             This sum of eigenvalues is exactly the definition of the <b>trace</b> of the matrix $E$.
             $$ \sum_{i=1}^n \lambda_i = \mathrm{tr}(E) = \mathrm{tr}(X^{-1}\Delta) $$
           </div>
@@ -523,7 +523,7 @@
 
 
       <h3>3.2 The "Isotropic Scaling" Lemma</h3>
-      <p>A classic result connects the geometry of eigenvectors to the structure of the matrix. We ask: what if <i>every</i> vector is an eigenvector?</p>
+      <p>While eigenvalues describe the behavior of $A$ along specific directions, sometimes the matrix acts uniformly in all directions. A classic result connects this geometric isotropy to the algebraic structure of the matrix. We ask: what if <i>every</i> vector is an eigenvector?</p>
       <div class="theorem-box">
         <h4>Lemma: Scalar Matrices</h4>
         <p>If every non-zero vector $x \in \mathbb{R}^n$ is an eigenvector of $A$ (i.e., $Ax = \lambda(x)x$), then $A$ must be a scalar multiple of the identity: $A = \lambda I$.</p>

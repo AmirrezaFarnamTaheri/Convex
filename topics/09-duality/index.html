@@ -126,7 +126,7 @@
           <p><b>Duality as a Game:</b>
           <br><b>Primal:</b> $\min_x \max_{\lambda, \nu} L(x, \lambda, \nu)$ (Minimizer moves first, Maximizer exploits violations).
           <br><b>Dual:</b> $\max_{\lambda, \nu} \min_x L(x, \lambda, \nu)$ (Maximizer moves first, setting prices; Minimizer optimizes given prices).
-          <br><b>Weak Duality</b> is simply the max-min inequality: $\max \min \le \min \max$.
+          <br><b>Weak Duality</b> is simply the max-min inequality: $\max_{\lambda, \nu} \min_x L(x, \lambda, \nu) \le \min_x \max_{\lambda, \nu} L(x, \lambda, \nu)$.
           <br><b>Strong Duality</b> implies the existence of a <b>Saddle Point</b> where the order of play doesn't matter.</p>
         </div>
       </section>
@@ -518,7 +518,7 @@
 
       <div class="problem">
         <h3>Problem 1: Least Squares (Residual Form)</h3>
-        <p><b>Primal:</b> $\min \|Ax - b\|_2^2$. Rewrite as $\min \frac{1}{2}\|y\|_2^2$ s.t. $y = Ax - b$.</p>
+        <p><b>Primal:</b> $\min \frac{1}{2} \|Ax - b\|_2^2$. Rewrite as $\min \frac{1}{2}\|y\|_2^2$ s.t. $y = Ax - b$.</p>
         <p><b>Lagrangian:</b> $L(x, y, \nu) = \frac{1}{2}\|y\|^2 + \nu^\top (Ax - b - y) = (\frac{1}{2}\|y\|^2 - \nu^\top y) + (A^\top \nu)^\top x - b^\top \nu$.</p>
         <p><b>Dual Function:</b>
         <br>1. Min over $x$: Requires $A^\top \nu = 0$ (Lemma A1).

@@ -475,10 +475,10 @@
         <div class="proof-step">
             <strong>Equivalence Proof:</strong> Fix $x$ and minimize over $w_i \ge 0$ for each residual $r = r_i(x)$.
             The function $f(w) = \frac{r^2}{w+1} + M^2 w$ has derivative $f'(w) = -\frac{r^2}{(w+1)^2} + M^2$.
-            Setting to zero gives $w+1 = |r|/M$, or $w^* = |r|/M - 1$.
+            Setting to zero gives $(w+1)^2 = r^2/M^2 \implies w+1 = |r|/M$ (since $w \ge 0 \implies w+1 \ge 1 > 0$), or $w^* = |r|/M - 1$.
             <ul>
                 <li>If $|r| \le M$: Then $w^* \le 0$, so the constraint $w \ge 0$ binds. $w_{opt}=0$, giving cost $r^2$.</li>
-                <li>If $|r| > M$: Then $w^* > 0$ is feasible. The cost is $\frac{r^2}{|r|/M} + M^2(\frac{|r|}{M}-1) = M(2|r|-M)$.</li>
+                <li>If $|r| > M$: Then $w^* > 0$ is feasible. The cost is $\frac{r^2}{|r|/M} + M^2(\frac{|r|}{M}-1) = M|r| + M|r| - M^2 = 2M|r| - M^2 = M(2|r|-M)$.</li>
             </ul>
             This exactly matches $\phi(r)$. Thus, robust regression is equivalent to reweighted LS where outliers get larger weights ($w_i+1$).
         </div>
@@ -1131,9 +1131,9 @@
             To minimize cost, we should make $u_i + v_i = |r_i|$ (tight constraint). So $v_i = |r_i| - u_i$.
             Since $v_i \ge 0$, we need $u_i \le |r_i|$. Combined with $0 \le u_i \le M$, the feasible range for $u_i$ is $[0, \min(M, |r_i|)]$.
             The objective becomes $u_i^2 + 2M(|r_i| - u_i)$ in terms of $u_i$.
-            This is a convex parabola opening up, with vertex at $u_i = M$.
+            This is a convex parabola opening up ($u_i^2 - 2Mu_i + 2M|r_i|$), with vertex at $u_i = M$.
             <ul>
-              <li>If $|r_i| \le M$: The interval is $[0, |r_i|]$. The vertex $M$ is to the right. Minimum is at $u_i = |r_i|$. Value: $|r_i|^2 + 2M(0) = r_i^2$.</li>
+              <li>If $|r_i| \le M$: The interval is $[0, |r_i|]$. The vertex $M$ is to the right (or at boundary). Minimum is at $u_i = |r_i|$. Value: $|r_i|^2 + 2M(0) = r_i^2$.</li>
               <li>If $|r_i| > M$: The interval is $[0, M]$. The vertex is at the boundary $u_i = M$. Minimum is at $u_i = M$. Value: $M^2 + 2M(|r_i| - M) = M(2|r_i| - M)$.</li>
             </ul>
             This matches $\phi(u)$.

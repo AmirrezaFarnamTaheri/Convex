@@ -287,6 +287,11 @@
         <p>The distinction between convex and nonconvex problems is not merely about ease of solution—it reflects fundamental differences in computational complexity:</p>
 
         <table class="data-table" style="width: 100%; margin-top: 16px;">
+          <colgroup>
+              <col style="width: 25%;">
+              <col style="width: 37.5%;">
+              <col style="width: 37.5%;">
+          </colgroup>
           <thead>
             <tr>
               <th>Property</th>
@@ -530,7 +535,7 @@
             <li><b>PSD cone:</b> $\mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}$ is a convex cone.</li>
             <li><b>Applications:</b> Control theory, combinatorial optimization relaxations, robust optimization, polynomial optimization.</li>
             <li><b>Algorithms:</b> Interior-point methods.</li>
-            <li><b>Complexity:</b> Polynomial time, but more expensive than LP/QP/SOCP.</li>
+            <li><b>Complexity:</b> Polynomial time, but more expensive than LP/QP/SOCP (typically $O(n^6)$ or $O(n^{4.5})$ depending on sparsity).</li>
           </ul>
         </div>
 
