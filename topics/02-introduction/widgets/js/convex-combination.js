@@ -59,38 +59,73 @@ export function initConvexCombination(containerId) {
         y = d3.scaleLinear().domain([-10, 10]).range([height / 2, -height / 2]);
 
         // Grid
-        svg.append("g").attr("class", "grid-line").call(d3.axisBottom(x).ticks(10).tickSize(-height).tickFormat("")).attr("transform", `translate(0, ${-height/2})`);
-        svg.append("g").attr("class", "grid-line").call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat("")).attr("transform", `translate(${-width/2}, 0)`);
+        const gridGroup = svg.append("g").attr("class", "grid-group");
+        gridGroup.append("g").attr("class", "grid-line axis-x").call(d3.axisBottom(x).ticks(10).tickSize(-height).tickFormat("")).attr("transform", `translate(0, ${height/2})`);
+        gridGroup.append("g").attr("class", "grid-line axis-y").call(d3.axisLeft(y).ticks(10).tickSize(-width).tickFormat("")).attr("transform", `translate(${-width/2}, 0)`);
+
+        // Axis Lines (Zero lines)
+        gridGroup.append("line").attr("x1", -width/2).attr("x2", width/2).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "var(--border-strong)").attr("stroke-width", 1.5);
+        gridGroup.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", -height/2).attr("y2", height/2).attr("stroke", "var(--border-strong)").attr("stroke-width", 1.5);
 
         // Hull
         svg.append("path").attr("class", "hull-path")
             .attr("fill", "rgba(124, 197, 255, 0.2)")
             .attr("stroke", "var(--primary-500)")
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 2)
+            .attr("stroke-linejoin", "round");
 
         // Handles (Vertices)
-        svg.selectAll(".vertex").data(vertices).enter().append("circle")
+        const verticesGroup = svg.selectAll(".vertex-group").data(vertices).enter().append("g").attr("class", "vertex-group");
+
+        verticesGroup.append("circle")
+            .attr("class", "vertex-glow")
+            .attr("r", 15)
+            .attr("fill", "var(--primary-500)")
+            .attr("opacity", 0)
+            .attr("cx", d => x(d.x)).attr("cy", d => y(d.y));
+
+        verticesGroup.append("circle")
             .attr("class", "vertex handle")
             .attr("r", 8)
             .attr("fill", "var(--primary-500)")
+            .attr("stroke", "var(--surface-1)")
+            .attr("stroke-width", 2)
             .style("cursor", "move")
-            .call(d3.drag().on("drag", (event, d) => {
-                const [mx, my] = d3.pointer(event, svg.node());
-                d.x = x.invert(mx); d.y = y.invert(my);
-                update();
-            }));
+            .call(d3.drag()
+                .on("start", function() { d3.select(this.parentNode).select(".vertex-glow").transition().duration(200).attr("opacity", 0.3); })
+                .on("drag", (event, d) => {
+                    const [mx, my] = d3.pointer(event, svg.node());
+                    d.x = Math.max(-10, Math.min(10, x.invert(mx)));
+                    d.y = Math.max(-10, Math.min(10, y.invert(my)));
+                    update();
+                })
+                .on("end", function() { d3.select(this.parentNode).select(".vertex-glow").transition().duration(200).attr("opacity", 0); })
+            );
 
         // Target Handle
-        svg.append("circle").attr("class", "target handle")
-            .attr("r", 6)
+        const targetGroup = svg.append("g").attr("class", "target-group");
+
+        targetGroup.append("circle")
+            .attr("class", "target-glow")
+            .attr("r", 12)
             .attr("fill", "var(--accent-500)")
-            .attr("stroke", "white").attr("stroke-width", 2)
+            .attr("opacity", 0);
+
+        targetGroup.append("circle").attr("class", "target handle")
+            .attr("r", 7)
+            .attr("fill", "var(--accent-500)")
+            .attr("stroke", "var(--surface-1)").attr("stroke-width", 2)
             .style("cursor", "move")
-            .call(d3.drag().on("drag", (event) => {
-                const [mx, my] = d3.pointer(event, svg.node());
-                target.x = x.invert(mx); target.y = y.invert(my);
-                update();
-            }));
+            .call(d3.drag()
+                .on("start", function() { d3.select(this.parentNode).select(".target-glow").transition().duration(200).attr("opacity", 0.3); })
+                .on("drag", (event) => {
+                    const [mx, my] = d3.pointer(event, svg.node());
+                    target.x = Math.max(-10, Math.min(10, x.invert(mx)));
+                    target.y = Math.max(-10, Math.min(10, y.invert(my)));
+                    update();
+                })
+                .on("end", function() { d3.select(this.parentNode).select(".target-glow").transition().duration(200).attr("opacity", 0); })
+            );
 
         // Labels
         svg.selectAll(".vertex-label").data(vertices).enter().append("text")
@@ -124,10 +159,13 @@ export function initConvexCombination(containerId) {
         // Update positions
         svg.selectAll(".vertex")
             .attr("cx", d => x(d.x)).attr("cy", d => y(d.y));
+        svg.selectAll(".vertex-glow")
+            .attr("cx", d => x(d.x)).attr("cy", d => y(d.y));
         svg.selectAll(".vertex-label")
             .attr("x", d => x(d.x)).attr("y", d => y(d.y));
 
         svg.select(".target").attr("cx", x(target.x)).attr("cy", y(target.y));
+        svg.select(".target-glow").attr("cx", x(target.x)).attr("cy", y(target.y));
         svg.select(".target-label").attr("x", x(target.x)).attr("y", y(target.y));
 
         // Compute Barycentric Coords
