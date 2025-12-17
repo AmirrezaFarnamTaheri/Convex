@@ -130,6 +130,14 @@
           <br><b>Strong Duality</b> implies the existence of a <b>Saddle Point</b> where the order of play doesn't matter, i.e., we can swap min and max.</p>
           <p>Consider a simple resource allocation example. The Primal seeks to minimize cost subject to meeting demand. The Dual sets prices for resources to maximize revenue while staying competitive. Strong duality means the minimum cost equals the maximum revenue, and the dual prices (shadow prices) reflect the true marginal value of the resources.</p>
         </div>
+
+        <div class="theorem-box">
+            <h4>Deep Dive: Minimax Theorem and Zero-Sum Games</h4>
+            <p>The duality gap for convex problems is intimately related to von Neumann's Minimax Theorem.
+            <br>For a matrix game with payoff matrix $A$, player 1 minimizes loss $x^\top A y$ and player 2 maximizes gain.
+            $$ \min_{x \in \Delta} \max_{y \in \Delta} x^\top A y = \max_{y \in \Delta} \min_{x \in \Delta} x^\top A y $$
+            Linear programming duality is essentially the statement that this equality holds for linear constraints. Lagrangian duality extends this logic to general convex functions.</p>
+        </div>
       </section>
 
       <section class="section-card" id="section-2">

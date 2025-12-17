@@ -152,7 +152,14 @@
         <h4>Recession Cone (Asymptotic Directions)</h4>
         <p>For unbounded convex sets, it is useful to characterize directions in which the set extends infinitely. The <b>recession cone</b> of a convex set $C$ is defined as:</p>
         $$ R_C = \{v \in \mathbb{R}^n \mid x + tv \in C \text{ for all } x \in C, t \ge 0\} $$
-        <p>Intuitively, if you look at $C$ from "infinitely far away", it looks like $R_C$. A closed convex set is bounded if and only if its recession cone is $\{0\}$. This concept is crucial for proving existence of solutions in optimization problems.</p>
+        <p>Intuitively, if you look at $C$ from "infinitely far away", it looks like $R_C$.
+        <br><b>Key Properties:</b>
+        <ul>
+            <li>$R_C$ is always a closed convex cone.</li>
+            <li>A closed convex set is <b>bounded</b> if and only if its recession cone is trivial ($R_C = \{0\}$).</li>
+            <li>If $C = \{x \mid Ax \le b\}$, then $R_C = \{v \mid Av \le 0\}$. The recession directions are those that keep you feasible as you move infinitely far.</li>
+        </ul>
+        This concept is crucial for proving the existence of solutions: if a problem is unbounded, the improving direction lives in the recession cone.</p>
 
         <div class="theorem-box">
           <h4>Theorem (Carathéodory's Theorem)</h4>

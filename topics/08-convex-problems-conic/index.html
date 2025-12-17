@@ -220,6 +220,13 @@
       </div>
       <p>Thus, Robust LP with ellipsoidal uncertainty is an SOCP.</p>
 
+      <div class="theorem-box">
+        <h4>Deep Dive: Value-at-Risk (VaR) vs. Conditional Value-at-Risk (CVaR)</h4>
+        <p>In the stochastic setting, the chance constraint $\mathbb{P}(a^\top x \le b) \ge \eta$ is related to limiting the <b>Value-at-Risk (VaR)</b>.
+        <br>For general distributions, chance constraints are non-convex. However, <b>Conditional Value-at-Risk (CVaR)</b> (also known as Expected Shortfall) is a convex coherent risk measure.
+        <br>CVaR can be optimized using linear programming (for discrete distributions) or convex programming, making it a robust alternative to non-convex VaR constraints.</p>
+      </div>
+
       <h3>2.2 Stochastic Robust LP (Chance Constraints)</h3>
       <p>Alternatively, assume $a_i$ is random and we require the constraint to hold with probability $\eta$ (e.g., 95%):</p>
       $$ \mathbb{P}(a_i^\top x \le b_i) \ge \eta $$

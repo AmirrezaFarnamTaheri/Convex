@@ -1401,6 +1401,36 @@
         <li>$t \in \mathbb{R}^k$ where $k = n - p$ (dimension of the nullspace).</li>
       </ul>
 
+      <h4>Euclidean Projection Formula (Explicit via KKT)</h4>
+      <p>Alternatively, using Lagrange multipliers (a technique we will explore deeply in Lecture 09), we can derive the projection without forming a nullspace basis.</p>
+      $$
+      \Pi_{\mathcal{A}}(y) = y - F^\top (F F^\top)^{-1} (F y - g)
+      $$
+
+      <div class="proof-box">
+        <h4>Derivation via Lagrange Multipliers</h4>
+        <div class="proof-step">
+          <strong>Step 1: Formulation.</strong> Minimize $\frac{1}{2}\|x - y\|^2$ subject to $Fx = g$.
+          The Lagrangian is $L(x, \nu) = \frac{1}{2}\|x - y\|^2 + \nu^\top (Fx - g)$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Optimality Conditions.</strong>
+          Gradient w.r.t $x$: $x - y + F^\top \nu = 0 \implies x = y - F^\top \nu$.
+          Primal feasibility: $Fx = g$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Solve for Dual Variable $\nu$.</strong>
+          Substitute $x$ into the constraint:
+          $$ F(y - F^\top \nu) = g \implies Fy - F F^\top \nu = g \implies F F^\top \nu = Fy - g $$
+          Assuming $F$ has full row rank, $F F^\top$ is invertible:
+          $$ \nu = (F F^\top)^{-1} (Fy - g) $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 4: Substitute back.</strong>
+          $$ x = y - F^\top (F F^\top)^{-1} (Fy - g) $$
+        </div>
+      </div>
+
       <h4>Euclidean Projection Formula (Nullspace)</h4>
       <p>The <b>Euclidean projection</b> of any point $y \in \mathbb{R}^n$ onto $\mathcal{A}$ can also be computed via the nullspace basis:</p>
       $$

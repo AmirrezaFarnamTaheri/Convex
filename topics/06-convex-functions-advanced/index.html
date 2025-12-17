@@ -105,6 +105,14 @@
         Thus, $f^*$ is convex for <b>any</b> $f$. The conjugate lives in the "convex world" even if $f$ doesn't.</p>
       </div>
 
+        <div class="theorem-box">
+            <h4>Deep Dive: Biconjugate and Convex Hulls</h4>
+            <p>While $f^*$ is always convex, $f^{**}$ (the conjugate of the conjugate) relates back to $f$ in a special way.
+            $$ f^{**}(x) = \text{cl}(\text{conv}(f))(x) $$
+            The biconjugate is the <b>closed convex envelope</b> of $f$. It is the largest lower semicontinuous convex function that is less than or equal to $f$.
+            <br><b>Consequence:</b> $f^{**} = f$ if and only if $f$ is closed and convex. This is the <b>Fenchel-Moreau Theorem</b>.</p>
+        </div>
+
       <h3>1.3 1D Examples in Detail</h3>
 
       <div class="example">
@@ -571,9 +579,9 @@
             Let $f, g, h: \mathbb{R}^n \to \mathbb{R}_+$ be integrable functions. If for some $\lambda \in (0, 1)$ and all $x, y \in \mathbb{R}^n$:
             $$ h(\lambda x + (1-\lambda)y) \ge f(x)^\lambda g(y)^{1-\lambda} $$
             Then:
-            $$ \int h(z) dz \ge \left( \int f(x) dx \right)^\lambda \left( \int g(y) dy \right)^{1-\lambda} $$
+            $$ \int_{\mathbb{R}^n} h(z) dz \ge \left( \int_{\mathbb{R}^n} f(x) dx \right)^\lambda \left( \int_{\mathbb{R}^n} g(y) dy \right)^{1-\lambda} $$
             </p>
-            <p><b>Consequence:</b> Convolution of log-concave functions is log-concave. If $f, g$ are log-concave, so is $(f*g)(x) = \int f(x-y)g(y) dy$.</p>
+            <p><b>Consequence:</b> Convolution of log-concave functions is log-concave. If $f, g$ are log-concave, so is $(f*g)(x) = \int f(x-y)g(y) dy$. This theorem is a functional generalization of the Brunn-Minkowski inequality for volumes of convex bodies.</p>
         </div>
 
         <h3>3.4 Probability Examples</h3>

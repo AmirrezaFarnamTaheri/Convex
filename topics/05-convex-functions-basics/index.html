@@ -491,7 +491,37 @@
           <p>For differentiable functions, convexity is equivalent to: <b>the first-order Taylor approximation always underestimates the function</b>. This is an extremely useful characterization for analysis and algorithm design.</p>
         </div>
 
-        <h3>3.2 Consequences and Applications</h3>
+        <h3>3.2 Monotonicity of the Gradient</h3>
+        <p>Another powerful first-order characterization involves the change in gradients. A differentiable function $f$ is convex <b>if and only if</b> its gradient is a <a href="#" class="definition-link">monotone operator</a>:</p>
+        $$
+        (\nabla f(x) - \nabla f(y))^\top (x - y) \ge 0 \quad \forall x, y \in \mathrm{dom}\, f
+        $$
+        <p><b>Geometric Intuition:</b> As you move from $y$ to $x$ (direction $x-y$), the gradient changes in a way that aligns with that movement. In 1D, this simply means $f'(x)$ is non-decreasing ($f'(x) \ge f'(y)$ whenever $x > y$).</p>
+
+        <div class="proof-box">
+            <h4>Proof: Convexity $\iff$ Monotone Gradient</h4>
+            <div class="proof-step">
+                <strong>($\Rightarrow$) Convex $\implies$ Monotone.</strong>
+                <br>Apply the first-order condition twice:
+                $$ f(y) \ge f(x) + \nabla f(x)^\top (y-x) $$
+                $$ f(x) \ge f(y) + \nabla f(y)^\top (x-y) $$
+                Summing these inequalities:
+                $$ f(y) + f(x) \ge f(x) + f(y) + \nabla f(x)^\top (y-x) + \nabla f(y)^\top (x-y) $$
+                $$ 0 \ge (\nabla f(x) - \nabla f(y))^\top (y-x) $$
+                Multiplying by $-1$ reverses the inequality:
+                $$ (\nabla f(x) - \nabla f(y))^\top (x-y) \ge 0 $$
+            </div>
+            <div class="proof-step">
+                <strong>($\Leftarrow$) Monotone $\implies$ Convex.</strong>
+                <br>Let $g(t) = f(x + t(y-x))$. Then $g'(t) = \nabla f(x+t(y-x))^\top (y-x)$.
+                <br>By the Mean Value Theorem, $f(y) - f(x) = g(1) - g(0) = \int_0^1 g'(t) dt$.
+                <br>Using monotonicity, we can show $g'(t) \ge g'(0)$.
+                $$ ( \nabla f(z) - \nabla f(x) )^\top (z-x) \ge 0 \implies \nabla f(z)^\top (y-x) \cdot t \ge \nabla f(x)^\top (y-x) \cdot t $$
+                Dividing by $t>0$, the directional derivative increases. Thus $f(y) \ge f(x) + \nabla f(x)^\top (y-x)$.
+            </div>
+        </div>
+
+        <h3>3.3 Consequences and Applications</h3>
 
         <div class="example">
           <h4>Application 1: Proving a Function is Convex</h4>

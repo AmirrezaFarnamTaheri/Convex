@@ -90,6 +90,14 @@
         $
       </p>
 
+      <div class="theorem-box">
+        <h4>Deep Dive: Slack Variables and Standard Forms</h4>
+        <p>Some communities (e.g., in linear programming) define "standard form" as minimizing $c^\top x$ subject to $Ax=b, x \ge 0$.
+        <br>We can convert inequality constraints $f_i(x) \le 0$ into equality constraints by introducing <b>slack variables</b> $s_i \ge 0$:
+        $$ f_i(x) + s_i = 0 $$
+        This technique lifts the feasible set into a higher dimension where the geometry might be simpler (e.g., an intersection of a manifold with the non-negative orthant). While useful for solver implementation (Simplex/Interior Point), we primarily stick to the inequality form for modeling.</p>
+      </div>
+
       <div class="proof-box">
         <h4>Theorem: Convexity of Feasible Set</h4>
         <p><strong>Statement:</strong> If the problem is in standard convex form ($f_i$ convex, $h_j$ affine), the feasible set $\mathcal{F}$ is convex.</p>

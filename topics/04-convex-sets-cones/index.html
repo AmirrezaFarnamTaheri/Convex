@@ -238,8 +238,18 @@
         <p>A set $K \subseteq \mathbb{R}^n$ is a <a href="#" class="definition-link">cone</a> if it is closed under non-negative scaling:</p>
         $$ x \in K, \ \alpha \ge 0 \implies \alpha x \in K $$
 
-        <p>A <a href="#" class="definition-link">convex cone</a> is a cone that is also a convex set. Equivalently, it is closed under non-negative linear combinations:</p>
+        <p>A <a href="#" class="definition-link">convex cone</a> is a cone that is also a convex set. Equivalently, it is closed under non-negative linear combinations (conic combinations):</p>
         $$ x, y \in K, \ \alpha, \beta \ge 0 \implies \alpha x + \beta y \in K $$
+
+        <div class="theorem-box">
+          <h4>Deep Dive: Polyhedral Cones and Weyl-Minkowski</h4>
+          <p>A fundamental result in the theory of convex cones is the equivalence between two ways of representing polyhedral cones:</p>
+          <ul>
+            <li><b>V-Representation (Vertex/Generator):</b> A cone is finitely generated if it is the conic hull of a finite set of vectors: $K = \{Ay \mid y \ge 0\}$.</li>
+            <li><b>H-Representation (Halfspace/Intersection):</b> A cone is polyhedral if it is the intersection of finitely many closed halfspaces passing through the origin: $K = \{x \mid Bx \le 0\}$.</li>
+          </ul>
+          <p><b>The Weyl-Minkowski Theorem</b> states that a convex cone is finitely generated if and only if it is polyhedral. This is the conical analog of the vertex-facet equivalence for polytopes. It underpins algorithms like the Simplex method (moving between vertices) and Fourier-Motzkin elimination (projecting H-representations).</p>
+        </div>
 
         <div class="example">
             <h4>Examples of Convex Cones</h4>

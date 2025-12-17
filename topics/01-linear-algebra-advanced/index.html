@@ -339,6 +339,19 @@
         <li><b>Scale (Gain via $\Sigma$):</b> The matrix $\Sigma$ is diagonal with non-negative entries $\sigma_i$. It independently stretches or shrinks each coordinate $i$ by the factor $\sigma_i$. This is where the magnitude change happens.</li>
         <li><b>Rotate/Reflect (Synthesis via $U$):</b> The matrix $U$ is orthogonal. It takes the scaled coordinates and rotates them to the final orientation in the output space, defined by the columns of $U$ (the "left singular vectors").</li>
       </ol>
+
+      <div class="insight">
+        <h4>Mapping SVD to the Four Fundamental Subspaces</h4>
+        <p>The SVD provides an explicit orthonormal basis for the four fundamental subspaces of $A$. Let $r = \mathrm{rank}(A)$.
+        <ul>
+            <li><b>Column Space $\mathcal{R}(A)$:</b> Spanned by the first $r$ columns of $U$ (left singular vectors $u_1, \dots, u_r$).</li>
+            <li><b>Nullspace $\mathcal{N}(A)$:</b> Spanned by the last $n-r$ columns of $V$ (right singular vectors $v_{r+1}, \dots, v_n$).</li>
+            <li><b>Row Space $\mathcal{R}(A^\top)$:</b> Spanned by the first $r$ columns of $V$ (right singular vectors $v_1, \dots, v_r$).</li>
+            <li><b>Left Nullspace $\mathcal{N}(A^\top)$:</b> Spanned by the last $m-r$ columns of $U$ (left singular vectors $u_{r+1}, \dots, u_m$).</li>
+        </ul>
+        This geometric alignment is why SVD is the "gold standard" for rank-deficient problems.</p>
+      </div>
+
       <p>This decomposition reveals that the image of the unit sphere under any linear map is a hyperellipse. The singular values are the lengths of the hyperellipse's semi-axes, and the columns of $U$ are the directions of these axes.</p>
 
       <figure style="text-align: center; margin: 24px 0;">
@@ -517,6 +530,16 @@
 
       <h3>7.1 The Moore-Penrose Pseudoinverse ($A^+$)</h3>
       <p>When $A$ is not square or not invertible, we cannot define $A^{-1}$. However, we can define a generalized inverse $A^+$ that "inverts" the action of $A$ on its range and sends the orthogonal complement to zero.</p>
+
+      <h4>The Moore-Penrose Axioms</h4>
+      <p>The pseudoinverse $A^+$ is the unique matrix satisfying these four algebraic conditions:
+      <ol>
+        <li>$A A^+ A = A$ ( $A A^+$ is a projection on the range).</li>
+        <li>$A^+ A A^+ = A^+$ ( $A^+$ acts like an inverse on the range of $A$).</li>
+        <li>$(A A^+)^\top = A A^+$ (Symmetry of projector).</li>
+        <li>$(A^+ A)^\top = A^+ A$ (Symmetry of projector).</li>
+      </ol>
+      </p>
 
       <p><b>Definition via SVD:</b> If $A = U \Sigma V^\top$, then:
       $$ A^+ = V \Sigma^+ U^\top $$
