@@ -590,12 +590,15 @@
       Thus $u^\top v \ge 0$ for all $u \in \mathcal{Q}$, so $v \in \mathcal{Q}^*$.
     </div>
     <div class="proof-step">
-      <strong>($\supseteq$):</strong> Let $v \in \mathcal{Q}^*$.
-      First, take $u=(0,1) \in \mathcal{Q}$. Then $u^\top v = s \ge 0$.
-      Next, if $y \ne 0$, take $u = (-y/\|y\|, 1)$. Since $\|-y/\|y\|\| = 1 \le 1$, $u \in \mathcal{Q}$.
-      The condition $u^\top v \ge 0$ implies:
-      $$ - \frac{y^\top y}{\|y\|} + s \ge 0 \implies -\|y\| + s \ge 0 \implies \|y\| \le s $$
-      (If $y=0$, then $\|y\| \le s$ since $s \ge 0$).
+      <strong>($\supseteq$):</strong> Let $v = (y,s) \in \mathcal{Q}^*$. We must show $v \in \mathcal{Q}$, i.e., $s \ge \|y\|$.
+      <br>First, test with the vector $u=(0,1)$. Since $\|0\| \le 1$, $u \in \mathcal{Q}$.
+      The dual condition implies $u^\top v = 0^\top y + 1 \cdot s = s \ge 0$. So $s$ must be non-negative.
+      <br>Now, consider the vector $y$.
+      <br><b>Case 1: $y = 0$.</b> Then $\|y\|=0$. Since we already showed $s \ge 0$, we have $s \ge \|y\|$. Thus $(0, s) \in \mathcal{Q}$.
+      <br><b>Case 2: $y \neq 0$.</b> Construct the test vector $u = (-\frac{y}{\|y\|}, 1)$.
+      Check primal feasibility: the spatial part has norm $\left\|-\frac{y}{\|y\|}\right\| = 1$, which is $\le$ the time part $1$. So $u \in \mathcal{Q}$.
+      <br>Apply the dual condition $u^\top v \ge 0$:
+      $$ -\frac{y}{\|y\|}^\top y + 1 \cdot s \ge 0 \implies -\frac{\|y\|^2}{\|y\|} + s \ge 0 \implies -\|y\| + s \ge 0 \implies s \ge \|y\| $$
       Thus $v \in \mathcal{Q}$.
     </div>
   </div>

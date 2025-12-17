@@ -64,13 +64,13 @@
     <section class="section-card" id="section-bases">
       <h2>1. Bases, Coordinates, and Change of Basis</h2>
 
-      <h3>0. The Meta-Move: Changing Perspective</h3>
-      <p>Almost all advanced linear algebra (Eigenvalues, SVD, PCA) relies on one idea: <b>pick coordinates where the operator looks simple</b>.</p>
+      <h3>0. The Core Strategy: Change of Coordinates</h3>
+      <p>Advanced linear algebra for optimization boils down to a single strategy: <b>simplify the operator by changing the coordinate system</b>. Instead of solving a problem in the standard basis (where variables are coupled), we transform to a basis that decouples the interactions.</p>
       <ul>
-        <li><b>Eigen-decomposition:</b> Choose a basis of eigenvectors $\to$ matrix becomes diagonal.</li>
-        <li><b>SVD:</b> Choose orthonormal bases for domain and codomain $\to$ matrix becomes diagonal.</li>
+        <li><b>Eigendecomposition:</b> Finds a basis where the operator acts as simple scaling along independent axes ($Av_i = \lambda_i v_i$). This transforms the matrix into a diagonal one.</li>
+        <li><b>SVD:</b> Generalizes this to rectangular matrices by allowing different bases for the input and output spaces. It reveals the fundamental geometry of the map: rotation $\to$ scaling $\to$ rotation.</li>
       </ul>
-      <p>This module formalizes the "change of coordinates" machinery.</p>
+      <p>This section formalizes the machinery of basis changes, which connects the matrix algebra you know to the geometric intuition you need.</p>
 
       <h3>1. Span and Independence</h3>
       <p>Given vectors $v_1, \dots, v_k \in \mathbb{R}^n$:</p>
@@ -291,21 +291,21 @@
 
         <div class="proof-step">
           <strong>Step 1: Initialization.</strong>
-          Consider the first column $a_1$. We define the first direction $q_1$ by normalizing $a_1$:
+          Let $a_1, \dots, a_n$ be the columns of $A$. We define the first basis vector $q_1$ by normalizing $a_1$:
           $$ r_{11} = \|a_1\|_2, \quad q_1 = \frac{a_1}{r_{11}} $$
           Thus, $a_1 = r_{11} q_1$.
         </div>
 
         <div class="proof-step">
           <strong>Step 2: Iteration ($k=2, \dots, n$).</strong>
-          For the $k$-th column $a_k$, we want to extract the component orthogonal to the span of $\{q_1, \dots, q_{k-1}\}$.
-          First, calculate the projection coefficients of $a_k$ onto the existing orthonormal basis vectors:
-          $$ r_{jk} = \langle q_j, a_k \rangle \quad \text{for } j=1, \dots, k-1 $$
-          Subtract these components from $a_k$ to obtain the orthogonal residual $v_k$:
+          For the $k$-th column $a_k$, we subtract its projection onto the subspace spanned by the previously constructed orthonormal vectors $\{q_1, \dots, q_{k-1}\}$.
+          <br>Calculate the coefficients (dot products):
+          $$ r_{jk} = q_j^\top a_k \quad \text{for } j=1, \dots, k-1 $$
+          Compute the orthogonal residual vector $v_k$:
           $$ v_k = a_k - \sum_{j=1}^{k-1} r_{jk} q_j $$
-          Finally, normalize this residual to obtain the new basis vector $q_k$:
+          Normalize to get the next basis vector:
           $$ r_{kk} = \|v_k\|_2, \quad q_k = \frac{v_k}{r_{kk}} $$
-          (Note: $r_{kk} > 0$ because $a_k$ is linearly independent of previous columns, so $v_k \neq 0$).
+          Since the columns of $A$ are linearly independent, $v_k$ is never zero, so $r_{kk} > 0$.
         </div>
 
         <div class="proof-step">
@@ -557,10 +557,15 @@
 
           <div class="proof-step">
           <strong>Step 3: Pythagorean Minimization.</strong>
-          Any generic solution $x$ can be decomposed into a row-space component and a nullspace component. Since $x$ is a solution, it must look like $x = x^+ + z$, where $z$ is some vector in the nullspace $\mathcal{N}(A)$.
-          Since $x^+ \in \mathcal{R}(A^\top)$ and $z \in \mathcal{N}(A)$, they are orthogonal: $\langle x^+, z \rangle = 0$.
+          Let $x$ be any solution to the least squares problem. The set of all solutions is the affine set $S = x^+ + \mathcal{N}(A)$.
+          Any solution $x$ can be written as $x = x^+ + z$, where $z \in \mathcal{N}(A)$.
+          <br>We established in Step 2 that $x^+ \in \mathcal{R}(A^\top)$.
+          The Fundamental Theorem of Linear Algebra states that $\mathcal{R}(A^\top) \perp \mathcal{N}(A)$.
+          Therefore, $x^+ \perp z$.
+          <br>By the Pythagorean Theorem:
           $$ \|x\|_2^2 = \|x^+ + z\|_2^2 = \|x^+\|_2^2 + \|z\|_2^2 $$
-          To minimize this norm, we must choose $z=0$. Therefore, $x^+ = A^+b$ is the unique minimum-norm solution.
+          Since $\|z\|_2^2 \ge 0$, the minimum possible value for $\|x\|_2^2$ occurs when $\|z\|_2^2 = 0$, i.e., $z=0$.
+          Thus, $x = x^+$ is the unique solution with minimum norm.
           </div>
         </div>
         </li>

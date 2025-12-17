@@ -1226,14 +1226,15 @@
           </div>
           <div class="proof-step">
             <strong>(b) Convex Reformulation (Perspective Trick):</strong>
-            Introduce variables $y = x/h(x)$ and $t = 1/h(x)$. Then $x = y/t$.
-            Objective: $f(x)/h(x) = f(y/t) \cdot t$. This is the <b>perspective</b> function of $f$, which is convex.
-            Constraint $h(x) = 1/t \implies h(y/t) = 1/t \implies t h(y/t) = 1$.
-            The function $g(y, t) = t h(y/t)$ is the perspective of a concave function, so it is concave.
-            The constraint is $g(y, t) = 1$. This is not convex.
-            <br><b>Relaxation:</b> Replace with $g(y, t) \ge 1$ (or $-g \le -1$, convex).
-            Since the objective $t f(y/t)$ is monotonic in $t$ (for $f \ge 0$), the optimizer will push $t$ to be as small as possible, making the constraint tight ($g(y,t)=1$).
-            <br><b>Result:</b> Min $t f(y/t)$ s.t. $A(y/t) \le b \implies Ay - bt \le 0$, and $t h(y/t) \ge 1$. All convex constraints.
+            We perform a change of variables to linearize the fraction. Let $t = 1/h(x)$ and $y = x/h(x)$. Note that since $h(x) > 0$, we have $t > 0$, so this transformation is well-defined.
+            <br>Substituting back, $x = y/t$.
+            <br><b>Objective:</b> The original objective is $f(x) \cdot \frac{1}{h(x)} = f(y/t) \cdot t$. This is exactly the <b>perspective function</b> of $f$, denoted $\tilde{f}(y,t)$. Since $f$ is convex, $\tilde{f}$ is convex.
+            <br><b>Constraint (Denominator):</b> By definition, $t h(x) = 1$. Substituting $x=y/t$, we get $t h(y/t) = 1$.
+            The function $g(y, t) = t h(y/t)$ is the perspective of the concave function $h$, so $g$ is concave.
+            The equality constraint $g(y, t) = 1$ defines a non-convex set (the boundary of a convex set).
+            <br><b>Relaxation:</b> We relax the equality to an inequality $g(y, t) \ge 1$ (i.e., $t h(y/t) \ge 1$). Since $g$ is concave, the set $\{(y,t) \mid g(y,t) \ge 1\}$ is convex.
+            <br><b>Tightness Argument:</b> Why does this relaxation work? We minimize the objective $t f(y/t)$. Assuming $f(x) \ge 0$, the objective is non-increasing in the "scaling" of the denominator. If we find a solution where $t h(y/t) > 1$, we can scale down $t$ (and $y$) to make the constraint tight without increasing the objective (often decreasing it). Thus, at optimality, the constraint holds with equality.
+            <br><b>Result:</b> Min $t f(y/t)$ subject to $Ay - bt \le 0$ (from $Ax \le b$), $t h(y/t) \ge 1$, and $t > 0$. This is a convex optimization problem.
           </div>
         </div>
       </div>

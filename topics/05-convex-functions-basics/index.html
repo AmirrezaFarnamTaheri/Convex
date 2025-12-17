@@ -1590,11 +1590,14 @@
           <div class="solution-box">
             <h4>Solution</h4>
             <p><b>Method 1: Hessian.</b> (See Lecture derivation). $\nabla^2 f(x) = \text{diag}(p) - pp^\top$ where $p_i = e^{x_i}/\sum e^{x_k}$. By Cauchy-Schwarz, $v^\top \nabla^2 f v = \sum p_i v_i^2 - (\sum p_i v_i)^2 \ge 0$.</p>
-            <p><b>Method 2: Geometric Mean.</b>
-            The epigraph condition $\log(\sum e^{x_i}) \le t$ is equivalent to $\sum e^{x_i} \le e^t$, or $\sum e^{x_i - t} \le 1$.
-            This doesn't immediately look convex.
-            Better: Use Hölder's inequality for the restriction to a line.
-            Or use the fact that it is the conjugate of the negative entropy (Lecture 06).</p>
+            <p><b>Method 2: Hölder's Inequality (Restriction to a Line).</b>
+            Consider $g(t) = f(x+tv) = \log(\sum e^{x_i+tv_i})$.
+            We need $g$ to be convex. Let $\alpha, \beta$ be points on the line and $\theta \in [0,1]$.
+            Let $u_i = e^{x_i + \alpha v_i}$ and $w_i = e^{x_i + \beta v_i}$.
+            Then $e^{x_i + (\theta \alpha + (1-\theta)\beta)v_i} = u_i^\theta w_i^{1-\theta}$.
+            We need to show $\log(\sum u_i^\theta w_i^{1-\theta}) \le \theta \log(\sum u_i) + (1-\theta) \log(\sum w_i)$.
+            Exponentiating both sides: $\sum u_i^\theta w_i^{1-\theta} \le (\sum u_i)^\theta (\sum w_i)^{1-\theta}$.
+            This is exactly <b>Hölder's Inequality</b> with exponents $1/\theta$ and $1/(1-\theta)$.</p>
           </div>
         </div>
 
