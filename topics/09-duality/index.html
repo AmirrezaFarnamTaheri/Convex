@@ -128,6 +128,7 @@
           <br><b>Dual:</b> $\max_{\lambda, \nu} \min_x L(x, \lambda, \nu)$ (Maximizer moves first, setting prices; Minimizer optimizes given prices).
           <br><b>Weak Duality</b> is simply the max-min inequality: $\max_{\lambda, \nu} \min_x L(x, \lambda, \nu) \le \min_x \max_{\lambda, \nu} L(x, \lambda, \nu)$. This inequality holds for <em>any</em> function, not just Lagrangians.
           <br><b>Strong Duality</b> implies the existence of a <b>Saddle Point</b> where the order of play doesn't matter, i.e., we can swap min and max.</p>
+          <p>Consider a simple resource allocation example. The Primal seeks to minimize cost subject to meeting demand. The Dual sets prices for resources to maximize revenue while staying competitive. Strong duality means the minimum cost equals the maximum revenue, and the dual prices (shadow prices) reflect the true marginal value of the resources.</p>
         </div>
       </section>
 
@@ -313,7 +314,7 @@
           <h4>Geometric Interpretation via Normal Cones</h4>
           <p>The stationarity condition $0 \in \nabla f_0(x^*) + \sum \lambda_i \nabla f_i(x^*) + \sum \nu_j \nabla h_j(x^*)$ has a deep geometric meaning:
           $$ -\nabla f_0(x^*) \in N_{\mathcal{F}}(x^*) $$
-          The negative gradient of the objective must lie in the <b>normal cone</b> of the feasible set at the optimal point. KKT simply expresses this normal vector as a linear combination of constraint gradients.</p>
+          The negative gradient of the objective must lie in the <b>normal cone</b> of the feasible set at the optimal point. KKT simply expresses this normal vector as a linear combination of constraint gradients, provided a constraint qualification (like Slater's) holds.</p>
         </div>
 
         <div class="proof-box">

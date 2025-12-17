@@ -423,7 +423,7 @@
         </div>
 
         <div class="proof-box">
-          <h4>Appendix 1: Rigorous Proof that the SOC is self-dual ($\mathcal{Q}^* = \mathcal{Q}$)</h4>
+          <h4>Rigorous Proof that the SOC is self-dual ($\mathcal{Q}^* = \mathcal{Q}$)</h4>
           <p>We prove that the Second-Order Cone $\mathcal{Q} = \{(z, t) \in \mathbb{R}^n \times \mathbb{R} \mid \|z\|_2 \le t\}$ is self-dual under the standard inner product $\langle (z,t), (y,s) \rangle = z^\top y + ts$.</p>
 
           <div class="proof-step">
@@ -434,8 +434,8 @@
             $$ \langle (z,t), (y,s) \rangle = z^\top y + ts $$
             Using Cauchy-Schwarz: $z^\top y \ge -\|z\|_2 \|y\|_2$.
             <br>Thus $z^\top y + ts \ge ts - \|z\|_2 \|y\|_2$.
-            <br>Since $t \ge \|z\|_2$ and $s \ge \|y\|_2$, we have $ts \ge \|z\|_2 \|y\|_2$.
-            <br>Therefore, the sum is non-negative. Since $(z,t)$ was arbitrary, $(y,s) \in \mathcal{Q}^*$.
+            <br>Since $t \ge \|z\|_2 \ge 0$ and $s \ge \|y\|_2 \ge 0$, we have $ts \ge \|z\|_2 \|y\|_2$.
+            <br>Therefore, the sum is non-negative ($ts - \|z\|\|y\| \ge 0$). Since $(z,t)$ was arbitrary, $(y,s) \in \mathcal{Q}^*$.
           </div>
 
           <div class="proof-step">
@@ -446,7 +446,7 @@
             <br>If $y \neq 0$, choose a specific test vector designed to "oppose" $y$. Let $z = -\frac{y}{\|y\|_2}$. Let $t=1$.
             <br>Since $\|z\|_2 = 1 \le t$, this vector $(z,t)$ is in $\mathcal{Q}$.
             <br>The dual condition implies:
-            $$ z^\top y + ts = -\frac{y^\top y}{\|y\|_2} + s \ge 0 \implies -\frac{\|y\|_2^2}{\|y\|_2} + s \ge 0 \implies s \ge \|y\|_2 $$
+            $$ z^\top y + ts = -\frac{y^\top y}{\|y\|_2} + s \ge 0 \implies -\frac{\|y\|_2^2}{\|y\|_2} + s \ge 0 \implies -\|y\|_2 + s \ge 0 \implies s \ge \|y\|_2 $$
             <br>Thus $\|y\|_2 \le s$, which means $(y,s) \in \mathcal{Q}$.
             <br>Since both inclusions hold, $\mathcal{Q}^* = \mathcal{Q}$.
           </div>

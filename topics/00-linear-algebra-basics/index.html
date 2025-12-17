@@ -265,12 +265,23 @@
       </div>
 
       <h4>Gradients with Respect to Matrices</h4>
-      <p>For a matrix variable $X \in \mathbb{R}^{m \times n}$, the gradient is an $m \times n$ matrix.</p>
+      <p>For a matrix variable $X \in \mathbb{R}^{m \times n}$, the gradient is an $m \times n$ matrix. The definition is consistent with the scalar directional derivative.</p>
       <ul>
         <li><b>Rule 1: Linear Trace:</b> $\nabla_X \mathrm{tr}(A^\top X) = A$.
-        <br><i>Proof:</i> $\mathrm{tr}(A^\top X) = \langle A, X \rangle$. The gradient is the coefficient of $X$, which is $A$.</li>
+        <br><i>Proof:</i> $\mathrm{tr}(A^\top X) = \langle A, X \rangle$. The function is linear: $f(X+\Delta) = \langle A, X+\Delta \rangle = f(X) + \langle A, \Delta \rangle$. The gradient is the coefficient of $\Delta$, which is $A$.</li>
         <li><b>Rule 2: Quadratic Trace:</b> $\nabla_X \mathrm{tr}(X^\top A X) = (A + A^\top)X$. If $A$ is symmetric, this is $2AX$.
-        <br><i>Note:</i> This corresponds to $\frac{d}{dx}(ax^2) = 2ax$.</li>
+        <br><i>Note:</i> This corresponds to $\frac{d}{dx}(ax^2) = 2ax$. For vector $x$, $\nabla (x^\top Ax) = (A+A^\top)x$. For matrix $X$, the columns transform independently if $A$ is scalar, but coupled if $A$ is a matrix.
+        <br><i>Derivation:</i>
+        $$ \begin{aligned}
+        f(X+\Delta) &= \mathrm{tr}((X+\Delta)^\top A (X+\Delta)) \\
+        &= \mathrm{tr}(X^\top AX + \Delta^\top AX + X^\top A\Delta + \Delta^\top A\Delta) \\
+        &\approx f(X) + \mathrm{tr}(\Delta^\top AX) + \mathrm{tr}(X^\top A \Delta) \\
+        &= f(X) + \mathrm{tr}(\Delta^\top AX) + \mathrm{tr}(\Delta^\top A^\top X) \quad \text{(using } \mathrm{tr}(M)=\mathrm{tr}(M^\top)) \\
+        &= f(X) + \mathrm{tr}(\Delta^\top (A+A^\top)X) \\
+        &= f(X) + \langle (A+A^\top)X, \Delta \rangle
+        \end{aligned} $$
+        Thus $\nabla f(X) = (A+A^\top)X$.
+        </li>
         <li><b>Rule 3: Log Determinant:</b> $\nabla_X \log \det X = X^{-\top}$. If $X \in \mathbb{S}^n_{++}$ (symmetric positive definite), then $\nabla_X \log \det X = X^{-1}$.
         <br>
         <div class="proof-box">
@@ -840,7 +851,7 @@
 
       <h4>Spectral Norm Details</h4>
       <p>The <b>spectral norm</b> (or operator norm) of a matrix $X \in \mathbb{R}^{m \times n}$ is induced by the Euclidean vector norm:
-      $$ \|X\|_2 = \sup_{v \neq 0} \frac{\|Xv\|_2}{\|v\|_2} $$
+      $$ \|X\|_2 = \sup_{v \neq 0} \frac{\|Xv\|_2}{\|v\|_2} = \sup_{\|v\|_2=1} \|Xv\|_2 $$
       <p><b>Intuition: Worst-Case Stretch.</b> The operator norm measures the maximum factor by which the matrix $X$ can "stretch" a vector. It corresponds to the "Lipschitz constant" of the linear map. Geometrically, it is the length of the longest semi-axis of the ellipsoid formed by mapping the unit sphere.</p>
       It turns out this equals the maximum singular value:
       $$ \|X\|_2 = \sigma_{\max}(X) = \sqrt{\lambda_{\max}(X^\top X)} $$

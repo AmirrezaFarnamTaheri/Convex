@@ -97,25 +97,25 @@
           <h4>Proof of Jensen's Inequality</h4>
           <p>We prove this by induction on the number of points $k$.</p>
           <div class="proof-step">
-            <strong>Base Case ($k=2$):</strong> This is exactly the definition of convexity.
+            <strong>Base Case ($k=2$):</strong> The inequality $f(\theta_1 x_1 + \theta_2 x_2) \le \theta_1 f(x_1) + \theta_2 f(x_2)$ holds by the definition of convexity.
           </div>
           <div class="proof-step">
-            <strong>Inductive Step:</strong> Assume the inequality holds for any convex combination of $k-1$ points. Consider a combination of $k$ points: $x = \sum_{i=1}^k \theta_i x_i$ with $\sum \theta_i = 1$ and $\theta_i > 0$.
-            <br>We can "peel off" the last point $x_k$ and treat the rest as a sub-combination.
-            Let $\tilde{\theta} = \sum_{i=1}^{k-1} \theta_i = 1 - \theta_k$. Since $\theta_k < 1$, $\tilde{\theta} > 0$.
-            $$ x = \theta_k x_k + \tilde{\theta} \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i = \theta_k x_k + \tilde{\theta} \bar{x} $$
-            where $\bar{x} = \sum_{i=1}^{k-1} (\theta_i/\tilde{\theta}) x_i$ is a valid convex combination of $k-1$ points (weights sum to 1).
+            <strong>Inductive Step:</strong> Assume the inequality holds for any convex combination of $k$ points. Consider a combination of $k+1$ points: $x = \sum_{i=1}^{k+1} \theta_i x_i$ with $\sum \theta_i = 1$ and $\theta_i > 0$.
+            <br>We can "peel off" the last point $x_{k+1}$ and treat the rest as a sub-combination.
+            Let $\tilde{\theta} = \sum_{i=1}^{k} \theta_i = 1 - \theta_{k+1}$. Since $\theta_{k+1} < 1$, $\tilde{\theta} > 0$.
+            $$ x = \theta_{k+1} x_{k+1} + \tilde{\theta} \sum_{i=1}^{k} \frac{\theta_i}{\tilde{\theta}} x_i = \theta_{k+1} x_{k+1} + \tilde{\theta} \bar{x} $$
+            where $\bar{x} = \sum_{i=1}^{k} (\theta_i/\tilde{\theta}) x_i$ is a valid convex combination of $k$ points (weights sum to 1).
           </div>
           <div class="proof-step">
             <strong>Apply Convexity Twice:</strong>
-            <br>1. Apply the 2-point definition to $x_k$ and $\bar{x}$:
-            $$ f(x) = f(\theta_k x_k + \tilde{\theta} \bar{x}) \le \theta_k f(x_k) + \tilde{\theta} f(\bar{x}) $$
+            <br>1. Apply the 2-point definition to $x_{k+1}$ and $\bar{x}$:
+            $$ f(x) = f(\theta_{k+1} x_{k+1} + \tilde{\theta} \bar{x}) \le \theta_{k+1} f(x_{k+1}) + \tilde{\theta} f(\bar{x}) $$
             2. Apply the inductive hypothesis to $f(\bar{x})$:
-            $$ f(\bar{x}) \le \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i) $$
+            $$ f(\bar{x}) \le \sum_{i=1}^{k} \frac{\theta_i}{\tilde{\theta}} f(x_i) $$
           </div>
           <div class="proof-step">
             <strong>Conclusion:</strong> Substituting back:
-            $$ f(x) \le \theta_k f(x_k) + \tilde{\theta} \left(\sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i)\right) = \theta_k f(x_k) + \sum_{i=1}^{k-1} \theta_i f(x_i) = \sum_{i=1}^k \theta_i f(x_i) $$
+            $$ f(x) \le \theta_{k+1} f(x_{k+1}) + \tilde{\theta} \left(\sum_{i=1}^{k} \frac{\theta_i}{\tilde{\theta}} f(x_i)\right) = \theta_{k+1} f(x_{k+1}) + \sum_{i=1}^{k} \theta_i f(x_i) = \sum_{i=1}^{k+1} \theta_i f(x_i) $$
           </div>
         </div>
 
@@ -264,6 +264,10 @@
             <li><b>Upper Bound:</b> Lipschitz gradients ($\nabla^2 f(x) \preceq LI$) imply a quadratic upper bound: $f(y) \le f(x) + \nabla f(x)^\top (y - x) + \frac{L}{2}\|y - x\|_2^2$.</li>
             <li><b>Stability:</b> The solution is stable to perturbations in the objective. A small change $\epsilon$ in the gradient moves the minimizer by at most $\epsilon/m$.</li>
           </ul></p>
+          <div class="insight">
+            <h4>Condition Number Intuition</h4>
+            <p>The parameter $m$ controls the minimum curvature (flatness), while $L$ controls the maximum curvature (sharpness). The ratio $L/m$ is the condition number of the Hessian. If $L/m$ is large, the function is shaped like a long narrow valley (steep in some directions, flat in others). Optimization algorithms struggle with such "ill-conditioned" functions because steps must be small to handle the steep directions, but large to traverse the flat ones.</p>
+          </div>
         </div>
 
         <h3>1.6 Concave Functions</h3>

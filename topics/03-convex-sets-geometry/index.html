@@ -299,6 +299,14 @@
           </ul>
         </div>
 
+        <h4>Supporting Hyperplanes</h4>
+        <p>A hyperplane $H = \{x \mid a^\top x = b\}$ supports a set $C$ at a point $x_0$ if:
+        <ol>
+            <li>$x_0$ lies on the hyperplane ($a^\top x_0 = b$).</li>
+            <li>The entire set $C$ lies in one of the halfspaces defined by $H$ (e.g., $a^\top x \le b$ for all $x \in C$).</li>
+        </ol>
+        Supporting hyperplanes are the geometric realization of <b>subgradients</b> (which we will meet in Lecture 05). For a convex set, every boundary point has at least one supporting hyperplane.</p>
+
         <p>A <a href="#" class="definition-link">halfspace</a> is a set of the form:</p>
         $$
         H^- = \{x \in \mathbb{R}^n \mid a^\top x \le b\}
@@ -608,6 +616,14 @@
           \mathcal{E} = \{x \mid \|P^{-1/2}(x - x_c)\|_2 \le 1\}
           $$
           <p>This is the preimage of the Euclidean ball $\{z \mid \|z\|_2 \le 1\}$ (convex) under the affine map $f(x) = P^{-1/2}(x - x_c)$. Since preimages preserve convexity, $\mathcal{E}$ is convex.</p>
+          <div class="insight">
+            <h4>Strict vs Non-Strict Separation</h4>
+            <p>The <b>Separating Hyperplane Theorem</b> states that disjoint convex sets $C, D$ can be separated by a hyperplane ($a^\top x \le b$ for $x \in C$, $a^\top x \ge b$ for $x \in D$).
+            <ul>
+                <li><b>Non-Strict:</b> Always possible if $C, D$ are disjoint and convex. But they might touch at the boundary.</li>
+                <li><b>Strict:</b> Possible if $C$ is closed and $D$ is compact (closed & bounded). Then there exists $\epsilon > 0$ such that the gap is strictly positive.</li>
+            </ul></p>
+          </div>
           <figure style="text-align: center; margin: 24px 0;">
                <img src="assets/image-vs-preimage-ball.png"
                     alt="Comparison of image vs preimage of a ball"

@@ -568,8 +568,11 @@
             <h4>(b) Integrals of Log-Concave Functions (Prékopa-Leindler)</h4>
             <p>If $f(x, y)$ is <b>jointly</b> log-concave in $(x, y)$, then the marginal $g(x) = \int f(x, y) dy$ is log-concave.</p>
             <p>This is a consequence of the <b>Prékopa-Leindler Theorem</b>, which relates integrals of functions satisfying log-concave-like conditions:
+            Let $f, g, h: \mathbb{R}^n \to \mathbb{R}_+$ be integrable functions. If for some $\lambda \in (0, 1)$ and all $x, y \in \mathbb{R}^n$:
+            $$ h(\lambda x + (1-\lambda)y) \ge f(x)^\lambda g(y)^{1-\lambda} $$
+            Then:
             $$ \int h(z) dz \ge \left( \int f(x) dx \right)^\lambda \left( \int g(y) dy \right)^{1-\lambda} $$
-            whenever $h(\lambda x + (1-\lambda)y) \ge f(x)^\lambda g(y)^{1-\lambda}$.</p>
+            </p>
             <p><b>Consequence:</b> Convolution of log-concave functions is log-concave. If $f, g$ are log-concave, so is $(f*g)(x) = \int f(x-y)g(y) dy$.</p>
         </div>
 
@@ -1084,10 +1087,10 @@
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
-      $f^*(y) = \sup_x (y^\top x - \log \sum e^{x_i})$.
-      Setting gradient to zero: $y_i = e^{x_i} / (\sum e^{x_k})$.
-      This implies $y_i > 0$ and $\sum y_i = 1$. If not, supremum is $\infty$ (scaling argument).
-      Substitute $x_i = \log y_i + C$ back into objective to get negative entropy.
+      See Example 1.4(e) for the derivation. The key steps are:
+      1. Gradient condition $y = \nabla f(x)$ implies $y$ is a probability vector.
+      2. If $y$ is not a probability vector, the supremum is infinite.
+      3. Substituting $x$ back gives the negative entropy term.
     </div>
   </div>
 </div>
