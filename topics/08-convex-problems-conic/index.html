@@ -139,16 +139,18 @@
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Construct Worst-Case Perturbation.</strong>
-          We show the bound is tight. Let $u = Ax - b$.
-          If $u=0$ or $x=0$, the bound holds trivially. Assume $u \ne 0, x \ne 0$.
-          <br><b>Goal:</b> Find a matrix $\Delta A$ with $\|\Delta A\|_2 \le \rho$ such that $\|u + \Delta A x\|_2$ is maximized.
-          Maximal stretch occurs when $\Delta A$ aligns its maximum singular value direction with $x$ and maps it to the direction of $u$.
-          <br><b>Construction:</b> Let $\Delta A = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2}$.
-          This is a rank-1 matrix $uv^\top$ (scaled). Its spectral norm is the product of vector norms: $\|\Delta A\|_2 = \rho \frac{\|u\|}{\|u\|} \frac{\|x\|}{\|x\|} = \rho$.
-          <br><b>Action:</b> $\Delta A x = \rho \frac{u}{\|u\|} \frac{x^\top x}{\|x\|} = \rho \|x\|_2 \frac{u}{\|u\|_2}$.
-          This vector is parallel to $u$ and has length $\rho \|x\|_2$.
-          <br><b>Result:</b> $\|u + \Delta A x\|_2 = \|u\|_2 + \|\Delta A x\|_2 = \|Ax - b\|_2 + \rho \|x\|_2$.
+          <strong>Step 3: Construct Worst-Case Perturbation (Tightness Proof).</strong>
+          Is this bound just a loose estimate, or can nature actually achieve it? We construct a specific $\Delta A$ that hits the bound exactly.
+          <br>Let $u = Ax - b$ be the nominal residual vector. We want the perturbation term $\Delta A x$ to point in the <i>exact same direction</i> as $u$ to maximize the sum.
+          <br><b>The Construction:</b> Define a rank-1 perturbation matrix:
+          $$ \Delta A = \rho \frac{u}{\|u\|_2} \frac{x^\top}{\|x\|_2} $$
+          This matrix takes the input direction $x$ and maps it to the output direction $u$, scaled by $\rho$.
+          <br><b>Verification:</b>
+          1. <b>Norm Check:</b> $\|\Delta A\|_2 = \rho \cdot 1 \cdot 1 = \rho$. (Valid perturbation).
+          2. <b>Alignment Check:</b> $\Delta A x = \rho \frac{u}{\|u\|} \frac{x^\top x}{\|x\|} = \rho \|x\|_2 \frac{u}{\|u\|}$.
+          3. <b>Sum:</b> $u + \Delta A x = u + \rho \frac{\|x\|}{\|u\|} u = (1 + \frac{\rho \|x\|}{\|u\|}) u$.
+          The norm is $(1 + \frac{\rho \|x\|}{\|u\|}) \|u\| = \|u\| + \rho \|x\|$.
+          <br>Thus, the worst-case error is exactly $\|Ax - b\|_2 + \rho \|x\|_2$.
         </div>
 
         <div class="proof-step">

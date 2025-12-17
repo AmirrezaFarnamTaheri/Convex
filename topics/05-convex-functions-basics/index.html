@@ -1125,6 +1125,24 @@
             <li>$g$ is <b>affine</b>, and $h$ is <b>convex</b> (monotonicity not required).</li>
           </ol>
 
+          <div class="intuition-box">
+            <h4>Calculus Intuition (Chain Rule)</h4>
+            <p>For smooth functions on $\mathbb{R}$, we can derive these rules from the second derivative:
+            $$ f'(x) = h'(g(x)) g'(x) $$
+            $$ f''(x) = h''(g(x)) [g'(x)]^2 + h'(g(x)) g''(x) $$
+            We need $f''(x) \ge 0$.
+            <ul>
+                <li>The first term $h'' (g')^2$ is always non-negative if $h$ is convex ($h'' \ge 0$).</li>
+                <li>The second term $h' g''$ sign depends on the product.
+                    <ul>
+                        <li>If $h$ is increasing ($h' \ge 0$) and $g$ is convex ($g'' \ge 0$), the product is $\ge 0$.</li>
+                        <li>If $h$ is decreasing ($h' \le 0$) and $g$ is concave ($g'' \le 0$), the product is $(-) \cdot (-) = (+)$.</li>
+                    </ul>
+                </li>
+            </ul>
+            This 1D intuition perfectly maps to the general vector rules.</p>
+          </div>
+
           <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin: 20px 0;">
             <figure style="flex: 1; min-width: 300px; text-align: center;">
               <img src="assets/convex_composition_case1.png"

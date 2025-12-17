@@ -495,20 +495,6 @@
           </div>
         </div>
 
-        <div class="theorem-box">
-            <h4>Deep Dive: Recession Cones</h4>
-            <p>For unbounded convex sets, it is useful to characterize directions in which the set extends infinitely. The <b>recession cone</b> of a convex set $C$ is defined as:
-            $$ R_C = \{v \in \mathbb{R}^n \mid x + tv \in C \text{ for all } x \in C, t \ge 0\} $$
-            Intuitively, if you look at $C$ from "infinitely far away", it looks like $R_C$.
-            <br><b>Key Properties:</b>
-            <ul>
-                <li>$R_C$ is always a closed convex cone.</li>
-                <li>A closed convex set is <b>bounded</b> if and only if its recession cone is trivial ($R_C = \{0\}$).</li>
-                <li>If $C = \{x \mid Ax \le b\}$, then $R_C = \{v \mid Av \le 0\}$. The recession directions are those that keep you feasible as you move infinitely far.</li>
-            </ul>
-            This concept is crucial for proving the existence of solutions: if a problem is unbounded, the improving direction lives in the recession cone.</p>
-        </div>
-
         <div class="example">
             <h4>Spectrahedra: The Shape of SDP</h4>
             <p>The intersection of the PSD cone with an affine subspace is called a <a href="#" class="definition-link">spectrahedron</a>. These are the feasible sets for Semidefinite Programs (SDPs). Unlike polyhedra, they have smooth, curved boundaries.</p>

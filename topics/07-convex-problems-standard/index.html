@@ -252,6 +252,15 @@
       <p>Let the ball be $\mathcal{B} = \{x_c + u \mid \|u\|_2 \le r\}$, centered at $x_c$ with radius $r$.
       We want to maximize $r$ subject to $\mathcal{B} \subseteq \mathcal{P}$.</p>
 
+      <div class="intuition-box">
+        <h4>Geometric Intuition (Sliding Hyperplanes)</h4>
+        <p>Imagine finding the deepest point in a polyhedral lake. The surface of the water corresponds to the hyperplanes $a_i^\top x = b_i$.
+        <br>For a point $x_c$ to be the center of a ball of radius $r$, its distance to every wall $i$ must be at least $r$.
+        <br>The distance from $x_c$ to the hyperplane $a_i^\top x = b_i$ is given by $(b_i - a_i^\top x_c) / \|a_i\|_2$ (assuming $x_c$ is feasible).
+        <br>So we require $r \le (b_i - a_i^\top x_c) / \|a_i\|_2$ for all $i$. This rearranges to the linear constraint $a_i^\top x_c + r\|a_i\|_2 \le b_i$.
+        </p>
+      </div>
+
       <div class="proof-box">
         <h4>Derivation of the Chebyshev LP</h4>
         <div class="proof-step">
@@ -319,11 +328,34 @@
       $$ \text{minimize} \quad \|A(x)\|_\infty = \max_{i=1,\dots,m} \sum_{j=1}^n |a_{ij}(x)| $$
 
       <div class="proof-box">
-        <h4>LP Formulation via Epigraph</h4>
-        <p>This looks nonlinear, but we can decompose it.
-        <br>Minimize $t$ subject to $\sum_j |a_{ij}(x)| \le t$ for all rows $i$.
-        <br>To handle the absolute values, introduce $y_{ij} \ge |a_{ij}(x)|$.
-        </p>
+        <h4>Deep Dive: The "Lifting" Technique for Norms</h4>
+        <p>This formulation is a classic example of "lifting"—introducing variables to represent non-linear terms. Let's walk through the logic step-by-step.</p>
+        <div class="proof-step">
+            <strong>Step 1: Epigraph Form.</strong>
+            Minimize $t$ subject to $\|A(x)\|_\infty \le t$.
+            By definition of the infinity norm, this means $\max_i \sum_j |a_{ij}(x)| \le t$.
+            This splits into $m$ constraints: $\sum_j |a_{ij}(x)| \le t$ for each row $i$.
+        </div>
+        <div class="proof-step">
+            <strong>Step 2: Lifting Absolute Values.</strong>
+            We cannot put absolute values in an LP. We introduce new variables $y_{ij}$ to "upper bound" the magnitudes:
+            $$ |a_{ij}(x)| \le y_{ij} $$
+            This condition is equivalent to two linear inequalities:
+            $$ -y_{ij} \le a_{ij}(x) \le y_{ij} $$
+        </div>
+        <div class="proof-step">
+            <strong>Step 3: Replacing Terms.</strong>
+            We replace the sum of absolute values with the sum of these upper bounds:
+            $$ \sum_{j=1}^n y_{ij} \le t $$
+            Wait, why is this valid?
+            Since we are minimizing $t$, the solver will try to make $t$ as small as possible. This forces the sum $\sum y_{ij}$ to be small. To minimize the sum, the solver pushes each $y_{ij}$ down until it hits the constraint boundary $y_{ij} = |a_{ij}(x)|$.
+            Thus, at the optimal solution, the slack variables become tight, and we recover the original norm.
+        </div>
+      </div>
+
+      <div class="proof-box">
+        <h4>LP Formulation Summary</h4>
+        <p>
         <p style="text-align: center;">
             $
             \begin{aligned}

@@ -109,11 +109,20 @@
         <p><i>Note:</i> Minimizing a concave function is generally non-convex. Equality constraints $h(x)=0$ where $h$ is convex (but not affine) are generally non-convex (see "Counter-Example Corner" below).</p>
 
         <div class="insight">
-          <h4>Why Affine Equality Constraints?</h4>
-          <p>We strictly require equality constraints to be linear ($Ax=b$). Why can't we allow $h(x)=0$ for a convex function $h$?</p>
-          <p>The set $\{x \mid h(x)=0\}$ is the intersection of $\{x \mid h(x) \le 0\}$ and $\{x \mid h(x) \ge 0\}$.
-          <br>While the first set (sublevel) is convex, the second set (superlevel) is generally concave and <b>not convex</b> (unless $h$ is linear).
-          </p>
+          <h4>Deep Dive: Why Inequality $\le 0$ and Equality $Ax=b$?</h4>
+          <p>The standard form is not arbitrary; it is designed to ensure the <b>feasible set</b> is convex.</p>
+          <ul>
+            <li><b>Inequalities ($f_i(x) \le 0$):</b> This defines the 0-sublevel set of a convex function. Geometrically, this region is "bowl-shaped" (convex). If we used $\ge 0$, we would get the superlevel set (outside the bowl), which is typically non-convex (has a hole).</li>
+            <li><b>Equalities ($h_i(x) = 0$):</b> An equality constraint forces the solution to lie on the boundary.
+                <br>Mathematically, $h(x) = 0$ is equivalent to $h(x) \le 0$ AND $h(x) \ge 0$.
+                <br>For the intersection to be convex, <i>both</i> sets must be convex.
+                <ul>
+                    <li>$h(x) \le 0$ is convex if $h$ is convex.</li>
+                    <li>$h(x) \ge 0$ is convex if $h$ is concave.</li>
+                </ul>
+                The only functions that are both convex and concave are <b>affine</b> functions. Thus, equalities must be affine.
+            </li>
+          </ul>
           <div class="example">
             <h4>🚫 Counter-Example: The Circle Boundary</h4>
             <p>Consider the constraint $x_1^2 + x_2^2 = 1$. Let $h(x) = x_1^2 + x_2^2 - 1$. This function is convex.
@@ -196,44 +205,41 @@
         </div>
 
         <div class="proof-box">
-          <h4>Proof of Global Optimality</h4>
+          <h4>Proof of Global Optimality (Narrative Walkthrough)</h4>
+          <p>This proof uses a "straight line" argument. We show that if there were a better point anywhere else, the path leading to it would immediately drop in value, contradicting local optimality.</p>
 
           <div class="proof-step">
-            <strong>Hypothesis:</strong> Assume the problem is convex. Suppose $x^*$ is a local minimum, meaning there is a radius $R > 0$ such that $f_0(x^*) \le f_0(z)$ for all feasible $z$ with $\|z - x^*\|_2 \le R$.
-            <br><strong>Contradiction Assumption:</strong> Suppose $x^*$ is <b>not</b> a global minimum. Then there exists some feasible point $y$ such that $f_0(y) < f_0(x^*)$.
+            <strong>Hypothesis:</strong> Assume the problem is convex. Suppose $x^*$ is a <b>local minimum</b>. This means within some small radius $R$, no feasible point is better than $x^*$.
+            <br><strong>Contradiction Assumption:</strong> Suppose $x^*$ is <b>not</b> a global minimum. This implies there exists a "challenger" point $y$ (somewhere far away) such that $f_0(y) < f_0(x^*)$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 1: Construct a path.</strong>
-            Consider the line segment connecting the local minimum $x^*$ to the global minimum candidate $y$. Parameterize it by $\theta \in [0, 1]$:
-            $$ z(\theta) = (1-\theta)x^* + \theta y $$
-            Since the feasible set $\mathcal{F}$ is convex, the entire segment lies within $\mathcal{F}$. Thus $z(\theta)$ is feasible for all $\theta$.
+            <strong>Step 1: The Path.</strong>
+            Imagine walking from $x^*$ towards $y$. The path is the line segment $z(\theta) = (1-\theta)x^* + \theta y$.
+            <br>Because the feasible set is convex, this entire path is safe (feasible). We never step outside the constraints.
           </div>
 
           <div class="proof-step">
-            <strong>Step 2: Evaluate the objective along the path.</strong>
-            By the convexity of $f_0$:
+            <strong>Step 2: The Slope.</strong>
+            What happens to the objective value as we walk? Since $f_0$ is convex, the value along the segment lies below the chord connecting $f_0(x^*)$ and $f_0(y)$.
             $$ f_0(z(\theta)) \le (1-\theta)f_0(x^*) + \theta f_0(y) $$
-            Since we assumed $f_0(y) < f_0(x^*)$, we can strictly bound the RHS:
-            $$ (1-\theta)f_0(x^*) + \theta f_0(y) < (1-\theta)f_0(x^*) + \theta f_0(x^*) = f_0(x^*) $$
-            Thus, for any $\theta \in (0, 1]$, we have $f_0(z(\theta)) < f_0(x^*)$.
+            Since the destination value $f_0(y)$ is strictly lower than the starting value $f_0(x^*)$, the chord slopes <b>downward</b>.
+            $$ f_0(z(\theta)) < (1-\theta)f_0(x^*) + \theta f_0(x^*) = f_0(x^*) $$
+            Mathematically, for any step size $\theta > 0$, the value $f_0(z(\theta))$ is strictly less than $f_0(x^*)$.
           </div>
 
           <div class="proof-step">
             <strong>Step 3: The Contradiction.</strong>
-            The function decreases strictly as we move away from $x^*$ towards $y$.
-            For extremely small $\theta$, the point $z(\theta)$ is extremely close to $x^*$.
-            Specifically, choose $\theta$ small enough such that $\|z(\theta) - x^*\|_2 = \|\theta(y - x^*)\|_2 < R$.
-            For this point, we have:
-            <ol>
-                <li>$z(\theta)$ is in the local neighborhood of $x^*$.</li>
-                <li>$f_0(z(\theta)) < f_0(x^*)$ (from Step 2).</li>
-            </ol>
-            This directly contradicts the definition of $x^*$ as a local minimum.
+            Take a tiny baby step along this path (very small $\theta$).
+            This point $z(\theta)$ is:
+            1. Valid (feasible).
+            2. Very close to $x^*$ (inside the local radius $R$).
+            3. Strictly better than $x^*$ (lower objective).
+            This contradicts the fact that $x^*$ was a local minimum!
           </div>
 
           <div class="proof-step">
-            <strong>Conclusion:</strong> The assumption that a better point $y$ exists must be false. Therefore, $x^*$ is a global minimum.
+            <strong>Conclusion:</strong> The only way to resolve this contradiction is to reject the existence of the challenger $y$. Thus, no point better than $x^*$ exists anywhere. $x^*$ is global.
           </div>
         </div>
 
