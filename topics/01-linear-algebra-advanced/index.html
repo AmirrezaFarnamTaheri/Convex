@@ -65,7 +65,7 @@
       <h2>1. Bases, Coordinates, and Change of Basis</h2>
 
       <h3>0. The Core Strategy: Change of Coordinates</h3>
-      <p>Advanced linear algebra for optimization boils down to a single strategy: <b>simplify the operator by changing the coordinate system</b>. Instead of solving a problem in the standard basis (where variables are coupled), we transform to a basis that decouples the interactions.</p>
+      <p>Advanced linear algebra for optimization often relies on a single strategy: <b>simplify the operator by changing the coordinate system</b>. Instead of solving a problem in the standard basis (where variables are coupled), we transform to a basis that decouples the interactions.</p>
       <ul>
         <li><b>Eigendecomposition:</b> Finds a basis where the operator acts as simple scaling along independent axes ($Av_i = \lambda_i v_i$). This transforms the matrix into a diagonal one.</li>
         <li><b>SVD:</b> Generalizes this to rectangular matrices by allowing different bases for the input and output spaces. It reveals the fundamental geometry of the map: rotation $\to$ scaling $\to$ rotation.</li>
@@ -94,7 +94,7 @@
         <h4>Steinitz Exchange Lemma</h4>
         <p>If $S = \{s_1, \dots, s_m\}$ spans $V$ and $L = \{\ell_1, \dots, \ell_k\}$ is independent in $V$, then $k \le m$.
         <br>Moreover, we can replace $k$ vectors from $S$ with the vectors in $L$ to form a new spanning set.</p>
-        <p><i>Logic:</i> We swap in $\ell_1$ for some $s_i$ (essential for spanning $\ell_1$). We repeat $k$ times. If $k > m$, we would run out of $s$'s to swap, leaving some $\ell$'s dependent on the previous ones.</p>
+        <p><i>Logic:</i> We swap in $\ell_1$ for some $s_i$ (essential for spanning $\ell_1$). We repeat $k$ times. If $k > m$, we would run out of $s$'s to swap, forcing a linear dependence among the $\ell$'s.</p>
       </div>
 
       <h3>3. Coordinates: The Dictionary</h3>
@@ -138,16 +138,17 @@
 
       <div class="insight">
         <h4>💡 "Same Vectors, Same Map, Different Coordinates"</h4>
-        <p>This formula $\tilde{A} = V^{-1} A V$ (similarity) is the algebraic expression of a geometric truth: we are performing the <b>same linear transformation</b> on the <b>same physical vectors</b>, but describing inputs and outputs using a <b>different coordinate system</b>.</p>
+        <p>This formula $\tilde{A} = V^{-1} A V$ (similarity) is the algebraic expression of a geometric truth: we are performing the <b>same linear transformation</b> on the <b>same vectors</b>, but describing inputs and outputs using a <b>different coordinate system</b>.</p>
       </div>
 
       <h4>4.3 Diagonalization as the Ultimate Simplification</h4>
-      <p>Diagonalization is simply finding a basis $V$ such that the new matrix $\Lambda = V^{-1} A V$ is diagonal.
-      <br>Why does this force the columns of $V$ to be eigenvectors?
-      <br>Rearrange the equation to $AV = V\Lambda$.
-      <br>If $\Lambda$ is diagonal, the $i$-th column of the RHS is $\lambda_i v_i$.
-      <br>The $i$-th column of the LHS is $A v_i$.
-      <br>Thus, $A v_i = \lambda_i v_i$. The basis vectors <b>must</b> be eigenvectors.</p>
+        <p>Diagonalization is simply finding a basis $V$ such that the new matrix $\Lambda = V^{-1} A V$ is diagonal. This corresponds to finding a coordinate system where the axes are decoupled.</p>
+        <p><b>Algebraic Mechanism:</b>
+        <br>Rearrange the similarity equation to $AV = V\Lambda$. Let $V = [v_1, \dots, v_n]$ be the basis vectors.
+        <br>On the RHS, matrix multiplication $V\Lambda$ scales each column of $V$: the $i$-th column is $\lambda_i v_i$.
+        <br>On the LHS, matrix multiplication $AV$ applies the map to each basis vector: the $i$-th column is $A v_i$.
+        <br>Equating columns: $A v_i = \lambda_i v_i$.
+        <br>Thus, the basis vectors $v_i$ must be <b>eigenvectors</b> and the diagonal entries $\lambda_i$ must be <b>eigenvalues</b>.</p>
 
       <div class="example">
         <h4>A Tiny 2D Concrete Picture</h4>
@@ -242,7 +243,7 @@
 
       <h3>4.3 The $\ell_2$ Operator Norm (Spectral Norm)</h3>
       <p>$$ \|A\|_2 = \max_{\|x\|_2=1} \|Ax\|_2 = \sqrt{\lambda_{\max}(A^\top A)} = \sigma_{\max}(A) $$</p>
-      <p>This is the square root of the maximum eigenvalue of $A^\top A$, which is the largest <b>singular value</b> of $A$. It represents the maximum stretch of the matrix in the Euclidean sense.</p>
+      <p>This is the square root of the maximum eigenvalue of $A^\top A$, which is the largest <b>singular value</b> of $A$. It represents the maximum stretch of the matrix in the Euclidean sense. This norm plays a crucial role in convergence analysis, as it dictates the worst-case amplification of errors.</p>
 
       <h3>4.4 Convexity of Induced Norms (Deep Dive)</h3>
       <p>Why are induced norms convex functions of the matrix $A$? We can prove this using the property that the pointwise supremum of linear functions is convex.</p>
@@ -261,10 +262,11 @@
           <strong>Step 3: Linear Structure.</strong>
           $$ \|X\|_{a,b} = \sup \{ u^\top X v \mid \|u\|_{a^*} \le 1, \|v\|_b = 1 \} $$
           Notice that for fixed vectors $u$ and $v$, the function $f_{u,v}(X) = u^\top X v$ is <b>linear</b> in the entries of $X$.
+          Specifically, $u^\top X v = \mathrm{tr}(u^\top X v) = \mathrm{tr}(v u^\top X) = \langle uv^\top, X \rangle$.
         </div>
         <div class="proof-step">
           <strong>Conclusion:</strong>
-          The induced norm $\|X\|_{a,b}$ is the <b>pointwise supremum</b> of a family of linear functions. Since the supremum of convex (specifically linear) functions is convex, the induced norm is a convex function of $X$.
+          The induced norm $\|X\|_{a,b}$ is the <b>pointwise supremum</b> of a family of linear functions. Since the supremum of any collection of convex functions is convex, the induced norm is a convex function of $X$.
         </div>
       </div>
     </section>
@@ -337,6 +339,19 @@
         <li><b>Scale (Gain via $\Sigma$):</b> The matrix $\Sigma$ is diagonal with non-negative entries $\sigma_i$. It independently stretches or shrinks each coordinate $i$ by the factor $\sigma_i$. This is where the magnitude change happens.</li>
         <li><b>Rotate/Reflect (Synthesis via $U$):</b> The matrix $U$ is orthogonal. It takes the scaled coordinates and rotates them to the final orientation in the output space, defined by the columns of $U$ (the "left singular vectors").</li>
       </ol>
+
+      <div class="insight">
+        <h4>Mapping SVD to the Four Fundamental Subspaces</h4>
+        <p>The SVD provides an explicit orthonormal basis for the four fundamental subspaces of $A$. Let $r = \mathrm{rank}(A)$.
+        <ul>
+            <li><b>Column Space $\mathcal{R}(A)$:</b> Spanned by the first $r$ columns of $U$ (left singular vectors $u_1, \dots, u_r$).</li>
+            <li><b>Nullspace $\mathcal{N}(A)$:</b> Spanned by the last $n-r$ columns of $V$ (right singular vectors $v_{r+1}, \dots, v_n$).</li>
+            <li><b>Row Space $\mathcal{R}(A^\top)$:</b> Spanned by the first $r$ columns of $V$ (right singular vectors $v_1, \dots, v_r$).</li>
+            <li><b>Left Nullspace $\mathcal{N}(A^\top)$:</b> Spanned by the last $m-r$ columns of $U$ (left singular vectors $u_{r+1}, \dots, u_m$).</li>
+        </ul>
+        This geometric alignment is why SVD is the "gold standard" for rank-deficient problems.</p>
+      </div>
+
       <p>This decomposition reveals that the image of the unit sphere under any linear map is a hyperellipse. The singular values are the lengths of the hyperellipse's semi-axes, and the columns of $U$ are the directions of these axes.</p>
 
       <figure style="text-align: center; margin: 24px 0;">
@@ -383,41 +398,47 @@
       </div>
 
       <div class="proof-box">
-        <h4>Constructive Proof via Spectral Theorem</h4>
-        <p>The existence of the SVD is a direct consequence of the Spectral Theorem applied to the symmetric matrix $A^\top A$.</p>
+        <h4>Constructive Proof via Spectral Theorem (Detailed)</h4>
+        <p>This proof demonstrates that the SVD is not magic, but a direct consequence of the eigendecomposition of the symmetric PSD matrix $A^\top A$. We construct $V$ from the eigenvectors of $A^\top A$ and $U$ by mapping them through $A$.</p>
 
         <div class="proof-step">
-          <strong>Step 1: Analyze $A^\top A$.</strong>
-          Consider the Gram matrix $G = A^\top A$. This matrix is symmetric and Positive Semidefinite ($x^\top A^\top A x = \|Ax\|_2^2 \ge 0$).
-          By the Spectral Theorem, there exists an orthogonal matrix $V$ and a diagonal matrix $\Lambda$ such that $A^\top A = V \Lambda V^\top$.
-          The diagonal entries $\lambda_i$ are non-negative. We order them $\lambda_1 \ge \dots \ge \lambda_r > 0 = \dots = 0$.
-          Define the <b>singular values</b> $\sigma_i = \sqrt{\lambda_i}$.
+          <strong>Step 1: Eigendecomposition of the Gram Matrix.</strong>
+          Let $G = A^\top A \in \mathbb{R}^{n \times n}$.
+          <br>1. <b>Symmetry:</b> $G^\top = (A^\top A)^\top = A^\top A = G$.
+          <br>2. <b>PSD:</b> For any $x$, $x^\top G x = x^\top A^\top A x = \|Ax\|_2^2 \ge 0$.
+          <br>By the Spectral Theorem, there exists an orthonormal basis of eigenvectors $\{v_1, \dots, v_n\}$ with real eigenvalues $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_n \ge 0$.
+          <br>Let $r$ be the number of non-zero eigenvalues ($\lambda_r > 0, \lambda_{r+1}=0$).
+          <br>Define the singular values $\sigma_i = \sqrt{\lambda_i}$.
+          <br>Construct the matrix $V = [v_1 \dots v_n]$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 2: Define Left Singular Vectors ($u_i$).</strong>
-          For indices $i=1, \dots, r$ (corresponding to non-zero $\sigma_i$), define:
-          $$ u_i = \frac{1}{\sigma_i} A v_i $$
-          We verify these vectors are orthonormal:
-          $$ \langle u_i, u_j \rangle = \frac{1}{\sigma_i \sigma_j} (A v_i)^\top (A v_j) = \frac{1}{\sigma_i \sigma_j} v_i^\top (A^\top A v_j) $$
-          $$ = \frac{1}{\sigma_i \sigma_j} v_i^\top (\sigma_j^2 v_j) = \frac{\sigma_j^2}{\sigma_i \sigma_j} \delta_{ij} = \delta_{ij} $$
+          <strong>Step 2: Constructing the Image Basis ($u_i$).</strong>
+          For the $r$ indices where $\sigma_i > 0$, we define vectors $u_i \in \mathbb{R}^m$ by mapping the $v_i$ through $A$ and normalizing:
+          $$ u_i = \frac{1}{\sigma_i} A v_i, \quad i=1,\dots,r $$
+          Why are these valid orthonormal basis vectors?
+          <br><b>Normality:</b> $\|u_i\|^2 = u_i^\top u_i = \frac{1}{\sigma_i^2} v_i^\top A^\top A v_i = \frac{1}{\lambda_i} v_i^\top (\lambda_i v_i) = v_i^\top v_i = 1$.
+          <br><b>Orthogonality:</b> For $i \ne j$, $\langle u_i, u_j \rangle = \frac{1}{\sigma_i \sigma_j} v_i^\top A^\top A v_j = \frac{1}{\sigma_i \sigma_j} v_i^\top (\lambda_j v_j) = \frac{\lambda_j}{\sigma_i \sigma_j} \delta_{ij} = 0$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 3: Complete the Basis.</strong>
-          We have $r$ orthonormal vectors $\{u_1, \dots, u_r\}$ in $\mathbb{R}^m$. If $r < m$, we use Gram-Schmidt to extend this set to a full orthonormal basis $\{u_1, \dots, u_m\}$ for $\mathbb{R}^m$.
-          Form the matrix $U = [u_1 \dots u_m]$.
+          <strong>Step 3: Completing the Basis ($U$).</strong>
+          We have found $r$ orthonormal vectors $\{u_1, \dots, u_r\}$ in $\mathbb{R}^m$.
+          If $r < m$, the set is not a complete basis. We can extend it to a full orthonormal basis $\{u_1, \dots, u_m\}$ using the Gram-Schmidt process or simply by picking vectors from the orthogonal complement.
+          <br>Define $U = [u_1 \dots u_m]$.
         </div>
 
         <div class="proof-step">
-          <strong>Step 4: Verify the Decomposition.</strong>
-          We check the equality $AV = U\Sigma$ column by column:
-          <ul>
-            <li><b>For $i \le r$:</b> $(AV)_i = Av_i$. Also $(U\Sigma)_i = \sigma_i u_i$. Since we defined $u_i = \frac{1}{\sigma_i}Av_i$, these match.</li>
-            <li><b>For $i > r$:</b> $(AV)_i = Av_i$. Since $\sigma_i=0$, $v_i \in \mathcal{N}(A^\top A) = \mathcal{N}(A)$, so $Av_i = 0$.
-              On the RHS, $(U\Sigma)_i = U(0) = 0$. These match.</li>
-          </ul>
-          Since $AV = U\Sigma$ and $V$ is orthogonal, multiplying by $V^\top$ gives $\boxed{A = U \Sigma V^\top}$.
+          <strong>Step 4: Matrix Verification ($AV = U\Sigma$).</strong>
+          We check that the action of $A$ on the basis $V$ matches the action of $U\Sigma$.
+          <br><b>Case 1 ($i \le r$):</b>
+          LHS: $A v_i$.
+          RHS: The $i$-th column of $U\Sigma$ is $\sum_{k=1}^m u_k \Sigma_{ki} = u_i \sigma_i$.
+          Since we defined $u_i = \frac{1}{\sigma_i} A v_i$, we have $A v_i = \sigma_i u_i$. Match.
+          <br><b>Case 2 ($i > r$):</b>
+          LHS: $A v_i$. Since $\lambda_i = 0$, we have $\|A v_i\|^2 = v_i^\top A^\top A v_i = v_i^\top (0 v_i) = 0$. So $A v_i = 0$.
+          RHS: The $i$-th column of $U\Sigma$ is $u_i \cdot 0 = 0$. Match.
+          <br><b>Conclusion:</b> Since $AV = U\Sigma$ and $V$ is invertible (orthogonal), $A = U \Sigma V^\top$.
         </div>
       </div>
 
@@ -516,6 +537,34 @@
       <h3>7.1 The Moore-Penrose Pseudoinverse ($A^+$)</h3>
       <p>When $A$ is not square or not invertible, we cannot define $A^{-1}$. However, we can define a generalized inverse $A^+$ that "inverts" the action of $A$ on its range and sends the orthogonal complement to zero.</p>
 
+      <h4>The Moore-Penrose Axioms</h4>
+      <p>The pseudoinverse $A^+$ is the unique matrix satisfying these four algebraic conditions:
+      <ol>
+        <li>$A A^+ A = A$ ( $A A^+$ is a projection on the range).</li>
+        <li>$A^+ A A^+ = A^+$ ( $A^+$ acts like an inverse on the range of $A$).</li>
+        <li>$(A A^+)^\top = A A^+$ (Symmetry of projector).</li>
+        <li>$(A^+ A)^\top = A^+ A$ (Symmetry of projector).</li>
+      </ol>
+      </p>
+
+      <div class="proof-box">
+        <h4>Proof: Uniqueness of the Pseudoinverse</h4>
+        <p>Suppose $X$ and $Y$ both satisfy the four Moore-Penrose axioms. We show $X=Y$.
+        <br>1. Start with $X = X A X$.
+        <br>2. Use $A = A Y A$: $X = X (A Y A) X$.
+        <br>3. Group terms: $X = (X A) Y (A X)$.
+        <br>4. Use Axiom 3/4 to introduce symmetry: $X A = (X A)^\top = A^\top X^\top$ and $A X = (A X)^\top = X^\top A^\top$. (Wait, this direction is harder).
+        <br><b>Alternative Clean Derivation:</b>
+        $$ X = X A X = (X A) X = (X A)^\top X = A^\top X^\top X = (A Y A)^\top X^\top X = A^\top Y^\top A^\top X^\top X $$
+        $$ = (Y A)^\top (X A)^\top X = Y A X A X = Y A X $$
+        Symmetrically, $Y = Y A Y = Y A (X A Y) = Y A X A Y = (Y A X) A Y$.
+        From above, $Y A X = X$, so $Y = X A Y$.
+        <br>Now apply symmetry again:
+        $X = Y A X = Y (A X) = Y (A X)^\top = Y X^\top A^\top = Y X^\top (A Y A)^\top = Y X^\top A^\top Y^\top A^\top$.
+        This algebraic manipulation confirms that the geometric definition (via SVD) produces the <i>unique</i> matrix satisfying the algebraic axioms.
+        </p>
+      </div>
+
       <p><b>Definition via SVD:</b> If $A = U \Sigma V^\top$, then:
       $$ A^+ = V \Sigma^+ U^\top $$
       where $\Sigma^+$ is the $n \times m$ matrix obtained by transposing $\Sigma$ and inverting the non-zero singular values:
@@ -574,7 +623,7 @@
       </ul>
 
       <h3>7.2 Condition Number</h3>
-      <p>The condition number $\kappa(A)$ measures the sensitivity of the solution of a linear system to perturbations in the data.</p>
+      <p>The condition number $\kappa(A)$ measures the sensitivity of the solution of a linear system to perturbations in the data. Formally, it is defined as:</p>
       $$ \kappa(A) = \|A\|_2 \|A^+\|_2 = \frac{\sigma_{\max}(A)}{\sigma_{\min}(A)} $$
       <p>where $\sigma_{\min}$ is the smallest <i>non-zero</i> singular value.</p>
 

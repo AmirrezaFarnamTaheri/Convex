@@ -97,25 +97,25 @@
           <h4>Proof of Jensen's Inequality</h4>
           <p>We prove this by induction on the number of points $k$.</p>
           <div class="proof-step">
-            <strong>Base Case ($k=2$):</strong> This is exactly the definition of convexity.
+            <strong>Base Case ($k=2$):</strong> The inequality $f(\theta_1 x_1 + \theta_2 x_2) \le \theta_1 f(x_1) + \theta_2 f(x_2)$ holds by the definition of convexity.
           </div>
           <div class="proof-step">
-            <strong>Inductive Step:</strong> Assume the inequality holds for any convex combination of $k-1$ points. Consider a combination of $k$ points: $x = \sum_{i=1}^k \theta_i x_i$ with $\sum \theta_i = 1$ and $\theta_i > 0$.
-            <br>We can "peel off" the last point $x_k$ and treat the rest as a sub-combination.
-            Let $\tilde{\theta} = \sum_{i=1}^{k-1} \theta_i = 1 - \theta_k$. Since $\theta_k < 1$, $\tilde{\theta} > 0$.
-            $$ x = \theta_k x_k + \tilde{\theta} \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} x_i = \theta_k x_k + \tilde{\theta} \bar{x} $$
-            where $\bar{x} = \sum_{i=1}^{k-1} (\theta_i/\tilde{\theta}) x_i$ is a valid convex combination of $k-1$ points (weights sum to 1).
+            <strong>Inductive Step:</strong> Assume the inequality holds for any convex combination of $k$ points. Consider a combination of $k+1$ points: $x = \sum_{i=1}^{k+1} \theta_i x_i$ with $\sum \theta_i = 1$ and $\theta_i > 0$.
+            <br>We can "peel off" the last point $x_{k+1}$ and treat the rest as a sub-combination.
+            Let $\tilde{\theta} = \sum_{i=1}^{k} \theta_i = 1 - \theta_{k+1}$. Since $\theta_{k+1} < 1$, $\tilde{\theta} > 0$.
+            $$ x = \theta_{k+1} x_{k+1} + \tilde{\theta} \sum_{i=1}^{k} \frac{\theta_i}{\tilde{\theta}} x_i = \theta_{k+1} x_{k+1} + \tilde{\theta} \bar{x} $$
+            where $\bar{x} = \sum_{i=1}^{k} (\theta_i/\tilde{\theta}) x_i$ is a valid convex combination of $k$ points (weights sum to 1).
           </div>
           <div class="proof-step">
             <strong>Apply Convexity Twice:</strong>
-            <br>1. Apply the 2-point definition to $x_k$ and $\bar{x}$:
-            $$ f(x) = f(\theta_k x_k + \tilde{\theta} \bar{x}) \le \theta_k f(x_k) + \tilde{\theta} f(\bar{x}) $$
+            <br>1. Apply the 2-point definition to $x_{k+1}$ and $\bar{x}$:
+            $$ f(x) = f(\theta_{k+1} x_{k+1} + \tilde{\theta} \bar{x}) \le \theta_{k+1} f(x_{k+1}) + \tilde{\theta} f(\bar{x}) $$
             2. Apply the inductive hypothesis to $f(\bar{x})$:
-            $$ f(\bar{x}) \le \sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i) $$
+            $$ f(\bar{x}) \le \sum_{i=1}^{k} \frac{\theta_i}{\tilde{\theta}} f(x_i) $$
           </div>
           <div class="proof-step">
             <strong>Conclusion:</strong> Substituting back:
-            $$ f(x) \le \theta_k f(x_k) + \tilde{\theta} \left(\sum_{i=1}^{k-1} \frac{\theta_i}{\tilde{\theta}} f(x_i)\right) = \theta_k f(x_k) + \sum_{i=1}^{k-1} \theta_i f(x_i) = \sum_{i=1}^k \theta_i f(x_i) $$
+            $$ f(x) \le \theta_{k+1} f(x_{k+1}) + \tilde{\theta} \left(\sum_{i=1}^{k} \frac{\theta_i}{\tilde{\theta}} f(x_i)\right) = \theta_{k+1} f(x_{k+1}) + \sum_{i=1}^{k} \theta_i f(x_i) = \sum_{i=1}^{k+1} \theta_i f(x_i) $$
           </div>
         </div>
 
@@ -254,13 +254,20 @@
           $$
           f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) - \frac{m}{2} \theta(1-\theta) \|x - y\|_2^2
           $$
-          <p>Equivalently, the function $g(x) = f(x) - \frac{m}{2}\|x\|_2^2$ is convex. For differentiable functions, this implies a <b>quadratic lower bound</b>:</p>
+          <p>Equivalently, the function $g(x) = f(x) - \frac{m}{2}\|x\|_2^2$ is convex. For twice differentiable functions, this is equivalent to:</p>
+          $$ \nabla^2 f(x) \succeq mI $$
+          <p>For differentiable functions, this implies a <b>quadratic lower bound</b>:</p>
           $$ f(y) \ge f(x) + \nabla f(x)^\top (y - x) + \frac{m}{2}\|y - x\|_2^2 $$
           <p><b>Optimization Significance:</b>
           <ul>
-            <li><b>Condition Number:</b> If $f$ is $m$-strongly convex and has $L$-Lipschitz gradients ($\nabla^2 f \preceq LI$), the condition number is $\kappa = L/m$. Gradient descent converges at a linear rate determined by $(1 - 1/\kappa)$.</li>
+            <li><b>Condition Number:</b> If $f$ is $m$-strongly convex and has $L$-Lipschitz gradients ($mI \preceq \nabla^2 f \preceq LI$), the condition number is $\kappa = L/m$. Gradient descent converges at a linear rate determined by $(1 - 1/\kappa)$.</li>
+            <li><b>Upper Bound:</b> Lipschitz gradients ($\nabla^2 f(x) \preceq LI$) imply a quadratic upper bound: $f(y) \le f(x) + \nabla f(x)^\top (y - x) + \frac{L}{2}\|y - x\|_2^2$.</li>
             <li><b>Stability:</b> The solution is stable to perturbations in the objective. A small change $\epsilon$ in the gradient moves the minimizer by at most $\epsilon/m$.</li>
           </ul></p>
+          <div class="insight">
+            <h4>Condition Number Intuition</h4>
+            <p>The parameter $m$ controls the minimum curvature (flatness), while $L$ controls the maximum curvature (sharpness). The ratio $L/m$ is the condition number of the Hessian. If $L/m$ is large, the function is shaped like a long narrow valley (steep in some directions, flat in others). Optimization algorithms struggle with such "ill-conditioned" functions because steps must be small to handle the steep directions, but large to traverse the flat ones.</p>
+          </div>
         </div>
 
         <h3>1.6 Concave Functions</h3>
@@ -484,7 +491,37 @@
           <p>For differentiable functions, convexity is equivalent to: <b>the first-order Taylor approximation always underestimates the function</b>. This is an extremely useful characterization for analysis and algorithm design.</p>
         </div>
 
-        <h3>3.2 Consequences and Applications</h3>
+        <h3>3.2 Monotonicity of the Gradient</h3>
+        <p>Another powerful first-order characterization involves the change in gradients. A differentiable function $f$ is convex <b>if and only if</b> its gradient is a <a href="#" class="definition-link">monotone operator</a>:</p>
+        $$
+        (\nabla f(x) - \nabla f(y))^\top (x - y) \ge 0 \quad \forall x, y \in \mathrm{dom}\, f
+        $$
+        <p><b>Geometric Intuition:</b> As you move from $y$ to $x$ (direction $x-y$), the gradient changes in a way that aligns with that movement. In 1D, this simply means $f'(x)$ is non-decreasing ($f'(x) \ge f'(y)$ whenever $x > y$).</p>
+
+        <div class="proof-box">
+            <h4>Proof: Convexity $\iff$ Monotone Gradient</h4>
+            <div class="proof-step">
+                <strong>($\Rightarrow$) Convex $\implies$ Monotone.</strong>
+                <br>Apply the first-order condition twice:
+                $$ f(y) \ge f(x) + \nabla f(x)^\top (y-x) $$
+                $$ f(x) \ge f(y) + \nabla f(y)^\top (x-y) $$
+                Summing these inequalities:
+                $$ f(y) + f(x) \ge f(x) + f(y) + \nabla f(x)^\top (y-x) + \nabla f(y)^\top (x-y) $$
+                $$ 0 \ge (\nabla f(x) - \nabla f(y))^\top (y-x) $$
+                Multiplying by $-1$ reverses the inequality:
+                $$ (\nabla f(x) - \nabla f(y))^\top (x-y) \ge 0 $$
+            </div>
+            <div class="proof-step">
+                <strong>($\Leftarrow$) Monotone $\implies$ Convex.</strong>
+                <br>Let $g(t) = f(x + t(y-x))$. Then $g'(t) = \nabla f(x+t(y-x))^\top (y-x)$.
+                <br>By the Mean Value Theorem, $f(y) - f(x) = g(1) - g(0) = \int_0^1 g'(t) dt$.
+                <br>Using monotonicity, we can show $g'(t) \ge g'(0)$.
+                $$ ( \nabla f(z) - \nabla f(x) )^\top (z-x) \ge 0 \implies \nabla f(z)^\top (y-x) \cdot t \ge \nabla f(x)^\top (y-x) \cdot t $$
+                Dividing by $t>0$, the directional derivative increases. Thus $f(y) \ge f(x) + \nabla f(x)^\top (y-x)$.
+            </div>
+        </div>
+
+        <h3>3.3 Consequences and Applications</h3>
 
         <div class="example">
           <h4>Application 1: Proving a Function is Convex</h4>
@@ -1087,6 +1124,24 @@
             <li>$g$ is <b>concave</b>, and $h$ is <b>convex</b> and <b>non-increasing</b>.</li>
             <li>$g$ is <b>affine</b>, and $h$ is <b>convex</b> (monotonicity not required).</li>
           </ol>
+
+          <div class="intuition-box">
+            <h4>Calculus Intuition (Chain Rule)</h4>
+            <p>For smooth functions on $\mathbb{R}$, we can derive these rules from the second derivative:
+            $$ f'(x) = h'(g(x)) g'(x) $$
+            $$ f''(x) = h''(g(x)) [g'(x)]^2 + h'(g(x)) g''(x) $$
+            We need $f''(x) \ge 0$.
+            <ul>
+                <li>The first term $h'' (g')^2$ is always non-negative if $h$ is convex ($h'' \ge 0$).</li>
+                <li>The second term $h' g''$ sign depends on the product.
+                    <ul>
+                        <li>If $h$ is increasing ($h' \ge 0$) and $g$ is convex ($g'' \ge 0$), the product is $\ge 0$.</li>
+                        <li>If $h$ is decreasing ($h' \le 0$) and $g$ is concave ($g'' \le 0$), the product is $(-) \cdot (-) = (+)$.</li>
+                    </ul>
+                </li>
+            </ul>
+            This 1D intuition perfectly maps to the general vector rules.</p>
+          </div>
 
           <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin: 20px 0;">
             <figure style="flex: 1; min-width: 300px; text-align: center;">

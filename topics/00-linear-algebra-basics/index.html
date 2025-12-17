@@ -73,7 +73,7 @@
         <li><b>Pullback (Preimages):</b> Constraints are typically defined by functions, such as $g(x) \le 0$. This defines a set implicitly: the set of all $x$ that map to non-positive values.
           <br><i>Example:</i> Understanding constraints as <b>preimages</b> ($g^{-1}((-\infty, 0])$) allows us to deduce the shape of the feasible region directly from the properties of the function $g$.</li>
       </ol>
-      <p>Mastering these three operations transforms optimization from abstract symbol manipulation into concrete geometric reasoning.</p>
+      <p>Understanding these three operations transforms optimization from abstract symbol manipulation into concrete geometric reasoning.</p>
 
       <h3>1.2 Preliminaries: Lines and Line Segments</h3>
       <p>We work in the vector space $\mathbb{R}^n$ equipped with the standard inner product $\langle x, y \rangle = x^\top y = \sum_{i=1}^n x_i y_i$ and the induced Euclidean norm $\|x\|_2 = \sqrt{\langle x, x \rangle}$. Geometric objects like lines and segments are the building blocks of convexity.</p>
@@ -189,12 +189,13 @@
       <p>Gradient-based optimization relies heavily on the computation of gradients and Hessians. Computing derivatives with respect to vectors and matrices is therefore a core skill. Unlike scalar calculus, where order doesn't matter, in matrix calculus we must carefully preserve non-commutativity and track dimensions. The "master key" to matrix calculus is the <b>differential</b>.</p>
 
       <p>For a function $f: \mathbb{R}^{n \times m} \to \mathbb{R}$, the gradient $\nabla f(X)$ is defined as the unique matrix satisfying the first-order approximation:
-      $$ f(X + \Delta) \approx f(X) + \langle \nabla f(X), \Delta \rangle $$
-      where $\langle A, B \rangle = \mathrm{tr}(A^\top B)$. This gives us a foolproof algorithm for finding gradients:</p>
+      $$ f(X + \Delta) = f(X) + \langle \nabla f(X), \Delta \rangle + o(\|\Delta\|) $$
+      where $\langle A, B \rangle = \mathrm{tr}(A^\top B)$ is the standard trace inner product. This definition provides a systematic algorithm for finding gradients:</p>
       <ol>
         <li>Perturb $X$ by a small direction $\Delta$.</li>
-        <li>Expand $f(X + \Delta)$ and isolate the term <i>linear</i> in $\Delta$.</li>
-        <li>Rewrite that term as $\langle G, \Delta \rangle$. Then $G$ is the gradient.</li>
+        <li>Expand $f(X + \Delta)$ using Taylor series or algebraic properties.</li>
+        <li>Isolate the term that is <i>linear</i> in $\Delta$.</li>
+        <li>Rewrite that linear term in the form $\langle G, \Delta \rangle = \mathrm{tr}(G^\top \Delta)$. Then $G$ is the gradient.</li>
       </ol>
 
       <h4>Gradients of Linear and Quadratic Forms</h4>
@@ -264,48 +265,62 @@
       </div>
 
       <h4>Gradients with Respect to Matrices</h4>
-      <p>For a matrix variable $X \in \mathbb{R}^{m \times n}$, the gradient is an $m \times n$ matrix.</p>
+      <p>For a matrix variable $X \in \mathbb{R}^{m \times n}$, the gradient is an $m \times n$ matrix. The definition is consistent with the scalar directional derivative.</p>
       <ul>
         <li><b>Rule 1: Linear Trace:</b> $\nabla_X \mathrm{tr}(A^\top X) = A$.
-        <br><i>Proof:</i> $\mathrm{tr}(A^\top X) = \langle A, X \rangle$. The gradient is the coefficient of $X$, which is $A$.</li>
+        <br><i>Proof:</i> $\mathrm{tr}(A^\top X) = \langle A, X \rangle$. The function is linear: $f(X+\Delta) = \langle A, X+\Delta \rangle = f(X) + \langle A, \Delta \rangle$. The gradient is the coefficient of $\Delta$, which is $A$.</li>
         <li><b>Rule 2: Quadratic Trace:</b> $\nabla_X \mathrm{tr}(X^\top A X) = (A + A^\top)X$. If $A$ is symmetric, this is $2AX$.
-        <br><i>Note:</i> This corresponds to $\frac{d}{dx}(ax^2) = 2ax$.</li>
+        <br><i>Note:</i> This corresponds to $\frac{d}{dx}(ax^2) = 2ax$. For vector $x$, $\nabla (x^\top Ax) = (A+A^\top)x$. For matrix $X$, the columns transform independently if $A$ is scalar, but coupled if $A$ is a matrix.
+        <br><i>Derivation:</i>
+        $$ \begin{aligned}
+        f(X+\Delta) &= \mathrm{tr}((X+\Delta)^\top A (X+\Delta)) \\
+        &= \mathrm{tr}(X^\top AX + \Delta^\top AX + X^\top A\Delta + \Delta^\top A\Delta) \\
+        &\approx f(X) + \mathrm{tr}(\Delta^\top AX) + \mathrm{tr}(X^\top A \Delta) \\
+        &= f(X) + \mathrm{tr}(\Delta^\top AX) + \mathrm{tr}(\Delta^\top A^\top X) \quad \text{(using } \mathrm{tr}(M)=\mathrm{tr}(M^\top)) \\
+        &= f(X) + \mathrm{tr}(\Delta^\top (A+A^\top)X) \\
+        &= f(X) + \langle (A+A^\top)X, \Delta \rangle
+        \end{aligned} $$
+        Thus $\nabla f(X) = (A+A^\top)X$.
+        </li>
         <li><b>Rule 3: Log Determinant:</b> $\nabla_X \log \det X = X^{-\top}$. If $X \in \mathbb{S}^n_{++}$ (symmetric positive definite), then $\nabla_X \log \det X = X^{-1}$.
         <br>
         <div class="proof-box">
           <h4>Derivation: Gradient of Log Determinant</h4>
-          <p>We derive the gradient by identifying the linear term in the Taylor expansion of $f(X+\Delta)$ around $X$. This derivation relies on the connection between determinant, trace, and eigenvalues.</p>
+          <p>We derive the gradient of $f(X) = \log \det X$ (defined for $\det X > 0$) by identifying the linear term in the Taylor expansion of $f(X+\Delta)$ around $X$. This step-by-step derivation uses the perturbation method, which is robust and general.</p>
           <div class="proof-step">
             <strong>Step 1: Factor out X.</strong>
-            Assuming $X$ is invertible and $\Delta$ is small enough:
-            $$ \log \det (X + \Delta) = \log \det (X(I + X^{-1}\Delta)) = \log (\det X \cdot \det(I + X^{-1}\Delta)) $$
-            Using the property $\log(ab) = \log a + \log b$:
-            $$ = \log \det X + \log \det(I + X^{-1}\Delta) $$
+            We want to isolate the perturbation $\Delta$. Since $X$ is invertible, we can write $X+\Delta = X(I + X^{-1}\Delta)$.
+            $$ \log \det (X + \Delta) = \log \det (X(I + X^{-1}\Delta)) $$
+            Using the multiplicative property of the determinant ($\det(AB) = \det(A)\det(B)$) and the additive property of the logarithm ($\log(ab) = \log a + \log b$):
+            $$ = \log (\det X \cdot \det(I + X^{-1}\Delta)) = \log \det X + \log \det(I + X^{-1}\Delta) $$
           </div>
           <div class="proof-step">
-            <strong>Step 2: Relate Determinant to Trace.</strong>
-            Let $E = X^{-1}\Delta$. Let $\lambda_i$ be the eigenvalues of $E$. The eigenvalues of $I+E$ are then $1+\lambda_i$. Thus:
+            <strong>Step 2: Relate Determinant to Trace via Eigenvalues.</strong>
+            Let $E = X^{-1}\Delta$. We need to approximate $\log \det(I + E)$ for small $E$.
+            Let $\lambda_i$ be the eigenvalues of $E$. The eigenvalues of $I+E$ are then $1+\lambda_i$.
             $$ \det(I + E) = \prod_{i=1}^n (1 + \lambda_i) $$
-            Taking the natural logarithm:
+            Taking the natural logarithm turns the product into a sum:
             $$ \log \det(I + E) = \sum_{i=1}^n \log(1 + \lambda_i) $$
           </div>
           <div class="proof-step">
             <strong>Step 3: Linearize via Taylor Series.</strong>
-            We need to approximate $\sum \log(1 + \lambda_i)$ for small $\lambda_i$.
-            <br>Recall the scalar Taylor series for the natural logarithm near 1:
-            $$ \log(1+x) = x - \frac{x^2}{2} + O(x^3) $$
-            Applying this to each eigenvalue:
-            $$ \sum_{i=1}^n \log(1 + \lambda_i) \approx \sum_{i=1}^n \lambda_i $$
-            This sum of eigenvalues is exactly the definition of the <b>trace</b> of the matrix $E$.
+            We use the scalar Taylor series expansion $\log(1+z) = z - \frac{z^2}{2} + O(z^3)$ for small $z$.
+            Applying this to each term $\log(1+\lambda_i)$:
+            $$ \sum_{i=1}^n \log(1 + \lambda_i) = \sum_{i=1}^n \left( \lambda_i - \frac{\lambda_i^2}{2} + \dots \right) = \sum_{i=1}^n \lambda_i - \frac{1}{2}\sum_{i=1}^n \lambda_i^2 + \dots $$
+            The linear term is the sum of eigenvalues, which is the <b>trace</b> of the matrix $E$:
             $$ \sum_{i=1}^n \lambda_i = \mathrm{tr}(E) = \mathrm{tr}(X^{-1}\Delta) $$
+            Thus, to first order, $\log \det(I + E) \approx \mathrm{tr}(E)$.
           </div>
           <div class="proof-step">
-            <strong>Step 4: Identify the Gradient.</strong>
-            Substituting back into the expression for the perturbation:
-            $$ \log \det(X+\Delta) \approx \log \det X + \mathrm{tr}(X^{-1}\Delta) $$
-            To extract the gradient, we rewrite the linear term using the trace inner product $\langle A, B \rangle = \mathrm{tr}(A^\top B)$.
-            $$ \mathrm{tr}(X^{-1}\Delta) = \mathrm{tr}((X^{-1}) \Delta) = \mathrm{tr}((X^{-\top})^\top \Delta) = \langle X^{-\top}, \Delta \rangle $$
-            By definition, the gradient is the matrix $G$ such that $f(X+\Delta) \approx f(X) + \langle G, \Delta \rangle$. Thus, $\nabla_X \log \det X = X^{-\top}$.
+            <strong>Step 4: Extract the Gradient.</strong>
+            Substituting back, the first-order approximation of the function is:
+            $$ f(X+\Delta) \approx f(X) + \mathrm{tr}(X^{-1}\Delta) $$
+            The gradient $\nabla f(X)$ is defined as the matrix $G$ such that the linear term is $\langle G, \Delta \rangle = \mathrm{tr}(G^\top \Delta)$.
+            We rewrite our linear term to match this form:
+            $$ \mathrm{tr}(X^{-1}\Delta) = \mathrm{tr}((X^{-\top})^\top \Delta) = \langle X^{-\top}, \Delta \rangle $$
+            Comparing terms, we identify $G = X^{-\top}$.
+            <br><b>Result:</b> $\nabla_X \log \det X = X^{-\top}$.
+            <br>If $X$ is symmetric ($X=X^\top$), then $\nabla f(X) = X^{-1}$.
           </div>
         </div>
         </li>
@@ -523,7 +538,7 @@
 
 
       <h3>3.2 The "Isotropic Scaling" Lemma</h3>
-      <p>A classic result connects the geometry of eigenvectors to the structure of the matrix. We ask: what if <i>every</i> vector is an eigenvector?</p>
+      <p>While eigenvalues describe the behavior of $A$ along specific directions, sometimes the matrix acts uniformly in all directions. A classic result connects this geometric isotropy to the algebraic structure of the matrix. We ask: what if <i>every</i> vector is an eigenvector?</p>
       <div class="theorem-box">
         <h4>Lemma: Scalar Matrices</h4>
         <p>If every non-zero vector $x \in \mathbb{R}^n$ is an eigenvector of $A$ (i.e., $Ax = \lambda(x)x$), then $A$ must be a scalar multiple of the identity: $A = \lambda I$.</p>
@@ -840,7 +855,7 @@
 
       <h4>Spectral Norm Details</h4>
       <p>The <b>spectral norm</b> (or operator norm) of a matrix $X \in \mathbb{R}^{m \times n}$ is induced by the Euclidean vector norm:
-      $$ \|X\|_2 = \sup_{v \neq 0} \frac{\|Xv\|_2}{\|v\|_2} $$
+      $$ \|X\|_2 = \sup_{v \neq 0} \frac{\|Xv\|_2}{\|v\|_2} = \sup_{\|v\|_2=1} \|Xv\|_2 $$
       <p><b>Intuition: Worst-Case Stretch.</b> The operator norm measures the maximum factor by which the matrix $X$ can "stretch" a vector. It corresponds to the "Lipschitz constant" of the linear map. Geometrically, it is the length of the longest semi-axis of the ellipsoid formed by mapping the unit sphere.</p>
       It turns out this equals the maximum singular value:
       $$ \|X\|_2 = \sigma_{\max}(X) = \sqrt{\lambda_{\max}(X^\top X)} $$
@@ -879,15 +894,26 @@
 
       <div class="proof-box">
         <h4>Derivation: Trace and Frobenius Norm</h4>
-        <p>Let $A \in \mathbb{R}^{m \times n}$. The diagonal entries of the product $A^\top A$ are formed by dotting the columns of $A$ with themselves.
-        <br>Specifically, the $(j,j)$ entry of $A^\top A$ is:
-        $$ (A^\top A)_{jj} = \sum_{k=1}^m (A^\top)_{jk} A_{kj} = \sum_{k=1}^m A_{kj} A_{kj} = \sum_{k=1}^m A_{kj}^2 $$
-        This is the sum of squares of the $j$-th column.
-        <br>The trace is the sum of these diagonal entries:
-        $$ \mathrm{tr}(A^\top A) = \sum_{j=1}^n (A^\top A)_{jj} = \sum_{j=1}^n \left(\sum_{k=1}^m A_{kj}^2\right) $$
-        Since the sums are finite, we can swap the order of summation (flipping sum over columns to sum over rows):
-        $$ \sum_{j=1}^n \sum_{k=1}^m A_{kj}^2 = \sum_{k=1}^m \sum_{j=1}^n A_{kj}^2 = \sum_{i,j} A_{ij}^2 $$
-        This is exactly the sum of squares of all entries. The 'tiny index detail' is the reordering of the summation.</p>
+        <p>We rigorously show that the Frobenius norm $\|A\|_F = \sqrt{\sum_{i,j} A_{ij}^2}$ is induced by the trace inner product $\langle A, B \rangle = \mathrm{tr}(A^\top B)$.</p>
+        <div class="proof-step">
+            <strong>Step 1: Compute Diagonal Elements of $A^\top A$.</strong>
+            Let $P = A^\top A$. By definition of matrix multiplication, the $(j, j)$ entry is the dot product of the $j$-th row of $A^\top$ and the $j$-th column of $A$.
+            Since the $j$-th row of $A^\top$ is the transpose of the $j$-th column of $A$:
+            $$ P_{jj} = \sum_{k=1}^m (A^\top)_{jk} A_{kj} = \sum_{k=1}^m A_{kj} A_{kj} = \sum_{k=1}^m A_{kj}^2 $$
+            This represents the squared Euclidean norm of the $j$-th column of $A$.
+        </div>
+        <div class="proof-step">
+            <strong>Step 2: Sum the Diagonal (Trace).</strong>
+            The trace is the sum of diagonal elements:
+            $$ \mathrm{tr}(A^\top A) = \sum_{j=1}^n P_{jj} = \sum_{j=1}^n \left( \sum_{k=1}^m A_{kj}^2 \right) $$
+        </div>
+        <div class="proof-step">
+            <strong>Step 3: Relate to Element-wise Sum.</strong>
+            The double sum $\sum_{j=1}^n \sum_{k=1}^m A_{kj}^2$ simply iterates over every entry in the matrix, squaring it and adding it up.
+            This is exactly the definition of the squared Frobenius norm:
+            $$ \sum_{j=1}^n \sum_{k=1}^m A_{kj}^2 = \sum_{i,j} A_{ij}^2 = \|A\|_F^2 $$
+            Thus, $\|A\|_F = \sqrt{\mathrm{tr}(A^\top A)}$.
+        </div>
       </div>
 
       <h4>Submultiplicativity of the Frobenius Norm</h4>
@@ -1375,6 +1401,13 @@
         <figcaption><i>Figure 0.7:</i> Projection onto an affine set: translate to a parallel subspace, project orthogonally, then shift back by a particular solution.</figcaption>
       </figure>
 
+      <h4>Explicit Formula via Least Norm</h4>
+      <p>We solve the problem $\min \|x - y\|_2^2$ s.t. $Fx = g$. The KKT conditions yield the linear system:
+      $$ \begin{bmatrix} I & F^\top \\ F & 0 \end{bmatrix} \begin{bmatrix} x \\ \nu \end{bmatrix} = \begin{bmatrix} y \\ g \end{bmatrix} $$
+      Solving for $x$ gives the explicit projection formula:
+      $$ \Pi_{\mathcal{A}}(y) = y - F^\top (F F^\top)^{-1} (F y - g) $$
+      This is often more practical than constructing a nullspace basis $Z$.</p>
+
       <h4>Parametric Representation</h4>
       <p>Every point in $\mathcal{A}$ can be written as $x = x_0 + Zt$, where:</p>
       <ul>
@@ -1383,8 +1416,38 @@
         <li>$t \in \mathbb{R}^k$ where $k = n - p$ (dimension of the nullspace).</li>
       </ul>
 
-      <h4>Euclidean Projection Formula</h4>
-      <p>The <b>Euclidean projection</b> of any point $y \in \mathbb{R}^n$ onto $\mathcal{A}$ is given by:</p>
+      <h4>Euclidean Projection Formula (Explicit via KKT)</h4>
+      <p>Alternatively, using Lagrange multipliers (a technique we will explore deeply in Lecture 09), we can derive the projection without forming a nullspace basis.</p>
+      $$
+      \Pi_{\mathcal{A}}(y) = y - F^\top (F F^\top)^{-1} (F y - g)
+      $$
+
+      <div class="proof-box">
+        <h4>Derivation via Lagrange Multipliers</h4>
+        <div class="proof-step">
+          <strong>Step 1: Formulation.</strong> Minimize $\frac{1}{2}\|x - y\|^2$ subject to $Fx = g$.
+          The Lagrangian is $L(x, \nu) = \frac{1}{2}\|x - y\|^2 + \nu^\top (Fx - g)$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Optimality Conditions.</strong>
+          Gradient w.r.t $x$: $x - y + F^\top \nu = 0 \implies x = y - F^\top \nu$.
+          Primal feasibility: $Fx = g$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Solve for Dual Variable $\nu$.</strong>
+          Substitute $x$ into the constraint:
+          $$ F(y - F^\top \nu) = g \implies Fy - F F^\top \nu = g \implies F F^\top \nu = Fy - g $$
+          Assuming $F$ has full row rank, $F F^\top$ is invertible:
+          $$ \nu = (F F^\top)^{-1} (Fy - g) $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 4: Substitute back.</strong>
+          $$ x = y - F^\top (F F^\top)^{-1} (Fy - g) $$
+        </div>
+      </div>
+
+      <h4>Euclidean Projection Formula (Nullspace)</h4>
+      <p>The <b>Euclidean projection</b> of any point $y \in \mathbb{R}^n$ onto $\mathcal{A}$ can also be computed via the nullspace basis:</p>
       $$
       \Pi_{\mathcal{A}}(y) = x_0 + Z(Z^\top Z)^{-1} Z^\top (y - x_0)
       $$

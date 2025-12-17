@@ -149,6 +149,18 @@
         $$
         <p>Think of this definition as creating "mixtures" of the points in $S$. If $S$ represents pure ingredients, $\mathrm{conv}(S)$ represents all possible mixtures (all possible percentages summing to 100%).</p>
 
+        <h4>Recession Cone (Asymptotic Directions)</h4>
+        <p>For unbounded convex sets, it is useful to characterize directions in which the set extends infinitely. The <b>recession cone</b> of a convex set $C$ is defined as:</p>
+        $$ R_C = \{v \in \mathbb{R}^n \mid x + tv \in C \text{ for all } x \in C, t \ge 0\} $$
+        <p>Intuitively, if you look at $C$ from "infinitely far away", it looks like $R_C$.
+        <br><b>Key Properties:</b>
+        <ul>
+            <li>$R_C$ is always a closed convex cone.</li>
+            <li>A closed convex set is <b>bounded</b> if and only if its recession cone is trivial ($R_C = \{0\}$).</li>
+            <li>If $C = \{x \mid Ax \le b\}$, then $R_C = \{v \mid Av \le 0\}$. The recession directions are those that keep you feasible as you move infinitely far.</li>
+        </ul>
+        This concept is crucial for proving the existence of solutions: if a problem is unbounded, the improving direction lives in the recession cone.</p>
+
         <div class="theorem-box">
           <h4>Theorem (Carathéodory's Theorem)</h4>
           <p>If $S \subseteq \mathbb{R}^n$, then every point in $\mathrm{conv}(S)$ can be written as a convex combination of at most $n+1$ points from $S$.</p>
@@ -294,11 +306,24 @@
           </ul>
         </div>
 
+        <h4>Supporting Hyperplanes</h4>
+        <p>A hyperplane $H = \{x \mid a^\top x = b\}$ supports a set $C$ at a point $x_0$ if:
+        <ol>
+            <li>$x_0$ lies on the hyperplane ($a^\top x_0 = b$).</li>
+            <li>The entire set $C$ lies in one of the halfspaces defined by $H$ (e.g., $a^\top x \le b$ for all $x \in C$).</li>
+        </ol>
+        Supporting hyperplanes are the geometric realization of <b>subgradients</b> (which we will meet in Lecture 05). For a convex set, every boundary point has at least one supporting hyperplane.</p>
+
         <p>A <a href="#" class="definition-link">halfspace</a> is a set of the form:</p>
         $$
         H^- = \{x \in \mathbb{R}^n \mid a^\top x \le b\}
         $$
         <p>This is the region on one side of the hyperplane. The complement halfspace is $H^+ = \{x \mid a^\top x \ge b\}$.</p>
+
+        <h4>Normal Cones (Geometry at the Boundary)</h4>
+        <p>For a convex set $C$ and a point $x \in C$, the <b>normal cone</b> $N_C(x)$ describes the "outward" directions at $x$. It is defined as:</p>
+        $$ N_C(x) = \{g \in \mathbb{R}^n \mid g^\top (y - x) \le 0 \text{ for all } y \in C\} $$
+        <p>If $x$ is in the interior of $C$, then $N_C(x) = \{0\}$. If $x$ is on the boundary, $N_C(x)$ contains the normal vectors to all supporting hyperplanes at $x$. This geometric object is fundamental to optimality conditions: $x^*$ minimizes a differentiable function $f$ over $C$ if and only if $-\nabla f(x^*) \in N_C(x^*)$.</p>
 
         <div class="proof-box">
           <h4>Proof: Hyperplanes and Halfspaces are Convex</h4>
@@ -400,7 +425,7 @@
         $$
         \mathcal{P} = \{x \in \mathbb{R}^n \mid Ax \le b, \ Cx = d\}
         $$
-        <p>Geometrically, a polyhedron is the intersection of a finite number of halfspaces and hyperplanes.</p>
+        <p>Geometrically, a polyhedron is the intersection of a finite number of halfspaces and hyperplanes. This description is known as the <b>H-representation</b> (Hyperplane representation).</p>
 
         <figure style="text-align: center; margin: 24px 0;">
           <img src="assets/polyhedron-construction.png"
@@ -414,7 +439,18 @@
           <p>Since halfspaces and hyperplanes are convex sets, and the intersection of any collection of convex sets is convex (see Section 3), a polyhedron is convex.</p>
         </div>
 
-        <p>A <a href="#" class="definition-link">polytope</a> is a bounded polyhedron. Equivalently, it is the convex hull of a finite set of points.</p>
+        <h3>Polytope vs. Polyhedron: H-Rep and V-Rep</h3>
+        <p>A <a href="#" class="definition-link">polytope</a> is a bounded polyhedron.</p>
+        <ul>
+            <li><b>H-Representation (Intersection):</b> $\mathcal{P} = \{x \mid Ax \le b\}$. This describes the set by its "walls" (facets). It is efficient for checking if a point is in the set ($Ax \le b$?) but hard for generating points.</li>
+            <li><b>V-Representation (Hull):</b> $\mathcal{P} = \mathrm{conv}\{v_1, \dots, v_k\}$. This describes the set by its "corners" (vertices). It is efficient for generating points (just mix the vertices) but hard for checking membership.</li>
+        </ul>
+        <div class="theorem-box">
+            <h4>Minkowski-Weyl Theorem</h4>
+            <p>A set $\mathcal{P}$ is a polyhedron if and only if it is the sum of a convex hull of a finite set of points and a conical hull of a finite set of directions (rays):
+            $$ \mathcal{P} = \mathrm{conv}\{v_1, \dots, v_k\} + \mathrm{cone}\{r_1, \dots, r_m\} $$
+            If the set is bounded (a polytope), the conical part is zero, and $\mathcal{P} = \mathrm{conv}\{v_1, \dots, v_k\}$.</p>
+        </div>
 
         <div class="widget-container" style="margin: 24px 0;">
           <h3 style="margin-top: 0;">Interactive Visualizer: Polyhedron Builder</h3>
@@ -446,16 +482,16 @@
           <h4>Proof: The PSD Cone is Convex</h4>
           <p>We need to show that if $A, B \in \mathbb{S}^n_+$ and $\theta \in [0,1]$, then $\theta A + (1-\theta)B \in \mathbb{S}^n_+$.</p>
           <div class="proof-step">
-            <strong>Definition Check:</strong> Let $z \in \mathbb{R}^n$ be any vector.
+            <strong>Definition Check:</strong> Let $z \in \mathbb{R}^n$ be any vector. We examine the quadratic form of the convex combination:
             $$
             z^\top (\theta A + (1-\theta)B) z = \theta (z^\top A z) + (1-\theta) (z^\top B z)
             $$
           </div>
           <div class="proof-step">
-            <strong>Sign Analysis:</strong> Since $A, B \succeq 0$, we know $z^\top A z \ge 0$ and $z^\top B z \ge 0$. Since $\theta \in [0,1]$, both coefficients are non-negative.
+            <strong>Sign Analysis:</strong> Since $A, B \succeq 0$, we know $z^\top A z \ge 0$ and $z^\top B z \ge 0$ for all $z$. Since $\theta \in [0,1]$, both coefficients $\theta$ and $1-\theta$ are non-negative.
           </div>
           <div class="proof-step">
-            <strong>Conclusion:</strong> The sum is non-negative, so $z^\top (\theta A + (1-\theta)B) z \ge 0$ for all $z$. Thus the combination is PSD.
+            <strong>Conclusion:</strong> The sum of non-negative terms is non-negative, so $z^\top (\theta A + (1-\theta)B) z \ge 0$ for all $z$. Thus the combination is PSD.
           </div>
         </div>
 
@@ -587,6 +623,14 @@
           \mathcal{E} = \{x \mid \|P^{-1/2}(x - x_c)\|_2 \le 1\}
           $$
           <p>This is the preimage of the Euclidean ball $\{z \mid \|z\|_2 \le 1\}$ (convex) under the affine map $f(x) = P^{-1/2}(x - x_c)$. Since preimages preserve convexity, $\mathcal{E}$ is convex.</p>
+          <div class="insight">
+            <h4>Strict vs Non-Strict Separation</h4>
+            <p>The <b>Separating Hyperplane Theorem</b> states that disjoint convex sets $C, D$ can be separated by a hyperplane ($a^\top x \le b$ for $x \in C$, $a^\top x \ge b$ for $x \in D$).
+            <ul>
+                <li><b>Non-Strict:</b> Always possible if $C, D$ are disjoint and convex. But they might touch at the boundary.</li>
+                <li><b>Strict:</b> Possible if $C$ is closed and $D$ is compact (closed & bounded). Then there exists $\epsilon > 0$ such that the gap is strictly positive.</li>
+            </ul></p>
+          </div>
           <figure style="text-align: center; margin: 24px 0;">
                <img src="assets/image-vs-preimage-ball.png"
                     alt="Comparison of image vs preimage of a ball"

@@ -105,6 +105,14 @@
         Thus, $f^*$ is convex for <b>any</b> $f$. The conjugate lives in the "convex world" even if $f$ doesn't.</p>
       </div>
 
+        <div class="theorem-box">
+            <h4>Deep Dive: Biconjugate and Convex Hulls</h4>
+            <p>While $f^*$ is always convex, $f^{**}$ (the conjugate of the conjugate) relates back to $f$ in a special way.
+            $$ f^{**}(x) = \text{cl}(\text{conv}(f))(x) $$
+            The biconjugate is the <b>closed convex envelope</b> of $f$. It is the largest lower semicontinuous convex function that is less than or equal to $f$.
+            <br><b>Consequence:</b> $f^{**} = f$ if and only if $f$ is closed and convex. This is the <b>Fenchel-Moreau Theorem</b>.</p>
+        </div>
+
       <h3>1.3 1D Examples in Detail</h3>
 
       <div class="example">
@@ -430,13 +438,13 @@
 
         <div class="example">
             <h4>(c) $f(x_1, x_2) = 1/(x_1 x_2)$ on $\mathbb{R}^2_{++}$</h4>
-            <p><b>Analysis:</b> $f(x) = (x_1 x_2)^{-1}$. Hessian has positive diagonal and positive determinant ($3/(x_1 x_2)^4 > 0$).
+            <p><b>Analysis:</b> $f(x) = (x_1 x_2)^{-1}$. The Hessian is $H = \begin{bmatrix} 2x_1^{-3}x_2^{-1} & x_1^{-2}x_2^{-2} \\ x_1^{-2}x_2^{-2} & 2x_1^{-1}x_2^{-3} \end{bmatrix}$. $\det(H) = 3(x_1 x_2)^{-4} > 0$. Trace $> 0$.
             <br><b>Convex</b> (and thus quasiconvex).
             <br>Superlevel sets are the same as sublevel sets of $x_1 x_2$. Non-convex. Not quasiconcave.</p>
         </div>
 
         <div class="example">
-            <h4>(d) $f(x_1, x_2) = x_1 / x_2$ on $\mathbb{R} \times \mathbb{R}_{++}$</h4>
+            <h4>(d) $f(x_1, x_2) = x_1 / x_2$ on $\mathbb{R}_{++}^2$</h4>
             <p><b>Analysis:</b> Linear-fractional function.
             <br>Sublevel sets $x_1 \le \alpha x_2$ are halfspaces (convex).
             <br>Superlevel sets $x_1 \ge \alpha x_2$ are halfspaces (convex).
@@ -566,9 +574,14 @@
         </div>
         <div class="theorem-box">
             <h4>(b) Integrals of Log-Concave Functions (Prékopa-Leindler)</h4>
-            <p>If $f(x, y)$ is <b>jointly</b> log-concave in $(x, y)$, then the marginal $g(x) = \int f(x, y) dy$ is log-concave.
-            <br><b>Geometric Intuition (Volume):</b> The probability density $f(x,y)$ represents mass. Log-concavity means this mass is concentrated in a "unimodal lump." Integrating out $y$ is like projecting the mass onto the x-axis (computing marginals). The theorem says that the "shadow" of a log-concave lump is still log-concave—it doesn't develop multiple peaks or weird skews.</p>
-            <p><b>Consequence:</b> Convolution of log-concave functions is log-concave. If $f, g$ are log-concave, so is $(f*g)(x) = \int f(x-y)g(y) dy$.</p>
+            <p>If $f(x, y)$ is <b>jointly</b> log-concave in $(x, y)$, then the marginal $g(x) = \int f(x, y) dy$ is log-concave.</p>
+            <p>This is a consequence of the <b>Prékopa-Leindler Theorem</b>, which relates integrals of functions satisfying log-concave-like conditions:
+            Let $f, g, h: \mathbb{R}^n \to \mathbb{R}_+$ be integrable functions. If for some $\lambda \in (0, 1)$ and all $x, y \in \mathbb{R}^n$:
+            $$ h(\lambda x + (1-\lambda)y) \ge f(x)^\lambda g(y)^{1-\lambda} $$
+            Then:
+            $$ \int_{\mathbb{R}^n} h(z) dz \ge \left( \int_{\mathbb{R}^n} f(x) dx \right)^\lambda \left( \int_{\mathbb{R}^n} g(y) dy \right)^{1-\lambda} $$
+            </p>
+            <p><b>Consequence:</b> Convolution of log-concave functions is log-concave. If $f, g$ are log-concave, so is $(f*g)(x) = \int f(x-y)g(y) dy$. This theorem is a functional generalization of the Brunn-Minkowski inequality for volumes of convex bodies.</p>
         </div>
 
         <h3>3.4 Probability Examples</h3>
@@ -1082,10 +1095,10 @@
   <div class="solution-box">
     <h4>Solution</h4>
     <div class="proof-step">
-      $f^*(y) = \sup_x (y^\top x - \log \sum e^{x_i})$.
-      Setting gradient to zero: $y_i = e^{x_i} / (\sum e^{x_k})$.
-      This implies $y_i > 0$ and $\sum y_i = 1$. If not, supremum is $\infty$ (scaling argument).
-      Substitute $x_i = \log y_i + C$ back into objective to get negative entropy.
+      See Example 1.4(e) for the derivation. The key steps are:
+      1. Gradient condition $y = \nabla f(x)$ implies $y$ is a probability vector.
+      2. If $y$ is not a probability vector, the supremum is infinite.
+      3. Substituting $x$ back gives the negative entropy term.
     </div>
   </div>
 </div>
