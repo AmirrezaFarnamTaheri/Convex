@@ -831,20 +831,21 @@
 
         <h4>Examples of Pointwise Maxima</h4>
         <div class="example">
-          <h4>1. Piecewise-Linear (Max of Affine Functions)</h4>
+          <h4>Example 1: Piecewise-Linear (Max of Affine Functions)</h4>
           <p>Let $\ell_i(x) = a_i^\top x + b_i$ for $i=1,\dots,m$. Define:</p>
           $$ f(x) = \max_{1\le i\le m} (a_i^\top x + b_i) $$
           <p>Each $\ell_i$ is convex, so $f$ is convex. Geometrically, this is a polyhedral convex function (its epigraph is a polyhedron).</p>
         </div>
+
         <div class="example">
-          <h4>2. The $\ell_p$-type Mean ($p < 1$)</h4>
+          <h4>Example 2: The $\ell_p$-type Mean ($p < 1$)</h4>
           <p>Consider the function $f(x) = \left(\sum x_i^p\right)^{1/p}$ for $0 < p < 1$ on $\mathbb{R}^n_{++}$.
           <br>This function is <b>concave</b>.
           <br><i>Note:</i> For $p \ge 1$, this is the $\ell_p$ norm, which is convex. The switch in curvature for $p < 1$ is a subtle but important distinction. The proof involves checking the Hessian or using a variation of Minkowski's inequality.</p>
         </div>
 
         <div class="example">
-          <h4>2. Sum of the $r$ Largest Components (Ky Fan Norm)</h4>
+          <h4>Example 3: Sum of the $r$ Largest Components (Ky Fan Norm)</h4>
           <p>For $x \in \mathbb{R}^n$, let $x_{[1]} \ge x_{[2]} \ge \dots \ge x_{[n]}$ denote components sorted in descending order. Define:
           $$ f(x) = \sum_{k=1}^r x_{[k]} $$
           This function is convex and coordinate-wise nondecreasing.</p>

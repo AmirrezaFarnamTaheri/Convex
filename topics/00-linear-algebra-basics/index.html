@@ -186,7 +186,16 @@
       A set is <b>convex</b> if it contains the line segment between any pair of its points.</p>
 
       <h3>1.6 Matrix Calculus Basics</h3>
-      <p>Gradient-based optimization relies on the computation of gradients and Hessians. Computing derivatives with respect to vectors and matrices is therefore a core skill. Unlike scalar calculus, where order doesn't matter, in matrix calculus we must preserve non-commutativity and track dimensions carefully.</p>
+      <p>Gradient-based optimization relies heavily on the computation of gradients and Hessians. Computing derivatives with respect to vectors and matrices is therefore a core skill. Unlike scalar calculus, where order doesn't matter, in matrix calculus we must carefully preserve non-commutativity and track dimensions. The "master key" to matrix calculus is the <b>differential</b>.</p>
+
+      <p>For a function $f: \mathbb{R}^{n \times m} \to \mathbb{R}$, the gradient $\nabla f(X)$ is defined as the unique matrix satisfying the first-order approximation:
+      $$ f(X + \Delta) \approx f(X) + \langle \nabla f(X), \Delta \rangle $$
+      where $\langle A, B \rangle = \mathrm{tr}(A^\top B)$. This gives us a foolproof algorithm for finding gradients:</p>
+      <ol>
+        <li>Perturb $X$ by a small direction $\Delta$.</li>
+        <li>Expand $f(X + \Delta)$ and isolate the term <i>linear</i> in $\Delta$.</li>
+        <li>Rewrite that term as $\langle G, \Delta \rangle$. Then $G$ is the gradient.</li>
+      </ol>
 
       <h4>Gradients of Linear and Quadratic Forms</h4>
       <p>For $x \in \mathbb{R}^n$, $A \in \mathbb{R}^{n \times n}$, and $b \in \mathbb{R}^n$:</p>
@@ -227,11 +236,38 @@
         </tbody>
       </table>
 
+      <div class="proof-box">
+        <h4>Detailed Derivation: Gradient of Quadratic Form</h4>
+        <p>Let $f(x) = x^\top A x$. We apply the perturbation method.</p>
+        <div class="proof-step">
+          <strong>Step 1: Perturb.</strong> Let $x \to x + h$.
+          $$ f(x+h) = (x+h)^\top A (x+h) = x^\top A x + x^\top A h + h^\top A x + h^\top A h $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 2: Linearize.</strong>
+          Identify terms linear in $h$: $L(h) = x^\top A h + h^\top A x$.
+          The term $h^\top A h$ is quadratic (second-order) and vanishes as $h \to 0$.
+        </div>
+        <div class="proof-step">
+          <strong>Step 3: Rearrange to Inner Product form.</strong>
+          Recall that a scalar equals its transpose: $h^\top A x = (h^\top A x)^\top = x^\top A^\top h$.
+          Thus, $L(h) = x^\top A h + x^\top A^\top h = x^\top (A + A^\top) h$.
+          Rewriting as an inner product:
+          $$ L(h) = \langle (A + A^\top)x, h \rangle $$
+        </div>
+        <div class="proof-step">
+          <strong>Step 4: Identify Gradient.</strong>
+          By definition, the vector multiplying $h$ in the inner product is the gradient.
+          $$ \nabla f(x) = (A + A^\top)x $$
+          If $A$ is symmetric, $A = A^\top$, so $\nabla f(x) = 2Ax$.
+        </div>
+      </div>
+
       <h4>Gradients with Respect to Matrices</h4>
       <p>For a matrix variable $X \in \mathbb{R}^{m \times n}$, the gradient is an $m \times n$ matrix.</p>
       <ul>
         <li><b>Rule 1: Linear Trace:</b> $\nabla_X \mathrm{tr}(A^\top X) = A$.
-        <br><i>Proof:</i> $\mathrm{tr}(A^\top X) = \sum_{i,j} A_{ij} X_{ij}$. The partial derivative with respect to $X_{ij}$ is $A_{ij}$.</li>
+        <br><i>Proof:</i> $\mathrm{tr}(A^\top X) = \langle A, X \rangle$. The gradient is the coefficient of $X$, which is $A$.</li>
         <li><b>Rule 2: Quadratic Trace:</b> $\nabla_X \mathrm{tr}(X^\top A X) = (A + A^\top)X$. If $A$ is symmetric, this is $2AX$.
         <br><i>Note:</i> This corresponds to $\frac{d}{dx}(ax^2) = 2ax$.</li>
         <li><b>Rule 3: Log Determinant:</b> $\nabla_X \log \det X = X^{-\top}$. If $X \in \mathbb{S}^n_{++}$ (symmetric positive definite), then $\nabla_X \log \det X = X^{-1}$.
@@ -297,11 +333,11 @@
 
         <div class="proof-step">
           <strong>Step 2: Gradient.</strong>
-          Differentiating term by term:
+          Using the rules derived above:
           <ul>
-            <li>$\nabla (x^\top A^\top A x) = 2A^\top A x$ (since $A^\top A$ is symmetric)</li>
-            <li>$\nabla (-2b^\top A x) = \nabla (-2(A^\top b)^\top x) = -2A^\top b$</li>
-            <li>$\nabla (b^\top b) = 0$</li>
+            <li>$\nabla (x^\top (A^\top A) x) = 2A^\top A x$ (since $A^\top A$ is symmetric).</li>
+            <li>$\nabla (-2(A^\top b)^\top x) = -2A^\top b$.</li>
+            <li>$\nabla (b^\top b) = 0$.</li>
           </ul>
           Summing these: $\nabla f(x) = 2A^\top A x - 2A^\top b = 2A^\top (Ax - b)$.
         </div>
@@ -310,7 +346,7 @@
           <strong>Step 3: Hessian.</strong>
           Differentiating $\nabla f(x)$ with respect to $x$:
           $$ \nabla^2 f(x) = \nabla_x (2A^\top A x) = 2A^\top A $$
-          Note that the Hessian is a constant matrix (independent of $x$), which is typical for quadratic functions.
+          The Hessian is constant, characteristic of quadratic functions.
         </div>
 
         <div class="proof-step">
@@ -346,10 +382,10 @@
         <br><i>Why do we care?</i> The Left Nullspace defines the <b>constraints on solvability</b>. The system $Ax=b$ has a solution if and only if $b$ is orthogonal to every vector in the Left Nullspace ($b \perp \mathcal{N}(A^\top)$). This is the <b>Fredholm Alternative</b>.</li>
       </ul>
 
-      <p>These subspaces are linked by two crucial orthogonality relationships (Fundamental Theorem of Linear Algebra):</p>
+      <p>These subspaces are linked by the <b>Fundamental Theorem of Linear Algebra</b>. This theorem is not just an algebraic curiosity; it is the geometric foundation for understanding when linear systems are solvable (feasibility) and when they are unique.</p>
       <ul>
-        <li>$\mathcal{R}(A) \perp \mathcal{N}(A^\top)$ in $\mathbb{R}^m$</li>
-        <li>$\mathcal{R}(A^\top) \perp \mathcal{N}(A)$ in $\mathbb{R}^n$</li>
+        <li><b>Relationship 1:</b> $\mathcal{R}(A) \perp \mathcal{N}(A^\top)$ in $\mathbb{R}^m$. The range is the orthogonal complement of the left nullspace.</li>
+        <li><b>Relationship 2:</b> $\mathcal{R}(A^\top) \perp \mathcal{N}(A)$ in $\mathbb{R}^n$. The row space is the orthogonal complement of the nullspace.</li>
       </ul>
 
       <figure style="text-align: center;">
@@ -377,9 +413,17 @@
         </div>
 
         <div class="proof-step">
-          <strong>Conclusion:</strong> The inner product is zero for any $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$. Thus, the subspaces are orthogonal.
+          <strong>Conclusion:</strong> The inner product is zero for any $v \in \mathcal{R}(A)$ and $y \in \mathcal{N}(A^\top)$. Thus, every vector in the column space is orthogonal to every vector in the left nullspace.
         </div>
       </div>
+
+      <h4>The Fredholm Alternative (Theorem of Alternatives)</h4>
+      <p>A crucial consequence of the orthogonality $\mathcal{R}(A) = \mathcal{N}(A^\top)^\perp$ is a solvability criterion for linear systems, known as the <b>Fredholm Alternative</b>. For any $A \in \mathbb{R}^{m \times n}$ and $b \in \mathbb{R}^m$, exactly one of the following two statements is true:</p>
+      <ol>
+        <li><b>Primal Feasibility:</b> The system $Ax = b$ has a solution.</li>
+        <li><b>Dual Certificate of Infeasibility:</b> There exists a vector $y$ such that $A^\top y = 0$ but $b^\top y \neq 0$.</li>
+      </ol>
+      <p><i>Interpretation:</i> If $Ax=b$ has no solution, then $b$ does not lie in $\mathcal{R}(A)$. Since $\mathcal{R}(A)^\perp = \mathcal{N}(A^\top)$, there must be a component of $b$ that lies in $\mathcal{N}(A^\top)$. This component $y$ serves as a witness (or certificate) that proving $b$ is unreachable by $A$. This logic generalizes to <b>Farkas' Lemma</b> and strong duality in later lectures.</p>
 
       <div class="example">
         <h4>Geometric Example: $\mathbb{R}^3$</h4>
@@ -726,13 +770,6 @@
         <p>Taking square roots gives $\|x+y\|_2 \le \|x\|_2 + \|y\|_2$.</p>
       </div>
 
-      <h4>Projection as Optimization</h4>
-      <p>The orthogonal projection of $x$ onto the line spanned by $y \neq 0$ is the solution to $\min_t \|x - ty\|_2^2$.
-      <br>Setting the derivative of the quadratic (from Cauchy-Schwarz proof) to zero gives $t^* = \frac{x^\top y}{\|y\|_2^2}$.
-      <br>The error $r = x - t^* y$ is orthogonal to $y$:
-      $$ \langle r, y \rangle = \langle x, y \rangle - t^* \langle y, y \rangle = x^\top y - \frac{x^\top y}{\|y\|^2} \|y\|^2 = 0. $$
-      This geometric "orthogonality of residual" principle generalizes to all least squares problems.</p>
-
       <h3>Dual Norms and Polar Sets</h3>
       <p>The <b>dual norm</b> provides a variational definition of size. For any norm $\|\cdot\|$, its dual $\|\cdot\|_*$ is:
       $$ \|y\|_* = \sup_{\|x\| \le 1} x^\top y $$
@@ -1004,12 +1041,11 @@
       <p>A symmetric matrix $A \in \mathbb{S}^n$ is PSD if and only if all its eigenvalues are non-negative:</p>
       $$ \lambda_i(A) \ge 0 \quad \text{for all } i = 1, \dots, n $$
 
-      <h4>Factorization of PSD Matrices</h4>
-      <p>A symmetric matrix $A$ is PSD if and only if it can be written as a Gram matrix: $A = B^\top B$ for some $B$.
-      <br><i>Proof:</i> If $A \succeq 0$, spectral decomposition gives $A = Q \Lambda Q^\top = (Q \Lambda^{1/2}) (Q \Lambda^{1/2})^\top$. Let $B = (Q \Lambda^{1/2})^\top$.
-      Conversely, if $A = B^\top B$, then $x^\top A x = \|Bx\|_2^2 \ge 0$.
+      <h4>Factorization of PSD Matrices (Gram Matrix)</h4>
+      <p>A symmetric matrix $A$ is PSD if and only if it can be written as a Gram matrix: $A = B^\top B$ for some matrix $B$ (not necessarily square).
+      <br><i>Proof:</i> If $A \succeq 0$, spectral decomposition gives $A = Q \Lambda Q^\top = (Q \Lambda^{1/2}) (Q \Lambda^{1/2})^\top$. Let $B = (Q \Lambda^{1/2})^\top$. This $B$ is a "square root" of $A$.
+      Conversely, if $A = B^\top B$, then $x^\top A x = x^\top B^\top B x = (Bx)^\top (Bx) = \|Bx\|_2^2 \ge 0$.
       </p>
-
 
       <div class="proof-box">
         <h4>Proof: Equivalence of Definitions</h4>
@@ -1032,12 +1068,23 @@
         </div>
       </div>
 
-      <h3>6.3 The Rayleigh Quotient and Eigenvalues</h3>
+      <h3>6.3 Geometry of PSD Matrices: Ellipsoids</h3>
+      <p>Positive Definite (PD) matrices define the shape of <b>ellipsoids</b>. For a matrix $P \in \mathbb{S}^n_{++}$, the set:
+      $$ \mathcal{E} = \{ x \in \mathbb{R}^n \mid x^\top P x \le 1 \} $$
+      is an ellipsoid centered at the origin.
+      </p>
+      <ul>
+        <li><b>Axes alignment:</b> The axes of the ellipsoid are aligned with the eigenvectors of $P$.</li>
+        <li><b>Axis lengths:</b> The semi-axis lengths are $1/\sqrt{\lambda_i}$, where $\lambda_i$ are the eigenvalues of $P$. Note the inverse relationship: a <i>large</i> eigenvalue means steep curvature in the quadratic bowl, which corresponds to a <i>short</i> axis in the level set ellipsoid (the function rises quickly).</li>
+      </ul>
+      <p>This geometric link explains why "conditioning" matters. If the ratio $\lambda_{\max}/\lambda_{\min}$ is large, the ellipsoid is very long and thin (a deep valley in one direction, flat in another), making optimization difficult.</p>
+
+      <h3>6.4 The Rayleigh Quotient and Eigenvalues</h3>
       <p>The <b>maximum eigenvalue</b> $\lambda_{\max}(A)$ can be defined as an optimization problem:</p>
       $$ \lambda_{\max}(A) = \sup_{x \neq 0} \frac{x^\top A x}{x^\top x} = \sup_{\|x\|_2 = 1} x^\top A x $$
       <p>This is the <b>Rayleigh Quotient</b>. This definition proves that $\lambda_{\max}(A)$ is a convex function of $A$. Notice that for a fixed $x$, the function $g(A) = x^\top A x$ is <b>linear</b> in $A$. Since $\lambda_{\max}(A)$ is the <b>pointwise supremum</b> of a family of linear functions (indexed by $x$), it is a convex function.</p>
 
-      <h3>6.4 The Schur Complement Lemma</h3>
+      <h3>6.5 The Schur Complement Lemma</h3>
       <p>A powerful tool for handling block matrices in optimization is the Schur Complement. It allows us to convert complicated nonlinear constraints into Linear Matrix Inequalities (LMIs) and provides a systematic way to check positive semidefiniteness.</p>
 
       <div class="insight">
@@ -1256,7 +1303,7 @@
         <div id="widget-hessian-landscape" style="width: 100%; height: 400px; position: relative;"></div>
       </div>
 
-      <h3>6.5 The Loewner Order</h3>
+      <h3>6.6 The Loewner Order</h3>
       <p>For symmetric matrices $X, Y \in \mathbb{S}^n$, we write <b>$X \succeq Y$</b> if and only if $X - Y$ is <b>positive semidefinite (PSD)</b>, meaning:</p>
       $$
       v^\top (X - Y) v \ge 0 \quad \text{for all } v \in \mathbb{R}^n
@@ -1286,8 +1333,26 @@
     <section class="section-card" id="section-projections">
       <h2>7. Projections onto Subspaces and Affine Sets</h2>
 
-      <h3>Orthogonal Projection onto a Subspace</h3>
-      <p>Let $\mathcal{S} \subseteq \mathbb{R}^m$ be a subspace and $b \in \mathbb{R}^m$. The <b>orthogonal projection</b> $p \in \mathcal{S}$ of $b$ is the unique vector in $\mathcal{S}$ minimizing $\|b - p\|_2$. It is characterized by the <b>orthogonality condition</b>:
+      <p>The concept of "finding the closest point" is the geometric heart of optimization. Whether solving least squares, applying constraints, or analyzing duality, we are often just computing an orthogonal projection.</p>
+
+      <h3>7.1 Projection onto a Line (1D Case)</h3>
+      <p>Before tackling general subspaces, let's rigorously derive the projection of a vector $x$ onto the line spanned by a single non-zero vector $a \in \mathbb{R}^n$. This simple case contains all the intuition needed for the general theory.</p>
+      <p>We seek the scalar $\alpha$ that minimizes the squared distance $\|x - \alpha a\|_2^2$.
+      $$ f(\alpha) = \|x - \alpha a\|_2^2 = (x - \alpha a)^\top (x - \alpha a) = \|x\|_2^2 - 2\alpha (a^\top x) + \alpha^2 \|a\|_2^2 $$
+      This is a simple convex quadratic in $\alpha$. Setting the derivative to zero:
+      $$ f'(\alpha) = -2(a^\top x) + 2\alpha \|a\|_2^2 = 0 \implies \alpha^\star = \frac{a^\top x}{\|a\|_2^2} $$
+      The projection is the vector $p = \alpha^\star a$:
+      $$ p = \frac{a^\top x}{a^\top a} a = \left( \frac{a a^\top}{a^\top a} \right) x $$
+      </p>
+      <div class="insight">
+        <h4>Geometric Insight: Orthogonality of the Residual</h4>
+        <p>Let $r = x - p$ be the error (residual) vector. Check its inner product with $a$:
+        $$ a^\top r = a^\top \left( x - \frac{a^\top x}{a^\top a} a \right) = a^\top x - \frac{a^\top x}{a^\top a} (a^\top a) = a^\top x - a^\top x = 0 $$
+        The error is orthogonal to the subspace (line). This <b>Orthogonality Principle</b> is universal: the optimal error is always perpendicular to the feasible set (for subspaces and affine sets).</p>
+      </div>
+
+      <h3>7.2 Orthogonal Projection onto a General Subspace</h3>
+      <p>Let $\mathcal{S} \subseteq \mathbb{R}^m$ be a subspace and $b \in \mathbb{R}^m$. The <b>orthogonal projection</b> $p \in \mathcal{S}$ of $b$ is the unique vector in $\mathcal{S}$ minimizing $\|b - p\|_2$. It is characterized by the condition that the residual is orthogonal to the entire subspace:
       $$ b - p \perp \mathcal{S} \quad \iff \quad v^\top(b - p) = 0 \ \ \forall v \in \mathcal{S} $$</p>
 
       <h3>Projection via a Basis</h3>

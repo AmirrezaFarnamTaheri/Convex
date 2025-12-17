@@ -530,46 +530,6 @@
 </div>
 
 <div class="problem">
-  <h3>P4.17 — Homogeneous Envelope and Directional Derivatives (Breakdown of 3.31)</h3>
-  <p>Given a convex function $f$ with $f(0)=0$, define its <b>homogeneous envelope</b>:
-  $$ g(x) = \inf_{\alpha > 0} \frac{f(\alpha x)}{\alpha} $$
-  (a) Prove $g$ is positively homogeneous ($g(tx) = tg(x)$ for $t \ge 0$).
-  <br>(b) Prove $g$ is the largest homogeneous underestimator of $f$.
-  <br>(c) Prove $g$ is convex. (Hint: relate it to the directional derivative $f'(0; x)$).</p>
-
-  <div class="recap-box">
-    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
-    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
-        <li><b>Directional Derivative:</b> For convex $f$ with $f(0)=0$, the directional derivative at 0 is $f'(0;x) = \inf_{t>0} \frac{f(tx)}{t}$. This matches the definition of $g(x)$.</li>
-        <li><b>Support Function:</b> $g(x)$ is actually the support function of the subdifferential $\partial f(0)$. Support functions are always convex and homogeneous.</li>
-    </ul>
-  </div>
-
-  <div class="solution-box">
-    <h4>Solution</h4>
-    <div class="proof-step">
-      <strong>(a) Homogeneity.</strong>
-      For $t > 0$: $g(tx) = \inf_{\alpha > 0} \frac{f(\alpha t x)}{\alpha}$. Let $\beta = \alpha t$. Then $\alpha = \beta/t$.
-      $$ g(tx) = \inf_{\beta > 0} \frac{f(\beta x)}{\beta/t} = t \inf_{\beta > 0} \frac{f(\beta x)}{\beta} = t g(x). $$
-      For $t=0$, $g(0)=0$ (assuming properness), so it holds.
-    </div>
-    <div class="proof-step">
-      <strong>(b) Largest Underestimator.</strong>
-      First, $g(x) \le f(x)$ (take $\alpha=1$ in infimum).
-      Second, let $h$ be homogeneous with $h \le f$. Then $h(x) = \frac{h(\alpha x)}{\alpha} \le \frac{f(\alpha x)}{\alpha}$ for all $\alpha$. Taking infimum, $h(x) \le g(x)$.
-    </div>
-    <div class="proof-step">
-      <strong>(c) Convexity via Directional Derivative.</strong>
-      Since $f$ is convex with $f(0)=0$, the difference quotient $\frac{f(\alpha x)}{\alpha} = \frac{f(0+\alpha x)-f(0)}{\alpha}$ is non-decreasing in $\alpha$.
-      Thus the infimum is the limit as $\alpha \downarrow 0$, which is the directional derivative $f'(0; x)$.
-      Directional derivatives of convex functions are sublinear (convex):
-      $$ f'(0; x+y) \le f'(0; x) + f'(0; y) \quad \text{(Subadditivity)} $$
-      Combined with homogeneity (part a), $g$ is convex.
-    </div>
-  </div>
-</div>
-
-<div class="problem">
   <h3>P4.3 — Self-Duality of Second-Order Cone</h3>
   <p>Prove that the second-order cone $\mathcal{Q} = \{(x, t) \in \mathbb{R}^{n+1} \mid \|x\|_2 \le t\}$ is self-dual: $\mathcal{Q}^* = \mathcal{Q}$.</p>
 
@@ -888,6 +848,46 @@
       The Lagrangian involves multipliers $\lambda_i \in \mathcal{Q}^* = \mathcal{Q}$ and $\nu$ for the equality.
       $$ L(x, \lambda, \nu) = c^\top x + \nu^\top (b - Ax) - \sum \lambda_i^\top z_i $$
       Minimizing over $x$ gives the dual equality constraint. The condition $\lambda_i \in \mathcal{Q}$ is explicitly an SOC constraint.
+    </div>
+  </div>
+</div>
+
+<div class="problem">
+  <h3>P4.17 — Homogeneous Envelope and Directional Derivatives</h3>
+  <p>Given a convex function $f$ with $f(0)=0$, define its <b>homogeneous envelope</b>:
+  $$ g(x) = \inf_{\alpha > 0} \frac{f(\alpha x)}{\alpha} $$
+  (a) Prove $g$ is positively homogeneous ($g(tx) = tg(x)$ for $t \ge 0$).
+  <br>(b) Prove $g$ is the largest homogeneous underestimator of $f$.
+  <br>(c) Prove $g$ is convex. (Hint: relate it to the directional derivative $f'(0; x)$).</p>
+
+  <div class="recap-box">
+    <h4 style="margin-top: 0; font-size: 0.9em; color: var(--primary-300); text-transform: uppercase; letter-spacing: 0.05em;">Recap & Key Concepts</h4>
+    <ul style="margin: 8px 0 0 20px; font-size: 0.9em; color: var(--text-secondary);">
+        <li><b>Directional Derivative:</b> For convex $f$ with $f(0)=0$, the directional derivative at 0 is $f'(0;x) = \inf_{t>0} \frac{f(tx)}{t}$. This matches the definition of $g(x)$.</li>
+        <li><b>Support Function:</b> $g(x)$ is actually the support function of the subdifferential $\partial f(0)$. Support functions are always convex and homogeneous.</li>
+    </ul>
+  </div>
+
+  <div class="solution-box">
+    <h4>Solution</h4>
+    <div class="proof-step">
+      <strong>(a) Homogeneity.</strong>
+      For $t > 0$: $g(tx) = \inf_{\alpha > 0} \frac{f(\alpha t x)}{\alpha}$. Let $\beta = \alpha t$. Then $\alpha = \beta/t$.
+      $$ g(tx) = \inf_{\beta > 0} \frac{f(\beta x)}{\beta/t} = t \inf_{\beta > 0} \frac{f(\beta x)}{\beta} = t g(x). $$
+      For $t=0$, $g(0)=0$ (assuming properness), so it holds.
+    </div>
+    <div class="proof-step">
+      <strong>(b) Largest Underestimator.</strong>
+      First, $g(x) \le f(x)$ (take $\alpha=1$ in infimum).
+      Second, let $h$ be homogeneous with $h \le f$. Then $h(x) = \frac{h(\alpha x)}{\alpha} \le \frac{f(\alpha x)}{\alpha}$ for all $\alpha$. Taking infimum, $h(x) \le g(x)$.
+    </div>
+    <div class="proof-step">
+      <strong>(c) Convexity via Directional Derivative.</strong>
+      Since $f$ is convex with $f(0)=0$, the difference quotient $\frac{f(\alpha x)}{\alpha} = \frac{f(0+\alpha x)-f(0)}{\alpha}$ is non-decreasing in $\alpha$.
+      Thus the infimum is the limit as $\alpha \downarrow 0$, which is the directional derivative $f'(0; x)$.
+      Directional derivatives of convex functions are sublinear (convex):
+      $$ f'(0; x+y) \le f'(0; x) + f'(0; y) \quad \text{(Subadditivity)} $$
+      Combined with homogeneity (part a), $g$ is convex.
     </div>
   </div>
 </div>
