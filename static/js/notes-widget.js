@@ -257,6 +257,7 @@ class KnowledgeWidget {
             <div class="kw-body">
                 <div id="kw-view-notes" class="kw-view active">
                     <div class="kw-toolbar">
+                        <button class="btn btn-sm btn-ghost" id="kw-export-notes" title="Export Notes" style="margin-right:auto;"><i data-feather="download"></i></button>
                         <button class="btn btn-sm btn-ghost" id="kw-toggle-preview" title="Preview"><i data-feather="eye"></i></button>
                         <button class="btn btn-sm btn-ghost" id="kw-add-note" title="Add"><i data-feather="plus"></i></button>
                     </div>
@@ -280,8 +281,30 @@ class KnowledgeWidget {
         this.panel.querySelector('#kw-add-note').onclick = () => this.addNote();
         this.panel.querySelector('#kw-toggle-preview').onclick = () => this.togglePreview();
         this.panel.querySelector('#kw-add-bookmark').onclick = () => this.addBookmark();
+        this.panel.querySelector('#kw-export-notes').onclick = () => this.exportNotes();
 
         if (typeof feather !== 'undefined') feather.replace();
+    }
+
+    exportNotes() {
+        if (this.notes.length === 0) {
+            alert('No notes to export.');
+            return;
+        }
+        let content = `# Notes for ${this.lectureId}\n\n`;
+        this.notes.forEach(n => {
+            content += `## ${new Date(n.timestamp).toLocaleDateString()}\n\n${n.text}\n\n---\n\n`;
+        });
+
+        const blob = new Blob([content], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `notes-${this.lectureId.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.md`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 
     injectStyles() {

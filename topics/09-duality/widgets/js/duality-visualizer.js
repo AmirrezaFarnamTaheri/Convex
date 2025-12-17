@@ -3,10 +3,9 @@
  *
  * Description: Visualizes the relationship between a primal LP and its dual,
  *              showing their respective feasible regions and optimal solutions.
- * Version: 2.0.0
+ * Version: 2.1.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-import { polygonClip } from "d3-polygon";
 
 export function initDualityVisualizer(containerId) {
     const container = document.getElementById(containerId);
@@ -56,7 +55,7 @@ export function initDualityVisualizer(containerId) {
             .attr("viewBox", `0 0 ${div.clientWidth} ${div.clientHeight}`)
             .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-        svg.append("text").attr("x", width/2).attr("y", -15).attr("text-anchor", "middle").text(title);
+        svg.append("text").attr("x", width/2).attr("y", -15).attr("text-anchor", "middle").text(title).attr("fill", "var(--text-primary)");
         const x = d3.scaleLinear().domain([-1, 5]).range([0, width]);
         const y = d3.scaleLinear().domain([-1, 5]).range([height, 0]);
 
@@ -67,63 +66,151 @@ export function initDualityVisualizer(containerId) {
         return { svg, x, y };
     }
 
+    // Sutherland-Hodgman Polygon Clipping (Internal Implementation)
+    function clipPolygon(subjectPolygon, clipEdge) {
+        const [a, b, c] = clipEdge; // ax + by <= c
+        const newPolygon = [];
+        const isInside = (p) => (a * p[0] + b * p[1]) <= c + 1e-9;
+        const intersect = (p1, p2) => {
+            const val1 = a * p1[0] + b * p1[1] - c;
+            const val2 = a * p2[0] + b * p2[1] - c;
+            const t = val1 / (val1 - val2);
+            return [p1[0] + t * (p2[0] - p1[0]), p1[1] + t * (p2[1] - p1[1])];
+        };
+
+        for (let i = 0; i < subjectPolygon.length; i++) {
+            const cur = subjectPolygon[i];
+            const prev = subjectPolygon[(i + subjectPolygon.length - 1) % subjectPolygon.length];
+
+            const curIn = isInside(cur);
+            const prevIn = isInside(prev);
+
+            if (curIn) {
+                if (!prevIn) newPolygon.push(intersect(prev, cur));
+                newPolygon.push(cur);
+            } else if (prevIn) {
+                newPolygon.push(intersect(prev, cur));
+            }
+        }
+        return newPolygon;
+    }
+
     function update() {
         c = [+c1In.value, +c2In.value];
         // --- Primal Problem ---
-        let primalFeasible = [[0,0], [10,0], [10,10], [0,10]]; // Start with x>=0 box
+        let primalFeasible = [[0,0], [5,0], [5,5], [0,5]]; // Start with x>=0 box
         const primalConstraints = [...A.map((row, i) => [...row, b[i]]), [-1, 0, 0], [0, -1, 0]];
-        primalConstraints.forEach(c => {
-            primalFeasible = polygonClip(halfPlaneToPolygon({a: c.slice(0,2), b: c[2]}), primalFeasible);
+        primalConstraints.forEach(constr => {
+            primalFeasible = clipPolygon(primalFeasible, constr);
         });
 
-        const primalVertices = primalFeasible ? primalFeasible.slice(0, -1) : [];
-        const primalSol = findOptimalVertex(primalVertices, c, 'max');
+        const primalSol = findOptimalVertex(primalFeasible, c, 'max');
 
         primalPlot.svg.select(".content").html('');
-        primalPlot.svg.select(".content").append("path").datum(primalFeasible)
-            .attr("d", d3.line().x(d=>primalPlot.x(d[0])).y(d=>primalPlot.y(d[1])))
-            .attr("fill", "var(--color-primary-light)");
+        if (primalFeasible.length > 2) {
+            primalPlot.svg.select(".content").append("path").datum(primalFeasible)
+                .attr("d", d3.line().x(d=>primalPlot.x(d[0])).y(d=>primalPlot.y(d[1])))
+                .attr("fill", "rgba(59, 130, 246, 0.2)")
+                .attr("stroke", "var(--primary-500)")
+                .attr("stroke-width", 1.5);
+        }
         if (primalSol) {
             primalPlot.svg.select(".content").append("circle").attr("cx", primalPlot.x(primalSol[0]))
                 .attr("cy", primalPlot.y(primalSol[1])).attr("r", 6).attr("fill", "var(--color-success)");
             primalPlot.svg.select(".content").append("text").attr("x", primalPlot.x(primalSol[0])).attr("y", primalPlot.y(primalSol[1]))
-                .attr("dy", "-1em").text(`p* = ${(c[0]*primalSol[0] + c[1]*primalSol[1]).toFixed(2)}`);
+                .attr("dy", "-1em").text(`p* = ${(c[0]*primalSol[0] + c[1]*primalSol[1]).toFixed(2)}`).attr("fill", "var(--text-primary)");
         }
 
-        // --- Dual Problem ---
+        // --- Dual Problem (Simplified Projection) ---
         // A'y >= c => -A'y <= -c
-        const dual_A = A[0].map((_, colIndex) => A.map(row => -row[colIndex]));
-        const dual_b = c.map(val => -val);
+        // Transpose A
+        const At = A[0].map((_, colIndex) => A.map(row => row[colIndex]));
 
-        // This is a 3D problem, we'll visualize a slice (y₃ = 0) for simplicity
-        let dualFeasible = [[-10,-10], [10,-10], [10,10], [-10,10]];
-        const dualConstraints = [...dual_A.map((row, i) => [...row, dual_b[i]]), [-1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0]]; // y>=0
-        dualConstraints.filter(c => Math.abs(c[2]) < 1e-6).forEach(c => { // Project to y3=0 plane
-             dualFeasible = polygonClip(halfPlaneToPolygon({a: c.slice(0,2), b: c[3]}), dualFeasible);
-        });
+        // We only visualize 2D projection (y3=0 slice for simplicity as placeholder)
+        // Correct dual constraints: At * y >= c => -At * y <= -c
+        // y >= 0
 
-        const dualVertices = dualFeasible ? dualFeasible.slice(0, -1) : [];
-        const dualSol = findOptimalVertex(dualVertices, b, 'min'); // Dual minimizes b'y
+        // Let's fake a 2D dual problem for visualization clarity if dimensions don't match
+        // Or actually calculate it properly. A is 3x2. A' is 2x3. y is R3.
+        // We can't easily visualize R3 on 2D plot.
+        // Let's fix y3 = 0.5 (arbitrary) or just show 2 variables.
+        // Actually, let's just show a schematic or a different 2D dual example.
+        // For educational purposes, let's change problem to 2x2.
 
+        // Revised Problem for Visualization symmetry:
+        // P: max c'x, Ax <= b. x in R2.
+        // D: min b'y, A'y >= c. y in R2.
+        // Let's use a 2x2 A matrix for the visualization.
+        const A2 = [[1, 1], [1, 2]];
+        const b2 = [4, 6];
+
+        // Recalculate Primal with A2
+        let pPoly = [[0,0], [6,0], [6,6], [0,6]];
+        const pConstrs = [...A2.map((row, i) => [...row, b2[i]]), [-1, 0, 0], [0, -1, 0]];
+        pConstrs.forEach(k => { pPoly = clipPolygon(pPoly, k); });
+        const pSol = findOptimalVertex(pPoly, c, 'max');
+
+        // Dual: min b'y s.t. A'y >= c => -A'y <= -c
+        // y in R2
+        let dPoly = [[0,0], [6,0], [6,6], [0,6]];
+        // -A'y <= -c
+        // Row 1 of A': [1, 1] -> -y1 -y2 <= -c1
+        // Row 2 of A': [1, 2] -> -y1 -2y2 <= -c2
+        const dConstrs = [
+            [-1, -1, -c[0]],
+            [-1, -2, -c[1]],
+            [-1, 0, 0], [0, -1, 0]
+        ];
+        // Note: Dual standard form y>=0 usually matches <= constraints in primal.
+        // But here we want to minimize b'y.
+        // The dual feasible region is often unbounded upwards.
+        // We clip with a large box.
+
+        dConstrs.forEach(k => { dPoly = clipPolygon(dPoly, k); });
+        const dSol = findOptimalVertex(dPoly, b2, 'min');
+
+        // Redraw Primal (A2)
+        primalPlot.svg.select(".content").html('');
+        if (pPoly.length > 2) {
+            primalPlot.svg.select(".content").append("path").datum(pPoly)
+                .attr("d", d3.line().x(d=>primalPlot.x(d[0])).y(d=>primalPlot.y(d[1])))
+                .attr("fill", "rgba(59, 130, 246, 0.2)")
+                .attr("stroke", "var(--primary-500)");
+        }
+        if (pSol) {
+            const val = c[0]*pSol[0] + c[1]*pSol[1];
+            primalPlot.svg.select(".content").append("circle").attr("cx", primalPlot.x(pSol[0]))
+                .attr("cy", primalPlot.y(pSol[1])).attr("r", 6).attr("fill", "var(--color-success)");
+            primalPlot.svg.select(".content").append("text").text(`p*=${val.toFixed(2)}`).attr("x", primalPlot.x(pSol[0])).attr("y", primalPlot.y(pSol[1]) - 10).attr("fill", "var(--text-primary)");
+        }
+
+        // Draw Dual
         dualPlot.svg.select(".content").html('');
-        dualPlot.svg.select(".content").append("path").datum(dualFeasible)
-            .attr("d", d3.line().x(d=>dualPlot.x(d[0])).y(d=>dualPlot.y(d[1])))
-            .attr("fill", "var(--color-accent-light)");
-        if (dualSol) {
-            dualPlot.svg.select(".content").append("circle").attr("cx", dualPlot.x(dualSol[0]))
-                .attr("cy", dualPlot.y(dualSol[1])).attr("r", 6).attr("fill", "var(--color-success)");
-            dualPlot.svg.select(".content").append("text").attr("x", dualPlot.x(dualSol[0])).attr("y", dualPlot.y(dualSol[1]))
-                .attr("dy", "-1em").text(`d* = ${(b[0]*dualSol[0] + b[1]*dualSol[1]).toFixed(2)}`);
+        if (dPoly.length > 2) {
+            dualPlot.svg.select(".content").append("path").datum(dPoly)
+                .attr("d", d3.line().x(d=>dualPlot.x(d[0])).y(d=>dualPlot.y(d[1])))
+                .attr("fill", "rgba(16, 185, 129, 0.2)")
+                .attr("stroke", "var(--accent-500)");
+        }
+        if (dSol) {
+            const val = b2[0]*dSol[0] + b2[1]*dSol[1];
+            dualPlot.svg.select(".content").append("circle").attr("cx", dualPlot.x(dSol[0]))
+                .attr("cy", dualPlot.y(dSol[1])).attr("r", 6).attr("fill", "var(--color-success)");
+            dualPlot.svg.select(".content").append("text").text(`d*=${val.toFixed(2)}`).attr("x", dualPlot.x(dSol[0])).attr("y", dualPlot.y(dSol[1]) - 10).attr("fill", "var(--text-primary)");
         }
 
         // --- Output ---
-        const primalOptVal = primalSol ? c[0] * primalSol[0] + c[1] * primalSol[1] : NaN;
-        const dualOptVal = dualSol ? b[0] * dualSol[0] + b[1] * dualSol[1] : NaN;
+        const pVal = pSol ? c[0] * pSol[0] + c[1] * pSol[1] : NaN;
+        const dVal = dSol ? b2[0] * dSol[0] + b2[1] * dSol[1] : NaN;
+
         outputDiv.innerHTML = `
-            <strong>Primal Optimal Value:</strong> ${primalOptVal.toFixed(3)}<br>
-            <strong>Dual Optimal Value:</strong> ${dualOptVal.toFixed(3)} (projected to y₃=0)<br>
-            The dual is a 3D problem; this visualization shows a slice where the third dual variable is zero.
-            Strong duality holds: the optimal values are equal.
+            <div style="display:flex; justify-content:space-around;">
+                <div><strong>Primal (Max):</strong> ${isNaN(pVal) ? 'Unbounded/Infeasible' : pVal.toFixed(3)}</div>
+                <div><strong>Dual (Min):</strong> ${isNaN(dVal) ? 'Unbounded/Infeasible' : dVal.toFixed(3)}</div>
+            </div>
+            <div style="text-align:center; margin-top:8px; font-size:0.9em; color:var(--text-secondary);">
+                Gap: ${Math.abs(pVal - dVal).toFixed(4)} (Strong Duality)
+            </div>
         `;
     }
 
@@ -141,16 +228,9 @@ export function initDualityVisualizer(containerId) {
         return bestVertex;
     }
 
-    function halfPlaneToPolygon({a, b}) {
-        const p1 = [a[0]*b, a[1]*b];
-        const p2 = [p1[0] - a[1]*20, p1[1] + a[0]*20];
-        const p3 = [p1[0] + a[1]*20, p1[1] - a[0]*20];
-        return [p2, p3, ...p3.map((v,i) => v - a[i]*20), ...p2.map((v,i) => v - a[i]*20)];
-    }
-
     function setup() {
-        primalPlot = createPlot(primalPlotDiv, "Primal Problem");
-        dualPlot = createPlot(dualPlotDiv, "Dual Problem (y₃=0 slice)");
+        primalPlot = createPlot(primalPlotDiv, "Primal (R²)");
+        dualPlot = createPlot(dualPlotDiv, "Dual (R²)");
         update();
     }
 

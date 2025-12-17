@@ -3,7 +3,7 @@
  *
  * Description: Interactively demonstrates how convexity is preserved under operations
  *              like non-negative weighted sums, composition with affine maps, and pointwise maximum.
- * Version: 3.0.0
+ * Version: 3.1.0
  */
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
@@ -22,6 +22,7 @@ export function initOperationsPreserving(containerId) {
                          <option value="sum">Non-negative Weighted Sum</option>
                          <option value="affine">Composition with Affine Map</option>
                          <option value="max">Pointwise Maximum</option>
+                         <option value="composition">General Composition f(g(x))</option>
                     </select>
                 </div>
                  <div class="widget-control-group" id="op-specific-controls" style="flex: 2; flex-direction: row; gap: 16px;"></div>
@@ -40,7 +41,9 @@ export function initOperationsPreserving(containerId) {
     const funcs = {
         f1: x => x**2 - 1,
         f2: x => Math.exp(0.6 * x),
-        f3: x => Math.abs(x) - 1
+        f3: x => Math.abs(x) - 1,
+        g_conv: x => x - 1, // Convex g(x) = x-1
+        g_conc: x => 1 - x**2 // Concave g(x) = 1-x^2 (for composition test)
     };
 
     function setupChart() {
@@ -186,6 +189,71 @@ export function initOperationsPreserving(containerId) {
                 `;
              }
              drawMax();
+        } else if (operation === 'composition') {
+             // Interactive composition: h(x) = f(g(x))
+             // Rule: f convex non-decreasing & g convex => h convex
+             controlsContainer.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+                    <label class="widget-label">Outer f(u): <select id="comp-f" class="widget-select-sm" style="background:var(--bg-surface-3); border:1px solid var(--border-subtle); color:var(--text-primary);"><option value="exp">eᵘ (Convex, Incr)</option><option value="sq">u² (Convex, Not Incr)</option></select></label>
+                    <label class="widget-label">Inner g(x): <select id="comp-g" class="widget-select-sm" style="background:var(--bg-surface-3); border:1px solid var(--border-subtle); color:var(--text-primary);"><option value="convex">x²-1 (Convex)</option><option value="linear">x-1 (Convex)</option></select></label>
+                </div>
+             `;
+
+             const fSelect = controlsContainer.querySelector('#comp-f');
+             const gSelect = controlsContainer.querySelector('#comp-g');
+
+             const drawComp = () => {
+                 const fType = fSelect.value;
+                 const gType = gSelect.value;
+
+                 let outerF, outerName, outerProp;
+                 if (fType === 'exp') {
+                     outerF = u => Math.exp(0.5 * u); // scaled for view
+                     outerName = "e^{0.5u}";
+                     outerProp = "Convex, Non-decreasing";
+                 } else {
+                     outerF = u => u**2;
+                     outerName = "u²";
+                     outerProp = "Convex, Not Mono";
+                 }
+
+                 let innerG, innerName;
+                 if (gType === 'convex') {
+                     innerG = x => x**2 - 1;
+                     innerName = "x²-1";
+                 } else {
+                     innerG = x => x - 1;
+                     innerName = "x-1";
+                 }
+
+                 svg.select(".path1").style("display", null).datum(data.map(d => ({ x: d, y: innerG(d) }))).attr("d", line).attr("stroke", "var(--color-accent)");
+                 svg.select(".path2").style("display", "none");
+
+                 // Result h(x) = f(g(x))
+                 svg.select(".result-path").datum(data.map(d => ({ x: d, y: outerF(innerG(d)) }))).attr("d", line);
+
+                 let statusColor = "var(--color-success)";
+                 let statusText = "Preserves Convexity (f is non-decreasing)";
+                 if (fType === 'sq' && gType === 'convex') {
+                     statusColor = "var(--color-warning)";
+                     statusText = "May Not Be Convex (f is not non-decreasing)";
+                 }
+
+                 legendOutput.innerHTML = `
+                    <div style="display: flex; gap: 16px; align-items: center; justify-content: center;">
+                        <div style="color: var(--color-accent);">Inner g(x) = ${innerName}</div>
+                        <div style="color: var(--color-success);">Result h(x) = f(g(x))</div>
+                    </div>
+                    <div style="text-align: center; margin-top: 6px;">
+                        <div style="font-weight: bold;">Outer f(u) = ${outerName} (${outerProp})</div>
+                        <div style="font-size: 0.8rem; color: ${statusColor};">${statusText}</div>
+                    </div>
+                `;
+             };
+
+             fSelect.onchange = drawComp;
+             gSelect.onchange = drawComp;
+             drawComp();
         }
     }
 
