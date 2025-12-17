@@ -79,41 +79,40 @@
 
         <div class="proof-box">
           <h4>Proof (Constructive via Projection)</h4>
+          <p>This proof is the "heavy lifting" of convex geometry. We prove the strict separation case where $C$ is closed and $D$ is compact.</p>
 
           <div class="proof-step">
-            <strong>Step 1: Construct the Difference Set.</strong> Define the Minkowski difference $S = C - D = \{c - d \mid c \in C, d \in D\}$.
+            <strong>Step 1: Construct the Difference Set $S$.</strong>
+            Define the Minkowski difference $S = C - D = \{c - d \mid c \in C, d \in D\}$.
             <br>Since $C$ and $D$ are convex, their difference $S$ is also convex.
-            <br>Because $C$ and $D$ are disjoint, the origin $0$ is <b>not</b> in $S$. (If $0 = c-d$, then $c=d \in C \cap D$).
+            <br>Since $C$ is closed and $D$ is compact, $S$ is <b>closed</b> (this relies on compactness; the sum of two closed sets is not necessarily closed).
+            <br>Because $C \cap D = \emptyset$, the origin $0$ is <b>not</b> in $S$. (If $0 = c-d$, then $c=d \in C \cap D$).
           </div>
 
           <div class="proof-step">
-            <strong>Step 2: Project Zero onto the Closure.</strong> Let $\bar{S} = \mathrm{cl}(S)$. Since $S$ is convex, $\bar{S}$ is closed and convex.
-            <br>Let $p = \Pi_{\bar{S}}(0)$ be the projection of the origin onto $\bar{S}$.
-            <br>Assuming $0 \notin \bar{S}$ (which holds if $C, D$ are closed and one is compact), then $p \neq 0$.
+            <strong>Step 2: Project Zero onto $S$.</strong>
+            We want to find the point in $S$ closest to the origin.
+            Since $S$ is a non-empty, closed, convex set, there exists a unique point $p = \Pi_S(0)$ that minimizes the Euclidean norm $\|z\|_2$ for $z \in S$.
+            <br>Since $0 \notin S$, we must have $p \neq 0$, so $\|p\|_2 > 0$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 3: Characterize Projection.</strong> By the projection theorem, the projection $p$ of a point $x$ (here $x=0$) onto a closed convex set $\bar{S}$ is characterized by the inequality $(z - p)^\top (x - p) \le 0$ for all $z \in \bar{S}$.
-            <br>Substitute $x=0$:
-            $$ (z - p)^\top (0 - p) \le 0 \implies (z - p)^\top (-p) \le 0 $$
-            Expand the inner product:
-            $$ -z^\top p + p^\top p \le 0 \implies z^\top p \ge p^\top p = \|p\|_2^2 $$
-            Since $0 \notin \bar{S}$, $p \ne 0$, so $\|p\|_2^2 > 0$.
-            <br>Since every $z \in S$ is of the form $c - d$:
-            $$ (c - d)^\top p \ge \|p\|_2^2 \implies p^\top c - p^\top d \ge \|p\|_2^2 \implies p^\top c \ge p^\top d + \|p\|_2^2 $$
+            <strong>Step 3: Variational Characterization.</strong>
+            By the projection theorem, for any $z \in S$:
+            $$ (z - p)^\top (0 - p) \le 0 \implies (z - p)^\top (-p) \le 0 \implies z^\top p \ge p^\top p = \|p\|_2^2 $$
+            This inequality $z^\top p \ge \|p\|_2^2$ holds for all $z \in S$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 4: Define the Hyperplane.</strong> Set the normal vector $a = p$.
-            <br><i>Why?</i> Because $p$ points from the origin (which represents points in $D$ relative to $C$) towards $S=C-D$.
-            <br>The vector $p = \Pi_{\bar{S}}(0)$ is the shortest vector in the difference set. The hyperplane normal to $p$ passing through $p$ separates $S$ from 0.
-            <br>Define the scalar $b$ halfway between the boundaries:
-            $$ b = \sup_{d \in D} a^\top d + \frac{1}{2}\|p\|_2^2 $$
-            Then for all $c \in C, d \in D$:
-            $$ a^\top c = a^\top (c-d+d) = a^\top (c-d) + a^\top d \ge \|p\|_2^2 + a^\top d $$
-            Since this holds for any $d$, $a^\top c \ge \sup_d a^\top d + \|p\|_2^2 > b$.
-            And $b > \sup_d a^\top d \ge a^\top d$.
-            Thus, the hyperplane $\{x \mid a^\top x = b\}$ strictly separates $C$ and $D$.
+            <strong>Step 4: Translating back to $C$ and $D$.</strong>
+            Any point $z \in S$ is of the form $c - d$. Thus for all $c \in C, d \in D$:
+            $$ (c - d)^\top p \ge \|p\|_2^2 \implies p^\top c \ge p^\top d + \|p\|_2^2 $$
+            Let the normal vector be $a = -p$. (Note: We can choose $a=p$ or $a=-p$ depending on which side we want greater). Let's stick to the theorem statement form $a^\top x \le b$ for $C$.
+            <br>Let $a = -p$. Then $(-p)^\top c \ge (-p)^\top d + \|p\|_2^2 \implies -a^\top c \ge -a^\top d + \|a\|_2^2 \implies a^\top c \le a^\top d - \|a\|_2^2$.
+            <br>Define $b = \sup_{c \in C} a^\top c$. Then $b \le a^\top d - \|a\|_2^2$.
+            <br>We have $a^\top c \le b$ for all $c \in C$.
+            <br>For $d \in D$, $a^\top d \ge b + \|a\|_2^2 > b$ (since $\|a\|_2 > 0$).
+            <br>Thus, the hyperplane defined by $(a, b)$ strictly separates $C$ and $D$.
           </div>
         </div>
 
@@ -129,17 +128,32 @@
         </div>
 
         <div class="proof-box">
-          <h4>Proof (Limit of Separating Hyperplanes)</h4>
+          <h4>Proof (Limit Argument)</h4>
+          <p>This proof handles the subtle case where separation isn't strictly possible (touching at the boundary) by taking a limit.</p>
           <div class="proof-step">
-            <strong>Step 1: Point outside interior.</strong> Since $x_0 \in \partial C$ and $C$ is convex, $\mathrm{int}(C)$ is also convex. If $\mathrm{int}(C) = \emptyset$, $C$ lies in a lower-dimensional affine space, and any hyperplane containing that space supports $C$. Assume $\mathrm{int}(C) \neq \emptyset$. Then $x_0 \notin \mathrm{int}(C)$.
+            <strong>Step 1: Sequence of External Points.</strong>
+            Since $x_0$ is on the boundary $\partial C$, it is in the closure of the complement $\mathbb{R}^n \setminus \text{cl}(C)$.
+            Therefore, there exists a sequence of points $\{y_k\}$ such that $y_k \notin \text{cl}(C)$ and $y_k \to x_0$.
           </div>
           <div class="proof-step">
-            <strong>Step 2: Separation.</strong> By the Separating Hyperplane Theorem, there exists a hyperplane separating the disjoint convex sets $\{x_0\}$ and $\mathrm{int}(C)$. Let $a \neq 0$ be the normal such that:
-            $$ a^\top z \le a^\top x_0 \quad \forall z \in \mathrm{int}(C) $$
+            <strong>Step 2: Projection and Separation.</strong>
+            Since $\text{cl}(C)$ is closed and convex, for each $y_k$, there is a unique projection $p_k = \Pi_{\text{cl}(C)}(y_k)$.
+            By the separation theorem (constructive version), the vector $a_k = y_k - p_k$ defines a separating hyperplane:
+            $$ a_k^\top x \le a_k^\top p_k \quad \forall x \in C $$
+            Also note that $a_k \neq 0$ since $y_k \notin \text{cl}(C)$.
+            We normalize the normal vectors: let $u_k = a_k / \|a_k\|_2$. Then $\|u_k\|_2 = 1$.
+            $$ u_k^\top x \le u_k^\top p_k \quad \forall x \in C $$
           </div>
           <div class="proof-step">
-            <strong>Step 3: Continuity to Closure.</strong> Since the linear function $f(z) = a^\top z$ is continuous, the inequality holds for all points in the closure of $\mathrm{int}(C)$. For a convex set with nonempty interior, $\mathrm{cl}(\mathrm{int}(C)) = \mathrm{cl}(C)$.
-            Thus, $a^\top x \le a^\top x_0$ for all $x \in \mathrm{cl}(C)$, and specifically for all $x \in C$.
+            <strong>Step 3: Convergence.</strong>
+            The sequence $\{u_k\}$ lies on the unit sphere (a compact set). By the Bolzano-Weierstrass theorem, there exists a convergent subsequence $u_{k_j} \to a$, where $\|a\|_2 = 1$ (so $a \neq 0$).
+            Also, since $y_k \to x_0$ and $p_k$ is the projection of $y_k$, by continuity of projection, $p_k \to \Pi_{\text{cl}(C)}(x_0) = x_0$ (since $x_0 \in \text{cl}(C)$).
+          </div>
+          <div class="proof-step">
+            <strong>Step 4: Limit Inequality.</strong>
+            Taking the limit as $k \to \infty$ in the inequality $u_k^\top x \le u_k^\top p_k$:
+            $$ a^\top x \le a^\top x_0 \quad \forall x \in C $$
+            This $a$ is the normal vector of the supporting hyperplane at $x_0$.
           </div>
         </div>
 
