@@ -77,27 +77,24 @@
           $$
           <p>where $x_0$ is any specific point in $C$, and $V$ is a linear subspace of $\mathbb{R}^n$.</p>
           <div class="proof-box">
-            <h4>Proof</h4>
+            <h4>Proof: The Geometric Shift</h4>
             <div class="proof-step">
-              <strong>($\Leftarrow$):</strong> Suppose $C = x_0 + V$. Let $x_1, x_2 \in C$. Then $x_1 = x_0 + v_1$ and $x_2 = x_0 + v_2$ for some $v_1, v_2 \in V$.
+              <strong>($\Leftarrow$ Subspace $\to$ Affine):</strong> Suppose $C = x_0 + V$. Let $x_1, x_2 \in C$. Then $x_1 = x_0 + v_1$ and $x_2 = x_0 + v_2$ for some $v_1, v_2 \in V$.
               For any $\theta \in \mathbb{R}$:
               $$
               \theta x_1 + (1-\theta)x_2 = \theta(x_0 + v_1) + (1-\theta)(x_0 + v_2)
-            = \theta x_0 + (1-\theta)x_0 + \theta v_1 + (1-\theta)v_2
-              = x_0 + [\theta v_1 + (1-\theta)v_2]
+            = x_0 + [\theta v_1 + (1-\theta)v_2]
               $$
               Since $V$ is a subspace, it is closed under linear combinations, so the bracketed term is in $V$. Thus the combination is in $x_0 + V = C$.
             </div>
             <div class="proof-step">
-              <strong>($\Rightarrow$):</strong> Suppose $C$ is affine. Pick any $x_0 \in C$ and define $V = C - x_0 = \{x - x_0 \mid x \in C\}$. We show $V$ is a subspace.
+              <strong>($\Rightarrow$ Affine $\to$ Subspace):</strong> Suppose $C$ is affine. Pick any $x_0 \in C$ and define $V = C - x_0$. We show $V$ is a subspace.
               <ul>
-                <li>$0 \in V$ since $x_0 \in C$.</li>
-              <li>To show $V$ is closed under scalar multiplication and addition:
-                <br>Let $v \in V$ and $\alpha \in \mathbb{R}$. Then $v+x_0 \in C$. Since $C$ is affine, $\alpha(v+x_0) + (1-\alpha)x_0 = \alpha v + x_0 \in C$. Thus $\alpha v \in V$.
-                <br>Let $u, v \in V$. Then $u+x_0, v+x_0 \in C$. Since $C$ is affine, $\frac{1}{2}(u+x_0) + \frac{1}{2}(v+x_0) = \frac{1}{2}(u+v) + x_0 \in C$. Thus $\frac{1}{2}(u+v) \in V$. By scaling (proven above), $u+v \in V$.
-              </li>
+                <li><b>Contains zero:</b> $x_0 - x_0 = 0 \in V$.</li>
+                <li><b>Closed under scaling:</b> Let $v \in V$, so $x_0 + v \in C$. Since $C$ is affine, the combination $\alpha(x_0 + v) + (1-\alpha)x_0 = x_0 + \alpha v$ is in $C$. Thus $\alpha v \in V$.</li>
+                <li><b>Closed under addition:</b> Let $u, v \in V$. Then $x_0+u, x_0+v \in C$. Since $C$ is affine, the midpoint $\frac{1}{2}(x_0+u) + \frac{1}{2}(x_0+v) = x_0 + \frac{1}{2}(u+v)$ is in $C$. Thus $\frac{1}{2}(u+v) \in V$. By scaling (proven above), $u+v \in V$.</li>
               </ul>
-              Thus $C = x_0 + V$.
+              Thus $V$ is a subspace.
             </div>
           </div>
         </div>
@@ -432,11 +429,11 @@
 
         <h3>2.4 The Positive Semidefinite (PSD) Cone</h3>
 
-        <p>The set of symmetric positive semidefinite matrices is a central object in modern convex optimization, forming the feasible region for <b>Semidefinite Programming (SDP)</b> (<a href="../08-convex-problems-conic/index.html">Lecture 08</a>). Its geometry relies on eigenvalue and quadratic-form characterizations from <a href="../00-linear-algebra-basics/index.html">Lecture 00</a> (and the SVD viewpoint in <a href="../01-linear-algebra-advanced/index.html">Lecture 01</a>).</p>
+        <p>The set of symmetric positive semidefinite matrices forms a convex cone, denoted $\mathbb{S}^n_+$. This object is the engine of <b>Semidefinite Programming (SDP)</b>.</p>
         $$
         \mathbb{S}^n_+ = \{X \in \mathbb{S}^n \mid X \succeq 0\}
         $$
-        <p><b>Connection to Lecture 00:</b> Recall that PSD matrices generalize non-negative numbers. Just as the non-negative orthant $\mathbb{R}^n_+$ generalizes the ray $[0, \infty)$, the PSD cone $\mathbb{S}^n_+$ generalizes non-negativity to matrix space. The condition $X \succeq 0$ means that $X$ has "non-negative energy" in every direction $z$.</p>
+        <p><b>Generalized Inequalities:</b> As we will detail in <a href="../04-convex-sets-cones/index.html">Lecture 04</a>, a convex cone $K$ induces a partial ordering on the vector space. For the PSD cone, we write $X \succeq Y$ to mean $X - Y \in \mathbb{S}^n_+$ (i.e., $X-Y$ is PSD). This generalizes the standard inequality $\ge$ on real numbers.</p>
 
         <figure style="text-align: center; margin: 24px 0;">
           <img src="assets/psd-cone-3d.png"
@@ -648,40 +645,42 @@
           <p>We want to show that if $u, v$ are in the perspective image $P(C)$, then the entire line segment connecting them is also in $P(C)$.</p>
 
           <div class="proof-step">
-            <strong>Step 1: Lift to the source set.</strong>
-            Since $u \in P(C)$, there is a preimage point $(y, t) \in C$ such that $u = y/t$.
-            Since $v \in P(C)$, there is a preimage point $(y', t') \in C$ such that $v = y'/t'$.
+            <strong>Step 1: Lift to the source set (Pre-image).</strong>
+            Since $u \in P(C)$, there exists $(y, t) \in C$ with $t>0$ such that $u = y/t$.
+            Since $v \in P(C)$, there exists $(y', t') \in C$ with $t'>0$ such that $v = y'/t'$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 2: Construct a target point in the image.</strong>
-            Pick any $\alpha \in [0, 1]$. We want to show the point $w = \alpha u + (1-\alpha)v$ is in $P(C)$.
+            <strong>Step 2: Target point (Image).</strong>
+            Consider a point on the segment in the image space: $w = \alpha u + (1-\alpha)v$ for $\alpha \in [0, 1]$.
             $$ w = \alpha \frac{y}{t} + (1-\alpha) \frac{y'}{t'} $$
           </div>
 
           <div class="proof-step">
-            <strong>Step 3: Find a convex combination in the domain.</strong>
-            We need to find a $\mu \in [0, 1]$ such that the perspective of the combination $z = \mu(y,t) + (1-\mu)(y', t')$ equals $w$.
-            $$ P(z) = \frac{\mu y + (1-\mu)y'}{\mu t + (1-\mu)t'} $$
-            We equate $P(z) = w$. This requires matching the relative weights of the terms $y/t$ and $y'/t'$.
-            Let the denominator be $D = \mu t + (1-\mu)t'$. We require:
-            $$ \frac{\mu}{D} = \frac{\alpha}{t} \quad \text{and} \quad \frac{1-\mu}{D} = \frac{1-\alpha}{t'} $$
+            <strong>Step 3: Construct the convex combination in the domain.</strong>
+            We need to find a point in $C$ that maps to $w$. This point will be a convex combination of $(y,t)$ and $(y',t')$.
+            The perspective map is non-linear, so the mixing weights in the domain ($\mu$) will be different from the mixing weights in the image ($\alpha$).
+            We define the weights proportional to the denominators:
+            $$ \mu = \frac{\alpha t'}{\alpha t' + (1-\alpha)t} $$
+            Note that $\mu \in [0, 1]$ because $t, t' > 0$.
+            Consider the point $z = \mu (y, t) + (1-\mu) (y', t')$. Since $C$ is convex, $z \in C$.
           </div>
 
           <div class="proof-step">
-            <strong>Step 4: Solve for the mixing weight $\mu$.</strong>
-            From $\mu t = \alpha D$, we get $\mu = \alpha D / t$.
-            Substitute $D = \mu t + (1-\mu)t'$ and solve for $\mu$.
-            Algebraically, this yields:
-            $$ \mu = \frac{\alpha t'}{\alpha t' + (1-\alpha)t} $$
-            Since $t, t' > 0$ and $\alpha \in [0,1]$, this $\mu$ is always in $[0,1]$.
+            <strong>Step 4: Verify mapping.</strong>
+            Let's calculate $P(z)$. The $t$-coordinate of $z$ is $D = \mu t + (1-\mu)t'$.
+            Substituting $\mu$:
+            $$ D = \frac{\alpha t' t + (1-\alpha)t t'}{\alpha t' + (1-\alpha)t} = \frac{tt'}{\alpha t' + (1-\alpha)t} $$
+            The $y$-coordinate of $z$ is $Y_{num} = \mu y + (1-\mu) y'$.
+            $$ P(z) = \frac{Y_{num}}{D} = \frac{\mu}{D} y + \frac{1-\mu}{D} y' $$
+            Calculating the coefficients: $\frac{\mu}{D} = \frac{\alpha t' / (\dots)}{t t' / (\dots)} \cdot \frac{1}{t} ... $ wait, simpler algebra:
+            $$ \mu = \frac{\alpha/t}{\alpha/t + (1-\alpha)/t'} \implies \frac{\mu}{\mu t + (1-\mu)t'} = \frac{\alpha}{t} $$
+            Thus $P(z) = \frac{\alpha}{t} y + \frac{1-\alpha}{t'} y' = \alpha u + (1-\alpha) v = w$.
           </div>
 
           <div class="proof-step">
             <strong>Conclusion:</strong>
-            Since $C$ is convex, the point $z$ formed by $\mu$ is in $C$.
-            By construction, $P(z) = w$.
-            Thus $w \in P(C)$. Therefore, $P(C)$ is convex.
+            We found a point $z \in C$ such that $P(z) = w$. Thus $w \in P(C)$.
           </div>
         </div>
 

@@ -100,13 +100,17 @@
 
         <div class="insight">
           <h4>Why Affine Equality Constraints?</h4>
-          <p>We require equality constraints to be linear ($Ax=b$) because general convex equality constraints ($h(x)=0$) destroy convexity.</p>
+          <p>We strictly require equality constraints to be linear ($Ax=b$). Why can't we allow $h(x)=0$ for a convex function $h$?</p>
+          <p>The set $\{x \mid h(x)=0\}$ is the intersection of $\{x \mid h(x) \le 0\}$ and $\{x \mid h(x) \ge 0\}$.
+          <br>While the first set (sublevel) is convex, the second set (superlevel) is generally concave and <b>not convex</b> (unless $h$ is linear).
+          </p>
           <div class="example">
             <h4>🚫 Counter-Example: The Circle Boundary</h4>
-            <p>Consider the constraint $x_1^2 + x_2^2 = 1$. The function $h(x) = x_1^2 + x_2^2 - 1$ is convex. However, the set of points satisfying $h(x)=0$ is the <b>boundary</b> of the unit circle.</p>
+            <p>Consider the constraint $x_1^2 + x_2^2 = 1$. Let $h(x) = x_1^2 + x_2^2 - 1$. This function is convex.
+            <br>The equality constraint $h(x)=0$ defines the <b>boundary</b> of the unit circle.</p>
             <ul>
-              <li>The points $(-1, 0)$ and $(1, 0)$ are feasible.</li>
-              <li>Their midpoint $(0, 0)$ is <b>not</b> feasible ($0^2 + 0^2 \neq 1$).</li>
+              <li>The points $A=(-1, 0)$ and $B=(1, 0)$ are feasible.</li>
+              <li>Their midpoint $M=(0, 0)$ is <b>not</b> feasible ($0^2 + 0^2 = 0 \neq 1$).</li>
             </ul>
             <p>Thus, the feasible set is not convex. In convex optimization, we can constrain solutions to be <i>inside</i> a bowl ($f_i(x) \le 0$) or <i>on</i> a flat plane ($Ax=b$), but not on the curved boundary of a bowl.</p>
           </div>
@@ -932,10 +936,13 @@
 
         <div class="subsection">
           <h4>Pattern: Perspective Transformation</h4>
-          <p><b>Key result:</b> The function $f(x,t) = \frac{\|x\|_2^2}{t}$ for $t > 0$ is convex and can be represented as a second-order cone constraint:</p>
+          <p>The function $f(x,t) = \frac{\|x\|_2^2}{t}$ (where domain is $t > 0$) is called the <b>quadratic-over-linear</b> function. It is convex because it is the perspective of the convex function $g(x)=x^2$ (generalized to vectors).</p>
+          <p>The epigraph condition $\frac{\|x\|_2^2}{t} \le s$ can be rewritten as a rotated second-order cone constraint:</p>
           $$
-          \frac{\|x\|_2^2}{t} \le s \quad \iff \quad \|(2x, s-t)\|_2 \le s + t
+          \|x\|_2^2 \le ts \quad \iff \quad \left\| \begin{bmatrix} 2x \\ s-t \end{bmatrix} \right\|_2 \le s+t
           $$
+          <p><i>Derivation:</i> $(s+t)^2 - (s-t)^2 = (s^2 + 2st + t^2) - (s^2 - 2st + t^2) = 4st$.
+          <br>So the norm inequality squares to $4\|x\|^2 + (s-t)^2 \le (s+t)^2 \iff 4\|x\|^2 \le 4st \iff \|x\|^2 \le st$.</p>
         </div>
 
         <div class="example">
