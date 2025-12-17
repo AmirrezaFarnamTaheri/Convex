@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initPageSettings();
     initHeaderFontSize();
     initSidebarToggle();
+    initBackToTop(); // Added Back to Top
     // initThemeSwitcher(); // Moved to theme-switcher.js
     feather.replace();
 });
@@ -530,5 +531,55 @@ function initSidebarToggle() {
         const collapsed = sidebar.classList.toggle('collapsed');
         localStorage.setItem('sidebar-collapsed', collapsed);
         window.dispatchEvent(new Event('resize'));
+    });
+}
+
+/* =========================================
+   5. BACK TO TOP BUTTON
+   ========================================= */
+function initBackToTop() {
+    if (document.getElementById('back-to-top')) return;
+
+    const btn = document.createElement('button');
+    btn.id = 'back-to-top';
+    btn.className = 'btn btn-primary';
+    btn.innerHTML = '<i data-feather="arrow-up"></i>';
+    btn.title = 'Back to Top';
+    btn.style.position = 'fixed';
+    btn.style.bottom = '20px';
+    btn.style.right = '20px';
+    btn.style.zIndex = '1020';
+    btn.style.borderRadius = '50%';
+    btn.style.width = '48px';
+    btn.style.height = '48px';
+    btn.style.padding = '0';
+    btn.style.display = 'flex';
+    btn.style.alignItems = 'center';
+    btn.style.justifyContent = 'center';
+    btn.style.boxShadow = 'var(--shadow-lg)';
+    btn.style.opacity = '0';
+    btn.style.transform = 'translateY(20px)';
+    btn.style.transition = 'all 0.3s ease';
+    btn.style.pointerEvents = 'none';
+
+    document.body.appendChild(btn);
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            btn.style.opacity = '1';
+            btn.style.transform = 'translateY(0)';
+            btn.style.pointerEvents = 'all';
+        } else {
+            btn.style.opacity = '0';
+            btn.style.transform = 'translateY(20px)';
+            btn.style.pointerEvents = 'none';
+        }
+    });
+
+    btn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     });
 }
