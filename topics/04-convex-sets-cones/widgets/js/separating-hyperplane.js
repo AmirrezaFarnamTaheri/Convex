@@ -268,8 +268,16 @@ export function initSeparatingHyperplane(containerId) {
              `;
              svg.select(".separator").style("opacity", 0);
              svg.select(".dist-line").style("opacity", 0);
+
+             // Visual feedback for intersection
+             svg.select(".path1").attr("fill", "rgba(239, 68, 68, 0.4)").attr("stroke", "var(--color-error)");
+             svg.select(".path2").attr("fill", "rgba(239, 68, 68, 0.4)").attr("stroke", "var(--color-error)");
              return;
         }
+
+        // Restore colors if separated
+        svg.select(".path1").attr("fill", "rgba(124, 197, 255, 0.4)").attr("stroke", "var(--color-primary)");
+        svg.select(".path2").attr("fill", "rgba(128, 255, 176, 0.4)").attr("stroke", "var(--color-accent)");
 
         // Hyperplane passes through midpoint of shortest link, perpendicular to it.
         const mid = [(pA[0] + pB[0])/2, (pA[1] + pB[1])/2];
@@ -293,9 +301,10 @@ export function initSeparatingHyperplane(containerId) {
         }
 
         const sepGroup = svg.select(".separator");
-        sepGroup.style("opacity", 1);
+        sepGroup.transition().duration(200).style("opacity", 1);
 
         sepGroup.select(".hyperplane")
+            .transition().duration(200)
             .attr("x1", x1).attr("y1", y1)
             .attr("x2", x2).attr("y2", y2);
 

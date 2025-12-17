@@ -62,8 +62,14 @@ class PomodoroWidget {
                 </div>
             </div>
 
-            <div class="pomodoro-body" style="padding:16px; text-align:center;">
-                <div class="pomodoro-time" style="font-family:var(--font-mono); font-size:2.5rem; font-weight:700; margin-bottom:12px; color:var(--text-heading);">${this.formatTime(this.timeLeft)}</div>
+            <div class="pomodoro-body" style="padding:16px; text-align:center; position: relative;">
+                <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 12px;">
+                    <svg width="120" height="120" viewBox="0 0 120 120" style="transform: rotate(-90deg);">
+                        <circle cx="60" cy="60" r="54" fill="none" stroke="var(--bg-surface-3)" stroke-width="4"></circle>
+                        <circle id="pomo-progress" cx="60" cy="60" r="54" fill="none" stroke="var(--primary-500)" stroke-width="4" stroke-dasharray="339.292" stroke-dashoffset="0" stroke-linecap="round"></circle>
+                    </svg>
+                    <div class="pomodoro-time" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family:var(--font-mono); font-size:2rem; font-weight:700; color:var(--text-heading); margin: 0;">${this.formatTime(this.timeLeft)}</div>
+                </div>
 
                 <div class="pomodoro-controls" style="display:flex; justify-content:center; gap:8px;">
                     <button class="btn btn-primary btn-sm" id="pomo-toggle" style="width:80px;">
@@ -72,6 +78,10 @@ class PomodoroWidget {
                     <button class="btn btn-ghost btn-sm" id="pomo-reset" title="Reset">
                         <i data-feather="rotate-ccw" style="width:14px;"></i>
                     </button>
+                </div>
+
+                <div style="margin-top: 12px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <input type="checkbox" id="pomo-sound" style="margin: 0;"> <label for="pomo-sound" style="cursor: pointer; color: var(--text-secondary);">Sound</label>
                 </div>
             </div>
 
@@ -93,20 +103,31 @@ class PomodoroWidget {
         this.container = container;
         this.header = container.querySelector('.pomodoro-header');
         this.display = container.querySelector('.pomodoro-time');
+        this.progressCircle = container.querySelector('#pomo-progress');
         this.toggleBtn = container.querySelector('#pomo-toggle');
         this.statusIcon = container.querySelector('.pomodoro-status i');
         this.statusText = container.querySelector('.pomodoro-status .status-text');
         this.settingsPanel = container.querySelector('.pomodoro-settings');
         this.body = container.querySelector('.pomodoro-body');
         this.minimizeBtn = container.querySelector('#pomo-minimize-btn');
+        this.soundToggle = container.querySelector('#pomo-sound');
+
+        // Restore sound pref
+        this.soundEnabled = localStorage.getItem('pomodoro-sound') === 'true';
+        this.soundToggle.checked = this.soundEnabled;
 
         this.toggleBtn.onclick = () => this.toggle();
         container.querySelector('#pomo-reset').onclick = () => this.reset();
         container.querySelector('#pomo-settings-btn').onclick = () => this.toggleSettings();
         container.querySelector('#pomo-save-settings').onclick = () => this.saveSettings();
         this.minimizeBtn.onclick = () => this.toggleMinimize();
+        this.soundToggle.onchange = (e) => {
+            this.soundEnabled = e.target.checked;
+            localStorage.setItem('pomodoro-sound', this.soundEnabled);
+        };
 
         this.initDragging();
+        this.updateProgress();
 
         if (typeof Resizable !== 'undefined') {
             new Resizable(this.container, { saveKey: 'pomodoro', handles: [] }); // No resize needed really
@@ -117,6 +138,22 @@ class PomodoroWidget {
         }
 
         if (typeof feather !== 'undefined') feather.replace();
+    }
+
+    updateProgress() {
+        if (!this.progressCircle) return;
+        const total = (this.mode === 'work' ? this.workDuration : this.breakDuration) * 60;
+        const percent = this.timeLeft / total;
+        // Circumference = 2 * PI * 54 ≈ 339.292
+        const dashOffset = 339.292 * (1 - percent);
+        this.progressCircle.style.strokeDashoffset = dashOffset;
+
+        // Color transition
+        if (this.mode === 'work') {
+            this.progressCircle.style.stroke = 'var(--primary-500)';
+        } else {
+            this.progressCircle.style.stroke = 'var(--success)';
+        }
     }
 
     initDragging() {
@@ -173,9 +210,11 @@ class PomodoroWidget {
         if (isHidden) {
             this.minimizeBtn.innerHTML = '<i data-feather="maximize-2" style="width:14px;"></i>';
             this.statusText.textContent = this.formatTime(this.timeLeft);
+            this.container.style.width = '160px'; // Compact mode
         } else {
             this.minimizeBtn.innerHTML = '<i data-feather="minus" style="width:14px;"></i>';
             this.statusText.textContent = this.mode === 'work' ? 'Focus' : 'Break';
+            this.container.style.width = '240px'; // Normal mode
         }
 
         if (save) localStorage.setItem('pomodoro-minimized', isHidden);
@@ -202,6 +241,7 @@ class PomodoroWidget {
         this.timerId = setInterval(() => {
             this.timeLeft--;
             this.display.textContent = this.formatTime(this.timeLeft);
+            this.updateProgress();
             document.title = `(${this.formatTime(this.timeLeft)}) Convex Opt`;
             
             if (this.body.classList.contains('hidden')) {
@@ -225,6 +265,7 @@ class PomodoroWidget {
         this.pause();
         this.timeLeft = (this.mode === 'work' ? this.workDuration : this.breakDuration) * 60;
         this.display.textContent = this.formatTime(this.timeLeft);
+        this.updateProgress();
         this.toggleBtn.innerHTML = '<i data-feather="play" style="width:14px;"></i> Start';
         if (typeof feather !== 'undefined') feather.replace();
     }
@@ -232,6 +273,8 @@ class PomodoroWidget {
     complete() {
         this.pause();
         this.sendNotification();
+        if (this.soundEnabled) this.playSound();
+
         if (this.mode === 'work') {
             this.mode = 'break';
             this.timeLeft = this.breakDuration * 60;
@@ -244,8 +287,32 @@ class PomodoroWidget {
             this.statusIcon.setAttribute('data-feather', 'briefcase');
         }
         this.display.textContent = this.formatTime(this.timeLeft);
+        this.updateProgress();
         this.toggleBtn.innerHTML = '<i data-feather="play" style="width:14px;"></i> Start';
         if (typeof feather !== 'undefined') feather.replace();
+    }
+
+    playSound() {
+        // Simple Beep using Web Audio API
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.value = 880; // A5
+            gain.gain.value = 0.1;
+            osc.start();
+
+            // Fade out
+            gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.5);
+            osc.stop(ctx.currentTime + 0.5);
+        } catch (e) {
+            console.warn('Audio play failed', e);
+        }
     }
 
     toggleSettings() {

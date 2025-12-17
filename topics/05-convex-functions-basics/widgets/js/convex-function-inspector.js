@@ -163,16 +163,30 @@ export function initConvexFunctionInspector(containerId) {
         width = canvas.clientWidth - margin.left - margin.right;
         height = canvas.clientHeight - margin.top - margin.bottom;
 
-        svg = d3.select(canvas).append("svg")
+        const mainSvg = d3.select(canvas).append("svg")
             .attr("width", "100%").attr("height", "100%")
-            .attr("viewBox", `0 0 ${canvas.clientWidth} ${canvas.clientHeight}`)
-            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+            .attr("viewBox", `0 0 ${canvas.clientWidth} ${canvas.clientHeight}`);
+
+        // Define gradient
+        const defs = mainSvg.append("defs");
+        const grad = defs.append("linearGradient")
+            .attr("id", "epigraph-gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
+        grad.append("stop").attr("offset", "0%").attr("stop-color", "rgba(59, 130, 246, 0.1)");
+        grad.append("stop").attr("offset", "100%").attr("stop-color", "rgba(59, 130, 246, 0.3)");
+
+        svg = mainSvg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
         // Interaction rect
         svg.append("rect").attr("width", width).attr("height", height)
             .attr("fill", "transparent")
             .on("click", handleClick)
-            .on("mousemove", handleMouseMove);
+            .on("mousemove", handleMouseMove)
+            // Touch support
+            .on("touchmove", handleMouseMove);
 
         x = d3.scaleLinear().range([0, width]);
         y = d3.scaleLinear().range([height, 0]);
@@ -183,7 +197,7 @@ export function initConvexFunctionInspector(containerId) {
         svg.append("g").attr("class", "axis-y");
 
         // Layers order matters
-        svg.append("path").attr("class", "layer-epigraph-area").attr("fill", "rgba(24, 144, 255, 0.1)").style("opacity", 0);
+        svg.append("path").attr("class", "layer-epigraph-area").attr("fill", "url(#epigraph-gradient)").style("opacity", 0);
         svg.append("path").attr("class", "function-curve").attr("fill", "none").attr("stroke", "var(--primary-500)").attr("stroke-width", 3);
 
         svg.append("line").attr("class", "layer-tangent-line").attr("stroke", "var(--accent-500)").attr("stroke-width", 2).attr("stroke-dasharray", "5 5").style("opacity", 0);
@@ -233,7 +247,12 @@ export function initConvexFunctionInspector(containerId) {
                 .x(d => x(d.x))
                 .y0(d => y(d.y))
                 .y1(0); // Top of SVG coordinate space is 0
-             svg.select(".layer-epigraph-area").datum(data).attr("d", area).style("opacity", 1);
+
+             svg.select(".layer-epigraph-area")
+                .datum(data)
+                .attr("d", area)
+                .style("opacity", 1)
+                .attr("fill", "url(#epigraph-gradient)"); // Use gradient
         } else {
             svg.select(".layer-epigraph-area").style("opacity", 0);
         }
@@ -277,8 +296,14 @@ export function initConvexFunctionInspector(containerId) {
              const ty = func(tx);
              const slope = selectedFunc.grad(tx);
 
-             // Draw Point
-             svg.select(".tangent-pt").attr("cx", x(tx)).attr("cy", y(ty)).style("opacity", 1);
+             // Draw Point with halo for draggability visual
+             svg.select(".tangent-pt")
+                .attr("cx", x(tx))
+                .attr("cy", y(ty))
+                .attr("r", 6)
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 2)
+                .style("opacity", 1);
 
              // Draw Line (y = slope*(x - tx) + ty)
              const y1 = slope*(domain[0] - tx) + ty;

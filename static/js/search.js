@@ -41,7 +41,10 @@ class GlobalSearch {
             <div class="search-input-wrapper">
                 <i data-feather="search" class="search-icon"></i>
                 <input type="text" placeholder="Search... (Cmd+K)" id="global-search-input" autocomplete="off" aria-label="Search">
-                <div class="search-shortcut">⌘K</div>
+                <div class="search-shortcut" style="display:flex; gap:4px; align-items:center;">
+                    <span style="background:rgba(255,255,255,0.1); padding:2px 5px; border-radius:3px;">⌘</span>
+                    <span style="background:rgba(255,255,255,0.1); padding:2px 5px; border-radius:3px;">K</span>
+                </div>
             </div>
             <div class="search-results-dropdown hidden" id="search-results"></div>
         `;
@@ -217,7 +220,13 @@ class GlobalSearch {
         this.resultsContainer.innerHTML = '';
 
         if (this.results.length === 0) {
-            this.resultsContainer.innerHTML = '<div style="padding:12px; text-align:center; color:var(--text-tertiary); font-size:var(--text-sm);">No results found.</div>';
+            this.resultsContainer.innerHTML = `
+                <div style="padding:20px; text-align:center; color:var(--text-tertiary); font-size:var(--text-sm);">
+                    <i data-feather="frown" style="width:24px; height:24px; margin-bottom:8px; opacity:0.5;"></i>
+                    <div>No results found for "<b>${this.escapeHtml(query)}</b>".</div>
+                    <div style="font-size:0.75rem; margin-top:4px;">Try searching for "convex", "gradient", or "dual".</div>
+                </div>`;
+            if (typeof feather !== 'undefined') feather.replace();
             return;
         }
 
@@ -287,7 +296,7 @@ class GlobalSearch {
 
     highlightText(text, query) {
         const terms = query.toLowerCase().split(/\s+/).filter(t => t);
-        let html = text; // Assumed safe plain text
+        let html = this.escapeHtml(text);
 
         // Sort terms by length desc to handle overlapping
         terms.sort((a, b) => b.length - a.length);
@@ -299,6 +308,15 @@ class GlobalSearch {
             html = html.replace(regex, '<mark style="background:rgba(251,191,36,0.2); color:var(--warning); padding:0 1px; border-radius:2px;">$1</mark>');
         });
         return html;
+    }
+
+    escapeHtml(text) {
+        if (!text) return '';
+        return text.replace(/&/g, "&amp;")
+                   .replace(/</g, "&lt;")
+                   .replace(/>/g, "&gt;")
+                   .replace(/"/g, "&quot;")
+                   .replace(/'/g, "&#039;");
     }
 
     handleKeydown(e) {
