@@ -254,8 +254,13 @@
           $$
           f(\theta x + (1-\theta)y) \le \theta f(x) + (1-\theta)f(y) - \frac{m}{2} \theta(1-\theta) \|x - y\|_2^2
           $$
-          <p>Equivalently, $f(x) - \frac{m}{2}\|x\|_2^2$ is convex.</p>
-          <p><b>Implication:</b> Strong convexity provides a quadratic lower bound on the growth of the function, leading to fast convergence rates in optimization algorithms.</p>
+          <p>Equivalently, the function $g(x) = f(x) - \frac{m}{2}\|x\|_2^2$ is convex. For differentiable functions, this implies a <b>quadratic lower bound</b>:</p>
+          $$ f(y) \ge f(x) + \nabla f(x)^\top (y - x) + \frac{m}{2}\|y - x\|_2^2 $$
+          <p><b>Optimization Significance:</b>
+          <ul>
+            <li><b>Condition Number:</b> If $f$ is $m$-strongly convex and has $L$-Lipschitz gradients ($\nabla^2 f \preceq LI$), the condition number is $\kappa = L/m$. Gradient descent converges at a linear rate determined by $(1 - 1/\kappa)$.</li>
+            <li><b>Stability:</b> The solution is stable to perturbations in the objective. A small change $\epsilon$ in the gradient moves the minimizer by at most $\epsilon/m$.</li>
+          </ul></p>
         </div>
 
         <h3>1.6 Concave Functions</h3>
@@ -378,8 +383,9 @@
         </div>
 
         <div class="insight">
-          <h4>⚡ Why This Matters</h4>
-          <p>The epigraph characterization lets us translate between function convexity and set convexity. Many operations on functions (e.g., infimal convolution) can be understood as operations on their epigraphs (e.g., Minkowski sum).</p>
+          <h4>⚡ Why This Matters: The Bridge</h4>
+          <p>The epigraph is the <b>fundamental bridge</b> between <a href="../03-convex-sets-geometry/index.html">Lecture 03 (Sets)</a> and this lecture. It allows us to apply geometric theorems (like separation of convex sets) to derive functional properties (like subgradients and duality).
+          <br><b>Rule of Thumb:</b> If you are stuck proving a function property, try rewriting it as a set property of its epigraph.</p>
         </div>
 
         <h3>2.3 Convex Hull of a Function</h3>
@@ -1049,7 +1055,8 @@
 
 
 
-        <h3>5.5 Composition Rules</h3>
+        <h3>5.5 Composition Rules: The Algebra of Convexity</h3>
+        <p>Recognizing convexity is often about parsing a function into a composition of atomic convex functions. We use a set of recursive rules.</p>
 
         <div class="theorem-box">
           <h4>1. Affine Composition</h4>

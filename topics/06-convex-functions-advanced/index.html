@@ -61,6 +61,11 @@
       \boxed{f^*(y) := \sup_{x\in\mathrm{dom} f} \big( y^\top x - f(x) \big), \quad y\in\mathbb{R}^n}
       $$
 
+      <div class="interpretation-box">
+        <p><b>Economic Interpretation (Prices & Profit):</b> Imagine $x$ is a production plan and $f(x)$ is the cost of production. If the market price vector is $y$, then the revenue is $y^\top x$. The term $y^\top x - f(x)$ represents the <b>net profit</b>.
+        <br>The conjugate $f^*(y)$ is the <b>maximum possible profit</b> achievable given prices $y$. This explains why $f^*$ is convex: profit is the pointwise supremum of linear functions (revenue minus fixed cost) as prices vary.</p>
+      </div>
+
       <h3>Supporting Hyperplane Viewpoint</h3>
       <p>Fix $y \in \mathbb{R}^n$. Consider affine functions of $x$ with slope $y$:
       $$ \ell_y(x) = y^\top x - c, \quad c \in \mathbb{R} $$
@@ -79,9 +84,6 @@
         </ul>
       </div>
 
-      <div class="interpretation-box">
-        <p><b>Economic interpretation (value/profit function):</b> The expression $y^\top x - f(x)$ is “revenue minus cost” if $y$ is a price vector and $f(x)$ is a cost (or disutility). The conjugate $f^*(y)$ is the <i>best achievable net value</i> at prices $y$. This is exactly the object that appears in duality: dual variables act like prices that score primal decisions via inner products.</p>
-      </div>
 
       <h3>1.2 Why $f^*$ is Always Convex</h3>
       <p>A crucial property is that $f^*$ is convex <b>regardless</b> of whether $f$ is convex.</p>
@@ -391,8 +393,12 @@
         <h4>Necessary Condition</h4>
         <p>If $f$ is quasiconvex, then for any $x \in \mathrm{dom}\, f$ and $y \in \mathbb{R}^n$:
         $$ y^\top \nabla f(x) = 0 \implies y^\top \nabla^2 f(x) y \ge 0 $$
-        <i>Interpretation:</i> If we look in a direction $y$ tangent to the level set ($\nabla f \perp y$), the function must curve upwards (positive curvature). The level sets cannot curve "inward" to create a disconnected or non-convex shape.
-        <br><b>1D Case:</b> This reduces to $f'(x) = 0 \implies f''(x) \ge 0$. A quasiconvex function on $\mathbb{R}$ cannot have a strict interior local maximum (which would have $f'=0, f''<0$). It effectively means the function has at most one "valley": it decreases, then possibly stays flat, then increases.</p>
+        <i>Interpretation:</i> If we look in a direction $y$ tangent to the level set ($\nabla f \perp y$), the function must curve upwards (positive curvature). The level sets cannot curve "inward" to create a disconnected or non-convex shape.</p>
+        <div class="insight">
+            <h4>Quasiconvexity vs. Unimodality</h4>
+            <p>In 1D, quasiconvexity is equivalent to being <b>unimodal</b> (decreasing then increasing).
+            <br>In high dimensions, quasiconvexity requires that <b>every</b> 1D restriction is unimodal. This implies the sublevel sets are convex bodies (e.g., nested eggs), forbidding "two-humped" mountains or saddle shapes that would trap gradient descent.</p>
+        </div>
 
         <h4>Sufficient Condition</h4>
         <p>If $f$ satisfies the stronger condition:
@@ -561,8 +567,8 @@
         <div class="theorem-box">
             <h4>(b) Integrals of Log-Concave Functions (Prékopa-Leindler)</h4>
             <p>If $f(x, y)$ is <b>jointly</b> log-concave in $(x, y)$, then the marginal $g(x) = \int f(x, y) dy$ is log-concave.
-            <br><b>Consequence:</b> Convolution of log-concave functions is log-concave. If $f, g$ are log-concave, so is $(f*g)(x) = \int f(x-y)g(y) dy$.
-            <br><i>Why?</i> The integrand $f(x-y)g(y)$ is log-concave in $(x, y)$ (product of log-concave functions). Integrating out $y$ preserves log-concavity in $x$.</p>
+            <br><b>Geometric Intuition (Volume):</b> The probability density $f(x,y)$ represents mass. Log-concavity means this mass is concentrated in a "unimodal lump." Integrating out $y$ is like projecting the mass onto the x-axis (computing marginals). The theorem says that the "shadow" of a log-concave lump is still log-concave—it doesn't develop multiple peaks or weird skews.</p>
+            <p><b>Consequence:</b> Convolution of log-concave functions is log-concave. If $f, g$ are log-concave, so is $(f*g)(x) = \int f(x-y)g(y) dy$.</p>
         </div>
 
         <h3>3.4 Probability Examples</h3>
